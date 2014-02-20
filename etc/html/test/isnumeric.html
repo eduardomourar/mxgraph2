@@ -1,0 +1,72 @@
+<html>
+<head>
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+	// NOTE: IsNumeric != IsValidNumberFormat
+	// See http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric/1830844#1830844
+	var isNumeric = mxUtils.isNumeric;
+	
+	// Possible new candidate that handles trailing/leading zeros, but also returns false for no leading zero before comma (eg. .42)
+	var isNumeric2 = function(n)
+	{
+		return String(parseFloat(n)) == n;
+	};
+	
+	mxUtils.isNumeric = function(n)
+	{
+		var result = isNumeric.apply(this, arguments);
+		var result2 = isNumeric2.apply(this, arguments);
+
+		if (result != result2)
+		{
+			mxUtils.write(document.body, 'Fail: ' + n + ' (' + typeof(n) + ') ' + result + ' ' + result2);
+		}
+		else
+		{
+			mxUtils.write(document.body, 'Pass: ' + n + ' (' + typeof(n) + ') ');
+		}
+
+		mxUtils.br(document.body);
+		
+		return result;
+	};
+	
+	mxUtils.isNumeric('.42');
+	mxUtils.isNumeric('01');
+	mxUtils.isNumeric('1.0');
+	mxUtils.isNumeric('1.00');
+	mxUtils.isNumeric('-1');
+	mxUtils.isNumeric('-1.5');
+	mxUtils.isNumeric('0');
+	mxUtils.isNumeric('0.42');
+	mxUtils.isNumeric('99,999');
+	mxUtils.isNumeric('0x89f');
+	mxUtils.isNumeric('#abcdef');
+	mxUtils.isNumeric('1.2.3');
+	mxUtils.isNumeric('1.1');
+	mxUtils.isNumeric('');
+	mxUtils.isNumeric(' ');
+	mxUtils.isNumeric('\t\t');
+	mxUtils.isNumeric('\n\r');
+	mxUtils.isNumeric('blah');
+	mxUtils.isNumeric(-1);
+	mxUtils.isNumeric(0);
+	mxUtils.isNumeric(1.0);
+	mxUtils.isNumeric(.42);
+	mxUtils.isNumeric(0.42);
+	mxUtils.isNumeric(02);
+	mxUtils.isNumeric(1.1);
+	mxUtils.isNumeric(8e5);
+	mxUtils.isNumeric(true);
+	mxUtils.isNumeric(false);
+	mxUtils.isNumeric(null);
+	mxUtils.isNumeric();
+</script>
+</body>
+</html>

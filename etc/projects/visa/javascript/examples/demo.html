@@ -1,0 +1,58 @@
+<!--
+  $Id: demo.html,v 1.1 2012/11/15 13:26:49 gaudenz Exp $
+  Copyright (c) 2006, Gaudenz Alder
+  
+  Static HTML page for the VISA Network Editor - Demo.
+-->
+<html>
+<head>
+	<title>VISA Network Editor - Demo</title>
+	<script type="text/javascript">
+		mxBasePath = '../../../mxgraph/javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../mxgraph/javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript" src="../src/js/vsShapes.js"></script>
+	<script type="text/javascript" src="../src/js/vsGraphModel.js"></script>
+	<script type="text/javascript" src="../src/js/vsEdgeStyle.js"></script>
+	<script type="text/javascript" src="../src/js/vsPerimeter.js"></script>
+	<script type="text/javascript" src="../src/js/vsGraph.js"></script>
+	<script type="text/javascript" src="../src/js/vsEditor.js"></script>
+	<script type="text/javascript" src="js/Demo.js"></script>
+	<script type="text/javascript">
+		function main(container)
+		{
+			if (mxClient.isBrowserSupported())
+			{
+				// Enables crisp rendering in SVG
+				mxRectangleShape.prototype.crisp = true;
+				
+				mxEvent.disableContextMenu(container);
+				container.style.background = '';
+				
+				var editor = new Demo(container, '.');
+				
+				// Shows a static example diagram
+				editor.graph.loadFile('../../xml/examples/example1.xml');
+			}
+			else
+			{
+				container.style.background = 'url(images/broken.gif) no-repeat';
+				
+				container.style.fontFamily = 'Helvetica,Arial';
+				container.style.fontSize = '11px';
+				
+				mxUtils.br(container, 4);
+				mxUtils.write(container, 'Browser is not supported');
+			}
+		}
+	</script>
+</head>
+<body style="background:#F9F7ED;" onload="main(document.getElementById('graph'));">
+	<font size="5"><strong>VISA Network Editor - Demo</strong></font>
+	<div id="graph" style="overflow:hidden;border-color:#CDCDCD;border-style:solid;border-width:1px;height:200px;width:300px;background:url('images/loading.gif') no-repeat;cursor:default;">
+	</div>
+	<p>
+		Use right click or shift click for popup menu or double click one of the cells. 
+	</p>
+</body>
+</html>

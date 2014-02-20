@@ -1,0 +1,131 @@
+<!--
+  $Id: dojostorage.html,v 1.2 2013/10/28 08:45:08 gaudenz Exp $
+  Copyright (c) 2006-2013, JGraph Ltd
+  
+  Dojo.Storage example for mxGraph. This example demonstrates using
+  client-side browser storage for saving and restoring the client state.
+-->
+<html>
+<head>
+	<title>Dojo.Storage example for mxGraph</title>
+
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript">
+		mxBasePath = '../src';
+	</script>
+
+	<!-- Loads and initializes the libraries -->
+	<script type="text/javascript" src="../src/js/mxClient.js"></script>
+	<script type="text/javascript" src="dojo/dojo.js"></script>
+
+	<!-- Example code -->
+	<script type="text/javascript">
+
+		// Dynamically load Dojo libraries
+		dojo.require('dojo.dom');
+		dojo.require('dojo.io.*');
+		dojo.require('dojo.event.*');
+		dojo.require('dojo.html');
+		dojo.require('dojo.storage.*');
+		
+		// Global flag for resetting the storage
+		var isCleared = false;
+
+		// Program starts here. Creates a sample graph in the
+		// DOM node with the specified ID. This function is invoked
+		// from the onLoad event handler of the document (see below).
+		var App =
+		{
+			main: function()
+			{
+				var container = document.getElementById('graphContainer')
+			
+				// Checks if the browser is supported
+				if (!mxClient.isBrowserSupported())
+				{
+					// Displays an error message if the browser is not supported.
+					mxUtils.error('Browser is not supported!', 200, false);
+				}
+				else
+				{
+					// Creates the graph inside the given container
+					var graph = new mxGraph(container);
+	
+					var xml = dojo.storage.get('mxGraph');
+					if (xml != null)
+					{
+						var doc = mxUtils.parseXml(xml);
+						var dec = new mxCodec(doc);
+						dec.decode(doc.documentElement, graph.getModel());
+					}
+					else
+					{
+						// Gets the default parent for inserting new cells. This
+						// is normally the first child of the root (ie. layer 0)
+						var parent = graph.getDefaultParent();
+										
+						// Adds cells to the model in a single step
+						graph.getModel().beginUpdate();
+						try
+						{
+							var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
+							var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
+							var e1 = graph.insertEdge(parent, null, 'Edge', v1, v2);
+						}
+						finally
+						{
+							// Updates the display
+							graph.getModel().endUpdate();
+						}
+					}
+	
+					// Stores the changes using Dojo.storage and frees memory
+					window.onunload = function(evt)
+					{
+						try
+						{
+							if (!isCleared)
+							{
+								var enc = new mxCodec(mxUtils.createXmlDocument());
+								var node = enc.encode(graph.getModel());
+								var xml = mxUtils.getXml(node);
+								dojo.storage.put('mxGraph', xml);
+							}
+						}
+						catch (e)
+						{
+							mxUtils.alert(e);
+						}
+						
+						window.onunload = null;
+					};
+				}
+			}
+		};
+		
+		// Waits for the persistence system to get initialized and
+		// invokes the main method (App.main) when ready
+		if (dojo.storage.manager.isInitialized() == false)
+		{
+		  dojo.event.connect(dojo.storage.manager,
+		                     "loaded", App, App.main);
+		}
+		else
+		{
+		  dojo.event.connect(dojo, "loaded", App, App.main);
+		}
+	</script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body>
+	This example requires Dojo and must be run from a http:// location!
+	<!-- Creates a container for the graph with a grid wallpaper -->
+	<div id="graphContainer"
+		style="overflow:hidden;width:321px;height:241px;background:url('editors/images/grid.gif')">
+	</div>
+	<a href="javascript:dojo.storage.clear();isCleared = true;window.location.reload(false);">
+		Clear
+	</a>
+</body>
+</html>

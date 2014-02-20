@@ -1,0 +1,649 @@
+<html>
+<head>
+<!--
+		// TODO:
+		//
+		// Implementation issues:
+		// - Add handling of Data URLs
+		// - Add clipped/vertical label backgrounds
+		// - Add properties (href, tooltip)
+		//
+		// Limitations:
+		// - No cross-domain image support in Canvas, PDF (XHR), needs server indirection
+		// - No canvas in old IEs, can use server or Flash
+		//
+		// For generic "swimlane"-API:
+		// - Check if hit is transparent
+		// - Get Rectangle for title region (paint, gradient, text)
+		// - StartSize / origin and orientation
+		// - Add generic handling of content bounds (swimlanes, startSize)
+		//   - Hit detection on content area
+		//   - Automatic backgroundSize
+		//   - Child origin
+-->
+	<title>Client-Side Export</title>
+	<script type="text/javascript">
+		mxBasePath = 'http://devhost.jgraph.com/mxgraph/javascript/src';
+	</script>
+	<script type="text/javascript" src="http://devhost.jgraph.com/mxgraph/javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript" src="base64.js"></script>
+	<script type="text/javascript" src="rawdeflate.js"></script>
+	<script type="text/javascript" src="rawinflate.js"></script>
+	<script type="text/javascript" src="jspdf.js"></script>
+	<script type="text/javascript" src="jscanvas.js"></script>
+	<script type="text/javascript" src="jstxt.js"></script>
+	<script type="text/javascript" src="jspdf.js"></script>
+	<script type="text/javascript" src="mxOutputHandler.js"></script>
+	<script type="text/vbscript">
+     Function BinaryToArray(Binary)
+         Dim i
+         ReDim byteArray(LenB(Binary))
+         For i = 1 To LenB(Binary)
+             byteArray(i-1) = AscB(MidB(Binary, i, 1))
+         Next
+         BinaryToArray = byteArray
+     End Function
+	</script>
+	<script type="text/javascript">
+		// TODO: Changes for mxConstants to replace SVG_SHADOW_TRANSFORM
+		// Sets the global shadow color
+		mxConstants.SHADOWCOLOR = '#E3E3E3';
+		mxConstants.SHADOW_OFFSET_X = 4;
+		mxConstants.SHADOW_OFFSET_Y = 4;
+		
+		// Enables crisp rendering of rectangles in SVG
+		mxRectangleShape.prototype.crisp = true;
+				
+		// Enables crisp rendering of rectangles in SVG
+		mxSwimlane.prototype.crisp = true;
+		
+		// Helper method for binary data
+		function toHex(string)
+		{
+	  	  	var text = '';
+			
+			for (var i = 0; i < string.length; i++)
+			{
+				text += string.charCodeAt(i).toString(16)+',';
+			}
+			
+			if (text.length > 0)
+			{
+				text = text.substring(0, text.length - 1);
+			}
+			
+			return text;
+		}
+
+		// Exports the graph to a PDF and displays it in a new tab via data URL
+		function exportPdf(graph)
+		{
+			// Prepare document
+			var pdfCanvas = new jsPDF();
+			pdfCanvas.scale(1 / graph.pageScale);
+
+			// Render graph
+			var imgExport = new mxImageExport();
+			imgExport.includeOverlays = true;
+			imgExport.drawState(graph.getView().getState(graph.model.root), pdfCanvas);
+
+			// Display result
+			// Optional - set properties on the document
+			pdfCanvas.setProperties(
+			{
+				title : 'Title',
+				subject : 'This is the subject',
+				author : 'John Doe',
+				keywords : 'images, gradients, opacity, vertical text',
+				creator : 'mxGraph'
+			});
+
+			// Asynchronous handling of output (required for images) requires
+			// the window to be opened in the event handling code so that it
+			// is not getting blocked and displayed as a tab (not a window).
+			var wnd = window.open('about:blank');
+
+			pdfCanvas.finish(function()
+			{
+				var pdf = pdfCanvas.output();
+
+				wnd.location.href = 'data:application/pdf;base64,'
+						+ Base64.encode(pdf, true);
+				// Save via Flash or Servlet (if binary transmission may
+				// be used then the binary data can be sent "as-is")
+				// mxUtils.submit('SaveServlet', 'pdf=' + data);
+				// mxLog.show();
+				// mxLog.debug(pdf);
+			});
+		}
+		
+		// Exports the graph to a PNG and displays it in a new tab via data URL
+		function exportPng(graph)
+		{
+			// Prepare image via HTML canvas element
+			var canvas = document.createElement('canvas');
+			var bounds = graph.getGraphBounds();
+			canvas.setAttribute('width', bounds.x + bounds.width + 4);
+			canvas.setAttribute('height', bounds.y + bounds.height + 4);
+			var htmlCanvas = new jsCanvas(canvas);
+
+			// Render graph
+			var imgExport = new mxImageExport();
+			imgExport.includeOverlays = true;
+			imgExport.drawState(graph.getView().getState(graph.model.root), htmlCanvas);
+
+			// Display result
+			var wnd = window.open('about:blank');
+
+			htmlCanvas.finish(function()
+			{
+				wnd.location.href = canvas.toDataURL();
+				// see above
+			});
+		}
+		
+		// Exports the graph to a PNG and displays it in a new tab via data URL
+		function exportXml(graph)
+		{
+			// Prepare document
+			var xmlDoc = mxUtils.createXmlDocument();
+			var root = xmlDoc.createElement('output');
+			xmlDoc.appendChild(root);
+			
+			// Render graph
+			var imgExport = new mxImageExport();
+			var xmlCanvas = new mxXmlCanvas2D(root);
+			imgExport.drawState(graph.getView().getState(graph.model.root), xmlCanvas);
+
+			// Display result
+			var value = mxUtils.getXml(root);
+			var compr = RawDeflate.deflate(value);
+			var base64 = Base64.encode(compr, true);
+			var enc = encodeURIComponent(compr);
+			var b64enc = encodeURIComponent(base64);
+			mxLog.show();
+			mxLog.debug('exportXml: uncompressed='+value.length+', compressed='+compr.length+
+					', base64='+base64.length+', encoded='+enc.length+', b64enc='+b64enc.length);
+			mxUtils.popup(mxUtils.getPrettyXml(root));
+		}
+		
+		// Exports the graph to a PNG and displays it in a new tab via data URL
+		function test(xmlRoot, width, height)
+		{
+			// Prepare document
+			var xmlDoc = mxUtils.createXmlDocument();
+			var root = xmlDoc.createElement('output');
+			xmlDoc.appendChild(root);
+			
+			// Render graph
+			var xmlCanvas = new mxXmlCanvas2D(root);
+			var handler = new mxOutputHandler(xmlCanvas);
+			handler.parse(xmlRoot);
+
+			// Display result
+			var value = mxUtils.getXml(root);
+			var compr = RawDeflate.deflate(value);
+			var base64 = Base64.encode(compr, true);
+			var enc = encodeURIComponent(compr);
+			var b64enc = encodeURIComponent(base64);
+			mxLog.show();
+			mxLog.debug('exportXml: uncompressed='+value.length+', compressed='+compr.length+
+					', base64='+base64.length+', encoded='+enc.length+', b64enc='+b64enc.length);
+			mxUtils.popup(mxUtils.getPrettyXml(root));
+		}
+
+		// Exports the graph to a PNG and displays it in a new tab via data URL
+		function exportSvg(graph)
+		{
+		    var scale = 1;
+		    var bounds = graph.getGraphBounds();
+
+		    // Prepares SVG document that holds the output
+		    var svgDoc = mxUtils.createXmlDocument();
+		    var root = svgDoc.createElement('svg');
+		    root.setAttribute('width', (bounds.width + 4) * scale + 'px');
+		    root.setAttribute('height', (bounds.height + 4) * scale + 'px');
+		    root.setAttribute('version', '1.1');
+		    root.setAttribute('xmlns', mxConstants.NS_SVG);
+		    root.setAttribute('xmlns:xlink', mxConstants.NS_XLINK);
+		    svgDoc.appendChild(root);
+
+		    // Render graph
+		    var svgCanvas = new mxSvgCanvas2D(root);
+		    svgCanvas.scale(scale);
+		    svgCanvas.translate(Math.round(-bounds.x), Math.round(-bounds.y));
+		    var imgExport = new mxImageExport();
+		    imgExport.drawState(graph.getView().getState(graph.model.root), svgCanvas);
+
+		    var value = mxUtils.getXml(root);
+			var compr = RawDeflate.deflate(value);
+			var base64 = Base64.encode(compr, true);
+			var enc = encodeURIComponent(compr);
+			var b64enc = encodeURIComponent(base64);
+			
+			mxLog.show();
+			mxLog.debug('exportXml: uncompressed=' + value.length + ', compressed=' + compr.length +
+				', base64=' + base64.length + ', encoded=' + enc.length + ', b64enc=' + b64enc.length);
+
+		    var wnd = window.open();
+			wnd.document.writeln(value);
+		   	wnd.document.close();
+			
+			var downloadFile = function()
+			{
+			  wnd.URL = wnd.webkitURL || wnd.URL;
+			  wnd.BlobBuilder = wnd.BlobBuilder || wnd.WebKitBlobBuilder ||
+			  	wnd.MozBlobBuilder;
+
+			  var bb = new wnd.BlobBuilder();
+			  bb.append(value);
+
+			  var a = wnd.document.createElement('a');
+			  a.download = 'export.svg';
+			  a.href = wnd.URL.createObjectURL(bb.getBlob('text/plain'));
+			  a.textContent = 'Save File (Needs Chrome)';
+
+			  a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+			  mxUtils.br(wnd.document.body);
+			  wnd.document.body.appendChild(a);
+			};
+		   	
+		   	downloadFile();
+			//wnd.location.href = 'data:image/svg+xml;base64,'
+			//	+ Base64.encode(value, true);
+		}
+
+		// Exports the graph to a PNG and displays it in a new tab via data URL
+		function testSvg(xmlRoot, width, height, dx, dy)
+		{
+			// Prepare document
+			var svgDoc = mxUtils.createXmlDocument();
+			var root = svgDoc.createElement('svg');
+			root.setAttribute('width', width + 'px');
+			root.setAttribute('height', height + 'px');
+			root.setAttribute('version', '1.1');
+			root.setAttribute('xmlns', mxConstants.NS_SVG);
+			root.setAttribute('xmlns:xlink', mxConstants.NS_XLINK);
+			svgDoc.appendChild(root);
+
+			// Render graph
+			var svgCanvas = new mxSvgCanvas2D(root);
+			svgCanvas.translate(dx, dy);
+			var handler = new mxOutputHandler(svgCanvas);
+			handler.parse(xmlRoot);
+
+			// Display result
+			var value = mxUtils.getXml(root);
+			var compr = RawDeflate.deflate(value);
+			var base64 = Base64.encode(compr, true);
+			var enc = encodeURIComponent(compr);
+			var b64enc = encodeURIComponent(base64);
+			mxLog.show();
+			mxLog.debug('exportXml: uncompressed='+value.length+', compressed='+compr.length+
+					', base64='+base64.length+', encoded='+enc.length+', b64enc='+b64enc.length);
+			//mxUtils.popup(mxUtils.getPrettyXml(root));
+			
+		    var wnd = window.open();
+			wnd.document.writeln(value);
+		   	wnd.document.close();
+			
+			var downloadFile = function()
+			{
+			  wnd.URL = wnd.webkitURL || wnd.URL;
+			  wnd.BlobBuilder = wnd.BlobBuilder || wnd.WebKitBlobBuilder ||
+			  	wnd.MozBlobBuilder;
+
+			  var bb = new wnd.BlobBuilder();
+			  bb.append(value);
+
+			  var a = wnd.document.createElement('a');
+			  a.download = 'export.svg';
+			  a.href = wnd.URL.createObjectURL(bb.getBlob('text/plain'));
+			  a.textContent = 'Save File (Needs Chrome)';
+
+			  a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+			  mxUtils.br(wnd.document.body);
+			  wnd.document.body.appendChild(a);
+			};
+		   	
+		   	downloadFile();
+			//wnd.location.href = 'data:image/svg+xml;base64,'
+			//	+ Base64.encode(value, true);
+		}
+
+		// Exports the graph to a PNG and displays it in a new tab via data URL
+		function exportText(graph)
+		{
+			// Prepare document
+			var output = '';
+			var doc = new jsTxt(output);
+			
+			// Render graph
+			// Render graph
+			var imgExport = new mxImageExport();
+			imgExport.drawState(graph.getView().getState(graph.model.root), doc);
+
+			// Display result
+			var value = doc.getString();
+			var compr = RawDeflate.deflate(value);
+			var base64 = Base64.encode(compr, true);
+			var enc = encodeURIComponent(compr);
+			var b64enc = encodeURIComponent(base64);
+			mxLog.show();
+			mxLog.debug('exportText: uncompressed='+value.length+', compressed='+compr.length+
+					', base64='+base64.length+', encoded='+enc.length+', b64enc='+b64enc.length);
+			mxUtils.popup(value);
+		}
+		
+		// Shows old image export for comparison
+		function oldImageExport(graph)
+		{
+			var node = mxUtils.getViewXml(graph, 1);
+			var xml = mxUtils.getXml(node);
+
+			// Display result
+			var value = mxUtils.getXml(node);
+			var compr = RawDeflate.deflate(value);
+			var base64 = Base64.encode(compr, true);
+			var enc = encodeURIComponent(compr);
+			var b64enc = encodeURIComponent(base64);
+			mxLog.show();
+			mxLog.debug('oldImageExport: uncompressed='+value.length+', compressed='+compr.length+
+					', base64='+base64.length+', encoded='+enc.length+', b64enc='+b64enc.length);
+			mxUtils.popup(mxUtils.getPrettyXml(node));
+		}
+		
+		// Loads custom shapes into the rendering engine
+		function loadShapes()
+		{
+			var req = mxUtils.load('shapes.xml');
+			var root = req.getDocumentElement();
+			var shape = root.firstChild;
+			
+			while (shape != null)
+			{
+				if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
+				{
+					mxStencilRegistry.addStencil(shape.getAttribute('name'), new mxStencil(shape));
+				}
+				
+				shape = shape.nextSibling;
+			}		
+		}
+		
+		function main(container)
+		{
+			loadShapes();
+			var graph = new mxGraph(container);
+			graph.setConnectable(true);
+			graph.setDropEnabled(true);
+			new mxRubberband(graph);
+			var parent = graph.getDefaultParent();
+			
+			var style = graph.getStylesheet().getDefaultVertexStyle();
+			style[mxConstants.STYLE_FILLCOLOR] = '#adc5ff';
+			style[mxConstants.STYLE_GRADIENTCOLOR] = '#7d85df';
+			
+			document.body.appendChild(mxUtils.button('Test 1', function()
+			{
+				graph.getModel().clear();
+				var parent = graph.getDefaultParent();
+				graph.getModel().beginUpdate();
+				try
+				{
+					//var v1 = graph.insertVertex(parent, null, 'XOR', 0, 0, 200, 200, 'shape=xor');
+					//var v1 = graph.insertVertex(parent, null, 'mxGraph.com', 20, 20, 120, 40, 'rounded=1');
+					var v1 = graph.insertVertex(parent, null, 'Container', 10, 10, 520, 640,
+							'shape=swimlane;shadow=1;startSize=28;fontStyle=3;fontSize=14;glass=1');
+					graph.setCellWarning(v1, 'Overlay');
+					var v2 = graph.insertVertex(v1, null, 'Bold + Glass', 20, 40, 120, 40,
+							'shape=label;rounded=1;arcSize=40;shadow=1;glass=1;image=logo.png;imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1');
+					var v22 = graph.insertVertex(v1, null, 'Bold + Glass', 70, 60, 120, 40,
+							'shape=label;rounded=1;shadow=1;glass=1;image=logo.png;imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1');
+					var v23 = graph.insertVertex(v1, null, 'Bold 14pt\nSecond line\nThird line', 120, 40, 120, 60,
+							'shape=label;rounded=1;shadow=1;glass=1;image=logo.png;imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=5;fontSize=14');
+					graph.setCellWarning(v23, 'Test', new mxImage('logo.png', 26, 18));
+					var v3 = graph.insertVertex(v1, null, 'Blue Gradient', 260, 50, 120, 40,
+							'rounded=1;fontStyle=4;');
+					var v4 = graph.insertVertex(v1, null, '75% Opacity', 320, 50, 120, 40,
+							'rounded=1;opacity=75;textOpacity=75;');
+					var v5 = graph.insertVertex(v1, null, '25% Opacity', 380, 50, 120, 40,
+							'rounded=1;opacity=25;textOpacity=25;');
+					var ims = 'shape=image;verticalLabelPosition=bottom;verticalAlign=top;';
+					var v6 = graph.insertVertex(v1, null, 'JPG Image\n(flipped)', 20, 110, 80, 40,
+							ims + 'image=mxlogo.jpg;imageFlipV=1;opacity=50;');
+					var v7 = graph.insertVertex(v1, null, 'PNG Image\n(non-alpha)', 120, 110, 80, 40,
+							ims + 'image=logo.png;align=left');
+					var v71 = graph.insertVertex(v1, null, 'PNG Image\n(flipped w/ bg)', 220, 110, 80, 40,
+							ims + 'image=logo.png;imageFlipH=1;imageBackground=#FFFF00;imageBorder=#FF00FF;');
+					var v8 = graph.insertVertex(v1, null, 'PNG Image\n(alpha)', 320, 110, 80, 40,
+							ims + 'image=bell.png;align=right');
+					/*var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
+							ims + 'image=image.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');*/
+					var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
+							ims + 'image=http://www.jgraph.com/images/mxgraph.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');
+					var v10 = graph.insertVertex(v1, null, 'OR', 20, 200, 80, 80,
+							'shape=or;shadow=1;rotation=25');
+					var v11 = graph.insertVertex(v1, null, 'AND', 140, 200, 80, 80,
+							'shape=and;glass=1;shadow=1;strokeColor=#0000ff;direction=south;verticalAlign=top');
+					var v12 = graph.insertVertex(v1, null, 'XOR', 260, 200, 80, 80,
+							'shape=xor;glass=1;shadow=1;opacity=50;align=left;');
+					var v13 = graph.insertVertex(v1, null, 'Vertical', 420, 200, 80, 80,
+							'shape=cancel_end;shadow=1;horizontal=0;labelBackgroundColor=#ffff00;labelBorderColor=#000000;');
+					var v14 = graph.insertVertex(v1, null, 'OR', 20, 300, 80, 80,
+							'shape=or;shadow=1;direction=north;');
+					var v15 = graph.insertVertex(v1, null, 'OR', 140, 300, 80, 80,
+							'shape=or;glass=1;shadow=1;strokeWidth=8;strokeColor=#0000ff;direction=east;');
+					var v16 = graph.insertVertex(v1, null, 'OR', 260, 300, 80, 80,
+							'shape=or;glass=1;shadow=1;direction=south;');
+					var v17 = graph.insertVertex(v1, null, 'OR', 420, 300, 80, 80,
+							'shape=or;shadow=1;horizontal=0;labelBackgroundColor=#ffff00;labelBorderColor=#000000;direction=west;');
+					var v18 = graph.insertVertex(v1, null, 'XOR', 20, 400, 80, 80,
+							'shape=xor;shadow=1;direction=north;strokeWidth=8;');
+					var v19 = graph.insertVertex(v1, null, 'XOR', 140, 400, 80, 80,
+							'shape=xor;glass=1;shadow=1;strokeWidth=6;strokeColor=#0000ff;direction=east;');
+					var v20 = graph.insertVertex(v1, null, 'XOR', 260, 400, 80, 80,
+							'shape=xor;glass=1;shadow=1;direction=south;strokeWidth=4;');
+					var v21 = graph.insertVertex(v1, null, 'XOR', 420, 400, 80, 80,
+							'shape=xor;shadow=1;horizontal=0;strokeWidth=2;labelBackgroundColor=#ffff00;labelBorderColor=#000000;direction=west;');
+					var v22 = graph.insertVertex(v1, null, 'AND', 20, 500, 80, 80,
+							'shape=gate;shadow=1;');
+					var v23 = graph.insertVertex(v1, null, 'AND', 140, 500, 80, 80,
+							'shape=gate;glass=1;shadow=1;flipV=1');
+					var v24 = graph.insertVertex(v1, null, 'AND', 260, 500, 80, 80,
+							'shape=gate;glass=1;shadow=1;flipH=1');
+					var v25 = graph.insertVertex(v1, null, 'AND', 420, 500, 80, 80,
+							'shape=gate;shadow=1;horizontal=0;labelBackgroundColor=#ffff00;labelBorderColor=#000000;flipV=1;flipH=1');
+					var e1 = graph.insertEdge(v1, null, 'e1', v10, v11, 'labelBackgroundColor=#ffffff;startArrow=oval;endArrow=classic');
+					var e2 = graph.insertEdge(v1, null, 'e2', v11, v12, 'labelBackgroundColor=#ffffff;startArrow=diamond;endArrow=open');
+					var e3 = graph.insertEdge(v1, null, 'e3', v12, v13, 'labelBackgroundColor=#ffff00;labelBorderColor=#000000;startArrow=none;endArrow=block;dashed=1');
+					// TODO: Add embedded images for testing
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+			}));
+
+			document.body.appendChild(mxUtils.button('Test 2', function()
+			{
+				graph.getModel().clear();
+				var parent = graph.getDefaultParent();
+				graph.getModel().beginUpdate();
+				try
+				{
+					//var v1 = graph.insertVertex(parent, null, 'mxGraph.com', 20, 20, 120, 40, 'rounded=1');
+					var v1 = graph.insertVertex(parent, null, 'Container', 20, 20, 680, 680,
+							'shape=swimlane;shadow=1;startSize=28;fontStyle=3;fontSize=14;glass=1');
+					//graph.setCellWarning(v1, 'Overlay');
+					var v2 = graph.insertVertex(v1, null, 'Bold + Glass', 20, 40, 120, 40,
+							'shape=label;rounded=1;shadow=1;glass=1;image=test/logo.png;'+
+							'imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1');
+					var v22 = graph.insertVertex(v1, null, 'Bold 14pt', 60, 60, 120, 40,
+							'shape=label;rounded=1;shadow=1;glass=1;image=test/logo.png;'+
+							'imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1;fontSize=14');
+					var v23 = graph.insertVertex(v1, null, 'Bold 18pt', 100, 50, 140, 40,
+							'shape=label;rounded=1;shadow=1;glass=1;image=test/logo.png;'+
+							'imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1;fontSize=18');
+					var v3 = graph.insertVertex(v1, null, 'Blue Gradient', 260, 40, 120, 40,
+							'rounded=1');
+					var v4 = graph.insertVertex(v1, null, '75% Opacity', 310, 50, 120, 40,
+							'rounded=1;opacity=75;textOpacity=75;');
+					var v5 = graph.insertVertex(v1, null, '25% Opacity', 360, 60, 120, 40,
+							'rounded=1;opacity=25;textOpacity=25;');
+					var ims = 'shape=image;verticalLabelPosition=bottom;verticalAlign=top;';
+					var v6 = graph.insertVertex(v1, null, 'JPG Image\n(flipped)', 20, 110, 80, 40,
+							ims + 'image=test/mxlogo.jpg;imageFlipV=1;opacity=50;');
+					var v7 = graph.insertVertex(v1, null, 'PNG Image\n(non-alpha)', 120, 110, 80, 40,
+							ims + 'image=test/logo.png;align=left');
+					var v71 = graph.insertVertex(v1, null, 'PNG Image\n(flipped w/ bg)', 220, 110, 80, 40,
+							ims + 'image=test/logo.png;imageFlipH=1;imageBackground=#FFFF00;imageBorder=#FF00FF;');
+					var v8 = graph.insertVertex(v1, null, 'PNG Image\n(alpha)', 320, 110, 80, 40,
+							ims + 'image=test/bell.png;align=right');
+					var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
+							ims + 'image=test/image.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');
+					var v10 = graph.insertVertex(v1, null, 'OR (flipH)', 20, 200, 80, 80,
+							'shape=or;shadow=1;stencilFlipH=1;dashed=1');
+					var v11 = graph.insertVertex(v1, null, 'AND', 140, 200, 80, 80,
+							'shape=and;glass=1;shadow=1;strokeColor=#0000ff;direction=south');
+					var v12 = graph.insertVertex(v1, null, 'XOR', 260, 200, 80, 80,
+							'shape=xor;glass=1;shadow=1;opacity=50;');
+					var v13 = graph.insertVertex(v1, null, 'Lorem Ipsum\nDolor Sit Amet', 380, 200, 120, 80,
+							'shape=rectangle;shadow=1;horizontal=0;labelBackgroundColor=#ffff00;labelBorderColor=#000000;dashed=1');
+					var v14 = graph.insertVertex(v1, null, 'Test test test\n<this is a "test"/>\nהצü יאיט', 20, 300, 80, 80,
+							'shape=or;shadow=1;direction=north;labelBackgroundColor=#ffff00;verticalAlign=bottom;labelBorderColor=#000000;');
+					var v15 = graph.insertVertex(v1, null, 'OR', 140, 300, 80, 80,
+							'shape=or;glass=1;shadow=1;strokeWidth=8;strokeColor=#0000ff;direction=east;');
+					var v16 = graph.insertVertex(v1, null, 'FlipH/V', 260, 300, 80, 80,
+							'shape=timerIntermediate;glass=1;shadow=1;stencilFlipH=1;stencilFlipV=1;');
+					var v17 = graph.insertVertex(v1, null, 'OR', 380, 300, 120, 80,
+							'shape=or;shadow=1;horizontal=0;labelBackgroundColor=#ffff00;labelBorderColor=#000000;direction=west;');
+					var v18 = graph.insertVertex(v1, null, 'XOR', 20, 400, 80, 80,
+							'shape=xor;shadow=1;direction=north;strokeWidth=8;labelBackgroundColor=#ffff00;labelBorderColor=#000000;');
+					var v19 = graph.insertVertex(v1, null, 'Timer', 140, 400, 80, 80,
+							'shape=timerIntermediate;glass=1;shadow=1;strokeWidth=6;strokeColor=#0000ff;direction=east;');
+					var v20 = graph.insertVertex(v1, null, 'Timer', 260, 400, 80, 80,
+							'shape=timerIntermediate;glass=1;shadow=1;direction=south;strokeWidth=4;stencilFlipH=1;stencilFlipV=1');
+					var v21 = graph.insertVertex(v1, null, 'XOR', 380, 400, 120, 80,
+							'shape=xor;shadow=1;horizontal=0;strokeWidth=2;labelBackgroundColor=#ffff00;labelBorderColor=#000000;direction=west;');
+					var v22 = graph.insertVertex(v1, null, 'AND', 20, 500, 80, 80,
+							'shape=and;shadow=1;');
+					var v23 = graph.insertVertex(v1, null, 'AND', 140, 500, 80, 80,
+							'shape=and;glass=1;shadow=1;stencilFlipH=1;labelBackgroundColor=#ffff00;labelBorderColor=#000000;textOpacity=50;');
+					var v24 = graph.insertVertex(v1, null, 'Timer', 260, 500, 80, 80,
+							'shape=label;glass=1;shadow=1;stencilFlipH=1;labelBackgroundColor=#ffff00;labelBorderColor=#000000;textOpacity=50;opacity=50;');
+					var v25 = graph.insertVertex(v1, null, 'FlipV', 400, 500, 80, 80,
+							'shape=cloud;shadow=1;horizontal=0;labelBackgroundColor=#ffff00;labelBorderColor=#000000;');
+					var v26 = graph.insertVertex(v1, null, 'Bold + Glass\nTest Line 2\nTest Line 3', 520, 40, 140, 80,
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=left;fontStyle=1;');
+					var v27 = graph.insertVertex(v1, null, 'Bold + Glass\nTest Line 2\nTest Line 3', 520, 140, 140, 80,
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=center;fontStyle=1;');
+					var v27 = graph.insertVertex(v1, null, 'Bold + Glass\nTest Line 2\nTest Line 3', 520, 240, 140, 80,
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=right;fontStyle=1;');
+					var v28 = graph.insertVertex(v1, null, 'Top + Left\nTest Line 2\nTest Line 3', 520, 340, 140, 80,
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=left;verticalAlign=top;fontStyle=1;horizontal=0;');
+					var v29 = graph.insertVertex(v1, null, 'Middle + Center\nTest Line 2\nTest Line 3', 520, 440, 140, 80,
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=center;verticalAlign=middle;fontStyle=1;horizontal=0;');
+					var v30 = graph.insertVertex(v1, null, 'Bottom + Right\nTest Line 2\nTest Line 3', 520, 540, 140, 80,
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=right;verticalAlign=bottom;fontStyle=1;horizontal=0;');
+					var e1 = graph.insertEdge(v1, null, 'e1', v10, v11, 'labelBackgroundColor=#ffffff;startArrow=oval;endArrow=classic');
+					var e2 = graph.insertEdge(v1, null, 'e22', v11, v12, 'labelBackgroundColor=#ffffff;startArrow=diamond;endArrow=open');
+					var e3 = graph.insertEdge(v1, null, 'e3', v12, v13, 'labelBackgroundColor=#ffff00;labelBorderColor=#000000;startArrow=none;endArrow=block;dashed=1');
+					var e4 = graph.insertEdge(v1, null, 'e4', v24, v25, 'labelBackgroundColor=#ffffff;startArrow=oval;startFill=0;endArrow=classic;endFill=0;strokeColor=#FF0000');
+					// TODO: Add embedded images for testing
+					/*graph.insertVertex(v1, null, 'Top Left\nTest Line 2\nTest Line 3', 20, 640, 300, 160,
+						'align=left;verticalAlign=top;horizontal=0;');
+					graph.insertVertex(v1, null, 'Top Right\nTest Line 2\nTest Line 3', 340, 640, 300, 160,
+					'align=right;verticalAlign=top;horizontal=0;');*/
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+			}));
+
+			document.body.appendChild(mxUtils.button('Test 3', function()
+			{
+				graph.getModel().clear();
+				var req = mxUtils.load('Diagram1.xml');
+				var codec = new mxCodec(req.getDocumentElement().ownerDocument);
+				codec.decode(req.getDocumentElement(), graph.getModel());
+			}));
+			
+			mxUtils.br(document.body);
+			mxUtils.br(document.body);
+			
+			document.body.appendChild(mxUtils.button('Export XML', function()
+			{
+				exportXml(graph);
+			}));
+			
+			document.body.appendChild(mxUtils.button('Export SVG', function()
+			{
+				exportSvg(graph);
+			}));
+
+			document.body.appendChild(mxUtils.button('Export PDF (Beta)', function()
+			{
+				exportPdf(graph);
+			}));
+
+			document.body.appendChild(mxUtils.button('Export PNG (Beta)', function()
+			{
+				exportPng(graph);
+			}));
+/*
+			mxUtils.br(document.body);
+
+			document.body.appendChild(mxUtils.button('Export Text (Beta)', function()
+			{
+				exportText(graph);
+			}));
+
+			document.body.appendChild(mxUtils.button('Export XML (Old)', function()
+			{
+				oldImageExport(graph);
+			}));*/
+			
+			mxUtils.br(document.body);
+			mxUtils.br(document.body);
+			
+			mxUtils.write(document.body, 'Export1.xml:');
+
+			document.body.appendChild(mxUtils.button('File to SVG', function()
+			{
+			 	var req = mxUtils.load('Export1.xml');
+				var root = req.getDocumentElement();
+				testSvg(root, 1130, 700, -10, -70);
+			}));
+			
+			document.body.appendChild(mxUtils.button('File to XML', function()
+			{
+			 	var req = mxUtils.load('Export1.xml');
+				var root = req.getDocumentElement();
+				test(root, 1130, 760);
+			}));
+			
+			var a = document.createElement('a');
+			a.setAttribute('href', 'Export1.png');
+			a.setAttribute('target', '_blank');
+			mxUtils.write(a, 'Expected output');
+			
+			document.body.appendChild(a);
+		};
+	</script>
+</head>
+<body onload="main(document.getElementById('graphContainer'))">
+	<div id="graphContainer"
+		style="overflow:hidden;width:801px;height:801px;cursor:default;border:solid gray 1px;">
+	</div>
+	<a href="alpha-gradient.pdf" target="_blank">PDF sample with opacity and gradients</a>
+	Note: This can only be tested in Chrome currently due to use of data-url for PDF viewing in new window.
+	The PDF output can be used in all browsers if echoed via servlet / stored via flash etc.
+	<br>
+</body>
+</html>

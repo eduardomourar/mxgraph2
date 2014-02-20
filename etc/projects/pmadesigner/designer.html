@@ -1,0 +1,50 @@
+<html>
+<head>
+	<title>Designer</title>
+
+	<style type="text/css" media="screen">
+		table.erd {
+			border-color: black;
+			border-collapse: collapse;
+			overflow: auto;
+		}
+		table.erd th {
+			padding-left: 18px;
+			border-color: #C3D9FF;
+			font-size: 10pt;
+			border-collapse: collapse;
+			border-width: 0 0 1 0px;
+			border-style: solid;
+			white-space: nowrap;
+			font-weight: normal;
+			padding-top: 4px;
+			padding-bottom: 4px;
+		}
+		table.erd tr {
+		}
+		table.erd td {
+			border-color: black;
+			font-size: 8pt;
+			border-collapse: collapse;
+			white-space: nowrap;
+		}
+	</style>
+	
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript"> 
+		mxBasePath = 'http://www.jgraph.com/demo/mxgraph/src';
+		mxBasePath = '../../../javascript/src';
+	</script>
+
+	<!-- Loads and initializes the library -->
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+	<script2 type="text/javascript" src="http://mxclient.jgraph.com/demo/mxgraph/src/js/mxclient.php?version=1.1.0.2&key=hnZ/f6erhH%2BllS0%3D"></script>
+
+	<!--  Loads the designer application -->
+	<script type="text/javascript" src="designer.js"></script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body onload="main('%sql%')">
+</body>
+</html>

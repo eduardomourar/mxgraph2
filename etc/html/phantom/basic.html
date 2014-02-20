@@ -1,0 +1,68 @@
+<html>
+<head>
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript">
+		function render(xml)
+		{
+			var container = document.createElement('div');
+			document.body.appendChild(container);
+			
+			var graph = new mxGraph(container);
+			graph.setHtmlLabels(true);
+			
+			var doc = mxUtils.parseXml(xml);
+			var codec = new mxCodec(doc);
+			codec.decode(doc.documentElement, graph.getModel());
+			
+			var scale = graph.view.scale;
+			var bounds = graph.getGraphBounds();
+
+			// Prepares SVG document that holds the output
+			var svgDoc = mxUtils.createXmlDocument();
+			var root = (svgDoc.createElementNS != null) ?
+				svgDoc.createElementNS(mxConstants.NS_SVG, 'svg') : svgDoc.createElement('svg');
+		    
+			if (root.style != null)
+			{
+				root.style.backgroundColor = '#FFFFFF';
+			}
+			else
+			{
+				root.setAttribute('style', 'background-color:#FFFFFF');
+			}
+		    
+		    if (svgDoc.createElementNS == null)
+		    {
+		    	root.setAttribute('xmlns', mxConstants.NS_SVG);
+		    }
+		    
+			root.setAttribute('width', Math.ceil(bounds.width * scale + 2) + 'px');
+			root.setAttribute('height', Math.ceil(bounds.height * scale + 2) + 'px');
+			root.setAttribute('xmlns:xlink', mxConstants.NS_XLINK);
+			root.setAttribute('version', '1.1');
+		    
+		    // Adds group for anti-aliasing via transform
+			var group = (svgDoc.createElementNS != null) ?
+				svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
+			group.setAttribute('transform', 'translate(0.5,0.5)');
+			root.appendChild(group);
+			svgDoc.appendChild(root);
+
+			// Renders graph. Offset will be multiplied with state's scale when painting state.
+			var svgCanvas = new mxSvgCanvas2D(group);
+			svgCanvas.translate(Math.floor(1 / scale - bounds.x), Math.floor(1 / scale - bounds.y));
+			svgCanvas.scale(scale);
+
+			var imgExport = new mxImageExport();
+			imgExport.drawState(graph.getView().getState(graph.model.root), svgCanvas);
+
+			return mxUtils.getXml(root);
+		};
+	</script>
+</head>
+<body>
+</body>
+</html>

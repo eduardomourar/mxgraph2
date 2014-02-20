@@ -1,0 +1,22 @@
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalabale=no">
+	<script type="text/javascript">
+		function main(container)
+		{
+			// Setting focus in touchstart/-end event does not show the keyboard
+			// in Android's browser (Chrome 18 Mobile), only click event works.
+			// TODO: Check if a click event is fired after the touchend event.
+			container.addEventListener('touchend', function(evt)
+			{
+				document.getElementById('input').focus();
+			}, false);
+		};
+	</script>
+</head>
+<body onload="main(document.getElementById('div'))">
+	<div id="div" style="width:80px;height:30px;background:gray;border:1px inset gray;"></div>
+	<br/><br/>
+	<input id="input" type="text"></input>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!--
+  $Id: thread.html,v 1.1 2012/11/15 13:26:40 gaudenz Exp $
+  Copyright (c) 2006, Gaudenz Alder
+  
+  Research for the 5M instructions limit for JS in IE. See
+  http://support.microsoft.com/kb/175500/en-us/ for more
+  information. From the 2 solutions of reseting the counter
+  the event-based approach doesn't work because there is
+  always a top-level event that invokes the code. This means
+  all calls inside this handler, including invocation of other
+  handlers, direct or indirect, are added to the counter of the
+  top-level event. So the timeout approach is used below to
+  reset the handler and split a process up into several calls.
+  Note that the execute method below must check the timeout
+  explicitely in the innermost loop, scheduling a new thread
+  via setTimeout will not preempt the running thread.
+-->
+<html>
+<head>
+	<title>Hello, World! example for mxGraph</title>
+
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+
+	<!-- Loads and initializes the library -->
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+
+	<!-- Example code -->
+	<script type="text/javascript">
+		// Move mxThread class to core if used in production
+		mxThread = function(work, more, done, timeout)
+		{
+			this.work = work;
+			this.more = more;
+			this.done = done;
+			// TODO: Default value of 500 is good and keeps the UI responsive
+			this.timeout = (timeout != null) ? timeout : 500;
+		};
+
+		mxThread.prototype.start = function()
+		{
+			this.count = 0;
+			this.schedule();
+		};
+
+		mxThread.prototype.schedule = function()
+		{
+			window.setTimeout(mxUtils.bind(this, function()
+			{
+				this.execute.apply(this, arguments);
+			}), 0);
+		};
+
+		mxThread.prototype.execute = function()
+		{
+			this.count++;
+			var t0 = new Date().getTime();
+
+			while (this.more())
+			{
+				this.work();
+
+				// Checks timeout and schedules call
+				if (new Date().getTime() - t0 > this.timeout)
+				{
+					// FIXME: When scheduled before entering the loop
+					// then even "stopping the script" doesn't stop this
+					this.schedule();
+					return;
+				}
+			}
+
+			if (this.done != null)
+			{
+				this.done();
+			}
+		};
+
+		// Program starts here. This shows a solution to execute more than 5M script
+		// invocations without a dialog in IE / with no way of stopping script
+		// execution in IE if the dialog appears. Tricky part is to split larger
+		// algorithms up as shown below and to deal with the asynchronicity, as
+		// well as finding a good value for dt (1500 ms seems to work fine here).
+		function main(container)
+		{
+			mxLog.show();
+
+			// Makes sure we can only run one thread
+			var running = false;
+
+			// Same as below with sequence of timeouts but with wrapper mxThread
+			var button = document.createElement('button');
+			mxUtils.write(button, 'Start');
+			mxEvent.addListener(button, 'click', function(e)
+			{
+				// Thread is not shared between click events, so
+				// mutiple parallel threads are implemented below
+				// but we use the running flag to make sure we only
+				// have one at a time
+				if (!running)
+				{
+					var timeout = mxUtils.prompt('Enter delay (ms)', 500);
+					var t0 = new Date().getTime();
+					var a = 0;
+					
+					var thread = new mxThread(
+						function() // work: executes thread work
+						{
+							if (a % 500000 == 0)
+							{
+								mxLog.show();
+								mxLog.debug('a='+a);
+							}
+			
+							a++;
+						},
+						function() // more: checks if complete
+						{
+							return (a < 3000001);
+						},
+						function() // done: after thread completes
+						{
+							button.removeAttribute('disabled');
+							mxLog.debug('count='+thread.count+
+									' dt='+(new Date().getTime() - t0));
+							running = false;
+						},
+						timeout
+					);
+
+					mxLog.write('timeout='+thread.timeout+'... ');
+					button.setAttribute('disabled', true);
+					running = true;
+					thread.start();
+				}
+				else
+				{
+					mxLog.debug('Already running');
+				}
+			});
+
+			document.body.appendChild(button);
+		}
+	</script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body onload="main()">
+</body>
+</html>

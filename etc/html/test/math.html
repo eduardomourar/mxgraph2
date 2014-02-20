@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript">
+	// FIXME: MathJax config ignored via HTTPS (cannot use HTTP)
+		window.MathJax =
+		{
+			skipStartupTypeset: true,
+			messageStyle: 'none',
+			AuthorInit: function ()
+			{
+				MathJax.Hub.Register.StartupHook('Begin', function()
+				{
+					for (var i = 0; i < mathJaxQueue.length; i++)
+					{
+						MathJax.Hub.Queue(['Typeset', MathJax.Hub, mathJaxQueue[i]]);
+					}
+				});
+		    }
+		};
+	
+		window.mathJaxQueue = [];
+	
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src  = 'https://c328740.ssl.cf1.rackcdn.com/mathjax/2.3-latest/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+		document.getElementsByTagName("head")[0].appendChild(script);
+		
+		function main(container)
+		{
+			mxClient.NO_FO = true;
+			
+			var graph = new mxGraph(container);
+			var parent = graph.getDefaultParent();
+			graph.setHtmlLabels(true);
+
+			graph.getModel().beginUpdate();
+			try
+			{
+				// Problem: All typeset offset to origin, needs full typeset after each repaint
+				var v1 = graph.insertVertex(parent, null, '`x = (-b +- sqrt(b^2-4ac))/(2a)`',
+					200, 40, 180, 60, 'whiteSpace=wrap;verticalAlign=middle;fontSize=14;fontColor=#000000;strokeColor=#00ff00;fillColor=none;');
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+			
+			document.body.appendChild(mxUtils.button('+', function()
+			{
+				graph.zoomIn();
+			}));
+			document.body.appendChild(mxUtils.button('-', function()
+			{
+				graph.zoomOut();
+			}));
+			
+			// Initial rendering when MathJax finished loading
+			if (typeof(MathJax) !== 'undefined' && typeof(MathJax.Hub) !== 'undefined')
+			{
+				MathJax.Hub.Queue(['Typeset', MathJax.Hub, graph.container]);
+			}
+			else
+			{
+				mathJaxQueue.push(graph.container);
+			}
+			
+			graph.addListener(mxEvent.SIZE, function(sender, evt)
+			{
+				MathJax.Hub.Queue(['Typeset', MathJax.Hub, graph.container]);
+			});
+		};
+	</script>
+</head>
+<body onload="main(document.getElementById('graphContainer'))">
+	<div id="graphContainer" style="overflow:hidden;width:641px;height:481px;border:1px solid gray;cursor:default;">
+	</div>
+	<p>When `a != 0`, there are two solutions to `ax^2 + bx + c = 0` and
+they are</p>
+<p style="text-align:center">
+  `x = (-b +- sqrt(b^2-4ac))/(2a) .`
+</p>
+	When $a \ne 0$, there are two solutions to \(ax^2 + bx + c = 0\) and they are
+$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+<p>
+When
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi><mo>&#x2260;</mo><mn>0</mn>
+</math>,
+there are two solutions to
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi><msup><mi>x</mi><mn>2</mn></msup>
+  <mo>+</mo> <mi>b</mi><mi>x</mi>
+  <mo>+</mo> <mi>c</mi> <mo>=</mo> <mn>0</mn>
+</math>
+and they are
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>x</mi> <mo>=</mo>
+  <mrow>
+    <mfrac>
+      <mrow>
+        <mo>&#x2212;</mo>
+        <mi>b</mi>
+        <mo>&#x00B1;</mo>
+        <msqrt>
+          <msup><mi>b</mi><mn>2</mn></msup>
+          <mo>&#x2212;</mo>
+          <mn>4</mn><mi>a</mi><mi>c</mi>
+        </msqrt>
+      </mrow>
+      <mrow> <mn>2</mn><mi>a</mi> </mrow>
+    </mfrac>
+  </mrow>
+  <mtext>.</mtext>
+</math>
+</p>
+</body>
+</html>

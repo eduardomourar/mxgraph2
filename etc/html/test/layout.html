@@ -1,0 +1,223 @@
+<html>
+<head>
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript">
+
+	/**
+	 * Function: executeChildLayout
+	 * 
+	 * Invoked when a state has been processed in <validatePoints>. This is used
+	 * to update the order of the DOM nodes of the shape.
+	 * 
+	 * Parameters:
+	 * 
+	 * state - <mxCellState> that represents the cell state.
+	 */
+	mxGraphView.prototype.executeChildLayout = function(state)
+	{
+		if (state.childLayout != null)
+		{
+			state.childLayout.execute(state.cell);
+		}
+	};
+
+	 /**
+	  * Function: validateBounds
+	  *
+	  * Validates the bounds of the given parent's child using the given parent
+	  * state as the origin for the child. The validation is carried out
+	  * recursively for all non-collapsed descendants.
+	  * 
+	  * Parameters:
+	  * 
+	  * parentState - <mxCellState> for the given parent.
+	  * cell - <mxCell> for which the bounds in the state should be updated.
+	  */
+	 mxGraphView.prototype.validateBounds = function(parentState, cell)
+	 {
+	 	var model = this.graph.getModel();
+	 	var state = this.getState(cell, true);
+
+	 	if (state != null)
+	 	{
+	 		if (!this.graph.isCellVisible(cell))
+	 		{
+	 			this.removeState(cell);
+	 		}
+	 		else
+	 		{
+	 			if (state.invalid && cell != this.currentRoot && parentState != null)
+	 			{
+	 				state.absoluteOffset.x = 0;
+	 				state.absoluteOffset.y = 0;
+	 				state.origin.x = parentState.origin.x;
+	 				state.origin.y = parentState.origin.y;
+	 				var geo = this.graph.getCellGeometry(cell);				
+	 	
+	 				if (geo != null)
+	 				{
+	 					if (!model.isEdge(cell))
+	 					{
+	 						var offset = geo.offset || this.EMPTY_POINT;
+	 	
+	 						if (geo.relative)
+	 						{
+	 							state.origin.x += geo.x * parentState.width / this.scale + offset.x;
+	 							state.origin.y += geo.y * parentState.height / this.scale + offset.y;
+	 						}
+	 						else
+	 						{
+	 							state.absoluteOffset.x = this.scale * offset.x;
+	 							state.absoluteOffset.y = this.scale * offset.y;
+	 							state.origin.x += geo.x;
+	 							state.origin.y += geo.y;
+	 						}
+	 					}
+	 	
+	 					// Updates cell state's bounds
+	 					state.x = this.scale * (this.translate.x + state.origin.x);
+	 					state.y = this.scale * (this.translate.y + state.origin.y);
+	 					state.width = this.scale * geo.width;
+	 					state.height = this.scale * geo.height;
+	 	
+	 					if (model.isVertex(cell))
+	 					{
+	 						// Rotates relative child cells
+	 						if (geo.relative)
+	 						{
+	 							var alpha = mxUtils.toRadians(parentState.style[mxConstants.STYLE_ROTATION] || '0');
+	 							
+	 							if (alpha != 0)
+	 							{
+	 								var cos = Math.cos(alpha);
+	 								var sin = Math.sin(alpha);
+	 							
+	 								// Uses translate or parent origin as offset
+	 								var ct = new mxPoint(state.getCenterX(), state.getCenterY());
+	 								var cx = new mxPoint(parentState.getCenterX(), parentState.getCenterY());
+	 								var pt = mxUtils.getRotatedPoint(ct, cos, sin, cx);
+	 								state.x = pt.x - state.width / 2;
+	 								state.y = pt.y - state.height / 2;
+	 							}
+	 						}
+	 						
+	 						this.updateVertexLabelOffset(state);
+	 					}
+	 				}
+
+	 				this.executeChildLayout(state);
+	 			}
+ 				
+	 			// Applies child offset to origin
+	 			var offset = this.graph.getChildOffsetForCell(cell);
+	 			
+	 			if (offset != null)
+	 			{
+	 				state.origin.x += offset.x;
+	 				state.origin.y += offset.y;
+	 			}
+	 		}
+	 	
+	 		// Recursively validates the child bounds
+	 		if (!this.graph.isCellCollapsed(cell) || cell == this.currentRoot)
+	 		{
+	 			var childCount = model.getChildCount(cell);
+	 			
+	 			for (var i = 0; i < childCount; i++)
+	 			{
+	 				var child = model.getChildAt(cell, i);
+	 				this.validateBounds(state, child);
+	 			}
+	 		}
+	 	}
+	 };
+
+	 mxGraphView.prototype.createState = function(cell)
+	 {
+		 // TODO: Extend
+	 	var state = new mxCellState(this, cell, this.graph.getCellStyle(cell));
+	 	var model = this.graph.getModel();
+
+	 	if (this.isRendering() && state.view.graph.container != null && state.cell != state.view.currentRoot &&
+	 		(model.isVertex(state.cell) || model.isEdge(state.cell)))
+	 	{
+	 		this.graph.cellRenderer.createShape(state);
+	 		state.childLayout = this.getChildLayout(state);
+	 	}
+	 	
+	 	return state;
+	 };
+
+		// Enables rotation handle
+		mxVertexHandler.prototype.rotationEnabled = true;
+		
+		// Enables managing of sizers
+		mxVertexHandler.prototype.manageSizers = true;
+		
+		// Enables live preview
+		mxVertexHandler.prototype.livePreview = true;
+		
+		function main(container)
+		{
+			var graph = new mxGraph(container);
+			graph.setHtmlLabels(true);
+			var parent = graph.getDefaultParent();
+		
+			// Layouts
+			var rackLayout = new mxStackLayout(graph, false);
+			
+			rackLayout.setChildGeometry = function(child, geo)
+			{
+				var unitSize = 20;
+				geo.height = Math.max(geo.height, unitSize);
+				
+				if (geo.height / unitSize > 1)
+				{
+					var mod = geo.height % unitSize;
+					geo.height += mod > unitSize / 2 ? (unitSize - mod) : -mod;
+				}
+
+				this.graph.getModel().setGeometry(child, geo);
+			};
+
+			rackLayout.fill = true;
+			
+			graph.view.getChildLayout = function(state)
+			{
+				if (state.style['childLayout'] == 'rack')
+				{
+					rackLayout.unitSize = state.style['unitSize'] || 20;
+					rackLayout.marginLeft = state.style['marginLeft'] || 0;
+					rackLayout.marginRight = state.style['marginRight'] || 0;
+					rackLayout.marginTop = state.style['marginTop'] || 0;
+					rackLayout.marginBottom = state.style['marginBottom'] || 0;
+					rackLayout.resizeParent = false;
+					
+					return rackLayout;
+				}
+				
+				return null;
+			};
+
+			
+			graph.getModel().beginUpdate();
+			try
+			{
+				var v1 = graph.insertVertex(parent, null, 'Container', 20, 20, 240, 260, 'shape=swimlane;childLayout=rack;');
+				var v2 = graph.insertVertex(v1, null, 'Hello,', 20, 40, 120, 80);
+				var v3 = graph.insertVertex(v1, null, 'Hello,', 240, 40, 120, 80);
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+		};
+	</script>
+</head>
+<body onload="main(document.getElementById('graphContainer'))">
+	<div id="graphContainer" onresize="console.log('onresize');" style="overflow:hidden;width:100%;height:481px;border:1px solid gray;cursor:default;">
+</body>
+</html>

@@ -1,0 +1,66 @@
+<html>
+<head>
+    <title>Double Click Test</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<script type="text/javascript">
+	mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript">
+		function main(container)
+		{
+			mxEvent.disableContextMenu(container);
+			
+			var graph = new mxGraph(container);
+			
+			new mxRubberband(graph);
+			
+			var parent = graph.getDefaultParent();
+			
+			graph.getModel().beginUpdate();
+			try
+			{
+				var v1 = graph.insertVertex(parent, null, 'Hello,', 240, 20, 120, 80,
+					'shape=rectangle;fillColor=green;');
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+			
+			graph.addListener('click', function(sender, evt)
+			{
+				var cell = evt.getProperty('cell');
+				
+				mxLog.show();
+				mxLog.debug('click', cell);
+				
+				if (cell != null)
+				{
+					var state = graph.view.getState(cell);
+					
+					if (state != null)
+					{
+						graph.setCellStyles('fillColor', (state.style['fillColor'] != 'red') ? 'red' : 'green', [cell]);
+					}
+				}
+			});
+			
+			graph.addListener('doubleClick', function(sender, evt)
+			{
+				mxLog.show();
+				mxLog.debug('doubleClick', evt.getProperty('cell'));
+			});
+			
+			mxLog.show();
+			mxLog.debug('nativeDblClick', graph.nativeDblClickEnabled, 'quirks', mxClient.IS_QUIRKS);
+		};
+	</script>
+</head>
+<body onload="main(document.getElementById('graphContainer'))">
+	<div id="graphContainer" style="overflow:hidden;width:641px;height:481px;border:1px solid gray;cursor:default;">
+	</div>
+	<div style="background:yellow;width:100px;height:100px" ondblclick="mxLog.debug('dblclick');" onclick="mxLog.debug('click');"></div>
+</body>
+</html>

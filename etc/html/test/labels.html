@@ -1,0 +1,55 @@
+<html>
+<head>
+	<title>Performance test...</title>
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript">
+		function main()
+		{
+			test(new mxGraph(document.getElementById('graphContainer1')));
+			
+			var g2 = new mxGraph(document.getElementById('graphContainer2'));
+			g2.getStylesheet().getDefaultVertexStyle()['overflow'] = 'fill';
+			g2.setHtmlLabels(true);
+			test(g2);
+
+			mxClient.NO_FO = true;
+			var g3 = new mxGraph(document.getElementById('graphContainer3'));
+			g3.getStylesheet().getDefaultVertexStyle()['overflow'] = 'fill';
+			g3.setHtmlLabels(true);
+			test(g3);
+		};
+		
+		function test(graph)
+		{
+			var parent = graph.getDefaultParent();
+			
+			graph.getModel().beginUpdate();
+			try
+			{
+				var v1 = graph.insertVertex(parent, null, 'Donec id elit non mi porta gravida at eget metus.', 20, 20, 80, 30);
+				var v2 = graph.insertVertex(parent, null, 'Donec id elit non mi porta gravida at eget metus.', 200, 150, 80, 30);
+				var e1 = graph.insertEdge(parent, null, 'Donec id elit non mi porta gravida at eget metus.', v1, v2);
+			}
+			finally
+			{
+				// Updates the display
+				graph.getModel().endUpdate();
+			}
+		};
+	</script>
+</head>
+<body onload="main();">
+	<div id="graphContainer1"
+		style="overflow:hidden;width:400px;height:300px;border:1px solid gray;cursor:default;">
+	</div>
+	<div id="graphContainer2"
+		style="overflow:hidden;width:400px;height:300px;border:1px solid gray;cursor:default;">
+	</div>
+	<div id="graphContainer3"
+		style="overflow:hidden;width:400px;height:300px;border:1px solid gray;cursor:default;">
+	</div>
+</body>
+</html>

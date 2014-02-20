@@ -1,0 +1,262 @@
+<!--
+  $Id: gears.html,v 1.2 2013/10/28 08:45:08 gaudenz Exp $
+  Copyright (c) 2006-2013, JGraph Ltd
+  
+  Gears example for mxGraph. This example demonstrates using Google
+  Gears for persisting the diagram state on the client-side.
+-->
+<html>
+<head>
+	<title>Gears example for mxGraph</title>
+
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript">
+		mxBasePath = '../src';
+	</script>
+
+	<!-- Loads and initializes the library -->
+	<script type="text/javascript" src="../src/js/mxClient.js"></script>
+
+	<!-- Example code -->
+	<script type="text/javascript">
+		// Program starts here. Creates a sample graph in the
+		// DOM node with the specified ID. This function is invoked
+		// from the onLoad event handler of the document (see below).
+		function main(container)
+		{
+			// Defines an icon for creating new connections in the connection handler.
+			// This will automatically disable the highlighting of the source vertex.
+			mxConnectionHandler.prototype.connectImage = new mxImage('images/connector.gif', 16, 16);
+
+			// Checks if the browser is supported
+			if (!mxClient.isBrowserSupported())
+			{
+				// Displays an error message if the browser is not supported.
+				mxUtils.error('Browser is not supported!', 200, false);
+			}
+			else
+			{
+				loadGoogleGears();
+				var db = createDb('mxGears');
+			
+				// Creates the graph inside the given container
+				var model = new mxGraphModel();
+				var graph = new mxGraph(container, model);
+				
+				// Enables basic operations
+				graph.setConnectable(true);
+				graph.setMultigraph(false);
+				graph.setAllowLoops(true);
+				
+				// Enables basic keystrokes and marquee selection
+				new mxKeyHandler(graph);
+				new mxRubberband(graph);
+
+				// Creates a new graph or loads the cached state
+				if (isEmpty(db))
+				{
+					reset(graph);
+				}
+				else
+				{
+					load(db, graph);
+				}
+				
+				// Installs a listener to save the XML for the diagram
+				// in the local DB on each change of the model
+				model.addListener(mxEvent.CHANGE, function()
+				{
+					save(db, graph);
+				});
+				
+				document.body.appendChild(mxUtils.button('Reset', function(evt)
+				{
+					reset(graph);
+				}));
+
+				document.body.appendChild(mxUtils.button('Dump', function(evt)
+				{
+					dump(db);
+				}));
+			}
+		};
+
+		function reset(graph)
+		{
+			var model = graph.getModel();
+			
+			// Adds cells to the model in a single step
+			model.beginUpdate();
+			try
+			{
+				var root = new mxCell();
+				var parent = root.insert(new mxCell());
+				model.setRoot(root);
+			
+				var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
+				var v2 = graph.insertVertex(parent, null, 'Hello,', 200, 20, 80, 30);
+				var v3 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
+				var e1 = graph.insertEdge(parent, null, '', v1, v3);
+			}
+			finally
+			{
+				model.endUpdate();
+			}
+		};
+
+		function save(db, graph)
+		{
+			var node = getXml(graph);
+			var xml = mxUtils.getXml(node);
+			
+			if (isEmpty(db))
+			{
+				db.execute('INSERT INTO Diagrams (NAME, XML) VALUES (?, ?);', ['', xml]);
+			}
+			else
+			{
+				db.execute('UPDATE Diagrams SET XML = (?) WHERE DIAGRAM_ID = 1', [xml]);
+			}
+		};
+						
+		function load(db, graph)
+		{
+			var rs = db.execute('SELECT xml FROM Diagrams WHERE DIAGRAM_ID = 1');
+			var xml = null;
+			
+			if (rs.isValidRow())
+			{
+				xml = rs.field(0);
+				var doc = mxUtils.parseXml(xml);
+				var dec = new mxCodec(doc);
+				dec.decode(doc.documentElement, graph.model);
+			}
+			
+			rs.close();
+		};
+		
+		function isEmpty(db)
+		{
+			var rs = db.execute('SELECT COUNT(*) FROM Diagrams');
+			var empty = parseInt(rs.field(0)) == 0;
+			rs.close();
+			
+			return empty;		
+		};
+		
+		function getXml(graph)
+		{
+			var enc = new mxCodec();
+			return enc.encode(graph.model);
+		};
+		
+		function createDb(name)
+		{
+			var db = null;
+			
+			try
+			{					
+				db = google.gears.factory.create('beta.database', '1.0');
+				db.open(name);
+				db.execute('CREATE TABLE IF NOT EXISTS Diagrams ('+
+					'DIAGRAM_ID INTEGER PRIMARY KEY AUTOINCREMENT,'+
+					'NAME TEXT,'+
+					'XML TEXT'+
+					');');
+				
+				return db;
+			}
+			catch (e)
+			{
+				mxUtils.alert('Google Gears is not available: '+e.message);
+			}
+			
+			return db;
+		};
+				
+		function dump(db)
+		{
+			mxLog.show();
+			mxLog.debug('Showing cached diagram:');
+			var rs = db.execute('select * from diagrams');
+
+			while (rs.isValidRow())
+			{
+				mxLog.debug(rs.field(2));
+				rs.next();
+			}
+			
+			rs.close();
+		};
+		
+		function loadGoogleGears()
+		{
+			// We are already defined. Hooray!
+			if (window.google && google.gears)
+			{
+			  return;
+			}
+			
+			var factory = null;
+			
+			// Firefox
+			if (typeof GearsFactory != 'undefined')
+			{
+			  factory = new GearsFactory();
+			}
+			else
+			{
+			  // IE
+			  try
+			  {
+			    factory = new ActiveXObject('Gears.Factory');
+			  }
+			  catch (e)
+			  {
+			    // Safari
+			    if (navigator.mimeTypes["application/x-googlegears"])
+				{
+			      factory = document.createElement("object");
+			      factory.style.display = "none";
+			      factory.width = 0;
+			      factory.height = 0;
+			      factory.type = "application/x-googlegears";
+			      document.documentElement.appendChild(factory);
+			    }
+			  }
+			}
+			
+		 	// *Do not* define any objects if Gears is not installed. This mimics the
+			// behavior of Gears defining the objects in the future.
+			if (!factory)
+			{
+			  return;
+			}
+			
+			// Now set up the objects, being careful not to overwrite anything.
+			if (!window.google)
+			{
+			  window.google = {};
+			}
+			
+			if (!google.gears)
+			{
+			  google.gears = {factory: factory};
+			}
+		};
+	</script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body onload="main(document.getElementById('graphContainer'))">
+	<p>
+		The diagram state is kept between different page loads using Google Gears. Try changing the
+		diagram and then refresh the page in your browser.
+	</p>
+	
+	<!-- Creates a container for the graph with a grid wallpaper -->
+	<div id="graphContainer"
+		style="overflow:hidden;width:321px;height:241px;background:url('editors/images/grid.gif')">
+	</div>
+</body>
+</html>

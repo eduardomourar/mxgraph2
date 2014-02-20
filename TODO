@@ -1,0 +1,189 @@
+-------------------------
+-- GraphEditor Example --
+-------------------------
+
+- Fix panning in FF/Win8, touch detection in FF (defaultScrollbars)
+- Check if selection in text2 when insert table
+- Cleanup App.save/saveFile and file.save/saveAs
+
+- Fix HTML entities converted in word wrapped plain text labels
+- Reset label location if edge style is changed
+- Add copy/paste style actions
+
+- Fix focus on text in mxPopupMenu
+- No table if selection empty, selectNode not working in quirks for rich text editing
+- Add find dialog, find again function
+
+- Remove dependency on urlParams, global vars
+- Build WAR, grapheditor.min.js for grapheditor in build step
+- Add gradient in page background
+
+- Use perimeter.html example to avoid labels
+- Fix wrapping for toolbar, menubar in quirks
+- Make UI more generic (add borderlayout, splitlayout)
+
+-------------------------
+--    mxGraph Core     --
+-------------------------
+
+- Add single handle for multiple selected cells
+- Move mxLayoutManager into validation process
+- Research alternative namespace solutions
+- Use spacing styles in overflow=fill
+
+- Report FO repaint bug in Webkit
+- Fix cell selection on drop new cell in draw.io (core?)
+- Add live preview while moving
+- Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)
+
+- Check overflow=fill in quirks vs standards with no HTML labels (inconsistent rendering)
+- Fix print output: checkbox.checked invalid in IE6 in Dialogs.js
+- Fix missing labels for zoom > 4.3 in print preview for IE8 standards
+- Fix loops for fixed connection points
+
+- Fix arcToCurves for special cases (eg. mxgraph.flowchart.data)
+- Add bridges for edge crossings
+- Invert loop order in mxGraph.removeCells
+- Add circular connector style https://github.com/jgraph/mxgraph/issues/15
+
+- Fix autoScroll when adding vertex via DnD from sidebar on Win8 with touch (scroll ignored?) (not new)
+- Fix scaling of background page in editor for pinch
+- Fix IE10 on Win8 fires double click after double tap editing and click on background
+- Fix FF on Win8 fires two (should be one) click events and a double click for double tap on background
+
+- Add arcSize handle in Shapes.js
+- Fix constrainChild/expandParent for rotated cells
+- Add workaround for touch support, guides stay visible on move in FF/Win8
+- Fix pinch (zoom) on Chromebook, Android and msPointerEvents (not new)
+
+- Fix hit detection on arrow shape in mxGraph.getCellAt
+- Fix edge styles for rotated edges, terminals
+- Cascaded rotation for edges (points)
+- Remove duplicates in mxGraph.removeCells
+
+- Add live preview for move, rotate
+- Fix clipping of oversize labels in IE10
+- Add names (refs) for constraints/ports
+- Print preview in IE 9 standards causes GraphEditor to 'corrupt'
+
+- Fix cloning of port IDs in edge styles
+- Fix del/cut/copy/paste for cell overlays
+- Fix text background size in Chrome 24 on Win 8 (see bbox.html)
+- Move panning, context menu trigger for touch devices to core/example
+
+- Fix edge to edge connections, edge routing, handling and validation
+- Add autoExtend for timerAutoScroll, scrollBuffer with zoom support
+- Add (v)Align=auto style for edge labels
+- Separate validation and repaint, move translate/scale to view
+- Fix scrollbars for translated graph
+
+- Fix toggle selection for FF on Mac
+- Fix scrollbars.html example for IE8 standards
+- Use requestAnimationFrame for animations
+- Allow extend via outline with scrollbars, fix extendCanvas in Java
+
+- Fix arrow and link shapes ignores waypoints
+- mxUtils.makeDraggable should check graph.isEnabled, add invalid drop target cursor
+- Fix custom dashpattern for VML / add extra style for dashstyle in VML
+- Add mxGraph.zoom method with optional center point, compute optimal zoom values
+
+- Add swimlane fill color support in core (see schema.html)
+- Fix dash pattern bug in VML (see etc/html/test/dash.html), add constant 
+- Add mxGraph.createMouseEvent hook
+- Add include-shape for backgrounds in stencils
+
+- Avoid use of translate in outline, use CSS instead (speedup)
+- Add styles in stencils for overriding (eg. perimeter, shadow)
+- Fix repaint of page breaks after autoscroll
+- Add example for using CSS3 HTML labels as vertices
+
+- Allow creating straight lines with orthogonalEdgeStyle (Moshe 4)
+- Grid of swimlanes, resizing via grid lines (Ryan)
+- Remove constructor call for prototype inheritance (Ed)
+- Add lazy instantion for templates in codecs (Ed)
+
+- Fix updateParent bug (see etc/html/test/maintainEdgeParent.html)
+- Use clientWidth in mxGraph.getOffsetSize
+- Fix rotated triangle perimeter point in stencils.html example
+- Add style for marker overlap on terminal vertex
+
+- Add iconCls support for toolbar buttons
+- Add operation for group size dependent on children, resize of group resized children, locked groups (selection)
+- Fix refresh of segmenthandler (handles stay visible) when using constraints
+- Fix first segment for edges not movable in wires.html
+
+- Add "perimeter" for connection point along segment in wires.html
+- Update terminal points of edges connected to segment in wires.html
+- Use mxUtils.getNumber/getColor for numbers and colors
+- Fix elbow edges in outline in workfloweditor.html example
+
+- Remove "none" values in inherited stylesheets (via getColor)
+- Fix size of vertical bounding box in mxText (see workaround in mxImageExport)
+- Add anchor points in stencil XML format for rel/abs combinations
+- Add handling of absolute coordinates in stencil format
+
+- Fix clicking on links in tooltips, enable custom tooltips
+- Refactor validation (validate edges implicitely)
+- Add support for enums in codecs for Java
+- Fix redo sequence for insignificant edits (should be included with primary edit)
+
+- Add example for referencing diagrams
+- Add generic bindKey method with modifier argument in mxKeyHandler
+- Create mxCell via factory method for easier subclassing
+- Fix edge points update process (fixed vs. floating)
+
+- Add hook in mxDefaultTextShape.paintShape for y-computation
+- Remove all i18n resources from core, use exceptions instead
+
+1.1 - Check if dir attribute (html) is set to RTL (http://www.w3.org/TR/html401/struct/dirlang.html) and set SVG and other
+      attributes to right-to-left based on that (<tspan style="direction: rtl"> for SVG)
+1.1 - Coordinate system inside swimlanes should take start-size into account
+1.1 - Provide servlet/handler for creating grids, sync grid with scale/translate (offset)
+
+1.2 - Fix no scrolling via scrollbars after rubberband in IE
+1.2 - Fix 3px-offset for hit-detection (mxMouseEvent.graphX/Y) in IE
+1.2 - Add code for label bounds in mxGraphView for JavaScript (use in canvas)
+
+1.3 - Add arcs for edge crossings (VPC)
+1.3 - Use mxUtils.getSizeForString in layout base class for overlapping label handling
+1.3 - Add class for painting grid with canvas (see guides.html)
+
+2.0 - Replace mxShape.prototype.SVG_STROKE_TOLERANCE with custom hit detection 
+2.0 - Extended handle for multiselection (rotate etc, see Visio)
+
+3.0 - Support for incremental layouts (state, trigger & invalidation)
+3.0 - Encode edits at execute time (see mxChildChangeCodec)
+
+4.0 - Add mxEventObject.source and explain difference between sender (caller) and source (event source)
+4.0 - Remove language dependent resources, add switch for load-time XHR (eg. properties files)
+4.0 - Add mxImageAlias for changing image paths
+
+Major API changes (long-term):
+1.0 - Add dictionary for cell style in cell.style (replace string, add visible, collpsed etc as style)
+1.0 - Add zIndex layering (sort by cell path and zindex, see mm java), decouple validation/repaint
+1.0 - Better support for edge-to-edge connections, edge loops
+1.0 - Remove absPoints[0] in result[0] argument of edge styles
+1.0 - Add mxPointList class (equals, typesafe access, array or collection?)
+1.0 - Add mxCellStyle class (Dictionary with equals, copy-on-write, cascading)
+1.0 - Keep bounds in cell states untranslated and unscaled
+1.0 - Replace isCellDeletable/CellsDeletable with isOperationAllowed(cell, mxConstants.OP_DELETE)
+1.0 - Render label and image (labelshape) on top of all shapes
+1.0 - Remove updateEdgeParents and render edges with other order
+1.0 - Support WAI/ARIA section 508 (http://www.itic.org/resources/voluntary-product-accessibility-template-vpat/)
+
+BUGS
+====
+Fix clipping for foreignObjects in Webkit (see labels.html)
+Fix inner handler in mxOutline ctor in Java (questions/632)
+Fix scaling for HTML labels in Java
+Fix missing target handle if edges not bendable in Java
+Fix image rotation in PHP canvas
+Fix align shapes left moves out of canvas
+Fix preview for loops with no preview edge state
+Slow down animations in Chrome
+Fix icon over glass effect in SVG
+Add popup trigger for iPad, fix popup trigger on Mac (control vs shift, check FF on Mac, tinyurl.com/4dxfdor)
+Fix offset for rubberband selection on iPad
+Fix cell position error for overlapping labels in Java (t=4954, t=5324)
+Fix update of outline after change of pageBreaksVisible, click on actualSize
+Fix beforeunload for processeditor in IE6 (or add to known_issues)

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" codebase="http://www.jgraph.com/demo/jgraphx">
+  <information> 
+    <title>JGraphX Demo</title> 
+    <vendor>JGraph Ltd</vendor>
+    <homepage href="http://www.jgraph.com/"/>
+    <description>mxGraph Editor</description>
+    <offline-allowed/> 
+  </information>
+  <resources>
+    <j2se version="1.5+"/>
+    <jar href="jgraphx-demo.jar"/>
+  </resources>
+  <application-desc main-class="com.mxgraph.examples.swing.GraphEditor"/>
+  <security>
+    <all-permissions/>
+  </security>
+</jnlp>

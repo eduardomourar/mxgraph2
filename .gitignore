@@ -1,0 +1,5 @@
+mxgraph-dotnet.*suo
+.settings
+classes
+bin
+target

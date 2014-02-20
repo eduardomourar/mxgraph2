@@ -1,0 +1,102 @@
+<!--
+  $Id: wordwrap.html,v 1.2 2013/10/28 08:45:08 gaudenz Exp $
+  Copyright (c) 2006-2013, JGraph Ltd
+  
+  Hello, World! example for mxGraph. This example demonstrates using
+  a DOM node to create a graph and adding vertices and edges.
+-->
+<html>
+<head>
+	<title>Hello, World! example for mxGraph</title>
+
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript">
+		mxBasePath = 'http://devhost.jgraph.com/mxgraph/javascript/src';
+	</script>
+	<script type="text/javascript" src="http://devhost.jgraph.com/mxgraph/javascript/src/js/mxClient.js"></script>
+
+	<!-- Example code -->
+	<script type="text/javascript">
+		// Program starts here. Creates a sample graph in the
+		// DOM node with the specified ID. This function is invoked
+		// from the onLoad event handler of the document (see below).
+		function main(container)
+		{
+			// Checks if the browser is supported
+			if (!mxClient.isBrowserSupported())
+			{
+				// Displays an error message if the browser is not supported.
+				mxUtils.error('Browser is not supported!', 200, false);
+			}
+			else
+			{
+				// Enables crisp rendering of rectangles in SVG
+				mxRectangleShape.prototype.crisp = true;
+				
+				// Creates the graph inside the given container
+				var graph = new mxGraph(container);
+				graph.setHtmlLabels(true);
+
+				// Uncomment the following if you want the container
+				// to fit the size of the graph
+				//graph.setResizeContainer(true);
+				
+				// Enables rubberband selection
+				new mxRubberband(graph);
+				
+				// Gets the default parent for inserting new cells. This
+				// is normally the first child of the root (ie. layer 0).
+				var parent = graph.getDefaultParent();
+								
+				// Adds cells to the model in a single step
+				graph.getModel().beginUpdate();
+				try
+				{
+					var v1 = graph.insertVertex(parent, null, 'bla bla bla blab labl', 0, 0, 80, 30, 'whiteSpace=wrap;align=left');
+					var v1 = graph.insertVertex(parent, null, 'bla bla bla blab labl', 100, 0, 80, 30, 'whiteSpace=wrap;fontStyle=1;align=right');
+					var v1 = graph.insertVertex(parent, null, 'bla bla bla blab labl', 200, 0, 80, 30, 'whiteSpace=wrap;fontSize=14;align=left');
+					var v1 = graph.insertVertex(parent, null, 'bla bla bla blab labl', 0, 60, 80, 30, 'whiteSpace=wrap;fontFamily=Times New Roman;fontSize=14;fontStyle=1');
+					var v1 = graph.insertVertex(parent, null, 'Doctor', 100, 60, 40, 30, 'whiteSpace=wrap;fontSize=8;fontStyle=1;align=left');
+					var v1 = graph.insertVertex(parent, null, 'Patient', 200, 60, 80, 30, 'whiteSpace=wrap;fontSize=8');
+					var v1 = graph.insertVertex(parent, null, 'The quick brown fox jumps over', 0, 120, 120, 30, 'whiteSpace=wrap;fontFamily=Times New Roman;fontSize=14;fontStyle=1;align=left');
+					var v1 = graph.insertVertex(parent, null, 'Container', 140, 120, 80, 30, 'whiteSpace=wrap;fontSize=12;fontFamily=Verdana');
+					var v1 = graph.insertVertex(parent, null, 'Container', 240, 120, 80, 30, 'whiteSpace=wrap;fontSize=12;fontFamily=Verdana;fontStyle=1');
+					var v1 = graph.insertVertex(parent, null, 'The quick brown fox jumps over', 0, 180, 100, 30, 'whiteSpace=wrap;fontSize=12');
+					var v1 = graph.insertVertex(parent, null, 'Doctor', 120, 180, 80, 30, 'whiteSpace=wrap;fontSize=16;fontStyle=1');
+					var v1 = graph.insertVertex(parent, null, 'Patient', 220, 180, 80, 30, 'whiteSpace=wrap;fontSize=16');
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+				
+				// Prepare document
+				var xmlDoc = mxUtils.createXmlDocument();
+				var root = xmlDoc.createElement('output');
+				xmlDoc.appendChild(root);
+				
+				// Render graph
+				var imgExport = new mxImageExport();
+				var xmlCanvas = new mxXmlCanvas2D(root);
+				imgExport.drawState(graph.getView().getState(graph.model.root), xmlCanvas);
+
+				// Display result
+				var value = mxUtils.getXml(root);
+				
+				mxLog.show();
+				mxLog.debug(value);
+			}
+		};
+	</script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body style="margin:0px;" onload="main(document.getElementById('graphContainer'))">
+
+	<!-- Creates a container for the graph with a grid wallpaper -->
+	<div id="graphContainer"
+		style="overflow:hidden;width:321px;height:241px;">
+	</div>
+</body>
+</html>

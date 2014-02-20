@@ -1,0 +1,47 @@
+<!-- Problem:
+
+	In IE10/11 the HTML labels (DIVs in graph.container) inside a div with overflow:hidden
+	are visible even if outside the visible part of the div when a page break appears.
+-->
+<html>
+<head>
+<meta content="IE=9" http-equiv="X-UA-Compatible">
+<title>Test</title>
+<link rel="stylesheet" type="text/css" href="../../../javascript/src/css/common.css" charset="ISO-8859-1">
+<style type="text/css">
+@media print {
+  table.mxPageSelector { display: none; }
+  hr.mxPageBreak { display: none; }
+  body.mxPage { background: white; }
+}
+@media screen {
+  table.mxPageSelector { position: fixed; right: 10px; top: 10px;font-family: Arial; font-size:10pt; border: solid 1px darkgray;background: white; border-collapse:collapse; }
+  table.mxPageSelector td { border: solid 1px gray; padding:4px; }
+  body.mxPage { background: gray; }
+}
+</style>
+</head>
+<body class="mxPage">
+<div style="position:relative;background: white; width: 826px; height: 1169px;" id="mxPage-1">
+<div style="position:relative;left:20px;top:20px;width:786px;height:1129px;overflow:hidden;">
+<div style="position:relative;margin-top:0px;">
+<svg xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%; display: block;"><g><g /><g><g transform="translate(0.5 0.5)"><rect fill="#c3d9ff" pointer-events="all" stroke="#6482b9" x="1" y="1" width="80" height="30" /></g><g transform="translate(0.5 0.5)"><rect fill="#c3d9ff" pointer-events="all" stroke="#6482b9" x="181" y="1281" width="80" height="30" /></g><g transform="translate(0.5 0.5)"><path visibility="hidden" fill="none" pointer-events="stroke" stroke="white" stroke-miterlimit="10" stroke-width="7" d="M 43 31 L 218 1275" /><path fill="none" stroke="#6482b9" stroke-miterlimit="10" d="M 43 31 L 218 1275" /><path fill="#6482b9" pointer-events="all" stroke="#6482b9" stroke-miterlimit="10" d="M 219 1280 L 214 1273 L 218 1275 L 221 1272 Z" /></g></g></g></svg>
+<div style="left: 41px; top: 16px; position: absolute;">Hello1</div>
+<div style="left: 221px; top: 1296px; position: absolute;">World1</div>
+<div style="left: 41px; top: 880px; position: absolute;background-color:blue;height:80px;">Hello5</div>
+<div style="left: 41px; top: 1080px; position: absolute;background-color:green;height:80px;">Hello4</div>
+<div style="left: 61px; top: 1390px; position: absolute;background-color:red;height:80px;">Hello3</div>
+</div>
+</div>
+</div>
+<hr class="mxPageBreak">
+<div style="background: white; width: 826px; height: 1169px; page-break-inside: avoid; position:relative;" id="mxPage-3">
+<div style="position:relative;left:20px;top:20px;width:786px;height:1129px;overflow:hidden;">
+<div style="position:relative;margin-top:-1170px;">
+<svg xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%; display: block;"><g><g /><g><g transform="translate(0.5 0.5)"><rect fill="#c3d9ff" pointer-events="all" stroke="#6482b9" x="1" y="1" width="80" height="30" /></g><g transform="translate(0.5 0.5)"><rect fill="#c3d9ff" pointer-events="all" stroke="#6482b9" x="181" y="1281" width="80" height="30" /></g><g transform="translate(0.5 0.5)"><path visibility="hidden" fill="none" pointer-events="stroke" stroke="white" stroke-miterlimit="10" stroke-width="7" d="M 43 31 L 218 1275" /><path fill="none" stroke="#6482b9" stroke-miterlimit="10" d="M 43 31 L 218 1275" /><path fill="#6482b9" pointer-events="all" stroke="#6482b9" stroke-miterlimit="10" d="M 219 1280 L 214 1273 L 218 1275 L 221 1272 Z" /></g></g></g></svg>
+<div style="-ms-transform-origin: 0% 0%; left: 41px; top: 16px; text-align: center; color: rgb(119, 68, 0); line-height: 13px; font-family: Arial,Helvetica; font-size: 11px; vertical-align: top; white-space: nowrap; position: absolute; -ms-transform: scale(1) translate(-50%, -50%);">Hello2</div>
+<div style="-ms-transform-origin: 0% 0%; left: 221px; top: 1296px; text-align: center; color: rgb(119, 68, 0); line-height: 13px; font-family: Arial,Helvetica; font-size: 11px; vertical-align: top; white-space: nowrap; position: absolute; -ms-transform: scale(1) translate(-50%, -50%);">World2</div>
+</div>
+</div>
+</div>
+</body>

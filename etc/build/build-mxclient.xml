@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<project basedir="." default="compile">
+	<taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask" classpath="compiler.jar"/>
+	<target name="compile">
+		<delete file=".tmp.js"/>
+		<java fork="false" classname="Preprocessor" classpath=".">
+			<arg value="../../javascript/src/js/mxClient.js"/>
+			<arg value=".tmp.js"/>
+		</java>
+		<loadfile property="version" srcFile="../../VERSION"/>
+		<replace file=".tmp.js" token="@MXGRAPH-VERSION@" value="${version}"/>
+		<jscomp compilationLevel="simple" debug="false" output="mxClient.js">
+			<sources dir=".">
+				<file name=".tmp.js"/>
+			</sources>
+		</jscomp>
+		<delete file=".tmp.js"/>
+	</target>
+</project>

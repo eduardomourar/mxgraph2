@@ -1,0 +1,323 @@
+<!--
+  $Id: fastgraph.html,v 1.2 2013/10/28 08:45:06 gaudenz Exp $
+  Copyright (c) 2006-2013, JGraph Ltd
+  
+  Hello, World! example for mxGraph. This example demonstrates using
+  a DOM node to create a graph and adding vertices and edges.
+-->
+<html>
+<head>
+	<title>Hello, World! example for mxGraph</title>
+
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript">
+		mxBasePath = '/mxgraph/javascript/src';
+	</script>
+
+	<!-- Loads and initializes the library -->
+	<script type="text/javascript" src="/mxgraph/javascript/src/js/mxClient.js"></script>
+
+	<!-- Example code -->
+	<script type="text/javascript">
+		//
+		// Open issues:
+		//
+		// - Size limit on GET request params for the image-src, should use POST request
+		//   for transferring the XML data of the graph to the servlet to create the image
+		// - In IE, the move events on the image are consumed / never fired in the graph
+		// - Label bounds not computed to no hit-detection on labels
+		// - Move over container doens't highlight container
+		//
+		// Usage:
+		//
+		// To use this class, move it into com.mxgraph.examples.web.resources and
+		// add the following to make the file available to browser via Main.java:
+		//
+		// ...
+		// else if (target.equalsIgnoreCase("/fastgraph.html"))
+		// {
+		//   String filename = Main.class.getResource(
+		//     "/com/mxgraph/examples/web/resources/fastgraph.html")
+		//     .getPath();
+		//   response.getWriter().write(mxUtils.readFile(filename));
+		//   response.setStatus(HttpServletResponse.SC_OK);
+		//   ((Request) request).setHandled(true);
+		// }
+	
+		// Replaces the event firing mechanism in the graph view since there are
+		// no longer any DOM elements that fire events for the actual states we
+		// have to find the state under the mouse using graph.getCellAt and then
+		// fire the event for the state from here instead.
+		// FIXME: Since we do not render the label we don't have the label bounds
+		// here which means hit detection will only work for the vertex bounds,
+		// the edge but not for overlapping labels or most part of the edge labels.
+		mxGraphView.prototype.installListeners = function()
+		{
+			var graph = this.graph;
+			var container = graph.container;
+			
+			if (container != null)
+			{
+				var md = (mxClient.IS_TOUCH) ? 'touchstart' : 'mousedown';
+				var mm = (mxClient.IS_TOUCH) ? 'touchmove' : 'mousemove';
+				var mu = (mxClient.IS_TOUCH) ? 'touchend' : 'mouseup';
+				
+				// Adds basic listeners for graph event dispatching
+				mxEvent.addListener(container, md,
+					mxUtils.bind(this, function(evt)
+					{
+						var pt = mxUtils.convertPoint(graph.container,
+								evt.clientX, evt.clientY);
+						var cell = graph.getCellAt(pt.x, pt.y);
+						var state = this.getState(cell);
+
+						if (state != null)
+						{
+							graph.fireMouseEvent(mxEvent.MOUSE_DOWN,
+									new mxMouseEvent(evt, state));
+						}
+						// Condition to avoid scrollbar events starting a rubberband
+						// selection
+						else if (this.isContainerEvent(evt) &&
+							((!mxClient.IS_IE && 
+							!mxClient.IS_GC && !mxClient.IS_OP && !mxClient.IS_SF) ||
+							!this.isScrollEvent(evt)))
+						{
+							graph.fireMouseEvent(mxEvent.MOUSE_DOWN,
+								new mxMouseEvent(evt));
+						}
+					})
+				);
+				mxEvent.addListener(container, mm,
+					mxUtils.bind(this, function(evt)
+					{
+						var pt = mxUtils.convertPoint(graph.container,
+								evt.clientX, evt.clientY);
+						var cell = graph.getCellAt(pt.x, pt.y);
+						var state = this.getState(cell);
+
+						if (state != null)
+						{
+							graph.fireMouseEvent(mxEvent.MOUSE_MOVE,
+									new mxMouseEvent(evt, state));
+						}
+						else if (this.isContainerEvent(evt))
+						{
+							graph.fireMouseEvent(mxEvent.MOUSE_MOVE,
+								new mxMouseEvent(evt));
+						}
+					})
+				);
+				mxEvent.addListener(container, mu,
+					mxUtils.bind(this, function(evt)
+					{
+						var pt = mxUtils.convertPoint(graph.container,
+								evt.clientX, evt.clientY);
+						var cell = graph.getCellAt(pt.x, pt.y);
+						var state = this.getState(cell);
+
+						if (state != null)
+						{
+							graph.fireMouseEvent(mxEvent.MOUSE_UP,
+									new mxMouseEvent(evt, state));
+						}
+						else if (this.isContainerEvent(evt))
+						{
+							graph.fireMouseEvent(mxEvent.MOUSE_UP,
+								new mxMouseEvent(evt));
+						}
+					})
+				);
+				
+				// Adds listener for double click handling on background
+				mxEvent.addListener(container, 'dblclick',
+					mxUtils.bind(this, function(evt)
+					{
+						var pt = mxUtils.convertPoint(graph.container,
+								evt.clientX, evt.clientY);
+						var cell = graph.getCellAt(pt.x, pt.y);
+						
+						graph.dblClick(evt, cell);
+					})
+				);
+							
+				// Adds basic listeners for graph event dispatching outside of the
+				// container and finishing the handling of a single gesture
+				mxEvent.addListener(document, md,
+					mxUtils.bind(this, function(evt)
+					{
+						if (this.isContainerEvent(evt))
+						{
+							graph.panningHandler.hideMenu();
+						}
+					})
+				);
+				mxEvent.addListener(document, mm,
+					mxUtils.bind(this, function(evt)
+					{
+						// Hides the tooltip if mouse is outside container
+						if (graph.tooltipHandler != null &&
+							graph.tooltipHandler.isHideOnHover())
+						{
+							graph.tooltipHandler.hide();
+						}
+						
+						if (this.captureDocumentGesture &&
+							graph.isMouseDown &&
+							!mxEvent.isConsumed(evt))
+						{
+							graph.fireMouseEvent(mxEvent.MOUSE_MOVE,
+								new mxMouseEvent(evt));
+						}
+					})
+				);
+				mxEvent.addListener(document, mu,
+					mxUtils.bind(this, function(evt)
+					{
+						if (this.captureDocumentGesture)
+						{
+							graph.fireMouseEvent(mxEvent.MOUSE_UP,
+								new mxMouseEvent(evt));
+						}
+					})
+				);
+			}
+		};
+	
+		// Program starts here. Creates a sample graph in the
+		// DOM node with the specified ID. This function is invoked
+		// from the onLoad event handler of the document (see below).
+		function main(container)
+		{
+			// Checks if the browser is supported
+			if (!mxClient.isBrowserSupported())
+			{
+				// Displays an error message if the browser is not supported.
+				mxUtils.error('Browser is not supported!', 200, false);
+			}
+			else
+			{
+				// Creates the graph inside the given container
+				var graph = new mxGraph(container);
+
+				// Makes the background of the in-place editor non-transparent
+				graph.cellEditor.startEditing = function (cell, trigger)
+				{
+					mxCellEditor.prototype.startEditing.apply(this, arguments);
+
+					var state = this.graph.getView().getState(cell);
+
+					if (state != null)
+					{
+						var color = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, 'white');
+						this.textarea.style.background = color;
+					}
+				};
+				
+				// Replaces the rendering in the graph with a server-side image
+				// by first placing the image in the background of the container.
+				// This image is used for all rendering by replacing its src
+				// attribute for now. Later we have to check if a POST request
+				// can be used to carry larger XML payloads for the graph data.
+				var display = new Image();
+				display.style.position = 'absolute';
+				display.style.left = '0px';
+				display.style.top = '0px';
+
+				// FIXME: In IE, move events on the image are blocked. Probaly requires
+				// some tweaking on the isContainerEvent method below. This implementation
+				// didn't fix it however.
+				/*graph.view.isContainerEvent = function(evt)
+				{
+					var source = mxEvent.getSource(evt);
+				
+					return (source == display ||
+						source == this.graph.container ||
+						source.parentNode == this.backgroundPane ||
+						(source.parentNode != null &&
+						source.parentNode.parentNode == this.backgroundPane) ||
+						source == this.canvas.parentNode ||
+						source == this.canvas ||
+						source == this.backgroundPane ||
+						source == this.drawPane ||
+						source == this.overlayPane);
+				};*/
+
+				// Uses the background image style for the display
+				graph.container.style.backgroundRepeat = 'no-repeat';
+
+				// Offset between image and overlays
+				var dx = -4;
+				var dy = -4;
+				
+				// Disables the DOM-based rendering in the graph and updates the
+				// display image on each validation step using the Export servlet
+				// on the graph
+				graph.view.rendering = false;
+				graph.view.validate = function()
+				{
+					mxGraphView.prototype.validate.apply(this, arguments);
+
+					// Turns the graph view into an XML GET request and updates the image
+					// src with this request. Shifts the image by the origin of the graph
+					// so that less empty image needs to be transferred over the net (only
+					// the actual graph bounds are turned into an image).
+					var node = mxUtils.getViewXml(graph, 1);
+					var xml = mxUtils.getXml(node, '\n');
+
+					graph.container.style.backgroundImage = 'url('+'/Export?xml=+'+encodeURIComponent(xml)+')';
+					var x0 = parseFloat(node.getAttribute('x')) + dx;
+					var y0 = parseFloat(node.getAttribute('y')) + dy;
+					graph.container.style.backgroundPosition = x0 + ' ' + y0;
+
+					// FIXME: We need to use a POST request to load the image
+					// because the graph XML might be larger than what the
+					// GET request parameter allows in terms of length
+					/*mxUtils.post('/Export', 'xml='+xml, function(req)
+					{
+						mxLog.debug('received image');
+					});*/
+					// One idea is to use this approach
+					// http://danielmclaren.net/2008/03/embedding-base64-image-data-into-a-webpage
+					// Another idea is to have two requests (POST for the XML and GET for the image)
+				};
+
+				// Uncomment the following if you want the container
+				// to fit the size of the graph
+				//graph.setResizeContainer(true);
+				
+				// Enables rubberband selection
+				new mxRubberband(graph);
+				
+				// Gets the default parent for inserting new cells. This
+				// is normally the first child of the root (ie. layer 0).
+				var parent = graph.getDefaultParent();
+								
+				// Adds cells to the model in a single step
+				graph.getModel().beginUpdate();
+				try
+				{
+					var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
+					var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
+					var v3 = graph.insertVertex(parent, null, 'Swimlane', 200, 20, 80, 80, 'shape=swimlane');
+					var e1 = graph.insertEdge(parent, null, '', v1, v2);
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+			}
+		};
+	</script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body onload="main(document.getElementById('graphContainer'))">
+
+	<!-- Creates a container for the graph with a grid wallpaper -->
+	<div id="graphContainer"
+		style="overflow:hidden;width:500px;height:500px;border: black solid 1px;cursor:default;">
+	</div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<html>
+<head>
+	<title>Performance test</title>
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript">
+		function main()
+		{
+			mxLog.TRACE = true;
+			mxLog.show();
+			//createGraph(30, 30);
+			
+			var t0 = mxLog.enter('total');
+			
+			for (var i = 0; i < 8; i++)
+			{
+				createGraph(5, 5, true);
+			}
+			
+			mxLog.leave('total', t0);
+		};
+		
+		function createGraph(n, m, connect)
+		{
+			var container = document.createElement('div');
+			container.style.position = 'relative';
+			container.style.overflow = 'hidden';
+			container.style.width = '800px';
+			container.style.height = '600px';
+			container.style.border = '1px solid gray';
+			container.style.cursor = 'default';
+			document.body.appendChild(container);
+
+			mxEvent.disableContextMenu(container);
+			
+			var graph = new mxGraph(container);
+			graph.setPanning(true);
+
+			var parent = graph.getDefaultParent();
+
+			var t0 = mxLog.enter('insert');
+			graph.getModel().beginUpdate();
+			var v0 = null;
+			try
+			{
+				for (var i = 0; i < n; i++)
+				{
+					for (var j = 0; j < m; j++)
+					{
+						var v = graph.insertVertex(parent, null, j + ' / ' + i, 100 * i, 40 * j,
+							80, 30);
+						
+						if (v0 == null)
+						{
+							v0 = v;
+						}
+						else if (connect)
+						{
+							graph.insertEdge(parent, null, v0.value + ' -> ' + v.value, v0, v);
+						}
+					}	
+				}
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+
+			mxLog.leave('insert', t0);
+			
+			document.body.appendChild(mxUtils.button('+', function()
+			{
+				graph.zoomIn();
+			}));
+			document.body.appendChild(mxUtils.button('-', function()
+			{
+				graph.zoomOut();
+			}));
+			document.body.appendChild(mxUtils.button('Fit', function()
+			{
+				graph.fit();
+			}));
+		};
+	</script>
+</head>
+<body onload="main()">
+</body>
+</html>

@@ -1,0 +1,84 @@
+01-DEC-2011: VISA Network Editor 1.0
+
+- Adds handling for dialback edges in vsNetworkLayout.layoutDialback, dialbackEdge
+- Adds support for common middle row in vsNetworkLayout.commonRow
+- Optimizes routing for shared endpoints in vsNetworkLayout.routeEdge
+- Adds support for shared endpoints where height exceeds rowheight 
+- Ignores row height when changing row in vsNetworkLayout.arrangeRow
+- Ignores result of vsNetworkLayout.layoutEndpoints in layout
+- Adds labels with single dashed horizontal ruler in vsGdCanvas.drawLabel 
+- Adds vsNetworkLayout.veryLongEdgeLength to handle very long labels
+- Adds vsNetworkLayout.layoutTunnelRouterPair to handle tunnel router pairs
+- Adds vsNetworkLayout.minRowHeights, tunnelRouterHorizontal/VerticalSpacing
+- Updated to work with latest mxGraph 1.8
+
+03-MAR-2009: VISA Network Editor 0.9
+
+- Removes table in javascript/examples/demo.html
+- Removes control point for horizontal server fan-in
+
+12-FEB-2009: VISA Network Editor 0.8
+
+- Adds support for new SERVER, LAN and HOST devices
+- Adds support for server stack, lan and member host
+- Adds vsLanShape and vsPerimeter for lan perimeter
+- Uses mxGraphView.getRoutingCenterX/Y in edge style
+- Uses new mxIEdgeStyle interface and mxStyleRegistry
+- Adds addVertex, addEdge methods to vsGraphModel
+
+23-FEB-2008: VISA Network Editor 0.7
+
+- Adds documentation for MPLS layout and new shapes
+- Adds handling of MPLS diagram format in layouts
+- Adds rendering of router2 and isr2 shapes with example
+- Adds example network with no ASE shapes
+- Adds autoArrange switch to vsGraph
+- Adds example for new column on left-hand side (enhancement 3)
+- Fixes layout for new column on right-hand side (enhancement 2)
+- Fixes routing of crossovers into endpoints (enhancement 1)
+- Adds true type font for PHP server-side demo
+
+09-NOV-2007: VISA Network Editor 0.6
+
+- Changes background colors in examples (transparency)
+- Adds custom bitmap canvas to PHP backend
+- Adds layout algorithm to PHP backend
+- Improves layout of crossover edges
+
+08-OCT-2007: VISA Network Editor 0.5
+
+- Adds endpoint flag to vsGraphModel.createEntity
+- Refactors layout algorithm, handles more cases
+- Fixes possible NPE in vsGraph.isLocked
+
+18-SEP-2007: VISA Network Editor 0.4
+
+- Adds automatic placement of notice in diagram
+- Adds support for notice with additional details
+- Adds support for two end vertices with common middle vertex
+- Adds handling for two rows with a common end vertex
+- Fixes vsGraph.getLabel to return value for demarcation line
+
+07-SEP-2007: VISA Network Editor 0.3
+
+- Disables tooltips in vsGraph.js
+- Removes all dependencies on node names (entity types) in the client
+- Moves overridden constants to vsEditor.js
+- Renames mxGraphModel.createElement to createEntitiy in PHP
+- Moves row data from cell to user object
+- Moves row parameter to createElement in vsGraphModel.php
+- Moves vsGraph.getXml to vsGraphModel in JavaScript
+- Minor fixes on some function signatures
+- Adds documentation and specification
+
+30-AUG-2007: VISA Network Editor 0.2
+
+- Adds PHP backend API with demo
+- Adds documentation (draft)
+- Moves demo into examples directory
+- Adds automated build process
+- Changes directory structure
+
+21-AUG-2007: VISA Network Editor 0.1
+
+- Initial delivery

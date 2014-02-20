@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- Maps mxgraph project directory to http://devhost.jgraph.com/mxgraph/ -->
+<project basedir="." default="run">
+	<target name="run">
+		<java fork="false" classname="Webserver">
+			<arg value="80"/>
+			<classpath>
+				<pathelement path="${basedir}"/>
+				<pathelement location="${basedir}/../../java/jars/servlet-api-2.5-6.1.1.jar"/>
+				<pathelement location="${basedir}/../../java/jars/jetty-6.1.1.jar"/>
+				<pathelement location="${basedir}/../../java/jars/jetty-util-6.1.1.jar"/>
+			</classpath>
+		</java>
+	</target>
+</project>

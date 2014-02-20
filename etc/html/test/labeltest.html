@@ -1,0 +1,80 @@
+<html>
+<head>
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript">
+		function main()
+		{
+			//mxClient.NO_FO = true;
+			
+			// Enables crisp rendering of rectangles in SVG
+			mxRectangleShape.prototype.crisp = true;
+			
+			function createGraph(htmlLabels, scale)
+			{
+				var container = document.createElement('div');
+				
+				container.style.overflow = 'hidden';
+				container.style.width = '500px';
+				container.style.height = '500px';
+				container.style.cursor = 'default';
+				container.style.border = '1px solid gray';
+
+				document.body.appendChild(container);
+				
+				// Creates the graph inside the given container
+				var graph = new mxGraph(container);
+				graph.setHtmlLabels(htmlLabels);
+				graph.view.scale = scale;
+
+				// Uncomment the following if you want the container
+				// to fit the size of the graph
+				//graph.setResizeContainer(true);
+				
+				// Enables rubberband selection
+				new mxRubberband(graph);
+				
+				// Gets the default parent for inserting new cells. This
+				// is normally the first child of the root (ie. layer 0).
+				var parent = graph.getDefaultParent();
+								
+				// Adds cells to the model in a single step
+				graph.getModel().beginUpdate();
+				try
+				{
+					graph.insertVertex(parent, null, 'hidden wrap asd asd asdasda sd asdasd\n634587\n3658736\n4587\n63445',
+						20, 20, 80, 30, 'overflow=hidden;whiteSpace=wrap;labelBackgroundColor=green;labelBorderColor=red');
+					graph.insertVertex(parent, null, 'fill wrap asd asd asdasda sd asdasd\n634587\n3658736\n4587\n63445',
+						180, 20, 80, 30, 'overflow=fill;whiteSpace=wrap;labelBackgroundColor=green;labelBorderColor=red');
+					graph.insertVertex(parent, null, 'hidden nowrap asd asd asdasda sd asdasd\n634587\n3658736\n4587\n63445',
+						20, 100, 80, 30, 'overflow=hidden;whiteSpace=nowrap;labelBackgroundColor=green;labelBorderColor=red');
+					graph.insertVertex(parent, null, 'fill nowrapasd asd asd asdasda sd asdasd\n634587\n3658736\n4587\n63445',
+						180, 100, 80, 30, 'overflow=fill;whiteSpace=nowrap;labelBackgroundColor=green;labelBorderColor=red');
+					graph.insertVertex(parent, null, 'hidden nowrap',
+						20, 180, 80, 30, 'overflow=hidden;whiteSpace=nowrap;labelBackgroundColor=green;labelBorderColor=red');
+					graph.insertVertex(parent, null, 'fill wrap',
+						180, 180, 80, 30, 'overflow=fill;whiteSpace=wrap;labelBackgroundColor=green;labelBorderColor=red');
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+				
+				return container;
+			};
+			
+			createGraph(false, 1).style.float = 'left';
+			createGraph(true, 1);
+			createGraph(false, 2).style.float = 'left';
+			createGraph(true, 2);
+		};
+	</script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body onload="main();">
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CSS3 animation example for mxGraph</title>
+	
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+	
+	<style type="text/css">
+		@keyframes foo {
+		  from {
+		    transform:scale(1);
+		    transform-origin:center center;
+		  }
+		  to {
+		    transform:scale(2);
+		    transform-origin:center center;
+		  }
+		}
+		@-webkit-keyframes foo {
+		  from {
+		    -webkit-transform:scale(1);
+		    -webkit-transform-origin:center center;
+		  }
+		  to {
+		    -webkit-transform:scale(2);
+		    -webkit-transform-origin:center center;
+		  }
+		}
+	</style>
+
+	<!-- Example code -->
+	<script type="text/javascript">
+		// Program starts here. Creates a sample graph in the
+		// DOM node with the specified ID. This function is invoked
+		// from the onLoad event handler of the document (see below).
+		function main(container)
+		{
+			// Checks if the browser is supported
+			if (!mxClient.isBrowserSupported())
+			{
+				// Displays an error message if the browser is not supported.
+				mxUtils.error('Browser is not supported!', 200, false);
+			}
+			else
+			{
+				// Disables the built-in context menu
+				mxEvent.disableContextMenu(container);
+				
+				// Creates the graph inside the given container
+				var graph = new mxGraph(container);
+
+				// Enables rubberband selection
+				new mxRubberband(graph);
+				
+				// Gets the default parent for inserting new cells. This
+				// is normally the first child of the root (ie. layer 0).
+				var parent = graph.getDefaultParent();
+								
+				// Adds cells to the model in a single step
+				graph.getModel().beginUpdate();
+				try
+				{
+					var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
+					var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
+					var e1 = graph.insertEdge(parent, null, '', v1, v2);
+					graph.orderCells(true, [e1]);
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+
+				var anim = new mxAnimation();
+				
+				graph.selectionModel.addListener('change', function(sender, evt)
+				{
+					if (!anim.isRunning())
+					{
+						var cells = evt.getProperty('removed');
+						
+						if (cells != null)
+						{
+							for (var i = 0; i < cells.length; i++)
+							{
+								if (graph.model.isVertex(cells[i]))
+								{
+									var state = graph.view.getState(cells[i]);
+									
+									if (state != null && state.shape != null)
+									{
+										mxUtils.setPrefixedStyle(state.shape.node.style, 'animation', 'foo 500ms ease infinite alternate');
+										
+										if (state.text != null)
+										{
+											mxUtils.setPrefixedStyle(state.text.node.style, 'animation', 'foo 500ms ease infinite alternate');
+										}
+									}
+								}
+							}
+						}
+						
+						cells = evt.getProperty('added');
+						
+						if (cells != null)
+						{
+							for (var i = 0; i < cells.length; i++)
+							{
+								if (graph.model.isVertex(cells[i]))
+								{
+									var state = graph.view.getState(cells[i]);
+									
+									if (state != null && state.shape != null)
+									{
+										// Stops all animations and resets state
+										graph.refresh(cells[i]);
+									}
+								}
+							}
+						}
+					}
+				});
+				
+				mxUtils.setPrefixedStyle(graph.view.canvas.style, 'transition', 'all 1s ease-in-out');
+				mxUtils.setPrefixedStyle(graph.view.canvas.style, 'transform', 'translate(100px,100px)');
+				
+				window.setTimeout(function()
+				{
+					mxUtils.setPrefixedStyle(graph.view.canvas.style, 'transition', '');
+					mxUtils.setPrefixedStyle(graph.view.canvas.style, 'transform', 'translate(0px,0px)');
+					graph.view.setTranslate(100, 100);
+					
+					graph.setSelectionCell(v1);
+				}, 1000);
+
+				document.body.appendChild(mxUtils.button('mxAnimation', function()
+				{
+					if (anim.isRunning())
+					{
+						anim.stopAnimation();
+						graph.refresh();
+					}
+					else
+					{
+						// mxAnimation based solution
+						function repaint(s)
+						{
+							graph.cellRenderer.redraw(s);
+							
+							// FIXME: Start/stop loses reference to handler
+							var handler = graph.selectionCellsHandler.getHandler(s.cell);
+							
+							if (handler != null)
+							{
+								handler.reset();
+							}
+						};
+						
+						anim.count = 0;
+						anim.reverse = false;
+						anim.updateAnimation = function()
+						{
+							var state = graph.view.getState(v2);
+
+							state.view.updateCellState(state);
+							this.count += (this.reverse) ? -1 : 1;
+							
+							if (this.count > 20)
+							{
+								this.reverse = true;
+							}
+							else if (this.count < 1)
+							{
+								this.reverse = false;
+							}
+							
+							state.x -= this.count;
+							state.y -= this.count;
+							state.width += 2 * this.count;
+							state.height += 2 * this.count;
+							
+							repaint(state);
+							
+							// Repaints connected edges
+							var e = graph.getEdges(state.cell);
+							var es = [];
+							
+							for (var i = 0; i < e.length; i++)
+							{
+								es[i] = state.view.getState(e[i]);
+							}
+							
+							for (var i = 0; i < es.length; i++)
+							{
+								state.view.updateCellState(es[i]);
+								repaint(es[i]);
+							}
+						};
+
+						graph.refresh();
+						anim.startAnimation();
+					}
+				}));
+			}
+		};
+	</script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body onload="main(document.getElementById('graphContainer'))">
+
+	<!-- Creates a container for the graph with a grid wallpaper -->
+	<div id="graphContainer"
+		style="position:relative;overflow:hidden;width:821px;height:641px;border:1px solid gray;cursor:default;">
+	</div>
+</body>
+</html>

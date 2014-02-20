@@ -1,0 +1,64 @@
+<html>
+<head>
+	<title>File I/O via Flash</title>
+	<script type="text/javascript">
+		mxBasePath = 'http://www.jgraph.com/demo/mxgraph/src';
+	</script>
+	<script type="text/javascript" src="http://mxclient.jgraph.com/demo/mxgraph/src/js/mxclient.php?version=1.7.1.11"></script>
+	<script type="text/javascript" src="flash_detect_min.js"></script>
+	<script type="text/javascript">
+		// Needs global graph for access from Flash
+		var graph = new mxGraph();
+		
+		// Returns the XML data for the current graph
+		function getGraphData()
+		{
+			var enc = new mxCodec(mxUtils.createXmlDocument());
+			var node = enc.encode(graph.getModel());
+			
+			return mxUtils.getXml(node, '\n');
+		}
+		
+		// Sets the XML data for the current graph
+		function setGraphData(xml)
+		{
+			var doc = mxUtils.parseXml(xml); 
+			var dec = new mxCodec(doc); 
+			dec.decode(doc.documentElement, graph.getModel());
+		}
+
+		function main(container)
+		{
+			graph.init(container);
+			var parent = graph.getDefaultParent();
+			
+			var style = graph.getStylesheet().getDefaultVertexStyle();
+			style[mxConstants.STYLE_FILLCOLOR] = '#adc5ff';
+			style[mxConstants.STYLE_GRADIENTCOLOR] = '#7d85df';
+			
+			graph.getModel().beginUpdate();
+			try
+			{
+				var v1 = graph.insertVertex(parent, null, 'Hello,', 30, 20, 80, 30);
+				var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
+				var e1 = graph.insertEdge(parent, null, '', v1, v2);
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+			
+			if (!FlashDetect.versionAtLeast(10))
+			{
+				alert('Flash Player 10 is not installed');
+			}
+		};
+	</script>
+</head>
+<body onload="main(document.getElementById('graphContainer'))">
+	<div id="graphContainer"
+		style="overflow:hidden;width:501px;height:381px;cursor:default;border:solid gray 1px;">
+	</div>
+	<iframe width="240" height="40" src="mxgraph_com_io.html" style="border-style:none; border-width:0pt;"></iframe>
+</body>
+</html>

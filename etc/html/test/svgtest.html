@@ -1,0 +1,73 @@
+<html>
+  <head>
+	<script type="text/javascript">
+		mxBasePath = '/mxgraph2/javascript/src';
+	</script>
+	<script type="text/javascript" src="/mxgraph2/javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript">
+		function test()
+		{
+			mxLog.show();
+			mxLog.TRACE = true;
+			var t0 = mxLog.enter('main');
+
+			var w = 5000;
+			var h = 2000;
+			
+			var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+			svg.setAttribute('width', w);
+			svg.setAttribute('height', h);
+
+			// Should appear behind green rectangle
+			for (var i = 0; i < 5000; i++)
+			{
+				var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+				rect.setAttribute('x', Math.random() * w);
+				rect.setAttribute('y', Math.random() * h);
+				rect.setAttribute('width', 50);
+				rect.setAttribute('height', 30);
+				rect.setAttribute('fill', 'red');
+
+				svg.appendChild(rect);
+			}
+			
+			document.body.appendChild(svg);
+			
+			mxLog.leave('main', t0);
+		}
+		function test2()
+		{
+			mxLog.show();
+			mxLog.TRACE = true;
+			var t0 = mxLog.enter('main');
+
+			var w = 5000;
+			var h = 2000;
+
+			// Should appear behind green rectangle
+			for (var i = 0; i < 5000; i++)
+			{
+				var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+				svg.setAttribute('width', 50);
+				svg.setAttribute('height', 30);
+
+				var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+				svg.style.left = Math.round(Math.random() * w) + 'px';
+				svg.style.top = Math.round(Math.random() * h) + 'px';
+				svg.style.position = 'absolute';
+				svg.style.display = 'block';
+				rect.setAttribute('width', 50);
+				rect.setAttribute('height', 30);
+				rect.setAttribute('fill', 'red');
+
+				svg.appendChild(rect);
+				document.body.appendChild(svg);
+			}
+			
+			mxLog.leave('main', t0);
+		}
+	</script>
+  </head>
+<body onload="test()">
+</body>
+</html>

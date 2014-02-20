@@ -1,0 +1,2874 @@
+<output>
+  <save/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#ffffff"/>
+  <rect x="10" y="70" w="1120" h="690"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="159" y="251"/>
+  <curve x1="181" y1="251" x2="181" y2="251" x3="181" y3="251"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="159" y="259"/>
+  <curve x1="181" y1="259" x2="181" y2="259" x3="181" y3="259"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="170" y="231"/>
+  <line x="170" y="250"/>
+  <fillstroke/>
+  <begin/>
+  <move x="170" y="260"/>
+  <line x="170" y="279"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="190" y="246.3" w="33" h="13" str="4.7uF" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="166" y="226" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="166" y="276" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <rect x="350" y="230" w="200" h="440"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontcolor color="#000"/>
+  <fontstyle style="1"/>
+  <fontsize size="16"/>
+  <text x="422" y="437.4" w="56" h="17" str="LT3694" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="239" y="321"/>
+  <curve x1="261" y1="321" x2="261" y2="321" x3="261" y3="321"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="239" y="329"/>
+  <curve x1="261" y1="329" x2="261" y2="329" x3="261" y3="329"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="250" y="301"/>
+  <line x="250" y="320"/>
+  <fillstroke/>
+  <begin/>
+  <move x="250" y="330"/>
+  <line x="250" y="349"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="270" y="316.3" w="24" h="13" str="1nF" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="296" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="346" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="265" cy="430"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="241" y="430"/>
+  <line x="264" y="430"/>
+  <stroke/>
+  <fontsize size="8.000017"/>
+  <fontstyle style="0"/>
+  <text x="285.42" y="410" w="0" h="0" str="C" align="left" valign="bottom" vertical="0"/>
+  <text x="285.71" y="454.9" w="0" h="0" str="E" align="left" valign="bottom" vertical="0"/>
+  <text x="249.41" y="440" w="0" h="0" str="B" align="left" valign="bottom" vertical="0"/>
+  <strokecolor color="#000000"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="265" y="435"/>
+  <line x="280" y="445"/>
+  <stroke/>
+  <begin/>
+  <move x="265" y="425"/>
+  <line x="280" y="415"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="280" y="401"/>
+  <line x="280" y="414"/>
+  <stroke/>
+  <begin/>
+  <move x="280" y="446"/>
+  <line x="280" y="459"/>
+  <stroke/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="265" y="413"/>
+  <line x="265" y="447"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="1"/>
+  <begin/>
+  <move x="272.16" y="443.56"/>
+  <line x="279.7" y="444.61"/>
+  <line x="275.26" y="438.42"/>
+  <close/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="286" y="426" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="396" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="456" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="250" y="492"/>
+  <line x="257" y="495"/>
+  <line x="250" y="498"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="498"/>
+  <line x="243" y="501"/>
+  <line x="250" y="504"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="504"/>
+  <line x="257" y="507"/>
+  <line x="250" y="510"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="510"/>
+  <line x="243" y="513"/>
+  <line x="250" y="516"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="516"/>
+  <line x="257" y="519"/>
+  <line x="250" y="522"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="522"/>
+  <line x="243" y="525"/>
+  <line x="250" y="528"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="250" y="481"/>
+  <line x="250" y="491"/>
+  <fillstroke/>
+  <begin/>
+  <move x="250" y="529"/>
+  <line x="250" y="539"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="260" y="501.3" w="34" h="13" str="24.9K" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="476" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="536" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="250" y="572"/>
+  <line x="257" y="575"/>
+  <line x="250" y="578"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="578"/>
+  <line x="243" y="581"/>
+  <line x="250" y="584"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="584"/>
+  <line x="257" y="587"/>
+  <line x="250" y="590"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="590"/>
+  <line x="243" y="593"/>
+  <line x="250" y="596"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="596"/>
+  <line x="257" y="599"/>
+  <line x="250" y="602"/>
+  <stroke/>
+  <begin/>
+  <move x="250" y="602"/>
+  <line x="243" y="605"/>
+  <line x="250" y="608"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="250" y="561"/>
+  <line x="250" y="571"/>
+  <fillstroke/>
+  <begin/>
+  <move x="250" y="609"/>
+  <line x="250" y="619"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="260" y="581.3" w="34" h="13" str="10.7K" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="556" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="616" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="0" cx="180" cy="400"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="180" y="382"/>
+  <line x="187" y="385"/>
+  <line x="180" y="388"/>
+  <stroke/>
+  <begin/>
+  <move x="180" y="388"/>
+  <line x="173" y="391"/>
+  <line x="180" y="394"/>
+  <stroke/>
+  <begin/>
+  <move x="180" y="394"/>
+  <line x="187" y="397"/>
+  <line x="180" y="400"/>
+  <stroke/>
+  <begin/>
+  <move x="180" y="400"/>
+  <line x="173" y="403"/>
+  <line x="180" y="406"/>
+  <stroke/>
+  <begin/>
+  <move x="180" y="406"/>
+  <line x="187" y="409"/>
+  <line x="180" y="412"/>
+  <stroke/>
+  <begin/>
+  <move x="180" y="412"/>
+  <line x="173" y="415"/>
+  <line x="180" y="418"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="180" y="371"/>
+  <line x="180" y="381"/>
+  <fillstroke/>
+  <begin/>
+  <move x="180" y="419"/>
+  <line x="180" y="429"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="170.5" y="371.4" w="19" h="13" str="0.1" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="206" y="396" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="146" y="396" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="340" cy="430"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="331" y="430"/>
+  <line x="349" y="430"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350" y="421.3" w="36" h="13" str="DRV2" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="326" y="426" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="340" cy="400"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="331" y="400"/>
+  <line x="349" y="400"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350" y="391.3" w="34" h="13" str="LIM2" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="326" y="396" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="330" y="400"/>
+  <line x="250" y="400"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="330" y="430"/>
+  <line x="290" y="430"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="340" cy="320"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="331" y="320"/>
+  <line x="349" y="320"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350" y="311.3" w="53" h="13" str="TRK/SS3" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="326" y="316" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="340" cy="310"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="331" y="310"/>
+  <line x="349" y="310"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350" y="301.3" w="53" h="13" str="TRK/SS2" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="326" y="306" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="340" cy="300"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="331" y="300"/>
+  <line x="349" y="300"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350" y="291.3" w="53" h="13" str="TRK/SS1" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="326" y="296" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="330" y="300"/>
+  <line x="250" y="300"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="318" y="298" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="330" y="320"/>
+  <line x="320" y="320"/>
+  <line x="320" y="303"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="318" y="308" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="330" y="310"/>
+  <line x="323" y="310"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="1" cx="380" cy="220"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="371" y="220"/>
+  <line x="389" y="220"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350.5" y="232" w="59" h="13" str="EN/UVLO" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="376" y="206" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="380" y="210"/>
+  <line x="130" y="210"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="168" y="208" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="170" y="230"/>
+  <line x="170" y="213"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="159" y="300.99"/>
+  <curve x1="181.02" y1="300.99" x2="181.02" y2="300.99" x3="181.02" y3="300.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="163.01" y="307"/>
+  <curve x1="172.57" y1="307" x2="177.01" y2="307" x3="177.01" y3="307"/>
+  <stroke/>
+  <begin/>
+  <move x="167.01" y="313"/>
+  <curve x1="170.12" y1="313" x2="173.01" y2="313" x3="173.01" y3="313"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="170" y="281"/>
+  <line x="170" y="299"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="166" y="276" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="239" y="360.99"/>
+  <curve x1="261.02" y1="360.99" x2="261.02" y2="360.99" x3="261.02" y3="360.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="243.01" y="367"/>
+  <curve x1="252.57" y1="367" x2="257.01" y2="367" x3="257.01" y3="367"/>
+  <stroke/>
+  <begin/>
+  <move x="247.01" y="373"/>
+  <curve x1="250.12" y1="373" x2="253.01" y2="373" x3="253.01" y3="373"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="250" y="341"/>
+  <line x="250" y="359"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="336" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="210" y="400"/>
+  <line x="250" y="400"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="250" y="460"/>
+  <line x="250" y="480"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="250" y="540"/>
+  <line x="250" y="560"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="248" y="468" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="247" y="470"/>
+  <line x="130" y="470"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="150" y="400"/>
+  <line x="130" y="400"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="111" y="210"/>
+  <line x="129" y="210"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="39" y="193.5" w="71" h="25" str="Vin&#xa;4.5V TO 36V" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="126" y="206" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="111" y="400"/>
+  <line x="129" y="400"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="74" y="391.3" w="36" h="13" str="OUT1" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="126" y="396" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="151" y="470"/>
+  <line x="169" y="470"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="166" y="466" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="0" cx="290" cy="630"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="290" y="612"/>
+  <line x="297" y="615"/>
+  <line x="290" y="618"/>
+  <stroke/>
+  <begin/>
+  <move x="290" y="618"/>
+  <line x="283" y="621"/>
+  <line x="290" y="624"/>
+  <stroke/>
+  <begin/>
+  <move x="290" y="624"/>
+  <line x="297" y="627"/>
+  <line x="290" y="630"/>
+  <stroke/>
+  <begin/>
+  <move x="290" y="630"/>
+  <line x="283" y="633"/>
+  <line x="290" y="636"/>
+  <stroke/>
+  <begin/>
+  <move x="290" y="636"/>
+  <line x="297" y="639"/>
+  <line x="290" y="642"/>
+  <stroke/>
+  <begin/>
+  <move x="290" y="642"/>
+  <line x="283" y="645"/>
+  <line x="290" y="648"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="290" y="601"/>
+  <line x="290" y="611"/>
+  <fillstroke/>
+  <begin/>
+  <move x="290" y="649"/>
+  <line x="290" y="659"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="273" y="642" w="34" h="13" str="51.1K" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="316" y="626" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="256" y="626" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="320" y="630"/>
+  <line x="330" y="630"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="260" y="630"/>
+  <line x="250" y="630"/>
+  <line x="250" y="620"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="239" y="710.99"/>
+  <curve x1="261.02" y1="710.99" x2="261.02" y2="710.99" x3="261.02" y3="710.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="243.01" y="717"/>
+  <curve x1="252.57" y1="717" x2="257.01" y2="717" x3="257.01" y3="717"/>
+  <stroke/>
+  <begin/>
+  <move x="247.01" y="723"/>
+  <curve x1="250.12" y1="723" x2="253.01" y2="723" x3="253.01" y3="723"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="250" y="691"/>
+  <line x="250" y="709"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="246" y="686" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="248" y="628" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="250" y="690"/>
+  <line x="250" y="633"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="139" y="511"/>
+  <curve x1="161" y1="511" x2="161" y2="511" x3="161" y3="511"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="139" y="519"/>
+  <curve x1="161" y1="519" x2="161" y2="519" x3="161" y3="519"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="150" y="491"/>
+  <line x="150" y="510"/>
+  <fillstroke/>
+  <begin/>
+  <move x="150" y="520"/>
+  <line x="150" y="539"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="170" y="506.3" w="33" h="13" str="2.2uF" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="146" y="486" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="146" y="536" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="150" y="490"/>
+  <line x="150" y="470"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="139" y="550.99"/>
+  <curve x1="161.02" y1="550.99" x2="161.02" y2="550.99" x3="161.02" y3="550.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="143.01" y="557"/>
+  <curve x1="152.57" y1="557" x2="157.01" y2="557" x3="157.01" y3="557"/>
+  <stroke/>
+  <begin/>
+  <move x="147.01" y="563"/>
+  <curve x1="150.12" y1="563" x2="153.01" y2="563" x3="153.01" y3="563"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="150" y="531"/>
+  <line x="150" y="549"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="146" y="526" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="111" y="470"/>
+  <line x="129" y="470"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="69" y="445.7" w="41" h="37" str="OUT2&#xa;2.5V&#xa;450mA" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="126" y="466" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="586.5" y="327"/>
+  <curve x1="586.5" y1="327" x2="590.5" y2="326.74" x3="590.5" y3="329.5"/>
+  <curve x1="590.5" y1="332.29" x2="586.5" y2="332" x3="586.5" y3="332"/>
+  <stroke/>
+  <begin/>
+  <move x="573.5" y="332"/>
+  <curve x1="573.5" y1="332" x2="569.41" y2="331.93" x3="569.5" y3="334.5"/>
+  <curve x1="569.59" y1="337.23" x2="573.5" y2="337" x3="573.5" y3="337"/>
+  <stroke/>
+  <begin/>
+  <move x="573.5" y="332"/>
+  <curve x1="595.5" y1="332" x2="586.5" y2="332" x3="586.5" y3="332"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="1.49"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="579.86" y="332.54"/>
+  <curve x1="579.86" y1="332.54" x2="579.86" y2="332.54" x3="572" y3="347.26"/>
+  <curve x1="587.72" y1="347.26" x2="587.72" y2="347.26" x3="587.72" y3="347.26"/>
+  <close/>
+  <fillstroke/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="580" y="311"/>
+  <line x="580" y="369"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="600" y="331.3" w="39" h="13" str="B340A" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="576" y="306" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="576" y="366" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="571" y="550"/>
+  <line x="594" y="550"/>
+  <stroke/>
+  <fontsize size="8.000017"/>
+  <fontstyle style="0"/>
+  <text x="615.42" y="530" w="0" h="0" str="C" align="left" valign="bottom" vertical="0"/>
+  <text x="615.71" y="574.9" w="0" h="0" str="E" align="left" valign="bottom" vertical="0"/>
+  <text x="579.41" y="560" w="0" h="0" str="B" align="left" valign="bottom" vertical="0"/>
+  <strokecolor color="#000000"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="595" y="555"/>
+  <line x="610" y="565"/>
+  <stroke/>
+  <begin/>
+  <move x="595" y="545"/>
+  <line x="610" y="535"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="610" y="521"/>
+  <line x="610" y="534"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="566"/>
+  <line x="610" y="579"/>
+  <stroke/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="595" y="533"/>
+  <line x="595" y="567"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="1"/>
+  <begin/>
+  <move x="602.16" y="563.56"/>
+  <line x="609.7" y="564.61"/>
+  <line x="605.26" y="558.42"/>
+  <close/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="546" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="606" y="516" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="606" y="576" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokecolor color="none"/>
+  <roundrect x="50" y="120" w="250" h="20" dx="12.5" dy="12.5"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontcolor color="#bf0000"/>
+  <fontstyle style="1"/>
+  <fontsize size="32"/>
+  <text x="51.5" y="81" w="247" h="33" str="LT3694/LT3694-1&#xa;" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokecolor color="none"/>
+  <roundrect x="40" y="110" w="460" h="50" dx="23" dy="23"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontcolor color="#000"/>
+  <fontstyle style="1"/>
+  <fontsize size="20"/>
+  <text x="40" y="118.5" w="464" h="21" str="36V, 2.6A Monolithic Buck Regulator With Dual LDO" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="4"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <begin/>
+  <move x="40" y="155"/>
+  <line x="1100" y="155"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="340" cy="550"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="331" y="550"/>
+  <line x="349" y="550"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350" y="541.3" w="25" h="13" str="FB2" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="326" y="546" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="248" y="548" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="330" y="550"/>
+  <line x="253" y="550"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="340" cy="570"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="331" y="570"/>
+  <line x="349" y="570"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350" y="561.3" w="25" h="13" str="FB2" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="326" y="566" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="299" y="590.99"/>
+  <curve x1="321.02" y1="590.99" x2="321.02" y2="590.99" x3="321.02" y3="590.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="303.01" y="597"/>
+  <curve x1="312.57" y1="597" x2="317.01" y2="597" x3="317.01" y3="597"/>
+  <stroke/>
+  <begin/>
+  <move x="307.01" y="603"/>
+  <curve x1="310.12" y1="603" x2="313.01" y2="603" x3="313.01" y3="603"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="310" y="571"/>
+  <line x="310" y="589"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="306" y="566" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="330" y="570"/>
+  <line x="310" y="570"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="340" cy="630"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="331" y="630"/>
+  <line x="349" y="630"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350" y="621.3" w="20" h="13" str="RT" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="326" y="626" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="340" cy="600"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="331" y="600"/>
+  <line x="349" y="600"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="350" y="591.3" w="48" h="13" str="PGOOD" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="326" y="596" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="1" cx="420" cy="680"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="411" y="680"/>
+  <line x="429" y="680"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="410" y="651.4" w="20" h="13" str="RT" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="416" y="666" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="409" y="710.99"/>
+  <curve x1="431.02" y1="710.99" x2="431.02" y2="710.99" x3="431.02" y3="710.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="413.01" y="717"/>
+  <curve x1="422.57" y1="717" x2="427.01" y2="717" x3="427.01" y3="717"/>
+  <stroke/>
+  <begin/>
+  <move x="417.01" y="723"/>
+  <curve x1="420.12" y1="723" x2="423.01" y2="723" x3="423.01" y3="723"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="420" y="691"/>
+  <line x="420" y="709"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="416" y="686" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="1" cx="430" cy="220"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="421" y="220"/>
+  <line x="439" y="220"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="417" y="232" w="26" h="13" str="VIN" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="426" y="206" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="1" cx="480" cy="220"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="471" y="220"/>
+  <line x="489" y="220"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="464" y="232" w="32" h="13" str="BIAS" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="476" y="206" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="180" flipH="1" flipV="0" cx="560" cy="260"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="551" y="260"/>
+  <line x="569" y="260"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="523" y="251.3" w="27" h="13" str="BST" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="256" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="180" flipH="1" flipV="0" cx="560" cy="310"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="551" y="310"/>
+  <line x="569" y="310"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="527" y="301.3" w="23" h="13" str="SW" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="306" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="180" flipH="1" flipV="0" cx="560" cy="370"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="551" y="370"/>
+  <line x="569" y="370"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="529" y="361.3" w="21" h="13" str="DA" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="366" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="180" flipH="1" flipV="0" cx="560" cy="390"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="551" y="390"/>
+  <line x="569" y="390"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="525" y="381.3" w="25" h="13" str="FB1" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="386" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="180" flipH="1" flipV="0" cx="560" cy="460"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="551" y="460"/>
+  <line x="569" y="460"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="523" y="451.3" w="27" h="13" str="VC1" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="456" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="180" flipH="1" flipV="0" cx="560" cy="520"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="551" y="520"/>
+  <line x="569" y="520"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="516" y="511.3" w="34" h="13" str="LIM3" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="516" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="180" flipH="1" flipV="0" cx="560" cy="550"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="551" y="550"/>
+  <line x="569" y="550"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="514" y="541.3" w="36" h="13" str="DRV3" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="546" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="180" flipH="1" flipV="0" cx="560" cy="640"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="551" y="640"/>
+  <line x="569" y="640"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="525" y="631.3" w="25" h="13" str="FB3" align="right" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="636" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="569" y="281"/>
+  <curve x1="591" y1="281" x2="591" y2="281" x3="591" y3="281"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="569" y="289"/>
+  <curve x1="591" y1="289" x2="591" y2="289" x3="591" y3="289"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="580" y="261"/>
+  <line x="580" y="280"/>
+  <fillstroke/>
+  <begin/>
+  <move x="580" y="290"/>
+  <line x="580" y="309"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="600" y="276.3" w="39" h="13" str="0.22uF" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="576" y="256" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="576" y="306" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="570" y="260"/>
+  <line x="580" y="260"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="570" y="310"/>
+  <line x="580" y="310"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="570" y="370"/>
+  <line x="580" y="370"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="0" cx="660" cy="310"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#ffffff"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="658.14" y="300"/>
+  <curve x1="655.11" y1="300.01" x2="652.65" y2="297.78" x3="652.64" y3="295.01"/>
+  <curve x1="652.63" y1="292.25" x2="655.08" y2="290.01" x3="658.1" y3="290"/>
+  <curve x1="658.11" y1="290" x2="658.11" y2="290" x3="658.12" y3="290"/>
+  <fillstroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="658" y="290"/>
+  <line x="660" y="290"/>
+  <stroke/>
+  <begin/>
+  <move x="658" y="300"/>
+  <line x="660" y="300"/>
+  <stroke/>
+  <fillcolor color="#ffffff"/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="658.14" y="310"/>
+  <curve x1="655.11" y1="310.01" x2="652.65" y2="307.78" x3="652.64" y3="305.01"/>
+  <curve x1="652.63" y1="302.25" x2="655.08" y2="300.01" x3="658.1" y3="300"/>
+  <curve x1="658.11" y1="300" x2="658.11" y2="300" x3="658.12" y3="300"/>
+  <fillstroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="658" y="300"/>
+  <line x="660" y="300"/>
+  <stroke/>
+  <begin/>
+  <move x="658" y="310"/>
+  <line x="660" y="310"/>
+  <stroke/>
+  <fillcolor color="#ffffff"/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="658.14" y="320"/>
+  <curve x1="655.11" y1="320.01" x2="652.65" y2="317.78" x3="652.64" y3="315.01"/>
+  <curve x1="652.63" y1="312.25" x2="655.08" y2="310.01" x3="658.1" y3="310"/>
+  <curve x1="658.11" y1="310" x2="658.11" y2="310" x3="658.12" y3="310"/>
+  <fillstroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="658" y="310"/>
+  <line x="660" y="310"/>
+  <stroke/>
+  <begin/>
+  <move x="658" y="320"/>
+  <line x="660" y="320"/>
+  <stroke/>
+  <fillcolor color="#ffffff"/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="658.14" y="330"/>
+  <curve x1="655.11" y1="330.01" x2="652.65" y2="327.78" x3="652.64" y3="325.01"/>
+  <curve x1="652.63" y1="322.25" x2="655.08" y2="320.01" x3="658.1" y3="320"/>
+  <curve x1="658.11" y1="320" x2="658.11" y2="320" x3="658.12" y3="320"/>
+  <fillstroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="658" y="320"/>
+  <line x="660" y="320"/>
+  <stroke/>
+  <begin/>
+  <move x="658" y="330"/>
+  <line x="660" y="330"/>
+  <stroke/>
+  <fillcolor color="#ffffff"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="660" y="281"/>
+  <line x="660" y="289"/>
+  <fillstroke/>
+  <begin/>
+  <move x="660" y="331"/>
+  <line x="660" y="339"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="642.5" y="281.4" w="35" h="13" str="4.7uH" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="686" y="306" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="626" y="306" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="630" y="310"/>
+  <line x="580" y="310"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="378" y="208" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="383" y="210"/>
+  <line x="430" y="210"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="710" y="332"/>
+  <line x="717" y="335"/>
+  <line x="710" y="338"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="338"/>
+  <line x="703" y="341"/>
+  <line x="710" y="344"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="344"/>
+  <line x="717" y="347"/>
+  <line x="710" y="350"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="350"/>
+  <line x="703" y="353"/>
+  <line x="710" y="356"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="356"/>
+  <line x="717" y="359"/>
+  <line x="710" y="362"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="362"/>
+  <line x="703" y="365"/>
+  <line x="710" y="368"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="710" y="321"/>
+  <line x="710" y="331"/>
+  <fillstroke/>
+  <begin/>
+  <move x="710" y="369"/>
+  <line x="710" y="379"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="720" y="341.3" w="23" h="13" str="34k" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="706" y="316" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="706" y="376" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="710" y="320"/>
+  <line x="710" y="310"/>
+  <line x="690" y="310"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="710" y="412"/>
+  <line x="717" y="415"/>
+  <line x="710" y="418"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="418"/>
+  <line x="703" y="421"/>
+  <line x="710" y="424"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="424"/>
+  <line x="717" y="427"/>
+  <line x="710" y="430"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="430"/>
+  <line x="703" y="433"/>
+  <line x="710" y="436"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="436"/>
+  <line x="717" y="439"/>
+  <line x="710" y="442"/>
+  <stroke/>
+  <begin/>
+  <move x="710" y="442"/>
+  <line x="703" y="445"/>
+  <line x="710" y="448"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="710" y="401"/>
+  <line x="710" y="411"/>
+  <fillstroke/>
+  <begin/>
+  <move x="710" y="449"/>
+  <line x="710" y="459"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="720" y="421.3" w="23" h="13" str="10k" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="706" y="396" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="706" y="456" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="710" y="380"/>
+  <line x="710" y="400"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="708" y="388" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="570" y="390"/>
+  <line x="707" y="390"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="0" cx="600" cy="460"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="600" y="442"/>
+  <line x="607" y="445"/>
+  <line x="600" y="448"/>
+  <stroke/>
+  <begin/>
+  <move x="600" y="448"/>
+  <line x="593" y="451"/>
+  <line x="600" y="454"/>
+  <stroke/>
+  <begin/>
+  <move x="600" y="454"/>
+  <line x="607" y="457"/>
+  <line x="600" y="460"/>
+  <stroke/>
+  <begin/>
+  <move x="600" y="460"/>
+  <line x="593" y="463"/>
+  <line x="600" y="466"/>
+  <stroke/>
+  <begin/>
+  <move x="600" y="466"/>
+  <line x="607" y="469"/>
+  <line x="600" y="472"/>
+  <stroke/>
+  <begin/>
+  <move x="600" y="472"/>
+  <line x="593" y="475"/>
+  <line x="600" y="478"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="600" y="431"/>
+  <line x="600" y="441"/>
+  <fillstroke/>
+  <begin/>
+  <move x="600" y="479"/>
+  <line x="600" y="489"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="584" y="431.4" w="32" h="13" str="41.2k" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="626" y="456" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="566" y="456" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="0" cx="655" cy="460"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="644" y="456"/>
+  <curve x1="666" y1="456" x2="666" y2="456" x3="666" y3="456"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="644" y="464"/>
+  <curve x1="666" y1="464" x2="666" y2="464" x3="666" y3="464"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="655" y="436"/>
+  <line x="655" y="455"/>
+  <fillstroke/>
+  <begin/>
+  <move x="655" y="465"/>
+  <line x="655" y="484"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="637" y="421.4" w="36" h="13" str="330pF" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="676" y="456" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="626" y="456" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="708" y="308" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="710" y="307"/>
+  <line x="710" y="210"/>
+  <line x="480" y="210"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="669" y="480.99"/>
+  <curve x1="691.02" y1="480.99" x2="691.02" y2="480.99" x3="691.02" y3="480.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="673.01" y="487"/>
+  <curve x1="682.57" y1="487" x2="687.01" y2="487" x3="687.01" y3="487"/>
+  <stroke/>
+  <begin/>
+  <move x="677.01" y="493"/>
+  <curve x1="680.12" y1="493" x2="683.01" y2="493" x3="683.01" y3="493"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="680" y="461"/>
+  <line x="680" y="479"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="676" y="456" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="749" y="381"/>
+  <curve x1="771" y1="381" x2="771" y2="381" x3="771" y3="381"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="749" y="389"/>
+  <curve x1="771" y1="389" x2="771" y2="389" x3="771" y3="389"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="760" y="361"/>
+  <line x="760" y="380"/>
+  <fillstroke/>
+  <begin/>
+  <move x="760" y="390"/>
+  <line x="760" y="409"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="780" y="376.3" w="30" h="13" str="47uF" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="756" y="356" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="756" y="406" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="708" y="308" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="760" y="360"/>
+  <line x="760" y="310"/>
+  <line x="713" y="310"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="760" y="410"/>
+  <line x="760" y="470"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="758" y="458" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="710" y="460"/>
+  <line x="757" y="460"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="749" y="490.99"/>
+  <curve x1="771.02" y1="490.99" x2="771.02" y2="490.99" x3="771.02" y3="490.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="753.01" y="497"/>
+  <curve x1="762.57" y1="497" x2="767.01" y2="497" x3="767.01" y3="497"/>
+  <stroke/>
+  <begin/>
+  <move x="757.01" y="503"/>
+  <curve x1="760.12" y1="503" x2="763.01" y2="503" x3="763.01" y3="503"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="760" y="471"/>
+  <line x="760" y="489"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="756" y="466" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="90" flipH="0" flipV="0" cx="660" cy="520"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="660" y="502"/>
+  <line x="667" y="505"/>
+  <line x="660" y="508"/>
+  <stroke/>
+  <begin/>
+  <move x="660" y="508"/>
+  <line x="653" y="511"/>
+  <line x="660" y="514"/>
+  <stroke/>
+  <begin/>
+  <move x="660" y="514"/>
+  <line x="667" y="517"/>
+  <line x="660" y="520"/>
+  <stroke/>
+  <begin/>
+  <move x="660" y="520"/>
+  <line x="653" y="523"/>
+  <line x="660" y="526"/>
+  <stroke/>
+  <begin/>
+  <move x="660" y="526"/>
+  <line x="667" y="529"/>
+  <line x="660" y="532"/>
+  <stroke/>
+  <begin/>
+  <move x="660" y="532"/>
+  <line x="653" y="535"/>
+  <line x="660" y="538"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="660" y="491"/>
+  <line x="660" y="501"/>
+  <fillstroke/>
+  <begin/>
+  <move x="660" y="539"/>
+  <line x="660" y="549"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="650.5" y="532" w="19" h="13" str="0.1" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="686" y="516" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="626" y="516" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="630" y="520"/>
+  <line x="610" y="520"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="608" y="518" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="607" y="520"/>
+  <line x="570" y="520"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="610" y="592"/>
+  <line x="617" y="595"/>
+  <line x="610" y="598"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="598"/>
+  <line x="603" y="601"/>
+  <line x="610" y="604"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="604"/>
+  <line x="617" y="607"/>
+  <line x="610" y="610"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="610"/>
+  <line x="603" y="613"/>
+  <line x="610" y="616"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="616"/>
+  <line x="617" y="619"/>
+  <line x="610" y="622"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="622"/>
+  <line x="603" y="625"/>
+  <line x="610" y="628"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="610" y="581"/>
+  <line x="610" y="591"/>
+  <fillstroke/>
+  <begin/>
+  <move x="610" y="629"/>
+  <line x="610" y="639"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="620" y="601.3" w="32" h="13" str="15.4k" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="606" y="576" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="606" y="636" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="round"/>
+  <begin/>
+  <move x="610" y="652"/>
+  <line x="617" y="655"/>
+  <line x="610" y="658"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="658"/>
+  <line x="603" y="661"/>
+  <line x="610" y="664"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="664"/>
+  <line x="617" y="667"/>
+  <line x="610" y="670"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="670"/>
+  <line x="603" y="673"/>
+  <line x="610" y="676"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="676"/>
+  <line x="617" y="679"/>
+  <line x="610" y="682"/>
+  <stroke/>
+  <begin/>
+  <move x="610" y="682"/>
+  <line x="603" y="685"/>
+  <line x="610" y="688"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="610" y="641"/>
+  <line x="610" y="651"/>
+  <fillstroke/>
+  <begin/>
+  <move x="610" y="689"/>
+  <line x="610" y="699"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="620" y="661.3" w="22" h="13" str="11k" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="606" y="636" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="606" y="696" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="570" y="640"/>
+  <line x="610" y="640"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="599" y="710.99"/>
+  <curve x1="621.02" y1="710.99" x2="621.02" y2="710.99" x3="621.02" y3="710.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="603.01" y="717"/>
+  <curve x1="612.57" y1="717" x2="617.01" y2="717" x3="617.01" y3="717"/>
+  <stroke/>
+  <begin/>
+  <move x="607.01" y="723"/>
+  <curve x1="610.12" y1="723" x2="613.01" y2="723" x3="613.01" y3="723"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="610" y="691"/>
+  <line x="610" y="709"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="606" y="686" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="689" y="601"/>
+  <curve x1="711" y1="601" x2="711" y2="601" x3="711" y3="601"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="689" y="609"/>
+  <curve x1="711" y1="609" x2="711" y2="609" x3="711" y3="609"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="700" y="581"/>
+  <line x="700" y="600"/>
+  <fillstroke/>
+  <begin/>
+  <move x="700" y="610"/>
+  <line x="700" y="629"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="720" y="596.3" w="33" h="13" str="2.2uF" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="696" y="576" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="696" y="626" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="round"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="689" y="640.99"/>
+  <curve x1="711.02" y1="640.99" x2="711.02" y2="640.99" x3="711.02" y3="640.99"/>
+  <stroke/>
+  <strokewidth width="2"/>
+  <begin/>
+  <move x="693.01" y="647"/>
+  <curve x1="702.57" y1="647" x2="707.01" y2="647" x3="707.01" y3="647"/>
+  <stroke/>
+  <begin/>
+  <move x="697.01" y="653"/>
+  <curve x1="700.12" y1="653" x2="703.01" y2="653" x3="703.01" y3="653"/>
+  <stroke/>
+  <fillcolor color="#000000"/>
+  <linecap cap="square"/>
+  <begin/>
+  <move x="700" y="621"/>
+  <line x="700" y="639"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="696" y="616" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <begin/>
+  <move x="610" y="580"/>
+  <line x="750" y="580"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="760" cy="580"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="751" y="580"/>
+  <line x="769" y="580"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="770" y="555.7" w="41" h="37" str="OUT3&#xa;1.8V&#xa;450mA" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="746" y="576" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="780" cy="310"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="771" y="310"/>
+  <line x="789" y="310"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="790" y="285.7" w="36" h="37" str="OUT1&#xa;3.3V&#xa;1.7A" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="766" y="306" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokewidth width="2"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#000000"/>
+  <ellipse x="758" y="308" w="4" h="4"/>
+  <fillstroke/>
+  <begin/>
+  <move x="770" y="310"/>
+  <line x="763" y="310"/>
+  <stroke/>
+  <restore/>
+  <save/>
+  <rotate theta="0" flipH="1" flipV="0" cx="700" cy="520"/>
+  <strokewidth width="0"/>
+  <strokecolor color="#000000"/>
+  <fillcolor color="#EFD3D2"/>
+  <strokewidth width="1"/>
+  <fillcolor color="#000000"/>
+  <strokecolor color="#000000"/>
+  <strokewidth width="2"/>
+  <linecap cap="square"/>
+  <linejoin join="miter"/>
+  <begin/>
+  <move x="691" y="520"/>
+  <line x="709" y="520"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="710" y="511.3" w="36" h="13" str="OUT1" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <strokecolor color="none"/>
+  <rect x="686" y="516" w="8" h="8"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <strokecolor color="none"/>
+  <roundrect x="330" y="660" w="130" h="50" dx="6.5" dy="6.5"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontcolor color="#000"/>
+  <fontstyle style="0"/>
+  <fontsize size="12"/>
+  <text x="330" y="676.3" w="68" h="13" str="fsw=800kHZ" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <image x="860" y="220" w="140" h="130" src="http://media.digikey.com/Renders/Micrel%20Renders/20-TSSOP%20Epad.jpg" aspect="1" flipH="0" flipV="0"/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="903" y="352" w="54" h="13" str="20TSSOP" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <image x="990" y="230" w="120" h="120" src="http://media.digikey.com/renders/Linear%20Tech%20Renders/28-QFN_05-08-1712%20rev%20B.jpg" aspect="1" flipH="0" flipV="0"/>
+  <restore/>
+  <save/>
+  <fontstyle style="1"/>
+  <fontsize size="12"/>
+  <text x="1029.5" y="352" w="41" h="13" str="28QFN" align="center" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokecolor color="none"/>
+  <roundrect x="910" y="180" w="130" h="50" dx="6.5" dy="6.5"/>
+  <fillstroke/>
+  <restore/>
+  <save/>
+  <fontcolor color="#000"/>
+  <fontstyle style="1"/>
+  <fontsize size="16"/>
+  <text x="910" y="192.4" w="138" h="17" str="PACKAGE TYPES" vertical="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <image x="870" y="420" w="145" h="175" src="http://media.digikey.com/photos/Fairchild%20Semi%20Photos/261-DO-35.jpg" aspect="1" flipH="0" flipV="0"/>
+  <restore/>
+  <save/>
+  <strokewidth width="0"/>
+  <image x="870" y="580" w="140" h="125" src="http://media.digikey.com/photos/Diodes%20Photos/31-SMA.jpg" aspect="1" flipH="0" flipV="0"/>
+  <restore/>
+  <save/>
+  <strokecolor color="#000000"/>
+  <gradient c1="#ff0000" c2="#ffffff" x="1030" y="450" w="70" h="230"/>
+  <roundrect x="1030" y="450" w="70" h="230" dx="11.5" dy="11.5"/>
+  <fillstroke/>
+  <restore/>
+</output>

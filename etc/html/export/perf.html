@@ -1,0 +1,208 @@
+<html>
+<head>
+<meta http-equiv='X-UA-Compatible' content='IE=9'/>
+<!--
+		// TODO:
+		// Main issues:
+		// - Add rotation (interface)
+		// - Canvas has no built-in dash-pattern for strokes
+		//   - Use AS code for straight lines
+		// - PNG/GIF in PDF:
+		//   - PNG mask via canvas or direct IDAT change
+		//   - GIF via canvas and PNG as Data URL
+		// - Fonts in PDF:
+		//   - Embedded fonts and font mapping
+		//   - MeasureString via canvas/HTML
+		//
+		// Design issues:
+		// - Add generic handling of content bounds (swimlanes, startSize)
+		//   - Hit detection on content area
+		//   - Automatic backgroundSize
+		//   - Child origin
+		//
+		// Implementation issues:
+		// - Add handling of Data URLs
+		// - Add clipped/vertical (PDF) labels
+		// - Add clipped/vertical label backgrounds
+		// - Add compression (PDF)
+		// - Add image aspect (PDF)
+		// - Add rotation
+		// - Add properties (href, tooltip)
+		// - Add SVG (with embedded images)
+		//
+		// For generic "swimlane"-API:
+		// - Check if hit is transparent
+		// - Get Rectangle for title region (paint, gradient, text)
+		// - StartSize / origin and orientation
+		//
+		// For generic shapes:
+		// - Outline for quick drawing, background, shadow and masking/clipping
+		//
+		// Limitations:
+		// - No cross-domain image support in Canvas, PDF (XHR)
+		// - No canvas in old IEs, can use server or Flash
+-->
+	<title>Stencil performance test</title>
+	<script type="text/javascript">
+		mxBasePath = 'http://devhost.jgraph.com/mxgraph/javascript/src';
+	</script>
+	<script type="text/javascript" src="http://devhost.jgraph.com/mxgraph/javascript/src/js/mxClient.js"></script>
+	<script type="text/javascript" src="base64.js"></script>
+	<script type="text/javascript" src="rawdeflate.js"></script>
+	<script type="text/javascript" src="rawinflate.js"></script>
+	<script type="text/javascript" src="jspdf.js"></script>
+	<script type="text/javascript" src="jscanvas.js"></script>
+	<script type="text/javascript" src="jstxt.js"></script>
+	<script type="text/vbscript">
+     Function BinaryToArray(Binary)
+         Dim i
+         ReDim byteArray(LenB(Binary))
+         For i = 1 To LenB(Binary)
+             byteArray(i-1) = AscB(MidB(Binary, i, 1))
+         Next
+         BinaryToArray = byteArray
+     End Function
+	</script>
+	<script type="text/javascript">
+		// TODO: Changes for mxConstants to replace SVG_SHADOW_TRANSFORM
+		/**
+		 * Variable: SHADOW_OPACITY
+		 * 
+		 * Defines the opacity for shadows. Default is 0.5.
+		 */
+		mxConstants.SHADOW_OPACITY = 1;
+
+		/**
+		 * Variable: SHADOW_OFFSET_X
+		 * 
+		 * Defines the horizontal offset for shadows. Default is 2.
+		 */
+		 mxConstants.SHADOW_OFFSET_X = 2;
+
+		/**
+		 * Variable: SHADOW_OFFSET_Y
+		 * 
+		 * Defines the vertical offset for shadows. Default is 3.
+		 */
+		 mxConstants.SHADOW_OFFSET_Y = 3;
+
+		// Sets the global shadow color
+		mxConstants.SHADOWCOLOR = '#E3E3E3';
+		mxConstants.SHADOW_OFFSET_X = 4;
+		mxConstants.SHADOW_OFFSET_Y = 4;
+
+		mxCellRenderer.prototype.createShape = function(state)
+		{
+			if (state.style != null)
+			{
+				var key = state.style[mxConstants.STYLE_SHAPE];
+				var stencil = mxStencilRegistry.getStencil(key);
+				
+				if (stencil != null)
+				{
+					state.shape = new mxStencilShape(stencil);
+				}
+				else
+				{
+					var ctor = this.getShapeConstructor(state);
+					state.shape = new ctor();
+				}
+
+				// Sets the initial bounds and points (will be updated in redraw)
+				state.shape.points = state.absolutePoints;
+				state.shape.bounds = new mxRectangle(
+					state.x, state.y, state.width, state.height);
+				state.shape.dialect = state.view.graph.dialect;
+
+				this.configureShape(state);
+			}
+		};
+
+		// Loads custom shapes into the rendering engine
+		try
+		{
+			var req = mxUtils.load('shapes.xml');
+			var root = req.getDocumentElement();
+			var shape = root.firstChild;
+			
+			while (shape != null)
+			{
+				if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
+				{
+					mxStencilRegistry.addStencil(shape.getAttribute('name'), new mxStencil(shape));
+				}
+				
+				shape = shape.nextSibling;
+			}
+		}
+		catch (ex)
+		{
+			alert('Cannot load shapes.xml: '+ex);
+			throw ex;
+		}
+		
+		function main(container)
+		{
+			//loadShapes();
+			var graph = new mxGraph(container);
+			graph.setDropEnabled(true);
+			new mxRubberband(graph);
+			
+			// Performance depends on style
+			var style = graph.getStylesheet().getDefaultVertexStyle();
+			style[mxConstants.STYLE_FILLCOLOR] = '#adc5ff';
+			style[mxConstants.STYLE_GRADIENTCOLOR] = '#7d85df';
+			
+			mxLog.show();
+			mxLog.TRACE = true;
+			
+			var styleInput = document.createElement('input');
+			styleInput.setAttribute('type', 'text');
+			styleInput.setAttribute('size', '80');
+			styleInput.value = 'shape=gate;shadow=1;startSize=28;fontStyle=3;fontSize=14;glass=1';
+			document.body.appendChild(styleInput);
+
+			document.body.appendChild(mxUtils.button('Clear', function()
+			{
+				graph.getModel().clear();
+			}));
+
+			document.body.appendChild(mxUtils.button('Insert', function()
+			{
+				var parent = graph.getDefaultParent();
+				graph.getModel().beginUpdate();
+				try
+				{
+					for (var i = 0; i < 10; i++)
+					{
+						for (var j = 0; j < 10; j++)
+						{
+							graph.insertVertex(parent, null, j + ' ' + i, i * 100 + 20, j * 60 + 20, 80, 40, styleInput.value);
+						}
+					}
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+			}));
+
+			document.body.appendChild(mxUtils.button('Move', function()
+			{
+				var children = graph.getModel().getChildren(graph.getDefaultParent());
+				
+				if (children != null)
+				{
+					graph.moveCells(children, 10, 10);
+				}
+			}));
+		};
+	</script>
+</head>
+<body onload="main(document.getElementById('graphContainer'))">
+	<div id="graphContainer"
+		style="overflow:auto;width:1024px;height:768px;cursor:default;border:solid gray 1px;">
+	</div>
+</body>
+</html>

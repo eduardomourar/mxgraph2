@@ -1,0 +1,69 @@
+<html> 
+  <head> 
+	<script type="text/javascript">
+		function test()
+		{
+			// Chrome has repaint issues for FO
+			var useGroup = true;
+			
+			var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+			svg.setAttribute('width', 200);
+			svg.setAttribute('height', 200);
+
+			var node = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+			var fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject')
+			fo.setAttribute('width', '120');
+			fo.setAttribute('height', '60');
+			fo.setAttribute('x', '10');
+			fo.setAttribute('y', '10');
+			
+			var body = document.createElementNS('http://www.w3.org/1999/xhtml', 'body');
+			
+			var div = document.createElement('div');
+			div.style.background = 'green';
+			div.style.width = '100%';
+			div.style.height = '100%';
+			div.appendChild(document.createTextNode('Hello, World!'))
+			
+			var button = document.createElement('button');
+			body.appendChild(button);
+			
+			body.appendChild(div);
+			fo.appendChild(body);
+
+			if (useGroup)
+			{
+				node.appendChild(fo);
+				svg.appendChild(node);
+			}
+			else
+			{
+				svg.appendChild(fo);
+			}
+			
+			document.body.appendChild(svg);
+
+			var div2 = document.createElement('div');
+			div2.style.position = 'absolute';
+			div2.style.left = '10px';
+			div2.style.top = '10px';
+			div2.style.width = '200px';
+			div2.style.height = '100px';
+			div2.style.background = 'yellow';
+			div2.style.opacity = '0.5';
+			document.body.appendChild(div2);
+
+			var funct = function(evt)
+			{
+				div2.style.left = evt.clientX+'px';
+				div2.style.top = evt.clientY+'px';
+			};
+			
+			document.body.addEventListener('mousemove', funct, false);
+		}
+	</script>
+  </head>
+<body onload="test()"> 
+</body>
+</html>

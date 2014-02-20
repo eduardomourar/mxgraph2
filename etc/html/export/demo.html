@@ -1,0 +1,116 @@
+<html>
+<head>
+	<title>Export PDF</title>
+	<script type="text/javascript">
+		mxBasePath = 'http://www.jgraph.com/demo/mxgraph/src';
+	</script>
+	<script type="text/javascript" src="http://mxclient.jgraph.com/demo/mxgraph/src/js/mxclient.php?version=1.7.1.7"></script>
+	<script type="text/javascript" src="base64.js"></script>
+	<script type="text/javascript" src="jspdf.js"></script>
+	<script type="text/javascript" src="http://pixelgraphics.us/downloadify/js/swfobject.js"></script>
+	<script type="text/javascript" src="http://pixelgraphics.us/downloadify/js/downloadify.min.js"></script>
+	<script type="text/vbscript">
+	 'Needed for IE to load and parse binary image files
+     Function BinaryToArray(Binary)
+         Dim i
+         ReDim byteArray(LenB(Binary))
+         For i = 1 To LenB(Binary)
+             byteArray(i-1) = AscB(MidB(Binary, i, 1))
+         Next
+         BinaryToArray = byteArray
+     End Function
+	</script>
+	<script type="text/javascript">
+		mxRectangleShape.prototype.crisp = true;
+		// NOTE: SHADOWCOLOR must be HEX instead of the default 'gray' for jspdf.js
+		mxConstants.SHADOWCOLOR = '#C0C0C0';
+		mxConstants.SHADOW_OPACITY = 0.5;
+		mxConstants.SHADOW_OFFSET_X = 5;
+		mxConstants.SHADOW_OFFSET_Y = 6;
+		
+		function exportPdf(graph)
+		{
+			var imgExport = new mxImageExport();
+			var pdfCanvas = new jsPDF();
+			pdfCanvas.scale(1 / graph.pageScale);
+			imgExport.drawState(graph.getView().getState(graph.model.root), pdfCanvas);
+
+			// Asynchronous handler
+			pdfCanvas.finish(function()
+			{
+				var pdf = pdfCanvas.output();
+
+				if (mxClient.IS_GC || mxClient.IS_SF || mxClient.IS_OP)
+				{
+					var wnd = window.open('about:blank');
+					wnd.location.href = 'data:application/pdf;base64,' + Base64.encode(pdf, true);
+				}
+				// Uses downloadify to save to local disk in IE/FF
+				else
+				{
+					document.getElementById('downloadify').innerHTML = '';
+					
+					Downloadify.create('downloadify',{
+						filename: function(){
+							return 'export.pdf';
+						},
+						data: function(){ 
+							return pdf;
+						},
+						onComplete: function() { alert('Your File Has Been Saved!'); },
+						onCancel: function(){ alert('You have cancelled the saving of this file.'); },
+						onError: function(){ alert('You must put something in the File Contents or there will be nothing to save!'); },
+						transparent: false,
+						swf: 'http://pixelgraphics.us/downloadify/media/downloadify.swf',
+						downloadImage: 'http://pixelgraphics.us/downloadify/images/download.png',
+						width: 100,
+						height: 30,
+						transparent: true,
+						append: false
+					});
+				}
+				
+			});
+		}
+
+		// Program starts here
+		function main(container)
+		{
+			var graph = new mxGraph(container);
+			graph.setConnectable(true);
+			new mxRubberband(graph);
+			
+			var style = graph.getStylesheet().getDefaultVertexStyle();
+			style[mxConstants.STYLE_FILLCOLOR] = '#ADC5FF';
+			style[mxConstants.STYLE_GRADIENTCOLOR] = '#7D85DF';
+			style[mxConstants.STYLE_SHADOW] = 1;
+			style[mxConstants.STYLE_ROUNDED] = 1;
+			
+			var parent = graph.getDefaultParent();
+			graph.getModel().beginUpdate();
+			try
+			{
+				var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
+				var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
+				var e1 = graph.insertEdge(parent, null, '', v1, v2);
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+
+			document.body.insertBefore(mxUtils.button('Export PDF', function()
+			{
+				exportPdf(graph);
+			}), document.getElementById('downloadify'));
+		};
+	</script>
+</head>
+<body onload="main(document.getElementById('graphContainer'))">
+	<div id="graphContainer"
+		style="overflow:hidden;width:301px;height:201px;cursor:default;border:solid gray 1px;">
+	</div>
+	<br>
+	<p id="downloadify"></p>
+</body>
+</html>

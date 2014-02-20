@@ -1,0 +1,147 @@
+<html>
+<head>
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+
+	<!-- Example code -->
+	<script type="text/javascript">
+		function mxCellsHandler(states)
+		{
+			if (states != null)
+			{
+				this.state = states[0];
+				this.states = states;
+				this.init();
+			}
+		};
+	
+		mxUtils.extend(mxCellsHandler, mxVertexHandler);
+	
+		mxCellsHandler.prototype.getSelectionBounds = function(state)
+		{
+			var b = this.graph.getView().getBounds(this.graph.getSelectionCells());
+			
+			return new mxRectangle(Math.round(b.x), Math.round(b.y), Math.round(b.width), Math.round(b.height));
+		};
+
+		// ***
+		
+		function main(container)
+		{
+			if (!mxClient.isBrowserSupported())
+			{
+				mxUtils.error('Browser is not supported!', 200, false);
+			}
+			else
+			{
+				mxEvent.disableContextMenu(container);
+				mxVertexHandler.prototype.rotationEnabled = true;
+				
+				// Creates the graph inside the given container
+				var graph = new mxGraph(container);
+
+				// Enables rubberband selection
+				new mxRubberband(graph);
+				
+				// Gets the default parent for inserting new cells. This
+				// is normally the first child of the root (ie. layer 0).
+				var parent = graph.getDefaultParent();
+								
+				// Adds cells to the model in a single step
+				graph.getModel().beginUpdate();
+				try
+				{
+					var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
+					var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
+					var e1 = graph.insertEdge(parent, null, '', v1, v2);
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+			}
+		};
+
+		mxSelectionCellsHandler.prototype.refresh = function()
+		{
+			console.log('refresh', this.graph.getSelectionCells().length);
+			this.bounds = this.graph.getView().getBounds(this.graph.getSelectionCells());
+			
+			if (this.cellsHandler != null)
+			{
+				this.cellsHandler.destroy();
+				this.cellsHandler = null;
+			}
+
+			// Removes all existing handlers
+			var oldHandlers = this.handlers;
+			
+			
+			if (this.graph.getSelectionCount() > 1)
+			{
+				this.cellsHandler = new mxCellsHandler(this.graph.view.getCellStates(this.graph.getSelectionCells()));
+			}
+			else
+			{
+				this.handlers = new mxDictionary();
+				
+				// Creates handles for all selection cells
+				var tmp = this.graph.getSelectionCells();
+			
+				for (var i = 0; i < tmp.length; i++)
+				{
+					var state = this.graph.view.getState(tmp[i]);
+			
+					if (state != null)
+					{
+						var handler = oldHandlers.remove(tmp[i]);
+			
+						if (handler != null)
+						{
+							if (handler.state != state)
+							{
+								handler.destroy();
+								handler = null;
+							}
+							else
+							{
+								handler.redraw();
+							}
+						}
+						
+						if (handler == null)
+						{
+							handler = this.graph.createHandler(state);
+							this.fireEvent(new mxEventObject(mxEvent.ADD, 'state', state));
+						}
+						
+						if (handler != null)
+						{
+							this.handlers.put(tmp[i], handler);
+						}
+					}
+				}
+			}
+			
+			// Destroys all unused handlers
+			oldHandlers.visit(mxUtils.bind(this, function(key, handler)
+			{
+				this.fireEvent(new mxEventObject(mxEvent.REMOVE, 'state', handler.state));
+				handler.destroy();
+			}));
+		};
+	</script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body onload="main(document.getElementById('graphContainer'))">
+
+	<!-- Creates a container for the graph with a grid wallpaper -->
+	<div id="graphContainer"
+		style="position:relative;overflow:hidden;width:321px;height:241px;border:1px solid gray;cursor:default;">
+	</div>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<vsGraphModel>
+	<root>
+		<mxCell id="0" />
+		<mxCell id="1" parent="0" />
+		<mxCell id="2" value="Endpoint LAN" style="demarcation" edge="1"
+			parent="1">
+			<mxGeometry relative="1" x="-1" as="geometry">
+				<mxPoint x="640" y="20" as="sourcePoint" />
+				<mxPoint x="640" y="420" as="targetPoint" />
+				<mxPoint x="4" y="-4" as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="3"
+			value="Note: All IP addresses are in the 10.1.205.0&#10;network unless otherwise specified."
+			vertex="1" parent="1">
+			<mxGeometry width="230" height="42" x="55" y="204"
+				as="geometry" />
+		</mxCell>
+		<ROUTER
+			label="&lt;b&gt;APC AccRtrName1&lt;/b&gt;&#10;&lt;hr size='1'&gt;7600&#10;ATM7/1/0.40&#10;Subint=17.1.86.1&#10;OSPF AREA = 3&#10;LO=172.11.255.11"
+			row="1" id="4">
+			<mxCell style="router" vertex="1" parent="1">
+				<mxGeometry width="110" height="110" x="20" y="50"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</ROUTER>
+		<mxCell id="5" value="title" style="title" vertex="1"
+			parent="4">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="6" value="details" style="details" vertex="1"
+			parent="4">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<SWITCH label="ATM SW" row="1" title="PPUSC61"
+			details="DNEC 669087&#10;VPI/VCI = 1/132&#10;PCR = 256kpbs&#10;45Mbps"
+			id="7">
+			<mxCell vertex="1" parent="1">
+				<mxGeometry width="50" height="20" x="170" y="95"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</SWITCH>
+		<mxCell id="8" value="title" style="title" vertex="1"
+			parent="7">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="9" value="details" style="details" vertex="1"
+			parent="7">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<NETWORK label="&lt;b&gt;AT&amp;T&lt;/b&gt;&#10;CIR = 192"
+			row="1" id="10">
+			<mxCell style="network" vertex="1" parent="1">
+				<mxGeometry width="70" height="60" x="260" y="75"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</NETWORK>
+		<mxCell id="11" value="title" style="title" vertex="1"
+			parent="10">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="12" value="details" style="details" vertex="1"
+			parent="10">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<DEVICE label="R2=2611&#10;R2Name&#10;LO = .97" row="1"
+			id="13">
+			<mxCell vertex="1" parent="1">
+				<mxGeometry width="80" height="60" x="370" y="75"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</DEVICE>
+		<mxCell id="14" value="title" style="title" vertex="1"
+			parent="13">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="15" value="details" style="details" vertex="1"
+			parent="13">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<DEVICE label="S2Name&#10;2912&#10;IP = .135&#10;DG = .129"
+			row="1" id="16">
+			<mxCell vertex="1" parent="1">
+				<mxGeometry width="60" height="60" x="530" y="75"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</DEVICE>
+		<mxCell id="17" value="title" style="title" vertex="1"
+			parent="16">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="18" value="details" style="details" vertex="1"
+			parent="16">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<DEVICE label="Endpoint Firewall&#10;&#10;10.168.6.21" row="1"
+			endpoint="1" id="19">
+			<mxCell vertex="1" parent="1">
+				<mxGeometry width="90" height="60" x="670" y="75"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</DEVICE>
+		<mxCell id="20" value="title" style="title" vertex="1"
+			parent="19">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="21" value="details" style="details" vertex="1"
+			parent="19">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<ROUTER
+			label="&lt;b&gt;APC AccRtrName1&lt;/b&gt;&#10;&lt;hr size='1'&gt;7600&#10;ATM7/1/0.40&#10;Subint=17.1.86.1&#10;OSPF AREA = 3&#10;LO=172.11.255.11"
+			row="2" id="22">
+			<mxCell style="router" vertex="1" parent="1">
+				<mxGeometry width="110" height="110" x="20" y="280"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</ROUTER>
+		<mxCell id="23" value="title" style="title" vertex="1"
+			parent="22">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="24" value="details" style="details" vertex="1"
+			parent="22">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<SWITCH label="ATM SW" row="2" title="PPUSC61"
+			details="DNEC 669087&#10;VPI/VCI = 1/132&#10;PCR = 256kpbs&#10;45Mbps"
+			id="25">
+			<mxCell vertex="1" parent="1">
+				<mxGeometry width="50" height="20" x="170" y="325"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</SWITCH>
+		<mxCell id="26" value="title" style="title" vertex="1"
+			parent="25">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="27" value="details" style="details" vertex="1"
+			parent="25">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<NETWORK label="&lt;b&gt;AT&amp;T&lt;/b&gt;&#10;CIR = 192"
+			row="2" id="28">
+			<mxCell style="network" vertex="1" parent="1">
+				<mxGeometry width="70" height="60" x="260" y="305"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</NETWORK>
+		<mxCell id="29" value="title" style="title" vertex="1"
+			parent="28">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="30" value="details" style="details" vertex="1"
+			parent="28">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<DEVICE label="R1=2611&#10;R1Name&#10;LO = .97" row="2"
+			id="31">
+			<mxCell vertex="1" parent="1">
+				<mxGeometry width="80" height="60" x="370" y="305"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</DEVICE>
+		<mxCell id="32" value="title" style="title" vertex="1"
+			parent="31">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="33" value="details" style="details" vertex="1"
+			parent="31">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<DEVICE label="S1Name&#10;2912&#10;IP = .135&#10;DG = .129"
+			row="2" id="34">
+			<mxCell vertex="1" parent="1">
+				<mxGeometry width="60" height="60" x="530" y="305"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</DEVICE>
+		<mxCell id="35" value="title" style="title" vertex="1"
+			parent="34">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="36" value="details" style="details" vertex="1"
+			parent="34">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<DEVICE label="Endpoint Firewall&#10;&#10;10.168.6.21" row="2"
+			endpoint="1" id="37">
+			<mxCell vertex="1" parent="1">
+				<mxGeometry width="90" height="60" x="670" y="305"
+					as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</DEVICE>
+		<mxCell id="38" value="title" style="title" vertex="1"
+			parent="37">
+			<mxGeometry relative="1" width="1" height="1" x="0.5"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="39" value="details" style="details" vertex="1"
+			parent="37">
+			<mxGeometry relative="1" width="1" height="1" x="0.5" y="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="40" label="OC3">
+			<mxCell edge="1" parent="1" source="4" target="7">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="41" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="40">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="42" value="targetLabel" style="targetLabel"
+			vertex="1" parent="40">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="43" label="">
+			<mxCell style="carrier" edge="1" parent="1" source="7"
+				target="10">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="44" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="43">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="45" value="targetLabel" style="targetLabel"
+			vertex="1" parent="43">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="46" label="">
+			<mxCell style="carrier" edge="1" parent="1" source="10"
+				target="13">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="47" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="46">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="48" value="targetLabel" style="targetLabel"
+			vertex="1" parent="46">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="49" label="" sourceLabel="e0/0, .131"
+			targetLabel="p1">
+			<mxCell edge="1" parent="1" source="13" target="16">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="50" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="49">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="51" value="targetLabel" style="targetLabel"
+			vertex="1" parent="49">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="52" label="" sourceLabel="p3">
+			<mxCell edge="1" parent="1" source="16" target="19">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="53" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="52">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="54" value="targetLabel" style="targetLabel"
+			vertex="1" parent="52">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="55" label="OC3">
+			<mxCell edge="1" parent="1" source="22" target="25">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="56" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="55">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="57" value="targetLabel" style="targetLabel"
+			vertex="1" parent="55">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="58" label="">
+			<mxCell style="carrier" edge="1" parent="1" source="25"
+				target="28">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="59" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="58">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="60" value="targetLabel" style="targetLabel"
+			vertex="1" parent="58">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="61" label="">
+			<mxCell style="carrier" edge="1" parent="1" source="28"
+				target="31">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="62" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="61">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="63" value="targetLabel" style="targetLabel"
+			vertex="1" parent="61">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="64" label="" sourceLabel="e0/0, .131"
+			targetLabel="p1">
+			<mxCell edge="1" parent="1" source="31" target="34">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="65" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="64">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="66" value="targetLabel" style="targetLabel"
+			vertex="1" parent="64">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="67" label="" sourceLabel="p5">
+			<mxCell edge="1" parent="1" source="34" target="37">
+				<mxGeometry relative="1" as="geometry">
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="68" value="sourceLabel" style="sourceLabel"
+			vertex="1" parent="67">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="69" value="targetLabel" style="targetLabel"
+			vertex="1" parent="67">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="70" label="Crossover" sourceLabel="e1/0 .162"
+			targetLabel="e1/0 .161">
+			<mxCell style="verticalAlign=bottom;horizontal=0" edge="1"
+				parent="1" source="13" target="31">
+				<mxGeometry relative="1" as="geometry">
+					<Array as="points">
+						<mxPoint x="410" y="145" />
+						<mxPoint x="410" y="295" />
+					</Array>
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="71" value="sourceLabel"
+			style="sourceLabel;align=right;verticalAlign=top" vertex="1"
+			parent="70">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="72" value="targetLabel"
+			style="targetLabel;align=right;verticalAlign=bottom" vertex="1"
+			parent="70">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="73" label="Crossover" sourceLabel="p2"
+			targetLabel="p2">
+			<mxCell style="verticalAlign=bottom;horizontal=0" edge="1"
+				parent="1" source="16" target="34">
+				<mxGeometry relative="1" as="geometry">
+					<Array as="points">
+						<mxPoint x="560" y="145" />
+						<mxPoint x="560" y="295" />
+					</Array>
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="74" value="sourceLabel"
+			style="sourceLabel;align=right;verticalAlign=top" vertex="1"
+			parent="73">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="75" value="targetLabel"
+			style="targetLabel;align=right;verticalAlign=bottom" vertex="1"
+			parent="73">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="76" label="Crossover" sourceLabel="p12"
+			targetLabel="p12">
+			<mxCell style="verticalAlign=top;horizontal=0" edge="1"
+				parent="1" source="34" target="16">
+				<mxGeometry relative="1" as="geometry">
+					<Array as="points">
+						<mxPoint x="570" y="295" />
+						<mxPoint x="570" y="145" />
+					</Array>
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="77" value="sourceLabel"
+			style="sourceLabel;align=left;verticalAlign=bottom" vertex="1"
+			parent="76">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="78" value="targetLabel"
+			style="targetLabel;align=left;verticalAlign=top" vertex="1"
+			parent="76">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<LINK id="79" label="">
+			<mxCell
+				style="verticalAlign=bottom;horizontal=0;horizontal=0" edge="1"
+				parent="1" source="19" target="37">
+				<mxGeometry relative="1" as="geometry">
+					<Array as="points">
+						<mxPoint x="715" y="145" />
+						<mxPoint x="715" y="295" />
+					</Array>
+					<mxPoint as="offset" />
+				</mxGeometry>
+			</mxCell>
+		</LINK>
+		<mxCell id="80" value="sourceLabel"
+			style="sourceLabel;align=right;verticalAlign=top;align=right;verticalAlign=top"
+			vertex="1" parent="79">
+			<mxGeometry relative="1" width="1" height="1" x="-1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+		<mxCell id="81" value="targetLabel"
+			style="targetLabel;align=right;verticalAlign=bottom;align=right;verticalAlign=bottom"
+			vertex="1" parent="79">
+			<mxGeometry relative="1" width="1" height="1" x="1"
+				as="geometry">
+				<mxPoint as="offset" />
+			</mxGeometry>
+		</mxCell>
+	</root>
+</vsGraphModel>
