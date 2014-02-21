@@ -545,7 +545,7 @@ mxVmlCanvas2D.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
 	else
 	{
 		// Uses fill with aspect to avoid asynchronous update of size
-		node = this.createVmlElement('rect', x, y, w, h);
+		node = this.createRect('rect', x, y, w, h);
 		node.stroked = 'false';
 		
 		// Handles image aspect via fill
