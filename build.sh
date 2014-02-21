@@ -6,10 +6,6 @@
 # See LICENSE file for license details. If you are unable to locate
 # this file please contact info (at) jgraph (dot) com.
 #
-# Arguments:
-#
-# Use notag to avoid tagging the CVS head. Eg: $> build.sh notag
-#
 # This script creates the following distributions:
 #
 # jgraphx.zip: Java source code, BSD license
@@ -205,18 +201,4 @@ cp ChangeLog build/
 cp etc/build/deploy.sh build/
 cp etc/build/jgraphx.jnlp build/
 
-if [ "$1" != "notag" ]; then
-
-	CVSTAG=`cat VERSION | sed "s|\.|_|g"`
-	echo "Tagging CVS head with mxgraph-$CVSTAG"
-	cvs tag mxgraph-$CVSTAG 2>/dev/null
-
-fi
-
 echo "Build Done. Execute build/deploy.sh as root for deployment."
-
-if [ "$1" == "notag" ]; then
-
-	echo "*** WARNING: Skipped tagging of CVS head (notag flag used in shell command) ***"
-
-fi
