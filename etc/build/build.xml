@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
-<project basedir="." default="compile">
+<project basedir="." default="mxclient">
+
 	<taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask" classpath="compiler.jar"/>
-	<target name="compile">
+	
+	<target name="mxclient">
 		<delete file=".tmp.js"/>
 		<java fork="false" classname="Preprocessor" classpath=".">
 			<arg value="../../javascript/src/js/mxClient.js"/>
@@ -16,4 +18,24 @@
 		</jscomp>
 		<delete file=".tmp.js"/>
 	</target>
+	
+	<target name="grapheditor" depends="mxclient">
+		<jscomp compilationLevel="simple" debug="false" output="grapheditor.min.js">
+			<sources dir=".">
+				<file name="mxClient.js"/>
+			</sources>
+
+			<sources dir="${basedir}/../../javascript/examples/grapheditor/www/js">
+				<file name="Editor.js"/>
+				<file name="Graph.js"/>
+				<file name="EditorUi.js"/>
+				<file name="Actions.js"/>
+				<file name="Menus.js"/>
+				<file name="Sidebar.js"/>
+				<file name="Toolbar.js"/>
+				<file name="Dialogs.js"/>
+			</sources>
+		</jscomp>
+	</target>
+
 </project>
