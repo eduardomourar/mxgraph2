@@ -1,3 +1,5 @@
+- Fixes constrainChild in mxGraph.cellsAdded after extending parent [JavaScript]
+
 21-FEB-2014: 2.5.0.1
 
 - Fixes mxVmlCanvas2D.ellipse, mxVmlCanvas2D.image [JavaScript]

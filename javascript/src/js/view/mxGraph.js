@@ -4384,13 +4384,15 @@ mxGraph.prototype.cellsAdded = function(cells, parent, index, source, target, ab
 					{
 						this.autoSizeCell(cells[i], true);
 					}
-	
+
 					// Extends the parent or constrains the child
 					if (this.isExtendParentsOnAdd() && this.isExtendParent(cells[i]))
 					{
 						this.extendParent(cells[i]);
 					}
-					else if (constrain == null || constrain)
+					
+					// Additionally constrains the child after extending the parent
+					if (constrain == null || constrain)
 					{
 						this.constrainChild(cells[i]);
 					}
