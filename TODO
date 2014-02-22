@@ -4,11 +4,10 @@
 
 - Fix panning in FF/Win8, touch detection in FF (defaultScrollbars)
 - Check if selection in text2 when insert table
-- Cleanup App.save/saveFile and file.save/saveAs
 
+- Cleanup App.save/saveFile and file.save/saveAs
 - Fix HTML entities converted in word wrapped plain text labels
 - Reset label location if edge style is changed
-- Add copy/paste style actions
 
 - Fix focus on text in mxPopupMenu
 - No table if selection empty, selectNode not working in quirks for rich text editing
