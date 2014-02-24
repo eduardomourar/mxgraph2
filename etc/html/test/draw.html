@@ -1,30 +1,38 @@
 <html>
 <head>
 	<script type="text/javascript">
-		var DRAW_IFRAME_URL = 'https://www.draw.io/?gapi=0&db=0&embed=1';
-		//var dav= '';
-		// FIXME: Missing header in PUT reesponse with CORS
-		/*
-		Apache Configuration:
+		// TODO: Add include-all-shapes in embed.js?s=* URL
+		var DRAW_IFRAME_URL = 'https://www.draw.io/?embed=1';
+		// See also: https://gist.github.com/alderg/8826608
+		// FIXME: Missing header in PUT response with CORS?
+		var previewGraph = null;
+
+		function mxClientOnLoad(stylesheet)
+		{
+			var div = document.createElement('div');
+			div.style.width = '480px';
+			div.style.height = '360px';
+			div.style.border = '1px solid gray';
+			div.style.position = 'relative';
+			document.body.appendChild(div);
+			previewGraph = new mxGraph(div);
 			
-		DavLockDB /tmp/DavLock
+			previewGraph.resetViewOnRootChange = false;
+			previewGraph.foldingEnabled = false;
+			// NOTE: Tooltips require CSS
+			previewGraph.setTooltips(false);
+			previewGraph.setEnabled(false);
 			
-		<Directory "/Library/WebServer/Documents/Webdav">
-		  Options Indexes
-		  DAV On
-		  AuthType Basic
-		  AuthName "Webdav"
-		  AuthUserFile /etc/apache2/webdav.password
-		  Header set Access-Control-Allow-Origin http://devhost.jgraph.com
-		  Header set Access-Control-Allow-Credentials true
-		  Header set Access-Control-Allow-Methods "POST, GET, PUT, DELETE, OPTIONS"
-		  Header set Cache-Control "no-cache, no-store, must-revalidate"
-		  Require valid-user
-		</Directory>
-		*/
-		var dav = 'http://localhost/Webdav/';
+			// Loads the stylesheet
+			if (stylesheet != null)
+			{
+				var xmlDoc = mxUtils.parseXml(stylesheet);
+				var dec = new mxCodec(xmlDoc);
+				dec.decode(xmlDoc.documentElement, previewGraph.getStylesheet());
+			}
+		}
 		
-		function edit(filename)
+		function edit(url)
 		{
 			var req = new XMLHttpRequest();
 			req.withCredentials = true;
@@ -74,7 +82,7 @@
 								}
 							};
 							
-							req2.open('PUT', dav + filename, true);
+							req2.open('PUT', url, true);
 							req2.send(evt.data);
 						}
 						
@@ -97,13 +105,60 @@
 				alert('error');
 			};
 
-			req.open('GET', dav + filename, true);
+			req.open('GET', url, true);
 			req.send();
-		};
+		}
+
+		function preview(url)
+		{
+			if (previewGraph != null)
+			{
+				var req = new XMLHttpRequest();
+				req.withCredentials = true;
+				
+				req.onreadystatechange = function()
+				{
+					if (req.readyState == 4)
+					{
+						var codec = new mxCodec(req.responseXML);
+						codec.decode(codec.document.documentElement, previewGraph.getModel());
+						previewGraph.fit();
+					}
+				};
+				
+				req.onerror = function()
+				{
+					alert('error');
+				};
+	
+				req.open('GET', url, true);
+				req.send();
+			}
+		}
 	</script>
 </head>
 <body>
-	<input id="filename" type="text" value="test.xml"/>
-	<button onclick="edit(document.getElementById('filename').value);">Edit</button>
+	URL: <input id="url" type="text" size="50" value="http://localhost/Webdav/test.xml"/>
+	<button onclick="edit(document.getElementById('url').value);">Edit</button>
+	<button onclick="preview(document.getElementById('url').value);">Preview</button>
+	<script type="text/javascript" src="https://www.draw.io/embed.js"></script>
+<pre>
+Apache Configuration:
+	
+DavLockDB /tmp/DavLock
+	
+&lt;Directory "/Library/WebServer/Documents/Webdav"&gt;
+  Options Indexes
+  DAV On
+  AuthType Basic
+  AuthName "Webdav"
+  AuthUserFile /etc/apache2/webdav.password
+  Header set Access-Control-Allow-Origin http://devhost.jgraph.com
+  Header set Access-Control-Allow-Credentials true
+  Header set Access-Control-Allow-Methods "POST, GET, PUT, DELETE, OPTIONS"
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+  Require valid-user
+&lt;/Directory&gt;
+</pre>
 </body>
 </html>
