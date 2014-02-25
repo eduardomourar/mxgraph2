@@ -1,5 +1,5 @@
-- Adds charset for SVG URI in mxGraph postProcessCellStyle [JavaScript]
-- Adds HTML5 doctype in mxPrintPreview for CSS1Compat documents
+- Adds charset for SVG URI in mxGraph.postProcessCellStyle [JavaScript]
+- Adds HTML5 doctype in mxPrintPreview for CSS1Compat documents [JavaScript]
 - Adds mxXmlRequest.withCredentials option [JavaScript]
 - Fixes constrainChild in mxGraph.cellsAdded after extending parent [JavaScript]
 
