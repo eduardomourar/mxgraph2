@@ -353,6 +353,11 @@ mxPrintPreview.prototype.open = function(css)
 			}
 			else
 			{
+				if (document.compatMode === 'CSS1Compat')
+				{
+					doc.writeln('<!DOCTYPE html>');
+				}
+				
 				doc.writeln('<html>');
 			}
 			
