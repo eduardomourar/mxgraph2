@@ -3108,17 +3108,7 @@ mxGraph.prototype.postProcessCellStyle = function(style)
 		// Converts short data uris to normal data uris
 		if (image != null && image.substring(0, 11) == 'data:image/')
 		{
-			if (image.substring(0, 19) == 'data:image/svg+xml,')
-			{
-				var comma = image.indexOf(',');
-				
-				if (comma > 0)
-				{
-					image = image.substring(0, comma) + ';utf8,'
-						+ image.substring(comma + 1);
-				}
-			}
-			else
+			if (image.substring(0, 19) != 'data:image/svg+xml,')
 			{
 				var comma = image.indexOf(',');
 				
