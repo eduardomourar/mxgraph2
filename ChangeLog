@@ -1,3 +1,5 @@
+- Fixes handling of data URIs in mxGraph.postProcessCellStyle [JavaScript]
+- Fixes possible type error in mxSvgCanvas2D.createDashPattern, mxVmlCanvas2D.getVmlDashStyle [JavaScript]
 - Adds HTML5 doctype in mxPrintPreview for CSS1Compat documents [JavaScript]
 - Adds mxXmlRequest.withCredentials option [JavaScript]
 - Fixes constrainChild in mxGraph.cellsAdded after extending parent [JavaScript]
