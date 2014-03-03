@@ -3,7 +3,7 @@
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 // Specifies if local storage should be used (eg. on the iPad which has no filesystem)
-var useLocalStorage = typeof(Storage) != 'undefined' && (mxClient.IS_IOS || urlParams['storage'] == 'local');
+var useLocalStorage = isLocalStorage && mxClient.IS_IOS;
 var fileSupport = window.File != null && window.FileReader != null && window.FileList != null;
 
 // Specifies if the touch UI should be used
