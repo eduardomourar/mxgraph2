@@ -3,7 +3,7 @@
  * Copyright (c) 2006-2013, JGraph Ltd
  */
 /**
- * Class: mxPanningHandler
+ * Class: mxPopupMenuHandler
  * 
  * Event handler that creates popupmenus.
  * 
