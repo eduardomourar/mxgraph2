@@ -1,3 +1,4 @@
+- Adds viewer.html in grapheditor example [JavaScript]
 - Fixes possible NPE in mxGraph.isEventSourceIgnored [JavaScript]
 
 27-FEB-2014: 2.5.0.2

@@ -2,7 +2,6 @@
 -- GraphEditor Example --
 -------------------------
 
-- Add reader example
 - Fix panning in FF/Win8, touch detection in FF (defaultScrollbars)
 
 - Cleanup App.save/saveFile and file.save/saveAs
