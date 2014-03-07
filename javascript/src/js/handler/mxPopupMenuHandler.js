@@ -26,7 +26,7 @@ function mxPopupMenuHandler(graph, factoryMethod)
  * Extends mxPopupMenu.
  */
 mxPopupMenuHandler.prototype = new mxPopupMenu();
-mxPopupMenuHandler.prototype.constructor = mxPanningHandler;
+mxPopupMenuHandler.prototype.constructor = mxPopupMenuHandler;
 
 /**
  * Variable: graph
