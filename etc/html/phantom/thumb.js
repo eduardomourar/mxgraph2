@@ -23,7 +23,9 @@ page.open('http://devhost.jgraph.com:8888/thumb.html', function(status)
 			render(xml, 176, 176);
 		}, xml);
     	
-        page.render(output);
-        phantom.exit();
+    	window.setTimeout(function () {
+    		page.render(output);
+    		phantom.exit();
+    	}, 300);
 	}
 });
