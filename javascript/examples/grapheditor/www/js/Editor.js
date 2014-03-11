@@ -6,8 +6,8 @@
 var useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
 var fileSupport = window.File != null && window.FileReader != null && window.FileList != null;
 
-// Specifies if the touch UI should be used
-var touchStyle = mxClient.IS_TOUCH || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
+// Specifies if the touch UI should be used (cannot detect touch in FF so always on)
+var touchStyle = mxClient.IS_TOUCH || mxClient.IS_FF || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
 
 // Counts open editor tabs (must be global for cross-window access)
 var counter = 0;
@@ -98,10 +98,10 @@ mxUtils.extend(Editor, mxEventSource);
 Editor.prototype.gridImage = IMAGE_PATH + '/grid.gif';
 
 /**
- * Scrollbars are enabled on non-touch devices. Disabled on Firefox because it causes problems with touch
- * events and touch feature cannot be detected.
+ * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
+ * cannot be detected in Firefox, see above).
  */
-Editor.prototype.defaultScrollbars = !touchStyle &&	(!mxClient.IS_NS || mxClient.IS_SF || mxClient.IS_GC);
+Editor.prototype.defaultScrollbars = !touchStyle;
 
 /**
  * Specifies the image URL to be used for the transparent background.
