@@ -1,3 +1,4 @@
+- Fixes mxPanningHandler.isForcePanningEvent with ignoreCell [JavaScript]
 - Fixes mxUtils.getDocumentScrollOrigin in standards mode [JavaScript]
 - Adds viewer.html in grapheditor example [JavaScript]
 - Fixes possible NPE in mxGraph.isEventSourceIgnored [JavaScript]
