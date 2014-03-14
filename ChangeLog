@@ -1,3 +1,4 @@
+- Fixes possible NPE in mxGraphView.updateEdgeState [Java,JavaScript,Dotnet,Php]
 - Uses selectall document command in mxCellEditor.startEditing [JavaScript]
 - Fixes mxPanningHandler.isForcePanningEvent with ignoreCell [JavaScript]
 - Fixes mxUtils.getDocumentScrollOrigin in standards mode [JavaScript]
