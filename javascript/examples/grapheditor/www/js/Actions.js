@@ -444,7 +444,11 @@ Actions.prototype.init = function()
 		graph.sizeDidChange();
 		
 		editor.updateGraphComponents();
-		editor.outline.update();
+		
+		if (editor.outline != null)
+		{
+			editor.outline.update();
+		}
 		
 		if (mxUtils.hasScrollbars(graph.container))
 		{

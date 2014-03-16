@@ -3,6 +3,7 @@
 -------------------------
 
 - Fix panning in FF/Win8, touch detection in FF (defaultScrollbars)
+- Add socket shape (lollipop-notation)
 
 - Cleanup App.save/saveFile and file.save/saveAs
 - Fix HTML entities converted in word wrapped plain text labels
