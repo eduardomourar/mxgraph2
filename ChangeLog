@@ -1,3 +1,5 @@
+- Fixes possible NPE in mxOutline.update [JavaScript]
+
 14-MAR-2014: 2.5.0.3
 
 - Adds support for RGB(A) color values in mxHtmlColor [Java]
