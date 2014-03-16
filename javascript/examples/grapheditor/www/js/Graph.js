@@ -49,7 +49,7 @@ Graph = function(container, model, renderHint, stylesheet)
     // Shows hand cursor while panning
 	this.panningHandler.addListener(mxEvent.PAN_START, mxUtils.bind(this, function()
 	{
-		this.container.style.cursor = 'pointer';
+		this.container.style.cursor = 'move';
 	}));
 		
 	this.panningHandler.addListener(mxEvent.PAN_END, mxUtils.bind(this, function()
@@ -58,9 +58,10 @@ Graph = function(container, model, renderHint, stylesheet)
 	}));
     
     // Forces panning for middle mouse button
+	var panningHandlerIsForcePanningEvent = this.panningHandler.isForcePanningEvent;
 	this.panningHandler.isForcePanningEvent = function(me)
 	{
-		return mxEvent.isMiddleMouseButton(me.getEvent());
+		return panningHandlerIsForcePanningEvent.apply(this, arguments) || mxEvent.isMiddleMouseButton(me.getEvent());
 	};
 
 	this.popupMenuHandler.autoExpand = true;
