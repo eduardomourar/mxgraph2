@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxGraphModel;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
@@ -895,11 +896,27 @@ public class mxGraphView extends mxEventSource
 		}
 		else if (state.getLabel() != null)
 		{
-			mxRectangle vertexBounds = (!graph.getModel().isEdge(cell)) ? state
-					: null;
+			// For edges, the width of the geometry is used for wrapping HTML
+			// labels or no wrapping is applied if the width is set to 0
+			mxRectangle vertexBounds = state;
+			
+			if (graph.getModel().isEdge(cell))
+			{
+				mxGeometry geo = graph.getCellGeometry(cell);
+				
+				if (geo != null && geo.getWidth() > 0)
+				{
+					vertexBounds = new mxRectangle(0, 0, geo.getWidth() * this.getScale(), 0);
+				}
+				else
+				{
+					vertexBounds = null;
+				}
+			}
+			
 			state.setLabelBounds(mxUtils.getLabelPaintBounds(state.getLabel(),
 					style, graph.isHtmlLabel(cell), state.getAbsoluteOffset(),
-					vertexBounds, scale));
+					vertexBounds, scale, graph.getModel().isEdge(cell)));
 
 			if (overflow.equals("width"))
 			{

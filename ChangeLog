@@ -1,3 +1,4 @@
+- Fixes HTML edge label wrapping for geometry.width > 0 [Java]
 - Fixes possible NPE in mxOutline.update [JavaScript]
 
 14-MAR-2014: 2.5.0.3
