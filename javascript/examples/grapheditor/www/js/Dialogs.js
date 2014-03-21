@@ -1423,9 +1423,9 @@ function MetadataDialog(ui, cell)
 	buttons.style.marginTop = '10px';
 	buttons.style.textAlign = 'right';
 
+	buttons.appendChild(cancelBtn);
 	buttons.appendChild(addBtn);
 	buttons.appendChild(applyBtn);
-	buttons.appendChild(cancelBtn);
 
 	div.appendChild(buttons);
 	this.container = div;
