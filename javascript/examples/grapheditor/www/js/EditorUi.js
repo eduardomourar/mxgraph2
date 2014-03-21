@@ -573,7 +573,11 @@ EditorUi.prototype.setBackgroundColor = function(value)
 EditorUi.prototype.setPageFormat = function(value)
 {
 	this.editor.graph.pageFormat = value;
-	this.editor.outline.outline.pageFormat = this.editor.graph.pageFormat;
+	
+	if (this.editor.outline != null)
+	{
+		this.editor.outline.outline.pageFormat = this.editor.graph.pageFormat;
+	}
 	
 	if (!this.editor.graph.pageVisible)
 	{
@@ -584,7 +588,11 @@ EditorUi.prototype.setPageFormat = function(value)
 		this.editor.updateGraphComponents();
 		this.editor.graph.view.validateBackground();
 		this.editor.graph.sizeDidChange();
-		this.editor.outline.update();
+		
+		if (this.editor.outline != null)
+		{
+			this.editor.outline.update();
+		}
 	}
 
 	this.fireEvent(new mxEventObject('pageFormatChanged'));
