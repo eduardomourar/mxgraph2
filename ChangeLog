@@ -1,3 +1,4 @@
+- Fixes handling of spaces in mxHtmlColor for rgb(a) [Java]
 - Fixes HTML edge label wrapping for geometry.width > 0 [Java]
 - Fixes possible NPE in mxOutline.update [JavaScript]
 
