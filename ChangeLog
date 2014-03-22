@@ -1,3 +1,4 @@
+- Fixes mxEvent.addMouseWheelListener for IE11 [JavaScript]
 - Handles spaces for rgb(a) values in mxHtmlColor [Java]
 - Fixes HTML edge label wrapping for geometry.width > 0 [Java]
 - Fixes possible NPE in mxOutline.update [JavaScript]
