@@ -864,6 +864,11 @@ function EditFileDialog(editorUi)
 		textarea.addEventListener('drop', handleDrop, false);
 	}
 	
+	div.appendChild(mxUtils.button(mxResources.get('cancel'), function()
+	{
+		editorUi.hideDialog();
+	}));
+	
 	var select = document.createElement('select');
 	select.style.width = '180px';
 
@@ -883,12 +888,7 @@ function EditFileDialog(editorUi)
 	select.appendChild(importOption);
 	
 	div.appendChild(select);
-	
-	div.appendChild(mxUtils.button(mxResources.get('cancel'), function()
-	{
-		editorUi.hideDialog();
-	}));
-	
+
 	div.appendChild(mxUtils.button(mxResources.get('ok'), function()
 	{
 		// Removes all illegal control characters before parsing
