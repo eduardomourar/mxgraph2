@@ -663,17 +663,15 @@ Editor.prototype.init = function()
 				
 				if (this.horizontalPageBreaks[i] != null)
 				{
-					this.horizontalPageBreaks[i].scale = 1;
 					this.horizontalPageBreaks[i].points = pts;
 					this.horizontalPageBreaks[i].redraw();
 				}
 				else
 				{
-					var pageBreak = new mxPolyline(pts, this.pageBreakColor, this.scale);
+					var pageBreak = new mxPolyline(pts, this.pageBreakColor);
 					pageBreak.dialect = this.dialect;
 					pageBreak.isDashed = this.pageBreakDashed;
-					pageBreak.addPipe = false;
-					pageBreak.scale = scale;
+					pageBreak.pointerEvents = false;
 					pageBreak.init(this.view.backgroundPane);
 					pageBreak.redraw();
 					
@@ -703,17 +701,15 @@ Editor.prototype.init = function()
 				
 				if (this.verticalPageBreaks[i] != null)
 				{
-					this.verticalPageBreaks[i].scale = 1; //scale;
 					this.verticalPageBreaks[i].points = pts;
 					this.verticalPageBreaks[i].redraw();
 				}
 				else
 				{
-					var pageBreak = new mxPolyline(pts, this.pageBreakColor, scale);
+					var pageBreak = new mxPolyline(pts, this.pageBreakColor);
 					pageBreak.dialect = this.dialect;
 					pageBreak.isDashed = this.pageBreakDashed;
-					pageBreak.addPipe = false;
-					pageBreak.scale = scale;
+					pageBreak.pointerEvents = false;
 					pageBreak.init(this.view.backgroundPane);
 					pageBreak.redraw();
 		
