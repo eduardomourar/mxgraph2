@@ -27,6 +27,7 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 	div.style.height = h + 'px';
 	div.style.left = left + 'px';
 	div.style.top = top + 'px';
+	div.style.zIndex = 2e9;
 	
 	if (this.bg == null)
 	{
@@ -37,6 +38,7 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 		this.bg.style.top = '0px';
 		this.bg.style.bottom = '0px';
 		this.bg.style.right = '0px';
+		this.bg.style.zIndex = 2e9;
 		
 		mxUtils.setOpacity(this.bg, this.bgOpacity);
 		
@@ -1429,4 +1431,344 @@ function MetadataDialog(ui, cell)
 
 	div.appendChild(buttons);
 	this.container = div;
+};
+
+/**
+ * 
+ */
+function LayersWindow(editorUi, x, y, w, h)
+{
+	var graph = editorUi.editor.graph;
+	
+	var div = document.createElement('div');
+	div.style.background = 'whiteSmoke';
+	div.style.border = '1px solid lightGray';
+	div.style.height = '100%';
+	div.style.marginBottom = '10px';
+	div.style.overflow = 'auto';
+	
+	function refresh()
+	{
+		var layerCount = graph.model.getChildCount(graph.model.root);
+		var selectionLayer = null;
+		div.innerHTML = '';
+
+		function addLayer(index, label, child, defaultParent)
+		{
+			var ldiv = document.createElement('div');
+			
+			ldiv.style.overflow = 'hidden';
+			ldiv.style.position = 'relative';
+			ldiv.style.padding = '4px';
+			ldiv.style.height = '22px';
+			ldiv.style.display = 'block';
+			ldiv.style.cursor = 'pointer';
+			ldiv.style.backgroundColor = '#e5e5e5';
+			ldiv.style.borderWidth = '0px 0px 1px 0px';
+			ldiv.style.borderColor = 'lightGray';
+			ldiv.style.borderStyle = 'solid';
+			ldiv.style.whiteSpace = 'nowrap';
+			
+			var left = document.createElement('div');
+			left.style.display = 'inline-block';
+			left.style.overflow = 'hidden';
+			
+			var inp = document.createElement('input');
+			inp.setAttribute('type', 'checkbox');
+			inp.setAttribute('title', mxResources.get('hideIt', [child.value || mxResources.get('background')]));
+			inp.style.marginRight = '4px';
+			inp.style.marginTop = '4px';
+			left.appendChild(inp);
+			
+			inp.value = graph.model.isVisible(child);
+			
+			if (graph.model.isVisible(child))
+			{
+				inp.setAttribute('checked', 'checked');
+			}
+			else
+			{
+				ldiv.style.color = 'gray';
+			}
+			
+			if (mxClient.IS_SVG)
+			{
+				mxEvent.addListener(inp, 'change', function(evt)
+				{
+					if (graph.isEnabled())
+					{
+						graph.model.setVisible(child, !graph.model.isVisible(child));
+					}
+				});
+				
+				mxEvent.addListener(inp, 'click', function(evt)
+				{
+					mxEvent.consume(evt);
+				});
+			}
+			else
+			{
+				mxEvent.addListener(inp, 'click', function(evt)
+				{
+					if (graph.isEnabled())
+					{
+						graph.model.setVisible(child, !graph.model.isVisible(child));
+					}
+				});
+			}
+
+			mxUtils.write(left, label);
+			ldiv.appendChild(left);
+
+			var right = document.createElement('div');
+			right.style.display = 'inline-block';
+			right.style.textAlign = 'right';
+			right.style.whiteSpace = 'nowrap';
+			
+			if (mxClient.IS_QUIRKS)
+			{
+				ldiv.style.height = '34px';
+			}
+
+			ldiv.className = (mxClient.IS_QUIRKS) ? '' : 'geToolbarContainer';;
+			right.style.position = 'absolute';
+			right.style.right = '6px';
+			right.style.top = '6px';
+
+			// Poor man's change layer order
+			if (index > 1)
+			{
+				var img2 = document.createElement('a');
+				img2.className = 'geButton';
+				img2.style.cssFloat = 'none';
+				img2.innerHTML = '&#9650;';
+				img2.style.width = '14px';
+				img2.style.height = '14px';
+				img2.style.fontSize = '14px';
+				img2.style.margin = '0px';
+				img2.style.marginTop = '-1px';
+				right.appendChild(img2);
+				
+				mxEvent.addListener(img2, 'click', function(evt)
+				{
+					if (graph.isEnabled())
+					{
+						graph.addCell(child, graph.model.root, index - 1);
+					}
+					
+					mxEvent.consume(evt);
+				});
+			}
+
+			if (index > 0 && index < layerCount - 1)
+			{
+				var img1 = document.createElement('a');
+				img1.className = 'geButton';
+				img1.style.cssFloat = 'none';
+				img1.innerHTML = '&#9660;';
+				img1.style.width = '14px';
+				img1.style.height = '14px';
+				img1.style.fontSize = '14px';
+				img1.style.margin = '0px';
+				img1.style.marginTop = '-1px';
+				right.appendChild(img1);
+				
+				mxEvent.addListener(img1, 'click', function(evt)
+				{
+					if (graph.isEnabled())
+					{
+						graph.addCell(child, graph.model.root, index + 1);
+					}
+					
+					mxEvent.consume(evt);
+				});
+			}
+			
+			if (index > 0)
+			{
+				var img = document.createElement('a');
+				img.className = 'geButton';
+				img.style.cssFloat = 'none';
+				img.innerHTML = 'X';
+				img.setAttribute('title', mxResources.get('removeIt', [child.value]));
+				img.style.margin = '0px';
+				img.style.marginTop = '-2px';
+				img.style.width = '14px';
+				img.style.height = '14px';
+				img.style.fontSize = '14px';
+				right.appendChild(img);
+				
+				mxEvent.addListener(img, 'click', function(evt)
+				{
+					if (graph.isEnabled())
+					{
+						editorUi.confirm(mxResources.get('removeIt', [child.value]) + '?', function()
+						{
+							graph.model.beginUpdate();
+							
+							try
+							{
+								graph.removeCells([child]);
+								graph.setDefaultParent(null);
+							}
+							finally
+							{
+								graph.model.endUpdate();
+							}
+						});
+					}
+					
+					mxEvent.consume(evt);
+				});
+			}
+			
+			ldiv.appendChild(right);
+			div.appendChild(ldiv);
+
+			mxEvent.addListener(ldiv, 'dblclick', function(evt)
+			{
+				if (graph.isEnabled())
+				{
+					var dlg = new FilenameDialog(editorUi, child.value || mxResources.get('background'), mxResources.get('rename'), mxUtils.bind(this, function(newValue)
+					{
+						if (newValue != null)
+						{
+							graph.getModel().setValue(child, newValue);
+						}
+					}), mxResources.get('enterName'));
+					editorUi.showDialog(dlg.container, 300, 80, true, true);
+					dlg.init();
+				}
+				
+				mxEvent.consume(evt);
+			});
+
+			if (graph.getDefaultParent() == child)
+			{
+				ldiv.style.background = '#e6eff8';
+				selectionLayer = child;
+			}
+			else
+			{
+				mxEvent.addListener(ldiv, 'click', function(evt)
+				{
+					if (graph.isEnabled())
+					{
+						graph.setDefaultParent(defaultParent);
+						graph.view.setCurrentRoot(null);
+						refresh();
+					}
+				});
+			}
+		};
+		
+		// Cannot be moved or deleted
+		var defaultLayer = graph.model.getChildAt(graph.model.root, 0);
+		addLayer(0, defaultLayer.value || mxResources.get('background'), defaultLayer, null);
+		
+		for (var i = 1; i < layerCount; i++)
+		{
+			(mxUtils.bind(this, function(child)
+			{
+				addLayer(i, child.value, child, child);
+			}))(graph.model.getChildAt(graph.model.root, i));
+		}
+		
+		if (selectionLayer != null)
+		{
+			var ldiv = document.createElement('div');
+			
+			ldiv.className = (mxClient.IS_QUIRKS) ? '' : 'geToolbarContainer';
+			ldiv.style.display = 'block';
+			ldiv.style.position = 'relative';
+			ldiv.style.overflow = 'hidden';
+			ldiv.style.paddingTop = '7px';
+			ldiv.style.display = 'block';
+			ldiv.style.whiteSpace = 'nowrap';
+			
+			if (mxClient.IS_QUIRKS)
+			{
+				ldiv.style.filter = 'none';
+			}
+			
+			var link = document.createElement('a');
+			mxUtils.write(link, mxResources.get('moveSelectionTo', [selectionLayer.value || mxResources.get('background')]));
+			link.style.marginTop = '-2px';
+			link.className = 'geLabel';
+			link.style.cursor = 'pointer';
+			
+			mxEvent.addListener(link, 'click', function(evt)
+			{
+				if (graph.isEnabled())
+				{
+					graph.moveCells(graph.getSelectionCells(), 0, 0, false, selectionLayer);
+				}
+				
+				mxEvent.consume(evt);
+			});
+			
+			ldiv.appendChild(link);
+			div.appendChild(ldiv);
+		}
+		
+		var ldiv = document.createElement('div');
+		
+		ldiv.className = (mxClient.IS_QUIRKS) ? '' : 'geToolbarContainer';
+		ldiv.style.display = 'block';
+		ldiv.style.position = 'relative';
+		ldiv.style.overflow = 'hidden';
+		ldiv.style.paddingTop = '7px';
+		ldiv.style.display = 'block';
+		ldiv.style.whiteSpace = 'nowrap';
+		
+		var link = document.createElement('a');
+		mxUtils.write(link, mxResources.get('addLayer') + '...');
+		link.style.marginTop = '-2px';
+		link.className = 'geLabel';
+		link.style.cursor = 'pointer';
+		
+		mxEvent.addListener(link, 'click', function(evt)
+		{
+			if (graph.isEnabled())
+			{
+				var dlg = new FilenameDialog(editorUi, mxResources.get('layer') + ' ' + layerCount, mxResources.get('create'), mxUtils.bind(this, function(newValue)
+				{
+					if (newValue != null && newValue.length > 0)
+					{
+						graph.model.beginUpdate();
+						
+						try
+						{
+							var cell = graph.addCell(new mxCell(newValue), graph.model.root);
+							graph.setDefaultParent(cell);
+						}
+						finally
+						{
+							graph.model.endUpdate();
+						}
+					}
+				}), mxResources.get('enterName'));
+				editorUi.showDialog(dlg.container, 300, 80, true, true);
+				dlg.init();
+			}
+			
+			mxEvent.consume(evt);
+		});
+		
+		ldiv.appendChild(link);
+		div.appendChild(ldiv);
+	};
+	
+	refresh();
+	graph.model.addListener(mxEvent.CHANGE, function()
+	{
+		refresh();
+	});
+	
+	this.window = new mxWindow(mxResources.get('layers'), div, x, y, w, h, true, true);
+	this.window.destroyOnClose = false;
+	this.window.setMaximizable(false);
+	this.window.setResizable(true);
+	this.window.setClosable(true);
+	this.window.setVisible(true);
 };

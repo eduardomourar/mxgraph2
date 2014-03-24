@@ -694,6 +694,18 @@ Actions.prototype.init = function()
     		}
         }
 	});
+	this.addAction('layers...', function()
+	{
+		if (this.layersWindow == null)
+		{
+			this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 230, 100, 220, 180);
+			this.layersWindow.window.setVisible(true);
+		}
+		else
+		{
+			this.layersWindow.window.setVisible(!this.layersWindow.window.isVisible());
+		}
+	});
 };
 
 /**

@@ -722,7 +722,6 @@ EditorUi.prototype.addSelectionListener = function()
         		graph.isLoop(graph.view.getState(graph.getSelectionCell()))));
         this.menus.get('navigation').setEnabled(graph.foldingEnabled && ((graph.view.currentRoot != null) ||
 				(graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell()))));
-        this.menus.get('layers').setEnabled(graph.view.currentRoot == null);
         this.actions.get('home').setEnabled(graph.view.currentRoot != null);
         this.actions.get('exitGroup').setEnabled(graph.view.currentRoot != null);
         var groupEnabled = graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell());
@@ -1294,6 +1293,24 @@ EditorUi.prototype.executeLayout = function(exec, animate, post)
 				graph.getModel().endUpdate();
 			}
 		}
+	}
+};
+
+/**
+ * Creates the keyboard event handler for the current graph and history.
+ */
+EditorUi.prototype.confirm = function(msg, okFn, cancelFn)
+{
+	if (mxUtils.confirm(msg))
+	{
+		if (okFn != null)
+		{
+			okFn();
+		}
+	}
+	else if (cancelFn != null)
+	{
+		cancelFn();
 	}
 };
 
