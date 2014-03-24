@@ -1501,10 +1501,13 @@ function LayersWindow(editorUi, x, y, w, h)
 					}
 				});
 				
-				mxEvent.addListener(inp, 'click', function(evt)
+				if (!mxClient.IS_FF)
 				{
-					mxEvent.consume(evt);
-				});
+					mxEvent.addListener(inp, 'click', function(evt)
+					{
+						mxEvent.consume(evt);
+					});
+				}
 			}
 			else
 			{
