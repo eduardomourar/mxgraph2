@@ -1539,6 +1539,9 @@ function LayersWindow(editorUi, x, y, w, h)
 			if (index > 1)
 			{
 				var img2 = document.createElement('a');
+				
+				img2.setAttribute('title', mxResources.get('toBack'));
+				
 				img2.className = 'geButton';
 				img2.style.cssFloat = 'none';
 				img2.innerHTML = '&#9650;';
@@ -1563,6 +1566,9 @@ function LayersWindow(editorUi, x, y, w, h)
 			if (index > 0 && index < layerCount - 1)
 			{
 				var img1 = document.createElement('a');
+				
+				img1.setAttribute('title', mxResources.get('toFront'));
+				
 				img1.className = 'geButton';
 				img1.style.cssFloat = 'none';
 				img1.innerHTML = '&#9660;';
@@ -1590,7 +1596,7 @@ function LayersWindow(editorUi, x, y, w, h)
 				img.className = 'geButton';
 				img.style.cssFloat = 'none';
 				img.innerHTML = 'X';
-				img.setAttribute('title', mxResources.get('removeIt', [child.value]));
+				img.setAttribute('title', mxResources.get('delete'));
 				img.style.margin = '0px';
 				img.style.marginTop = '-2px';
 				img.style.width = '14px';
