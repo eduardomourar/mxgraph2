@@ -718,6 +718,7 @@ EditorUi.prototype.addSelectionListener = function()
        	this.actions.get('setAsDefaultEdge').setEnabled(edgeSelected);
         	
         this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
+        this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
         this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected &&
         		graph.isLoop(graph.view.getState(graph.getSelectionCell()))));
         this.menus.get('navigation').setEnabled(graph.foldingEnabled && ((graph.view.currentRoot != null) ||

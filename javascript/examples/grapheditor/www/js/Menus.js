@@ -296,6 +296,11 @@ Menus.prototype.init = function()
 		menu.addItem(mxResources.get('middle'), null, function() { graph.alignCells(mxConstants.ALIGN_MIDDLE); }, parent);
 		menu.addItem(mxResources.get('bottomAlign'), null, function() { graph.alignCells(mxConstants.ALIGN_BOTTOM); }, parent);
 	})));
+	this.put('distribute', new Menu(mxUtils.bind(this, function(menu, parent)
+	{
+		menu.addItem(mxResources.get('horizontal'), null, function() { graph.distributeCells(true); }, parent);
+		menu.addItem(mxResources.get('vertical'), null, function() { graph.distributeCells(false); }, parent);
+	})));
 	this.put('layout', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		menu.addItem(mxResources.get('horizontalFlow'), null, mxUtils.bind(this, function()
@@ -368,7 +373,9 @@ Menus.prototype.init = function()
 		this.addMenuItems(menu, ['toFront', 'toBack', '-'], parent);
 		this.addSubmenu('direction', menu, parent);
 		this.addSubmenu('layout', menu, parent);
+		menu.addSeparator(parent);
 		this.addSubmenu('align', menu, parent);
+		this.addSubmenu('distribute', menu, parent);
 		menu.addSeparator(parent);
 		this.addMenuItems(menu, ['layers'], parent);
 		this.addSubmenu('navigation', menu, parent);

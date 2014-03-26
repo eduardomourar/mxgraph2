@@ -61,6 +61,7 @@ deleteRow=Delete row
 diamond=Diamond
 diamondThin=Diamond (thin)
 direction=Direction
+distribute=Distribute
 drawing=Drawing{1}
 drawingEmpty=Drawing is empty
 drawingTooLarge=Drawing is too large

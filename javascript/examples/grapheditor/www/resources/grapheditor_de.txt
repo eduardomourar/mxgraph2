@@ -61,6 +61,7 @@ deleteRow=Zeile löschen
 diamond=Diamant
 diamondThin=Diamant (Schmal)
 direction=Richtung
+distribute=Verteilen
 drawing=Zeichnung{1}
 drawingEmpty=Zeichnung ist leer
 drawingTooLarge=Zeichnung ist zu gross
