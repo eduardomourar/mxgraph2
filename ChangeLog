@@ -1,3 +1,4 @@
+- Fixes native HTML label check in mxCellRenderer.insertStateAfter [JavaScript]
 - Adds layers dialog in grapheditor example [JavaScript]
 - Fixes mxEvent.addMouseWheelListener for IE11 [JavaScript]
 - Handles spaces for rgb(a) values in mxHtmlColor [Java]
