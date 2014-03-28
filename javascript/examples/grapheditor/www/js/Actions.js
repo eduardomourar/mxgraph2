@@ -68,7 +68,7 @@ Actions.prototype.init = function()
 	}).isEnabled = isGraphEnabled;
 	this.addAction('save', function() { ui.saveFile(false); }, null, null, 'Ctrl+S').isEnabled = isGraphEnabled;
 	this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, 'Ctrl+Shift-S').isEnabled = isGraphEnabled;
-	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 200, true, true); });
+	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 210, true, true); });
 	this.put('editFile', new Action(mxResources.get('edit') + '...', mxUtils.bind(this, function()
 	{
 		this.editorUi.showDialog(new EditFileDialog(ui).container, 620, 420, true, true);
@@ -705,7 +705,7 @@ Actions.prototype.init = function()
 		{
 			this.layersWindow.window.setVisible(!this.layersWindow.window.isVisible());
 		}
-	});
+	}, null, null, 'Ctrl+Shift-L');
 };
 
 /**

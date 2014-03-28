@@ -1445,6 +1445,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
     bindAction(77, true, 'editData'); // Ctrl+M
     bindAction(71, true, 'grid', true); // Ctrl+Shift+G
     bindAction(76, true, 'lockUnlock'); // Ctrl+L
+    bindAction(76, true, 'layers', true); // Ctrl+Shift+L
     bindAction(80, true, 'print'); // Ctrl+P
     bindAction(85, true, 'ungroup'); // Ctrl+U
     bindAction(112, false, 'about'); // F1

@@ -1010,10 +1010,13 @@ function ExportDialog(editorUi)
 	mxUtils.write(svgOption, 'SVG - Scalable Vector Graphics');
 	imageFormatSelect.appendChild(svgOption);
 	
-	var xmlOption = document.createElement('option');
-	xmlOption.setAttribute('value', 'xml');
-	mxUtils.write(xmlOption, 'XML - Diagramly XML Document');
-	imageFormatSelect.appendChild(xmlOption);
+	if (ExportDialog.showXmlOption)
+	{
+		var xmlOption = document.createElement('option');
+		xmlOption.setAttribute('value', 'xml');
+		mxUtils.write(xmlOption, 'XML - Diagramly XML Document');
+		imageFormatSelect.appendChild(xmlOption);
+	}
 
 	td = document.createElement('td');
 	td.appendChild(imageFormatSelect);
@@ -1035,6 +1038,7 @@ function ExportDialog(editorUi)
 
 	var backgroundCheckbox = document.createElement('input');
 	backgroundCheckbox.setAttribute('type', 'checkbox');
+	backgroundCheckbox.checked = graph.background == null || graph.background == mxConstants.NONE;
 
 	td = document.createElement('td');
 	td.appendChild(backgroundInput);
@@ -1205,7 +1209,7 @@ function ExportDialog(editorUi)
 			bg = backgroundInput.value;
 		}
 		
-		return mxUtils.getXml(editorUi.getSvg(bg, scale, b));
+		return editorUi.getSvg(bg, scale, b);
 	};
 	
 	function getXml()
@@ -1215,11 +1219,11 @@ function ExportDialog(editorUi)
 
 	row = document.createElement('tr');
 	td = document.createElement('td');
-	td.colSpan = 2;
-	td.style.paddingTop = '10px';
 	td.setAttribute('align', 'right');
+	td.style.paddingTop = '16px';
+	td.colSpan = 2;
 	
-	var saveBtn = mxUtils.button(mxResources.get('save'), mxUtils.bind(this, function()
+	var saveBtn = mxUtils.button(mxResources.get('export'), mxUtils.bind(this, function()
 	{
 		if (parseInt(widthInput.value) <= 0 && parseInt(heightInput.value) <= 0)
 		{
@@ -1237,13 +1241,13 @@ function ExportDialog(editorUi)
 	    	}
 	        else if (format == 'svg')
 	    	{
-	        	var xml = getSvg();
+	        	var xml = mxUtils.getXml(getSvg());
 				
 				if (xml.length < MAX_REQUEST_SIZE)
 				{
 					xml = encodeURIComponent(xml);
 					new mxXmlRequest(SAVE_URL, 'filename=' + name + '&format=' + format +
-							'&xml=' + xml).simulate(document, '_blank');
+						'&xml=' + xml).simulate(document, '_blank');
 				}
 				else
 				{
@@ -1253,28 +1257,42 @@ function ExportDialog(editorUi)
 	    	}
 	        else
 	        {
-				var b = Math.max(0, parseInt(borderInput.value)) + 1;
-				var scale = parseInt(widthInput.value) / width;
-				var bounds = graph.getGraphBounds();
-				var vs = graph.view.scale;
-				
-	        	// New image export
-				var xmlDoc = mxUtils.createXmlDocument();
-				var root = xmlDoc.createElement('output');
-				xmlDoc.appendChild(root);
-				
-			    // Renders graph. Offset will be multiplied with state's scale when painting state.
-				var xmlCanvas = new mxXmlCanvas2D(root);
-				xmlCanvas.translate(Math.floor((b / scale - bounds.x) / vs), Math.floor((b / scale - bounds.y) / vs));
-				xmlCanvas.scale(scale / vs);
-			    imgExport.drawState(graph.getView().getState(graph.model.root), xmlCanvas);
-			    
-				// Puts request data together
-				var w = Math.ceil(bounds.width * scale / vs + 2 * b);
-				var h = Math.ceil(bounds.height * scale / vs + 2 * b);
-				
-				var xml = mxUtils.getXml(root);
-
+	        	var xml = null;
+	        	var w = 0;
+	        	var h = 0;
+	        	
+	        	if (ExportDialog.imgExportFormat == 'svg')
+	        	{
+	        		var svgRoot = getSvg();
+	        			
+	        		w = parseInt(svgRoot.getAttribute('width'));
+					h = parseInt(svgRoot.getAttribute('height'));
+	        		xml = mxUtils.getXml(svgRoot);
+	        	}
+	        	else
+	        	{
+					var b = Math.max(0, parseInt(borderInput.value)) + 1;
+					var scale = parseInt(widthInput.value) / width;
+					var bounds = graph.getGraphBounds();
+					var vs = graph.view.scale;
+					
+		        	// New image export
+					var xmlDoc = mxUtils.createXmlDocument();
+					var root = xmlDoc.createElement('output');
+					xmlDoc.appendChild(root);
+					
+				    // Renders graph. Offset will be multiplied with state's scale when painting state.
+					var xmlCanvas = new mxXmlCanvas2D(root);
+					xmlCanvas.translate(Math.floor((b / scale - bounds.x) / vs), Math.floor((b / scale - bounds.y) / vs));
+					xmlCanvas.scale(scale / vs);
+				    imgExport.drawState(graph.getView().getState(graph.model.root), xmlCanvas);
+				    
+					// Puts request data together
+					w = Math.ceil(bounds.width * scale / vs + 2 * b);
+					h = Math.ceil(bounds.height * scale / vs + 2 * b);
+					xml = mxUtils.getXml(root);
+	        	}
+	
 				// Requests image if request is valid
 				if (xml != null && xml.length <= MAX_REQUEST_SIZE && w > 0 && h > 0 && w * h < MAX_AREA)
 				{
@@ -1287,8 +1305,8 @@ function ExportDialog(editorUi)
 					}
 					
 					new mxXmlRequest(EXPORT_URL, 'filename=' + name + '&format=' + format +
-	        			bg + '&w=' + w + '&h=' + h + '&xml=' + encodeURIComponent(xml)).
-	        			simulate(document, '_blank');
+	        			bg + '&w=' + w + '&h=' + h + '&' + ExportDialog.imgExportFormat + '=' +
+	        			encodeURIComponent(xml)).simulate(document, '_blank');
 				}
 				else
 				{
@@ -1312,6 +1330,12 @@ function ExportDialog(editorUi)
 	table.appendChild(tbody);
 	this.container = table;
 };
+
+/**
+ * Global switches for the export dialog.
+ */
+ExportDialog.imgExportFormat = 'xml';
+ExportDialog.showXmlOption = true;
 
 /**
  * Constructs a new metadata dialog.
