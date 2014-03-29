@@ -737,6 +737,15 @@ function FilenameDialog(editorUi, filename, buttonText, fn, label)
 		fn(nameInput.value);
 	});
 	
+	mxEvent.addListener(nameInput, 'keyup', function(e)
+	{
+		if (e.keyCode == 13)
+		{
+			editorUi.hideDialog();
+			fn(nameInput.value);
+		}
+	});
+	
 	td.appendChild(genericBtn);
 
 	row.appendChild(td);
@@ -776,7 +785,7 @@ function TextareaDialog(editorUi, title, url, fn, cancelFn, cancelTitle)
 	nameInput.style.height = '100px';
 	
 	this.textarea = nameInput;
-	
+
 	this.init = function()
 	{
 		nameInput.focus();
