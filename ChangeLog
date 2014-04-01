@@ -1,5 +1,6 @@
 01-APR-2014: 2.5.1.0
 
+- Fixes NPE in hierarchical layout when resizeParent=true [JavaScript]
 - Hides edges with no visible terminals in mxGraphView.updateEdgeState [JavaScript]
 - Fixes rounding of bounding box in mxShape and mxText [JavaScript]
 - Fixes native HTML label check in mxCellRenderer.insertStateAfter [JavaScript]
