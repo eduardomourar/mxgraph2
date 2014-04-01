@@ -744,6 +744,10 @@ function FilenameDialog(editorUi, filename, buttonText, fn, label)
 			editorUi.hideDialog();
 			fn(nameInput.value);
 		}
+		else if (e.keyCode == 27)
+		{
+			editorUi.hideDialog();
+		}
 	});
 	
 	td.appendChild(genericBtn);
@@ -1369,6 +1373,8 @@ function MetadataDialog(ui, cell)
 
 	// Creates the dialog contents
 	var form = new mxForm('properties');
+	form.table.style.width = '100%';
+	form.table.style.paddingRight = '10px';
 	var attrs = value.attributes;
 	var names = [];
 	var texts = [];
@@ -1380,6 +1386,7 @@ function MetadataDialog(ui, cell)
 		{
 			names[count] = attrs[i].nodeName;
 			texts[count] = form.addTextarea(names[count], attrs[i].nodeValue, 2);
+			texts[count].style.width = '100%';
 			count++;
 		}
 	}
@@ -1414,6 +1421,7 @@ function MetadataDialog(ui, cell)
 					
 					names.push(name);
 					var text = form.addTextarea(name, '', 2);
+					text.style.width = '100%';
 					texts.push(text);
 					text.focus();
 					
@@ -1456,7 +1464,7 @@ function MetadataDialog(ui, cell)
 	});
 
 	var buttons = document.createElement('div');
-	buttons.style.marginTop = '10px';
+	buttons.style.marginTop = '14px';
 	buttons.style.textAlign = 'right';
 
 	buttons.appendChild(cancelBtn);

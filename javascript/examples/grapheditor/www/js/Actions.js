@@ -138,7 +138,7 @@ Actions.prototype.init = function()
 		
 		if (cell != null)
 		{
-			ui.showDialog(new MetadataDialog(ui, cell).container, 280, 320, true, true);
+			ui.showDialog(new MetadataDialog(ui, cell).container, 300, 320, true, true);
 		}
 	}, null, null, 'Ctrl+M');
 	this.addAction('editLink...', function()
