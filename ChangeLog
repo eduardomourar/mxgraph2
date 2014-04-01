@@ -19,7 +19,6 @@
 - Fixes mxUtils.getDocumentScrollOrigin in standards mode [JavaScript]
 - Adds viewer.html in grapheditor example [JavaScript]
 - Fixes possible NPE in mxGraph.isEventSourceIgnored [JavaScript]
->>>>>>> 429931e1399a2d97374869453c7026f5f3c54715
 
 27-FEB-2014: 2.5.0.2
 
