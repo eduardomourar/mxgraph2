@@ -3,11 +3,11 @@
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 // Specifies if local storage should be used (eg. on the iPad which has no filesystem)
-var useLocalStorage = typeof(Storage) != 'undefined' && (mxClient.IS_IOS || urlParams['storage'] == 'local');
+var useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
 var fileSupport = window.File != null && window.FileReader != null && window.FileList != null;
 
-// Specifies if the touch UI should be used
-var touchStyle = mxClient.IS_TOUCH || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
+// Specifies if the touch UI should be used (cannot detect touch in FF so always on)
+var touchStyle = mxClient.IS_TOUCH || mxClient.IS_FF || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
 
 // Counts open editor tabs (must be global for cross-window access)
 var counter = 0;
@@ -43,9 +43,14 @@ Editor = function()
 	mxEventSource.call(this);
 	this.init();
 	this.initStencilRegistry();
-	this.graph = new Graph();
-	this.outline = new mxOutline(this.graph);
-	this.outline.updateOnPan = true;
+	this.graph = this.createGraph();
+	this.outline = this.createOutline(this.graph);
+	
+	if (this.outline != null)
+	{
+		this.outline.updateOnPan = true;
+	}
+	
 	this.undoManager = this.createUndoManager();
 	this.status = '';
 
@@ -98,10 +103,10 @@ mxUtils.extend(Editor, mxEventSource);
 Editor.prototype.gridImage = IMAGE_PATH + '/grid.gif';
 
 /**
- * Scrollbars are enabled on non-touch devices. Disabled on Firefox because it causes problems with touch
- * events and touch feature cannot be detected.
+ * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
+ * cannot be detected in Firefox, see above).
  */
-Editor.prototype.defaultScrollbars = !touchStyle &&	(!mxClient.IS_NS || mxClient.IS_SF || mxClient.IS_GC);
+Editor.prototype.defaultScrollbars = !touchStyle;
 
 /**
  * Specifies the image URL to be used for the transparent background.
@@ -134,6 +139,22 @@ Editor.prototype.autosave = true;
  * Specifies the app name. Default is document.title.
  */
 Editor.prototype.appName = document.title;
+
+/**
+ * Sets the XML node for the current diagram.
+ */
+Editor.prototype.createGraph = function()
+{
+	return new Graph();
+};
+
+/**
+ * Sets the XML node for the current diagram.
+ */
+Editor.prototype.createOutline = function(graph)
+{
+	return new mxOutline(graph);
+};
 
 /**
  * Sets the XML node for the current diagram.
@@ -194,7 +215,11 @@ Editor.prototype.setGraphXml = function(node)
 		if (pw != null && ph != null)
 		{
 			this.graph.pageFormat = new mxRectangle(0, 0, parseFloat(pw), parseFloat(ph));
-			this.outline.outline.pageFormat = this.graph.pageFormat;
+			
+			if (this.outline != null)
+			{
+				this.outline.outline.pageFormat = this.graph.pageFormat;
+			}
 		}
 
 		// Loads the persistent state settings
@@ -273,7 +298,7 @@ Editor.prototype.updateGraphComponents = function()
 	var graph = this.graph;
 	var outline = this.outline;
 	
-	if (graph.container != null && outline.outline.container != null)
+	if (graph.container != null)
 	{
 		var bg = (graph.background == null || graph.background == 'none') ? '#ffffff' : graph.background;
 		
@@ -300,13 +325,16 @@ Editor.prototype.updateGraphComponents = function()
 			graph.container.style.border = '';
 		}
 		
-		outline.outline.container.style.backgroundColor = graph.container.style.backgroundColor;
-
-		if (outline.outline.pageVisible != graph.pageVisible || outline.outline.pageScale != graph.pageScale)
+		if (outline != null)
 		{
-			outline.outline.pageScale = graph.pageScale;
-			outline.outline.pageVisible = graph.pageVisible;
-			outline.outline.view.validate();
+			outline.outline.container.style.backgroundColor = graph.container.style.backgroundColor;
+	
+			if (outline.outline.pageVisible != graph.pageVisible || outline.outline.pageScale != graph.pageScale)
+			{
+				outline.outline.pageScale = graph.pageScale;
+				outline.outline.pageVisible = graph.pageVisible;
+				outline.outline.view.validate();
+			}
 		}
 		
 		if (!graph.scrollbars)
@@ -635,17 +663,15 @@ Editor.prototype.init = function()
 				
 				if (this.horizontalPageBreaks[i] != null)
 				{
-					this.horizontalPageBreaks[i].scale = 1;
 					this.horizontalPageBreaks[i].points = pts;
 					this.horizontalPageBreaks[i].redraw();
 				}
 				else
 				{
-					var pageBreak = new mxPolyline(pts, this.pageBreakColor, this.scale);
+					var pageBreak = new mxPolyline(pts, this.pageBreakColor);
 					pageBreak.dialect = this.dialect;
 					pageBreak.isDashed = this.pageBreakDashed;
-					pageBreak.addPipe = false;
-					pageBreak.scale = scale;
+					pageBreak.pointerEvents = false;
 					pageBreak.init(this.view.backgroundPane);
 					pageBreak.redraw();
 					
@@ -675,17 +701,15 @@ Editor.prototype.init = function()
 				
 				if (this.verticalPageBreaks[i] != null)
 				{
-					this.verticalPageBreaks[i].scale = 1; //scale;
 					this.verticalPageBreaks[i].points = pts;
 					this.verticalPageBreaks[i].redraw();
 				}
 				else
 				{
-					var pageBreak = new mxPolyline(pts, this.pageBreakColor, scale);
+					var pageBreak = new mxPolyline(pts, this.pageBreakColor);
 					pageBreak.dialect = this.dialect;
 					pageBreak.isDashed = this.pageBreakDashed;
-					pageBreak.addPipe = false;
-					pageBreak.scale = scale;
+					pageBreak.pointerEvents = false;
 					pageBreak.init(this.view.backgroundPane);
 					pageBreak.redraw();
 		

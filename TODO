@@ -3,7 +3,7 @@
 -------------------------
 
 - Fix panning in FF/Win8, touch detection in FF (defaultScrollbars)
-- Check if selection in text2 when insert table
+- Add socket shape (lollipop-notation)
 
 - Cleanup App.save/saveFile and file.save/saveAs
 - Fix HTML entities converted in word wrapped plain text labels
@@ -27,16 +27,13 @@
 
 - Add single handle for multiple selected cells
 - Move mxLayoutManager into validation process
+
 - Research alternative namespace solutions
 - Use spacing styles in overflow=fill
-
-- Report FO repaint bug in Webkit
-- Fix cell selection on drop new cell in draw.io (core?)
 - Add live preview while moving
 - Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)
 
 - Check overflow=fill in quirks vs standards with no HTML labels (inconsistent rendering)
-- Fix print output: checkbox.checked invalid in IE6 in Dialogs.js
 - Fix missing labels for zoom > 4.3 in print preview for IE8 standards
 - Fix loops for fixed connection points
 
@@ -147,15 +144,13 @@
 1.3 - Use mxUtils.getSizeForString in layout base class for overlapping label handling
 1.3 - Add class for painting grid with canvas (see guides.html)
 
-2.0 - Replace mxShape.prototype.SVG_STROKE_TOLERANCE with custom hit detection 
-2.0 - Extended handle for multiselection (rotate etc, see Visio)
+2.0 - Replace mxShape.prototype.SVG_STROKE_TOLERANCE with custom hit detection
+2.0 - Support for incremental layouts (state, trigger & invalidation)
+2.0 - Encode edits at execute time (see mxChildChangeCodec)
 
-3.0 - Support for incremental layouts (state, trigger & invalidation)
-3.0 - Encode edits at execute time (see mxChildChangeCodec)
-
-4.0 - Add mxEventObject.source and explain difference between sender (caller) and source (event source)
-4.0 - Remove language dependent resources, add switch for load-time XHR (eg. properties files)
-4.0 - Add mxImageAlias for changing image paths
+3.0 - Add mxEventObject.source and explain difference between sender (caller) and source (event source)
+3.0 - Remove language dependent resources, add switch for load-time XHR (eg. properties files)
+3.0 - Add mxImageAlias for changing image paths
 
 Major API changes (long-term):
 1.0 - Add dictionary for cell style in cell.style (replace string, add visible, collpsed etc as style)

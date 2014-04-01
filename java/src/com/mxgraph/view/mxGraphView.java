@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxGraphModel;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
@@ -60,7 +61,6 @@ import com.mxgraph.view.mxPerimeter.mxPerimeterFunction;
  */
 public class mxGraphView extends mxEventSource
 {
-
 	/**
 	 *
 	 */
@@ -732,25 +732,36 @@ public class mxGraphView extends mxEventSource
 		mxCellState source = state.getVisibleTerminalState(true);
 		mxCellState target = state.getVisibleTerminalState(false);
 
-		updateFixedTerminalPoints(state, source, target);
-		updatePoints(state, geo.getPoints(), source, target);
-		updateFloatingTerminalPoints(state, source, target);
-
-		if (state.getAbsolutePointCount() < 2
-				|| state.getAbsolutePoint(0) == null
-				|| state.getAbsolutePoint(state.getAbsolutePointCount() - 1) == null)
+		// This will remove edges with no terminals and no terminal points
+		// as such edges are invalid and produce NPEs in the edge styles.
+		// Also removes connected edges that have no visible terminals.
+		if ((graph.getModel().getTerminal(state.getCell(), true) != null && source == null) ||
+			(source == null && geo.getTerminalPoint(true) == null) ||
+			(graph.getModel().getTerminal(state.getCell(), false) != null && target == null) ||
+			(target == null && geo.getTerminalPoint(false) == null))
 		{
-			// This will remove edges with invalid points from the list of states in the view.
-			// Happens if the one of the terminals and the corresponding terminal point is null.
-			if (state.getCell() != getCurrentRoot())
-			{
-				clear(state.getCell(), true, true);
-			}
+			clear(state.cell, true, true);
 		}
 		else
 		{
-			updateEdgeBounds(state);
-			state.setAbsoluteOffset(getPoint(state, geo));
+			updateFixedTerminalPoints(state, source, target);
+			updatePoints(state, geo.getPoints(), source, target);
+			updateFloatingTerminalPoints(state, source, target);
+
+			if (state.getCell() != getCurrentRoot()
+					&& (state.getAbsolutePointCount() < 2
+							|| state.getAbsolutePoint(0) == null || state
+							.getAbsolutePoint(state.getAbsolutePointCount() - 1) == null))
+			{
+				// This will remove edges with invalid points from the list of states in the view.
+				// Happens if the one of the terminals and the corresponding terminal point is null.
+				clear(state.getCell(), true, true);
+			}
+			else
+			{
+				updateEdgeBounds(state);
+				state.setAbsoluteOffset(getPoint(state, geo));
+			}
 		}
 	}
 
@@ -887,11 +898,27 @@ public class mxGraphView extends mxEventSource
 		}
 		else if (state.getLabel() != null)
 		{
-			mxRectangle vertexBounds = (!graph.getModel().isEdge(cell)) ? state
-					: null;
+			// For edges, the width of the geometry is used for wrapping HTML
+			// labels or no wrapping is applied if the width is set to 0
+			mxRectangle vertexBounds = state;
+			
+			if (graph.getModel().isEdge(cell))
+			{
+				mxGeometry geo = graph.getCellGeometry(cell);
+				
+				if (geo != null && geo.getWidth() > 0)
+				{
+					vertexBounds = new mxRectangle(0, 0, geo.getWidth() * this.getScale(), 0);
+				}
+				else
+				{
+					vertexBounds = null;
+				}
+			}
+			
 			state.setLabelBounds(mxUtils.getLabelPaintBounds(state.getLabel(),
 					style, graph.isHtmlLabel(cell), state.getAbsoluteOffset(),
-					vertexBounds, scale));
+					vertexBounds, scale, graph.getModel().isEdge(cell)));
 
 			if (overflow.equals("width"))
 			{

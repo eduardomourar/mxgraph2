@@ -1,8 +1,7 @@
-
 <html>
 <head>
 	<script type="text/javascript">
-		var DRAW_IFRAME_URL = 'https://www.draw.io/?embed=1';
+		var DRAW_IFRAME_URL = 'https://test.draw.io/?dev=1&embed=1';
 		var xml = null;
 
 		function mxClientOnLoad(stylesheet)
@@ -62,6 +61,11 @@
 			iframe.style.position = 'absolute';
 			iframe.style.top = border + 'px';
 			iframe.style.left = border + 'px';
+
+			if (border == 0)
+			{
+				iframe.setAttribute('frameborder', '0');
+			}
 			 
 			var resize = function()
 			{
@@ -69,57 +73,49 @@
 				iframe.setAttribute('height', document.body.clientHeight - 2 * border);
 			};
 			 
-			if (border == 0)
-			{
-				iframe.setAttribute('frameborder', '0');
-			}
-
-			iframe.addEventListener('load', function()
-			{
-				console.log('xml', xml);
-				iframe.contentWindow.postMessage(xml, '*');
-				resize();
-			});
-			 
 			window.addEventListener('resize', resize);
+			resize();
 			 
 			var receive = function(evt)
 			{
-				if (evt.data.length > 0)
+				if (evt.data == 'ready')
 				{
-					console.log('evt.data', evt.data);
-					
-					var req2 = new XMLHttpRequest();
-					req2.withCredentials = true;
-					
-					req2.onreadystatechange = function()
-					{
-						if (req2.readyState == 4)
-						{
-							window.location.reload();
-						}
-					};
-
-					var data = encodeURIComponent(evt.data);
-					var idx = doc.indexOf('<div ' + 'id="mxfile"');
-					var newdoc = doc.substring(0, idx) + '\n<div ' + 'id="mxfile" style="display:none;">' +
-						data + '</d' + 'iv>' +
-						'\n<script type="text/javascript">\nvar doc = document.documentElement.outerHTML;\n</' + 'script>' +
-						'\n<script type="text/javascript" src="https://www.draw.io/embed.js"></' + 'script></body></html>';
-					
-					req2.open('PUT', location.pathname.substring(location.pathname.lastIndexOf("/") + 1), true);
-					req2.send(newdoc);
+					iframe.contentWindow.postMessage(xml, '*');
+					resize();
 				}
-				
-				window.removeEventListener('resize', resize);
-				window.removeEventListener('message', receive);
-				document.body.removeChild(iframe);
+				else
+				{
+					if (evt.data.length > 0)
+					{
+						var req2 = new XMLHttpRequest();
+						req2.withCredentials = true;
+						
+						req2.onreadystatechange = function()
+						{
+							if (req2.readyState == 4)
+							{
+								window.location.reload();
+							}
+						};
+	
+						var data = encodeURIComponent(evt.data);
+						var idx = doc.indexOf('<div ' + 'id="mxfile"');
+						var newdoc = doc.substring(0, idx) + '\n<div ' + 'id="mxfile" style="display:none;">' +
+							data + '</d' + 'iv>' +
+							'\n<script type="text/javascript">\nvar doc = document.documentElement.outerHTML;\n</' + 'script>' +
+							'\n<script type="text/javascript" src="https://www.draw.io/embed.js"></' + 'script></body></html>';
+						
+						req2.open('PUT', location.pathname.substring(location.pathname.lastIndexOf("/") + 1), true);
+						req2.send(newdoc);
+					}
+					
+					window.removeEventListener('resize', resize);
+					window.removeEventListener('message', receive);
+					document.body.removeChild(iframe);
+				}
 			};
 			
 			window.addEventListener('message', receive);
-			 
-			resize();
-			 
 			iframe.setAttribute('src', DRAW_IFRAME_URL);
 			document.body.appendChild(iframe);
 		}
