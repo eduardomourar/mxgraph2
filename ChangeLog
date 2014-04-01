@@ -1,3 +1,4 @@
+- Hides edges with no visible terminals in mxGraphView.updateEdgeState [JavaScript]
 - Fixes rounding of bounding box in mxShape and mxText [JavaScript]
 - Fixes native HTML label check in mxCellRenderer.insertStateAfter [JavaScript]
 - Adds layers dialog in grapheditor example [JavaScript]

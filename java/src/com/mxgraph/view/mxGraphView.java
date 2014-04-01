@@ -61,7 +61,6 @@ import com.mxgraph.view.mxPerimeter.mxPerimeterFunction;
  */
 public class mxGraphView extends mxEventSource
 {
-
 	/**
 	 *
 	 */
@@ -735,8 +734,11 @@ public class mxGraphView extends mxEventSource
 
 		// This will remove edges with no terminals and no terminal points
 		// as such edges are invalid and produce NPEs in the edge styles.
-		if ((source == null && geo.getTerminalPoint(true) == null)
-				|| (target == null && geo.getTerminalPoint(false) == null))
+		// Also removes connected edges that have no visible terminals.
+		if ((graph.getModel().getTerminal(state.getCell(), true) != null && source == null) ||
+			(source == null && geo.getTerminalPoint(true) == null) ||
+			(graph.getModel().getTerminal(state.getCell(), false) != null && target == null) ||
+			(target == null && geo.getTerminalPoint(false) == null))
 		{
 			clear(state.cell, true, true);
 		}
