@@ -1034,8 +1034,8 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt)
 {
 	var graph = this.editorUi.editor.graph;
 	var gs = graph.getGridSize();
-	var dx = graph.container.scrollLeft - graph.view.translate.x;
-	var dy = graph.container.scrollTop - graph.view.translate.y;
+	var dx = graph.container.scrollLeft / graph.view.scale - graph.view.translate.x;
+	var dy = graph.container.scrollTop / graph.view.scale - graph.view.translate.y;
 	ds.drop(graph, evt, null, graph.snap(dx + gs), graph.snap(dy + gs));
 };
 
