@@ -1,3 +1,7 @@
+01-APR-2014: 2.5.0.3
+
+- Fixes NPE in hierarchical layout when resizeParent=true [JavaScript]
+
 27-FEB-2014: 2.5.0.2
 
 - Removes Test label in mxConnectPreview [Java]
