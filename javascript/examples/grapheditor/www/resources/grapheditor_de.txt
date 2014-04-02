@@ -181,6 +181,7 @@ rename=Umbenennen
 renameIt={1} umbenennen
 replace={1} existiert bereits. Soll die Datei überschrieben werden?
 replaceExistingDrawing=Vorhandene Zeichnung ersetzen
+reset=Zurücksetzen
 right=Rechts
 rightAlign=Rechts
 rotate=Rotieren
