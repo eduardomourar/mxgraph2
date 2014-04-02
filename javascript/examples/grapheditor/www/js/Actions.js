@@ -634,7 +634,7 @@ Actions.prototype.init = function()
 	});
 	this.addAction('image...', function()
 	{
-		var title = mxResources.get('enterValue') + ' (' + mxResources.get('url') + ')';
+		var title = mxResources.get('image') + ' (' + mxResources.get('url') + '):';
     	var state = graph.getView().getState(graph.getSelectionCell());
     	var value = '';
     	
