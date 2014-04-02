@@ -1,3 +1,5 @@
+- Uses display CSS style for show/hide mxWindow, mxWindow.isVisible [JavaScript]
+
 01-APR-2014: 2.5.1.0
 
 - Fixes NPE in hierarchical layout when resizeParent=true [JavaScript]
