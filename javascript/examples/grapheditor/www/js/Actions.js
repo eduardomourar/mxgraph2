@@ -693,7 +693,9 @@ Actions.prototype.init = function()
 						var dx = graph.container.scrollLeft / graph.view.scale - graph.view.translate.x;
 						var dy = graph.container.scrollTop / graph.view.scale - graph.view.translate.y;
 	    				
-	    				cells = [graph.insertVertex(graph.getDefaultParent(), null, '', graph.snap(dx + gs), graph.snap(dy + gs), w, h)];
+	    				cells = [graph.insertVertex(graph.getDefaultParent(), null, '',
+	    						graph.snap(dx + gs), graph.snap(dy + gs), w, h,
+	    						'verticalLabelPosition=bottom;verticalAlign=top;')];
 	    				select = cells;
 	    			}
 	    			
