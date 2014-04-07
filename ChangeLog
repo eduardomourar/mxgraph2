@@ -1,3 +1,4 @@
+- Adds rectangle fallback for rendering SVG shapes in graph.container [JavaScript]
 - Uses display CSS style for show/hide mxWindow, mxWindow.isVisible [JavaScript]
 
 01-APR-2014: 2.5.1.0
