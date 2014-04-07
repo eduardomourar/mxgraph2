@@ -353,8 +353,9 @@ mxVertexHandler.prototype.isSizerVisible = function(index)
 /**
  * Function: createSizerShape
  * 
- * Creates the shape used for the sizer handle for the specified bounds and
- * index.
+ * Creates the shape used for the sizer handle for the specified bounds an
+ * index. Only images and rectangles should be returned if support for HTML
+ * labels with not foreign objects is required.
  */
 mxVertexHandler.prototype.createSizerShape = function(bounds, index, fillColor)
 {
