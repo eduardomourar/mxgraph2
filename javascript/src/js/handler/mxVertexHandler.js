@@ -795,7 +795,8 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 				dy = ty;
 				
 				var s = this.graph.view.scale;
-				this.resizeCell(this.state.cell, dx / s, dy / s, this.index, gridEnabled, this.isConstrainedEvent(me));
+				var recurse = this.isRecursiveResize(this.state, me);
+				this.resizeCell(this.state.cell, dx / s, dy / s, this.index, gridEnabled, this.isConstrainedEvent(me), recurse);
 			}
 		}
 		finally
@@ -806,6 +807,16 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 		me.consume();
 		this.reset();
 	}
+};
+
+/**
+ * Function: rotateCell
+ * 
+ * Rotates the given cell to the given rotation.
+ */
+mxVertexHandler.prototype.isRecursiveResize = function(state, me)
+{
+	return this.graph.isRecursiveResize();
 };
 
 /**
@@ -924,7 +935,7 @@ mxVertexHandler.prototype.reset = function()
  * Uses the given vector to change the bounds of the given cell
  * in the graph using <mxGraph.resizeCell>.
  */
-mxVertexHandler.prototype.resizeCell = function(cell, dx, dy, index, gridEnabled, constrained)
+mxVertexHandler.prototype.resizeCell = function(cell, dx, dy, index, gridEnabled, constrained, recurse)
 {
 	var geo = this.graph.model.getGeometry(cell);
 	
@@ -988,7 +999,7 @@ mxVertexHandler.prototype.resizeCell = function(cell, dx, dy, index, gridEnabled
 				}
 			}
 			
-			this.graph.resizeCell(cell, bounds);
+			this.graph.resizeCell(cell, bounds, recurse);
 		}
 	}
 };

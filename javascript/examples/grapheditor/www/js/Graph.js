@@ -854,6 +854,14 @@ Graph.prototype.initTouch = function()
 	}
 
 	/**
+	 * Enables recursive resize for groups.
+	 */
+	mxVertexHandler.prototype.isRecursiveResize = function(state, me)
+	{
+		return !this.graph.isSwimlane(state.cell) && this.graph.model.getChildCount(state.cell) > 0 && !mxEvent.isControlDown(me.getEvent());
+	};
+	
+	/**
 	 * Implements touch style
 	 */
 	if (touchStyle)

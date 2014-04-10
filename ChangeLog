@@ -1,3 +1,4 @@
+- Adds mxVertexHandler.isRecursiveResize hook [JavaScript]
 - Fixes NS_ERROR_FAILURE in mxCellEditor.startEditing for Firefox [JavaScript]
 - Adds rectangle fallback for rendering SVG shapes in graph.container [JavaScript]
 - Uses display CSS style for show/hide mxWindow, mxWindow.isVisible [JavaScript]
