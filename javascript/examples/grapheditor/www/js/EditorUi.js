@@ -1004,6 +1004,8 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 {
 	var start = null;
 	var initial = null;
+	var ignoreClick = true;
+	var last = null;
 
 	// Disables built-in pan and zoom in IE10 and later
 	if (mxClient.IS_POINTER)
@@ -1011,10 +1013,18 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 		elt.style.msTouchAction = 'none';
 	}
 	
-	function getValue()
+	var getValue = mxUtils.bind(this, function()
 	{
-		return parseInt(((horizontal) ? elt.style.left : elt.style.bottom));
-	};
+		var result = parseInt(((horizontal) ? elt.style.left : elt.style.bottom));
+	
+		// Takes into account hidden footer
+		if (!horizontal)
+		{
+			result = result + dx - this.footerHeight;
+		}
+		
+		return result;
+	});
 
 	function moveHandler(evt)
 	{
@@ -1022,6 +1032,13 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 		{
 			var pt = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 			onChange(Math.max(0, initial + ((horizontal) ? (pt.x - start.x) : (start.y - pt.y)) - dx));
+			
+			if (initial != getValue())
+			{
+				ignoreClick = true;
+				last = null;
+			}
+			
 			mxEvent.consume(evt);
 		}
 	};
@@ -1029,15 +1046,27 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 	function dropHandler(evt)
 	{
 		moveHandler(evt);
-		start = null;
 		initial = null;
+		start = null;
+		mxEvent.consume(evt);
 	};
 	
 	mxEvent.addGestureListeners(elt, function(evt)
 	{
 		start = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 		initial = getValue();
+		ignoreClick = false;
 		mxEvent.consume(evt);
+	});
+	
+	mxEvent.addListener(elt, 'click', function(evt)
+	{
+		if (!ignoreClick)
+		{
+			var next = (last != null) ? last - dx : 0;
+			last = getValue();
+			onChange(next);
+		}
 	});
 
 	mxEvent.addGestureListeners(document, null, moveHandler, dropHandler);
