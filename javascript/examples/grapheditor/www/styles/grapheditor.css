@@ -150,10 +150,9 @@
 }
 .geSidebar {
 	border-bottom:1px solid #e5e5e5;
-	padding-top:2px;
-	padding-bottom:6px;
-	padding-left:1px;
-	padding-right:0px;
+	padding:5px;
+	_padding:1px;
+	padding-bottom:12px;
 	overflow:hidden;
 }
 .geSidebarContainer .geTitle {
