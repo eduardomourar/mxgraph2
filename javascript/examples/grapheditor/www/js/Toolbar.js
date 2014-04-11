@@ -90,6 +90,7 @@ Toolbar.prototype.init = function()
 	this.addItems(['-', 'strokeColor', 'image', 'fillColor']);
 	this.addItem('geSprite-gradientcolor', 'gradientColor').setAttribute('title', mxResources.get('gradient'));
 	this.addItems(['shadow']);
+	this.addItems(['-', 'grid', 'guides']);
 	
 	var graph = this.editorUi.editor.graph;
 
