@@ -643,11 +643,15 @@ Actions.prototype.init = function()
     		value = state.style[mxConstants.STYLE_IMAGE] || value;
     	}
     	
+    	var selectionState = graph.cellEditor.saveSelection();
+    	
     	ui.showImageDialog(title, value, function(newValue, w, h)
 		{
     		// Inserts image into HTML text
     		if (graph.cellEditor.isContentEditing())
     		{
+    			graph.cellEditor.restoreSelection(selectionState);
+    			
 				// To find the new image, we create a list of all existing links first
 				var tmp = graph.cellEditor.text2.getElementsByTagName('img');
 				var oldImages = [];
@@ -659,7 +663,7 @@ Actions.prototype.init = function()
 		
 				document.execCommand('insertimage', false, newValue);
 				
-				// Adds target="_blank" for the new link
+				// Sets size of new image
 				var newImages = graph.cellEditor.text2.getElementsByTagName('img');
 				
 				if (newImages.length == oldImages.length + 1)
