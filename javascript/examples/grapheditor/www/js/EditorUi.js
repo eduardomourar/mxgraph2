@@ -1038,8 +1038,6 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 				ignoreClick = true;
 				last = null;
 			}
-			
-			mxEvent.consume(evt);
 		}
 	};
 	
@@ -1048,7 +1046,6 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 		moveHandler(evt);
 		initial = null;
 		start = null;
-		mxEvent.consume(evt);
 	};
 	
 	mxEvent.addGestureListeners(elt, function(evt)
