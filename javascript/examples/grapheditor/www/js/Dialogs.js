@@ -711,6 +711,15 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label)
 	this.init = function()
 	{
 		nameInput.focus();
+		
+		if (mxClient.IS_FF || document.documentMode >= 5)
+		{
+			nameInput.select();
+		}
+		else
+		{
+			document.execCommand('selectAll');
+		}
 	};
 
 	td = document.createElement('td');
