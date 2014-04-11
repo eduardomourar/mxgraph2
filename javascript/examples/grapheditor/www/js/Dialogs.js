@@ -712,7 +712,7 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label)
 	{
 		nameInput.focus();
 		
-		if (mxClient.IS_FF || document.documentMode >= 5)
+		if (mxClient.IS_FF || document.documentMode >= 5 || mxClient.IS_QUIRKS)
 		{
 			nameInput.select();
 		}
