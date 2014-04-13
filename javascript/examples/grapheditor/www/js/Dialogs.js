@@ -1408,7 +1408,7 @@ var MetadataDialog = function(ui, cell)
 	div.appendChild(form.table);
 	
 	// Adds buttons
-	var addBtn = mxUtils.button(mxResources.get('addProperty') + '...', function()
+	var addBtn = mxUtils.button(mxResources.get('addProperty'), function()
 	{
 		var name = mxUtils.prompt(mxResources.get('enterPropertyName'));
 		
@@ -1876,7 +1876,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		ldiv.style.whiteSpace = 'nowrap';
 		
 		var link = document.createElement('a');
-		mxUtils.write(link, mxResources.get('addLayer') + '...');
+		mxUtils.write(link, mxResources.get('addLayer'));
 		link.style.marginTop = '-2px';
 		link.className = 'geLabel';
 		link.style.cursor = 'pointer';
