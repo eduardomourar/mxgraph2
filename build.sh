@@ -201,4 +201,4 @@ cp ChangeLog build/
 cp etc/build/deploy.sh build/
 cp etc/build/jgraphx.jnlp build/
 
-echo "Build Done. Execute build/deploy.sh as root for deployment."
+echo "Build Done. Execute build/deploy.sh for deployment."
