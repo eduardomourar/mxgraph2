@@ -10,6 +10,8 @@ BUILD=`dirname $0`
 WEBROOT=/var/www
 VERSION=`cat $BUILD/version.txt | sed "s/\./_/g"`
 DOTVERSION=`cat $BUILD/version.txt`
+cd $BUILD
+BUILD=`pwd`
 
 echo "Deploying from $BUILD to $WEBROOT..."
 echo
@@ -28,10 +30,10 @@ cd ~
 date=`date +"%H%M%S%d%m%y"`
 mkdir tmp-$date
 cd tmp-$date
-git clone git@github.com:jgraph/mxgraph.git
 cp $BUILD/mxgraph-distro.zip .
 mkdir tmp
 unzip mxgraph-distro.zip -d tmp
+git clone git@github.com:jgraph/mxgraph.git
 cp mxgraph/README.md tmp/mxgraph
 cd tmp/mxgraph/javascript/
 mv src/js/mxClient.js mxClient.min.js
