@@ -337,14 +337,7 @@ Editor.prototype.updateGraphComponents = function()
 			}
 		}
 		
-		if (!graph.scrollbars)
-		{
-			graph.container.style.overflow = 'hidden';
-		}
-		else if (graph.scrollbars)
-		{
-			graph.container.style.overflow = 'auto';
-		}
+		graph.container.style.overflow = (graph.scrollbars) ? 'auto' : 'hidden';
 		
 		// Transparent.gif is a workaround for focus repaint problems in IE
 		var noBackground = (mxClient.IS_IE && document.documentMode >= 9) ? 'url(' + this.transparentImage + ')' : 'none';
@@ -364,6 +357,11 @@ Editor.prototype.updateGraphComponents = function()
 		if (graph.view.backgroundPageShape != null)
 		{
 			graph.view.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : 'none';
+			
+			if (outline.outline.view.backgroundPageShape != null)
+			{
+				outline.outline.view.backgroundPageShape.node.style.backgroundImage = graph.view.backgroundPageShape.node.style.backgroundImage;
+			}
 		}
 	}
 };
