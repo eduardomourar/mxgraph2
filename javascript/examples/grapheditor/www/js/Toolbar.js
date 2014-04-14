@@ -352,7 +352,7 @@ Toolbar.prototype.createTextToolbar = function()
 			
 			var selState = graph.cellEditor.saveSelection();
 			
-	    	var dlg = new TextareaDialog(this.editorUi, mxResources.get('enterValue') + ' (' + mxResources.get('url') + '):', oldValue, mxUtils.bind(this, function(value)
+			this.editorUi.showLinkDialog(oldValue, mxResources.get('apply'), mxUtils.bind(this, function(value)
 			{
 	    		graph.cellEditor.restoreSelection(selState);
 				
@@ -386,13 +386,7 @@ Toolbar.prototype.createTextToolbar = function()
 						}
 					}
 				}
-			}), mxUtils.bind(this, function()
-			{
-				graph.cellEditor.restoreSelection(selState);
 			}));
-	    	
-			this.editorUi.showDialog(dlg.container, 320, 200, true, false);
-			dlg.init();
 		}
 	}));
 	

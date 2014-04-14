@@ -1332,6 +1332,16 @@ EditorUi.prototype.showImageDialog = function(title, value, fn)
 };
 
 /**
+ * Hides the current menu.
+ */
+EditorUi.prototype.showLinkDialog = function(value, btnLabel, fn)
+{
+	var dlg = new LinkDialog(this, value, btnLabel, fn);
+	this.showDialog(dlg.container, 320, 90, true, true);
+	dlg.init();
+};
+
+/**
  * Creates the keyboard event handler for the current graph and history.
  */
 EditorUi.prototype.confirm = function(msg, okFn, cancelFn)

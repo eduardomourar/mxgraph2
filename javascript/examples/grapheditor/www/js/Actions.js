@@ -150,7 +150,7 @@ Actions.prototype.init = function()
 			var cell = graph.getSelectionCell();
 			var value = graph.getLinkForCell(cell) || '';
 			
-			var dlg = new LinkDialog(ui, value, mxResources.get('apply'), function(link)
+			ui.showLinkDialog(value, mxResources.get('apply'), function(link)
 			{
 				link = mxUtils.trim(link);
 				graph.getModel().beginUpdate();
@@ -175,8 +175,6 @@ Actions.prototype.init = function()
 					graph.getModel().endUpdate();
 				}
 			});
-			ui.showDialog(dlg.container, 320, 90, true, true);
-			dlg.init();
 		}
 	}).isEnabled = isGraphEnabled;
 	this.addAction('openLink', function()
