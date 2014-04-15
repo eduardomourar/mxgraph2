@@ -299,8 +299,14 @@ EditorUi.prototype.init = function()
 {
 	// Updates action states
 	this.addUndoListener();
-	this.addSelectionListener();
 	this.addBeforeUnloadListener();
+	
+	this.editor.graph.getSelectionModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
+	{
+		this.updateActionStates();
+	}));
+	
+	this.updateActionStates();
 	
 	// Overrides clipboard to update paste action state
 	var paste = this.actions.get('paste');
@@ -623,100 +629,94 @@ EditorUi.prototype.addUndoListener = function()
 };
 
 /**
- * Updates the states of the given toolbar items based on the selection.
- */
-EditorUi.prototype.addSelectionListener = function()
+* Updates the states of the given toolbar items based on the selection.
+*/
+EditorUi.prototype.updateActionStates = function()
 {
-	var selectionListener = mxUtils.bind(this, function()
-    {
-		var graph = this.editor.graph;
-		var selected = !graph.isSelectionEmpty();
-		var vertexSelected = false;
-		var edgeSelected = false;
+	var graph = this.editor.graph;
+	var selected = !graph.isSelectionEmpty();
+	var vertexSelected = false;
+	var edgeSelected = false;
 
-		var cells = graph.getSelectionCells();
-		
-		if (cells != null)
-		{
-	    	for (var i = 0; i < cells.length; i++)
-	    	{
-	    		var cell = cells[i];
-	    		
-	    		if (graph.getModel().isEdge(cell))
-	    		{
-	    			edgeSelected = true;
-	    		}
-	    		
-	    		if (graph.getModel().isVertex(cell))
-	    		{
-	    			vertexSelected = true;
-	    		}
-	    		
-	    		if (edgeSelected && vertexSelected)
-				{
-					break;
-				}
-	    	}
-		}
-		
-		// Updates action states
-		var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'fontColor',
-		           'delete', 'duplicate', 'style', 'fillColor', 'gradientColor', 'strokeColor',
-		           'backgroundColor', 'borderColor', 'toFront', 'toBack', 'dashed', 'rounded',
-		           'shadow', 'tilt', 'autosize', 'lockUnlock', 'editData'];
-    	
-    	for (var i = 0; i < actions.length; i++)
+	var cells = graph.getSelectionCells();
+	
+	if (cells != null)
+	{
+    	for (var i = 0; i < cells.length; i++)
     	{
-    		this.actions.get(actions[i]).setEnabled(selected);
+    		var cell = cells[i];
+    		
+    		if (graph.getModel().isEdge(cell))
+    		{
+    			edgeSelected = true;
+    		}
+    		
+    		if (graph.getModel().isVertex(cell))
+    		{
+    			vertexSelected = true;
+    		}
+    		
+    		if (edgeSelected && vertexSelected)
+			{
+				break;
+			}
     	}
+	}
+	
+	// Updates action states
+	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'fontColor',
+	           'delete', 'duplicate', 'style', 'fillColor', 'gradientColor', 'strokeColor',
+	           'backgroundColor', 'borderColor', 'toFront', 'toBack', 'dashed', 'rounded',
+	           'shadow', 'tilt', 'autosize', 'lockUnlock', 'editData'];
+	
+	for (var i = 0; i < actions.length; i++)
+	{
+		this.actions.get(actions[i]).setEnabled(selected);
+	}
+	
+	this.actions.get('curved').setEnabled(edgeSelected);
+	this.actions.get('rotation').setEnabled(vertexSelected);
+	this.actions.get('wordWrap').setEnabled(vertexSelected);
+   	this.actions.get('group').setEnabled(graph.getSelectionCount() > 1);
+   	this.actions.get('ungroup').setEnabled(graph.getSelectionCount() == 1 &&
+   			graph.getModel().getChildCount(graph.getSelectionCell()) > 0);
+   	var oneVertexSelected = vertexSelected && graph.getSelectionCount() == 1;
+   	this.actions.get('removeFromGroup').setEnabled(oneVertexSelected &&
+   			graph.getModel().isVertex(graph.getModel().getParent(graph.getSelectionCell())));
+
+	// Updates menu states
+	var menus = ['fontFamily', 'fontSize', 'alignment', 'position', 'text', 'format', 'linewidth',
+	             'spacing', 'gradient'];
+
+	for (var i = 0; i < menus.length; i++)
+	{
+		this.menus.get(menus[i]).setEnabled(selected);
+	}
+	
+	menus = ['line', 'lineend', 'linestart'];
+
+ 	for (var i = 0; i < menus.length; i++)
+ 	{
+ 		this.menus.get(menus[i]).setEnabled(edgeSelected);
+ 	}
+ 	
+   	this.actions.get('setAsDefaultEdge').setEnabled(edgeSelected);
     	
-    	this.actions.get('curved').setEnabled(edgeSelected);
-    	this.actions.get('rotation').setEnabled(vertexSelected);
-    	this.actions.get('wordWrap').setEnabled(vertexSelected);
-       	this.actions.get('group').setEnabled(graph.getSelectionCount() > 1);
-       	this.actions.get('ungroup').setEnabled(graph.getSelectionCount() == 1 &&
-       			graph.getModel().getChildCount(graph.getSelectionCell()) > 0);
-       	var oneVertexSelected = vertexSelected && graph.getSelectionCount() == 1;
-       	this.actions.get('removeFromGroup').setEnabled(oneVertexSelected &&
-       			graph.getModel().isVertex(graph.getModel().getParent(graph.getSelectionCell())));
-
-    	// Updates menu states
-    	var menus = ['fontFamily', 'fontSize', 'alignment', 'position', 'text', 'format', 'linewidth',
-    	             'spacing', 'gradient'];
-
-    	for (var i = 0; i < menus.length; i++)
-    	{
-    		this.menus.get(menus[i]).setEnabled(selected);
-    	}
-    	
-    	menus = ['line', 'lineend', 'linestart'];
-
-     	for (var i = 0; i < menus.length; i++)
-     	{
-     		this.menus.get(menus[i]).setEnabled(edgeSelected);
-     	}
-     	
-       	this.actions.get('setAsDefaultEdge').setEnabled(edgeSelected);
-        	
-        this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
-        this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
-        this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected &&
-        		graph.isLoop(graph.view.getState(graph.getSelectionCell()))));
-        this.menus.get('navigation').setEnabled(graph.foldingEnabled && ((graph.view.currentRoot != null) ||
-				(graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell()))));
-        this.actions.get('home').setEnabled(graph.view.currentRoot != null);
-        this.actions.get('exitGroup').setEnabled(graph.view.currentRoot != null);
-        var groupEnabled = graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell());
-        this.actions.get('enterGroup').setEnabled(groupEnabled);
-        this.actions.get('expand').setEnabled(groupEnabled);
-        this.actions.get('collapse').setEnabled(groupEnabled);
-        this.actions.get('editLink').setEnabled(graph.getSelectionCount() == 1);
-        this.actions.get('openLink').setEnabled(graph.getSelectionCount() == 1 &&
-        		graph.getLinkForCell(graph.getSelectionCell()) != null);
-    });
-	    
-    this.editor.graph.getSelectionModel().addListener(mxEvent.CHANGE, selectionListener);
-    selectionListener();
+    this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
+    this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
+    this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected &&
+    		graph.isLoop(graph.view.getState(graph.getSelectionCell()))));
+    this.menus.get('navigation').setEnabled(graph.foldingEnabled && ((graph.view.currentRoot != null) ||
+			(graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell()))));
+    this.actions.get('home').setEnabled(graph.view.currentRoot != null);
+    this.actions.get('exitGroup').setEnabled(graph.view.currentRoot != null);
+    var groupEnabled = graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell());
+    this.actions.get('enterGroup').setEnabled(groupEnabled);
+    this.actions.get('expand').setEnabled(groupEnabled);
+    this.actions.get('collapse').setEnabled(groupEnabled);
+    this.actions.get('editLink').setEnabled(graph.getSelectionCount() == 1);
+    this.actions.get('openLink').setEnabled(graph.getSelectionCount() == 1 &&
+    		graph.getLinkForCell(graph.getSelectionCell()) != null);
 };
 
 /**

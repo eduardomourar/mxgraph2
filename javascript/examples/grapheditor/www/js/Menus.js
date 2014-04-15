@@ -379,8 +379,15 @@ Menus.prototype.init = function()
 		menu.addSeparator(parent);
 		this.addMenuItems(menu, ['layers'], parent);
 		this.addSubmenu('navigation', menu, parent);
-		this.addMenuItems(menu, ['-', 'group', 'ungroup', 'removeFromGroup', '-', 'lockUnlock', '-', 'autosize'], parent);
+		this.addSubmenu('insert', menu, parent);
+		this.addMenuItems(menu, ['-', 'group', 'ungroup', 'removeFromGroup', '-', 'autosize'], parent);
 	}))).isEnabled = isGraphEnabled;
+	this.put('insert', new Menu(mxUtils.bind(this, function(menu, parent)
+	{
+		this.addMenuItems(menu, ['insertLink'], parent);
+		this.addMenuItem(menu, 'image', parent).firstChild.nextSibling.innerHTML = mxResources.get('insertImage');
+	})));
+
 	this.put('view', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['actualSize'], parent);
@@ -407,8 +414,8 @@ Menus.prototype.init = function()
 	this.put('edit', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['undo', 'redo', '-', 'cut', 'copy', 'paste', 'delete', '-', 'duplicate', '-',
-		                         'editData', 'editLink', 'openLink', '-', 'selectVertices', 'selectEdges', 'selectAll', '-',
-		                         'setAsDefaultEdge']);
+		                         'editData', 'editLink', 'openLink', '-', 'selectVertices', 'selectEdges', 'selectAll',
+		                         '-', 'setAsDefaultEdge', 'lockUnlock']);
 	})));
 	this.put('options', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -725,12 +732,21 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 		{
 			menu.addSeparator();
 			this.addMenuItems(menu, ['editLink']);
-			
+
 			var link = graph.getLinkForCell(graph.getSelectionCell());
 			
 			if (link != null)
 			{
 				this.addMenuItems(menu, ['openLink']);
+			}
+			
+			// Shows edit image action if there is an image in the style
+			var state = graph.view.getState(graph.getSelectionCell());
+			
+			if (state != null && mxUtils.getValue(state.style, mxConstants.STYLE_IMAGE, null) != null)
+			{
+				menu.addSeparator();
+				this.addMenuItem(menu, 'image', null).firstChild.nextSibling.innerHTML = mxResources.get('editImage') + '...';
 			}
 		}
 	}

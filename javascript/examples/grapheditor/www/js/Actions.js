@@ -69,10 +69,10 @@ Actions.prototype.init = function()
 	this.addAction('save', function() { ui.saveFile(false); }, null, null, 'Ctrl+S').isEnabled = isGraphEnabled;
 	this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, 'Ctrl+Shift-S').isEnabled = isGraphEnabled;
 	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 210, true, true); });
-	this.put('editFile', new Action(mxResources.get('edit') + '...', mxUtils.bind(this, function()
+	this.put('editFile', new Action(mxResources.get('edit') + '...', function()
 	{
-		this.editorUi.showDialog(new EditFileDialog(ui).container, 620, 420, true, true);
-	}))).isEnabled = isGraphEnabled;
+		ui.showDialog(new EditFileDialog(ui).container, 620, 420, true, true);
+	})).isEnabled = isGraphEnabled;
 	this.addAction('pageSetup...', function() { ui.showDialog(new PageSetupDialog(ui).container, 320, 120, true, true); });
 	this.addAction('print...', function() { ui.showDialog(new PrintDialog(ui).container, 300, 120, true, true); }, null, 'sprite-print', 'Ctrl+P');
 	this.addAction('preview', function() { mxUtils.show(graph, null, 10, 10); });
@@ -176,7 +176,7 @@ Actions.prototype.init = function()
 				}
 			});
 		}
-	}).isEnabled = isGraphEnabled;
+	});
 	this.addAction('openLink', function()
 	{
 		var link = graph.getLinkForCell(graph.getSelectionCell());
@@ -252,7 +252,7 @@ Actions.prototype.init = function()
 
        	graph.setCellStyles(mxConstants.STYLE_WHITE_SPACE, value);
 	});
-	this.addAction('rotation', mxUtils.bind(this, function()
+	this.addAction('rotation', function()
 	{
 		var value = '0';
     	var state = graph.getView().getState(graph.getSelectionCell());
@@ -262,16 +262,17 @@ Actions.prototype.init = function()
     		value = state.style[mxConstants.STYLE_ROTATION] || value;
     	}
 
-		var dlg = new FilenameDialog(this.editorUi, value, mxResources.get('apply'), mxUtils.bind(this, function(newValue)
+		var dlg = new FilenameDialog(ui, value, mxResources.get('apply'), function(newValue)
 		{
 			if (newValue != null && newValue.length > 0)
 			{
 				graph.setCellStyles(mxConstants.STYLE_ROTATION, newValue);
 			}
-		}), mxResources.get('enterValue') + ' (' + mxResources.get('rotation') + ' 0-360)');
-		this.editorUi.showDialog(dlg.container, 300, 80, true, true);
+		}, mxResources.get('enterValue') + ' (' + mxResources.get('rotation') + ' 0-360)');
+		
+		ui.showDialog(dlg.container, 300, 80, true, true);
 		dlg.init();
-	}));
+	});
 	this.addAction('tilt', function()
 	{
 		var cells = graph.getSelectionCells();
@@ -400,6 +401,7 @@ Actions.prototype.init = function()
 	{
 		graph.setGridEnabled(!graph.isGridEnabled());
 		editor.updateGraphComponents();
+		ui.fireEvent(new mxEventObject('gridEnabledChanged'));
 	}, null, null, 'Ctrl+Shift+G');
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.isGridEnabled(); });
@@ -478,6 +480,8 @@ Actions.prototype.init = function()
 				graph.container.scrollTop += 20;
 			}
 		}
+		
+		ui.fireEvent(new mxEventObject('pageViewChanged'));
 	}));
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.pageVisible; });
@@ -630,6 +634,51 @@ Actions.prototype.init = function()
 			rmWaypointAction.handler.removePoint(rmWaypointAction.handler.state, rmWaypointAction.index);
 		}
 	});
+	this.addAction('insertLink', function()
+	{
+		if (graph.isEnabled())
+		{
+			var dlg = new LinkDialog(ui, '', mxResources.get('insert'), function(link, docs)
+			{
+				link = mxUtils.trim(link);
+				
+				if (link.length > 0)
+				{
+					var title = link.substring(link.lastIndexOf('/') + 1);
+					var icon = null;
+					
+					if (docs != null && docs.length > 0)
+					{
+						icon = docs[0].iconUrl;
+						title = docs[0].name || docs[0].type;
+						title = title.charAt(0).toUpperCase() + title.substring(1);
+						
+						if (title.length > 30)
+						{
+							title = title.substring(0, 30) + '...';
+						}
+					}
+            		
+					var gs = graph.getGridSize();
+					var dx = graph.container.scrollLeft / graph.view.scale - graph.view.translate.x;
+					var dy = graph.container.scrollTop / graph.view.scale - graph.view.translate.y;
+					
+            	    var linkCell = new mxCell(title, new mxGeometry(graph.snap(dx + gs), graph.snap(dy + gs), 100, 40),
+            	    	'fontColor=#0000EE;fontStyle=4;rounded=1;overflow=hidden;' + ((icon != null) ?
+            	    	'shape=label;imageWidth=16;imageHeight=16;spacingLeft=26;align=left;image=' + icon :
+            	    	'spacing=10;'));
+            	    linkCell.vertex = true;
+
+            	    graph.setLinkForCell(linkCell, link);
+            	    graph.cellSizeUpdated(linkCell, true);
+            	    graph.setSelectionCell(graph.addCell(linkCell));
+				}
+			});
+			
+			ui.showDialog(dlg.container, 320, 90, true, true);
+			dlg.init();
+		}
+	}).isEnabled = isGraphEnabled;
 	this.addAction('image...', function()
 	{
 		var title = mxResources.get('image') + ' (' + mxResources.get('url') + '):';
