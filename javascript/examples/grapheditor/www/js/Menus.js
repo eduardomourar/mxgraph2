@@ -216,7 +216,7 @@ Menus.prototype.init = function()
 	{
 		this.addMenuItems(menu, ['fillColor'], parent);
 		this.addSubmenu('gradient', menu, parent);
-		this.addMenuItems(menu, ['-', 'shadow'], parent);
+		this.addMenuItems(menu, ['image', '-', 'shadow'], parent);
 		this.promptChange(menu, mxResources.get('opacity'), '(%)', '100', mxConstants.STYLE_OPACITY, parent, this.get('format').enabled);
 		this.addMenuItems(menu, ['-', 'curved', 'rounded', 'dashed', '-', 'strokeColor'], parent);
 		this.addSubmenu('linewidth', menu, parent);
