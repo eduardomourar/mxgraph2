@@ -1114,7 +1114,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview)
 				target = model.getParent(target);
 			}
 			
-			if (!graph.isValidRoot(target) && graph.getModel().getChildCount(target) == 0)
+			if (graph.view.currentRoot == target || (!graph.isValidRoot(target) &&
+				graph.getModel().getChildCount(target) == 0))
 			{
 				target = null;
 			}
@@ -1135,6 +1136,7 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt)
 	var gs = graph.getGridSize();
 	var dx = graph.container.scrollLeft / graph.view.scale - graph.view.translate.x;
 	var dy = graph.container.scrollTop / graph.view.scale - graph.view.translate.y;
+
 	ds.drop(graph, evt, null, graph.snap(dx + gs), graph.snap(dy + gs));
 };
 
