@@ -997,71 +997,74 @@ mxGraphView.prototype.updateCellState = function(state)
 	state.origin.y = 0;
 	state.length = 0;
 	
-	var model = this.graph.getModel();
-	var pState = this.getState(model.getParent(state.cell)); 
-	
-	if (pState != null && pState.cell != this.currentRoot)
+	if (state.cell != this.currentRoot)
 	{
-		state.origin.x += pState.origin.x;
-		state.origin.y += pState.origin.y;
-	}
-	
-	var offset = this.graph.getChildOffsetForCell(state.cell);
-	
-	if (offset != null)
-	{
-		state.origin.x += offset.x;
-		state.origin.y += offset.y;
-	}
-	
-	var geo = this.graph.getCellGeometry(state.cell);				
-
-	if (geo != null)
-	{
-		if (!model.isEdge(state.cell))
+		var model = this.graph.getModel();
+		var pState = this.getState(model.getParent(state.cell)); 
+		
+		if (pState != null && pState.cell != this.currentRoot)
 		{
-			offset = geo.offset || this.EMPTY_POINT;
-
-			if (geo.relative && pState != null)
+			state.origin.x += pState.origin.x;
+			state.origin.y += pState.origin.y;
+		}
+		
+		var offset = this.graph.getChildOffsetForCell(state.cell);
+		
+		if (offset != null)
+		{
+			state.origin.x += offset.x;
+			state.origin.y += offset.y;
+		}
+		
+		var geo = this.graph.getCellGeometry(state.cell);				
+	
+		if (geo != null)
+		{
+			if (!model.isEdge(state.cell))
 			{
-				if (model.isEdge(pState.cell))
+				offset = geo.offset || this.EMPTY_POINT;
+	
+				if (geo.relative && pState != null)
 				{
-					var origin = this.getPoint(pState, geo);
-					
-					if (origin != null)
+					if (model.isEdge(pState.cell))
 					{
-						state.origin.x += (origin.x / this.scale) - this.translate.x;
-						state.origin.y += (origin.y / this.scale) - this.translate.y;
+						var origin = this.getPoint(pState, geo);
+						
+						if (origin != null)
+						{
+							state.origin.x += (origin.x / this.scale) - this.translate.x;
+							state.origin.y += (origin.y / this.scale) - this.translate.y;
+						}
+					}
+					else
+					{
+						state.origin.x += geo.x * pState.width / this.scale + offset.x;
+						state.origin.y += geo.y * pState.height / this.scale + offset.y;
 					}
 				}
 				else
 				{
-					state.origin.x += geo.x * pState.width / this.scale + offset.x;
-					state.origin.y += geo.y * pState.height / this.scale + offset.y;
+					state.absoluteOffset.x = this.scale * offset.x;
+					state.absoluteOffset.y = this.scale * offset.y;
+					state.origin.x += geo.x;
+					state.origin.y += geo.y;
 				}
 			}
-			else
+	
+			state.x = this.scale * (this.translate.x + state.origin.x);
+			state.y = this.scale * (this.translate.y + state.origin.y);
+			state.width = this.scale * geo.width;
+			state.height = this.scale * geo.height;
+			
+			if (model.isVertex(state.cell))
 			{
-				state.absoluteOffset.x = this.scale * offset.x;
-				state.absoluteOffset.y = this.scale * offset.y;
-				state.origin.x += geo.x;
-				state.origin.y += geo.y;
+				this.updateVertexState(state, geo);
 			}
-		}
-
-		state.x = this.scale * (this.translate.x + state.origin.x);
-		state.y = this.scale * (this.translate.y + state.origin.y);
-		state.width = this.scale * geo.width;
-		state.height = this.scale * geo.height;
-		
-		if (model.isVertex(state.cell))
-		{
-			this.updateVertexState(state, geo);
-		}
-		
-		if (model.isEdge(state.cell))
-		{
-			this.updateEdgeState(state, geo);
+			
+			if (model.isEdge(state.cell))
+			{
+				this.updateEdgeState(state, geo);
+			}
 		}
 	}
 };
