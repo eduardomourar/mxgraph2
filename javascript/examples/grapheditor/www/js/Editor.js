@@ -348,30 +348,15 @@ Editor.prototype.updateGraphComponents = function()
 		if (graph.view.canvas.ownerSVGElement != null)
 		{
 			graph.view.canvas.ownerSVGElement.style.backgroundImage = bgImg;
-			
-			if (outline != null)
-			{
-				outline.outline.view.canvas.ownerSVGElement.style.backgroundImage = bgImg;
-			}
 		}
 		else
 		{
 			graph.view.canvas.style.backgroundImage = bgImg;
-			
-			if (outline != null)
-			{
-				outline.outline.view.canvas.style.backgroundImage = bgImg;
-			}
 		}
 		
 		if (graph.view.backgroundPageShape != null)
 		{
 			graph.view.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : 'none';
-			
-			if (outline != null && outline.outline.view.backgroundPageShape != null)
-			{
-				outline.outline.view.backgroundPageShape.node.style.backgroundImage = graph.view.backgroundPageShape.node.style.backgroundImage;
-			}
 		}
 	}
 };
