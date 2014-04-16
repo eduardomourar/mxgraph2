@@ -930,7 +930,7 @@ Sidebar.prototype.createTitle = function(label)
 /**
  * Creates a thumbnail for the given cells.
  */
-Sidebar.prototype.createThumb = function(cells, width, height, parent, title, showLabel)
+Sidebar.prototype.createThumb = function(cells, width, height, parent, title, showLabel, showTitle)
 {
 	this.graph.labelsVisible = (showLabel == null || showLabel);
 	this.graph.view.scaleAndTranslate(1, 0, 0);
@@ -976,14 +976,14 @@ Sidebar.prototype.createThumb = function(cells, width, height, parent, title, sh
 	parent.appendChild(node);
 	
 	// Adds title for sidebar entries
-	if (this.sidebarTitles && title != null)
+	if (this.sidebarTitles && title != null && showTitle != false)
 	{
 		var border = (mxClient.IS_QUIRKS) ? 2 * this.thumbPadding + 2: 0;
 		parent.style.height = (this.thumbHeight + border + this.sidebarTitleSize + 8) + 'px';
 		
 		var div = document.createElement('div');
 		div.style.fontSize = this.sidebarTitleSize + 'px';
-		div.style.color = '#808080';
+		div.style.color = '#303030';
 		div.style.textAlign = 'center';
 		div.style.whiteSpace = 'nowrap';
 		
@@ -1001,7 +1001,7 @@ Sidebar.prototype.createThumb = function(cells, width, height, parent, title, sh
 /**
  * Creates and returns a new palette item for the given image.
  */
-Sidebar.prototype.createItem = function(cells, title, showLabel)
+Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle)
 {
 	var elt = document.createElement('a');
 	elt.setAttribute('href', 'javascript:void(0);');
@@ -1018,7 +1018,7 @@ Sidebar.prototype.createItem = function(cells, title, showLabel)
 		mxEvent.consume(evt);
 	});
 
-	this.createThumb(cells, this.thumbWidth, this.thumbHeight, elt, title, showLabel);
+	this.createThumb(cells, this.thumbWidth, this.thumbHeight, elt, title, showLabel, showTitle);
 	
 	return elt;
 };
@@ -1178,20 +1178,20 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells)
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createVertexTemplate = function(style, width, height, value, title, showLabel)
+Sidebar.prototype.createVertexTemplate = function(style, width, height, value, title, showLabel, showTitle)
 {
 	var cells = [new mxCell((value != null) ? value : '', new mxGeometry(0, 0, width, height), style)];
 	cells[0].vertex = true;
 	
-	return this.createVertexTemplateFromCells(cells, width, height, title, showLabel);
+	return this.createVertexTemplateFromCells(cells, width, height, title, showLabel, showTitle);
 };
 
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createVertexTemplateFromCells = function(cells, width, height, title, showLabel)
+Sidebar.prototype.createVertexTemplateFromCells = function(cells, width, height, title, showLabel, showTitle)
 {
-	var elt = this.createItem(cells, title, showLabel);
+	var elt = this.createItem(cells, title, showLabel, showTitle);
 	var ds = this.createDragSource(elt, this.createDropHandler(cells, true), this.createDragPreview(width, height));
 	this.addClickHandler(elt, ds, cells);
 
@@ -1305,6 +1305,8 @@ Sidebar.prototype.addPalette = function(id, title, expanded, onInit)
     {
     	this.palettes[id] = [elt, outer];
     }
+    
+    return div;
 };
 
 /**
