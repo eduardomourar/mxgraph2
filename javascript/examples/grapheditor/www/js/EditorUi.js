@@ -125,7 +125,6 @@ EditorUi = function(editor, container)
 		updateToolbar();
 	};
 	
-    
     // Enables scrollbars and sets cursor style for the container
 	graph.container.setAttribute('tabindex', '0');
    	graph.container.style.cursor = 'default';
@@ -186,6 +185,7 @@ EditorUi = function(editor, container)
 	if (this.editor.outline != null)
 	{
 		this.editor.outline.init(this.outlineContainer);
+		this.editor.outline.outline.gridEnabled = false;
 	}
 	
 	// Hides context menu
@@ -1074,9 +1074,15 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
  */
 EditorUi.prototype.showDialog = function(elt, w, h, modal, closable, onClose)
 {
-	this.hideDialog(true);
 	this.editor.graph.tooltipHandler.hideTooltip();
+	
+	if (this.dialogs == null)
+	{
+		this.dialogs = [];
+	}
+	
 	this.dialog = new Dialog(this, elt, w, h, modal, closable, onClose);
+	this.dialogs.push(this.dialog);
 };
 
 /**
@@ -1084,16 +1090,17 @@ EditorUi.prototype.showDialog = function(elt, w, h, modal, closable, onClose)
  */
 EditorUi.prototype.hideDialog = function(cancel)
 {
-	if (this.dialog != null)
+	if (this.dialogs != null && this.dialogs.length > 0)
 	{
-		if (this.editor.graph.container.style.visibility != 'hidden')
+		var dlg = this.dialogs.pop();
+		dlg.close(cancel);
+		
+		this.dialog = (this.dialogs.length > 0) ? this.dialogs[this.dialogs.length - 1] : null;
+
+		if (this.dialog == null && this.editor.graph.container.style.visibility != 'hidden')
 		{
 			this.editor.graph.container.focus();
 		}
-		
-		var dlg = this.dialog;
-		this.dialog = null;
-		dlg.close(cancel);
 	}
 };
 
