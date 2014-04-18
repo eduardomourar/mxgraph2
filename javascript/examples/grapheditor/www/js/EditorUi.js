@@ -386,7 +386,7 @@ EditorUi.prototype.init = function()
  */
 EditorUi.prototype.isSelectionAllowed = function(evt)
 {
-	return false;
+	return mxEvent.getSource(evt).nodeName == 'SELECT';
 };
 
 /**
