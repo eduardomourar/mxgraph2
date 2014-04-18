@@ -405,15 +405,20 @@ Actions.prototype.init = function()
 	}, null, null, 'Ctrl+Shift+G');
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.isGridEnabled(); });
+	action.setEnabled(false);
+	
 	action = this.addAction('guides', function() { graph.graphHandler.guidesEnabled = !graph.graphHandler.guidesEnabled; });
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.graphHandler.guidesEnabled; });
+	action.setEnabled(false);
+	
 	action = this.addAction('tooltips', function()
 	{
 		graph.tooltipHandler.setEnabled(!graph.tooltipHandler.isEnabled());
 	});
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.tooltipHandler.isEnabled(); });
+	
 	action = this.addAction('navigation', function()
 	{
 		graph.foldingEnabled = !graph.foldingEnabled;
