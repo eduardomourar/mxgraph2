@@ -6,8 +6,8 @@
 var useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
 var fileSupport = window.File != null && window.FileReader != null && window.FileList != null;
 
-// Specifies if the touch UI should be used (cannot detect touch in FF so always on)
-var touchStyle = mxClient.IS_TOUCH || mxClient.IS_FF || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
+// Specifies if the touch UI should be used (cannot detect touch in FF so always on for Windows/Linux)
+var touchStyle = mxClient.IS_TOUCH || (mxClient.IS_FF && !mxClient.IS_MAC) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
 
 // Counts open editor tabs (must be global for cross-window access)
 var counter = 0;
