@@ -90,7 +90,27 @@ Toolbar.prototype.init = function()
 	this.addItems(['-', 'strokeColor', 'fillColor']);
 	this.addItem('geSprite-gradientcolor', 'gradientColor').setAttribute('title', mxResources.get('gradient'));
 	this.addItems(['shadow']);
-	this.addItems(['-', 'grid', 'guides']);
+	var items = this.addItems(['-', 'grid', 'guides']);
+	
+	// Syncs grid & guides button states
+	this.editorUi.addListener('gridEnabledChanged', mxUtils.bind(this, function()
+	{
+		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? '#c0c0c0' : 'none';
+	}));
+	
+	this.editorUi.addListener('guidesEnabledChanged', mxUtils.bind(this, function()
+	{
+		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? '#c0c0c0' : 'none';
+	}));
+	
+	this.editorUi.editor.addListener('updateGraphComponents', mxUtils.bind(this, function()
+	{
+		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? '#c0c0c0' : 'none';
+		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? '#c0c0c0' : 'none';
+	}));
+	
+	items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? '#c0c0c0' : 'none';
+	items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? '#c0c0c0' : 'none';
 	
 	var graph = this.editorUi.editor.graph;
 
@@ -859,19 +879,23 @@ Toolbar.prototype.addSeparator = function()
  */
 Toolbar.prototype.addItems = function(keys)
 {
+	var items = [];
+	
 	for (var i = 0; i < keys.length; i++)
 	{
 		var key = keys[i];
 		
 		if (key == '-')
 		{
-			this.addSeparator();
+			items.push(this.addSeparator());
 		}
 		else
 		{
-			this.addItem('geSprite-' + key.toLowerCase(), key);
+			items.push(this.addItem('geSprite-' + key.toLowerCase(), key));
 		}
 	}
+	
+	return items;
 };
 
 /**
