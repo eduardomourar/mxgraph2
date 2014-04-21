@@ -407,7 +407,11 @@ Actions.prototype.init = function()
 	action.setSelectedCallback(function() { return graph.isGridEnabled(); });
 	action.setEnabled(false);
 	
-	action = this.addAction('guides', function() { graph.graphHandler.guidesEnabled = !graph.graphHandler.guidesEnabled; });
+	action = this.addAction('guides', function()
+	{
+		graph.graphHandler.guidesEnabled = !graph.graphHandler.guidesEnabled;
+		ui.fireEvent(new mxEventObject('guidesEnabledChanged'));
+	});
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.graphHandler.guidesEnabled; });
 	action.setEnabled(false);
