@@ -358,6 +358,8 @@ Editor.prototype.updateGraphComponents = function()
 		{
 			graph.view.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : 'none';
 		}
+		
+		this.fireEvent(new mxEventObject('updateGraphComponents'));
 	}
 };
 
