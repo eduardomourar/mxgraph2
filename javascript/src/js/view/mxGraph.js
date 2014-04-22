@@ -2978,7 +2978,6 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 			}
 			else
 			{
-				console.log('here', this.scale, scale);
 				var pageBreak = new mxPolyline(pts, this.pageBreakColor);
 				pageBreak.dialect = this.dialect;
 				pageBreak.pointerEvents = false;
