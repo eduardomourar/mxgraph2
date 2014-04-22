@@ -1,3 +1,4 @@
+- Calls configureShape in mxCellRenderer.initializeShape [JavaScript]
 - Fixes origin of currentRoot in mxGraphView [Java,JavaScript]
 
 13-APR-2014: 2.5.1.1

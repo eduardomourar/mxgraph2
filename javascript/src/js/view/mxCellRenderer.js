@@ -115,7 +115,7 @@ mxCellRenderer.registerShape(mxConstants.SHAPE_LABEL, mxLabel);
  * Function: initializeShape
  * 
  * Initializes the shape in the given state by calling its init method with
- * the correct container.
+ * the correct container after configuring it using <configureShape>.
  * 
  * Parameters:
  * 
@@ -124,14 +124,14 @@ mxCellRenderer.registerShape(mxConstants.SHAPE_LABEL, mxLabel);
 mxCellRenderer.prototype.initializeShape = function(state)
 {
 	state.shape.dialect = state.view.graph.dialect;
+	this.configureShape(state);
 	state.shape.init(state.view.getDrawPane());
 };
 
 /**
  * Function: createShape
  * 
- * Creates the shape for the given cell state. The shape is configured
- * using <configureShape>.
+ * Creates the shape for the given cell state.
  * 
  * Parameters:
  * 
