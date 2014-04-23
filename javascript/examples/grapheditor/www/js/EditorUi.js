@@ -181,7 +181,7 @@ EditorUi = function(editor, container)
 		this.menus.createPopupMenu(menu, cell, evt);
 	});
 	
-	// Initializes the outline
+	// Initializes the outline and disables the grid
 	if (this.editor.outline != null)
 	{
 		this.editor.outline.init(this.outlineContainer);
