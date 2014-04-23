@@ -1,3 +1,4 @@
+- Fixes possible infinite loop via mxGraph.getDropTarget [JavaScript]
 - Calls configureShape in mxCellRenderer.initializeShape [JavaScript]
 - Fixes origin of currentRoot in mxGraphView [Java,JavaScript]
 

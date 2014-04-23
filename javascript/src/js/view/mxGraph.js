@@ -10099,7 +10099,15 @@ mxGraph.prototype.getDropTarget = function(cells, evt, cell)
 		cell = this.model.getParent(cell);
 	}
 	
-	return (!this.model.isLayer(cell) && mxUtils.indexOf(cells, cell) < 0) ? cell : null;
+	// Checks if parent is dropped into child
+	var parent = cell;
+	
+	while (parent != null && mxUtils.indexOf(cells, parent) < 0)
+	{
+		parent = this.model.getParent(parent);
+	}
+
+	return (!this.model.isLayer(cell) && parent == null) ? cell : null;
 };
 
 /**
