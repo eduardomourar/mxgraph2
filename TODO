@@ -25,7 +25,9 @@
 --    mxGraph Core     --
 -------------------------
 
+- Fix resize of rotated groups
 - Add single handle for multiple selected cells
+- Add dynamic translate with hook in graph view
 - Move mxLayoutManager into validation process
 
 - Research alternative namespace solutions
