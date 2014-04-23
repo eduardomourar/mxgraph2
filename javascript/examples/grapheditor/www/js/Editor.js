@@ -186,6 +186,7 @@ Editor.prototype.setGraphXml = function(node)
 
 	if (node.nodeName == 'mxGraphModel')
 	{
+		this.graph.model.clear();
 		this.graph.view.scale = 1;
 		this.graph.gridEnabled = node.getAttribute('grid') != '0';
 		this.graph.graphHandler.guidesEnabled = node.getAttribute('guides') != '0';
@@ -233,8 +234,9 @@ Editor.prototype.setGraphXml = function(node)
 		{
 			this.graph.background = null;
 		}
-		
+
 		dec.decode(node, this.graph.getModel());
+		this.fireEvent(new mxEventObject('resetGraphView'));
 		this.updateGraphComponents();
 	}
 	else if (node.nodeName == 'root')
@@ -246,6 +248,7 @@ Editor.prototype.setGraphXml = function(node)
 		wrapper.appendChild(node);
 		
 		dec.decode(wrapper, this.graph.getModel());
+		this.fireEvent(new mxEventObject('resetGraphView'));
 		this.updateGraphComponents();
 	}
 	else
