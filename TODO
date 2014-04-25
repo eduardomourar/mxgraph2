@@ -2,6 +2,7 @@
 -- GraphEditor Example --
 -------------------------
 
+- https://developers.google.com/appengine/docs/java/tools/ant
 - Fix panning in FF/Win8, touch detection in FF (defaultScrollbars)
 - Add socket shape (lollipop-notation)
 
@@ -28,13 +29,13 @@
 - Fix resize of rotated groups
 - Add single handle for multiple selected cells
 - Add dynamic translate with hook in graph view
-- Move mxLayoutManager into validation process
 
+- Move mxLayoutManager into validation process
 - Research alternative namespace solutions
 - Use spacing styles in overflow=fill
 - Add live preview while moving
-- Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)
 
+- Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)
 - Check overflow=fill in quirks vs standards with no HTML labels (inconsistent rendering)
 - Fix missing labels for zoom > 4.3 in print preview for IE8 standards
 - Fix loops for fixed connection points
