@@ -185,18 +185,18 @@ mxGraphView.prototype.lastNode = null;
 mxGraphView.prototype.lastHtmlNode = null;
 
 /**
- * Variable: lastEdgeNode
+ * Variable: lastForegroundNode
  * 
  * During validation, this contains the last edge's DOM node that was processed.
  */
-mxGraphView.prototype.lastEdgeNode = null;
+mxGraphView.prototype.lastForegroundNode = null;
 
 /**
- * Variable: lastHtmlEdgeNode
+ * Variable: lastForegroundHtmlNode
  * 
 During validation, this contains the last edge HTML DOM node that was processed.
  */
-mxGraphView.prototype.lastHtmlEdgeNode = null;
+mxGraphView.prototype.lastForegroundHtmlNode = null;
 
 /**
  * Function: getGraphBounds
@@ -519,19 +519,6 @@ mxGraphView.prototype.invalidate = function(cell, recurse, includeEdges)
 		
 		delete cell.invalidating;
 	}
-};
-
-/**
- * Function: resetValidationState
- *
- * Resets the current validation state.
- */
-mxGraphView.prototype.resetValidationState = function()
-{
-	this.lastNode = null;
-	this.lastHtmlNode = null;
-	this.lastEdgeNode = null;
-	this.lastHtmlEdgeNode = null;
 };
 
 /**
@@ -1182,6 +1169,19 @@ mxGraphView.prototype.updateVertexLabelOffset = function(state)
 };
 
 /**
+ * Function: resetValidationState
+ *
+ * Resets the current validation state.
+ */
+mxGraphView.prototype.resetValidationState = function()
+{
+	this.lastNode = null;
+	this.lastHtmlNode = null;
+	this.lastForegroundNode = null;
+	this.lastForegroundHtmlNode = null;
+};
+
+/**
  * Function: stateValidated
  * 
  * Invoked when a state has been processed in <validatePoints>. This is used
@@ -1193,15 +1193,16 @@ mxGraphView.prototype.updateVertexLabelOffset = function(state)
  */
 mxGraphView.prototype.stateValidated = function(state)
 {
-	var fg = this.graph.getModel().isEdge(state.cell) && this.graph.keepEdgesInForeground;
-	var htmlNode = (fg) ? this.lastEdgeHtmlNode || this.lastHtmlNode : this.lastHtmlNode;
-	var node = (fg) ? this.lastEdgeNode || this.lastNode : this.lastNode;
+	var fg = (this.graph.getModel().isEdge(state.cell) && this.graph.keepEdgesInForeground) ||
+		(this.graph.getModel().isVertex(state.cell) && this.graph.keepEdgesInBackground);
+	var htmlNode = (fg) ? this.lastForegroundHtmlNode || this.lastHtmlNode : this.lastHtmlNode;
+	var node = (fg) ? this.lastForegroundNode || this.lastNode : this.lastNode;
 	var result = this.graph.cellRenderer.insertStateAfter(state, node, htmlNode);
-	
+
 	if (fg)
 	{
-		this.lastEdgeHtmlNode = result[1];
-		this.lastEdgeNode = result[0];
+		this.lastForegroundHtmlNode = result[1];
+		this.lastForegroundNode = result[0];
 	}
 	else
 	{

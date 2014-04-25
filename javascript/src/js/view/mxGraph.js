@@ -1310,10 +1310,20 @@ mxGraph.prototype.border = 0;
 /**
  * Variable: keepEdgesInForeground
  * 
- * Specifies if edges should appear in the foreground regardless of their
- * order in the model. Default is false.
+ * Specifies if edges should appear in the foreground regardless of their order
+ * in the model. If <keepEdgesInForeground> and <keepEdgesInBackground> are
+ * both true then the normal order is applied. Default is false.
  */
 mxGraph.prototype.keepEdgesInForeground = false;
+
+/**
+ * Variable: keepEdgesInBackground
+ * 
+ * Specifies if edges should appear in the background regardless of their order
+ * in the model. If <keepEdgesInForeground> and <keepEdgesInBackground> are
+ * both true then the normal order is applied. Default is false.
+ */
+mxGraph.prototype.keepEdgesInBackground = false;
 
 /**
  * Variable: allowNegativeCoordinates

@@ -1184,6 +1184,10 @@ mxCellRenderer.prototype.insertStateAfter = function(state, node, htmlNode)
 					temp.parentNode.insertBefore(shapes[i].node, temp.nextSibling);
 				}
 			}
+			else if (temp == null && shapes[i].node.parentNode.firstChild != null)
+			{
+				shapes[i].node.parentNode.insertBefore(shapes[i].node, shapes[i].node.parentNode.firstChild);
+			}
 			
 			if (html)
 			{
