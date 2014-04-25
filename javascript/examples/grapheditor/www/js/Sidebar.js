@@ -526,7 +526,7 @@ Sidebar.prototype.addAdvancedShapes = function(dir, content)
 	content.appendChild(this.createVertexTemplate('swimlane;whiteSpace=wrap', 200, 200, 'Container', 'Container', true));
 	content.appendChild(this.createVertexTemplate('swimlane;swimlaneLine=0;whiteSpace=wrap', 200, 200, 'Container', 'No separator', true));
 	content.appendChild(this.createVertexTemplate('swimlane;swimlaneFillColor=#ffffff;whiteSpace=wrap', 200, 200, 'Container', 'Filled', true));
-	content.appendChild(this.createVertexTemplate('swimlane;swimlaneLine=0;swimlaneFillColor=#ffffff;whiteSpace=wrap', 200, 200, 'Container', 'Both', true));
+	content.appendChild(this.createVertexTemplate('swimlane;swimlaneLine=0;swimlaneFillColor=#ffffff;whiteSpace=wrap', 200, 200, 'Container', 'Filled No Separator', true));
 };
 
 /**
