@@ -1,3 +1,4 @@
+- Adds mxOutline.createGraph hook [JavaScript]
 - Adds mxShape.shapePointerEvents switch [JavaScript]
 - Fixes transformed event handling with mxShape.stencilPointerEvents [JavaScript]
 - Removes mxShape.paintStencilShape [JavaScript]

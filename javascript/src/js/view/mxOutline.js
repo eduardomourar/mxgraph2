@@ -164,15 +164,27 @@ mxOutline.prototype.suspended = false;
 mxOutline.prototype.forceVmlHandles = document.documentMode == 8;
 
 /**
+ * Function: createGraph
+ * 
+ * Creates the <mxGraph> used in the outline.
+ */
+mxOutline.prototype.createGraph = function(container)
+{
+	var graph = new mxGraph(container, this.source.getModel(), this.graphRenderHint, this.source.getStylesheet());
+	graph.foldingEnabled = false;
+	graph.autoScroll = false;
+	
+	return graph;
+};
+
+/**
  * Function: init
  * 
  * Initializes the outline inside the given container.
  */
 mxOutline.prototype.init = function(container)
 {
-	this.outline = new mxGraph(container, this.source.getModel(), this.graphRenderHint, this.source.getStylesheet());
-	this.outline.foldingEnabled = false;
-	this.outline.autoScroll = false;
+	this.outline = this.createGraph(container);
 	
 	// Do not repaint when suspended
 	var outlineGraphModelChanged = this.outline.graphModelChanged;
