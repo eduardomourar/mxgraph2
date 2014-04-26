@@ -984,6 +984,8 @@ Editor.prototype.initStencilRegistry = function()
 				}
 				else
 				{
+					// Replaces '_-_' with '_'
+					basename = basename.replace('_-_', '_');
 					mxStencilRegistry.loadStencilSet(STENCIL_PATH + '/' + basename + '.xml', null);
 				}
 				
