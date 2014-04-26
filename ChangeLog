@@ -1,3 +1,7 @@
+- Adds mxShape.shapePointerEvents switch [JavaScript]
+- Fixes transformed event handling with mxShape.stencilPointerEvents [JavaScript]
+- Removes mxShape.paintStencilShape [JavaScript]
+- Changes mxShape.addTransparentBackgroundRectangle to createTransparentSvgRectangle [JavaScript]
 - Adds mxGraph.keepEdgesInBackground switch [JavaScript]
 - Fixes possible infinite loop via mxGraph.getDropTarget [JavaScript]
 - Calls configureShape in mxCellRenderer.initializeShape [JavaScript]
