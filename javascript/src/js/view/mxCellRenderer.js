@@ -1184,9 +1184,28 @@ mxCellRenderer.prototype.insertStateAfter = function(state, node, htmlNode)
 					temp.parentNode.insertBefore(shapes[i].node, temp.nextSibling);
 				}
 			}
-			else if (temp == null && shapes[i].node.parentNode.firstChild != null)
+			else if (temp == null)
 			{
-				shapes[i].node.parentNode.insertBefore(shapes[i].node, shapes[i].node.parentNode.firstChild);
+				// Special case: First HTML node should be first sibling after canvas container
+				if (shapes[i].node.parentNode == state.view.graph.container)
+				{
+					var canvas = state.view.canvas;
+					
+					while (canvas.parentNode != null && canvas.parentNode != state.view.graph.container)
+					{
+						canvas = canvas.parentNode;
+					}
+					
+					if (canvas.nextSibling != null && canvas.nextSibling != shapes[i].node)
+					{
+						shapes[i].node.parentNode.insertBefore(shapes[i].node, canvas.nextSibling);
+					}
+				}
+				else if (shapes[i].node.parentNode.firstChild != null && shapes[i].node.parentNode.firstChild != shapes[i].node)
+				{
+					// Inserts the node as the first child of the parent to implement the order
+					shapes[i].node.parentNode.insertBefore(shapes[i].node, shapes[i].node.parentNode.firstChild);
+				}
 			}
 			
 			if (html)
