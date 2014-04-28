@@ -765,14 +765,16 @@ mxShape.prototype.paint = function(c)
 	if ((this.stencil == null && this.points == null && this.shapePointerEvents) ||
 		(this.stencil != null && this.stencilPointerEvents))
 	{
+		var bb = this.createBoundingBox();
+		
 		if (this.dialect == mxConstants.DIALECT_SVG)
 		{
-			bg = this.createTransparentSvgRectangle(x, y, w, h);
+			bg = this.createTransparentSvgRectangle(bb.x, bb.y, bb.width, bb.height);
 			this.node.appendChild(bg);
 		}
 		else
 		{
-			var rect = c.createRect('rect', x, y, w, h);
+			var rect = c.createRect('rect', bb.x / s, bb.y / s, bb.width / s, bb.height / s);
 			rect.appendChild(c.createTransparentFill());
 			rect.stroked = 'false';
 			c.root.appendChild(rect);
@@ -812,7 +814,7 @@ mxShape.prototype.paint = function(c)
 	
 	if (bg != null && c.state != null && c.state.transform != null)
 	{
-		bg.setAttribute('transform', c.state.transform || '');
+		bg.setAttribute('transform', c.state.transform);
 	}
 };
 
