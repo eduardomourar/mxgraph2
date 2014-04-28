@@ -48,6 +48,7 @@ td.mxWindowPane {
 }
 div.mxWindowPane {
 	overflow: hidden;
+	position: absolute;
 }
 td.mxWindowPane td {
   	font-family: Arial;

@@ -1,3 +1,4 @@
+- Sets position:absolute for mxWindow.div in common.css [JavaScript]
 - Uses shadow filter for mxWindow only in quirks mode [JavaScript]
 - Adds mxOutline.createGraph hook [JavaScript]
 - Adds mxShape.shapePointerEvents switch [JavaScript]
