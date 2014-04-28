@@ -9,15 +9,14 @@
 - Cleanup App.save/saveFile and file.save/saveAs
 - Fix HTML entities converted in word wrapped plain text labels
 - Reset label location if edge style is changed
-
 - Fix focus on text in mxPopupMenu
+
 - No table if selection empty, selectNode not working in quirks for rich text editing
 - Add find dialog, find again function
-
 - Remove dependency on urlParams, global vars
 - Build WAR, grapheditor.min.js for grapheditor in build step
-- Add gradient in page background
 
+- Add gradient in page background
 - Use perimeter.html example to avoid labels
 - Fix wrapping for toolbar, menubar in quirks
 - Make UI more generic (add borderlayout, splitlayout)
@@ -29,6 +28,7 @@
 - Fix resize of rotated groups
 - Add single handle for multiple selected cells
 - Add dynamic translate with hook in graph view
+- Appemd key=value in cell styles for changes entries
 
 - Move mxLayoutManager into validation process
 - Research alternative namespace solutions
