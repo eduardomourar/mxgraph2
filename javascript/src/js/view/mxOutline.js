@@ -412,6 +412,16 @@ mxOutline.prototype.getOutlineOffset = function(scale)
 };
 
 /**
+ * Function: getOutlineOffset
+ * 
+ * Returns the offset for drawing the outline graph.
+ */
+mxOutline.prototype.getSourceGraphBounds = function()
+{
+	return this.source.getGraphBounds();
+};
+
+/**
  * Function: update
  * 
  * Updates the outline.
@@ -421,7 +431,7 @@ mxOutline.prototype.update = function(revalidate)
 	if (this.source != null && this.outline != null)
 	{
 		var sourceScale = this.source.view.scale;
-		var scaledGraphBounds = this.source.getGraphBounds();
+		var scaledGraphBounds = this.getSourceGraphBounds();
 		var unscaledGraphBounds = new mxRectangle(scaledGraphBounds.x / sourceScale + this.source.panDx,
 				scaledGraphBounds.y / sourceScale + this.source.panDy, scaledGraphBounds.width / sourceScale,
 				scaledGraphBounds.height / sourceScale);

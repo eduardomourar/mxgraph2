@@ -1,7 +1,7 @@
 - Adds mxClient.IS_WIN [JavaScript]
 - Sets position:absolute for mxWindow.div in common.css [JavaScript]
 - Uses shadow filter for mxWindow only in quirks mode [JavaScript]
-- Adds mxOutline.createGraph hook [JavaScript]
+- Adds mxOutline.createGraph, getSourceGraphBounds hooks [JavaScript]
 - Adds mxShape.shapePointerEvents switch [JavaScript]
 - Fixes transformed event handling with mxShape.stencilPointerEvents [JavaScript]
 - Removes mxShape.paintStencilShape [JavaScript]
