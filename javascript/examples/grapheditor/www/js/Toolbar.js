@@ -91,26 +91,27 @@ Toolbar.prototype.init = function()
 	this.addItem('geSprite-gradientcolor', 'gradientColor').setAttribute('title', mxResources.get('gradient'));
 	this.addItems(['shadow']);
 	var items = this.addItems(['-', 'grid', 'guides']);
+	var scolor = '#d0d0d0';
 	
 	// Syncs grid & guides button states
 	this.editorUi.addListener('gridEnabledChanged', mxUtils.bind(this, function()
 	{
-		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? '#c0c0c0' : 'none';
+		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? scolor : 'none';
 	}));
 	
 	this.editorUi.addListener('guidesEnabledChanged', mxUtils.bind(this, function()
 	{
-		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? '#c0c0c0' : 'none';
+		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? scolor : 'none';
 	}));
 	
 	this.editorUi.editor.addListener('updateGraphComponents', mxUtils.bind(this, function()
 	{
-		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? '#c0c0c0' : 'none';
-		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? '#c0c0c0' : 'none';
+		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? scolor : 'none';
+		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? scolor : 'none';
 	}));
 	
-	items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? '#c0c0c0' : 'none';
-	items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? '#c0c0c0' : 'none';
+	items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? scolor : 'none';
+	items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? scolor : 'none';
 	
 	var graph = this.editorUi.editor.graph;
 
