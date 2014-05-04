@@ -7043,6 +7043,7 @@ mxGraph.prototype.zoom = function(factor, center)
 			this.view.setScale(scale);
 		}
 	}
+	else
 	{
 		var hasScrollbars = mxUtils.hasScrollbars(this.container);
 		
@@ -7070,6 +7071,12 @@ mxGraph.prototype.zoom = function(factor, center)
 		}
 		else
 		{
+			// Allows for changes of translate and scrollbars during setscale
+			var tx = this.view.translate.x;
+			var ty = this.view.translate.y;
+			var sl = this.container.scrollLeft;
+			var st = this.container.scrollTop;
+			
 			this.view.setScale(scale);
 			
 			if (hasScrollbars)
@@ -7083,8 +7090,8 @@ mxGraph.prototype.zoom = function(factor, center)
 					dy = this.container.offsetHeight * (factor - 1) / 2;
 				}
 				
-				this.container.scrollLeft = Math.round(this.container.scrollLeft * factor + dx);
-				this.container.scrollTop = Math.round(this.container.scrollTop * factor + dy);
+				this.container.scrollLeft = (this.view.translate.x - tx) * this.view.scale + Math.round(sl * factor + dx);
+				this.container.scrollTop = (this.view.translate.y - ty) * this.view.scale + Math.round(st * factor + dy);
 			}
 		}
 	}
@@ -7245,17 +7252,16 @@ mxGraph.prototype.fit = function(border, keepOrigin)
 			else
 			{
 				this.view.setScale(s2);
+				var b2 = this.getGraphBounds();
 				
-				if (bounds.x != null)
+				if (b2.x != null)
 				{
-					this.container.scrollLeft = Math.round(bounds.x / s) * s2 - border -
-						Math.max(0, (this.container.clientWidth - w2 * s2) / 2);
+					this.container.scrollLeft = b2.x;
 				}
 				
-				if (bounds.y != null)
+				if (b2.y != null)
 				{
-					this.container.scrollTop = Math.round(bounds.y / s) * s2 - border -
-						Math.max(0, (this.container.clientHeight - h2 * s2) / 2);
+					this.container.scrollTop = b2.y;
 				}
 			}
 		}
