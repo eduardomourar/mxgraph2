@@ -1,3 +1,4 @@
+- Fixes mxEvent.isTouchEvent, isMouseEvent in Firefox [JavaScript]
 - Adds mxCellEditor.isSelectText function [JavaScript]
 - Adds mxClient.IS_WIN [JavaScript]
 - Sets position:absolute for mxWindow.div in common.css [JavaScript]
