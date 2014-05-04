@@ -168,11 +168,18 @@ var mxClient =
   	IS_VML: navigator.appName.toUpperCase() == 'MICROSOFT INTERNET EXPLORER',
 
 	/**
+	 * Variable: IS_WIN
+	 *
+	 * True if the client is a Windows.
+	 */
+  	IS_WIN: navigator.appVersion.indexOf('Win') > 0,
+
+	/**
 	 * Variable: IS_MAC
 	 *
 	 * True if the client is a Mac.
 	 */
-  	IS_MAC: navigator.userAgent.toUpperCase().indexOf('MACINTOSH') > 0,
+  	IS_MAC: navigator.appVersion.indexOf('Mac') > 0,
 
 	/**
 	 * Variable: IS_TOUCH

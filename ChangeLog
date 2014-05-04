@@ -1,3 +1,4 @@
+- Adds mxClient.IS_WIN [JavaScript]
 - Sets position:absolute for mxWindow.div in common.css [JavaScript]
 - Uses shadow filter for mxWindow only in quirks mode [JavaScript]
 - Adds mxOutline.createGraph hook [JavaScript]
