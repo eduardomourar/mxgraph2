@@ -25,7 +25,9 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix resize of rotated groups
+- Fix Java/.NET API missing in distro (install doxygen, fix git push)
+
+- Fix resize of rotated groups with layouts
 - Add single handle for multiple selected cells
 - Add dynamic translate with hook in graph view
 - Appemd key=value in cell styles for changes entries
