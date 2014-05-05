@@ -181,13 +181,6 @@ EditorUi = function(editor, container)
 		this.menus.createPopupMenu(menu, cell, evt);
 	});
 	
-	// Initializes the outline and disables the grid
-	if (this.editor.outline != null)
-	{
-		this.editor.outline.init(this.outlineContainer);
-		this.editor.outline.outline.gridEnabled = false;
-	}
-	
 	// Hides context menu
 	mxEvent.addGestureListeners(document, mxUtils.bind(this, function(evt)
 	{
@@ -233,15 +226,15 @@ EditorUi = function(editor, container)
 	};
 
 	// Updates the editor UI after the window has been resized
+	// Timeout is workaround for old IE versions which have a delay for DOM client sizes.
+	// Should not use delay > 0 to avoid handle multiple repaints during window resize
    	mxEvent.addListener(window, 'resize', mxUtils.bind(this, function()
    	{
-   		if (this.editor.outline != null)
+   		window.setTimeout(mxUtils.bind(this, function()
    		{
-   	   		this.refresh();
-   	   		graph.sizeDidChange();
-	   		this.editor.outline.update(false);
-	   		this.editor.outline.outline.sizeDidChange();
-   		}
+   	   	   	this.refresh();
+   	   	   	graph.sizeDidChange();
+   		}), 0);
    	}));
 
 	// Updates action and menu states
@@ -281,11 +274,6 @@ EditorUi.prototype.sidebarFooterHeight = 34;
  * Specifies the height of the horizontal split bar. Default is 212.
  */
 EditorUi.prototype.hsplitPosition = 204;
-
-/**
- * Specifies the position of the vertical split bar. Default is 190.
- */
-EditorUi.prototype.vsplitPosition = 190;
 
 /**
  * Specifies if animations are allowed in <executeLayout>. Default is true.
@@ -561,11 +549,6 @@ EditorUi.prototype.setPageFormat = function(value)
 {
 	this.editor.graph.pageFormat = value;
 	
-	if (this.editor.outline != null)
-	{
-		this.editor.outline.outline.pageFormat = this.editor.graph.pageFormat;
-	}
-	
 	if (!this.editor.graph.pageVisible)
 	{
 		this.actions.get('pageView').funct();
@@ -575,11 +558,6 @@ EditorUi.prototype.setPageFormat = function(value)
 		this.editor.updateGraphComponents();
 		this.editor.graph.view.validateBackground();
 		this.editor.graph.sizeDidChange();
-		
-		if (this.editor.outline != null)
-		{
-			this.editor.outline.update();
-		}
 	}
 
 	this.fireEvent(new mxEventObject('pageFormatChanged'));
@@ -737,7 +715,6 @@ EditorUi.prototype.refresh = function()
 	}
 	
 	var effHsplitPosition = Math.max(0, Math.min(this.hsplitPosition, w - this.splitSize - 20));
-	var effVsplitPosition = Math.max(0, Math.min(this.vsplitPosition, h - this.menubarHeight - this.toolbarHeight - this.footerHeight - this.splitSize - 1));
 
 	var tmp = 0;
 	
@@ -763,7 +740,7 @@ EditorUi.prototype.refresh = function()
 	
 	if (this.sidebarFooterContainer != null)
 	{
-		var bottom = (effVsplitPosition + this.splitSize + this.footerHeight);
+		var bottom = this.footerHeight;
 		sidebarFooterHeight = Math.max(0, Math.min(h - tmp - bottom, this.sidebarFooterHeight));
 		this.sidebarFooterContainer.style.width = effHsplitPosition + 'px';
 		this.sidebarFooterContainer.style.height = sidebarFooterHeight + 'px';
@@ -772,34 +749,30 @@ EditorUi.prototype.refresh = function()
 	
 	this.sidebarContainer.style.top = tmp + 'px';
 	this.sidebarContainer.style.width = effHsplitPosition + 'px';
-	this.outlineContainer.style.width = effHsplitPosition + 'px';
-	this.outlineContainer.style.height = effVsplitPosition + 'px';
-	this.outlineContainer.style.bottom = this.footerHeight + 'px';
+	
 	this.diagramContainer.style.left = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) + 'px' : '0px';
 	this.diagramContainer.style.top = this.sidebarContainer.style.top;
 	this.footerContainer.style.height = this.footerHeight + 'px';
 	this.hsplit.style.top = this.sidebarContainer.style.top;
-	this.hsplit.style.bottom = this.outlineContainer.style.bottom;
+	this.hsplit.style.bottom = this.footerHeight + 'px';
 	this.hsplit.style.left = effHsplitPosition + 'px';
-	this.vsplit.style.width = this.sidebarContainer.style.width;
-	this.vsplit.style.bottom = (effVsplitPosition + this.footerHeight) + 'px';
 	
 	if (quirks)
 	{
 		this.menubarContainer.style.width = w + 'px';
 		this.toolbarContainer.style.width = this.menubarContainer.style.width;
-		var sidebarHeight = Math.max(0, h - effVsplitPosition - this.splitSize - this.footerHeight - this.menubarHeight - this.toolbarHeight);
+		var sidebarHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
 		this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
 		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize) + 'px' : w + 'px';
-		var diagramHeight = (this.editor.outline != null) ? Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight) : h;
+		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
 		this.diagramContainer.style.height = diagramHeight + 'px';
 		this.footerContainer.style.width = this.menubarContainer.style.width;
 		this.hsplit.style.height = diagramHeight + 'px';
 	}
 	else
 	{
-		this.sidebarContainer.style.bottom = (effVsplitPosition + this.splitSize + this.footerHeight + sidebarFooterHeight) + 'px';
-		this.diagramContainer.style.bottom = (this.editor.outline != null) ? this.outlineContainer.style.bottom : '0px';
+		this.sidebarContainer.style.bottom = (this.footerHeight + sidebarFooterHeight) + 'px';
+		this.diagramContainer.style.bottom = this.footerHeight + 'px';
 	}
 };
 
@@ -811,11 +784,9 @@ EditorUi.prototype.createDivs = function()
 	this.menubarContainer = this.createDiv('geMenubarContainer');
 	this.toolbarContainer = this.createDiv('geToolbarContainer');
 	this.sidebarContainer = this.createDiv('geSidebarContainer');
-	this.outlineContainer = this.createDiv('geOutlineContainer');
 	this.diagramContainer = this.createDiv('geDiagramContainer');
 	this.footerContainer = this.createDiv('geFooterContainer');
 	this.hsplit = this.createDiv('geHsplit');
-	this.vsplit = this.createDiv('geVsplit');
 
 	// Sets static style for containers
 	this.menubarContainer.style.top = '0px';
@@ -824,13 +795,10 @@ EditorUi.prototype.createDivs = function()
 	this.toolbarContainer.style.left = '0px';
 	this.toolbarContainer.style.right = '0px';
 	this.sidebarContainer.style.left = '0px';
-	this.outlineContainer.style.left = '0px';
 	this.diagramContainer.style.right = '0px';
 	this.footerContainer.style.left = '0px';
 	this.footerContainer.style.right = '0px';
 	this.footerContainer.style.bottom = '0px';
-	this.vsplit.style.left = '0px';
-	this.vsplit.style.height = this.splitSize + 'px';
 	this.hsplit.style.width = this.splitSize + 'px';
 	
 	this.sidebarFooterContainer = this.createSidebarFooterContainer();
@@ -911,15 +879,10 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.menubarContainer);
 	}
 
-	if (this.editor.outline != null)
-	{
-		this.container.appendChild(this.outlineContainer);
-	}
-	
 	this.container.appendChild(this.diagramContainer);
 
 	// HSplit
-	if (this.sidebar != null && this.editor.outline != null)
+	if (this.sidebar != null)
 	{
 		this.container.appendChild(this.hsplit);
 		
@@ -928,19 +891,6 @@ EditorUi.prototype.createUi = function()
 			this.hsplitPosition = value;
 			this.refresh();
 			this.editor.graph.sizeDidChange();
-			this.editor.outline.update(false);
-			this.editor.outline.outline.sizeDidChange();
-		}));
-	
-		this.container.appendChild(this.vsplit);
-		
-		// VSplit
-		this.addSplitHandler(this.vsplit, false, this.footerHeight, mxUtils.bind(this, function(value)
-		{
-			this.vsplitPosition = value;
-			this.refresh();
-			this.editor.outline.update(false);
-			this.editor.outline.outline.sizeDidChange();
 		}));
 	}
 };
@@ -1371,6 +1321,17 @@ EditorUi.prototype.confirm = function(msg, okFn, cancelFn)
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
+EditorUi.prototype.createOutline = function(window)
+{
+	var outline = new mxOutline(this.editor.graph);
+	outline.border = 20;
+
+	return outline;
+};
+
+/**
+ * Creates the keyboard event handler for the current graph and history.
+ */
 EditorUi.prototype.createKeyHandler = function(editor)
 {
 	var graph = this.editor.graph;
@@ -1499,6 +1460,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
     bindAction(71, true, 'grid', true); // Ctrl+Shift+G
     bindAction(76, true, 'lockUnlock'); // Ctrl+L
     bindAction(76, true, 'layers', true); // Ctrl+Shift+L
+    bindAction(79, true, 'outline', true); // Ctrl+Shift+O
     bindAction(80, true, 'print'); // Ctrl+P
     bindAction(85, true, 'ungroup'); // Ctrl+U
     bindAction(112, false, 'about'); // F1

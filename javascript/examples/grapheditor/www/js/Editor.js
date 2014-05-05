@@ -7,7 +7,7 @@ var useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
 var fileSupport = window.File != null && window.FileReader != null && window.FileList != null;
 
 // Specifies if the touch UI should be used (cannot detect touch in FF so always on for Windows/Linux)
-var touchStyle = mxClient.IS_TOUCH || (mxClient.IS_FF && !mxClient.IS_MAC) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
+var touchStyle = mxClient.IS_TOUCH || (mxClient.IS_FF && mxClient.IS_WIN) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
 
 // Counts open editor tabs (must be global for cross-window access)
 var counter = 0;
@@ -44,13 +44,6 @@ Editor = function()
 	this.init();
 	this.initStencilRegistry();
 	this.graph = this.createGraph();
-	this.outline = this.createOutline(this.graph);
-	
-	if (this.outline != null)
-	{
-		this.outline.updateOnPan = true;
-	}
-	
 	this.undoManager = this.createUndoManager();
 	this.status = '';
 
@@ -106,7 +99,7 @@ Editor.prototype.gridImage = IMAGE_PATH + '/grid.gif';
  * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
  * cannot be detected in Firefox, see above).
  */
-Editor.prototype.defaultScrollbars = !touchStyle;
+Editor.prototype.defaultScrollbars = !mxClient.IS_IOS;
 
 /**
  * Specifies the image URL to be used for the transparent background.
@@ -146,14 +139,6 @@ Editor.prototype.appName = document.title;
 Editor.prototype.createGraph = function()
 {
 	return new Graph();
-};
-
-/**
- * Sets the XML node for the current diagram.
- */
-Editor.prototype.createOutline = function(graph)
-{
-	return new mxOutline(graph);
 };
 
 /**
@@ -216,11 +201,6 @@ Editor.prototype.setGraphXml = function(node)
 		if (pw != null && ph != null)
 		{
 			this.graph.pageFormat = new mxRectangle(0, 0, parseFloat(pw), parseFloat(ph));
-			
-			if (this.outline != null)
-			{
-				this.outline.outline.pageFormat = this.graph.pageFormat;
-			}
 		}
 
 		// Loads the persistent state settings
@@ -235,9 +215,9 @@ Editor.prototype.setGraphXml = function(node)
 			this.graph.background = null;
 		}
 
+		this.updateGraphComponents();
 		dec.decode(node, this.graph.getModel());
 		this.fireEvent(new mxEventObject('resetGraphView'));
-		this.updateGraphComponents();
 	}
 	else if (node.nodeName == 'root')
 	{
@@ -248,7 +228,6 @@ Editor.prototype.setGraphXml = function(node)
 		wrapper.appendChild(node);
 		
 		dec.decode(wrapper, this.graph.getModel());
-		this.fireEvent(new mxEventObject('resetGraphView'));
 		this.updateGraphComponents();
 	}
 	else
@@ -299,7 +278,6 @@ Editor.prototype.getGraphXml = function()
 Editor.prototype.updateGraphComponents = function()
 {
 	var graph = this.graph;
-	var outline = this.outline;
 	
 	if (graph.container != null)
 	{
@@ -326,18 +304,6 @@ Editor.prototype.updateGraphComponents = function()
 		else
 		{
 			graph.container.style.border = '';
-		}
-		
-		if (outline != null)
-		{
-			outline.outline.container.style.backgroundColor = graph.container.style.backgroundColor;
-	
-			if (outline.outline.pageVisible != graph.pageVisible || outline.outline.pageScale != graph.pageScale)
-			{
-				outline.outline.pageScale = graph.pageScale;
-				outline.outline.pageVisible = graph.pageVisible;
-				outline.outline.view.validate();
-			}
 		}
 		
 		graph.container.style.overflow = (graph.scrollbars) ? 'auto' : 'hidden';
@@ -454,7 +420,9 @@ Editor.prototype.init = function()
 	// Changes border color of background page shape
 	mxGraphView.prototype.createBackgroundPageShape = function(bounds)
 	{
-		return new mxRectangleShape(bounds, this.graph.background || 'white', '#cacaca');
+		var bg = (this.graph.background == null || this.graph.background == 'none') ? '#ffffff' : this.graph.background;
+		
+		return new mxRectangleShape(bounds, bg, '#cacaca');
 	};
 
 	// Fits the number of background pages to the graph
@@ -564,7 +532,9 @@ Editor.prototype.init = function()
 			{
 				this.backgroundPageShape = this.createBackgroundPageShape(bounds);
 				this.backgroundPageShape.scale = 1;
-				this.backgroundPageShape.isShadow = true;
+				// Shadow filter causes problems in outline window in quirks mode. IE8 standards
+				// also has known rendering issues inside mxWindow but not using shadow is worse.
+				this.backgroundPageShape.isShadow = !mxClient.IS_QUIRKS;
 				this.backgroundPageShape.dialect = mxConstants.DIALECT_STRICTHTML;
 				this.backgroundPageShape.init(this.graph.container);
 				// Required for the browser to render the background page in correct order

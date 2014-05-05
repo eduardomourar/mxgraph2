@@ -170,6 +170,7 @@ Menus.prototype.init = function()
 		menu.addSeparator(parent);
 		menu.addItem(mxResources.get('transparent'), null, function() { graph.toggleCellStyles('endFill', true); }, parent, null, true);
 		menu.addSeparator(parent);
+		this.promptChange(menu, mxResources.get('targetSpacing') + '...', '(px)', '0', mxConstants.STYLE_TARGET_PERIMETER_SPACING, parent);
 		this.promptChange(menu, mxResources.get('size') + '...', '(px)', mxConstants.DEFAULT_MARKERSIZE, mxConstants.STYLE_ENDSIZE, parent);
 	})));
 	this.put('linestart', new Menu(mxUtils.bind(this, function(menu, parent)
@@ -186,13 +187,13 @@ Menus.prototype.init = function()
 		menu.addSeparator(parent);
 		menu.addItem(mxResources.get('transparent'), null, function() { graph.toggleCellStyles('startFill', true); }, parent, null, true);
 		menu.addSeparator(parent);
+		this.promptChange(menu, mxResources.get('sourceSpacing') + '...', '(px)', '0', mxConstants.STYLE_SOURCE_PERIMETER_SPACING, parent);
 		this.promptChange(menu, mxResources.get('size') + '...', '(px)', mxConstants.DEFAULT_MARKERSIZE, mxConstants.STYLE_STARTSIZE, parent);
 	})));
 	this.put('spacing', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		// Uses shadow action and line menu to analyze selection
 		var vertexSelected = this.editorUi.actions.get('shadow').enabled;
-		var edgeSelected = this.get('line').enabled;
 		
 		if (vertexSelected || menu.showDisabled)
 		{
@@ -203,13 +204,6 @@ Menus.prototype.init = function()
 			menu.addSeparator(parent);
 			this.promptChange(menu, mxResources.get('global'), '(px)', '0', mxConstants.STYLE_SPACING, parent, vertexSelected);
 			this.promptChange(menu, mxResources.get('perimeter'), '(px)', '0', mxConstants.STYLE_PERIMETER_SPACING, parent, vertexSelected);
-		}
-
-		if (edgeSelected || menu.showDisabled)
-		{
-			menu.addSeparator(parent);
-			this.promptChange(menu, mxResources.get('sourceSpacing'), '(px)', '0', mxConstants.STYLE_SOURCE_PERIMETER_SPACING, parent, edgeSelected);
-			this.promptChange(menu, mxResources.get('targetSpacing'), '(px)', '0', mxConstants.STYLE_TARGET_PERIMETER_SPACING, parent, edgeSelected);
 		}
 	})));
 	this.put('format', new Menu(mxUtils.bind(this, function(menu, parent)
@@ -390,7 +384,7 @@ Menus.prototype.init = function()
 
 	this.put('view', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		this.addMenuItems(menu, ['actualSize'], parent);
+		this.addMenuItems(menu, ['outline'], parent);
 		menu.addSeparator();
 		var scales = [0.25, 0.5, 0.75, 1, 1.5, 2, 4];
 		
@@ -405,7 +399,7 @@ Menus.prototype.init = function()
 			})(scales[i]);
 		}
 		
-		this.addMenuItems(menu, ['-', 'zoomIn', 'zoomOut', '-', 'fitWindow', 'customZoom', '-', 'fitPage', 'fitPageWidth'], parent);
+		this.addMenuItems(menu, ['-', 'actualSize', 'zoomIn', 'zoomOut', '-', 'fitWindow', 'fitPageWidth', 'fitPage', 'fitTwoPages', '-', 'customZoom'], parent);
 	})));
 	this.put('file', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -419,8 +413,8 @@ Menus.prototype.init = function()
 	})));
 	this.put('options', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		this.addMenuItems(menu, ['grid', 'guides', 'tooltips', '-', 'connect', 'copyConnect', 'navigation',
-		                         '-', 'scrollbars', 'pageView', '-', 'pageBackgroundColor', '-', 'autosave']);
+		this.addMenuItems(menu, ['pageView', '-', 'grid', 'guides', 'tooltips', '-', 'connect', 'copyConnect', 'navigation',
+		                         '-', 'pageBackgroundColor', 'autosave']);
 	})));
 	this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -779,10 +773,20 @@ Menus.prototype.createMenubar = function(container)
 					if (!menu.enabled)
 					{
 						elt.className = 'geItem mxDisabled';
+						
+						if (document.documentMode == 8)
+						{
+							elt.style.color = '#c3c3c3';
+						}
 					}
 					else
 					{
 						elt.className = 'geItem';
+						
+						if (document.documentMode == 8)
+						{
+							elt.style.color = '';
+						}
 					}
 				});
 			}

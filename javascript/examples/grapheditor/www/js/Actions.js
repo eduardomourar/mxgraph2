@@ -342,9 +342,31 @@ Actions.prototype.init = function()
 	this.addAction('actualSize', function()
 	{
 		graph.zoomTo(1);
+		
+		if (mxUtils.hasScrollbars(graph.container))
+		{
+			if (graph.pageVisible)
+			{
+				var pad = graph.getPagePadding();
+				graph.container.scrollTop = pad.y;
+				graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
+			}
+			else
+			{
+				var bounds = graph.getGraphBounds();
+				graph.container.scrollTop = Math.max(0, bounds.y - Math.max(20, (graph.container.clientHeight - bounds.height) / 4));
+				graph.container.scrollLeft = Math.max(0, bounds.x - Math.max(0, (graph.container.clientWidth - bounds.width) / 2));
+			}
+		}
 	});
-	this.addAction('zoomIn', function() { graph.zoomIn(); }, null, null, 'Add');
-	this.addAction('zoomOut', function() { graph.zoomOut(); }, null, null, 'Subtract');
+	this.addAction('zoomIn', function()
+	{
+		graph.zoomIn();
+	}, null, null, 'Add');
+	this.addAction('zoomOut', function()
+	{
+		graph.zoomOut();
+	}, null, null, 'Subtract');
 	this.addAction('fitWindow', function() { graph.fit(); });
 
 	this.addAction('fitPage', mxUtils.bind(this, function()
@@ -356,14 +378,39 @@ Actions.prototype.init = function()
 		
 		var fmt = graph.pageFormat;
 		var ps = graph.pageScale;
-		var cw = graph.container.clientWidth - 20;
-		var ch = graph.container.clientHeight - 20;
-		
+		var cw = graph.container.clientWidth - 10;
+		var ch = graph.container.clientHeight - 10;
 		var scale = Math.floor(100 * Math.min(cw / fmt.width / ps, ch / fmt.height / ps)) / 100;
 		graph.zoomTo(scale);
 		
-		graph.container.scrollLeft = Math.round(graph.view.translate.x * scale - Math.max(10, (graph.container.clientWidth - fmt.width * ps * scale) / 2));
-		graph.container.scrollTop = Math.round(graph.view.translate.y * scale - Math.max(10, (graph.container.clientHeight - fmt.height * ps * scale) / 2));
+		if (mxUtils.hasScrollbars(graph.container))
+		{
+			var pad = graph.getPagePadding();
+			graph.container.scrollTop = pad.y;
+			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
+		}
+	}));
+	this.addAction('fitTwoPages', mxUtils.bind(this, function()
+	{
+		if (!graph.pageVisible)
+		{
+			this.get('pageView').funct();
+		}
+		
+		var fmt = graph.pageFormat;
+		var ps = graph.pageScale;
+		var cw = graph.container.clientWidth - 10;
+		var ch = graph.container.clientHeight - 10;
+		
+		var scale = Math.floor(100 * Math.min(cw / (2 * fmt.width) / ps, ch / fmt.height / ps)) / 100;
+		graph.zoomTo(scale);
+		
+		if (mxUtils.hasScrollbars(graph.container))
+		{
+			var pad = graph.getPagePadding();
+			graph.container.scrollTop = Math.min(pad.y, (graph.container.scrollHeight - graph.container.clientHeight) / 2);
+			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
+		}
 	}));
 	this.addAction('fitPageWidth', mxUtils.bind(this, function()
 	{
@@ -374,13 +421,17 @@ Actions.prototype.init = function()
 		
 		var fmt = graph.pageFormat;
 		var ps = graph.pageScale;
-		var cw = graph.container.clientWidth - 20;
-		
+		var cw = graph.container.clientWidth - 10;
+
 		var scale = Math.floor(100 * cw / fmt.width / ps) / 100;
 		graph.zoomTo(scale);
 		
-		graph.container.scrollLeft = Math.round(graph.view.translate.x * scale - Math.max(10, (graph.container.clientWidth - fmt.width * ps * scale) / 2));
-		graph.container.scrollTop = Math.round(graph.view.translate.y * scale - Math.max(10, (graph.container.clientHeight - fmt.height * ps * scale) / 2));
+		if (mxUtils.hasScrollbars(graph.container))
+		{
+			var pad = graph.getPagePadding();
+			graph.container.scrollTop = pad.y;
+			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
+		}
 	}));
 	this.put('customZoom', new Action(mxResources.get('custom') + '...', mxUtils.bind(this, function()
 	{
@@ -444,6 +495,7 @@ Actions.prototype.init = function()
 				graph.view.setTranslate(t.x - graph.container.scrollLeft / graph.view.scale, t.y - graph.container.scrollTop / graph.view.scale);
 				graph.container.scrollLeft = 0;
 				graph.container.scrollTop = 0;
+				graph.minimumGraphSize = null;
 				graph.sizeDidChange();
 			}
 			else
@@ -463,38 +515,38 @@ Actions.prototype.init = function()
 	action.setSelectedCallback(function() { return graph.scrollbars; });
 	action = this.addAction('pageView', mxUtils.bind(this, function()
 	{
+		var hasScrollbars = mxUtils.hasScrollbars(graph.container);
+		var tx = 0;
+		var ty = 0;
+		
+		if (hasScrollbars)
+		{
+			tx = graph.view.translate.x * graph.view.scale - graph.container.scrollLeft;
+			ty = graph.view.translate.y * graph.view.scale - graph.container.scrollTop;
+		}
+		
 		graph.pageVisible = !graph.pageVisible;
 		graph.pageBreaksVisible = graph.pageVisible; 
 		graph.preferPageSize = graph.pageBreaksVisible;
-		graph.view.validate();
+		editor.updateGraphComponents();
+
+		// Removes background page
+		graph.refresh();
+		
+		// Calls updatePageBreaks
 		graph.sizeDidChange();
 		
-		editor.updateGraphComponents();
-		
-		if (editor.outline != null)
+		if (hasScrollbars)
 		{
-			editor.outline.update();
-		}
-		
-		if (mxUtils.hasScrollbars(graph.container))
-		{
-			if (graph.pageVisible)
-			{
-				graph.container.scrollLeft -= 20;
-				graph.container.scrollTop -= 20;
-			}
-			else
-			{
-				graph.container.scrollLeft += 20;
-				graph.container.scrollTop += 20;
-			}
+			graph.container.scrollLeft = graph.view.translate.x * graph.view.scale - tx;
+			graph.container.scrollTop = graph.view.translate.y * graph.view.scale - ty;
 		}
 		
 		ui.fireEvent(new mxEventObject('pageViewChanged'));
 	}));
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.pageVisible; });
-	this.put('pageBackgroundColor', new Action(mxResources.get('backgroundColor'), function()
+	this.put('pageBackgroundColor', new Action(mxResources.get('backgroundColor') + '...', function()
 	{
 		var apply = function(color)
 		{
@@ -792,18 +844,40 @@ Actions.prototype.init = function()
     		}
 		});
 	});
-	this.addAction('layers...', function()
+	action = this.addAction('layers', mxUtils.bind(this, function()
 	{
 		if (this.layersWindow == null)
 		{
-			this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 230, 100, 220, 180);
+			// LATER: Check outline window for initial placement
+			this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 180);
 			this.layersWindow.window.setVisible(true);
 		}
 		else
 		{
 			this.layersWindow.window.setVisible(!this.layersWindow.window.isVisible());
 		}
-	}, null, null, 'Ctrl+Shift-L');
+	}), null, null, 'Ctrl+Shift-L');
+	action.setToggleAction(true);
+	action.setSelectedCallback(mxUtils.bind(this, function() { return this.layersWindow != null && this.layersWindow.window.isVisible(); }));
+	action = this.addAction('outline', mxUtils.bind(this, function()
+	{
+		if (this.outlineWindow == null)
+		{
+			// LATER: Check layers window for initial placement
+			this.outlineWindow = new OutlineWindow(ui, document.body.offsetWidth - 260, 100, 180, 180);
+			this.outlineWindow.window.setVisible(true);
+		}
+		else
+		{
+			this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
+		}
+	}), null, null, 'Ctrl+Shift-O');
+	
+	action.setToggleAction(true);
+	action.setSelectedCallback(function() { return graph.scrollbars; });
+	
+	action.setToggleAction(true);
+	action.setSelectedCallback(mxUtils.bind(this, function() { return this.outlineWindow != null && this.outlineWindow.window.isVisible(); }));
 };
 
 /**
