@@ -233,7 +233,6 @@ EditorUi = function(editor, container)
    		window.setTimeout(mxUtils.bind(this, function()
    		{
    	   	   	this.refresh();
-   	   	   	graph.sizeDidChange();
    		}), 0);
    	}));
 
@@ -774,6 +773,8 @@ EditorUi.prototype.refresh = function()
 		this.sidebarContainer.style.bottom = (this.footerHeight + sidebarFooterHeight) + 'px';
 		this.diagramContainer.style.bottom = this.footerHeight + 'px';
 	}
+	
+	this.editor.graph.sizeDidChange();
 };
 
 /**
@@ -890,7 +891,6 @@ EditorUi.prototype.createUi = function()
 		{
 			this.hsplitPosition = value;
 			this.refresh();
-			this.editor.graph.sizeDidChange();
 		}));
 	}
 };
