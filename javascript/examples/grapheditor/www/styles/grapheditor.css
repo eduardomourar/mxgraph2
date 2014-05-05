@@ -16,12 +16,12 @@
 	color:black;
 	text-decoration:none;
 }
-.geMenubarContainer, .geToolbarContainer, .geDiagramContainer, .geOutlineContainer, .geSidebarContainer, .geFooterContainer, .geHsplit, .geVsplit {
+.geMenubarContainer, .geToolbarContainer, .geDiagramContainer, .geSidebarContainer, .geFooterContainer, .geHsplit, .geVsplit {
 	overflow:hidden;
 	position:absolute;
 	cursor:default;
 }
-.geDiagramContainer, .geOutlineContainer {
+.geDiagramContainer {
 	background-color:#ffffff;
 	outline:none;
 }
