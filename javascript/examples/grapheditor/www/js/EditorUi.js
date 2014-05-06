@@ -193,7 +193,9 @@ EditorUi = function(editor, container)
 		mxEvent.addListener(graph.container, 'gesturechange',
 			mxUtils.bind(this, function(evt)
 			{
-				graph.view.getDrawPane().setAttribute('transform', 'scale(' + evt.scale + ')');
+				graph.stopEditing();
+				mxUtils.setPrefixedStyle(graph.view.getDrawPane().ownerSVGElement.style, 'transform', 'scale(' + evt.scale + ')');
+				mxUtils.setPrefixedStyle(graph.view.getDrawPane().ownerSVGElement.style, 'transform-origin', '50% 50%');
 				graph.view.getOverlayPane().style.visibility = 'hidden';
 				mxEvent.consume(evt);
 			})
@@ -202,8 +204,8 @@ EditorUi = function(editor, container)
 		mxEvent.addListener(graph.container, 'gestureend',
 			mxUtils.bind(this, function(evt)
 			{
-				graph.view.getDrawPane().removeAttribute('transform');
-				graph.view.setScale(graph.view.scale * evt.scale);
+				mxUtils.setPrefixedStyle(graph.view.getDrawPane().ownerSVGElement.style, 'transform', '');
+				graph.zoomTo(graph.view.scale * evt.scale);
 				graph.view.getOverlayPane().style.visibility = 'visible';
 				mxEvent.consume(evt);
 			})
