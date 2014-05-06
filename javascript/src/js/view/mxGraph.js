@@ -2290,21 +2290,24 @@ mxGraph.prototype.startEditing = function(evt)
  */
 mxGraph.prototype.startEditingAtCell = function(cell, evt)
 {
-	if (cell == null)
+	if (evt == null || !mxEvent.isMultiTouchEvent(evt))
 	{
-		cell = this.getSelectionCell();
-		
-		if (cell != null && !this.isCellEditable(cell))
+		if (cell == null)
 		{
-			cell = null;
+			cell = this.getSelectionCell();
+			
+			if (cell != null && !this.isCellEditable(cell))
+			{
+				cell = null;
+			}
 		}
-	}
-
-	if (cell != null)
-	{
-		this.fireEvent(new mxEventObject(mxEvent.START_EDITING,
-				'cell', cell, 'event', evt));
-		this.cellEditor.startEditing(cell, evt);
+	
+		if (cell != null)
+		{
+			this.fireEvent(new mxEventObject(mxEvent.START_EDITING,
+					'cell', cell, 'event', evt));
+			this.cellEditor.startEditing(cell, evt);
+		}
 	}
 };
 

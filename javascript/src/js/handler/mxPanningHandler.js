@@ -147,7 +147,8 @@ mxPanningHandler.prototype.isPanningTrigger = function(me)
 	
 	return (this.useLeftButtonForPanning && me.getState() == null &&
 			mxEvent.isLeftMouseButton(evt)) || (mxEvent.isControlDown(evt) &&
-			mxEvent.isShiftDown(evt)) || (this.usePopupTrigger && mxEvent.isPopupTrigger(evt));
+			mxEvent.isShiftDown(evt) || mxEvent.isMultiTouchEvent(me.getEvent())) ||
+			(this.usePopupTrigger && mxEvent.isPopupTrigger(evt));
 };
 
 /**
@@ -241,7 +242,7 @@ mxPanningHandler.prototype.mouseMove = function(sender, me)
 		// Handles pinch on iOS
 		var scale = me.getEvent().scale;
 		
-		if (scale != null && scale != 1)
+		if (mxEvent.isMultiTouchEvent(me.getEvent()) && scale != null)
 		{
 			this.scaleGraph(scale, true);
 		}
@@ -341,12 +342,33 @@ mxPanningHandler.prototype.scaleGraph = function(scale, preview)
 {
 	if (preview)
 	{
-		this.graph.view.getCanvas().setAttribute('transform', 'scale(' + scale + ')');
+		mxUtils.setPrefixedStyle(this.graph.view.getDrawPane().ownerSVGElement.style, 'transform', 'scale(' + scale + ')');
+		mxUtils.setPrefixedStyle(this.graph.view.getDrawPane().ownerSVGElement.style, 'transform-origin',
+			(this.graph.centerZoom) ? '50% 50%' : '0% 0%');
+		this.graph.view.getOverlayPane().style.visibility = 'hidden';
+		var shape = this.graph.view.backgroundPageShape;
+
+		if (shape != null)
+		{
+			mxUtils.setPrefixedStyle(shape.node.style, 'transform', 'scale(' + scale + ')');
+			mxUtils.setPrefixedStyle(shape.node.style, 'transform-origin',
+				(this.graph.centerZoom) ? '50% 50%' : '0% 0%');
+		}
 	}
 	else
 	{
-		this.graph.view.getCanvas().removeAttribute('transform');
-		this.graph.view.setScale(this.graph.view.scale * scale);
+		mxUtils.setPrefixedStyle(this.graph.view.getDrawPane().ownerSVGElement.style, 'transform', '');
+		mxUtils.setPrefixedStyle(this.graph.view.getDrawPane().ownerSVGElement.style, 'transform-origin', '');
+		var shape = this.graph.view.backgroundPageShape;
+
+		if (shape != null)
+		{
+			mxUtils.setPrefixedStyle(shape.node.style, 'transform', '');
+			mxUtils.setPrefixedStyle(shape.node.style, 'transform-origin', '');
+		}
+
+		this.graph.zoomTo(this.graph.view.scale * scale);
+		this.graph.view.getOverlayPane().style.visibility = 'visible';
 	}
 };
 

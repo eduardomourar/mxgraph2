@@ -345,7 +345,8 @@ mxGraphHandler.prototype.mouseDown = function(sender, me)
 			var model = this.graph.model;
 			var geo = model.getGeometry(cell);
 
-			if (this.graph.isCellMovable(cell) && ((!model.isEdge(cell) || this.graph.getSelectionCount() > 1 ||
+			if (this.graph.isCellMovable(cell) && !mxEvent.isMultiTouchEvent(me.getEvent()) &&
+				((!model.isEdge(cell) || this.graph.getSelectionCount() > 1 ||
 				(geo.points != null && geo.points.length > 0) || model.getTerminal(cell, true) == null ||
 				model.getTerminal(cell, false) == null) || this.graph.allowDanglingEdges || 
 				(this.graph.isCloneEvent(me.getEvent()) && this.graph.isCellsCloneable())))

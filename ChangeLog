@@ -1,3 +1,4 @@
+- Handles multi touch in mxRubberband, mxPanningHandler, mxGraphHandler [JavaScript]
 - Adds mxEvent.isMultiTouchEvent [JavaScript]
 
 05-MAY-2014: 2.6.0.0
