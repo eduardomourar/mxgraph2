@@ -62,12 +62,12 @@ cd ..
 cp $BUILD/mxgraph-distro.zip .
 mkdir tmp
 unzip mxgraph-distro.zip -d tmp
-cp mxgraph/README.md tmp/mxgraph
 cd tmp/mxgraph/javascript/
 rm -rf debug devel
 cd ~/tmp-$date
 rm -rf mxgraph/*
 cp -rf tmp/mxgraph/* mxgraph/
+rm -rf mxgraph/java/.gitignore
 cd mxgraph
 git add .
 git commit -am "$DOTVERSION release"
