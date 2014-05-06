@@ -1038,7 +1038,7 @@ var ExportDialog = function(editorUi)
 	{
 		var xmlOption = document.createElement('option');
 		xmlOption.setAttribute('value', 'xml');
-		mxUtils.write(xmlOption, 'XML - Diagramly XML Document');
+		mxUtils.write(xmlOption, 'XML - Extensible Markup Language');
 		imageFormatSelect.appendChild(xmlOption);
 	}
 
