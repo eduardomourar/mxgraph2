@@ -469,29 +469,7 @@ Editor.prototype.init = function()
 			this.view.backgroundPageShape.node.style.marginTop = dy + 'px';
 		}
 	};
-	
-	// Adds pinch support for background page
-	// TODO: Scale background page on iOS
-	/*var panningHandlerScaleGraph = mxPanningHandler.prototype.scaleGraph;
-	mxPanningHandler.prototype.scaleGraph = function(scale, preview)
-	{
-		panningHandlerScaleGraph.apply(this, arguments);
-		
-		var shape = this.graph.view.backgroundPageShape;
-		
-		if (shape != null)
-		{
-			if (preview)
-			{
-				mxUtils.setPrefixedStyle(shape.node.style, 'transform', 'scale(' + scale + ')');
-			}
-			else
-			{
-				mxUtils.setPrefixedStyle(shape.node.style, 'transform', '');
-			}
-		}
-	};*/
-	
+
 	var editor = this;
 	
 	// Uses HTML for background pages (to support grid background image)
