@@ -190,27 +190,6 @@ EditorUi = function(editor, container)
 	// Adds gesture handling (pinch to zoom)
 	if (mxClient.IS_TOUCH)
 	{
-		mxEvent.addListener(graph.container, 'gesturechange',
-			mxUtils.bind(this, function(evt)
-			{
-				graph.stopEditing();
-				mxUtils.setPrefixedStyle(graph.view.getDrawPane().ownerSVGElement.style, 'transform', 'scale(' + evt.scale + ')');
-				mxUtils.setPrefixedStyle(graph.view.getDrawPane().ownerSVGElement.style, 'transform-origin', '50% 50%');
-				graph.view.getOverlayPane().style.visibility = 'hidden';
-				mxEvent.consume(evt);
-			})
-		);
-	
-		mxEvent.addListener(graph.container, 'gestureend',
-			mxUtils.bind(this, function(evt)
-			{
-				mxUtils.setPrefixedStyle(graph.view.getDrawPane().ownerSVGElement.style, 'transform', '');
-				graph.zoomTo(graph.view.scale * evt.scale);
-				graph.view.getOverlayPane().style.visibility = 'visible';
-				mxEvent.consume(evt);
-			})
-		);
-		
 		// Disables pinch to resize
 		graph.handleGesture = function()
 		{
