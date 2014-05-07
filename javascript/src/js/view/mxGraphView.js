@@ -758,7 +758,7 @@ mxGraphView.prototype.validateBackgroundPage = function()
 			this.backgroundPageShape.redraw();
 			
 			// Adds listener for double click handling on background
-			if (graph.nativeDblClickEnabled)
+			if (this.graph.nativeDblClickEnabled)
 			{
 				mxEvent.addListener(this.backgroundPageShape.node, 'dblclick', mxUtils.bind(this, function(evt)
 				{
