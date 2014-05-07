@@ -238,9 +238,6 @@ mxPanningHandler.prototype.mouseMove = function(sender, me)
 
 	if (this.active)
 	{
-		// Handles pinch on iOS
-		var scale = me.getEvent().scale;
-		
 		if (this.previewEnabled)
 		{
 			// Applies the grid to the panning steps
@@ -299,6 +296,7 @@ mxPanningHandler.prototype.mouseUp = function(sender, me)
 			
 			var scale = this.graph.getView().scale;
 			var t = this.graph.getView().translate;
+			this.graph.panGraph(0, 0);
 			this.panGraph(t.x + dx / scale, t.y + dy / scale);
 		}
 		
