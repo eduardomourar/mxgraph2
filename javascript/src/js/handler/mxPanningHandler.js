@@ -147,8 +147,7 @@ mxPanningHandler.prototype.isPanningTrigger = function(me)
 	
 	return (this.useLeftButtonForPanning && me.getState() == null &&
 			mxEvent.isLeftMouseButton(evt)) || (mxEvent.isControlDown(evt) &&
-			mxEvent.isShiftDown(evt) || mxEvent.isMultiTouchEvent(me.getEvent())) ||
-			(this.usePopupTrigger && mxEvent.isPopupTrigger(evt));
+			mxEvent.isShiftDown(evt)) || (this.usePopupTrigger && mxEvent.isPopupTrigger(evt));
 };
 
 /**
@@ -242,11 +241,7 @@ mxPanningHandler.prototype.mouseMove = function(sender, me)
 		// Handles pinch on iOS
 		var scale = me.getEvent().scale;
 		
-		if (mxEvent.isMultiTouchEvent(me.getEvent()) && scale != null)
-		{
-			this.scaleGraph(scale, true);
-		}
-		else if (this.previewEnabled)
+		if (this.previewEnabled)
 		{
 			// Applies the grid to the panning steps
 			if (this.useGrid)
@@ -266,8 +261,7 @@ mxPanningHandler.prototype.mouseMove = function(sender, me)
 
 		// Panning is activated only if the mouse is moved
 		// beyond the graph tolerance
-		this.active = Math.abs(dx) > this.graph.tolerance ||
-			Math.abs(dy) > this.graph.tolerance;
+		this.active = Math.abs(dx) > this.graph.tolerance || Math.abs(dy) > this.graph.tolerance;
 
 		if (!tmp && this.active)
 		{
@@ -289,10 +283,6 @@ mxPanningHandler.prototype.mouseMove = function(sender, me)
  */
 mxPanningHandler.prototype.mouseUp = function(sender, me)
 {
-	// Shows popup menu if mouse was not moved
-	var dx = Math.abs(me.getX() - this.startX);
-	var dy = Math.abs(me.getY() - this.startY);
-
 	if (this.active)
 	{
 		if (!this.graph.useScrollbarsForPanning || !mxUtils.hasScrollbars(this.graph.container))
@@ -309,67 +299,15 @@ mxPanningHandler.prototype.mouseUp = function(sender, me)
 			
 			var scale = this.graph.getView().scale;
 			var t = this.graph.getView().translate;
-			
-			this.graph.panGraph(0, 0);
-			
-			// Handles pinch on iOS
-			var scale2 = me.getEvent().scale;
-			
-			if (scale2 != null && scale2 != 1)
-			{
-				this.scaleGraph(scale2, false);
-			}
-			else
-			{
-				this.panGraph(t.x + dx / scale, t.y + dy / scale);
-			}
+			this.panGraph(t.x + dx / scale, t.y + dy / scale);
 		}
 		
-		this.active = false;
 		this.fireEvent(new mxEventObject(mxEvent.PAN_END, 'event', me));
 		me.consume();
 	}
 	
 	this.panningTrigger = false;
-};
-
-/**
- * Function: scaleGraph
- * 
- * Handles pinch events on touch devices.
- */
-mxPanningHandler.prototype.scaleGraph = function(scale, preview)
-{
-	if (preview)
-	{
-		mxUtils.setPrefixedStyle(this.graph.view.getDrawPane().ownerSVGElement.style, 'transform', 'scale(' + scale + ')');
-		mxUtils.setPrefixedStyle(this.graph.view.getDrawPane().ownerSVGElement.style, 'transform-origin',
-			(this.graph.centerZoom) ? '50% 50%' : '0% 0%');
-		this.graph.view.getOverlayPane().style.visibility = 'hidden';
-		var shape = this.graph.view.backgroundPageShape;
-
-		if (shape != null)
-		{
-			mxUtils.setPrefixedStyle(shape.node.style, 'transform', 'scale(' + scale + ')');
-			mxUtils.setPrefixedStyle(shape.node.style, 'transform-origin',
-				(this.graph.centerZoom) ? '50% 50%' : '0% 0%');
-		}
-	}
-	else
-	{
-		mxUtils.setPrefixedStyle(this.graph.view.getDrawPane().ownerSVGElement.style, 'transform', '');
-		mxUtils.setPrefixedStyle(this.graph.view.getDrawPane().ownerSVGElement.style, 'transform-origin', '');
-		var shape = this.graph.view.backgroundPageShape;
-
-		if (shape != null)
-		{
-			mxUtils.setPrefixedStyle(shape.node.style, 'transform', '');
-			mxUtils.setPrefixedStyle(shape.node.style, 'transform-origin', '');
-		}
-
-		this.graph.zoomTo(this.graph.view.scale * scale);
-		this.graph.view.getOverlayPane().style.visibility = 'visible';
-	}
+	this.active = false;
 };
 
 /**

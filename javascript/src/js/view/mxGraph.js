@@ -1694,6 +1694,7 @@ mxGraph.prototype.collapseExpandResource = (mxClient.language != 'none') ? 'coll
  */
 mxGraph.prototype.createHandlers = function(container)
 {
+	this.multiTouchHandler = new mxMultiTouchHandler(this);
 	this.tooltipHandler = new mxTooltipHandler(this);
 	this.tooltipHandler.setEnabled(false);
 	this.selectionCellsHandler = new mxSelectionCellsHandler(this);
@@ -11796,7 +11797,7 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 		if ((mxClient.IS_OP || mxClient.IS_SF || mxClient.IS_GC ||
 			(mxClient.IS_IE && mxClient.IS_SVG) || me.getEvent().target != this.container))
 		{
-			if (evtName == mxEvent.MOUSE_MOVE && this.isMouseDown && this.autoScroll)
+			if (evtName == mxEvent.MOUSE_MOVE && this.isMouseDown && this.autoScroll && !mxEvent.isMultiTouchEvent(me.getEvent))
 			{
 				this.scrollPointToVisible(me.getGraphX(), me.getGraphY(), this.autoExtend);
 			}

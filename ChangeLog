@@ -1,4 +1,6 @@
-- Handles multi touch in mxRubberband, mxPanningHandler, mxGraphHandler [JavaScript]
+- Disables autoscroll for multi touch events in mxGraph.fireMouseEvent [JavaScript]
+- Disables handling of multi touch events in mxGraphHandler [JavaScript]
+- Adds mxMultiTouchHandler, mxGraph.multiTouchHandler [JavaScript]
 - Adds mxEvent.isMultiTouchEvent [JavaScript]
 
 05-MAY-2014: 2.6.0.0

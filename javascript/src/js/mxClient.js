@@ -655,6 +655,7 @@ mxClient.include(mxClient.basePath+'/js/view/mxSwimlaneManager.js');
 mxClient.include(mxClient.basePath+'/js/view/mxTemporaryCellStates.js');
 mxClient.include(mxClient.basePath+'/js/view/mxCellStatePreview.js');
 mxClient.include(mxClient.basePath+'/js/view/mxConnectionConstraint.js');
+mxClient.include(mxClient.basePath+'/js/handler/mxMultiTouchHandler.js');
 mxClient.include(mxClient.basePath+'/js/handler/mxGraphHandler.js');
 mxClient.include(mxClient.basePath+'/js/handler/mxPanningHandler.js');
 mxClient.include(mxClient.basePath+'/js/handler/mxPopupMenuHandler.js');

@@ -151,8 +151,7 @@ mxRubberband.prototype.isForceRubberbandEvent = function(me)
  */
 mxRubberband.prototype.mouseDown = function(sender, me)
 {
-	if (!me.isConsumed() && this.isEnabled() && this.graph.isEnabled() &&
-		me.getState() == null && !mxEvent.isMultiTouchEvent(me.getEvent()))
+	if (!me.isConsumed() && this.isEnabled() && this.graph.isEnabled() && me.getState() == null)
 	{
 		var offset = mxUtils.getOffset(this.graph.container);
 		var origin = mxUtils.getScrollOrigin(this.graph.container);
@@ -232,15 +231,6 @@ mxRubberband.prototype.mouseMove = function(sender, me)
 			if (this.div == null)
 			{
 				this.div = this.createShape();
-			}
-			
-			if (mxEvent.isMultiTouchEvent(me.getEvent()))
-			{
-				this.div.style.display = 'none';
-			}
-			else
-			{
-				this.div.style.display = '';
 			}
 			
 			// Clears selection while rubberbanding. This is required because
