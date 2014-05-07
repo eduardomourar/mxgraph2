@@ -115,6 +115,16 @@ mxPanningHandler.prototype.useGrid = false;
 mxPanningHandler.prototype.panningEnabled = true;
 
 /**
+ * Function: isActive
+ * 
+ * Returns true if the handler is currently active.
+ */
+mxPanningHandler.prototype.isActive = function()
+{
+	return this.active;
+};
+
+/**
  * Function: isPanningEnabled
  * 
  * Returns <panningEnabled>.
@@ -169,7 +179,7 @@ mxPanningHandler.prototype.isForcePanningEvent = function(me)
  */
 mxPanningHandler.prototype.mouseDown = function(sender, me)
 {
-	if (!me.isConsumed() && this.isPanningEnabled() && !this.active && this.isPanningTrigger(me))
+	if (!me.isConsumed() && this.isPanningEnabled() && !this.isActive() && this.isPanningTrigger(me))
 	{
 		this.start(me);
 		this.consumePanningTrigger(me);

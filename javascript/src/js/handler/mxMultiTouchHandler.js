@@ -55,6 +55,16 @@ mxMultiTouchHandler.prototype.maxScale = 8;
 mxMultiTouchHandler.prototype.minScale = 0.01;
 
 /**
+ * Function: isActive
+ * 
+ * Returns true if the handler is currently active.
+ */
+mxMultiTouchHandler.prototype.isActive = function()
+{
+	return this.initialScale != null;
+};
+
+/**
  * Function: isEnabled
  * 
  * Returns <enabled>.
@@ -92,7 +102,7 @@ mxMultiTouchHandler.prototype.isMultiTouchTrigger = function(me)
  */
 mxMultiTouchHandler.prototype.mouseDown = function(sender, me)
 {
-	if (!me.isConsumed() && this.isEnabled() && this.initialScale == null && this.isMultiTouchTrigger(me))
+	if (!me.isConsumed() && this.isEnabled() && !this.isActive() && this.isMultiTouchTrigger(me))
 	{
 		this.initialScale = this.graph.view.scale;
 		me.consume();

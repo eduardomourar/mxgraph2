@@ -1,3 +1,4 @@
+- Adds mxPanningHandler.isActive [JavaScript]
 - Disables autoscroll for multi touch events in mxGraph.fireMouseEvent [JavaScript]
 - Disables handling of multi touch events in mxGraphHandler [JavaScript]
 - Adds mxMultiTouchHandler, mxGraph.multiTouchHandler [JavaScript]
