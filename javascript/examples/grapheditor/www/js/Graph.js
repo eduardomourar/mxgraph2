@@ -776,7 +776,7 @@ Graph.prototype.initTouch = function()
 			mxCellEditorStartEditing.apply(this, arguments);
 	
 			if (this.textarea.style.display == 'none')
-			{			
+			{
 				this.text2 = document.createElement('div');
 				this.text2.className = 'geContentEditable';
 				this.text2.innerHTML = this.textarea.value.replace(/\n/g, '<br/>');
