@@ -2726,7 +2726,7 @@ mxGraph.prototype.scrollPointToVisible = function(x, y, extend, border)
 			}
 		}
 	}
-	else if (this.allowAutoPanning && !this.panningHandler.active)
+	else if (this.allowAutoPanning && !this.panningHandler.isActive() && !this.multiTouchHandler.isActive())
 	{
 		if (this.panningManager == null)
 		{
