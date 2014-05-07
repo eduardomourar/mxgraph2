@@ -120,8 +120,6 @@ mxMultiTouchHandler.prototype.mouseMove = function(sender, me)
 			value = Math.min(this.maxScale, value);
 		}
 		
-		console.log(value);
-		
 		this.graph.zoomTo(value);
 		me.consume();
 	}
