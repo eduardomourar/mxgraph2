@@ -41,6 +41,20 @@ mxMultiTouchHandler.prototype.graph = null;
 mxMultiTouchHandler.prototype.enabled = true;
 
 /**
+ * Variable: maxScale
+ * 
+ * Specifies the maximum scale. Default is 8.
+ */
+mxMultiTouchHandler.prototype.maxScale = 8;
+
+/**
+ * Variable: minScale
+ * 
+ * Specifies the minimum scale. Default is 0.01.
+ */
+mxMultiTouchHandler.prototype.minScale = 0.01;
+
+/**
  * Function: isEnabled
  * 
  * Returns <enabled>.
@@ -94,7 +108,21 @@ mxMultiTouchHandler.prototype.mouseMove = function(sender, me)
 {
 	if (this.initialScale != null)
 	{
-		this.graph.zoomTo(this.initialScale * me.getEvent().scale);
+		var value = this.initialScale * me.getEvent().scale;
+		
+		if (this.minScale != null)
+		{
+			value = Math.max(this.minScale, value);
+		}
+		
+		if (this.maxScale != null)
+		{
+			value = Math.min(this.maxScale, value);
+		}
+		
+		console.log(value);
+		
+		this.graph.zoomTo(value);
 		me.consume();
 	}
 };
