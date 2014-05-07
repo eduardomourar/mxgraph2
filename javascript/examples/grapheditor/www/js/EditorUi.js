@@ -187,16 +187,6 @@ EditorUi = function(editor, container)
 		graph.popupMenuHandler.hideMenu();
 	}));
 
-	// Adds gesture handling (pinch to zoom)
-	if (mxClient.IS_TOUCH)
-	{
-		// Disables pinch to resize
-		graph.handleGesture = function()
-		{
-			// do nothing
-		};
-	}
-	
     // Create handler for key events
 	var keyHandler = this.createKeyHandler(editor);
     
