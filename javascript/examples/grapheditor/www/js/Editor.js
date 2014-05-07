@@ -146,7 +146,6 @@ Editor.prototype.createGraph = function()
  */
 Editor.prototype.resetGraph = function()
 {
-	this.graph.view.scale = 1;
 	this.graph.gridEnabled = true;
 	this.graph.graphHandler.guidesEnabled = true;
 	this.graph.setTooltips(true);
