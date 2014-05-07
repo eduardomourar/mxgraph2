@@ -87,7 +87,7 @@
 
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
-				graph.centerZoom = true;
+				graph.centerZoom = false;
 				graph.setConnectable(true);
 				graph.setPanning(true);
 				
@@ -175,6 +175,21 @@
 					// Blocks further processing of the event
 					evt.consume();
 				});
+				
+				// Adds mouse wheel handling for zoom
+				mxEvent.addMouseWheelListener(function(evt, up)
+				{
+					if (up)
+					{
+						graph.zoomIn();
+					}
+					else
+					{
+						graph.zoomOut();
+					}
+
+					mxEvent.consume(evt);
+				});
 
 				// Gets the default parent for inserting new cells. This
 				// is normally the first child of the root (ie. layer 0).
@@ -193,12 +208,6 @@
 					// Updates the display
 					graph.getModel().endUpdate();
 				}
-
-				// Disables pinch to resize
-				graph.handleGesture = function()
-				{
-					// do nothing
-				};
 
 				// Disables new connections via "hotspot"
 				graph.connectionHandler.marker.isEnabled = function()
