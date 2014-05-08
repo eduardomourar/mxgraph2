@@ -1,7 +1,8 @@
-- Adds mxPanningHandler.isActive [JavaScript]
+- Adds mxPanningHandler.isActive, pinchEnabled [JavaScript]
+- Moves native gesture event handling from shapes to container [JavaScript]
 - Disables autoscroll for multi touch events in mxGraph.fireMouseEvent [JavaScript]
+- Ignores multi touch events in mxGraph.startEditingAtCell, mxGraphHandler, mxRubberband, mxPopupMenuHandler [JavaScript]
 - Disables handling of multi touch events in mxGraphHandler [JavaScript]
-- Adds mxMultiTouchHandler, mxGraph.multiTouchHandler [JavaScript]
 - Adds mxEvent.isMultiTouchEvent [JavaScript]
 
 05-MAY-2014: 2.6.0.0

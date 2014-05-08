@@ -52,7 +52,18 @@ function mxRubberband(graph)
 		});
 		
 		this.graph.addListener(mxEvent.PAN, this.panHandler);
-
+		
+		// Does not show menu if any touch gestures take place after the trigger
+		this.gestureHandler = mxUtils.bind(this, function(sender, eo)
+		{
+			if (this.first != null)
+			{
+				this.reset();
+			}
+		});
+		
+		this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
+		
 		// Automatic deallocation of memory
 		if (mxClient.IS_IE)
 		{
@@ -151,7 +162,8 @@ mxRubberband.prototype.isForceRubberbandEvent = function(me)
  */
 mxRubberband.prototype.mouseDown = function(sender, me)
 {
-	if (!me.isConsumed() && this.isEnabled() && this.graph.isEnabled() && me.getState() == null)
+	if (!me.isConsumed() && this.isEnabled() && this.graph.isEnabled() &&
+		me.getState() == null && !mxEvent.isMultiTouchEvent(me.getEvent()))
 	{
 		var offset = mxUtils.getOffset(this.graph.container);
 		var origin = mxUtils.getScrollOrigin(this.graph.container);

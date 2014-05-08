@@ -584,6 +584,13 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 	if (!me.isConsumed() && graph.isMouseDown && this.cell != null &&
 		this.first != null && this.bounds != null)
 	{
+		// Stops moving if a multi touch event is received
+		if (mxEvent.isMultiTouchEvent(me.getEvent()))
+		{
+			this.reset();
+			return;
+		}
+		
 		var delta = this.getDelta(me);
 		var dx = delta.x;
 		var dy = delta.y;

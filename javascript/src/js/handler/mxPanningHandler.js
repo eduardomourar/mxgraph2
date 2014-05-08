@@ -51,8 +51,56 @@ function mxPanningHandler(graph)
 				me.consume();
 			}
 		});
-		
+
 		this.graph.addListener(mxEvent.FIRE_MOUSE_EVENT, this.forcePanningHandler);
+		
+		// Handles pinch gestures
+		this.gestureHandler = mxUtils.bind(this, function(sender, eo)
+		{
+			if (this.isPinchEnabled())
+			{
+				var evt = eo.getProperty('event');
+				
+				if (!mxEvent.isConsumed(evt) && evt.type == 'gesturestart')
+				{
+					this.initialScale = this.graph.view.scale;
+				
+					// Forces start of panning when pinch gesture starts
+					if (!this.active && this.mouseDownEvent != null)
+					{
+						this.start(this.mouseDownEvent);
+						this.mouseDownEvent = null;
+					}
+				}
+				else if (evt.type == 'gestureend' && this.initialScale == null)
+				{
+					this.initialScale = null;
+				}
+				
+				if (this.initialScale != null)
+				{
+					var value = Math.round(this.initialScale * evt.scale * 100) / 100;
+					
+					if (this.minScale != null)
+					{
+						value = Math.max(this.minScale, value);
+					}
+					
+					if (this.maxScale != null)
+					{
+						value = Math.min(this.maxScale, value);
+					}
+	
+					if (this.graph.view.scale != value)
+					{
+						this.graph.zoomTo(value);
+						mxEvent.consume(evt);
+					}
+				}
+			}
+		});
+		
+		this.graph.addListener(mxEvent.GESTURE, this.gestureHandler);
 	}
 };
 
@@ -115,13 +163,34 @@ mxPanningHandler.prototype.useGrid = false;
 mxPanningHandler.prototype.panningEnabled = true;
 
 /**
+ * Variable: pinchEnabled
+ * 
+ * Specifies if pinch gestures should be handled as zoom. Default is true.
+ */
+mxPanningHandler.prototype.pinchEnabled = true;
+
+/**
+ * Variable: maxScale
+ * 
+ * Specifies the maximum scale. Default is 8.
+ */
+mxPanningHandler.prototype.maxScale = 8;
+
+/**
+ * Variable: minScale
+ * 
+ * Specifies the minimum scale. Default is 0.01.
+ */
+mxPanningHandler.prototype.minScale = 0.01;
+
+/**
  * Function: isActive
  * 
  * Returns true if the handler is currently active.
  */
 mxPanningHandler.prototype.isActive = function()
 {
-	return this.active;
+	return this.active || this.initialScale != null;
 };
 
 /**
@@ -142,6 +211,26 @@ mxPanningHandler.prototype.isPanningEnabled = function()
 mxPanningHandler.prototype.setPanningEnabled = function(value)
 {
 	this.panningEnabled = value;
+};
+
+/**
+ * Function: isPinchEnabled
+ * 
+ * Returns <pinchEnabled>.
+ */
+mxPanningHandler.prototype.isPinchEnabled = function()
+{
+	return this.pinchEnabled;
+};
+
+/**
+ * Function: setPinchEnabled
+ * 
+ * Sets <pinchEnabled>.
+ */
+mxPanningHandler.prototype.setPinchEnabled = function(value)
+{
+	this.pinchEnabled = value;
 };
 
 /**
@@ -168,7 +257,7 @@ mxPanningHandler.prototype.isPanningTrigger = function(me)
  */
 mxPanningHandler.prototype.isForcePanningEvent = function(me)
 {
-	return this.ignoreCell;
+	return this.ignoreCell || mxEvent.isMultiTouchEvent(me.getEvent());
 };
 
 /**
@@ -179,7 +268,9 @@ mxPanningHandler.prototype.isForcePanningEvent = function(me)
  */
 mxPanningHandler.prototype.mouseDown = function(sender, me)
 {
-	if (!me.isConsumed() && this.isPanningEnabled() && !this.isActive() && this.isPanningTrigger(me))
+	this.mouseDownEvent = me;
+	
+	if (!me.isConsumed() && this.isPanningEnabled() && !this.active && this.isPanningTrigger(me))
 	{
 		this.start(me);
 		this.consumePanningTrigger(me);
@@ -243,8 +334,8 @@ mxPanningHandler.prototype.consumePanningTrigger = function(me)
  */
 mxPanningHandler.prototype.mouseMove = function(sender, me)
 {
-	var dx = me.getX() - this.startX;
-	var dy = me.getY() - this.startY;
+	this.dx = me.getX() - this.startX;
+	this.dy = me.getY() - this.startY;
 
 	if (this.active)
 	{
@@ -253,11 +344,11 @@ mxPanningHandler.prototype.mouseMove = function(sender, me)
 			// Applies the grid to the panning steps
 			if (this.useGrid)
 			{
-				dx = this.graph.snap(dx);
-				dy = this.graph.snap(dy);
+				this.dx = this.graph.snap(this.dx);
+				this.dy = this.graph.snap(this.dy);
 			}
 			
-			this.graph.panGraph(dx + this.dx0, dy + this.dy0);
+			this.graph.panGraph(this.dx + this.dx0, this.dy + this.dy0);
 		}
 
 		this.fireEvent(new mxEventObject(mxEvent.PAN, 'event', me));
@@ -268,7 +359,7 @@ mxPanningHandler.prototype.mouseMove = function(sender, me)
 
 		// Panning is activated only if the mouse is moved
 		// beyond the graph tolerance
-		this.active = Math.abs(dx) > this.graph.tolerance || Math.abs(dy) > this.graph.tolerance;
+		this.active = Math.abs(this.dx) > this.graph.tolerance || Math.abs(this.dy) > this.graph.tolerance;
 
 		if (!tmp && this.active)
 		{
@@ -290,24 +381,14 @@ mxPanningHandler.prototype.mouseMove = function(sender, me)
  */
 mxPanningHandler.prototype.mouseUp = function(sender, me)
 {
-	if (this.active)
+	if (this.active && this.dx != null && this.dy != null)
 	{
 		if (!this.graph.useScrollbarsForPanning || !mxUtils.hasScrollbars(this.graph.container))
 		{
-			dx = me.getX() - this.startX;
-			dy = me.getY() - this.startY;
-			
-			// Applies the grid to the panning steps
-			if (this.useGrid)
-			{
-				dx = this.graph.snap(dx);
-				dy = this.graph.snap(dy);
-			}
-			
 			var scale = this.graph.getView().scale;
 			var t = this.graph.getView().translate;
 			this.graph.panGraph(0, 0);
-			this.panGraph(t.x + dx / scale, t.y + dy / scale);
+			this.panGraph(t.x + this.dx / scale, t.y + this.dy / scale);
 		}
 		
 		this.fireEvent(new mxEventObject(mxEvent.PAN_END, 'event', me));
@@ -315,7 +396,10 @@ mxPanningHandler.prototype.mouseUp = function(sender, me)
 	}
 	
 	this.panningTrigger = false;
+	this.mouseDownEvent = null;
 	this.active = false;
+	this.dx = null;
+	this.dy = null;
 };
 
 /**
@@ -337,4 +421,5 @@ mxPanningHandler.prototype.destroy = function()
 {
 	this.graph.removeMouseListener(this);
 	this.graph.removeListener(mxEvent.FIRE_MOUSE_EVENT, this.forcePanningHandler);
+	this.graph.removeListener(mxEvent.GESTURE, this.gestureHandler);
 };
