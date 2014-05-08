@@ -1694,7 +1694,6 @@ mxGraph.prototype.collapseExpandResource = (mxClient.language != 'none') ? 'coll
  */
 mxGraph.prototype.createHandlers = function(container)
 {
-	this.multiTouchHandler = new mxMultiTouchHandler(this);
 	this.tooltipHandler = new mxTooltipHandler(this);
 	this.tooltipHandler.setEnabled(false);
 	this.selectionCellsHandler = new mxSelectionCellsHandler(this);
@@ -2726,7 +2725,7 @@ mxGraph.prototype.scrollPointToVisible = function(x, y, extend, border)
 			}
 		}
 	}
-	else if (this.allowAutoPanning && !this.panningHandler.isActive() && !this.multiTouchHandler.isActive())
+	else if (this.allowAutoPanning && !this.panningHandler.isActive())
 	{
 		if (this.panningManager == null)
 		{
