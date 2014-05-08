@@ -231,6 +231,8 @@ Editor.prototype.setGraphXml = function(node)
 	}
 	else
 	{
+		this.resetGraph();
+		
 		throw { 
 		    message: 'Cannot open file', 
 		    toString: function() { return this.message; }
