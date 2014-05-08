@@ -129,22 +129,25 @@ Graph = function(container, model, renderHint, stylesheet)
 	// cells the cell associated with the event is deselected
 	this.addListener(mxEvent.TAP_AND_HOLD, mxUtils.bind(this, function(sender, evt)
 	{
-		var me = evt.getProperty('event');
-		var cell = evt.getProperty('cell');
-		
-		if (cell == null)
+		if (!mxEvent.isMultiTouchEvent(evt))
 		{
-			var pt = mxUtils.convertPoint(this.container,
-					mxEvent.getClientX(me), mxEvent.getClientY(me));
-			rubberband.start(pt.x, pt.y);
+			var me = evt.getProperty('event');
+			var cell = evt.getProperty('cell');
+			
+			if (cell == null)
+			{
+				var pt = mxUtils.convertPoint(this.container,
+						mxEvent.getClientX(me), mxEvent.getClientY(me));
+				rubberband.start(pt.x, pt.y);
+			}
+			else if (this.getSelectionCount() > 1 && this.isCellSelected(cell))
+			{
+				this.removeSelectionCell(cell);
+			}
+			
+			// Blocks further processing of the event
+			evt.consume();
 		}
-		else if (this.getSelectionCount() > 1 && this.isCellSelected(cell))
-		{
-			this.removeSelectionCell(cell);
-		}
-		
-		// Blocks further processing of the event
-		evt.consume();
 	}));
 
 	// On connect the target is selected and we clone the cell of the preview edge for insert

@@ -158,22 +158,25 @@
 				// cells the cell associated with the event is deselected
 				graph.addListener(mxEvent.TAP_AND_HOLD, function(sender, evt)
 				{
-					var me = evt.getProperty('event');
-					var cell = evt.getProperty('cell');
-					
-					if (cell == null)
+					if (!mxEvent.isMultiTouchEvent(evt))
 					{
-						var pt = mxUtils.convertPoint(this.container,
-								mxEvent.getClientX(me), mxEvent.getClientY(me));
-						rubberband.start(pt.x, pt.y);
+						var me = evt.getProperty('event');
+						var cell = evt.getProperty('cell');
+						
+						if (cell == null)
+						{
+							var pt = mxUtils.convertPoint(this.container,
+									mxEvent.getClientX(me), mxEvent.getClientY(me));
+							rubberband.start(pt.x, pt.y);
+						}
+						else if (graph.getSelectionCount() > 1 && graph.isCellSelected(cell))
+						{
+							graph.removeSelectionCell(cell);
+						}
+						
+						// Blocks further processing of the event
+						evt.consume();
 					}
-					else if (graph.getSelectionCount() > 1 && graph.isCellSelected(cell))
-					{
-						graph.removeSelectionCell(cell);
-					}
-					
-					// Blocks further processing of the event
-					evt.consume();
 				});
 				
 				// Adds mouse wheel handling for zoom
