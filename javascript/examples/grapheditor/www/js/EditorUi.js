@@ -73,7 +73,6 @@ EditorUi = function(editor, container)
 
 	// Contains the main graph instance inside the given panel
 	graph.init(this.diagramContainer);
-	graph.refresh();
 	
 	var textMode = false;
 	var nodes = null;
@@ -206,6 +205,9 @@ EditorUi = function(editor, container)
    	   	   	this.refresh();
    		}), 0);
    	}));
+   	
+   	this.editor.updateGraphComponents();
+	graph.refresh();
 
 	// Updates action and menu states
    	this.init();
