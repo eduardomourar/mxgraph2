@@ -2439,22 +2439,7 @@ mxGraph.prototype.cellLabelChanged = function(cell, value, autoSize)
  */
 mxGraph.prototype.escape = function(evt)
 {
-	this.stopEditing(true);
-	this.connectionHandler.reset();
-	this.graphHandler.reset();
-	
-	// Cancels all cell-based editing
-	var cells = this.getSelectionCells();
-	
-	for (var i = 0; i < cells.length; i++)
-	{
-		var state = this.view.getState(cells[i]);
-		
-		if (state != null && state.handler != null)
-		{
-			state.handler.reset();
-		}
-	}
+	this.fireEvent(new mxEventObject(mxEvent.ESCAPE, 'event', evt));
 };
 
 /**

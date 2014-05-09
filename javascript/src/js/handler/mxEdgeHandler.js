@@ -33,6 +33,14 @@ function mxEdgeHandler(state)
 	{
 		this.state = state;
 		this.init();
+		
+		// Handles escape keystrokes
+		this.escapeHandler = mxUtils.bind(this, function(sender, evt)
+		{
+			this.reset();
+		});
+		
+		this.state.view.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
 	}
 };
 
@@ -1264,8 +1272,8 @@ mxEdgeHandler.prototype.addPointAt = function(state, x, y)
 		}
 		
 		this.graph.getModel().setGeometry(state.cell, geo);
-		this.destroy();
-		this.init();
+		this.refresh();	
+		this.redraw();
 	}
 };
 
@@ -1285,8 +1293,8 @@ mxEdgeHandler.prototype.removePoint = function(state, index)
 			geo = geo.clone();
 			geo.points.splice(index - 1, 1);
 			this.graph.getModel().setGeometry(state.cell, geo);
-			this.destroy();
-			this.init();
+			this.refresh();
+			this.redraw();
 		}
 	}
 };
@@ -1469,6 +1477,45 @@ mxEdgeHandler.prototype.drawPreview = function()
 };
 
 /**
+ * Function: refresh
+ * 
+ * Refreshes the bends of this handler.
+ */
+mxEdgeHandler.prototype.refresh = function()
+{
+	this.abspoints = this.getSelectionPoints(this.state);
+	this.shape.points = this.abspoints;
+	this.points = [];
+	
+	if (this.bends != null)
+	{
+		this.destroyBends();
+		this.bends = this.createBends();
+	}
+};
+
+/**
+ * Function: destroyBends
+ * 
+ * Destroys all elements in <bends>.
+ */
+mxEdgeHandler.prototype.destroyBends = function()
+{
+	if (this.bends != null)
+	{
+		for (var i = 0; i < this.bends.length; i++)
+		{
+			if (this.bends[i] != null)
+			{
+				this.bends[i].destroy();
+			}
+		}
+		
+		this.bends = null;
+	}
+};
+
+/**
  * Function: destroy
  * 
  * Destroys the handler and all its resources and DOM nodes. This does
@@ -1477,6 +1524,12 @@ mxEdgeHandler.prototype.drawPreview = function()
  */
 mxEdgeHandler.prototype.destroy = function()
 {
+	if (this.escapeHandler != null)
+	{
+		this.state.view.graph.removeListener(this.escapeHandler);
+		this.escapeHandler = null;
+	}
+	
 	if (this.marker != null)
 	{
 		this.marker.destroy();
@@ -1501,18 +1554,5 @@ mxEdgeHandler.prototype.destroy = function()
 		this.constraintHandler = null;
 	}
 
-	// Destroy the control points for the bends
-	if (this.bends != null)
-	{
-		for (var i = 0; i < this.bends.length; i++)
-		{
-			if (this.bends[i] != null)
-			{
-				this.bends[i].destroy();
-				this.bends[i] = null;
-			}
-		}
-		
-		this.bends = null;
-	}
+	this.destroyBends();
 };

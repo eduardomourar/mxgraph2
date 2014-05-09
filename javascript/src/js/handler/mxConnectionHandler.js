@@ -165,6 +165,14 @@ function mxConnectionHandler(graph, factoryMethod)
 		this.graph = graph;
 		this.factoryMethod = factoryMethod;
 		this.init();
+		
+		// Handles escape keystrokes
+		this.escapeHandler = mxUtils.bind(this, function(sender, evt)
+		{
+			this.reset();
+		});
+		
+		this.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
 	}
 };
 
@@ -1846,5 +1854,11 @@ mxConnectionHandler.prototype.destroy = function()
 		this.graph.removeListener(this.drillHandler);
 		this.graph.getView().removeListener(this.drillHandler);
 		this.drillHandler = null;
+	}
+	
+	if (this.escapeHandler != null)
+	{
+		this.graph.removeListener(this.escapeHandler);
+		this.escapeHandler = null;
 	}
 };

@@ -23,6 +23,25 @@ function mxVertexHandler(state)
 	{
 		this.state = state;
 		this.init();
+		
+		// Handles escape keystrokes
+		this.escapeHandler = mxUtils.bind(this, function(sender, evt)
+		{
+			if (this.livePreview)
+			{
+				// Redraws the live preview
+				this.state.view.graph.cellRenderer.redraw(this.state, true);
+				
+				// Redraws connected edges
+				this.state.view.invalidate(this.state.cell);
+				this.state.invalid = false;
+				this.state.view.validate();
+			}
+			
+			this.reset();
+		});
+		
+		this.state.view.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
 	}
 };
 
@@ -1438,12 +1457,18 @@ mxVertexHandler.prototype.drawPreview = function()
  */
 mxVertexHandler.prototype.destroy = function()
 {
+	if (this.escapeHandler != null)
+	{
+		this.state.view.graph.removeListener(this.escapeHandler);
+		this.escapeHandler = null;
+	}
+	
 	if (this.preview != null)
 	{
 		this.preview.destroy();
 		this.preview = null;
 	}
-	
+
 	this.selectionBorder.destroy();
 	this.selectionBorder = null;
 	this.labelShape = null;

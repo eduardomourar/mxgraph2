@@ -34,6 +34,14 @@ function mxGraphHandler(graph)
 	});
 	
 	this.graph.addListener(mxEvent.PAN, this.panHandler);
+	
+	// Handles escape keystrokes
+	this.escapeHandler = mxUtils.bind(this, function(sender, evt)
+	{
+		this.reset();
+	});
+	
+	this.graph.addListener(mxEvent.ESCAPE, this.escapeHandler);
 };
 
 /**
@@ -956,5 +964,12 @@ mxGraphHandler.prototype.destroy = function()
 {
 	this.graph.removeMouseListener(this);
 	this.graph.removeListener(this.panHandler);
+	
+	if (this.escapeHandler != null)
+	{
+		this.graph.removeListener(this.escapeHandler);
+		this.escapeHandler = null;
+	}
+	
 	this.destroyShapes();
 };

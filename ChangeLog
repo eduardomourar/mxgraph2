@@ -1,3 +1,6 @@
+- Adds escape event handling in mxConnectionHandler, mxGraphHandler, mxVertexHandler, mxEdgeHandler [JavaScript]
+- mxGraph.escape now only fires mxEvent.ESCAPE event [JavaScript]
+- Adds mxEdgeHandler.refresh, destroyBends [JavaScript]
 - Adds mouse event parameter in mxConnectionHandler.isValidSource [JavaScript]
 - Adds mxPanningHandler.isActive, pinchEnabled [JavaScript]
 - Moves native gesture event handling from shapes to container [JavaScript]
