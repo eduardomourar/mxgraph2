@@ -1,3 +1,4 @@
+- Adds updateHint, removeHint hooks in mxGraphHandler, mxVertexHandler [JavaScript]
 - Disables tooltips in mxTooltipHandler while mouse button is pressed [JavaSCript]
 - Adds escape event handling in mxConnectionHandler, mxGraphHandler, mxVertexHandler, mxEdgeHandler [JavaScript]
 - mxGraph.escape now only fires mxEvent.ESCAPE event [JavaScript]

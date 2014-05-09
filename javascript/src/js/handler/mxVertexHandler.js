@@ -610,6 +610,20 @@ mxVertexHandler.prototype.checkTolerance = function(me)
 };
 
 /**
+ * Function: updateHint
+ * 
+ * Hook for subclassers do show details while the handler is active.
+ */
+mxVertexHandler.prototype.updateHint = function(me) { };
+
+/**
+ * Function: removeHint
+ * 
+ * Hooks for subclassers to hide details when the handler gets inactive.
+ */
+mxVertexHandler.prototype.removeHint = function() { };
+
+/**
  * Function: mouseMove
  * 
  * Handles the event by updating the preview.
@@ -764,6 +778,8 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 					this.drawPreview();
 				}
 			}
+
+			this.updateHint(me);
 		}
 		
 		me.consume();
@@ -949,6 +965,7 @@ mxVertexHandler.prototype.reset = function()
 		}
 	}
 	
+	this.removeHint();
 	this.redrawHandles();
 	this.edgeHandlers = null;
 };

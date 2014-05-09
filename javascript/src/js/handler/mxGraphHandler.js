@@ -580,6 +580,20 @@ mxGraphHandler.prototype.getDelta = function(me)
 };
 
 /**
+ * Function: updateHint
+ * 
+ * Hook for subclassers do show details while the handler is active.
+ */
+mxGraphHandler.prototype.updateHint = function(me) { };
+
+/**
+ * Function: removeHint
+ * 
+ * Hooks for subclassers to hide details when the handler gets inactive.
+ */
+mxGraphHandler.prototype.removeHint = function() { };
+
+/**
  * Function: mouseMove
  * 
  * Handles the event by highlighting possible drop targets and updating the
@@ -717,6 +731,7 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			}
 		}
 
+		this.updateHint(me);
 		me.consume();
 		
 		// Cancels the bubbling of events to the container so
@@ -852,6 +867,8 @@ mxGraphHandler.prototype.selectDelayed = function(me)
 mxGraphHandler.prototype.reset = function()
 {
 	this.destroyShapes();
+	this.removeHint();
+	
 	this.cellWasClicked = false;
 	this.delayedSelection = false;
 	this.currentDx = null;
