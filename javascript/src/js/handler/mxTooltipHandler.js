@@ -152,7 +152,11 @@ mxTooltipHandler.prototype.init = function()
  */
 mxTooltipHandler.prototype.mouseDown = function(sender, me)
 {
-	this.reset(me, false);
+	if (!this.graph.isMouseDown)
+	{
+		this.reset(me, false);
+	}
+	
 	this.hideTooltip();
 };
 
@@ -165,7 +169,10 @@ mxTooltipHandler.prototype.mouseMove = function(sender, me)
 {
 	if (me.getX() != this.lastX || me.getY() != this.lastY)
 	{
-		this.reset(me, true);
+		if (!this.graph.isMouseDown)
+		{
+			this.reset(me, false);
+		}
 		
 		if (this.isHideOnHover() || me.getState() != this.state || (me.getSource() != this.node &&
 			(!this.stateSource || (me.getState() != null && this.stateSource ==
@@ -187,7 +194,11 @@ mxTooltipHandler.prototype.mouseMove = function(sender, me)
  */
 mxTooltipHandler.prototype.mouseUp = function(sender, me)
 {
-	this.reset(me, true);
+	if (!this.graph.isMouseDown)
+	{
+		this.reset(me, false);
+	}
+	
 	this.hideTooltip();
 };
 
