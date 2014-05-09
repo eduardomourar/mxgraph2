@@ -3,7 +3,7 @@
 -------------------------
 
 - https://developers.google.com/appengine/docs/java/tools/ant
-- Fix panning in FF/Win8, touch detection in FF (defaultScrollbars)
+- Fix touch detection in FF (defaultScrollbars)
 - Add socket shape (lollipop-notation)
 
 - Cleanup App.save/saveFile and file.save/saveAs
