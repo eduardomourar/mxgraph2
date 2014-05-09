@@ -152,11 +152,7 @@ mxTooltipHandler.prototype.init = function()
  */
 mxTooltipHandler.prototype.mouseDown = function(sender, me)
 {
-	if (!this.graph.isMouseDown)
-	{
-		this.reset(me, false);
-	}
-	
+	this.reset(me, false);
 	this.hideTooltip();
 };
 
@@ -169,10 +165,7 @@ mxTooltipHandler.prototype.mouseMove = function(sender, me)
 {
 	if (me.getX() != this.lastX || me.getY() != this.lastY)
 	{
-		if (!this.graph.isMouseDown)
-		{
-			this.reset(me, false);
-		}
+		this.reset(me, true);
 		
 		if (this.isHideOnHover() || me.getState() != this.state || (me.getSource() != this.node &&
 			(!this.stateSource || (me.getState() != null && this.stateSource ==
@@ -194,11 +187,7 @@ mxTooltipHandler.prototype.mouseMove = function(sender, me)
  */
 mxTooltipHandler.prototype.mouseUp = function(sender, me)
 {
-	if (!this.graph.isMouseDown)
-	{
-		this.reset(me, false);
-	}
-	
+	this.reset(me, true);
 	this.hideTooltip();
 };
 
@@ -239,7 +228,7 @@ mxTooltipHandler.prototype.reset = function(me, restart)
 	
 			this.thread = window.setTimeout(mxUtils.bind(this, function()
 			{
-				if (!this.graph.isEditing() && !this.graph.popupMenuHandler.isMenuShowing())
+				if (!this.graph.isEditing() && !this.graph.popupMenuHandler.isMenuShowing() && !this.graph.isMouseDown)
 				{
 					// Uses information from inside event cause using the event at
 					// this (delayed) point in time is not possible in IE as it no
