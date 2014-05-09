@@ -966,8 +966,9 @@ Graph.prototype.initTouch = function()
 			}
 			else
 			{
-				this.hint.innerHTML = mxResources.get('width').substring(0, 1) + ': ' + f2(this.bounds.width) +
-					'&nbsp;&nbsp;' + mxResources.get('height').substring(0, 1) + ': ' + f2(this.bounds.height);
+				var s = this.state.view.scale;
+				this.hint.innerHTML = mxResources.get('width').substring(0, 1) + ': ' + f2(this.bounds.width / s) +
+					'&nbsp;&nbsp;' + mxResources.get('height').substring(0, 1) + ': ' + f2(this.bounds.height / s);
 			}
 		}
 	};
