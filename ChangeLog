@@ -1,3 +1,4 @@
+- Adds mouse event parameter in mxConnectionHandler.isValidSource [JavaScript]
 - Adds mxPanningHandler.isActive, pinchEnabled [JavaScript]
 - Moves native gesture event handling from shapes to container [JavaScript]
 - Disables autoscroll for multi touch events in mxGraph.fireMouseEvent [JavaScript]

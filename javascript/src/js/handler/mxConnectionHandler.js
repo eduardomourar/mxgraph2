@@ -522,7 +522,7 @@ mxConnectionHandler.prototype.createMarker = function()
 					}
 				}
 			}
-			else if (!this.isValidSource(cell))
+			else if (!this.isValidSource(cell, me))
 			{
 				cell = null;
 			}
@@ -611,8 +611,9 @@ mxConnectionHandler.prototype.isConnecting = function()
  * Parameters:
  * 
  * cell - <mxCell> that represents the source terminal.
+ * me - <mxMouseEvent> that is associated with this call.
  */
-mxConnectionHandler.prototype.isValidSource = function(cell)
+mxConnectionHandler.prototype.isValidSource = function(cell, me)
 {
 	return this.graph.isValidSource(cell);
 };

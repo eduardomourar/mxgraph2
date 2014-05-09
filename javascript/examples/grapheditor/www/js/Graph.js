@@ -24,10 +24,12 @@ Graph = function(container, model, renderHint, stylesheet)
 	// Enables cloning of connection sources by default
 	this.connectionHandler.setCreateTarget(true);
 	
-	// Disables built-in connection starts
-	this.connectionHandler.isValidSource = function()
+	// Disables built-in connection starts except shift is pressed when hovering the cell
+	this.connectionHandler.isValidSource = function(cell, me)
 	{
-		return mxConnectionHandler.prototype.isValidSource.apply(this, arguments) && urlParams['connect'] != '2' && urlParams['connect'] != null;
+		return mxConnectionHandler.prototype.isValidSource.apply(this, arguments) &&
+			((urlParams['connect'] != '2' && urlParams['connect'] != null) ||
+			mxEvent.isShiftDown(me.getEvent()));
 	};
 
 	// Sets the style to be used when an elbow edge is double clicked
