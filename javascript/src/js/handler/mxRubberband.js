@@ -368,7 +368,7 @@ mxRubberband.prototype.destroy = function()
 	{
 		this.destroyed = true;
 		this.graph.removeMouseListener(this);
-		this.graph.removeListener(mxEvent.FIRE_MOUSE_EVENT, this.forceRubberbandHandler);
+		this.graph.removeListener(this.forceRubberbandHandler);
 		this.graph.removeListener(this.panHandler);
 		this.reset();
 		

@@ -420,6 +420,6 @@ mxPanningHandler.prototype.panGraph = function(dx, dy)
 mxPanningHandler.prototype.destroy = function()
 {
 	this.graph.removeMouseListener(this);
-	this.graph.removeListener(mxEvent.FIRE_MOUSE_EVENT, this.forcePanningHandler);
-	this.graph.removeListener(mxEvent.GESTURE, this.gestureHandler);
+	this.graph.removeListener(this.forcePanningHandler);
+	this.graph.removeListener(this.gestureHandler);
 };

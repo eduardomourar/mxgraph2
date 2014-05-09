@@ -195,7 +195,7 @@ mxPopupMenuHandler.prototype.getCellForPopupEvent = function(me)
 mxPopupMenuHandler.prototype.destroy = function()
 {
 	this.graph.removeMouseListener(this);
-	this.graph.removeListener(mxEvent.GESTURE, this.gestureHandler);
+	this.graph.removeListener(this.gestureHandler);
 	
 	// Supercall
 	mxPopupMenu.prototype.destroy.apply(this);
