@@ -427,7 +427,7 @@ Menus.prototype.init = function()
 	this.put('edit', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['undo', 'redo', '-', 'cut', 'copy', 'paste', 'delete', '-', 'duplicate', '-',
-		                         'editData', 'editLink', 'openLink', '-', 'selectVertices', 'selectEdges', 'selectAll',
+		                         'editData', 'editLink', 'openLink', 'editTooltip', '-', 'selectVertices', 'selectEdges', 'selectAll',
 		                         '-', 'setAsDefaultEdge', 'lockUnlock']);
 	})));
 	this.put('options', new Menu(mxUtils.bind(this, function(menu, parent)
