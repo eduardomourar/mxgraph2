@@ -2,18 +2,21 @@
   $Id: jquery.html,v 1.1 2014/01/13 15:44:02 gaudenz Exp $
   Copyright (c) 2006-2013, JGraph Ltd
   
-  Hello, World! example for mxGraph. This example demonstrates using
-  a DOM node to create a graph and adding vertices and edges.
+  JQuery example for mxGraph. This example demonstrates using
+  a JQuery plugin to generate labels for vertices on the fly.
 -->
 <html>
 <head>
 	<title>JQuery plugin for labels</title>
-
+	
+	<!-- Sets the basepath for the library if not in same directory -->
 	<script type="text/javascript">
-		mxBasePath = '../../../javascript/src';
+		mxBasePath = '../src';
 	</script>
-	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
 
+	<!-- Loads and initializes the library -->
+	<script type="text/javascript" src="../src/js/mxClient.js"></script>
+	
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://www.chartjs.org/assets/Chart.js"></script>
 
