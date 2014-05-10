@@ -624,6 +624,26 @@ mxVertexHandler.prototype.updateHint = function(me) { };
 mxVertexHandler.prototype.removeHint = function() { };
 
 /**
+ * Function: roundAngle
+ * 
+ * Hook for rounding the angle. This uses Math.round.
+ */
+mxVertexHandler.prototype.roundAngle = function(angle)
+{
+	return Math.round(angle);
+};
+
+/**
+ * Function: roundLength
+ * 
+ * Hook for rounding the unscaled width or height. This uses Math.round.
+ */
+mxVertexHandler.prototype.roundLength = function(length)
+{
+	return Math.round(length);
+};
+
+/**
  * Function: mouseMove
  * 
  * Handles the event by updating the preview.
@@ -673,6 +693,10 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 					
 					this.currentAlpha = Math.round(this.currentAlpha / raster) * raster;
 				}
+				else
+				{
+					this.currentAlpha = this.roundAngle(this.currentAlpha);
+				}
 	
 				this.selectionBorder.rotation = this.currentAlpha;
 				this.selectionBorder.redraw();
@@ -698,8 +722,8 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 				var tx = cos * dx - sin * dy;
 				var ty = sin * dx + cos * dy;
 				
-				dx = tx;
-				dy = ty;
+				dx = this.roundLength(tx / scale) * scale;
+				dy = this.roundLength(ty / scale) * scale;
 				
 				this.bounds = this.union(this.selectionBounds, dx, dy, this.index, gridEnabled, scale, tr, this.isConstrainedEvent(me));
 
@@ -836,7 +860,8 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 				
 				var s = this.graph.view.scale;
 				var recurse = this.isRecursiveResize(this.state, me);
-				this.resizeCell(this.state.cell, dx / s, dy / s, this.index, gridEnabled, this.isConstrainedEvent(me), recurse);
+				this.resizeCell(this.state.cell, this.roundLength(dx / s), this.roundLength(dy / s),
+					this.index, gridEnabled, this.isConstrainedEvent(me), recurse);
 			}
 		}
 		finally

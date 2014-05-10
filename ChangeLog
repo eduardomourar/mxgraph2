@@ -1,4 +1,6 @@
-- Adds updateHint, removeHint hooks in mxGraphHandler, mxVertexHandler [JavaScript]
+- Adds mxGraphHandler, mxEdgeHandler.roundLength for rounding coordinates [JavaScript]
+- Adds mxVertexHandler.roundAngle, roundLength for rounding rotate and size [JavaScript]
+- Adds updateHint, removeHint in mxGraphHandler, mxVertexHandler, mxEdgeHandler [JavaScript]
 - Disables tooltips in mxTooltipHandler while mouse button is pressed [JavaSCript]
 - Adds escape event handling in mxConnectionHandler, mxGraphHandler, mxVertexHandler, mxEdgeHandler [JavaScript]
 - mxGraph.escape now only fires mxEvent.ESCAPE event [JavaScript]

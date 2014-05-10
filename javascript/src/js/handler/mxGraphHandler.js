@@ -575,8 +575,10 @@ mxGraphHandler.prototype.snap = function(vector)
 mxGraphHandler.prototype.getDelta = function(me)
 {
 	var point = mxUtils.convertPoint(this.graph.container, me.getX(), me.getY());
+	var s = this.graph.view.scale;
 	
-	return new mxPoint(point.x - this.first.x, point.y - this.first.y);
+	return new mxPoint(this.roundLength((point.x - this.first.x) / s) * s,
+		this.roundLength((point.y - this.first.y) / s) * s);
 };
 
 /**
@@ -592,6 +594,16 @@ mxGraphHandler.prototype.updateHint = function(me) { };
  * Hooks for subclassers to hide details when the handler gets inactive.
  */
 mxGraphHandler.prototype.removeHint = function() { };
+
+/**
+ * Function: roundLength
+ * 
+ * Hook for rounding the unscaled vector. This uses Math.round.
+ */
+mxGraphHandler.prototype.roundLength = function(length)
+{
+	return Math.round(length);
+};
 
 /**
  * Function: mouseMove
@@ -808,8 +820,8 @@ mxGraphHandler.prototype.mouseUp = function(sender, me)
 		{
 			var scale = graph.getView().scale;
 			var clone = graph.isCloneEvent(me.getEvent()) && graph.isCellsCloneable() && this.isCloneEnabled();
-			var dx = this.currentDx / scale;
-			var dy = this.currentDy / scale;
+			var dx = this.roundLength(this.currentDx / scale);
+			var dy = this.roundLength(this.currentDy / scale);
 			var cell = me.getCell();
 			
 			if (this.connectOnDrop && this.target == null && cell != null && graph.getModel().isVertex(cell) &&

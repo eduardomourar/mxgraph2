@@ -861,9 +861,24 @@ Graph.prototype.initTouch = function()
 		};
 	}
 
+	function createHint()
+	{
+		var hint = document.createElement('div');
+		hint.style.backgroundColor = 'white';
+		hint.style.border = '1px solid gray';
+		hint.style.padding = '4px';
+		hint.style.paddingLeft = '16px';
+		hint.style.paddingRight = '16px';
+		hint.style.whiteSpace = 'nowrap';
+		hint.style.position = 'absolute';
+		
+		mxUtils.setPrefixedStyle(hint.style, 'borderRadius', '3px');
+		mxUtils.setPrefixedStyle(hint.style, 'boxShadow', '1px 1px 2px 0px #ddd');
+		
+		return hint;
+	};
+	
 	/**
-	 * Function: updateHint
-	 * 
 	 * Updates the hint for the current operation.
 	 */
 	mxGraphHandler.prototype.updateHint = function(me)
@@ -872,41 +887,23 @@ Graph.prototype.initTouch = function()
 		{
 			if (this.hint == null)
 			{
-				this.hint = document.createElement('div');
-				this.hint.style.backgroundColor = 'white';
-				this.hint.style.border = '1px solid gray';
-				this.hint.style.padding = '4px';
-				this.hint.style.paddingLeft = '16px';
-				this.hint.style.paddingRight = '16px';
-				this.hint.style.whiteSpace = 'nowrap';
-				this.hint.style.position = 'absolute';
-				
-				mxUtils.setPrefixedStyle(this.hint.style, 'borderRadius', '3px');
-				mxUtils.setPrefixedStyle(this.hint.style, 'boxShadow', '1px 1px 2px 0px #ddd');
-				
+				this.hint = createHint();
 				this.graph.container.appendChild(this.hint);
 			}
-			
-			function f2(n)
-			{
-				return Math.round(n * 100) / 100;
-			}
-		
-			this.hint.style.left = this.shape.bounds.x + ((this.shape.bounds.width - this.hint.clientWidth) / 2) + 'px';
-			this.hint.style.top = (this.shape.bounds.y + this.shape.bounds.height + 20) + 'px';
-			
+
 			var t = this.graph.view.translate;
 			var s = this.graph.view.scale;
-			var x = (this.bounds.x + this.currentDx) / s - t.x;
-			var y = (this.bounds.y + this.currentDy) / s - t.y;
+			var x = this.roundLength((this.bounds.x + this.currentDx) / s - t.x);
+			var y = this.roundLength((this.bounds.y + this.currentDy) / s - t.y);
 			
-			this.hint.innerHTML = 'X: ' + f2(x) + '&nbsp;&nbsp;Y: ' + f2(y);
+			this.hint.innerHTML = 'X: ' + x + '&nbsp;&nbsp;Y: ' + y;
+
+			this.hint.style.left = this.shape.bounds.x + Math.round((this.shape.bounds.width - this.hint.clientWidth) / 2) + 'px';
+			this.hint.style.top = (this.shape.bounds.y + this.shape.bounds.height + 20) + 'px';
 		}
 	};
 
 	/**
-	 * Function: updateHint
-	 * 
 	 * Updates the hint for the current operation.
 	 */
 	mxGraphHandler.prototype.removeHint = function()
@@ -927,8 +924,6 @@ Graph.prototype.initTouch = function()
 	};
 
 	/**
-	 * Function: updateHint
-	 * 
 	 * Updates the hint for the current operation.
 	 */
 	mxVertexHandler.prototype.updateHint = function(me)
@@ -937,55 +932,57 @@ Graph.prototype.initTouch = function()
 		{
 			if (this.hint == null)
 			{
-				this.hint = document.createElement('div');
-				this.hint.style.backgroundColor = 'white';
-				this.hint.style.border = '1px solid gray';
-				this.hint.style.padding = '4px';
-				this.hint.style.paddingLeft = '16px';
-				this.hint.style.paddingRight = '16px';
-				this.hint.style.whiteSpace = 'nowrap';
-				this.hint.style.position = 'absolute';
-				
-				mxUtils.setPrefixedStyle(this.hint.style, 'borderRadius', '3px');
-				mxUtils.setPrefixedStyle(this.hint.style, 'boxShadow', '1px 1px 2px 0px #ddd');
-				
+				this.hint = createHint();
 				this.state.view.graph.container.appendChild(this.hint);
 			}
-			
-			function f2(n)
-			{
-				return Math.round(n * 100) / 100;
-			}
-		
-			this.hint.style.left = this.bounds.x + ((this.bounds.width - this.hint.clientWidth) / 2) + 'px';
-			this.hint.style.top = (this.bounds.y + this.bounds.height + 20) + 'px';
-			
+
 			if (this.index == mxEvent.ROTATION_HANDLE)
 			{
-				this.hint.innerHTML = f2(this.currentAlpha) + '&deg;';
+				this.hint.innerHTML = this.currentAlpha + '&deg;';
 			}
 			else
 			{
 				var s = this.state.view.scale;
-				this.hint.innerHTML = mxResources.get('width').substring(0, 1) + ': ' + f2(this.bounds.width / s) +
-					'&nbsp;&nbsp;' + mxResources.get('height').substring(0, 1) + ': ' + f2(this.bounds.height / s);
+				this.hint.innerHTML = mxResources.get('width').substring(0, 1) + ': ' + this.roundLength(this.bounds.width / s) +
+					'&nbsp;&nbsp;' + mxResources.get('height').substring(0, 1) + ': ' + this.roundLength(this.bounds.height / s);
 			}
+			
+			this.hint.style.left = this.bounds.x + Math.round((this.bounds.width - this.hint.clientWidth) / 2) + 'px';
+			this.hint.style.top = (this.bounds.y + this.bounds.height + 20) + 'px';
 		}
 	};
 
 	/**
-	 * Function: updateHint
-	 * 
 	 * Updates the hint for the current operation.
 	 */
-	mxVertexHandler.prototype.removeHint = function()
+	mxVertexHandler.prototype.removeHint = mxGraphHandler.prototype.removeHint;
+
+	/**
+	 * Updates the hint for the current operation.
+	 */
+	mxEdgeHandler.prototype.updateHint = function(me, point)
 	{
-		if (this.hint != null)
+		if (this.hint == null)
 		{
-			this.hint.parentNode.removeChild(this.hint);
-			this.hint = null;
+			this.hint = createHint();
+			this.state.view.graph.container.appendChild(this.hint);
 		}
+
+		var t = this.graph.view.translate;
+		var s = this.graph.view.scale;
+		var x = this.roundLength(point.x / s - t.x);
+		var y = this.roundLength(point.y / s - t.y);
+		
+		this.hint.innerHTML = 'X: ' + x + '&nbsp;&nbsp;Y: ' + y;
+		
+		this.hint.style.left = Math.round(me.getGraphX() - this.hint.clientWidth / 2) + 'px';
+		this.hint.style.top = (me.getGraphY() + 20) + 'px';
 	};
+
+	/**
+	 * Updates the hint for the current operation.
+	 */
+	mxEdgeHandler.prototype.removeHint = mxGraphHandler.prototype.removeHint;
 
 	/**
 	 * Implements touch style
