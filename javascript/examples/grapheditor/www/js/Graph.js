@@ -864,17 +864,9 @@ Graph.prototype.initTouch = function()
 	function createHint()
 	{
 		var hint = document.createElement('div');
-		hint.style.backgroundColor = 'white';
-		hint.style.border = '1px solid gray';
-		hint.style.padding = '4px';
-		hint.style.paddingLeft = '16px';
-		hint.style.paddingRight = '16px';
+		hint.className = 'geHint';
 		hint.style.whiteSpace = 'nowrap';
 		hint.style.position = 'absolute';
-		hint.style.opacity = '0.8';
-		
-		mxUtils.setPrefixedStyle(hint.style, 'borderRadius', '3px');
-		mxUtils.setPrefixedStyle(hint.style, 'boxShadow', '1px 1px 2px 0px #ddd');
 		
 		return hint;
 	};
