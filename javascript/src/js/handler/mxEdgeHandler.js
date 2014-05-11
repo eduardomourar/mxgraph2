@@ -1581,4 +1581,5 @@ mxEdgeHandler.prototype.destroy = function()
 	}
 
 	this.destroyBends();
+	this.removeHint();
 };

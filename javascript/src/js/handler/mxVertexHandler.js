@@ -1514,6 +1514,7 @@ mxVertexHandler.prototype.destroy = function()
 	this.selectionBorder.destroy();
 	this.selectionBorder = null;
 	this.labelShape = null;
+	this.removeHint();
 	
 	if (this.sizers != null)
 	{
