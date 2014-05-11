@@ -1539,6 +1539,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn)
 	
 	var linkInput = document.createElement('input');
 	linkInput.setAttribute('value', initialValue);
+	linkInput.setAttribute('placeholder', 'http://www.example.com/');
 	linkInput.setAttribute('type', 'text');
 	linkInput.style.marginTop = '6px';
 	linkInput.style.width = '300px';
