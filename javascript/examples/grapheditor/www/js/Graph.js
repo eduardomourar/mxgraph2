@@ -871,6 +871,7 @@ Graph.prototype.initTouch = function()
 		hint.style.paddingRight = '16px';
 		hint.style.whiteSpace = 'nowrap';
 		hint.style.position = 'absolute';
+		hint.style.opacity = '0.8';
 		
 		mxUtils.setPrefixedStyle(hint.style, 'borderRadius', '3px');
 		mxUtils.setPrefixedStyle(hint.style, 'boxShadow', '1px 1px 2px 0px #ddd');
