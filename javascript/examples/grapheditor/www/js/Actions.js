@@ -839,7 +839,15 @@ Actions.prototype.init = function()
 	    			}
 	    			
 	        		graph.setCellStyles(mxConstants.STYLE_IMAGE, newValue, cells);
-		        	graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
+	        		
+	        		// Sets shape only if not already shape with image (label or image)
+	        		var state = graph.view.getState(cells[0]);
+	        		var style = (state != null) ? state.style : graph.getCellStyle(cells[0]);
+	        		
+	        		if (style[mxConstants.STYLE_SHAPE] != 'image' && style[mxConstants.STYLE_SHAPE] != 'label')
+	        		{
+	        			graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
+	        		}
 		        	
 		        	if (graph.getSelectionCount() == 1)
 		        	{
