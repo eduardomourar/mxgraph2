@@ -756,6 +756,46 @@ Graph.prototype.initTouch = function()
 	if ('contentEditable' in document.documentElement)
 	{
 		/**
+		 * Keypress starts immediate editing on selectionc cell
+		 */
+		var editorUiInit = EditorUi.prototype.init;
+		EditorUi.prototype.init = function()
+		{
+			editorUiInit.apply(this, arguments);
+
+			mxEvent.addListener(this.editor.graph.container, 'keypress', mxUtils.bind(this, function(evt)
+			{
+				if (!this.editor.graph.isEditing() && !this.editor.graph.isSelectionEmpty() && evt.which !== 0 &&
+					!mxEvent.isAltDown(evt) && !mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
+				{
+					this.editor.graph.startEditing();
+
+					if (mxClient.IS_FF)
+					{
+						var ce = this.editor.graph.cellEditor;
+
+						// Initial keystroke is lost in FF
+						if (ce.textarea.style.display != 'none')
+						{
+							ce.textarea.value = String.fromCharCode(evt.which);
+						}
+						else if (ce.text2 != null)
+						{
+							ce.text2.innerHTML = String.fromCharCode(evt.which);
+				            var range = document.createRange();
+				            range.selectNodeContents(ce.text2);
+				            range.collapse(false);
+				            
+				            var selection = window.getSelection();
+				            selection.removeAllRanges();
+				            selection.addRange(range);
+						}
+					}
+				}
+			}));
+		};
+
+		/**
 		 * HTML in-place editor
 		 */
 		var mxCellEditorStartEditing = mxCellEditor.prototype.startEditing;
