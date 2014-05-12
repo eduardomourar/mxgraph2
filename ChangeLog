@@ -1,3 +1,5 @@
+12-MAY-2014: 2.7.0.0
+
 - Adds mxGraphHandler, mxEdgeHandler.roundLength for rounding coordinates [JavaScript]
 - Adds mxVertexHandler.roundAngle, roundLength for rounding rotate and size [JavaScript]
 - Adds updateHint, removeHint in mxGraphHandler, mxVertexHandler, mxEdgeHandler [JavaScript]
