@@ -198,7 +198,7 @@ mxCellEditor.prototype.init = function ()
 			else
 			{
 				// Clears the initial empty label on the first keystroke
-				if (this.clearOnChange)
+				if (this.clearOnChange && this.textarea.value == this.getEmptyLabelText())
 				{
 					this.clearOnChange = false;
 					this.textarea.value = '';
@@ -458,7 +458,7 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		if (value == null || value.length == 0)
 		{
 			value = this.getEmptyLabelText();
-			this.clearOnChange = true;
+			this.clearOnChange = value.length > 0;
 		}
 		else
 		{

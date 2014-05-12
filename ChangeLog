@@ -1,3 +1,5 @@
+- Checks placeholder value for clearOnChange in mxCellEditor [JavaScript]
+
 12-MAY-2014: 2.7.0.0
 
 - Adds mxGraphHandler, mxEdgeHandler.roundLength for rounding coordinates [JavaScript]
