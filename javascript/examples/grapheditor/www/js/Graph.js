@@ -889,7 +889,7 @@ Graph.prototype.initTouch = function()
 			var x = this.roundLength((this.bounds.x + this.currentDx) / s - t.x);
 			var y = this.roundLength((this.bounds.y + this.currentDy) / s - t.y);
 			
-			this.hint.innerHTML = 'X: ' + x + '&nbsp;&nbsp;Y: ' + y;
+			this.hint.innerHTML = x + ', ' + y;
 
 			this.hint.style.left = this.shape.bounds.x + Math.round((this.shape.bounds.width - this.hint.clientWidth) / 2) + 'px';
 			this.hint.style.top = (this.shape.bounds.y + this.shape.bounds.height + 20) + 'px';
@@ -936,8 +936,7 @@ Graph.prototype.initTouch = function()
 			else
 			{
 				var s = this.state.view.scale;
-				this.hint.innerHTML = mxResources.get('width').substring(0, 1) + ': ' + this.roundLength(this.bounds.width / s) +
-					'&nbsp;&nbsp;' + mxResources.get('height').substring(0, 1) + ': ' + this.roundLength(this.bounds.height / s);
+				this.hint.innerHTML = this.roundLength(this.bounds.width / s) + ' x ' + this.roundLength(this.bounds.height / s);
 			}
 			
 			this.hint.style.left = this.bounds.x + Math.round((this.bounds.width - this.hint.clientWidth) / 2) + 'px';
@@ -966,7 +965,7 @@ Graph.prototype.initTouch = function()
 		var x = this.roundLength(point.x / s - t.x);
 		var y = this.roundLength(point.y / s - t.y);
 		
-		this.hint.innerHTML = 'X: ' + x + '&nbsp;&nbsp;Y: ' + y;
+		this.hint.innerHTML = x + ', ' + y;
 		
 		this.hint.style.left = Math.round(me.getGraphX() - this.hint.clientWidth / 2) + 'px';
 		this.hint.style.top = (me.getGraphY() + 20) + 'px';
