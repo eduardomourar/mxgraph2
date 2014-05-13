@@ -36,6 +36,8 @@
  *     
  *     return !(model.isEdge(edge2) && ((src == src2 && trg == trg2) || (src == trg2 && trg == src2)));
  *   };
+ *   
+ *   layout.execute(graph.getDefaultParent());
  * });
  * (end)
  * 
