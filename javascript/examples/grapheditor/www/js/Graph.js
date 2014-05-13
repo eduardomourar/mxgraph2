@@ -756,7 +756,7 @@ Graph.prototype.initTouch = function()
 	if ('contentEditable' in document.documentElement)
 	{
 		/**
-		 * Keypress starts immediate editing on selectionc cell
+		 * Keypress starts immediate editing on selection cell
 		 */
 		var editorUiInit = EditorUi.prototype.init;
 		EditorUi.prototype.init = function()
