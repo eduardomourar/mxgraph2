@@ -11861,11 +11861,21 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 				Math.abs(this.initialTouchY - me.getGraphY()) < this.tolerance;
 		}
 		
-		// Workaround for duplicate click in Windows 8 with Chrome/FF/Opera with touch
-		if (evtName == mxEvent.MOUSE_DOWN && mxEvent.isTouchEvent(me.getEvent()))
-		{
-			me.consume(false);
-		}
+		this.consumeMouseEvent(evtName, me, sender);
+	}
+};
+
+/**
+ * Function: consumeMouseEvent
+ * 
+ * Destroys the graph and all its resources.
+ */
+mxGraph.prototype.consumeMouseEvent = function(evtName, me, sender)
+{
+	// Workaround for duplicate click in Windows 8 with Chrome/FF/Opera with touch
+	if (evtName == mxEvent.MOUSE_DOWN && mxEvent.isTouchEvent(me.getEvent()))
+	{
+		me.consume(false);
 	}
 };
 
