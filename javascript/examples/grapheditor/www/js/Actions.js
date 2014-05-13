@@ -834,7 +834,7 @@ Actions.prototype.init = function()
 	    				
 	    				cells = [graph.insertVertex(graph.getDefaultParent(), null, '',
 	    						graph.snap(dx + gs), graph.snap(dy + gs), w, h,
-	    						'verticalLabelPosition=bottom;verticalAlign=top;')];
+	    						'shape=image;verticalLabelPosition=bottom;verticalAlign=top;')];
 	    				select = cells;
 	    			}
 	    			
