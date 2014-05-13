@@ -2340,9 +2340,6 @@ mxGraphView.prototype.installListeners = function()
 		{
 			mxEvent.addListener(container, 'gesturestart', mxUtils.bind(this, function(evt)
 			{
-				// FIXME: Breaks encapsulation to reset the double
-				// tap event handling when gestures take place
-				graph.lastTouchTime = 0;
 				graph.fireGestureEvent(evt);
 				mxEvent.consume(evt);
 			}));
