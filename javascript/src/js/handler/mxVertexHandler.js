@@ -136,6 +136,29 @@ mxVertexHandler.prototype.manageSizers = false;
 mxVertexHandler.prototype.constrainGroupByChildren = false;
 
 /**
+ * Variable: rotationHandleVSpacing
+ * 
+ * Vertical spacing for rotation icon. Default is -16.
+ */
+mxVertexHandler.prototype.rotationHandleVSpacing = -16;
+
+/**
+ * Variable: horizontalOffset
+ * 
+ * The horizontal offset for the handles. This is updated in <redrawHandles>
+ * if <manageSizers> is true and the sizers are offset horizontally.
+ */
+mxVertexHandler.prototype.horizontalOffset = 0;
+
+/**
+ * Variable: verticalOffset
+ * 
+ * The horizontal offset for the handles. This is updated in <redrawHandles>
+ * if <manageSizers> is true and the sizers are offset vertically.
+ */
+mxVertexHandler.prototype.verticalOffset = 0;
+
+/**
  * Function: init
  * 
  * Initializes the shapes required for this vertex handler.
@@ -1304,6 +1327,8 @@ mxVertexHandler.prototype.redraw = function()
  */
 mxVertexHandler.prototype.redrawHandles = function()
 {
+	this.horizontalOffset = 0;
+	this.verticalOffset = 0;
 	var s = this.bounds;
 
 	if (this.sizers != null)
@@ -1341,10 +1366,12 @@ mxVertexHandler.prototype.redrawHandles = function()
 				s = new mxRectangle(s.x, s.y, s.width, s.height);
 				tol /= 2;
 				
-				s.x -= (this.sizers[0].bounds.width + tol) / 2;
-				s.width += this.sizers[0].bounds.width + tol;
-				s.y -= (this.sizers[0].bounds.height + tol)  / 2;
-				s.height += this.sizers[0].bounds.height + tol;
+				this.horizontalOffset = this.sizers[0].bounds.width + tol;
+				this.verticalOffset = this.sizers[0].bounds.height + tol;
+				s.x -= this.horizontalOffset / 2;
+				s.width += this.horizontalOffset;
+				s.y -= this.verticalOffset / 2;
+				s.height += this.verticalOffset;
 			}
 		}
 
@@ -1445,7 +1472,7 @@ mxVertexHandler.prototype.redrawHandles = function()
 		var sin = Math.sin(alpha);
 		
 		var ct = new mxPoint(this.state.getCenterX(), this.state.getCenterY());
-		var pt = mxUtils.getRotatedPoint(new mxPoint(s.x + s.width / 2, s.y - 16), cos, sin, ct);
+		var pt = mxUtils.getRotatedPoint(new mxPoint(s.x + s.width / 2, s.y + this.rotationHandleVSpacing), cos, sin, ct);
 
 		if (this.rotationShape.node != null)
 		{
