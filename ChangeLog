@@ -1,3 +1,4 @@
+- mxUtils.getBoundingBox adds optional rotation center parameter [JavaScript]
 - Fixes PAN_START event in mxPanningHandler for forced panning [JavaScript]
 - Adds mxVertexHandler.rotationHandleVSpacing, horizontal-/verticalOffset [JavaScript]
 - mxGraph.isEventSourceIgnored ignores anchors, certain inputs [JavaScript]
