@@ -1,3 +1,4 @@
+- Fixes PAN_START event in mxPanningHandler for forced panning [JavaScript]
 - Adds mxVertexHandler.rotationHandleVSpacing, horizontal-/verticalOffset [JavaScript]
 - mxGraph.isEventSourceIgnored ignores anchors, certain inputs [JavaScript]
 - Ignores events with alt and meta in mxEvent.isPopupTrigger [JavaScript]

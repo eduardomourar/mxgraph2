@@ -48,6 +48,7 @@ function mxPanningHandler(graph)
 			{
 				this.start(me);
 				this.active = true;
+				this.fireEvent(new mxEventObject(mxEvent.PAN_START, 'event', me));
 				me.consume();
 			}
 		});
