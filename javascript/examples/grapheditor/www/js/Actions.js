@@ -722,6 +722,39 @@ Actions.prototype.init = function()
 			rmWaypointAction.handler.removePoint(rmWaypointAction.handler.state, rmWaypointAction.index);
 		}
 	});
+	this.addAction('resetWaypoints', function()
+	{
+		var cells = graph.getSelectionCells();
+		
+		if (cells != null)
+		{
+			graph.getModel().beginUpdate();
+			try
+			{
+				for (var i = 0; i < cells.length; i++)
+				{
+					var cell = cells[i];
+					
+					if (graph.getModel().isEdge(cell))
+					{
+						var geo = graph.getCellGeometry(cell);
+			
+						if (geo != null)
+						{
+							// Rotates the size and position in the geometry
+							geo = geo.clone();
+							geo.points = null;
+							graph.getModel().setGeometry(cell, geo);
+						}
+					}
+				}
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+		}
+	});
 	this.addAction('insertLink', function()
 	{
 		if (graph.isEnabled())
