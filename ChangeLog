@@ -1,3 +1,4 @@
+- mxGraph.isEventSourceIgnored ignores anchors, certain inputs [JavaScript]
 - Ignores events with alt and meta in mxEvent.isPopupTrigger [JavaScript]
 - Adds mxGraph.consumeMouseEvent hook [JavaScript]
 - Checks placeholder value for clearOnChange in mxCellEditor [JavaScript]

@@ -11642,8 +11642,10 @@ mxGraph.prototype.isSyntheticEventIgnored = function(evtName, me, sender)
 /**
  * Function: isEventSourceIgnored
  * 
- * Returns true if the given mouse down event should be ignored. This returns
- * true for mouse events on select, option, button, anchor and input.
+ * Returns true if the event should be ignored in <fireMouseEvent>. This
+ * implementation returns true for select, option and input (if not of type
+ * checkbox, radio, button, submit or file) event sources if the event is not
+ * a mouse event or a left mouse button press event.
  * 
  * Parameters:
  * 
@@ -11652,10 +11654,13 @@ mxGraph.prototype.isSyntheticEventIgnored = function(evtName, me, sender)
  */
 mxGraph.prototype.isEventSourceIgnored = function(evtName, me)
 {
-	var name = (me.getSource().nodeName != null) ? me.getSource().nodeName.toLowerCase() : '';
+	var source = me.getSource();
+	var name = (source.nodeName != null) ? source.nodeName.toLowerCase() : '';
+	var candidate = !mxEvent.isMouseEvent(me.getEvent()) || mxEvent.isLeftMouseButton(me.getEvent());
 	
-	return evtName == mxEvent.MOUSE_DOWN && (name == 'select' || name == 'option'
-		|| name == 'button' || name == 'a' || name == 'input');
+	return evtName == mxEvent.MOUSE_DOWN && candidate && (name == 'select' || name == 'option' ||
+		(name == 'input' && source.type != 'checkbox' && source.type != 'radio' &&
+		source.type != 'button' && source.type != 'submit' && source.type != 'file'));
 };
 
 /**
