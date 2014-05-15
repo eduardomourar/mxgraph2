@@ -827,6 +827,7 @@ Graph.prototype.initTouch = function()
 				if (!this.editor.graph.isEditing() && !this.editor.graph.isSelectionEmpty() && evt.which !== 0 &&
 					!mxEvent.isAltDown(evt) && !mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
 				{
+					this.editor.graph.escape();
 					this.editor.graph.startEditing();
 
 					if (mxClient.IS_FF)
