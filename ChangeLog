@@ -1,3 +1,4 @@
+- Adds mxVertexHandler.rotationCursor, uses crosshair cursor [JavaScript]
 - mxUtils.getBoundingBox adds optional rotation center parameter [JavaScript]
 - Fixes PAN_START event in mxPanningHandler for forced panning [JavaScript]
 - Adds mxVertexHandler.rotationHandleVSpacing, horizontal-/verticalOffset [JavaScript]

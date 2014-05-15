@@ -1309,7 +1309,7 @@ Graph.prototype.initTouch = function()
 						}
 					}
 					
-					this.connectorImg.style.cursor = 'pointer';
+					this.connectorImg.style.cursor = 'crosshair';
 					this.connectorImg.style.position = 'absolute';
 					this.connectorImg.setAttribute('title', mxResources.get('connect'));
 					

@@ -112,6 +112,13 @@ mxVertexHandler.prototype.rotationEnabled = false;
 mxVertexHandler.prototype.rotationRaster = true;
 
 /**
+ * Variable: rotationCursor
+ * 
+ * Specifies the cursor for the rotation handle. Default is 'crosshair'.
+ */
+mxVertexHandler.prototype.rotationCursor = 'crosshair';
+
+/**
  * Variable: livePreview
  * 
  * Specifies if resize should change the cell in-place. This is an experimental
@@ -231,7 +238,7 @@ mxVertexHandler.prototype.init = function()
 		(mxGraphHandler.prototype.maxCells <= 0 || this.graph.getSelectionCount() < mxGraphHandler.prototype.maxCells) &&
 		this.state.width > 2 && this.state.height > 2)
 	{
-		this.rotationShape = this.createSizer('pointer', mxEvent.ROTATION_HANDLE,
+		this.rotationShape = this.createSizer(this.rotationCursor, mxEvent.ROTATION_HANDLE,
 			mxConstants.HANDLE_SIZE + 3, mxConstants.HANDLE_FILLCOLOR);
 		this.sizers.push(this.rotationShape);
 	}
