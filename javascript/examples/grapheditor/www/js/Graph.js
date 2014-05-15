@@ -1582,7 +1582,6 @@ Graph.prototype.initTouch = function()
 				}
 				
 				this.linkHint.style.left = Math.round(b.x + (b.width - this.linkHint.clientWidth) / 2) + 'px';
-				// Takes into account the spacing of the handles if the cell gets too small
 				this.linkHint.style.top = Math.round(b.y + b.height + 6 + this.state.view.graph.tolerance) + 'px';
 			}
 		}
