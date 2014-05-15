@@ -83,8 +83,6 @@ Editor = function()
 
 	// Sets persistent graph state defaults
 	this.graph.resetViewOnRootChange = false;
-	this.graph.scrollbars = this.defaultScrollbars;
-	this.graph.background = null;
 };
 
 // Editor inherits from mxEventSource
@@ -152,13 +150,13 @@ Editor.prototype.resetGraph = function()
 	this.graph.setConnectable(true);
 	this.graph.foldingEnabled = true;
 	this.graph.scrollbars = this.defaultScrollbars;
-	this.graph.pageVisible = true;
+	this.graph.pageVisible = mxGraph.prototype.pageVisible;
 	this.graph.pageBreaksVisible = this.graph.pageVisible; 
 	this.graph.preferPageSize = this.graph.pageBreaksVisible;
 	this.graph.background = null;
 	this.graph.pageScale = mxGraph.prototype.pageScale;
-	this.graph.view.setScale(1);
 	this.updateGraphComponents();
+	this.graph.view.setScale(1);
 };
 
 /**
@@ -228,11 +226,10 @@ Editor.prototype.setGraphXml = function(node)
 		
 		dec.decode(wrapper, this.graph.getModel());
 		this.updateGraphComponents();
+		this.fireEvent(new mxEventObject('resetGraphView'));
 	}
 	else
 	{
-		this.resetGraph();
-		
 		throw { 
 		    message: 'Cannot open file', 
 		    toString: function() { return this.message; }
@@ -511,11 +508,13 @@ Editor.prototype.init = function()
 			{
 				this.backgroundPageShape = this.createBackgroundPageShape(bounds);
 				this.backgroundPageShape.scale = 1;
+				
 				// Shadow filter causes problems in outline window in quirks mode. IE8 standards
 				// also has known rendering issues inside mxWindow but not using shadow is worse.
 				this.backgroundPageShape.isShadow = !mxClient.IS_QUIRKS;
 				this.backgroundPageShape.dialect = mxConstants.DIALECT_STRICTHTML;
 				this.backgroundPageShape.init(this.graph.container);
+				
 				// Required for the browser to render the background page in correct order
 				this.graph.container.firstChild.style.position = 'absolute';
 				this.graph.container.insertBefore(this.backgroundPageShape.node, this.graph.container.firstChild);
