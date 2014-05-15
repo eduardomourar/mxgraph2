@@ -5,6 +5,7 @@
 - https://developers.google.com/appengine/docs/java/tools/ant
 - Fix touch detection in FF (defaultScrollbars)
 - Add socket shape (lollipop-notation)
+- Add arcSize handle in Shapes.js
 
 - Cleanup App.save/saveFile and file.save/saveAs
 - Fix HTML entities converted in word wrapped plain text labels
@@ -50,8 +51,8 @@
 - Fix IE10 on Win8 fires double click after double tap editing and click on background
 - Fix FF on Win8 fires two (should be one) click events and a double click for double tap on background
 
-- Add arcSize handle in Shapes.js
-- Fix constrainChild/expandParent for rotated cells
+- Fix constrainChild/expandParent for rotation
+- Fix ignored ancestors if maximumGraphBounds in constrainChild (see constrain.html)
 - Add workaround for touch support, guides stay visible on move in FF/Win8
 - Fix pinch (zoom) on Chromebook, Android and msPointerEvents (not new)
 
