@@ -503,7 +503,7 @@ Editor.prototype.init = function()
 			this.backgroundImage = null;
 		}
 		
-		if (this.graph.pageVisible)
+		if (this.graph.pageVisible && this.graph.container != null)
 		{
 			var bounds = this.getBackgroundPageBounds();
 			
