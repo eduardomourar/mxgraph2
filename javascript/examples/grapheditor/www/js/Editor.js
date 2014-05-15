@@ -142,6 +142,20 @@ Editor.prototype.createGraph = function()
 /**
  * Sets the XML node for the current diagram.
  */
+Editor.prototype.resetScrollbars = function()
+{
+	this.graph.container.scrollTop = 0;
+	this.graph.container.scrollLeft = 0;
+	
+	if (!mxUtils.hasScrollbars(this.graph.container))
+	{
+		this.graph.view.setTranslate(0, 0);
+	}
+};
+
+/**
+ * Sets the XML node for the current diagram.
+ */
 Editor.prototype.resetGraph = function()
 {
 	this.graph.gridEnabled = true;

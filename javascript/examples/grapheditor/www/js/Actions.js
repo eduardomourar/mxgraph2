@@ -369,22 +369,7 @@ Actions.prototype.init = function()
 	this.addAction('actualSize', function()
 	{
 		graph.zoomTo(1);
-		
-		if (mxUtils.hasScrollbars(graph.container))
-		{
-			if (graph.pageVisible)
-			{
-				var pad = graph.getPagePadding();
-				graph.container.scrollTop = pad.y;
-				graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
-			}
-			else
-			{
-				var bounds = graph.getGraphBounds();
-				graph.container.scrollTop = Math.max(0, bounds.y - Math.max(20, (graph.container.clientHeight - bounds.height) / 4));
-				graph.container.scrollLeft = Math.max(0, bounds.x - Math.max(0, (graph.container.clientWidth - bounds.width) / 2));
-			}
-		}
+		editor.resetScrollbars();
 	});
 	this.addAction('zoomIn', function()
 	{
