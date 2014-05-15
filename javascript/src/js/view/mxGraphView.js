@@ -571,7 +571,7 @@ mxGraphView.prototype.validate = function(cell)
 	var graphBounds = this.getBoundingBox(this.validateCellState(
 		this.validateCell(cell || ((this.currentRoot != null) ?
 			this.currentRoot : this.graph.getModel().getRoot()))));
-	this.setGraphBounds((graphBounds != null) ? graphBounds : new mxRectangle());
+	this.setGraphBounds((graphBounds != null) ? graphBounds : this.getEmptyBounds());
 	this.validateBackground();
 	
 	if (prevDisplay != null)
@@ -589,6 +589,17 @@ mxGraphView.prototype.validate = function(cell)
 	window.status = mxResources.get(this.doneResource) ||
 		this.doneResource;
 	mxLog.leave('mxGraphView.validate', t0);
+};
+
+/**
+ * Function: getEmptyBounds
+ * 
+ * Returns the bounds for an empty graph. This returns a rectangle at
+ * <translate> with the size of 0 x 0.
+ */
+mxGraphView.prototype.getEmptyBounds = function()
+{
+	return new mxRectangle(this.translate.x * this.scale, this.translate.y * this.scale);
 };
 
 /**

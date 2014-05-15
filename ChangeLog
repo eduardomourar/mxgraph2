@@ -1,3 +1,5 @@
+- Adds mxGraphView.getEmptyBounds [JavaScript]
+- Empty graph returns graph bounds at translate [JavaScript]
 - Fixes bug in mxMorphing.updateAnimation [JavaScript]
 - Adds mxVertexHandler.rotationCursor, uses crosshair cursor [JavaScript]
 - mxUtils.getBoundingBox adds optional rotation center parameter [JavaScript]
