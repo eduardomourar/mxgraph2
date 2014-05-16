@@ -206,6 +206,18 @@ EditorUi = function(editor, container)
    		}), 0);
    	}));
 
+	/**
+	 * Sets the initial scrollbar locations after a file was loaded.
+	 */
+	this.editor.addListener('resetGraphView', mxUtils.bind(this, function()
+	{
+		// Timeout is a workaround for delay needed in older browsers and IE
+		window.setTimeout(mxUtils.bind(this, function()
+		{
+			this.editor.resetScrollbars();
+		}), 0);
+	}));
+	
    	// Resets UI, updates action and menu states
    	this.editor.resetGraph();
    	this.init();
