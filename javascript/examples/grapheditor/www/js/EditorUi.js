@@ -217,7 +217,7 @@ EditorUi = function(editor, container)
 			this.editor.resetScrollbars();
 		}), 0);
 	}));
-	
+
    	// Resets UI, updates action and menu states
    	this.editor.resetGraph();
    	this.init();
@@ -426,6 +426,10 @@ EditorUi.prototype.open = function()
 	
 	// Fires as the last step if no file was loaded
 	this.editor.graph.view.validate();
+	
+	// Required only in special cases where an initial file is opened
+	// and the minimumGraphSize changes and CSS must be updated.
+	this.editor.graph.sizeDidChange();
 	this.editor.fireEvent(new mxEventObject('resetGraphView'));
 };
 

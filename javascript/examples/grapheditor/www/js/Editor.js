@@ -340,6 +340,7 @@ Editor.prototype.updateGraphComponents = function()
 		
 		var bgImg = (!graph.pageVisible && graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : noBackground;
 		
+		// FIXME: Background clipping bug in webkit
 		if (graph.view.canvas.ownerSVGElement != null)
 		{
 			graph.view.canvas.ownerSVGElement.style.backgroundImage = bgImg;
