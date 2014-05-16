@@ -100,6 +100,11 @@ Editor.prototype.gridImage = IMAGE_PATH + '/grid.gif';
 Editor.prototype.defaultScrollbars = !mxClient.IS_IOS;
 
 /**
+ * Specifies if the page should be visible for new files. Default is false.
+ */
+Editor.prototype.defaultPageVisible = false;
+
+/**
  * Specifies the image URL to be used for the transparent background.
  */
 Editor.prototype.transparentImage = IMAGE_PATH + '/transparent.gif';
@@ -164,7 +169,7 @@ Editor.prototype.resetGraph = function()
 	this.graph.setConnectable(true);
 	this.graph.foldingEnabled = true;
 	this.graph.scrollbars = this.defaultScrollbars;
-	this.graph.pageVisible = mxGraph.prototype.pageVisible;
+	this.graph.pageVisible = this.defaultPageVisible;
 	this.graph.pageBreaksVisible = this.graph.pageVisible; 
 	this.graph.preferPageSize = this.graph.pageBreaksVisible;
 	this.graph.background = null;
@@ -190,11 +195,6 @@ Editor.prototype.setGraphXml = function(node)
 		this.graph.setConnectable(node.getAttribute('connect') != '0');
 		this.graph.foldingEnabled = node.getAttribute('fold') != '0';
 
-		this.graph.pageVisible = node.getAttribute('page') == '1';
-		this.graph.pageBreaksVisible = this.graph.pageVisible; 
-		this.graph.preferPageSize = this.graph.pageBreaksVisible;
-		
-		// Loads the persistent state settings
 		var ps = node.getAttribute('pageScale');
 		
 		if (ps != null)
@@ -205,6 +205,20 @@ Editor.prototype.setGraphXml = function(node)
 		{
 			this.graph.pageScale = mxGraph.prototype.pageScale;
 		}
+		
+		var pv = node.getAttribute('page');
+		
+		if (pv != null)
+		{
+			this.graph.pageVisible = (pv == '1');
+		}
+		else
+		{
+			this.graph.pageVisible = this.defaultPageVisible;
+		}
+		
+		this.graph.pageBreaksVisible = this.graph.pageVisible; 
+		this.graph.preferPageSize = this.graph.pageBreaksVisible;
 		
 		var pw = node.getAttribute('pageWidth');
 		var ph = node.getAttribute('pageHeight');
