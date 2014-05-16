@@ -1,3 +1,5 @@
+- Adds mxPerimeter.s
+
 15-MAY-2014: 2.8.0.0
 
 - Adds mxGraphView.getEmptyBounds [JavaScript]
