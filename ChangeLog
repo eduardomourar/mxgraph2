@@ -1,3 +1,4 @@
+- Adds semicolon to line-height CSS in HTML labels [Java]
 - Adds mxPerimeter.HexagonPerimeter, mxConstants.PERIMETER_HEXAGON [JavaScript]
 
 15-MAY-2014: 2.8.0.0
