@@ -991,7 +991,7 @@ Graph.prototype.initTouch = function()
 			
 			this.hint.innerHTML = x + ', ' + y;
 
-			this.hint.style.left = this.shape.bounds.x + Math.round((this.shape.bounds.width - this.hint.clientWidth) / 2) + 'px';
+			this.hint.style.left = (this.shape.bounds.x + Math.round((this.shape.bounds.width - this.hint.clientWidth) / 2)) + 'px';
 			this.hint.style.top = (this.shape.bounds.y + this.shape.bounds.height + 12) + 'px';
 		}
 	};
