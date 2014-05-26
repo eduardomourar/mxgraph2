@@ -2,6 +2,8 @@
 -- GraphEditor Example --
 -------------------------
 
+- Add window.resize listener for outline update (why not needed in draw.io?)
+
 - https://developers.google.com/appengine/docs/java/tools/ant
 - Fix touch detection in FF (defaultScrollbars)
 - Add socket shape (lollipop-notation)
@@ -25,6 +27,8 @@
 -------------------------
 --    mxGraph Core     --
 -------------------------
+
+- Fix type mismatch in IE9 (mxUtils.createDocument creates HTML documenet in IE9)
 
 - Fix resize of rotated groups with layouts
 - Add single handle for multiple selected cells
