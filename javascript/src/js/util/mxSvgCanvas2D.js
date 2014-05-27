@@ -720,6 +720,39 @@ mxSvgCanvas2D.prototype.createShadow = function(node)
 };
 
 /**
+ * Function: setLink
+ * 
+ * Experimental implementation for hyperlinks.
+ */
+mxSvgCanvas2D.prototype.setLink = function(link)
+{
+	if (link == null)
+	{
+		this.root = this.originalRoot;
+	}
+	else
+	{
+		this.originalRoot = this.root;
+		
+		var node = this.createElement('a');
+		
+		// Workaround for implicit namespace handling in HTML5 export, IE adds NS1 namespace so use code below
+		// in all IE versions except quirks mode. KNOWN: Adds xlink namespace to each image tag in output.
+		if (node.setAttributeNS == null || (this.root.ownerDocument != document && document.documentMode == null))
+		{
+			node.setAttribute('xlink:href', link);
+		}
+		else
+		{
+			node.setAttributeNS(mxConstants.NS_XLINK, 'xlink:href', link);
+		}
+		
+		this.root.appendChild(node);
+		this.root = node;
+	}
+};
+
+/**
  * Function: rotate
  * 
  * Sets the rotation of the canvas. Note that rotation cannot be concatenated.

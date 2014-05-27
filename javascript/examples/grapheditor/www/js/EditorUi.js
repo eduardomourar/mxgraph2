@@ -1196,6 +1196,12 @@ EditorUi.prototype.getSvg = function(background, scale, border)
 	svgCanvas.translate(Math.floor((border / scale - bounds.x) / vs), Math.floor((border / scale - bounds.y) / vs));
 	svgCanvas.scale(scale / vs);
 	
+	// Adds hyperlinks (experimental)
+	imgExport.getLinkForCellState = function(state, canvas)
+	{
+		return graph.getLinkForCell(state.cell);
+	};
+	
 	// Paints background image
 	var bgImg = graph.backgroundImage;
 	
