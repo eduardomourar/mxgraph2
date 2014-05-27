@@ -570,6 +570,16 @@ mxSvgCanvas2D.prototype.updateFill = function()
 };
 
 /**
+ * Function: getCurrentStrokeWidth
+ * 
+ * Returns the current stroke width (>= 1), ie. max(1, this.format(this.state.strokeWidth * this.state.scale)).
+ */
+mxSvgCanvas2D.prototype.getCurrentStrokeWidth = function()
+{
+	return Math.max(1, this.format(this.state.strokeWidth * this.state.scale));
+};
+
+/**
  * Function: updateStroke
  * 
  * Transfers the stroke attributes from <state> to <node>.
@@ -585,8 +595,7 @@ mxSvgCanvas2D.prototype.updateStroke = function()
 		this.node.setAttribute('stroke-opacity', s.alpha);
 	}
 	
-	// Sets the stroke properties (1 is default in SVG)
-	var sw = Math.max(1, this.format(s.strokeWidth * s.scale));
+	var sw = this.getCurrentStrokeWidth();
 	
 	if (sw != 1)
 	{

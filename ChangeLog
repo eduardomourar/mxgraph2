@@ -1,3 +1,4 @@
+- Adds mxSvgCanvas2D.getCurrentStrokeWidth hook [JavaScript] 
 - Adds experimental support for links in mxAbstractCanvas2D, mxSvgCanvas2D [JavaScript]
 - Adds support for links in mxImageExport.getLinkForCellState [JavaScript]
 - Adds morph.html example [JavaScript]
