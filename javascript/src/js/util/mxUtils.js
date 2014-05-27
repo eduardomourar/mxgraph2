@@ -3603,7 +3603,7 @@ var mxUtils =
 			div.appendChild(pre);
 			
 			var w = document.body.clientWidth;
-			var h = (document.body.clientHeight || document.documentElement.clientHeight);
+			var h = Math.max(document.body.clientHeight || 0, document.documentElement.clientHeight)
 			var wnd = new mxWindow('Popup Window', div,
 				w/2-320, h/2-240, 640, 480, false, true);
 
