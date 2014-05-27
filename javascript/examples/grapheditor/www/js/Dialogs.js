@@ -1500,7 +1500,7 @@ var MetadataDialog = function(ui, cell)
 		{
 			var name = nameInput.value;
 			
-			if (name != null && name.length > 0)
+			if (name != null && name.length > 0 && name != 'label')
 			{
 				try
 				{
