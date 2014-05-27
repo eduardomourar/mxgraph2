@@ -122,8 +122,8 @@ var OpenDialog = function()
 	// Adds padding as a workaround for box model in older IE versions
 	var dx = (mxClient.IS_VML && (document.documentMode == null || document.documentMode < 8)) ? 20 : 0;
 	
-	iframe.setAttribute('width', (320 + dx) + 'px');
-	iframe.setAttribute('height', (190 + dx) + 'px');
+	iframe.setAttribute('width', (360 + dx) + 'px');
+	iframe.setAttribute('height', (230 + dx) + 'px');
 	iframe.setAttribute('src', OPEN_FORM);
 	
 	this.container = iframe;
