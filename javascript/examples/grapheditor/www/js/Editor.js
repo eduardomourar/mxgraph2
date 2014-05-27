@@ -314,6 +314,27 @@ Editor.prototype.updateGraphComponents = function()
 			graph.view.backgroundPageShape.fill = bg;
 			graph.view.backgroundPageShape.reconfigure();
 		}
+
+		// Transparent.gif is a workaround for focus repaint problems in IE and clipping issues in webkit
+		var noBackground = 'url(' + this.transparentImage + ')';
+		var bgImg = (!graph.pageVisible && graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : noBackground;
+
+		if (graph.view.canvas.ownerSVGElement != null)
+		{
+			// FIXME: Initial background clipping bug if page view disabled in webkit
+			graph.view.canvas.ownerSVGElement.style.backgroundImage = bgImg;
+		}
+		else
+		{
+			graph.view.canvas.style.backgroundImage = bgImg;
+		}
+		
+		graph.container.style.backgroundImage = noBackground;
+				
+		if (graph.view.backgroundPageShape != null)
+		{
+			graph.view.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : 'none';
+		}
 		
 		graph.container.style.backgroundColor = bg;
 
@@ -331,29 +352,8 @@ Editor.prototype.updateGraphComponents = function()
 		{
 			graph.container.style.border = '';
 		}
-		
+
 		graph.container.style.overflow = (graph.scrollbars) ? 'auto' : 'hidden';
-		
-		// Transparent.gif is a workaround for focus repaint problems in IE
-		var noBackground = (mxClient.IS_IE && document.documentMode >= 9) ? 'url(' + this.transparentImage + ')' : 'none';
-		graph.container.style.backgroundImage = noBackground;
-		
-		var bgImg = (!graph.pageVisible && graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : noBackground;
-		
-		// FIXME: Background clipping bug in webkit
-		if (graph.view.canvas.ownerSVGElement != null)
-		{
-			graph.view.canvas.ownerSVGElement.style.backgroundImage = bgImg;
-		}
-		else
-		{
-			graph.view.canvas.style.backgroundImage = bgImg;
-		}
-		
-		if (graph.view.backgroundPageShape != null)
-		{
-			graph.view.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : 'none';
-		}
 		
 		this.fireEvent(new mxEventObject('updateGraphComponents'));
 	}
