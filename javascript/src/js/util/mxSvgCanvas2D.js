@@ -531,7 +531,8 @@ mxSvgCanvas2D.prototype.addNode = function(filled, stroked)
 		{
 			node.setAttribute('pointer-events', 'all');
 		}
-		else if (!this.pointerEvents)
+		// Ugly hack to activate pointer events while a link is active
+		else if (!this.pointerEvents && this.originalRoot == null)
 		{
 			node.setAttribute('pointer-events', 'none');
 		}
