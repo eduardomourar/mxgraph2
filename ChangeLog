@@ -1,3 +1,4 @@
+- Corrects rotated bounding box around port constraints in orthogonal router [JavaScript]
 - Uses ActiveX in mxUtils.createaXmlDocument, getXml for IE9 standards [JavaScript]
 - Adds mxSvgCanvas2D.getCurrentStrokeWidth hook [JavaScript] 
 - Adds experimental support for links in mxAbstractCanvas2D, mxSvgCanvas2D [JavaScript]
