@@ -28,8 +28,6 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix type mismatch in IE9 (mxUtils.createDocument creates HTML documenet in IE9)
-
 - Fix resize of rotated groups with layouts
 - Add single handle for multiple selected cells
 - Add dynamic translate with hook in graph view
