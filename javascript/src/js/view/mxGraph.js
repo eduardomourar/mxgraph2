@@ -1163,7 +1163,9 @@ mxGraph.prototype.dropEnabled = false;
 /**
  * Variable: splitEnabled
  * 
- * Specifies if dropping onto edges should be enabled. Default is true.
+ * Specifies if dropping onto edges should be enabled. This is ignored if
+ * <dropEnabled> is false. If enabled, it will call <splitEdge> to carry
+ * out the drop operation. Default is true.
  */
 mxGraph.prototype.splitEnabled = true;
 
