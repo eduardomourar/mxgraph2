@@ -2,8 +2,6 @@
 -- GraphEditor Example --
 -------------------------
 
-- Add window.resize listener for outline update (why not needed in draw.io?)
-
 - https://developers.google.com/appengine/docs/java/tools/ant
 - Fix touch detection in FF (defaultScrollbars)
 - Add socket shape (lollipop-notation)

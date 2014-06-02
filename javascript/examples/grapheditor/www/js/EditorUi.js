@@ -1320,10 +1320,15 @@ EditorUi.prototype.confirm = function(msg, okFn, cancelFn)
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-EditorUi.prototype.createOutline = function(window)
+EditorUi.prototype.createOutline = function(wnd)
 {
 	var outline = new mxOutline(this.editor.graph);
 	outline.border = 20;
+
+	mxEvent.addListener(window, 'resize', function()
+	{
+		outline.update();
+	});
 
 	return outline;
 };
