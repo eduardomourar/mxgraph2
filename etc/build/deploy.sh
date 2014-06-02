@@ -69,7 +69,7 @@ rm -rf mxgraph/*
 cp -rf tmp/mxgraph/* mxgraph/
 rm -rf mxgraph/java/.gitignore
 cd mxgraph
-git add .
+git add -A
 git commit -am "$DOTVERSION release"
 git push origin gh-pages
 git tag -a v$DOTVERSION -m "v$DOTVERSION"
@@ -88,7 +88,7 @@ rm -rf jgraphx/*
 mv README.md jgraphx
 unzip -o jgraphx.zip
 cd jgraphx
-git add .
+git add -A
 git commit -am "$DOTVERSION release"
 git push origin master
 git tag -a v$DOTVERSION -m "v$DOTVERSION"
