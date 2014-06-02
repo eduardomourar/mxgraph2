@@ -546,7 +546,7 @@ var mxUtils =
 	 */
 	importNode: function(doc, node, allChildren)
 	{
-		if (mxClient.IS_IE)
+		if (mxClient.IS_IE && (document.documentMode == null || document.documentMode < 10))
 		{
 			switch (node.nodeType)
 			{
