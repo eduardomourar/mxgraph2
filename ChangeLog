@@ -1,3 +1,5 @@
+02-JUN-2014: 2.8.1.0
+
 - Uses mxUtils.importNode in mxCodec.encode, mxCellCodec.afterEncode [JavaScript]
 - Adds mxUtils.importNode cross-browser implementation [JavaScript]
 - Corrects rotated bounding box around port constraints in orthogonal router [JavaScript]
