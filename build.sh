@@ -180,7 +180,7 @@ cp ../docs/images/mx_man_* jgraphx/docs/manual/images
 cp -r 2>/dev/null mxgraph/java/lib/jgraphx.jar jgraphx/lib
 cp -r 2>/dev/null mxgraph/java/examples/com/mxgraph/examples/swing jgraphx/examples/com/mxgraph/examples
 cp -r 2>/dev/null mxgraph/java/src jgraphx
-cp docs/jgraphx_license.txt jgraphx/license.txt
+cp ../docs/jgraphx_license.txt jgraphx/license.txt
 
 sed "s/@MXGRAPH-VERSION@/$VERSION/;s/@MXGRAPH-DATE@/$TODAY/" ../etc/build/jgraphx-build.xml > jgraphx/build.xml
 cd jgraphx
