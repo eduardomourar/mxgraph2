@@ -605,6 +605,83 @@ Graph.prototype.distributeCells = function(horizontal, cells)
 	return cells;
 };
 
+/**
+ * Translates this point by the given vector.
+ * 
+ * @param {number} dx X-coordinate of the translation.
+ * @param {number} dy Y-coordinate of the translation.
+ */
+Graph.prototype.getSvg = function(background, scale, border)
+{
+	scale = (scale != null) ? scale : 1;
+	border = (border != null) ? border : 1;
+
+	var imgExport = new mxImageExport();
+	var bounds = this.getGraphBounds();
+	var vs = this.view.scale;
+
+	// Prepares SVG document that holds the output
+	var svgDoc = mxUtils.createXmlDocument();
+	var root = (svgDoc.createElementNS != null) ?
+    		svgDoc.createElementNS(mxConstants.NS_SVG, 'svg') : svgDoc.createElement('svg');
+    
+	if (background != null)
+	{
+		if (root.style != null)
+		{
+			root.style.backgroundColor = background;
+		}
+		else
+		{
+			root.setAttribute('style', 'background-color:' + background);
+		}
+	}
+    
+	if (svgDoc.createElementNS == null)
+	{
+    	root.setAttribute('xmlns', mxConstants.NS_SVG);
+	}
+	else
+	{
+		// KNOWN: Ignored in IE9-11, adds namespace for each image element instead. No workaround.
+		root.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', mxConstants.NS_XLINK);
+	}
+	
+	root.setAttribute('width', (Math.ceil(bounds.width * scale / vs) + 2 * border) + 'px');
+	root.setAttribute('height', (Math.ceil(bounds.height * scale / vs) + 2 * border) + 'px');
+	root.setAttribute('version', '1.1');
+	
+    // Adds group for anti-aliasing via transform
+	var group = (svgDoc.createElementNS != null) ?
+			svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
+	group.setAttribute('transform', 'translate(0.5,0.5)');
+	root.appendChild(group);
+	svgDoc.appendChild(root);
+
+    // Renders graph. Offset will be multiplied with state's scale when painting state.
+	var svgCanvas = new mxSvgCanvas2D(group);
+	svgCanvas.translate(Math.floor((border / scale - bounds.x) / vs), Math.floor((border / scale - bounds.y) / vs));
+	svgCanvas.scale(scale / vs);
+	
+	// Adds hyperlinks (experimental)
+	imgExport.getLinkForCellState = mxUtils.bind(this, function(state, canvas)
+	{
+		return this.getLinkForCell(state.cell);
+	});
+	
+	// Paints background image
+	var bgImg = this.backgroundImage;
+	
+	if (bgImg != null)
+	{
+		var tr = this.view.translate;
+		svgCanvas.image(tr.x, tr.y, bgImg.width, bgImg.height, bgImg.src, false);
+	}
+	
+	imgExport.drawState(this.getView().getState(this.model.root), svgCanvas);
+
+	return root;
+};
 
 /**
  * Customized graph for touch devices.

@@ -1233,7 +1233,7 @@ var ExportDialog = function(editorUi)
 			bg = backgroundInput.value;
 		}
 		
-		return editorUi.getSvg(bg, scale, b);
+		return graph.getSvg(bg, scale, b);
 	};
 	
 	function getXml()
