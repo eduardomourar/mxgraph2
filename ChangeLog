@@ -1,3 +1,5 @@
+- Adds mxGraphView.isCellCollapsed indirection [JavaScript] 
+
 02-JUN-2014: 2.8.1.0
 
 - Uses mxUtils.importNode in mxCodec.encode, mxCellCodec.afterEncode [JavaScript]
