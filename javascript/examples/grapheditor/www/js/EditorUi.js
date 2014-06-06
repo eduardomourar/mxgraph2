@@ -1122,9 +1122,14 @@ EditorUi.prototype.saveFile = function(forceDialog)
 			this.save(name, true);
 		}), null, mxUtils.bind(this, function(name)
 		{
+			if (name != null && name.length > 0)
+			{
+				return true;
+			}
+			
 			mxUtils.confirm(mxResources.get('invalidFilename'));
 			
-			return name != null && name.length > 0;
+			return false;
 		}));
 		this.showDialog(dlg.container, 300, 100, true, true);
 		dlg.init();
