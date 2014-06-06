@@ -194,6 +194,45 @@ EditorUi = function(editor, container)
 	{
 		return keyHandler;
 	};
+	
+	// Stores the current selection for fontfamily, size and alignment and assigns it to new cells
+	var currentStyle = {};
+	var styles = ['fontFamily', 'fontSize', 'align'];
+	
+	// Implements a stateful toolbar where the current values for fontFamily,
+	// fontSize and alignment are applied to all new cells
+	this.addListener('cellsInserted', function(sender, evt)
+	{
+		var cells = evt.getProperty('cells');
+
+		if (cells != null && cells.length > 0)
+		{
+			for (var j = 0; j < styles.length; j++)
+			{
+				var key = styles[j];
+				var value = currentStyle[key];
+				
+				if (value != null)
+				{
+					graph.setCellStyles(key, value, cells);
+				}
+			}
+		}
+	});
+	
+	this.addListener('styleChanged', function(sender, evt)
+	{
+		var keys = evt.getProperty('keys');
+		var values = evt.getProperty('values');
+		
+		for (var i = 0; i < keys.length; i++)
+		{
+			if (mxUtils.indexOf(styles, keys[i]) >= 0)
+			{
+				currentStyle[keys[i]] = values[i];
+			}
+		}
+	});
 
 	// Updates the editor UI after the window has been resized
 	// Timeout is workaround for old IE versions which have a delay for DOM client sizes.
@@ -1081,6 +1120,11 @@ EditorUi.prototype.saveFile = function(forceDialog)
 		var dlg = new FilenameDialog(this, this.editor.getOrCreateFilename(), mxResources.get('save'), mxUtils.bind(this, function(name)
 		{
 			this.save(name, true);
+		}), null, mxUtils.bind(this, function(name)
+		{
+			mxUtils.confirm(mxResources.get('invalidFilename'));
+			
+			return name != null && name.length > 0;
 		}));
 		this.showDialog(dlg.container, 300, 100, true, true);
 		dlg.init();
