@@ -510,6 +510,8 @@ Menus.prototype.styleChange = function(menu, label, keys, values, sprite, parent
 				{
 					graph.setCellStyles(keys[i], values[i]);
 				}
+				
+				this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', keys, 'values', values));
 			}
 			finally
 			{
