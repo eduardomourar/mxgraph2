@@ -1,3 +1,4 @@
+- Disables mxTooltipHandler.show if destroy was called [JavaScript]
 - Adds mxGraphView.isCellCollapsed indirection [JavaScript] 
 
 02-JUN-2014: 2.8.1.0
