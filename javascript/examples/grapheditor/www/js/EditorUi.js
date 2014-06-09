@@ -206,39 +206,79 @@ EditorUi = function(editor, container)
 	
 	// Stores the current selection for fontfamily, size and alignment and assigns it to new cells
 	var currentStyle = {};
+	var currentEdgeStyle = {};
 	var styles = ['fontFamily', 'fontSize', 'align'];
+	
+	// Edge style interferes with set default edge feature, need to cleanup
+	// edge insert, default edge, connect process and make it more consistent
+	var edgeStyles = []; //['startArrow', 'endFill', 'endSize', 'startFill', 'startSize', 'endArrow', 'edgeStyle'];
 	
 	// Implements a stateful toolbar where the current values for fontFamily,
 	// fontSize and alignment are applied to all new cells
-	this.addListener('cellsInserted', function(sender, evt)
+	var insertHandler = function(cells, connect)
 	{
-		var cells = evt.getProperty('cells');
-
-		if (cells != null && cells.length > 0)
+		if (cells != null && cells.length == 1)
 		{
-			for (var j = 0; j < styles.length; j++)
+			var value = graph.convertValueToString(cells[0]);
+			
+			// Only applies current style to cells with no value
+			if (value == null || value.length == 0)
 			{
-				var key = styles[j];
-				var value = currentStyle[key];
+				var style = graph.stylesheet.getCellStyle(graph.getModel().getStyle(cells[0]));
 				
-				if (value != null)
+				for (var j = 0; j < styles.length; j++)
 				{
-					graph.setCellStyles(key, value, cells);
+					var key = styles[j];
+					var value = currentStyle[key];
+					
+					// Only applies current style if undefined in cell style
+					if (mxUtils.getValue(style, key, null) == null && value != null)
+					{
+						graph.setCellStyles(key, value, cells);
+					}
+				}
+				
+				if (connect && cells.length == 1 && graph.getModel().isEdge(cells[0]))
+				{
+					for (var j = 0; j < edgeStyles.length; j++)
+					{
+						var key = edgeStyles[j];
+						var value = currentEdgeStyle[key];
+						
+						if (value != null)
+						{
+							graph.setCellStyles(key, value, cells);
+						}
+					}
 				}
 			}
 		}
+	};
+
+	this.addListener('cellsInserted', function(sender, evt)
+	{
+		insertHandler(evt.getProperty('cells'), false);
+	});
+	
+	graph.connectionHandler.addListener(mxEvent.CONNECT, function(sender, evt)
+	{
+		insertHandler([evt.getProperty('cell')], true);
 	});
 	
 	this.addListener('styleChanged', function(sender, evt)
 	{
 		var keys = evt.getProperty('keys');
 		var values = evt.getProperty('values');
-		
+
 		for (var i = 0; i < keys.length; i++)
 		{
 			if (mxUtils.indexOf(styles, keys[i]) >= 0)
 			{
 				currentStyle[keys[i]] = values[i];
+			}
+			else if (mxUtils.indexOf(edgeStyles, keys[i]) >= 0)
+			{
+				currentEdgeStyle[keys[i]] = values[i];
 			}
 		}
 	});
@@ -719,11 +759,11 @@ EditorUi.prototype.updateActionStates = function()
  	}
  	
    	this.actions.get('setAsDefaultEdge').setEnabled(edgeSelected);
-    	
+   	var state = graph.view.getState(graph.getSelectionCell());
+   	
     this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
     this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
-    this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected &&
-    		graph.isLoop(graph.view.getState(graph.getSelectionCell()))));
+    this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected && state != null && graph.isLoop(state)));
     this.menus.get('navigation').setEnabled(graph.foldingEnabled && ((graph.view.currentRoot != null) ||
 			(graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell()))));
     this.actions.get('home').setEnabled(graph.view.currentRoot != null);
