@@ -1,3 +1,4 @@
+- Adds mxCellEditor.isStopEditingEvent, installListeners [JavaScript]
 - Disables mxTooltipHandler.show if destroy was called [JavaScript]
 - Adds mxGraphView.isCellCollapsed indirection [JavaScript] 
 
