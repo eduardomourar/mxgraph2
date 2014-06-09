@@ -108,6 +108,15 @@ EditorUi = function(editor, container)
 			nodes = newNodes;
 		}
 	});
+
+	// Control-enter applies editing value
+	// FIXME: Fix for HTML editing
+	var cellEditorIsStopEditingEvent = graph.cellEditor.isStopEditingEvent;
+	graph.cellEditor.isStopEditingEvent = function(evt)
+	{
+		return cellEditorIsStopEditingEvent.apply(this, arguments) ||
+			(evt.keyCode == 13 && mxEvent.isControlDown(evt));
+	};
 	
 	// Overrides cell editor to update toolbar
 	var cellEditorStartEditing = graph.cellEditor.startEditing;
@@ -1127,7 +1136,7 @@ EditorUi.prototype.saveFile = function(forceDialog)
 				return true;
 			}
 			
-			mxUtils.confirm(mxResources.get('invalidFilename'));
+			mxUtils.confirm(mxResources.get('invalidName'));
 			
 			return false;
 		}));

@@ -965,6 +965,25 @@ Graph.prototype.initTouch = function()
 				this.text2 = document.createElement('div');
 				this.text2.className = 'geContentEditable';
 				this.text2.innerHTML = this.textarea.value.replace(/\n/g, '<br/>');
+				
+				// Invokes stop editing and escape hooks
+				mxEvent.addListener(this.text2, 'keydown', mxUtils.bind(this, function(evt)
+				{
+					if (!mxEvent.isConsumed(evt))
+					{
+						if (this.isStopEditingEvent(evt))
+						{
+							this.graph.stopEditing(false);
+							mxEvent.consume(evt);
+						}
+						else if (evt.keyCode == 27 /* Escape */)
+						{
+							this.graph.stopEditing(true);
+							mxEvent.consume(evt);
+						}
+					}
+				}));
+				
 				var style = this.text2.style;
 								
 				// Required to catch all events on the background in IE
