@@ -282,6 +282,18 @@ EditorUi = function(editor, container)
 			}
 		}
 	});
+	
+	// Makes sure the current layer is visible when cells are added
+	graph.addListener(mxEvent.CELLS_ADDED, function(sender, evt)
+	{
+		var cells = evt.getProperty('cells');
+		var parent = evt.getProperty('parent');
+		
+		if (graph.getModel().isLayer(parent) && !graph.isCellVisible(parent) && cells != null && cells.length > 0)
+		{
+			graph.getModel().setVisible(parent, true);
+		}
+	});
 
 	// Updates the editor UI after the window has been resized
 	// Timeout is workaround for old IE versions which have a delay for DOM client sizes.
