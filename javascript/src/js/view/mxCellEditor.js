@@ -286,8 +286,8 @@ mxCellEditor.prototype.installListeners = function(elt)
  * Function: isStopEditingEvent
  * 
  * Returns true if the given keydown event should stop cell editing. This
- * returns true if F2 is pressed of if enter is pressed without control or
- * shift and <mxGraph.enterStopsCellEditing> is true.
+ * returns true if F2 is pressed of if <mxGraph.enterStopsCellEditing> is true
+ * and enter is pressed without control or shift.
  */
 mxCellEditor.prototype.isStopEditingEvent = function(evt)
 {
