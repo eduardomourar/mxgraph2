@@ -1,3 +1,4 @@
+- mxEdgeHandler.isHandleVisible returns false for entity relation waypoints [JavaScript]
 - Adds terminal property for mxEvent.CONNECT in mxConnectionHandler [JavaScript]
 - Target null if not inserted in mxConnectionHandler.selectCells [JavaScript]
 - Visibility and style changes trigger layout in mxLayoutManager [JavaScript]

@@ -461,7 +461,8 @@ mxEdgeHandler.prototype.isHandleEnabled = function(index)
  */
 mxEdgeHandler.prototype.isHandleVisible = function(index)
 {
-	return true;
+	return this.state.style[mxConstants.STYLE_EDGE] != mxConstants.EDGESTYLE_ENTITY_RELATION ||
+		index == 0 || index == this.abspoints.length - 1;
 };
 
 /**
