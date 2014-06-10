@@ -224,15 +224,13 @@ EditorUi = function(editor, container)
 			// Only applies current style to cells with no value
 			if (value == null || value.length == 0)
 			{
-				var style = graph.stylesheet.getCellStyle(graph.getModel().getStyle(cells[0]));
-				
 				for (var j = 0; j < styles.length; j++)
 				{
 					var key = styles[j];
 					var value = currentStyle[key];
-					
-					// Only applies current style if undefined in cell style
-					if (mxUtils.getValue(style, key, null) == null && value != null)
+
+					// Overrides existing and inherited styles
+					if (value != null)
 					{
 						graph.setCellStyles(key, value, cells);
 					}
