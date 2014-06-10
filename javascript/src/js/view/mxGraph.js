@@ -1673,9 +1673,9 @@ mxGraph.prototype.collapseExpandResource = (mxClient.language != 'none') ? 'coll
 		
 		// Disable shift-click for text
 		mxEvent.addListener(container, 'selectstart',
-			mxUtils.bind(this, function()
+			mxUtils.bind(this, function(evt)
 			{
-				return this.isEditing();
+				return this.isEditing() || (!this.isMouseDown && !mxEvent.isShiftDown(evt));
 			})
 		);
 	}
