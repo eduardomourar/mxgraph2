@@ -1,5 +1,7 @@
-- Fixes blocking of select click for mxGraph container in IE [JavaScript]
+11-JUN-2014: 2.8.2.0
+
 - Fixes reconnect event handling for image handles in VML [JavaScript]
+- Fixes blocking of select click for mxGraph container in IE [JavaScript]
 - mxEdgeHandler.isHandleVisible returns false for entity relation waypoints [JavaScript]
 - Adds terminal property for mxEvent.CONNECT in mxConnectionHandler [JavaScript]
 - Target null if not inserted in mxConnectionHandler.selectCells [JavaScript]
