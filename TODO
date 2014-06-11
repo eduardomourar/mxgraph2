@@ -26,16 +26,13 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix run layouts if style has changed
 - Move mxLayoutManager into validation process
-
-- Fix resize of rotated groups with layouts
 - Add single handle for multiple selected cells
-- Add dynamic translate with hook in graph view
-- Appemd key=value in cell styles for changes entries
+- Fix resize of rotated groups with layouts
 
+- Add dynamic translate with hook in graph view
 - Research alternative namespace solutions
-- Use spacing styles in overflow=fill
+- Use spacing styles with overflow=fill
 - Add live preview while moving
 
 - Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)

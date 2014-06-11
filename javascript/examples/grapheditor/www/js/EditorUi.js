@@ -196,7 +196,7 @@ EditorUi = function(editor, container)
 	}));
 
     // Create handler for key events
-	var keyHandler = this.createKeyHandler(editor);
+	this.keyHandler = this.createKeyHandler(editor);
     
 	// Getter for key handler
 	this.getKeyHandler = function()
@@ -1407,7 +1407,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
     };
 
     // Binds keystrokes to actions
-    var bindAction = mxUtils.bind(this, function(code, control, key, shift)
+    keyHandler.bindAction = mxUtils.bind(this, function(code, control, key, shift)
     {
     	var action = this.actions.get(key);
     	
@@ -1469,34 +1469,35 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindKey(40, function() { nudge(40); }); // Down arrow
     keyHandler.bindKey(113, function() { graph.startEditingAtCell(); });
     keyHandler.bindKey(8, function() { graph.foldCells(true); }); // Backspace
-    bindAction(8, false, 'delete'); // Backspace
-    bindAction(46, false, 'delete'); // Delete
-    bindAction(82, true, 'tilt'); // Ctrl+R
-    bindAction(83, true, 'save'); // Ctrl+S
-    bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
-    bindAction(107, false, 'zoomIn'); // Add
-    bindAction(109, false, 'zoomOut'); // Subtract
-    bindAction(65, true, 'selectAll'); // Ctrl+A
-    bindAction(86, true, 'selectVertices', true); // Ctrl+Shift+V
-    bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
-    bindAction(66, true, 'toBack'); // Ctrl+B
-    bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
-    bindAction(68, true, 'duplicate'); // Ctrl+D
-    bindAction(90, true, 'undo'); // Ctrl+Z
-    bindAction(89, true, 'redo'); // Ctrl+Y
-    bindAction(88, true, 'cut'); // Ctrl+X
-    bindAction(67, true, 'copy'); // Ctrl+C
-    bindAction(81, true, 'connect'); // Ctrl+Q
-    bindAction(86, true, 'paste'); // Ctrl+V
-    bindAction(71, true, 'group'); // Ctrl+G
-    bindAction(77, true, 'editData'); // Ctrl+M
-    bindAction(71, true, 'grid', true); // Ctrl+Shift+G
-    bindAction(76, true, 'lockUnlock'); // Ctrl+L
-    bindAction(76, true, 'layers', true); // Ctrl+Shift+L
-    bindAction(79, true, 'outline', true); // Ctrl+Shift+O
-    bindAction(80, true, 'print'); // Ctrl+P
-    bindAction(85, true, 'ungroup'); // Ctrl+U
-    bindAction(112, false, 'about'); // F1
+    keyHandler.bindAction(8, false, 'delete'); // Backspace
+    keyHandler.bindAction(46, false, 'delete'); // Delete
+    keyHandler.bindAction(82, true, 'tilt'); // Ctrl+R
+    keyHandler.bindAction(83, true, 'save'); // Ctrl+S
+    keyHandler.bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
+    keyHandler.bindAction(107, false, 'zoomIn'); // Add
+    keyHandler.bindAction(109, false, 'zoomOut'); // Subtract
+    keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
+    keyHandler.bindAction(65, true, 'selectVertices', true); // Ctrl+Shift+A
+    keyHandler.bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
+    keyHandler.bindAction(69, true, 'style'); // Ctrl+S
+    keyHandler.bindAction(66, true, 'toBack'); // Ctrl+B
+    keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
+    keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
+    keyHandler.bindAction(90, true, 'undo'); // Ctrl+Z
+    keyHandler.bindAction(89, true, 'redo'); // Ctrl+Y
+    keyHandler.bindAction(88, true, 'cut'); // Ctrl+X
+    keyHandler.bindAction(67, true, 'copy'); // Ctrl+C
+    keyHandler.bindAction(81, true, 'connect'); // Ctrl+Q
+    keyHandler.bindAction(86, true, 'paste'); // Ctrl+V
+    keyHandler.bindAction(71, true, 'group'); // Ctrl+G
+    keyHandler.bindAction(77, true, 'editData'); // Ctrl+M
+    keyHandler.bindAction(71, true, 'grid', true); // Ctrl+Shift+G
+    keyHandler.bindAction(76, true, 'lockUnlock'); // Ctrl+L
+    keyHandler.bindAction(76, true, 'layers', true); // Ctrl+Shift+L
+    keyHandler.bindAction(79, true, 'outline', true); // Ctrl+Shift+O
+    keyHandler.bindAction(80, true, 'print'); // Ctrl+P
+    keyHandler.bindAction(85, true, 'ungroup'); // Ctrl+U
+    keyHandler.bindAction(112, false, 'about'); // F1
     
     return keyHandler;
 };
