@@ -1115,7 +1115,7 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 							// Special shape level styles
 							var rounded = mxUtils.getValue(sourceStyle, mxConstants.STYLE_ROUNDED, null);
 							var perimeter = mxUtils.getValue(sourceStyle, mxConstants.STYLE_PERIMETER, null);
-							var double = mxUtils.getValue(sourceStyle, 'double', null);
+							var doubleStyle = mxUtils.getValue(sourceStyle, 'double', null);
 							
 							if (shape != null)
 							{
@@ -1127,7 +1127,7 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 									graph.setCellStyles(mxConstants.STYLE_IMAGE, image, [target]);
 									graph.setCellStyles(mxConstants.STYLE_ROUNDED, rounded, [target]);
 									graph.setCellStyles(mxConstants.STYLE_PERIMETER, perimeter, [target]);
-									graph.setCellStyles('double', double, [target]);
+									graph.setCellStyles('double', doubleStyle, [target]);
 								}
 								finally
 								{
