@@ -363,6 +363,29 @@ Menus.prototype.init = function()
 		menu.addItem(mxResources.get('organic'), null, mxUtils.bind(this, function()
 		{
 			var layout = new mxFastOrganicLayout(graph);
+			
+			// Tries to find good force constant by averaging cell width
+			var count = 0;
+			var sum = 0;
+			
+			for (var key in graph.getModel().cells)
+			{
+				var tmp = graph.getModel().getCell(key);
+				
+				if (graph.getModel().isVertex(tmp))
+				{
+					var geo = graph.getModel().getGeometry(tmp);
+
+					if (geo != null)
+					{
+						sum += geo.width;
+						count++;
+					}
+				}
+			}
+			
+			layout.forceConstant = (sum / count) * 1.1;
+			
     		this.editorUi.executeLayout(function()
     		{
     			layout.execute(graph.getDefaultParent(), graph.getSelectionCell());
@@ -703,7 +726,7 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 	}
 	else
 	{
-		this.addMenuItems(menu, ['delete', '-', 'cut', 'copy', '-', 'duplicate'], null, evt);	
+		this.addMenuItems(menu, ['delete', '-', 'cut', 'copy', '-', 'duplicate'], null, evt);
 
 		if (graph.getSelectionCount() == 1 && graph.getModel().isEdge(graph.getSelectionCell()))
 		{
