@@ -208,6 +208,7 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel, dx,
 					}
 					
 					this.tooltipImage = mxUtils.createImage(IMAGE_PATH + '/tooltip.png');
+					this.tooltipImage.className = 'geSidebarTooltipImage';
 					this.tooltipImage.style.position = 'absolute';
 					this.tooltipImage.style.width = '14px';
 					this.tooltipImage.style.height = '27px';
@@ -1095,6 +1096,78 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 			{
 				var validDropTarget = (target != null) ? graph.isValidDropTarget(target, cells, evt) : false;
 				var select = null;
+				
+				// Special handling for alt-drop to change shape of cell under mouse
+				if (cells.length == 1 && mxEvent.isAltDown(evt))
+				{
+					var t = graph.view.translate;
+					var s = graph.view.scale;
+					var target = graph.getCellAt((x + dx + t.x) * s, (y + dy + t.y) * s);
+					
+					if (target != null)
+					{
+						if (graph.getModel().isVertex(target) && graph.getModel().isVertex(cells[0]))
+						{
+							var sourceStyle = graph.getCellStyle(cells[0]);
+							var shape = mxUtils.getValue(sourceStyle, mxConstants.STYLE_SHAPE, null);
+							var image = mxUtils.getValue(sourceStyle, mxConstants.STYLE_IMAGE, null);
+							
+							// Special shape level styles
+							var rounded = mxUtils.getValue(sourceStyle, mxConstants.STYLE_ROUNDED, null);
+							var perimeter = mxUtils.getValue(sourceStyle, mxConstants.STYLE_PERIMETER, null);
+							var double = mxUtils.getValue(sourceStyle, 'double', null);
+							
+							if (shape != null)
+							{
+								graph.model.beginUpdate();
+								
+								try
+								{
+									graph.setCellStyles(mxConstants.STYLE_SHAPE, shape, [target]);
+									graph.setCellStyles(mxConstants.STYLE_IMAGE, image, [target]);
+									graph.setCellStyles(mxConstants.STYLE_ROUNDED, rounded, [target]);
+									graph.setCellStyles(mxConstants.STYLE_PERIMETER, perimeter, [target]);
+									graph.setCellStyles('double', double, [target]);
+								}
+								finally
+								{
+									graph.model.endUpdate();
+								}
+								graph.setSelectionCell(target);
+								
+								return;
+							}
+						}
+						else if (graph.getModel().isEdge(target) && graph.getModel().isEdge(cells[0]))
+						{
+							var sourceStyle = graph.getCellStyle(cells[0]);
+							var shape = mxUtils.getValue(sourceStyle, mxConstants.STYLE_SHAPE, null);
+							var edge = mxUtils.getValue(sourceStyle, mxConstants.STYLE_EDGE, null);
+							
+							// Special shape level styles
+							var rounded = mxUtils.getValue(sourceStyle, mxConstants.STYLE_ROUNDED, null);
+							
+							if (shape != null)
+							{
+								graph.model.beginUpdate();
+								
+								try
+								{
+									graph.setCellStyles(mxConstants.STYLE_SHAPE, shape, [target]);
+									graph.setCellStyles(mxConstants.STYLE_EDGE, edge, [target]);
+									graph.setCellStyles(mxConstants.STYLE_ROUNDED, rounded, [target]);
+								}
+								finally
+								{
+									graph.model.endUpdate();
+								}
+								graph.setSelectionCell(target);
+								
+								return;
+							}
+						}
+					}
+				}
 				
 				if (target != null && !validDropTarget)
 				{
