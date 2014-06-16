@@ -1366,7 +1366,7 @@ Graph.prototype.initTouch = function()
 			
 			this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
 
-			if (touchStyle || urlParams['connect'] == null || urlParams['connect'] == '2')
+			if (this.graph.isEnabled() && (touchStyle || urlParams['connect'] == null || urlParams['connect'] == '2'))
 			{
 				// Only show connector image on one cell and do not show on containers
 				if (showConnectorImg && this.graph.connectionHandler.isEnabled() &&
@@ -1488,20 +1488,23 @@ Graph.prototype.initTouch = function()
 
 				this.linkHint.innerHTML = '<a href="' + link + '" title="' + link + '" target="_blank">' + label + '</a>';
 	
-				var changeLink = document.createElement('img');
-				changeLink.setAttribute('src', IMAGE_PATH + '/edit.gif');
-				changeLink.setAttribute('title', mxResources.get('editLink'));
-				changeLink.style.marginLeft = '10px';
-				changeLink.style.marginBottom = '-1px';
-				changeLink.style.cursor = 'pointer';
-				this.linkHint.appendChild(changeLink);
-				
-				mxEvent.addListener(changeLink, 'click', mxUtils.bind(this, function(evt)
+				if (this.graph.isEnabled())
 				{
-					this.graph.setSelectionCell(this.state.cell);
-					ui.actions.get('editLink').funct();
-					mxEvent.consume(evt);
-				}));
+					var changeLink = document.createElement('img');
+					changeLink.setAttribute('src', IMAGE_PATH + '/edit.gif');
+					changeLink.setAttribute('title', mxResources.get('editLink'));
+					changeLink.style.marginLeft = '10px';
+					changeLink.style.marginBottom = '-1px';
+					changeLink.style.cursor = 'pointer';
+					this.linkHint.appendChild(changeLink);
+					
+					mxEvent.addListener(changeLink, 'click', mxUtils.bind(this, function(evt)
+					{
+						this.graph.setSelectionCell(this.state.cell);
+						ui.actions.get('editLink').funct();
+						mxEvent.consume(evt);
+					}));
+				}
 			}
 		};
 		
