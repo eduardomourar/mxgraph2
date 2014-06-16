@@ -922,6 +922,24 @@ EditorUi.prototype.createUi = function()
 		this.menubarContainer.appendChild(this.menubar.container);
 	}
 	
+	// Adds status bar in menubar
+	if (this.menubar != null)
+	{
+		this.statusContainer = this.createStatusContainer();
+	
+		// Connects the status bar to the editor status
+		this.editor.addListener('statusChanged', mxUtils.bind(this, function()
+		{
+			this.setStatusText(this.editor.getStatus());
+		}));
+	
+		this.setStatusText(this.editor.getStatus());
+		this.menubar.container.appendChild(this.statusContainer);
+		
+		// Inserts into DOM
+		this.container.appendChild(this.menubarContainer);
+	}
+
 	// Creates toolbar
 	this.toolbar = this.createToolbar(this.createDiv('geToolbar'));
 	
@@ -951,24 +969,6 @@ EditorUi.prototype.createUi = function()
 	if (this.sidebar != null && this.sidebarFooterContainer)
 	{
 		this.container.appendChild(this.sidebarFooterContainer);		
-	}
-	
-	// Adds status bar in menubar
-	if (this.menubar != null)
-	{
-		this.statusContainer = this.createStatusContainer();
-	
-		// Connects the status bar to the editor status
-		this.editor.addListener('statusChanged', mxUtils.bind(this, function()
-		{
-			this.setStatusText(this.editor.getStatus());
-		}));
-	
-		this.setStatusText(this.editor.getStatus());
-		this.menubar.container.appendChild(this.statusContainer);
-		
-		// Inserts into DOM
-		this.container.appendChild(this.menubarContainer);
 	}
 
 	this.container.appendChild(this.diagramContainer);
