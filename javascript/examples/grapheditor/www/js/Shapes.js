@@ -816,7 +816,7 @@
 			this.specialHandle.node.style.cursor = this.getSpecialHandleCursor();
 			
 			// Locked state is implemented via rotatable flag
-			if (!graph.isCellRotatable(this.state.cell))
+			if (!graph.isCellRotatable(this.state.cell) || !graph.isEnabled())
 			{
 				this.specialHandle.node.style.display = 'none';
 			}
