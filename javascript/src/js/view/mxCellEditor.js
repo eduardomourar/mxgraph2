@@ -542,14 +542,7 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 			
 			if (this.isSelectText() && this.textarea.value.length > 0)
 			{
-				if (mxClient.IS_FF)
-				{
-					this.textarea.select();
-				}
-				else
-				{
-					document.execCommand('selectAll');					
-				}
+				this.textarea.select();
 			}
 		}
 	}
