@@ -37,12 +37,12 @@ Toolbar.prototype.init = function()
 	var fontElt = this.addMenu('Helvetica', mxResources.get('fontFamily'), true, 'fontFamily');
 	fontElt.style.whiteSpace = 'nowrap';
 	fontElt.style.overflow = 'hidden';
-	fontElt.style.width = '56px';
+	fontElt.style.width = (mxClient.IS_QUIRKS) ? '76px' : '56px';
 	this.addSeparator();
 	var sizeElt = this.addMenu('12', mxResources.get('fontSize'), true, 'fontSize');
 	sizeElt.style.whiteSpace = 'nowrap';
 	sizeElt.style.overflow = 'hidden';
-	sizeElt.style.width = '22px';
+	sizeElt.style.width = (mxClient.IS_QUIRKS) ? '42px' : '22px';
 
 	this.addItems(['-', 'bold', 'italic', 'underline']);
 	var align = this.addMenuFunction('geSprite-left', mxResources.get('align'), false, mxUtils.bind(this, function(menu)
@@ -172,14 +172,14 @@ Toolbar.prototype.createTextToolbar = function()
 	var fontElt = this.addMenu('Helvetica', mxResources.get('fontFamily'), true, 'fontFamily');
 	fontElt.style.whiteSpace = 'nowrap';
 	fontElt.style.overflow = 'hidden';
-	fontElt.style.width = '56px';
+	fontElt.style.width = (mxClient.IS_QUIRKS) ? '76px' : '56px';
 	
 	this.addSeparator();
 	
 	var sizeElt = this.addMenu('12', mxResources.get('fontSize'), true, 'fontSize');
 	sizeElt.style.whiteSpace = 'nowrap';
 	sizeElt.style.overflow = 'hidden';
-	sizeElt.style.width = '22px';
+	sizeElt.style.width = (mxClient.IS_QUIRKS) ? '42px' : '22px';
 	
 	this.addItems(['-', 'bold', 'italic', 'underline']);
 
