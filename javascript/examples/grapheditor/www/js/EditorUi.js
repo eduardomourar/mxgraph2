@@ -293,16 +293,31 @@ EditorUi = function(editor, container)
 		}
 	});
 
-	// Updates the editor UI after the window has been resized
+	// Updates the editor UI after the window has been resized or the orientation changes
 	// Timeout is workaround for old IE versions which have a delay for DOM client sizes.
 	// Should not use delay > 0 to avoid handle multiple repaints during window resize
    	mxEvent.addListener(window, 'resize', mxUtils.bind(this, function()
    	{
    		window.setTimeout(mxUtils.bind(this, function()
    		{
-   	   	   	this.refresh();
+   			this.refresh();
    		}), 0);
    	}));
+   	
+   	mxEvent.addListener(window, 'orientationchange', mxUtils.bind(this, function()
+   	{
+   		this.refresh();
+   	}));
+   	
+	// Workaround for bug on iOS see
+	// http://stackoverflow.com/questions/19012135/ios-7-ipad-safari-landscape-innerheight-outerheight-layout-issue
+	if (mxClient.IS_IOS)
+	{
+	   	mxEvent.addListener(window, 'scroll', mxUtils.bind(this, function()
+	   	{
+	   		window.scrollTo(0, 0);
+	   	}));
+	}
 
 	/**
 	 * Sets the initial scrollbar locations after a file was loaded.
@@ -804,6 +819,19 @@ EditorUi.prototype.refresh = function()
 		h = (quirks) ? document.body.clientHeight || document.documentElement.clientHeight : document.documentElement.clientHeight;
 	}
 	
+	// Workaround for bug on iOS see
+	// http://stackoverflow.com/questions/19012135/ios-7-ipad-safari-landscape-innerheight-outerheight-layout-issue
+	var off = 0;
+	
+	if (mxClient.IS_IOS)
+	{
+		if (window.innerHeight != document.documentElement.clientHeight)
+		{
+			off = document.documentElement.clientHeight - window.innerHeight;
+			window.scrollTo(0, 0);
+		}
+	}
+	
 	var effHsplitPosition = Math.max(0, Math.min(this.hsplitPosition, w - this.splitSize - 20));
 
 	var tmp = 0;
@@ -830,7 +858,7 @@ EditorUi.prototype.refresh = function()
 	
 	if (this.sidebarFooterContainer != null)
 	{
-		var bottom = this.footerHeight;
+		var bottom = this.footerHeight + off;
 		sidebarFooterHeight = Math.max(0, Math.min(h - tmp - bottom, this.sidebarFooterHeight));
 		this.sidebarFooterContainer.style.width = effHsplitPosition + 'px';
 		this.sidebarFooterContainer.style.height = sidebarFooterHeight + 'px';
@@ -844,7 +872,7 @@ EditorUi.prototype.refresh = function()
 	this.diagramContainer.style.top = this.sidebarContainer.style.top;
 	this.footerContainer.style.height = this.footerHeight + 'px';
 	this.hsplit.style.top = this.sidebarContainer.style.top;
-	this.hsplit.style.bottom = this.footerHeight + 'px';
+	this.hsplit.style.bottom = (this.footerHeight + off) + 'px';
 	this.hsplit.style.left = effHsplitPosition + 'px';
 	
 	if (quirks)
@@ -861,8 +889,8 @@ EditorUi.prototype.refresh = function()
 	}
 	else
 	{
-		this.sidebarContainer.style.bottom = (this.footerHeight + sidebarFooterHeight) + 'px';
-		this.diagramContainer.style.bottom = this.footerHeight + 'px';
+		this.sidebarContainer.style.bottom = (this.footerHeight + sidebarFooterHeight + off) + 'px';
+		this.diagramContainer.style.bottom = (this.footerHeight + off) + 'px';
 	}
 	
 	this.editor.graph.sizeDidChange();
