@@ -19,6 +19,16 @@ function Toolbar(editorUi, container)
 };
 
 /**
+ * Defines the background for selected buttons.
+ */
+Toolbar.prototype.selectedBackground = '#d0d0d0';
+
+/**
+ * Defines the background for selected buttons.
+ */
+Toolbar.prototype.unselectedBackground = 'none';
+
+/**
  * Adds the toolbar elements.
  */
 Toolbar.prototype.init = function()
@@ -50,12 +60,12 @@ Toolbar.prototype.init = function()
 	this.addItems(['fontColor', '-']);
 	var line = this.addMenuFunction('geSprite-straight', mxResources.get('line'), false, mxUtils.bind(this, function(menu)
 	{
-		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE], [null], 'geIcon geSprite geSprite-straight', null).setAttribute('title', mxResources.get('straight'));
-		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE], ['entityRelationEdgeStyle'], 'geIcon geSprite geSprite-entity', null).setAttribute('title', mxResources.get('entityRelation'));
-		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW], ['elbowEdgeStyle', 'horizontal'], 'geIcon geSprite geSprite-helbow', null).setAttribute('title', mxResources.get('horizontal'));
-		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW], ['elbowEdgeStyle', 'vertical'], 'geIcon geSprite geSprite-velbow', null).setAttribute('title', mxResources.get('vertical'));
-		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE], ['segmentEdgeStyle'], 'geIcon geSprite geSprite-segment', null).setAttribute('title', mxResources.get('manual'));
-		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE], ['orthogonalEdgeStyle'], 'geIcon geSprite geSprite-orthogonal', null).setAttribute('title', mxResources.get('automatic'));
+		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE, 'noEdgeStyle'], [null, null], 'geIcon geSprite geSprite-straight', null).setAttribute('title', mxResources.get('straight'));
+		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE, 'noEdgeStyle'], ['entityRelationEdgeStyle', null], 'geIcon geSprite geSprite-entity', null).setAttribute('title', mxResources.get('entityRelation'));
+		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, 'noEdgeStyle'], ['elbowEdgeStyle', 'horizontal', null], 'geIcon geSprite geSprite-helbow', null).setAttribute('title', mxResources.get('horizontal'));
+		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, 'noEdgeStyle'], ['elbowEdgeStyle', 'vertical', null], 'geIcon geSprite geSprite-velbow', null).setAttribute('title', mxResources.get('vertical'));
+		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE, 'noEdgeStyle'], ['segmentEdgeStyle', null], 'geIcon geSprite geSprite-segment', null).setAttribute('title', mxResources.get('manual'));
+		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_EDGE, 'noEdgeStyle'], ['orthogonalEdgeStyle', null], 'geIcon geSprite geSprite-orthogonal', null).setAttribute('title', mxResources.get('automatic'));
 	}));
 	var linestart = this.addMenuFunction('geSprite-startclassic', mxResources.get('lineend'), false, mxUtils.bind(this, function(menu)
 	{
@@ -91,27 +101,29 @@ Toolbar.prototype.init = function()
 	this.addItem('geSprite-gradientcolor', 'gradientColor').setAttribute('title', mxResources.get('gradient'));
 	this.addItems(['shadow']);
 	var items = this.addItems(['-', 'grid', 'guides']);
-	var scolor = '#d0d0d0';
+	
+	var ucolor = this.unselectedBackground;
+	var scolor = this.selectedBackground;
 	
 	// Syncs grid & guides button states
 	this.editorUi.addListener('gridEnabledChanged', mxUtils.bind(this, function()
 	{
-		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? scolor : 'none';
+		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? scolor : ucolor;
 	}));
 	
 	this.editorUi.addListener('guidesEnabledChanged', mxUtils.bind(this, function()
 	{
-		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? scolor : 'none';
+		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? scolor : ucolor;
 	}));
 	
 	this.editorUi.editor.addListener('updateGraphComponents', mxUtils.bind(this, function()
 	{
-		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? scolor : 'none';
-		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? scolor : 'none';
+		items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? scolor : ucolor;
+		items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? scolor : ucolor;
 	}));
 	
-	items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? scolor : 'none';
-	items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? scolor : 'none';
+	items[1].style.background = (this.editorUi.actions.get('grid').selectedCallback()) ? scolor : ucolor;
+	items[2].style.background = (this.editorUi.actions.get('guides').selectedCallback()) ? scolor : ucolor;
 	
 	var graph = this.editorUi.editor.graph;
 
