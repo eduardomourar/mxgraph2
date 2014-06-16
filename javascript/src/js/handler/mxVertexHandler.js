@@ -234,7 +234,7 @@ mxVertexHandler.prototype.init = function()
 	}
 	
 	// Adds the rotation handler
-	if (this.rotationEnabled && this.graph.isCellRotatable(this.state.cell) &&
+	if (this.graph.isEnabled() && this.rotationEnabled && this.graph.isCellRotatable(this.state.cell) &&
 		(mxGraphHandler.prototype.maxCells <= 0 || this.graph.getSelectionCount() < mxGraphHandler.prototype.maxCells) &&
 		this.state.width > 2 && this.state.height > 2)
 	{
