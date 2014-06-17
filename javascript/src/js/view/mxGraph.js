@@ -10732,8 +10732,8 @@ mxGraph.prototype.getEdgesBetween = function(source, target, directed)
  * y - Y-coordinate of the rectangle.
  * width - Width of the rectangle.
  * height - Height of the rectangle.
- * parent - <mxCell> whose children should be checked. Default is
- * <defaultParent>.
+ * parent - <mxCell> that should be used as the root of the recursion.
+ * Default is current root of the view or the root of the model.
  * result - Optional array to store the result in.
  */
 mxGraph.prototype.getCells = function(x, y, width, height, parent, result)
@@ -10744,8 +10744,16 @@ mxGraph.prototype.getCells = function(x, y, width, height, parent, result)
 	{
 		var right = x + width;
 		var bottom = y + height;
-		
-		parent = parent || this.getDefaultParent();
+
+		if (parent == null)
+		{
+			parent = this.getCurrentRoot();
+			
+			if (parent == null)
+			{
+				parent = this.getModel().getRoot();
+			}
+		}
 		
 		if (parent != null)
 		{
