@@ -758,7 +758,7 @@ Graph.prototype.initTouch = function()
 	// selecting parent for selected children in groups before this check can be made.
 	this.popupMenuHandler.mouseUp = mxUtils.bind(this, function(sender, me)
 	{
-		this.popupMenuHandler.popupTrigger = !this.isEditing() && (this.popupMenuHandler.popupTrigger  ||
+		this.popupMenuHandler.popupTrigger = !this.isEditing() && (this.popupMenuHandler.popupTrigger ||
 			(!menuShowing && !mxEvent.isMouseEvent(me.getEvent()) &&
 			((selectionEmpty && me.getCell() == null && this.isSelectionEmpty()) ||
 			(cellSelected && this.isCellSelected(me.getCell())))));

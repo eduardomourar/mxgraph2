@@ -1,3 +1,4 @@
+- mxGraph.getCellAt uses current root as default parent [JavaScript]
 - Adds mxSwimlane.getTitleSize hook [JavaScript]
 - Adds new example htmllabel.html [JavaScript]
 

@@ -6392,12 +6392,12 @@ mxGraph.prototype.disconnectGraph = function(cells)
  * Returns the current root of the displayed cell hierarchy. This is a
  * shortcut to <mxGraphView.currentRoot> in <view>.
  */
-	mxGraph.prototype.getCurrentRoot = function()
-	{
-		return this.view.currentRoot;
-	};
+mxGraph.prototype.getCurrentRoot = function()
+{
+	return this.view.currentRoot;
+};
  
-	/**
+/**
  * Function: getTranslateForRoot
  * 
  * Returns the translation to be used if the given cell is the root cell as
@@ -10237,7 +10237,7 @@ mxGraph.prototype.getSwimlaneAt = function (x, y, parent)
  * x - X-coordinate of the location to be checked.
  * y - Y-coordinate of the location to be checked.
  * parent - <mxCell> that should be used as the root of the recursion.
- * Default is <defaultParent>.
+ * Default is current root of the view or the root of the model.
  * vertices - Optional boolean indicating if vertices should be returned.
  * Default is true.
  * edges - Optional boolean indicating if edges should be returned. Default
@@ -10247,7 +10247,16 @@ mxGraph.prototype.getCellAt = function(x, y, parent, vertices, edges)
 {
 	vertices = (vertices != null) ? vertices : true;
 	edges = (edges != null) ? edges : true;
-	parent = (parent != null) ? parent : this.getDefaultParent();
+
+	if (parent == null)
+	{
+		parent = this.getCurrentRoot();
+		
+		if (parent == null)
+		{
+			parent = this.getModel().getRoot();
+		}
+	}
 
 	if (parent != null)
 	{
