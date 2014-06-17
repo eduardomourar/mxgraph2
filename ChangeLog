@@ -1,3 +1,4 @@
+- Adds mxSwimlane.getTitleSize hook [JavaScript]
 - Adds new example htmllabel.html [JavaScript]
 
 11-JUN-2014: 2.8.2.0
