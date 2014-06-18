@@ -1,3 +1,4 @@
+- Fixes offset of overlapping, wrapped labels in mxSvgCanvas2D [JavaScript]
 - mxGraph.getCellAt, getCells use current root as parent [JavaScript]
 - Adds mxSwimlane.getTitleSize hook [JavaScript]
 - Adds new example htmllabel.html [JavaScript]
