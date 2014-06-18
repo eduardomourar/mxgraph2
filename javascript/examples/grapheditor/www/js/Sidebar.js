@@ -391,6 +391,11 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	    content.appendChild(this.createVertexTemplate('shape=note;whiteSpace=wrap', 80, 100, '', 'Note', true));
 	    content.appendChild(this.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top', 30, 60, '', 'Actor', true));
 	    content.appendChild(this.createVertexTemplate('ellipse;shape=cloud;whiteSpace=wrap', 120, 80, '', 'Cloud', true));
+
+	    content.appendChild(this.createVertexTemplate('shape=card;whiteSpace=wrap', 60, 80, '', 'Card', true));
+	    content.appendChild(this.createVertexTemplate('shape=folder;whiteSpace=wrap', 120, 120, '', 'Folder', true));
+	    content.appendChild(this.createVertexTemplate('shape=internalStorage;whiteSpace=wrap', 80, 80, '', 'Internal Storage', true));
+	    content.appendChild(this.createVertexTemplate('shape=cylinder;whiteSpace=wrap', 60, 80, '', 'Cylinder', true));
 	}));
 };
 
@@ -514,16 +519,26 @@ Sidebar.prototype.addAdvancedPalette = function(dir, expand)
  */
 Sidebar.prototype.addAdvancedShapes = function(dir, content)
 {
-    content.appendChild(this.createVertexTemplate('shape=card;whiteSpace=wrap', 60, 80, '', 'Card', true));
-    content.appendChild(this.createVertexTemplate('shape=folder;whiteSpace=wrap', 120, 120, '', 'Folder', true));
-    content.appendChild(this.createVertexTemplate('shape=actor;whiteSpace=wrap', 40, 60, '', 'User', true));
-    content.appendChild(this.createVertexTemplate('shape=cylinder;whiteSpace=wrap', 60, 80, '', 'Cylinder', true));
-    
     content.appendChild(this.createVertexTemplate('shape=xor;whiteSpace=wrap', 60, 80, '', 'Exclusive Or', true));
     content.appendChild(this.createVertexTemplate('shape=or;whiteSpace=wrap', 60, 80, '', 'Or', true));
+    content.appendChild(this.createVertexTemplate('shape=dataStorage;whiteSpace=wrap', 100, 80, '', 'Data Storage', true));    
+    content.appendChild(this.createVertexTemplate('shape=tapeData;whiteSpace=wrap;perimeter=ellipsePerimeter;', 80, 80, '', 'Tape Data', true));
+    
+    content.appendChild(this.createVertexTemplate('shape=manualInput;whiteSpace=wrap', 80, 80, '', 'Manual Input', true));
+    content.appendChild(this.createVertexTemplate('shape=loopLimit;whiteSpace=wrap', 100, 80, '', 'Loop Limit', true));
+    content.appendChild(this.createVertexTemplate('shape=offPageConnector;whiteSpace=wrap', 80, 80, '', 'Off Page Connector', true));
+    content.appendChild(this.createVertexTemplate('shape=actor;whiteSpace=wrap', 40, 60, '', 'User', true));
+
+    content.appendChild(this.createVertexTemplate('shape=singleArrow;direction=west;whiteSpace=wrap', 100, 60, '', 'Arrow Left', true));
+    content.appendChild(this.createVertexTemplate('shape=singleArrow;whiteSpace=wrap', 100, 60, '', 'Arrow Right', true));
+    content.appendChild(this.createVertexTemplate('shape=doubleArrow;whiteSpace=wrap', 100, 60, '', 'Double Arrow', true));
+    content.appendChild(this.createVertexTemplate('shape=cross;whiteSpace=wrap', 80, 80, '', 'Cross', true));
+    
+    content.appendChild(this.createVertexTemplate('shape=delay;whiteSpace=wrap', 80, 40, '', 'Delay', true));
+    content.appendChild(this.createVertexTemplate('shape=display;whiteSpace=wrap', 80, 40, '', 'Display', true));
     content.appendChild(this.createVertexTemplate('line', 160, 10, '', 'Horizontal Line', true));
     content.appendChild(this.createVertexTemplate('line;direction=south', 10, 160, '', 'Vertical Line', true));
-	
+    
 	content.appendChild(this.createVertexTemplate('swimlane;whiteSpace=wrap', 200, 200, 'Container', 'Container', true));
 	content.appendChild(this.createVertexTemplate('swimlane;swimlaneLine=0;whiteSpace=wrap', 200, 200, 'Container', 'No separator', true));
 	content.appendChild(this.createVertexTemplate('swimlane;swimlaneFillColor=#ffffff;whiteSpace=wrap', 200, 200, 'Container', 'Filled', true));
