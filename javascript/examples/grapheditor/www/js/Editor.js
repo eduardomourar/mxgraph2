@@ -886,11 +886,7 @@ Editor.prototype.createUndoManager = function()
 /**
  * Adds basic stencil set (no namespace).
  */
-Editor.prototype.initStencilRegistry = function()
-{
-	// Loads default stencils
-	mxStencilRegistry.loadStencilSet(STENCIL_PATH + '/general.xml');
-};
+Editor.prototype.initStencilRegistry = function() { };
 
 /**
  * Overrides stencil registry for dynamic loading of stencils.
