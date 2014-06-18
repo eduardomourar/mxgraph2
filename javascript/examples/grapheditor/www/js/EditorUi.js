@@ -1411,28 +1411,30 @@ EditorUi.prototype.createKeyHandler = function(editor)
     };
 	
 	// Helper function to move cells with the cursor keys
-    function nudge(keyCode)
+    function nudge(keyCode, stepSize)
     {
     	if (!graph.isSelectionEmpty() && graph.isEnabled())
 		{
+    		stepSize = (stepSize != null) ? stepSize : 1;
+    		
     		var dx = 0;
     		var dy = 0;
     		
     		if (keyCode == 37)
 			{
-    			dx = -1;
+    			dx = -stepSize;
 			}
     		else if (keyCode == 38)
     		{
-    			dy = -1;
+    			dy = -stepSize;
     		}
     		else if (keyCode == 39)
     		{
-    			dx = 1;
+    			dx = stepSize;
     		}
     		else if (keyCode == 40)
     		{
-    			dy = 1;
+    			dy = stepSize;
     		}
     		
     		graph.moveCells(graph.getSelectionCells(), dx, dy);
@@ -1501,6 +1503,10 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindKey(38, function() { nudge(38); }); // Up arrow
     keyHandler.bindKey(39, function() { nudge(39); }); // Right arrow
     keyHandler.bindKey(40, function() { nudge(40); }); // Down arrow
+    keyHandler.bindShiftKey(37, function() { nudge(37, 10); }); // Shift-Left arrow
+    keyHandler.bindShiftKey(38, function() { nudge(38, 10); }); // Shift-Up arrow
+    keyHandler.bindShiftKey(39, function() { nudge(39, 10); }); // Shift-Right arrow
+    keyHandler.bindShiftKey(40, function() { nudge(40, 10); }); // Shift-Down arrow
     keyHandler.bindKey(113, function() { graph.startEditingAtCell(); });
     keyHandler.bindKey(8, function() { graph.foldCells(true); }); // Backspace
     keyHandler.bindAction(8, false, 'delete'); // Backspace
