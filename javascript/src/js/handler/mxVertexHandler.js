@@ -548,6 +548,8 @@ mxVertexHandler.prototype.isLivePreviewBorder = function()
 mxVertexHandler.prototype.start = function(x, y, index)
 {
 	this.inTolerance = true;
+	this.childOffsetX = 0;
+	this.childOffsetY = 0;
 	this.index = index;
 	this.startX = x;
 	this.startY = y;
@@ -771,9 +773,28 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 				var dx3 = dx2 - dx;
 				var dy3 = dy2 - dy;
 				
+				var dx4 = this.bounds.x - this.state.x;
+				var dy4 = this.bounds.y - this.state.y;
+				
+				var dx5 = cos * dx4 - sin * dy4;
+				var dy5 = sin * dx4 + cos * dy4;
+
 				this.bounds.x += dx3;
 				this.bounds.y += dy3;
-	
+				
+				// Shifts the children according to parent offset
+				if (!this.graph.isCellCollapsed(this.state.cell) && (dx3 != 0 || dy3 != 0))
+				{
+					this.childOffsetX = this.state.x - this.bounds.x + dx5;
+					this.childOffsetY = this.state.y - this.bounds.y + dy5;
+				}
+				else
+				{
+					this.childOffsetX = 0;
+					this.childOffsetY = 0;
+				}
+				
+				// TODO: Apply child offset to children in live preview
 				if (this.livePreview)
 				{
 					// Saves current state
@@ -1059,42 +1080,35 @@ mxVertexHandler.prototype.resizeCell = function(cell, dx, dy, index, gridEnabled
 		}
 		else
 		{
-			var bounds = this.union(geo, dx, dy, index, gridEnabled, 1, new mxPoint(0, 0), constrained);
-			var alpha = mxUtils.toRadians(this.state.style[mxConstants.STYLE_ROTATION] || '0');
+			//var bounds = this.union(geo, dx, dy, index, gridEnabled, 1, new mxPoint(0, 0), constrained);
+			//var alpha = mxUtils.toRadians(this.state.style[mxConstants.STYLE_ROTATION] || '0');
+			var scale = this.graph.view.scale;
+			var t = this.graph.view.translate;
+			var px = t.x;
+			var py = t.y;
+
+			var parent = this.graph.getModel().getParent(cell);
 			
-			if (alpha != 0)
+			if (parent != this.graph.getCurrentRoot())
 			{
-				var dx = bounds.getCenterX() - geo.getCenterX();
-				var dy = bounds.getCenterY() - geo.getCenterY();
-	
-				var cos = Math.cos(alpha);
-				var sin = Math.sin(alpha);
-	
-				var dx2 = cos * dx - sin * dy;
-				var dy2 = sin * dx + cos * dy;
+				var pstate = this.graph.view.getState(parent);
 				
-				var dx3 = dx2 - dx;
-				var dy3 = dy2 - dy;
-				
-				var dx4 = bounds.x - geo.x;
-				var dy4 = bounds.y - geo.y;
-				
-				var dx5 = cos * dx4 - sin * dy4;
-				var dy5 = sin * dx4 + cos * dy4;
-				
-				bounds.x += dx3;
-				bounds.y += dy3;
-	
-				// Shifts the children according to parent offset
-				if (!this.graph.isCellCollapsed(cell) && (dx3 != 0 || dy3 != 0))
+				if (pstate != null && this.graph.getCellGeometry(parent) != null)
 				{
-					var dx4 = geo.x - bounds.x + dx5;
-					var dy4 = geo.y - bounds.y + dy5;
-					
-					this.moveChildren(cell, dx4, dy4);
+					px = pstate.x / scale;
+					py = pstate.y / scale;
 				}
 			}
 			
+			var bounds = new mxRectangle(this.bounds.x / scale - px, 
+					this.bounds.y / scale - py,
+					this.bounds.width / scale, this.bounds.height / scale);
+
+			if (this.childOffsetX != 0 || this.childOffsetY != 0)
+			{
+				this.moveChildren(cell, this.childOffsetX / scale, this.childOffsetY / scale);
+			}
+
 			this.graph.resizeCell(cell, bounds, recurse);
 		}
 	}
