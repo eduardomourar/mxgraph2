@@ -2208,4 +2208,16 @@
 	                                    new mxConnectionConstraint(new mxPoint(0.5, 0), false),
 	                                    new mxConnectionConstraint(new mxPoint(0.5, 1), false)];
 	UmlLifeline.prototype.constraints = null;
+	OrShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.25), false),
+	  	                             new mxConnectionConstraint(new mxPoint(0, 0.5), false),
+	  	                             new mxConnectionConstraint(new mxPoint(0, 0.75), false),
+	  	                             new mxConnectionConstraint(new mxPoint(1, 0.5), false),
+	  	                             new mxConnectionConstraint(new mxPoint(0.7, 0.1), false),
+	  	                             new mxConnectionConstraint(new mxPoint(0.7, 0.9), false)];
+	XorShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.175, 0.25), false),
+	  	                             new mxConnectionConstraint(new mxPoint(0.25, 0.5), false),
+	  	                             new mxConnectionConstraint(new mxPoint(0.175, 0.75), false),
+	  	                             new mxConnectionConstraint(new mxPoint(1, 0.5), false),
+	  	                             new mxConnectionConstraint(new mxPoint(0.7, 0.1), false),
+	  	                             new mxConnectionConstraint(new mxPoint(0.7, 0.9), false)];
 })();
