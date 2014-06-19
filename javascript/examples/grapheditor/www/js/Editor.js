@@ -190,6 +190,7 @@ Editor.prototype.setGraphXml = function(node)
 		this.graph.model.clear();
 		this.graph.view.scale = 1;
 		this.graph.gridEnabled = node.getAttribute('grid') != '0';
+		this.graph.gridSize = node.getAttribute('gridSize') || mxGraph.prototype.gridSize;
 		this.graph.graphHandler.guidesEnabled = node.getAttribute('guides') != '0';
 		this.graph.setTooltips(node.getAttribute('tooltips') != '0');
 		this.graph.setConnectable(node.getAttribute('connect') != '0');
@@ -280,6 +281,7 @@ Editor.prototype.getGraphXml = function()
 	}
 	
 	node.setAttribute('grid', (this.graph.isGridEnabled()) ? '1' : '0');
+	node.setAttribute('gridSize', this.graph.gridSize);
 	node.setAttribute('guides', (this.graph.graphHandler.guidesEnabled) ? '1' : '0');
 	node.setAttribute('guides', (this.graph.graphHandler.guidesEnabled) ? '1' : '0');
 	node.setAttribute('tooltips', (this.graph.tooltipHandler.isEnabled()) ? '1' : '0');
