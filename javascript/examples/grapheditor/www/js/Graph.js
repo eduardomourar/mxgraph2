@@ -20,6 +20,9 @@ Graph = function(container, model, renderHint, stylesheet)
 	this.allowAutoPanning = true;
 	this.resetEdgesOnConnect = false;
 	this.constrainChildren = false;
+	
+	// Do not scroll after moving cells
+	this.graphHandler.scrollOnMove = false;
 
 	// Enables cloning of connection sources by default
 	this.connectionHandler.setCreateTarget(true);
@@ -1259,23 +1262,6 @@ Graph.prototype.initTouch = function()
 					this.delayedSelection = false;
 				}
 			};
-	
-			// Installs locked and connect handles
-			// Problem is condition for source and target in segment handler before creating bends array
-			/*var edgeHandlerCreateHandleShape = mxEdgeHandler.prototype.createHandleShape;
-			mxEdgeHandler.prototype.createHandleShape = function(index)
-			{
-				if (index == 0 || index == this.abspoints.length - 1)
-				{
-					this.handleImage = connectHandle;
-				}
-				else
-				{
-					this.handleImage = touchHandle;
-				}
-				
-				return edgeHandlerCreateHandleShape.apply(this, arguments);
-			};*/
 		}
 		
 		var vertexHandlerMouseMove = mxVertexHandler.prototype.mouseMove;
