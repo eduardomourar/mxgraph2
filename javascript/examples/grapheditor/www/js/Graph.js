@@ -23,6 +23,7 @@ Graph = function(container, model, renderHint, stylesheet)
 	
 	// Do not scroll after moving cells
 	this.graphHandler.scrollOnMove = false;
+	this.graphHandler.scaleGrid = true;
 
 	// Enables cloning of connection sources by default
 	this.connectionHandler.setCreateTarget(true);
