@@ -592,9 +592,10 @@ Editor.prototype.init = function()
 				this.backgroundPageShape.bounds = bounds;
 				this.backgroundPageShape.redraw();
 				
-				var tx = (10 - mxUtils.mod(this.translate.x, 10)) - 1;
-				var ty = (10 - mxUtils.mod(this.translate.y, 10)) - 1;
-				this.backgroundPageShape.node.style.backgroundPosition = (-tx) + 'px ' + (-ty) + 'px';
+				var bds = this.getBackgroundPageBounds();
+				var tx = -1 + (10 - mxUtils.mod(bds.x - this.translate.x, 10));
+				var ty = -1 + (10 - mxUtils.mod(bds.y - this.translate.y, 10));
+				this.backgroundPageShape.node.style.backgroundPosition = (tx) + 'px ' + (ty) + 'px';
 			}
 			
 			this.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ?
