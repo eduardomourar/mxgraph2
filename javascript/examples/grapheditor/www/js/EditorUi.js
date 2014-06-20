@@ -1519,7 +1519,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
     keyHandler.bindAction(65, true, 'selectVertices', true); // Ctrl+Shift+A
     keyHandler.bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
-    keyHandler.bindAction(69, true, 'style'); // Ctrl+S
+    keyHandler.bindAction(69, true, 'style'); // Ctrl+E
     keyHandler.bindAction(66, true, 'toBack'); // Ctrl+B
     keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
     keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
