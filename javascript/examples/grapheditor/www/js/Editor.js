@@ -190,7 +190,7 @@ Editor.prototype.setGraphXml = function(node)
 		this.graph.model.clear();
 		this.graph.view.scale = 1;
 		this.graph.gridEnabled = node.getAttribute('grid') != '0';
-		this.graph.gridSize = node.getAttribute('gridSize') || mxGraph.prototype.gridSize;
+		this.graph.gridSize = parseFloat(node.getAttribute('gridSize')) || mxGraph.prototype.gridSize;
 		this.graph.graphHandler.guidesEnabled = node.getAttribute('guides') != '0';
 		this.graph.setTooltips(node.getAttribute('tooltips') != '0');
 		this.graph.setConnectable(node.getAttribute('connect') != '0');
