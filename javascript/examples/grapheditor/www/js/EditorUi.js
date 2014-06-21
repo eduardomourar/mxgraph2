@@ -1522,7 +1522,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindAction(69, true, 'style'); // Ctrl+E
     keyHandler.bindAction(66, true, 'toBack'); // Ctrl+B
     keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
-    keyHandler.bindAction(80, true, 'duplicate', true); // Ctrl+Shift+P
+    keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
     keyHandler.bindAction(90, true, 'undo'); // Ctrl+Z
     keyHandler.bindAction(89, true, 'redo'); // Ctrl+Y
     keyHandler.bindAction(88, true, 'cut'); // Ctrl+X

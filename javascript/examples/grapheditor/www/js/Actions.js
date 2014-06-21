@@ -99,7 +99,7 @@ Actions.prototype.init = function()
     {
 		var s = graph.gridSize;
 		graph.setSelectionCells(graph.moveCells(graph.getSelectionCells(), s, s, true));
-    }, null, null, 'Ctrl+Shift+P');
+    }, null, null, 'Ctrl+D');
 	this.addAction('selectVertices', function() { graph.selectVertices(); }, null, null, 'Ctrl+Shift+A').isEnabled = isGraphEnabled;
 	this.addAction('selectEdges', function() { graph.selectEdges(); }, null, null, 'Ctrl+Shift+E').isEnabled = isGraphEnabled;
 	this.addAction('selectAll', function() { graph.selectAll(); }, null, null, 'Ctrl+A').isEnabled = isGraphEnabled;
