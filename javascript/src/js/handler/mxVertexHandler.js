@@ -615,9 +615,12 @@ mxVertexHandler.prototype.start = function(x, y, index)
  */
 mxVertexHandler.prototype.hideSizers = function()
 {
-	for (var i = 0; i < this.sizers.length; i++)
+	if (this.sizers != null)
 	{
-		this.sizers[i].node.style.display = 'none';
+		for (var i = 0; i < this.sizers.length; i++)
+		{
+			this.sizers[i].node.style.display = 'none';
+		}
 	}
 };
 
