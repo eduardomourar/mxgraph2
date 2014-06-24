@@ -1335,6 +1335,11 @@ Graph.prototype.initTouch = function()
 					this.rotationShape.node.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
 				}
 				
+				if (this.specialHandle != null)
+				{
+					this.specialHandle.node.style.display = (this.graph.getSelectionCount() < this.graph.graphHandler.maxCells) ? '' : 'none';
+				}
+				
 				this.redrawHandles();
 			});
 			
@@ -1507,6 +1512,11 @@ Graph.prototype.initTouch = function()
 				if (this.linkHint != null)
 				{
 					this.linkHint.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
+				}
+				
+				if (this.labelShape != null)
+				{
+					this.labelShape.node.style.display = (this.graph.getSelectionCount() < this.graph.graphHandler.maxCells) ? '' : 'none';
 				}
 			});
 
