@@ -1337,7 +1337,7 @@ Graph.prototype.initTouch = function()
 				
 				if (this.specialHandle != null)
 				{
-					this.specialHandle.node.style.display = (this.graph.getSelectionCount() < this.graph.graphHandler.maxCells) ? '' : 'none';
+					this.specialHandle.node.style.display = (this.graph.isEnabled() && this.graph.getSelectionCount() < this.graph.graphHandler.maxCells) ? '' : 'none';
 				}
 				
 				this.redrawHandles();
@@ -1516,7 +1516,7 @@ Graph.prototype.initTouch = function()
 				
 				if (this.labelShape != null)
 				{
-					this.labelShape.node.style.display = (this.graph.getSelectionCount() < this.graph.graphHandler.maxCells) ? '' : 'none';
+					this.labelShape.node.style.display = (this.graph.isEnabled() && this.graph.getSelectionCount() < this.graph.graphHandler.maxCells) ? '' : 'none';
 				}
 			});
 
