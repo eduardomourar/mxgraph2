@@ -9828,8 +9828,12 @@ mxGraph.prototype.setExtendParentsOnMove = function(value)
  * Function: isRecursiveResize
  * 
  * Returns <recursiveResize>.
+ * 
+ * Parameters:
+ * 
+ * state - <mxCellState> that is being resized.
  */
-mxGraph.prototype.isRecursiveResize = function()
+mxGraph.prototype.isRecursiveResize = function(state)
 {
 	return this.recursiveResize;
 };
