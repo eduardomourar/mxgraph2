@@ -669,7 +669,7 @@ Toolbar.prototype.createTextToolbar = function()
 				selectNode(tblBodyObj.rows[0].cells[(index >= 0) ? index : tblBodyObj.rows[0].cells.length - 1]);
 			};
 			
-			var elt = menu.addItem('', null, mxUtils.bind(this, function()
+			elt = menu.addItem('', null, mxUtils.bind(this, function()
 			{
 				insertColumn((cell != null) ? cell.cellIndex : 0);
 			}), null, 'geIcon geSprite geSprite-insertcolumnbefore');
@@ -816,9 +816,6 @@ Toolbar.prototype.createTextToolbar = function()
 			
     	}
 	}));
-	elt.style.width = '16px';
-	elt.style.paddingTop = '0px';
-	elt.style.paddingLeft = '4px';
 	
 	this.addSeparator();
 	
