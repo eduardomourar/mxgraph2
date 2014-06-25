@@ -784,13 +784,6 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 			{
 				menu.addSeparator();
 				this.addMenuItems(menu, ['editLink'], null, evt);
-	
-				var link = graph.getLinkForCell(cell);
-				
-				if (link != null)
-				{
-					this.addMenuItems(menu, ['openLink'], null, evt);
-				}
 
 				// Shows edit image action if there is an image in the style
 				if (graph.getModel().isVertex(cell) && mxUtils.getValue(state.style, mxConstants.STYLE_IMAGE, null) != null)
