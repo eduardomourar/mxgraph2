@@ -1,3 +1,4 @@
+- Fixes tolerance check in mxPopupMenuHandler [JavaScript]
 - Adds state parameter in mxGraph.isRecursiveResize [JavaScript]
 - Fixes bounds to match preview in mxVertexHandler [JavaScript]
 - Fixes offset of overlapping, wrapped labels in mxSvgCanvas2D [JavaScript]
