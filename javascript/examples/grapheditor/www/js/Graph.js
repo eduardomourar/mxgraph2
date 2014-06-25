@@ -1310,7 +1310,19 @@ Graph.prototype.initTouch = function()
 				this.rotationShape.node.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
 			}
 		};
-
+		
+		var vertexHandlerReset = mxVertexHandler.prototype.reset;
+		mxVertexHandler.prototype.reset = function()
+		{
+			vertexHandlerReset.apply(this, arguments);
+			
+			// Shows rotation handle only if one vertex is selected
+			if (this.rotationShape != null && this.rotationShape.node != null)
+			{
+				this.rotationShape.node.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
+			}
+		};
+		
 		var vertexHandlerInit = mxVertexHandler.prototype.init;
 		mxVertexHandler.prototype.init = function()
 		{
