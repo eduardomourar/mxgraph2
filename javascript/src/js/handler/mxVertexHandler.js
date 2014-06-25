@@ -935,7 +935,7 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
  */
 mxVertexHandler.prototype.isRecursiveResize = function(state, me)
 {
-	return this.graph.isRecursiveResize();
+	return this.graph.isRecursiveResize(this.state);
 };
 
 /**
