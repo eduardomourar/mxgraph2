@@ -1,3 +1,5 @@
+- Adds support for curved style in mxPolyline [JavaScript]
+- Moves mxConnector.paintCurvedLine to mxPolyline [JavaScript]
 - Fixes tolerance check in mxPopupMenuHandler [JavaScript]
 - Adds state parameter in mxGraph.isRecursiveResize [JavaScript]
 - Fixes bounds to match preview in mxVertexHandler [JavaScript]
