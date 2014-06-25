@@ -1493,8 +1493,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
     // Ignores enter keystroke. Remove this line if you want the
     // enter keystroke to stop editing.
     keyHandler.enter = function() {};
-    keyHandler.bindShiftKey(13, function() { graph.foldCells(true); }); // Shift-Enter
-    keyHandler.bindKey(13, function() { graph.foldCells(false); }); // Enter
+    keyHandler.bindControlKey(13, function() { graph.foldCells(false); }); // Ctrl+Enter
+    keyHandler.bindControlKey(8, function() { graph.foldCells(true); }); // Ctrl+Backspace
     keyHandler.bindKey(33, function() { graph.exitGroup(); }); // Page Up
     keyHandler.bindKey(34, function() { graph.enterGroup(); }); // Page Down
     keyHandler.bindKey(36, function() { graph.home(); }); // Home
@@ -1503,12 +1503,10 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindKey(38, function() { nudge(38); }); // Up arrow
     keyHandler.bindKey(39, function() { nudge(39); }); // Right arrow
     keyHandler.bindKey(40, function() { nudge(40); }); // Down arrow
-    keyHandler.bindShiftKey(37, function() { nudge(37, 10); }); // Shift-Left arrow
-    keyHandler.bindShiftKey(38, function() { nudge(38, 10); }); // Shift-Up arrow
-    keyHandler.bindShiftKey(39, function() { nudge(39, 10); }); // Shift-Right arrow
-    keyHandler.bindShiftKey(40, function() { nudge(40, 10); }); // Shift-Down arrow
-    keyHandler.bindKey(113, function() { graph.startEditingAtCell(); });
-    keyHandler.bindKey(8, function() { graph.foldCells(true); }); // Backspace
+    keyHandler.bindShiftKey(37, function() { nudge(37, 10); }); // Shift+Left arrow
+    keyHandler.bindShiftKey(38, function() { nudge(38, 10); }); // Shift+Up arrow
+    keyHandler.bindShiftKey(39, function() { nudge(39, 10); }); // Shift+Right arrow
+    keyHandler.bindShiftKey(40, function() { nudge(40, 10); }); // Shift+Down arrow
     keyHandler.bindAction(8, false, 'delete'); // Backspace
     keyHandler.bindAction(46, false, 'delete'); // Delete
     keyHandler.bindAction(82, true, 'tilt'); // Ctrl+R
@@ -1538,6 +1536,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindAction(80, true, 'print'); // Ctrl+P
     keyHandler.bindAction(85, true, 'ungroup'); // Ctrl+U
     keyHandler.bindAction(112, false, 'about'); // F1
+    keyHandler.bindKey(113, function() { graph.startEditingAtCell(); }); // F2
     
     return keyHandler;
 };

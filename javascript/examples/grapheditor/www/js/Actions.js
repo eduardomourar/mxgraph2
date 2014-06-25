@@ -122,8 +122,8 @@ Actions.prototype.init = function()
 	this.addAction('home', function() { graph.home(); }, null, null, 'Home');
 	this.addAction('exitGroup', function() { graph.exitGroup(); }, null, null, 'Page Up');
 	this.addAction('enterGroup', function() { graph.enterGroup(); }, null, null, 'Page Down');
-	this.addAction('expand', function() { graph.foldCells(false); }, null, null, 'Enter');
-	this.addAction('collapse', function() { graph.foldCells(true); }, null, null, 'Backspace');
+	this.addAction('expand', function() { graph.foldCells(false); }, null, null, 'Ctrl+Enter');
+	this.addAction('collapse', function() { graph.foldCells(true); }, null, null, 'Ctrl+Backspace');
 
 	// Arrange actions
 	this.addAction('toFront', function() { graph.orderCells(false); }, null, null, 'Ctrl+Shift+B');
