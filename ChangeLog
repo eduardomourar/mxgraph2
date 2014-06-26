@@ -1,3 +1,4 @@
+- mxEdgeHandler.createSelectionShape clones edge shape [JavaScript]
 - Adds support for curved style in mxPolyline [JavaScript]
 - Moves mxConnector.paintCurvedLine to mxPolyline [JavaScript]
 - Fixes tolerance check in mxPopupMenuHandler [JavaScript]

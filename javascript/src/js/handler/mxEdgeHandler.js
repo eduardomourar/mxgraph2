@@ -275,9 +275,13 @@ mxEdgeHandler.prototype.getSelectionPoints = function(state)
  */
 mxEdgeHandler.prototype.createSelectionShape = function(points)
 {
-	var shape = new mxPolyline(points, this.getSelectionColor());
+	var shape = new this.state.shape.constructor();
+	shape.apply(this.state);
+	
 	shape.strokewidth = this.getSelectionStrokeWidth();
 	shape.isDashed = this.isSelectionDashed();
+	shape.stroke = this.getSelectionColor();
+	shape.fill = null;
 	
 	return shape;
 };
@@ -1431,8 +1435,8 @@ mxEdgeHandler.prototype.redrawHandles = function()
 		var n = this.abspoints.length - 1;
 		
 		var p0 = this.abspoints[0];
-		var x0 = this.abspoints[0].x;
-		var y0 = this.abspoints[0].y;
+		var x0 = p0.x;
+		var y0 = p0.y;
 		
 		var b = this.bends[0].bounds;
 		this.bends[0].bounds = new mxRectangle(Math.round(x0 - b.width / 2),
@@ -1441,8 +1445,8 @@ mxEdgeHandler.prototype.redrawHandles = function()
 		this.bends[0].redraw();
 		
 		var pe = this.abspoints[n];
-		var xn = this.abspoints[n].x;
-		var yn = this.abspoints[n].y;
+		var xn = pe.x;
+		var yn = pe.y;
 		
 		var bn = this.bends.length - 1;
 		b = this.bends[bn].bounds;
