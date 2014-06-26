@@ -176,6 +176,13 @@ mxShape.prototype.stencilPointerEvents = false;
 mxShape.prototype.vmlScale = 1;
 
 /**
+ * Variable: fillEnabled
+ * 
+ * Specifies if any fill colors should be applied. Default is true.
+ */
+mxShape.prototype.fillEnabled = true;
+
+/**
  * Function: init
  *
  * Initializes the shape by creaing the DOM node using <create>
@@ -487,6 +494,12 @@ mxShape.prototype.createCanvas = function()
 	{
 		this.updateVmlContainer();
 		canvas = this.createVmlCanvas();
+	}
+	
+	if (!this.fillEnabled)
+	{
+		canvas.setFillColor = function() {};
+		canvas.setGradient = function() {};
 	}
 
 	return canvas;
