@@ -276,12 +276,13 @@ mxEdgeHandler.prototype.getSelectionPoints = function(state)
 mxEdgeHandler.prototype.createSelectionShape = function(points)
 {
 	var shape = new this.state.shape.constructor();
+	shape.fillEnabled = false;
 	shape.apply(this.state);
 	
 	shape.strokewidth = this.getSelectionStrokeWidth();
 	shape.isDashed = this.isSelectionDashed();
 	shape.stroke = this.getSelectionColor();
-	shape.fill = null;
+	shape.isShadow = false;
 	
 	return shape;
 };

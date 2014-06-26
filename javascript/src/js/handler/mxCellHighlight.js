@@ -141,22 +141,19 @@ mxCellHighlight.prototype.drawHighlight = function()
  */
 mxCellHighlight.prototype.createShape = function()
 {
-	var shape = null;
-	
-	if (this.graph.model.isEdge(this.state.cell))
-	{
-		shape = new mxPolyline(this.state.absolutePoints, this.highlightColor, this.strokeWidth);
-	}
-	else
-	{
-		shape = new mxRectangleShape( new mxRectangle(), null, this.highlightColor, this.strokeWidth);
-	}
+	var shape = new this.state.shape.constructor();
+	shape.fillEnabled = false;
+	shape.points = this.state.absolutePoints;
+	shape.apply(this.state);
+	shape.strokewidth = this.strokeWidth;
+	shape.stroke = this.highlightColor;
+	shape.isDashed = this.dashed;
+	shape.isShadow = false;
 	
 	shape.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
 	shape.init(this.graph.getView().getOverlayPane());
 	mxEvent.redirectMouseEvents(shape.node, this.graph, this.state);
 	shape.pointerEvents = false;
-	shape.isDashed = this.dashed;
 	
 	return shape;
 };

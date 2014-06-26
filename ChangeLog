@@ -1,3 +1,4 @@
+- mxCellHighlight clones original shape for highlight [JavaScript]
 - Adds mxShape.fillEnabled to disable fill colors [JavaScript]
 - mxEdgeHandler.createSelectionShape clones edge shape [JavaScript]
 - Adds support for curved style in mxPolyline [JavaScript]
