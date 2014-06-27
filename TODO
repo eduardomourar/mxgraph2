@@ -26,15 +26,15 @@
 --    mxGraph Core     --
 -------------------------
 
-- Add support for touchCancel event, use requestAnimFrame
 - Group JS example list, improve descriptions
 - Move mxLayoutManager into validation process
 - Add single handle for multiple selected cells
-
 - Fix resize of rotated groups with layouts
+
 - Add dynamic translate with hook in graph view
 - Research alternative namespace solutions
 - Use spacing styles with overflow=fill
+- Add support for touchCancel event, use requestAnimationFrame
 
 - Add live preview while moving, reconnect
 - Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)
