@@ -1517,8 +1517,8 @@
 
 		mxArrowHandler.prototype.getSpecialHandlePoint = function(bounds)
 		{
-			var aw = Math.min(bounds.width, mxUtils.getValue(this.state.style, 'arrowWidth', SingleArrowShape.prototype.arrowWidth) * bounds.height);
-			var as = Math.min(bounds.height, mxUtils.getValue(this.state.style, 'arrowSize', SingleArrowShape.prototype.arrowSize) * bounds.width);
+			var aw = Math.min(bounds.height, mxUtils.getValue(this.state.style, 'arrowWidth', SingleArrowShape.prototype.arrowWidth) * bounds.height);
+			var as = Math.min(bounds.width, mxUtils.getValue(this.state.style, 'arrowSize', SingleArrowShape.prototype.arrowSize) * bounds.width);
 
 			return new mxPoint(bounds.x + bounds.width - as, bounds.y + (bounds.height - aw) / 2);
 		};
