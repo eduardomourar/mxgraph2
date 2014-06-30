@@ -7004,6 +7004,49 @@ mxGraph.prototype.zoomTo = function(scale, center)
 };
 
 /**
+ * Function: center
+ * 
+ * Centers the graph in the container.
+ */
+mxGraph.prototype.center = function()
+{
+	var hasScrollbars = mxUtils.hasScrollbars(this.container);
+	var cw = this.container.clientWidth;
+	var ch = this.container.clientHeight;
+	var bounds = this.getGraphBounds();
+	var t = this.view.translate;
+	bounds.x -= t.x;
+	bounds.y -= t.y;
+	
+	var dx = cw - bounds.width;
+	var dy = ch - bounds.height;
+	
+	if (!hasScrollbars)
+	{
+		this.view.setTranslate(dx / 2 - bounds.x, dy / 2 - bounds.y);
+	}
+	else
+	{
+		var sw = this.container.scrollWidth;
+		var sh = this.container.scrollHeight;
+		
+		if (sw > cw)
+		{
+			dx = 0;
+		}
+		
+		if (sh > ch)
+		{
+			dy = 0;
+		}
+
+		this.view.setTranslate(dx / 2 - bounds.x, dy / 2 - bounds.y);
+		this.container.scrollLeft = (sw - cw) / 2;
+		this.container.scrollTop = (sh - ch) / 2;
+	}
+};
+
+/**
  * Function: zoom
  * 
  * Zooms the graph using the given factor. Center is an optional boolean

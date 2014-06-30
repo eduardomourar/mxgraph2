@@ -1,3 +1,4 @@
+- Adds mxGraph.center [JavaScript]
 - mxCellHighlight clones original shape for highlight [JavaScript]
 - Adds mxShape.fillEnabled to disable fill colors [JavaScript]
 - mxEdgeHandler.createSelectionShape clones edge shape [JavaScript]
