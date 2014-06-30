@@ -253,6 +253,50 @@ Graph.prototype.loadStylesheet = function()
 };
 
 /**
+ * Overrides method to provide connection constraints for shapes.
+ */
+Graph.prototype.getAllConnectionConstraints = function(terminal, source)
+{
+	if (terminal != null)
+	{
+		var constraints = mxUtils.getValue(terminal.style, 'constraints', null);
+		
+		if (constraints != null)
+		{
+			var c = JSON.parse(constraints);
+			var result = [];
+			
+			for (var i = 0; i < c.length; i++)
+			{
+				var tmp = c[i];
+				result.push(new mxConnectionConstraint(new mxPoint(tmp[0], tmp[1]), (tmp.length > 2) ? tmp[2] != '0' : true));
+			}
+			
+			return result;
+		}
+		else
+		{
+			if (terminal.shape != null)
+			{
+				if (terminal.shape.stencil != null)
+				{
+					if (terminal.shape.stencil != null)
+					{
+						return terminal.shape.stencil.constraints;
+					}
+				}
+				else if (terminal.shape.constraints != null)
+				{
+					return terminal.shape.constraints;
+				}
+			}
+		}
+	}
+
+	return null;
+};
+
+/**
  * Inverts the elbow edge style without removing existing styles.
  */
 Graph.prototype.flipEdge = function(edge)
@@ -1203,6 +1247,7 @@ Graph.prototype.initTouch = function()
 	mxVertexHandler.prototype.handleImage = mainHandle;
 	mxVertexHandler.prototype.secondaryHandleImage = secondaryHandle;
 	mxEdgeHandler.prototype.handleImage = edgeHandle;
+	//mxEdgeHandler.prototype.labelHandleImage = secondaryHandle;
 	mxOutline.prototype.sizerImage = mainHandle;
 	
 	// Pre-fetches images

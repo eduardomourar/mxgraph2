@@ -2029,30 +2029,6 @@
 			return mxGraphCreateHandler.apply(this, arguments);
 		};
 	}
-	
-	// Constraints
-	mxGraph.prototype.getAllConnectionConstraints = function(terminal, source)
-	{
-		if (mxUtils.getValue(terminal.style, 'fixedPoints', '1') != '0')
-		{
-			if (terminal != null && terminal.shape != null)
-			{
-				if (terminal.shape.stencil != null)
-				{
-					if (terminal.shape.stencil != null)
-					{
-						return terminal.shape.stencil.constraints;
-					}
-				}
-				else if (terminal.shape.constraints != null)
-				{
-					return terminal.shape.constraints;
-				}
-			}
-		}
-
-		return null;
-	};
 
 	mxRectangleShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
 	                                          new mxConnectionConstraint(new mxPoint(0.5, 0), true),
