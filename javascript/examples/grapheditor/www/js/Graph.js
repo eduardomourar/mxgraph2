@@ -263,6 +263,8 @@ Graph.prototype.getAllConnectionConstraints = function(terminal, source)
 		
 		if (constraints != null)
 		{
+			// Requires an array of arrays with x, y (0..1) and an optional
+			// perimeter (0 or 1), eg. constraints=[[0,0,1],[0,1,0],[1,1]] 
 			var c = JSON.parse(constraints);
 			var result = [];
 			
