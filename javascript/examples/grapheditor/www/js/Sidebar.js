@@ -1206,16 +1206,22 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 						select = graph.importCells(cells, x + dx, y + dy, target);
 						this.editorUi.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
 					}
-					
-					if (select != null && select.length > 0)
-					{
-						graph.scrollCellToVisible(select[0]);
-						graph.setSelectionCells(select);
-					}
 				}
 				finally
 				{
 					graph.model.endUpdate();
+				}
+
+				
+				if (select != null && select.length > 0)
+				{
+					graph.scrollCellToVisible(select[0]);
+					graph.setSelectionCells(select);
+				}
+				
+				if (select != null && select.length == 1)
+				{
+					graph.startEditingAtCell(select[0]);
 				}
 			}
 			
@@ -1244,6 +1250,12 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview)
 {
 	var dragSource = mxUtils.makeDraggable(elt, this.editorUi.editor.graph, dropHandler,
 		preview, 0, 0, this.editorUi.editor.graph.autoscroll, true, true);
+	
+	// Disables focus after drop to keep focus on in-place editor
+	dragSource.drop = function(graph, evt, dropTarget, x, y)
+	{
+		this.dropHandler(graph, evt, dropTarget, x, y);
+	};
 	
 	// Overrides mouseDown to ignore popup triggers
 	var mouseDown = dragSource.mouseDown;
