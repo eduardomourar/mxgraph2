@@ -1117,11 +1117,11 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 				{
 					var t = graph.view.translate;
 					var s = graph.view.scale;
-					var target = graph.getCellAt((x + dx + t.x) * s, (y + dy + t.y) * s);
+					var targetCell = graph.getCellAt((x + dx + t.x) * s, (y + dy + t.y) * s);
 					
-					if (target != null)
+					if (targetCell != null)
 					{
-						if (graph.getModel().isVertex(target) && graph.getModel().isVertex(cells[0]))
+						if (graph.getModel().isVertex(targetCell) && graph.getModel().isVertex(cells[0]))
 						{
 							var sourceStyle = graph.getCellStyle(cells[0]);
 							var shape = mxUtils.getValue(sourceStyle, mxConstants.STYLE_SHAPE, null);
@@ -1138,22 +1138,23 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 								
 								try
 								{
-									graph.setCellStyles(mxConstants.STYLE_SHAPE, shape, [target]);
-									graph.setCellStyles(mxConstants.STYLE_IMAGE, image, [target]);
-									graph.setCellStyles(mxConstants.STYLE_ROUNDED, rounded, [target]);
-									graph.setCellStyles(mxConstants.STYLE_PERIMETER, perimeter, [target]);
-									graph.setCellStyles('double', doubleStyle, [target]);
+									graph.setCellStyles(mxConstants.STYLE_SHAPE, shape, [targetCell]);
+									graph.setCellStyles(mxConstants.STYLE_IMAGE, image, [targetCell]);
+									graph.setCellStyles(mxConstants.STYLE_ROUNDED, rounded, [targetCell]);
+									graph.setCellStyles(mxConstants.STYLE_PERIMETER, perimeter, [targetCell]);
+									graph.setCellStyles('double', doubleStyle, [targetCell]);
 								}
 								finally
 								{
 									graph.model.endUpdate();
 								}
-								graph.setSelectionCell(target);
+								
+								graph.setSelectionCell(targetCell);
 								
 								return;
 							}
 						}
-						else if (graph.getModel().isEdge(target) && graph.getModel().isEdge(cells[0]))
+						else if (graph.getModel().isEdge(targetCell) && graph.getModel().isEdge(cells[0]))
 						{
 							var sourceStyle = graph.getCellStyle(cells[0]);
 							var shape = mxUtils.getValue(sourceStyle, mxConstants.STYLE_SHAPE, null);
@@ -1168,15 +1169,16 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 								
 								try
 								{
-									graph.setCellStyles(mxConstants.STYLE_SHAPE, shape, [target]);
-									graph.setCellStyles(mxConstants.STYLE_EDGE, edge, [target]);
-									graph.setCellStyles(mxConstants.STYLE_ROUNDED, rounded, [target]);
+									graph.setCellStyles(mxConstants.STYLE_SHAPE, shape, [targetCell]);
+									graph.setCellStyles(mxConstants.STYLE_EDGE, edge, [targetCell]);
+									graph.setCellStyles(mxConstants.STYLE_ROUNDED, rounded, [targetCell]);
 								}
 								finally
 								{
 									graph.model.endUpdate();
 								}
-								graph.setSelectionCell(target);
+								
+								graph.setSelectionCell(targetCell);
 								
 								return;
 							}
