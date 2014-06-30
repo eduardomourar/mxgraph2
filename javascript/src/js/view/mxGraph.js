@@ -5928,8 +5928,7 @@ mxGraph.prototype.resetEdge = function(edge)
  */
 mxGraph.prototype.getAllConnectionConstraints = function(terminal, source)
 {
-	if (terminal != null && terminal.shape != null &&
-		terminal.shape.stencil != null)
+	if (terminal != null && terminal.shape != null && terminal.shape.stencil != null)
 	{
 		return terminal.shape.stencil.constraints;
 	}
