@@ -187,62 +187,72 @@ Editor.prototype.setGraphXml = function(node)
 
 	if (node.nodeName == 'mxGraphModel')
 	{
-		this.graph.model.clear();
-		this.graph.view.scale = 1;
-		this.graph.gridEnabled = node.getAttribute('grid') != '0';
-		this.graph.gridSize = parseFloat(node.getAttribute('gridSize')) || mxGraph.prototype.gridSize;
-		this.graph.graphHandler.guidesEnabled = node.getAttribute('guides') != '0';
-		this.graph.setTooltips(node.getAttribute('tooltips') != '0');
-		this.graph.setConnectable(node.getAttribute('connect') != '0');
-		this.graph.foldingEnabled = node.getAttribute('fold') != '0';
-
-		var ps = node.getAttribute('pageScale');
+		this.graph.model.beginUpdate();
 		
-		if (ps != null)
+		try
 		{
-			this.graph.pageScale = ps;
+			this.graph.model.clear();
+			this.graph.view.scale = 1;
+			this.graph.gridEnabled = node.getAttribute('grid') != '0';
+			this.graph.gridSize = parseFloat(node.getAttribute('gridSize')) || mxGraph.prototype.gridSize;
+			this.graph.graphHandler.guidesEnabled = node.getAttribute('guides') != '0';
+			this.graph.setTooltips(node.getAttribute('tooltips') != '0');
+			this.graph.setConnectable(node.getAttribute('connect') != '0');
+			this.graph.foldingEnabled = node.getAttribute('fold') != '0';
+	
+			var ps = node.getAttribute('pageScale');
+			
+			if (ps != null)
+			{
+				this.graph.pageScale = ps;
+			}
+			else
+			{
+				this.graph.pageScale = mxGraph.prototype.pageScale;
+			}
+			
+			var pv = node.getAttribute('page');
+			
+			if (pv != null)
+			{
+				this.graph.pageVisible = (pv == '1');
+			}
+			else
+			{
+				this.graph.pageVisible = this.defaultPageVisible;
+			}
+			
+			this.graph.pageBreaksVisible = this.graph.pageVisible; 
+			this.graph.preferPageSize = this.graph.pageBreaksVisible;
+			
+			var pw = node.getAttribute('pageWidth');
+			var ph = node.getAttribute('pageHeight');
+			
+			if (pw != null && ph != null)
+			{
+				this.graph.pageFormat = new mxRectangle(0, 0, parseFloat(pw), parseFloat(ph));
+			}
+	
+			// Loads the persistent state settings
+			var bg = node.getAttribute('background');
+			
+			if (bg != null && bg.length > 0)
+			{
+				this.graph.background = bg;
+			}
+			else
+			{
+				this.graph.background = null;
+			}
+	
+			this.updateGraphComponents();
+			dec.decode(node, this.graph.getModel());
 		}
-		else
+		finally
 		{
-			this.graph.pageScale = mxGraph.prototype.pageScale;
+			this.graph.model.endUpdate();
 		}
 		
-		var pv = node.getAttribute('page');
-		
-		if (pv != null)
-		{
-			this.graph.pageVisible = (pv == '1');
-		}
-		else
-		{
-			this.graph.pageVisible = this.defaultPageVisible;
-		}
-		
-		this.graph.pageBreaksVisible = this.graph.pageVisible; 
-		this.graph.preferPageSize = this.graph.pageBreaksVisible;
-		
-		var pw = node.getAttribute('pageWidth');
-		var ph = node.getAttribute('pageHeight');
-		
-		if (pw != null && ph != null)
-		{
-			this.graph.pageFormat = new mxRectangle(0, 0, parseFloat(pw), parseFloat(ph));
-		}
-
-		// Loads the persistent state settings
-		var bg = node.getAttribute('background');
-		
-		if (bg != null && bg.length > 0)
-		{
-			this.graph.background = bg;
-		}
-		else
-		{
-			this.graph.background = null;
-		}
-
-		this.updateGraphComponents();
-		dec.decode(node, this.graph.getModel());
 		this.fireEvent(new mxEventObject('resetGraphView'));
 	}
 	else if (node.nodeName == 'root')
