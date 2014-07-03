@@ -372,7 +372,7 @@
 	{
 		if (this.style != null)
 		{
-			if (this.style['double'] == 1)
+			if (!this.outline && this.style['double'] == 1)
 			{
 				var inset = Math.max(2, this.strokewidth + 1);
 				
