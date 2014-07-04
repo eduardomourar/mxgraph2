@@ -126,7 +126,7 @@ Actions.prototype.init = function()
 	this.addAction('collapse', function() { graph.foldCells(true); }, null, null, 'Ctrl+Backspace');
 
 	// Arrange actions
-	this.addAction('toFront', function() { graph.orderCells(false); }, null, null, 'Ctrl+Shift+B');
+	this.addAction('toFront', function() { graph.orderCells(false); }, null, null, 'Ctrl+Shift+F');
 	this.addAction('toBack', function() { graph.orderCells(true); }, null, null, 'Ctrl+B');
 	this.addAction('group', function() { graph.setSelectionCell(graph.groupCells(null, 0)); }, null, null, 'Ctrl+G');
 	this.addAction('ungroup', function() { graph.setSelectionCells(graph.ungroupCells()); }, null, null, 'Ctrl+U');
