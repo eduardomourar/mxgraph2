@@ -512,12 +512,13 @@ var mxEvent =
 	 * Function: isPopupTrigger
 	 * 
 	 * Returns true if the event is a popup trigger. This implementation
-	 * returns true if the right mouse button or shift was pressed.
+	 * returns true if the right button or the left button and control was
+	 * pressed.
 	 */
 	isPopupTrigger: function(evt)
 	{
-		return mxEvent.isRightMouseButton(evt) || (mxEvent.isShiftDown(evt) &&
-			!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt) && !mxEvent.isAltDown(evt));
+		return mxEvent.isRightMouseButton(evt) || (mxEvent.isControlDown(evt) &&
+			!mxEvent.isShiftDown(evt) && !mxEvent.isMetaDown(evt) && !mxEvent.isAltDown(evt));
 	},
 
 	/**
