@@ -477,7 +477,8 @@ var mxEvent =
 	 * 
 	 * Returns true if the left mouse button is pressed for the given event.
 	 * To check if a button is pressed during a mouseMove you should use the
-	 * <mxGraph.isMouseDown> property.
+	 * <mxGraph.isMouseDown> property. Note that this returns true in Firefox
+	 * for control+left-click on the Mac.
 	 */
 	isLeftMouseButton: function(evt)
 	{
