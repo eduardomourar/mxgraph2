@@ -259,12 +259,12 @@ Graph.prototype.getAllConnectionConstraints = function(terminal, source)
 {
 	if (terminal != null)
 	{
-		var constraints = mxUtils.getValue(terminal.style, 'constraints', null);
+		var constraints = mxUtils.getValue(terminal.style, 'points', null);
 		
 		if (constraints != null)
 		{
 			// Requires an array of arrays with x, y (0..1) and an optional
-			// perimeter (0 or 1), eg. constraints=[[0,0,1],[0,1,0],[1,1]] 
+			// perimeter (0 or 1), eg. points=[[0,0,1],[0,1,0],[1,1]] 
 			var c = JSON.parse(constraints);
 			var result = [];
 			
@@ -1221,9 +1221,37 @@ Graph.prototype.initTouch = function()
 		var y = this.roundLength(point.y / s - t.y);
 		
 		this.hint.innerHTML = x + ', ' + y;
+		this.hint.style.visibility = 'visible';
+		
+		if (this.isSource || this.isTarget)
+		{
+			if (this.constraintHandler.currentConstraint != null &&
+				this.constraintHandler.currentFocus != null)
+			{
+				var pt = this.constraintHandler.currentConstraint.point;
+				this.hint.innerHTML = '[' + Math.round(pt.x * 100) + '%, '+ Math.round(pt.y * 100) + '%]';
+			}
+			else if (this.marker.hasValidState())
+			{
+				this.hint.style.visibility = 'hidden';
+			}
+		}
 		
 		this.hint.style.left = Math.round(me.getGraphX() - this.hint.clientWidth / 2) + 'px';
 		this.hint.style.top = (me.getGraphY() + 12) + 'px';
+		
+		if (this.hideEdgeHintThread != null)
+		{
+			window.clearTimeout(this.hideEdgeHintThread);
+		}
+		
+		this.hideEdgeHintThread = window.setTimeout(mxUtils.bind(this, function()
+		{
+			if (this.hint != null)
+			{
+				this.hint.style.visibility = 'hidden';
+			}
+		}), 500);
 	};
 
 	/**
@@ -1238,19 +1266,21 @@ Graph.prototype.initTouch = function()
 	var mainHandle = new mxImage(IMAGE_PATH + '/handle-main.png', 17, 17);
 	var secondaryHandle = new mxImage(IMAGE_PATH + '/handle-secondary.png', 17, 17);
 	var rotationHandle = new mxImage(IMAGE_PATH + '/handle-rotate.png', 19, 21);
-	var edgeHandle = new mxImage(IMAGE_PATH + '/handle-main.png', 17, 17);
-
-	mxConstants.HANDLE_SIZE = 17;
-	mxConstants.LABEL_HANDLE_SIZE = 7;
 
 	mxVertexHandler.prototype.rotationHandleVSpacing = -20;
 
 	mxConnectionHandler.prototype.connectImage = connectHandle;
 	mxVertexHandler.prototype.handleImage = mainHandle;
 	mxVertexHandler.prototype.secondaryHandleImage = secondaryHandle;
-	mxEdgeHandler.prototype.handleImage = edgeHandle;
-	//mxEdgeHandler.prototype.labelHandleImage = secondaryHandle;
+	mxEdgeHandler.prototype.handleImage = mainHandle;
+	mxEdgeHandler.prototype.labelHandleImage = secondaryHandle;
 	mxOutline.prototype.sizerImage = mainHandle;
+	
+	// Enables connections along the outline
+	mxConnectionHandler.prototype.outlineConnect = true;
+	mxEdgeHandler.prototype.manageLabelHandle = true;
+	mxEdgeHandler.prototype.outlineConnect = true;
+	mxCellHighlight.prototype.keepOnTop = true;
 	
 	// Pre-fetches images
 	new Image().src = connectHandle.src;
@@ -1631,7 +1661,8 @@ Graph.prototype.initTouch = function()
 			}
 			else
 			{
-				pt.x = s.x + s.width + (mxConstants.HANDLE_SIZE + this.horizontalOffset + this.tolerance + this.connectorImg.offsetWidth) / 2;
+				var dx = (this.handleImage != null) ? this.handleImage.width : mxConstants.HANDLE_SIZE;
+				pt.x = s.x + s.width + (dx + this.horizontalOffset + this.tolerance + this.connectorImg.offsetWidth) / 2;
 				pt.y = s.y + s.height / 2;
 			}
 			
