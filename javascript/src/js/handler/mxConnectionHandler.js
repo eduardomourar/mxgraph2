@@ -1273,7 +1273,7 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 			this.destroyIcons();
 			
 			// Sets the cursor on the current shape				
-			if (this.currentState != null && this.error == null)
+			if (this.currentState != null && this.error == null && this.constraintHandler.currentConstraint == null)
 			{
 				this.icons = this.createIcons(this.currentState);
 
