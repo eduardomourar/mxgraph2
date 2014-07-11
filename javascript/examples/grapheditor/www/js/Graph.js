@@ -755,7 +755,7 @@ Graph.prototype.initTouch = function()
 	{
 		var me = mxGraph.prototype.updateMouseEvent.apply(this, arguments);
 
-		if (me.getState() == null)
+		if (mxEvent.isTouchEvent(me.getEvent()) && me.getState() == null)
 		{
 			var cell = this.getCellAt(me.graphX, me.graphY);
 
