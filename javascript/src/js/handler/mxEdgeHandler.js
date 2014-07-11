@@ -861,12 +861,12 @@ mxEdgeHandler.prototype.getPreviewTerminalState = function(me)
 		
 		return this.constraintHandler.currentFocus;
 	}
-	else if (!this.isOutlineConnectEvent(me))
+	else
 	{
 		this.marker.process(me);
+		
+		return this.marker.getValidState();
 	}
-	
-	return this.marker.getValidState();
 };
 
 /**
@@ -909,7 +909,7 @@ mxEdgeHandler.prototype.getPreviewPoints = function(point)
  */
 mxEdgeHandler.prototype.isOutlineConnectEvent = function(me)
 {
-	return this.outlineConnect && (me.isSource(this.marker.highlight.shape) || mxEvent.isControlDown(me.getEvent()));
+	return this.outlineConnect && (me.isSource(this.marker.highlight.shape) || mxEvent.isAltDown(me.getEvent()));
 };
 
 /**

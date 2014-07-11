@@ -974,7 +974,7 @@ mxConnectionHandler.prototype.createEdgeState = function(me)
  */
 mxConnectionHandler.prototype.isOutlineConnectEvent = function(me)
 {
-	return this.outlineConnect && (me.isSource(this.marker.highlight.shape) || mxEvent.isControlDown(me.getEvent()));
+	return this.outlineConnect && (me.isSource(this.marker.highlight.shape) || mxEvent.isAltDown(me.getEvent()));
 };
 
 /**
@@ -985,13 +985,19 @@ mxConnectionHandler.prototype.isOutlineConnectEvent = function(me)
  */
 mxConnectionHandler.prototype.updateCurrentState = function(me, point)
 {
-	var outlineEvent = this.marker.highlight != null && this.isOutlineConnectEvent(me);
-	this.currentState = (outlineEvent) ? this.marker.validState : this.marker.process(me);
 	this.constraintHandler.update(me, this.first == null);
 	
-	if (this.constraintHandler.currentConstraint == null && point != null && this.currentState != null)
+	if (this.constraintHandler.currentFocus != null && this.constraintHandler.currentConstraint != null)
 	{
-		if (outlineEvent)
+		this.marker.reset();
+		this.currentState = this.constraintHandler.currentFocus;
+	}
+	else
+	{
+		this.marker.process(me);
+		this.currentState = this.marker.getValidState();
+		
+		if (this.currentState != null && this.isOutlineConnectEvent(me))
 		{
 			var constraint = this.graph.getOutlineConstraint(point, this.currentState, me);
 			this.constraintHandler.currentConstraint = constraint;
@@ -999,11 +1005,7 @@ mxConnectionHandler.prototype.updateCurrentState = function(me, point)
 			this.constraintHandler.currentPoint = point;
 		}
 	}
-	else if (this.constraintHandler.currentFocus != null && this.constraintHandler.currentConstraint != null)
-	{
-		this.marker.reset();
-	}
-	
+
 	if (this.outlineConnect)
 	{
 		if (this.marker.highlight != null && this.marker.highlight.shape != null)
@@ -1059,8 +1061,14 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 		var view = this.graph.getView();
 		var scale = view.scale;
 		var tr = view.translate;
-		var point = new mxPoint(this.graph.snap(me.getGraphX() / scale - tr.x) * scale + tr.x,
-				this.graph.snap(me.getGraphY() / scale - tr.y) * scale + tr.y);
+		var point = new mxPoint(me.getGraphX(), me.getGraphY());
+		
+		if (this.graph.isGridEnabledEvent(me.getEvent()))
+		{
+			point = new mxPoint(this.graph.snap(point.x / scale - tr.x) * scale + tr.x,
+				this.graph.snap(point.y / scale - tr.y) * scale + tr.y);
+		}
+		
 		this.currentPoint = point;
 		
 		if (this.first != null || (this.isEnabled() && this.graph.isEnabled()))

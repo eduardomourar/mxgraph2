@@ -876,7 +876,7 @@ Graph.prototype.initTouch = function()
 	var mxConstraintHandlerUpdate = mxConstraintHandler.prototype.update;
 	mxConstraintHandler.prototype.update = function(me, source)
 	{
-		if (!mxEvent.isMetaDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()) && !mxEvent.isControlDown(me.getEvent()))
+		if (!mxEvent.isAltDown(me.getEvent()))
 		{
 			mxConstraintHandlerUpdate.apply(this, arguments);
 		}
@@ -1506,15 +1506,20 @@ Graph.prototype.initTouch = function()
 					mxEvent.addGestureListeners(this.connectorImg,
 						mxUtils.bind(this, function(evt)
 						{
-							this.graph.popupMenuHandler.hideMenu();
-							this.graph.stopEditing(false);
-							
-							var pt = mxUtils.convertPoint(this.graph.container,
-									mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-							this.graph.connectionHandler.start(this.state, pt.x, pt.y);
-							this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-							this.graph.isMouseDown = true;
-							mxEvent.consume(evt);
+							// FIXME: Use native event in isForceRubberband, isForcePanningEvent
+							if (!mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt))
+							{
+								this.graph.popupMenuHandler.hideMenu();
+								this.graph.stopEditing(false);
+								
+								var pt = mxUtils.convertPoint(this.graph.container,
+										mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+								this.graph.connectionHandler.start(this.state, pt.x, pt.y);
+								this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+								this.graph.isMouseDown = true;
+								
+								mxEvent.consume(evt);
+							}
 						})
 					);
 	
