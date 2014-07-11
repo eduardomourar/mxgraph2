@@ -2335,8 +2335,8 @@ var mxUtils =
 		
 		var b = doc.body;
 		var d = doc.documentElement;
-		var sl = (d && d.scrollLeft) || b.scrollLeft;
-		var st = (d && d.scrollTop) || b.scrollTop;
+		var sl = (d != null && !isNaN(d.scrollLeft)) ? d.scrollLeft : b.scrollLeft;
+		var st = (d != null && !isNaN(d.scrollTop)) ? d.scrollTop : b.scrollTop;
 		
 		return new mxPoint(sl, st);
 	},
@@ -2387,7 +2387,7 @@ var mxUtils =
 	{
 		var origin = mxUtils.getScrollOrigin(container);
 		var offset = mxUtils.getOffset(container);
-		
+
 		offset.x -= origin.x;
 		offset.y -= origin.y;
 		
