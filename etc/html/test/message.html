@@ -1,0 +1,32 @@
+<html>
+<head>
+	<script type="text/javascript">
+		function edit(xml, callback)
+		{
+			var editWindow = window.open('https://test.draw.io/?dev=1&ui=atlas&embed=1');
+			
+			var receive = function(evt)
+			{
+				if (evt.origin == 'https://test.draw.io')
+				{
+					if (evt.data == 'ready')
+					{
+						editWindow.postMessage(xml, 'https://test.draw.io');
+					}
+					else
+					{
+						window.removeEventListener('message', receive);
+						editWindow.close();
+						callback(evt.data);
+					}
+				}
+			};
+			
+			window.addEventListener('message', receive);
+		}
+	</script>
+</head>
+<body>
+	<button onclick="edit('', function(xml) { console.log(xml); });">Edit</button>
+</body>
+</html>
