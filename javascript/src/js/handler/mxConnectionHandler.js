@@ -357,6 +357,15 @@ mxConnectionHandler.prototype.mouseDownCounter = 0;
 mxConnectionHandler.prototype.movePreviewAway = mxClient.IS_VML;
 
 /**
+ * Variable: outlineConnect
+ * 
+ * Specifies if connections to the outline of a highlighted target should be
+ * enabled. This will allow to place the connection point along the outline of
+ * the highlighted target. Default is false.
+ */
+mxConnectionHandler.prototype.outlineConnect = false;
+
+/**
  * Function: isEnabled
  * 
  * Returns true if events are handled. This implementation
@@ -958,16 +967,62 @@ mxConnectionHandler.prototype.createEdgeState = function(me)
 };
 
 /**
+ * Function: isOutlineConnectEvent
+ * 
+ * Returns true if <outlineConnect> is true and the source of the event is the outline shape
+ * or shift is pressed.
+ */
+mxConnectionHandler.prototype.isOutlineConnectEvent = function(me)
+{
+	return this.outlineConnect && (me.isSource(this.marker.highlight.shape) || mxEvent.isControlDown(me.getEvent()));
+};
+
+/**
  * Function: updateCurrentState
  * 
  * Updates the current state for a given mouse move event by using
  * the <marker>.
  */
-mxConnectionHandler.prototype.updateCurrentState = function(me)
+mxConnectionHandler.prototype.updateCurrentState = function(me, point)
 {
-	var state = this.marker.process(me);
+	var outlineEvent = this.marker.highlight != null && this.isOutlineConnectEvent(me);
+	this.currentState = (outlineEvent) ? this.marker.validState : this.marker.process(me);
 	this.constraintHandler.update(me, this.first == null);
-	this.currentState = state;
+	
+	if (this.constraintHandler.currentConstraint == null && point != null && this.currentState != null)
+	{
+		if (outlineEvent)
+		{
+			var constraint = this.graph.getOutlineConstraint(point, this.currentState, me);
+			this.constraintHandler.currentConstraint = constraint;
+			this.constraintHandler.currentFocus = this.currentState;
+			this.constraintHandler.currentPoint = point;
+		}
+	}
+	else if (this.constraintHandler.currentFocus != null && this.constraintHandler.currentConstraint != null)
+	{
+		this.marker.reset();
+	}
+	
+	if (this.outlineConnect)
+	{
+		if (this.marker.highlight != null && this.marker.highlight.shape != null)
+		{
+			if (this.constraintHandler.currentConstraint != null &&
+				this.constraintHandler.currentFocus != null)
+			{
+				this.marker.highlight.shape.stroke = mxConstants.OUTLINE_HIGHLIGHT_COLOR;;
+				this.marker.highlight.shape.strokewidth = mxConstants.OUTLINE_HIGHLIGHT_STROKEWIDTH / this.graph.view.scale / this.graph.view.scale;
+				this.marker.highlight.repaint();
+			}
+			else if (this.marker.hasValidState())
+			{
+				this.marker.highlight.shape.stroke = mxConstants.DEFAULT_VALID_COLOR;
+				this.marker.highlight.shape.strokewidth = mxConstants.HIGHLIGHT_STROKEWIDTH / this.graph.view.scale / this.graph.view.scale;
+				this.marker.highlight.repaint();
+			}
+		}
+	}
 };
 
 /**
@@ -1000,18 +1055,21 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 			this.destroyIcons();
 			this.currentState = null;
 		}
+
+		var view = this.graph.getView();
+		var scale = view.scale;
+		var tr = view.translate;
+		var point = new mxPoint(this.graph.snap(me.getGraphX() / scale - tr.x) * scale + tr.x,
+				this.graph.snap(me.getGraphY() / scale - tr.y) * scale + tr.y);
+		this.currentPoint = point;
 		
 		if (this.first != null || (this.isEnabled() && this.graph.isEnabled()))
 		{
-			this.updateCurrentState(me);
+			this.updateCurrentState(me, point);
 		}
 
 		if (this.first != null)
 		{
-			var view = this.graph.getView();
-			var scale = view.scale;
-			var point = new mxPoint(this.graph.snap(me.getGraphX() / scale) * scale,
-					this.graph.snap(me.getGraphY() / scale) * scale);
 			var constraint = null;
 			var current = point;
 			
@@ -1022,6 +1080,17 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 			{
 				constraint = this.constraintHandler.currentConstraint;
 				current = this.constraintHandler.currentPoint.clone();
+			}
+			else if (this.previous != null && mxEvent.isShiftDown(me.getEvent()))
+			{
+				if (Math.abs(this.previous.getCenterX() - point.x) < Math.abs(this.previous.getCenterY() - point.y))
+				{
+					point.x = this.previous.getCenterX();
+				}
+				else
+				{
+					point.y = this.previous.getCenterY();
+				}
 			}
 			
 			var pt2 = this.first;
@@ -1157,7 +1226,7 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 					this.shape = this.createShape();
 					
 					// Revalidates current connection
-					this.updateCurrentState(me);
+					this.updateCurrentState(me, point);
 				}
 			}
 
@@ -1216,11 +1285,6 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 			me.consume();
 		}
 
-		if (this.constraintHandler.currentConstraint != null)
-		{
-			this.marker.reset();
-		}
-		
 		if (!this.graph.isMouseDown && this.currentState != null && this.icons != null)
 		{
 			var hitsIcon = false;
@@ -1558,7 +1622,7 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 				if (target != null)
 				{
 					dropTarget = this.graph.getDropTarget([target], evt, dropTarget);
-					targetInserted= true;
+					targetInserted = true;
 					
 					// Disables edges as drop targets if the target cell was created
 					// FIXME: Should not shift if vertex was aligned (same in Java)
@@ -1649,7 +1713,9 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 
 				if (target == null)
 				{
-					var pt = this.graph.getPointForEvent(evt, false);
+					var t = this.graph.view.translate;
+					var s = this.graph.view.scale;
+					var pt = new mxPoint(this.currentPoint.x / s - t.x, this.currentPoint.y / s - t.y);
 					pt.x -= this.graph.panDx / this.graph.view.scale;
 					pt.y -= this.graph.panDy / this.graph.view.scale;
 					geo.setTerminalPoint(pt, false);
@@ -1737,7 +1803,9 @@ mxConnectionHandler.prototype.createTargetVertex = function(evt, source)
 	
 	if (geo != null)
 	{
-		var point = this.graph.getPointForEvent(evt);
+		var t = this.graph.view.translate;
+		var s = this.graph.view.scale;
+		var point = new mxPoint(this.currentPoint.x / s - t.x, this.currentPoint.y / s - t.y);
 		geo.x = this.graph.snap(point.x - geo.width / 2) - this.graph.panDx / this.graph.view.scale;
 		geo.y = this.graph.snap(point.y - geo.height / 2) - this.graph.panDy / this.graph.view.scale;
 
