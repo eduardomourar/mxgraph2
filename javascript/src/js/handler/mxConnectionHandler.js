@@ -512,7 +512,7 @@ mxConnectionHandler.prototype.createMarker = function()
 		// Checks for cell under mouse
 		if (cell == null)
 		{
-			cell = this.graph.getCellAt(point.x, point.y);
+			cell = this.getCellAt(point.x, point.y);
 		}
 		
 		if ((this.graph.isSwimlane(cell) && this.graph.hitsSwimlaneContent(cell, point.x, point.y)) ||
@@ -609,6 +609,16 @@ mxConnectionHandler.prototype.start = function(state, x, y, edgeState)
 	this.marker.mark();
 	
 	this.fireEvent(new mxEventObject(mxEvent.START, 'state', this.previous));
+};
+
+/**
+ * Function: getCellAt
+ * 
+ * Creates and returns the <mxCellMarker> used in <marker>.
+ */
+mxConnectionHandler.prototype.getCellAt = function(x, y)
+{
+	return (!this.outlineConnect) ? this.graph.getCellAt(x, y) : null;
 };
 
 /**
@@ -1818,7 +1828,9 @@ mxConnectionHandler.prototype.createTargetVertex = function(evt, source)
 		geo.y = point.y - geo.height / 2 - this.graph.panDy / s;
 
 		// Aligns with source if within certain tolerance
-		if (this.graph.isGridEnabled())
+		var tol = this.getAlignmentTolerance();
+		
+		if (tol > 0)
 		{
 			var sourceState = this.graph.view.getState(source);
 			
@@ -1827,8 +1839,6 @@ mxConnectionHandler.prototype.createTargetVertex = function(evt, source)
 				var x = sourceState.x / s - t.x;
 				var y = sourceState.y / s - t.y;
 				
-				var tol = this.getAlignmentTolerance();
-
 				if (Math.abs(x - geo.x) <= tol)
 				{
 					geo.x = x;
@@ -1850,9 +1860,9 @@ mxConnectionHandler.prototype.createTargetVertex = function(evt, source)
  * 
  * Returns the tolerance for aligning new targets to sources. This returns the grid size / 2.
  */
-mxConnectionHandler.prototype.getAlignmentTolerance = function()
+mxConnectionHandler.prototype.getAlignmentTolerance = function(evt)
 {
-	return this.graph.gridSize / 2;
+	return (this.graph.isGridEnabled()) ? this.graph.gridSize / 2 : this.graph.tolerance;
 };
 
 /**

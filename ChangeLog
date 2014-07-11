@@ -1,5 +1,5 @@
 - Fixes alignment in mxConnectionHandler.createTargetVertex [JavaScript]
-- Adds mxCellMarker.setCurrentState [JavaScript]
+- Adds mxCellMarker.setCurrentState, mxConnectionHandler.getCellAt [JavaScript]
 - Adds handling for fixed points in mxEdgeStyle.Loop [JavaScript]
 - Adds mxConstants.OUTLINE_HIGHLIGHT_COLOR, OUTLINE_HIGHLIGHT_STROKEWIDTH [JavaScript]
 - Adds mxEdgeHandler.createaLabelHandleShape, getCellAt, isSnapToTerminalsEvent [JavaScript]
