@@ -1336,7 +1336,8 @@ Graph.prototype.initTouch = function()
 			{
 				graphHandlerMouseDown.apply(this, arguments);
 	
-				if (this.graph.isCellSelected(me.getCell()) && this.graph.getSelectionCount() > 1)
+				if (mxEvent.isTouchEvent(me.getEvent()) && this.graph.isCellSelected(me.getCell()) &&
+					this.graph.getSelectionCount() > 1)
 				{
 					this.delayedSelection = false;
 				}
