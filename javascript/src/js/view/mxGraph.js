@@ -5915,6 +5915,87 @@ mxGraph.prototype.resetEdge = function(edge)
  */
 
 /**
+ * Function: getOutlineConstraint
+ * 
+ * Returns the constraint used to connect to the outline of the given state.
+ */
+mxGraph.prototype.getOutlineConstraint = function(point, terminalState, me)
+{
+	if (terminalState.shape != null)
+	{
+		var bounds = this.view.getPerimeterBounds(terminalState);
+		var direction = terminalState.style[mxConstants.STYLE_DIRECTION];
+		
+		if (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH)
+		{
+			bounds.x += bounds.width / 2 - bounds.height / 2;
+			bounds.y += bounds.height / 2 - bounds.width / 2;
+			var tmp = bounds.width;
+			bounds.width = bounds.height;
+			bounds.height = tmp;
+		}
+	
+		var alpha = mxUtils.toRadians(terminalState.shape.getShapeRotation());
+		
+		if (alpha != 0)
+		{
+			var cos = Math.cos(-alpha);
+			var sin = Math.sin(-alpha);
+	
+			var ct = new mxPoint(bounds.getCenterX(), bounds.getCenterY());
+			point = mxUtils.getRotatedPoint(point, cos, sin, ct);
+		}
+
+		var sx = 1;
+		var sy = 1;
+		var dx = 0;
+		var dy = 0;
+		
+		// LATER: Add flipping support for image shapes
+		if (this.getModel().isVertex(terminalState.cell))
+		{
+			var flipH = terminalState.style[mxConstants.STYLE_FLIPH];
+			var flipV = terminalState.style[mxConstants.STYLE_FLIPV];
+			
+			// Legacy support for stencilFlipH/V
+			if (terminalState.shape != null && terminalState.shape.stencil != null)
+			{
+				flipH = mxUtils.getValue(terminalState.style, 'stencilFlipH', 0) == 1 || flipH;
+				flipV = mxUtils.getValue(terminalState.style, 'stencilFlipV', 0) == 1 || flipV;
+			}
+			
+			if (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH)
+			{
+				var tmp = flipH;
+				flipH = flipV;
+				flipV = tmp;
+			}
+			
+			if (flipH)
+			{
+				sx = -1;
+				dx = -bounds.width;
+			}
+			
+			if (flipV)
+			{
+				sy = -1;
+				dy = -bounds.height ;
+			}
+		}
+		
+		point = new mxPoint((point.x - bounds.x) * sx - dx + bounds.x, (point.y - bounds.y) * sy - dy + bounds.y);
+		
+		var x = Math.round((point.x - bounds.x) * 1000 / bounds.width) / 1000;
+		var y = Math.round((point.y - bounds.y) * 1000 / bounds.height) / 1000;
+		
+		return new mxConnectionConstraint(new mxPoint(x, y), false);
+	}
+	
+	return null;
+};
+
+/**
  * Function: getAllConnectionConstraints
  * 
  * Returns an array of all <mxConnectionConstraints> for the given terminal. If
@@ -5994,6 +6075,7 @@ mxGraph.prototype.setConnectionConstraint = function(edge, terminal, source, con
 	if (constraint != null)
 	{
 		this.model.beginUpdate();
+		
 		try
 		{
 			if (constraint == null || constraint.point == null)
