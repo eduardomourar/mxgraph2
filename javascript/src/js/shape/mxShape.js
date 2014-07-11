@@ -511,10 +511,16 @@ mxShape.prototype.createCanvas = function()
 		canvas.setStrokeWidth(this.strokewidth);
 		canvas.setStrokeColor(this.stroke);
 		
+		if (this.isDashed != null)
+		{
+			canvas.setDashed(this.isDashed);
+		}
+		
 		canvas.setStrokeWidth = function() {};
 		canvas.setStrokeColor = function() {};
 		canvas.setFillColor = function() {};
 		canvas.setGradient = function() {};
+		canvas.setDashed = function() {};
 	}
 
 	return canvas;
