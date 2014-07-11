@@ -105,7 +105,7 @@ mxConnector.prototype.createMarker = function(c, pts, source)
 		var type = mxUtils.getValue(this.style, (source) ? mxConstants.STYLE_STARTARROW : mxConstants.STYLE_ENDARROW);
 		var filled = this.style[(source) ? mxConstants.STYLE_STARTFILL : mxConstants.STYLE_ENDFILL] != 0;
 		
-		result = mxMarker.createMarker(c, this, type, pe, unitX, unitY, size, source, this.strokewidth, filled);
+		result = mxMarker.createMarker(c, this, type, pe, unitX, unitY, size, source, this.arrowStrokewidth, filled);
 	}
 	
 	return result;
