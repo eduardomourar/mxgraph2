@@ -603,9 +603,10 @@ Editor.prototype.init = function()
 				this.backgroundPageShape.redraw();
 				
 				var bds = this.getBackgroundPageBounds();
-				var tx = -1 + (10 - mxUtils.mod(bds.x - this.translate.x, 10));
-				var ty = -1 + (10 - mxUtils.mod(bds.y - this.translate.y, 10));
-				this.backgroundPageShape.node.style.backgroundPosition = (tx) + 'px ' + (ty) + 'px';
+				var gs = this.graph.gridSize * this.graph.view.scale;
+				var tx = -1 + (gs - mxUtils.mod(bds.x / this.graph.view.scale - this.translate.x, gs) * this.graph.view.scale);
+				var ty = -1 + (gs - mxUtils.mod(bds.y / this.graph.view.scale - this.translate.y, gs) * this.graph.view.scale);
+				this.backgroundPageShape.node.style.backgroundPosition = Math.round(tx) + 'px ' + Math.round(ty) + 'px';
 			}
 			
 			this.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ?
