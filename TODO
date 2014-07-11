@@ -131,6 +131,7 @@
 - Create mxCell via factory method for easier subclassing
 - Fix edge points update process (fixed vs. floating)
 
+- Use document fragments for faster rendering
 - Add hook in mxDefaultTextShape.paintShape for y-computation
 - Remove all i18n resources from core, use exceptions instead
 

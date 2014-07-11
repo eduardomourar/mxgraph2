@@ -9,7 +9,7 @@
 - Adds mxGraph.getOutlineConstraint, mxGraphView.decoratorPane [JavaScript]
 - Adds mxSvgCanvas2D.pointerEventsValue [JavaScript]
 - Adds mxShape.svgPointerEvents, arrowStrokewidth [JavaScript]
-- Uses left or Ctrl-click in mxEvent.isPopupTrigger [JavaScript]
+- Uses left or Ctrl-click on Macs in mxEvent.isPopupTrigger [JavaScript]
 - Changes default for mxShape.svgStrokeTolerance to 8 [JavaScript]
 - Adds mxGraph.center to center graph in container [JavaScript]
 - mxCellHighlight clones original shape for highlight [JavaScript]
