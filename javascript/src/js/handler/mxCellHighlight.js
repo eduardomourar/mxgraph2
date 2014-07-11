@@ -141,11 +141,25 @@ mxCellHighlight.prototype.drawHighlight = function()
  */
 mxCellHighlight.prototype.createShape = function()
 {
-	var shape = new this.state.shape.constructor();
-	shape.fillEnabled = false;
+	var key = this.state.style[mxConstants.STYLE_SHAPE];
+	var stencil = mxStencilRegistry.getStencil(key);
+	var shape = null;
+	
+	if (stencil != null)
+	{
+		shape = new mxShape(stencil);
+	}
+	else
+	{
+		shape = new this.state.shape.constructor();
+	}
+	
+	shape.scale = this.state.view.scale;
+	shape.outline = true;
 	shape.points = this.state.absolutePoints;
 	shape.apply(this.state);
-	shape.strokewidth = this.strokeWidth;
+	shape.strokewidth = this.strokeWidth / this.state.view.scale / this.state.view.scale;
+	shape.arrowStrokewidth = this.strokeWidth;
 	shape.stroke = this.highlightColor;
 	shape.isDashed = this.dashed;
 	shape.isShadow = false;
@@ -153,7 +167,15 @@ mxCellHighlight.prototype.createShape = function()
 	shape.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
 	shape.init(this.graph.getView().getOverlayPane());
 	mxEvent.redirectMouseEvents(shape.node, this.graph, this.state);
-	shape.pointerEvents = false;
+	
+	if (this.graph.dialect != mxConstants.DIALECT_SVG)
+	{
+		shape.pointerEvents = false;
+	}
+	else
+	{
+		shape.svgPointerEvents = 'stroke';
+	}
 	
 	return shape;
 };
@@ -230,11 +252,9 @@ mxCellHighlight.prototype.highlight = function(state)
  */
 mxCellHighlight.prototype.destroy = function()
 {
+	this.graph.getView().removeListener(this.resetHandler);
 	this.graph.getView().removeListener(this.repaintHandler);
 	this.graph.getModel().removeListener(this.repaintHandler);
-	
-	this.graph.getView().removeListener(this.resetHandler);
-	this.graph.getModel().removeListener(this.resetHandler);
 	
 	if (this.shape != null)
 	{
