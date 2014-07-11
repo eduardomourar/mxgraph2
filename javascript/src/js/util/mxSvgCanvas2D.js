@@ -208,6 +208,13 @@ mxSvgCanvas2D.prototype.blockImagePointerEvents = false;
 mxSvgCanvas2D.prototype.lineHeightCorrection = 1.05;
 
 /**
+ * Variable: pointerEventsValue
+ * 
+ * Default value for active pointer events. Default is all.
+ */
+mxSvgCanvas2D.prototype.pointerEventsValue = 'all';
+
+/**
  * Function: reset
  * 
  * Returns any offsets for rendering pixels.
@@ -529,9 +536,9 @@ mxSvgCanvas2D.prototype.addNode = function(filled, stroked)
 		if (this.pointerEvents && (node.nodeName != 'path' ||
 			this.path[this.path.length - 1] == this.closeOp))
 		{
-			node.setAttribute('pointer-events', 'all');
+			node.setAttribute('pointer-events', this.pointerEventsValue);
 		}
-		// Ugly hack to activate pointer events while a link is active
+		// Enables clicks for nodes inside a link element
 		else if (!this.pointerEvents && this.originalRoot == null)
 		{
 			node.setAttribute('pointer-events', 'none');
