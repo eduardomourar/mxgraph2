@@ -206,6 +206,11 @@ mxEdgeSegmentHandler.prototype.redrawInnerBends = function(p0, pe)
 			 		this.bends[i + 1].bounds = new mxRectangle(Math.round(pt.x - b.width / 2),
 			 				Math.round(pt.y - b.height / 2), b.width, b.height);
 				 	this.bends[i + 1].redraw();
+				 	
+				 	if (this.manageLabelHandle)
+					{
+						this.checkLabelHandle(this.bends[i + 1].bounds);
+					}
 				}
 			}
 		}
