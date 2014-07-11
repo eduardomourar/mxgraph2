@@ -1814,27 +1814,29 @@ mxConnectionHandler.prototype.createTargetVertex = function(evt, source)
 		var t = this.graph.view.translate;
 		var s = this.graph.view.scale;
 		var point = new mxPoint(this.currentPoint.x / s - t.x, this.currentPoint.y / s - t.y);
-		geo.x = this.graph.snap(point.x - geo.width / 2) - this.graph.panDx / this.graph.view.scale;
-		geo.y = this.graph.snap(point.y - geo.height / 2) - this.graph.panDy / this.graph.view.scale;
+		geo.x = point.x - geo.width / 2 - this.graph.panDx / s;
+		geo.y = point.y - geo.height / 2 - this.graph.panDy / s;
 
 		// Aligns with source if within certain tolerance
-		if (this.first != null)
+		if (this.graph.isGridEnabled())
 		{
 			var sourceState = this.graph.view.getState(source);
 			
 			if (sourceState != null)
 			{
+				var x = sourceState.x / s - t.x;
+				var y = sourceState.y / s - t.y;
+				
 				var tol = this.getAlignmentTolerance();
 
-				if (Math.abs(this.graph.snap(this.first.x) -
-					this.graph.snap(point.x)) <= tol)
+				if (Math.abs(x - geo.x) <= tol)
 				{
-					geo.x = sourceState.x;
+					geo.x = x;
 				}
-				else if (Math.abs(this.graph.snap(this.first.y) -
-						this.graph.snap(point.y)) <= tol)
+				
+				if (Math.abs(y - geo.y) <= tol)
 				{
-					geo.y = sourceState.y;
+					geo.y = y;
 				}
 			}
 		}
@@ -1846,12 +1848,11 @@ mxConnectionHandler.prototype.createTargetVertex = function(evt, source)
 /**
  * Function: getAlignmentTolerance
  * 
- * Returns the tolerance for aligning new targets to sources.
+ * Returns the tolerance for aligning new targets to sources. This returns the grid size / 2.
  */
 mxConnectionHandler.prototype.getAlignmentTolerance = function()
 {
-	return (this.graph.isGridEnabled()) ?
-		this.graph.gridSize : this.graph.tolerance;
+	return this.graph.gridSize / 2;
 };
 
 /**
