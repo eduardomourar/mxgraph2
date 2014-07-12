@@ -593,36 +593,51 @@ Graph.prototype.distributeCells = function(horizontal, cells)
 	if (cells != null && cells.length > 1)
 	{
 		var vertices = [];
-		var total = 0;
+		var max = null;
+		var min = null;
 		
 		for (var i = 0; i < cells.length; i++)
 		{
 			if (this.getModel().isVertex(cells[i]))
 			{
-				var geo = this.getCellGeometry(cells[i]);
+				var state = this.view.getState(cells[i]);
 				
-				if (geo != null)
+				if (state != null)
 				{
-					total += (horizontal) ? geo.width : geo.height;
-					vertices.push(cells[i]);
+					var tmp = (horizontal) ? state.x : state.y;
+					min = (min != null) ? Math.min(min, tmp) : tmp;
+					
+					tmp += (horizontal) ? state.width : state.height;
+					max = (max != null) ? Math.max(max, tmp) : tmp;
+					
+					vertices.push(state);
 				}
 			}
 		}
 		
-		if (vertices.length > 0)
+		if (vertices.length > 2)
 		{
-			var bounds = this.getBoundingBoxFromGeometry(vertices);
+			vertices.sort(function(a, b)
+			{
+				return (horizontal) ? a.x - b.x : a.y - b.y;
+			});
+
+			var t = this.view.translate;
+			var s = this.view.scale;
 			
-			var dt = Math.max(0, (((horizontal) ? bounds.width : bounds.height) - total) /
-					(vertices.length - 1));
-			var v0 = (horizontal) ? bounds.x : bounds.y;
+			min = min / s - ((horizontal) ? t.x : t.y);
+			max = max / s - ((horizontal) ? t.x : t.y);
 			
 			this.getModel().beginUpdate();
 			try
 			{
-				for (var i = 0; i < vertices.length; i++)
+				var dt = (max - min) / (vertices.length - 1);
+				var t0 = min;
+				
+				for (var i = 1; i < vertices.length - 1; i++)
 				{
-					var geo = this.getCellGeometry(vertices[i]);
+					var geo = this.getCellGeometry(vertices[i].cell);
+					t0 += dt;
 					
 					if (geo != null)
 					{
@@ -630,20 +645,16 @@ Graph.prototype.distributeCells = function(horizontal, cells)
 						
 						if (horizontal)
 						{
-							geo.x = v0;
-							v0 += geo.width + dt;
+							geo.x = t0 - geo.width / 2;
 						}
 						else
 						{
-							geo.y = v0;
-							v0 += geo.height + dt;
+							geo.y = t0 - geo.height / 2;
 						}
 						
-						this.getModel().setGeometry(vertices[i], geo);
+						this.getModel().setGeometry(vertices[i].cell, geo);
 					}
 				}
-				
-				cells = vertices;
 			}
 			finally
 			{
