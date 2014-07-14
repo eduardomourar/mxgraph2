@@ -44,6 +44,14 @@ Graph = function(container, model, renderHint, stylesheet)
 		this.loadStylesheet();
 	}
 	
+	// Changes color of move preview for black backgrounds
+	this.graphHandler.createPreviewShape = function(bounds)
+	{
+		this.previewColor = (this.graph.background == '#000000') ? 'white' : mxGraphHandler.prototype.previewColor;
+		
+		return mxGraphHandler.prototype.createPreviewShape.apply(this, arguments);
+	};
+	
 	// Creates rubberband selection
     var rubberband = new mxRubberband(this);
     
