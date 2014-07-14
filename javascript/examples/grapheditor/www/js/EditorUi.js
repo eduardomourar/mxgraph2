@@ -1503,10 +1503,10 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindKey(38, function() { nudge(38); }); // Up arrow
     keyHandler.bindKey(39, function() { nudge(39); }); // Right arrow
     keyHandler.bindKey(40, function() { nudge(40); }); // Down arrow
-    keyHandler.bindShiftKey(37, function() { nudge(37, 10); }); // Shift+Left arrow
-    keyHandler.bindShiftKey(38, function() { nudge(38, 10); }); // Shift+Up arrow
-    keyHandler.bindShiftKey(39, function() { nudge(39, 10); }); // Shift+Right arrow
-    keyHandler.bindShiftKey(40, function() { nudge(40, 10); }); // Shift+Down arrow
+    keyHandler.bindShiftKey(37, function() { nudge(37, graph.gridSize); }); // Shift+Left arrow
+    keyHandler.bindShiftKey(38, function() { nudge(38, graph.gridSize); }); // Shift+Up arrow
+    keyHandler.bindShiftKey(39, function() { nudge(39, graph.gridSize); }); // Shift+Right arrow
+    keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
     keyHandler.bindAction(8, false, 'delete'); // Backspace
     keyHandler.bindAction(46, false, 'delete'); // Delete
     keyHandler.bindAction(82, true, 'tilt'); // Ctrl+R
