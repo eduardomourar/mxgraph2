@@ -28,7 +28,7 @@ var mxClient =
 	/**
 	 * Variable: IS_IE
 	 *
-	 * True if the current browser is Internet Explorer.
+	 * True if the current browser is Internet Explorer 10 or below.
 	 */
 	IS_IE: navigator.userAgent.indexOf('MSIE') >= 0,
 
