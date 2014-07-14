@@ -272,14 +272,22 @@ Graph.prototype.getAllConnectionConstraints = function(terminal, source)
 		if (constraints != null)
 		{
 			// Requires an array of arrays with x, y (0..1) and an optional
-			// perimeter (0 or 1), eg. points=[[0,0,1],[0,1,0],[1,1]] 
-			var c = JSON.parse(constraints);
+			// perimeter (0 or 1), eg. points=[[0,0,1],[0,1,0],[1,1]]
 			var result = [];
 			
-			for (var i = 0; i < c.length; i++)
+			try
 			{
-				var tmp = c[i];
-				result.push(new mxConnectionConstraint(new mxPoint(tmp[0], tmp[1]), (tmp.length > 2) ? tmp[2] != '0' : true));
+				var c = JSON.parse(constraints);
+				
+				for (var i = 0; i < c.length; i++)
+				{
+					var tmp = c[i];
+					result.push(new mxConnectionConstraint(new mxPoint(tmp[0], tmp[1]), (tmp.length > 2) ? tmp[2] != '0' : true));
+				}
+			}
+			catch (e)
+			{
+				// ignore
 			}
 			
 			return result;
