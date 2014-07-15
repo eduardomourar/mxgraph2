@@ -330,6 +330,12 @@ Editor.prototype.updateGraphComponents = function()
 		// Transparent.gif is a workaround for focus repaint problems in IE and clipping issues in webkit
 		var noBackground = 'url(' + this.transparentImage + ')';
 		var bgImg = (!graph.pageVisible && graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : noBackground;
+		
+		// Needed to align background position for grid
+		if (graph.isGridEnabled())
+		{
+			graph.view.validateBackground();
+		}
 
 		if (graph.view.canvas.ownerSVGElement != null)
 		{
@@ -544,7 +550,7 @@ Editor.prototype.init = function()
 		if (this.graph.pageVisible && this.graph.container != null)
 		{
 			var bounds = this.getBackgroundPageBounds();
-			
+
 			if (this.backgroundPageShape == null)
 			{
 				this.backgroundPageShape = this.createBackgroundPageShape(bounds);
@@ -611,6 +617,11 @@ Editor.prototype.init = function()
 			
 			this.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ?
 					'url(' + editor.gridImage + ')' : 'none';
+			
+			if (this.graph.isGridEnabled())
+			{
+				
+			}
 		}
 		else if (this.backgroundPageShape != null)
 		{
