@@ -1482,6 +1482,11 @@ mxEdgeHandler.prototype.getHandleFillColor = function(index)
  */
 mxEdgeHandler.prototype.redraw = function()
 {
+	if (this.abspoints.length != this.state.absolutePoints.length)
+	{
+		this.refresh();
+	}
+	
 	this.abspoints = this.state.absolutePoints.slice();
 	this.redrawHandles();
 	

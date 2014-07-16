@@ -1,3 +1,4 @@
+- mxEdgeHandler calls refresh if waypoints have changed [JavaScript]
 - Fixes alignment in mxConnectionHandler.createTargetVertex [JavaScript]
 - Adds mxCellMarker.setCurrentState, mxConnectionHandler.getCellAt [JavaScript]
 - Adds handling for fixed points in mxEdgeStyle.Loop [JavaScript]
