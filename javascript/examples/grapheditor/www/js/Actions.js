@@ -708,7 +708,10 @@ Actions.prototype.init = function()
 					pgeo = graph.getCellGeometry(parent);
 				}
 				
-				handler.addPointAt(handler.state, graph.popupMenuHandler.triggerX / s - dx, graph.popupMenuHandler.triggerY / s - dy);
+				var x = Math.round(graph.snap(graph.popupMenuHandler.triggerX / s - dx));
+				var y = Math.round(graph.snap(graph.popupMenuHandler.triggerY / s - dy));
+				
+				handler.addPointAt(handler.state, x, y);
 			}
 		}
 	});
