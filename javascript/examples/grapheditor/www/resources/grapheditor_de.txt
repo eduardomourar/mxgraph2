@@ -180,6 +180,7 @@ position=Position
 posterPrint=Posterdruck
 preview=Vorschau
 print=Drucken
+radialTree=Radialer Baum
 redo=Wiederherstellen
 removeFormat=Formatierung entfernen
 removeFromGroup=Aus Gruppe entfernen

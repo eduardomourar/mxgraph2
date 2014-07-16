@@ -359,6 +359,17 @@ Menus.prototype.init = function()
 	    		}, true);
 			}
 		}), parent);
+		menu.addItem(mxResources.get('radialTree'), null, mxUtils.bind(this, function()
+		{
+			if (!graph.isSelectionEmpty())
+			{
+				var layout = new mxRadialTreeLayout(graph, false);
+	    		this.editorUi.executeLayout(function()
+	    		{
+	    			layout.execute(graph.getDefaultParent(), graph.getSelectionCell());
+	    		}, true);
+			}
+		}), parent);
 		menu.addSeparator(parent);
 		menu.addItem(mxResources.get('organic'), null, mxUtils.bind(this, function()
 		{
