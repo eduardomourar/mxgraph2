@@ -614,6 +614,7 @@ mxClient.include(mxClient.basePath+'/js/layout/mxGraphLayout.js');
 mxClient.include(mxClient.basePath+'/js/layout/mxStackLayout.js');
 mxClient.include(mxClient.basePath+'/js/layout/mxPartitionLayout.js');
 mxClient.include(mxClient.basePath+'/js/layout/mxCompactTreeLayout.js');
+mxClient.include(mxClient.basePath+'/js/layout/mxRadialTreeLayout.js');
 mxClient.include(mxClient.basePath+'/js/layout/mxFastOrganicLayout.js');
 mxClient.include(mxClient.basePath+'/js/layout/mxCircleLayout.js');
 mxClient.include(mxClient.basePath+'/js/layout/mxParallelEdgeLayout.js');
