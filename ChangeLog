@@ -1,3 +1,4 @@
+- Adds mxRadialTreeLayout [JavaScript]
 - Fixes rounding errors in mxVertexHandler [JavaScript]
 - mxEdgeHandler calls refresh if waypoints have changed [JavaScript]
 - Fixes alignment in mxConnectionHandler.createTargetVertex [JavaScript]
