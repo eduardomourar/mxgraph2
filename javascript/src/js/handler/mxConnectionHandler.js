@@ -1075,8 +1075,8 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 		
 		if (this.graph.isGridEnabledEvent(me.getEvent()))
 		{
-			point = new mxPoint(this.graph.snap(point.x / scale - tr.x) * scale + tr.x,
-				this.graph.snap(point.y / scale - tr.y) * scale + tr.y);
+			point = new mxPoint((this.graph.snap(point.x / scale - tr.x) + tr.x) * scale,
+				(this.graph.snap(point.y / scale - tr.y) + tr.y) * scale);
 		}
 		
 		this.currentPoint = point;
