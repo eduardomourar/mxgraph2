@@ -694,14 +694,15 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 		{
 			var point = new mxPoint(me.getGraphX(), me.getGraphY());
 			var gridEnabled = this.graph.isGridEnabledEvent(me.getEvent());
-			var scale = this.graph.getView().scale;
+			var scale = this.graph.view.scale;
+			var tr = this.graph.view.translate;
 			
 			if (this.index == mxEvent.LABEL_HANDLE)
 			{
 				if (gridEnabled)
 				{
-					point.x = this.graph.snap(point.x / scale) * scale;
-					point.y = this.graph.snap(point.y / scale) * scale;
+					point.x = (this.graph.snap(point.x / scale - tr.x) + tr.x) * scale;
+					point.y = (this.graph.snap(point.y / scale - tr.y) + tr.y) * scale;
 				}
 	
 				this.moveSizerTo(this.sizers[this.sizers.length - 1], point.x, point.y);
@@ -748,19 +749,22 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 				var sin = Math.sin(-alpha);
 				
 				var ct = new mxPoint(this.state.getCenterX(), this.state.getCenterY());
-				
+
 				var dx = point.x - this.startX;
 				var dy = point.y - this.startY;
-				var tr = this.graph.view.translate;
-				
+			
 				// Rotates vector for mouse gesture
 				var tx = cos * dx - sin * dy;
 				var ty = sin * dx + cos * dy;
 				
 				dx = this.roundLength(tx / scale) * scale;
 				dy = this.roundLength(ty / scale) * scale;
-				
-				this.bounds = this.union(this.selectionBounds, dx, dy, this.index, gridEnabled, scale, tr, this.isConstrainedEvent(me));
+
+				var geo = this.graph.getCellGeometry(this.state.cell);
+				this.unscaledBounds = this.union(geo, this.roundLength(tx / scale),
+						this.roundLength(ty / scale), this.index, gridEnabled, 1, new mxPoint(0, 0), this.isConstrainedEvent(me));
+				this.bounds = new mxRectangle((tr.x + this.unscaledBounds.x) * scale, (tr.y + this.unscaledBounds.y) * scale,
+						this.unscaledBounds.width * scale, this.unscaledBounds.height * scale);
 
 				cos = Math.cos(alpha);
 				sin = Math.sin(alpha);
@@ -1047,6 +1051,7 @@ mxVertexHandler.prototype.reset = function()
 	this.removeHint();
 	this.redrawHandles();
 	this.edgeHandlers = null;
+	this.unscaledBounds = null;
 };
 
 /**
@@ -1081,38 +1086,16 @@ mxVertexHandler.prototype.resizeCell = function(cell, dx, dy, index, gridEnabled
 			
 			this.graph.model.setGeometry(cell, geo);
 		}
-		else
+		else if (this.unscaledBounds != null)
 		{
-			//var bounds = this.union(geo, dx, dy, index, gridEnabled, 1, new mxPoint(0, 0), constrained);
-			//var alpha = mxUtils.toRadians(this.state.style[mxConstants.STYLE_ROTATION] || '0');
 			var scale = this.graph.view.scale;
-			var t = this.graph.view.translate;
-			var px = t.x;
-			var py = t.y;
-
-			var parent = this.graph.getModel().getParent(cell);
-			
-			if (parent != this.graph.getCurrentRoot())
-			{
-				var pstate = this.graph.view.getState(parent);
-				
-				if (pstate != null && this.graph.getCellGeometry(parent) != null)
-				{
-					px = pstate.x / scale;
-					py = pstate.y / scale;
-				}
-			}
-			
-			var bounds = new mxRectangle(this.bounds.x / scale - px, 
-					this.bounds.y / scale - py,
-					this.bounds.width / scale, this.bounds.height / scale);
 
 			if (this.childOffsetX != 0 || this.childOffsetY != 0)
 			{
 				this.moveChildren(cell, this.childOffsetX / scale, this.childOffsetY / scale);
 			}
 
-			this.graph.resizeCell(cell, bounds, recurse);
+			this.graph.resizeCell(cell, this.unscaledBounds, recurse);
 		}
 	}
 };
