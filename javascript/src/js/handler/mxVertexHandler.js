@@ -22,6 +22,14 @@ function mxVertexHandler(state)
 	if (state != null)
 	{
 		this.state = state;
+		
+		var parent = state.view.graph.model.getParent(state.cell);
+		
+		if (state.view.graph.model.isVertex(parent))
+		{
+			this.parentState = state.view.graph.view.getState(parent);
+		}
+		
 		this.init();
 		
 		// Handles escape keystrokes
@@ -763,8 +771,9 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 				var geo = this.graph.getCellGeometry(this.state.cell);
 				this.unscaledBounds = this.union(geo, this.roundLength(tx / scale),
 						this.roundLength(ty / scale), this.index, gridEnabled, 1, new mxPoint(0, 0), this.isConstrainedEvent(me));
-				this.bounds = new mxRectangle((tr.x + this.unscaledBounds.x) * scale, (tr.y + this.unscaledBounds.y) * scale,
-						this.unscaledBounds.width * scale, this.unscaledBounds.height * scale);
+				this.bounds = new mxRectangle(((this.parentState != null) ? this.parentState.x : tr.x * scale) +
+						(this.unscaledBounds.x) * scale, ((this.parentState != null) ? this.parentState.y : tr.y * scale) +
+						(this.unscaledBounds.y) * scale, this.unscaledBounds.width * scale, this.unscaledBounds.height * scale);
 
 				cos = Math.cos(alpha);
 				sin = Math.sin(alpha);
