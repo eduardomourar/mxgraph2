@@ -499,6 +499,16 @@ Sidebar.prototype.addConnectionShapes = function(dir, content)
     content.appendChild(this.createEdgeTemplate('edgeStyle=entityRelationEdgeStyle', 100, 100, '', 'Entity Relation', true));
     content.appendChild(this.createEdgeTemplate('edgeStyle=segmentEdgeStyle', 100, 100, '', 'Manual Line', true));
     content.appendChild(this.createEdgeTemplate('edgeStyle=orthogonalEdgeStyle', 100, 100, '', 'Automatic Line', true));
+    
+	var cells = [new mxCell('', new mxGeometry(0, 0, 100, 100), 'edgeStyle=orthogonalEdgeStyle')];
+	cells[0].geometry.setTerminalPoint(new mxPoint(0, 100), true);
+	cells[0].geometry.setTerminalPoint(new mxPoint(100, 0), false);
+	cells[0].geometry.points = [new mxPoint(30, 100), new mxPoint(30, 50), new mxPoint(70, 50), new mxPoint(70, 0)];
+	cells[0].geometry.relative = true;
+	cells[0].edge = true;
+	
+	content.appendChild(this.createEdgeTemplateFromCells(cells, 100, 100, 'Automatic Line', true));
+    
     content.appendChild(this.createEdgeTemplate('shape=link', 100, 100, '', 'Link', true));
     content.appendChild(this.createEdgeTemplate('arrow', 100, 100, '', 'Arrow', true));
 };
