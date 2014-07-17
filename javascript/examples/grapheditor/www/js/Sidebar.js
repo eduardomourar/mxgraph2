@@ -498,8 +498,7 @@ Sidebar.prototype.addConnectionShapes = function(dir, content)
     content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical', 100, 100, '', 'Vertical Elbow', true));
     content.appendChild(this.createEdgeTemplate('edgeStyle=entityRelationEdgeStyle', 100, 100, '', 'Entity Relation', true));
     content.appendChild(this.createEdgeTemplate('edgeStyle=segmentEdgeStyle', 100, 100, '', 'Manual Line', true));
-    content.appendChild(this.createEdgeTemplate('edgeStyle=orthogonalEdgeStyle', 100, 100, '', 'Automatic Line', true));
-    
+
 	var cells = [new mxCell('', new mxGeometry(0, 0, 100, 100), 'edgeStyle=orthogonalEdgeStyle')];
 	cells[0].geometry.setTerminalPoint(new mxPoint(0, 100), true);
 	cells[0].geometry.setTerminalPoint(new mxPoint(100, 0), false);
