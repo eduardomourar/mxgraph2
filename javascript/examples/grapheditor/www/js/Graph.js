@@ -52,6 +52,30 @@ Graph = function(container, model, renderHint, stylesheet)
 		return mxGraphHandler.prototype.createPreviewShape.apply(this, arguments);
 	};
 	
+	// Handles parts of cells by checking if part=1 is in the style and returning the parent
+	this.graphHandler.getCells = function(initialCell)
+	{
+	    var cells = mxGraphHandler.prototype.getCells.apply(this, arguments);
+
+	    for (var i = 0; i < cells.length; i++)
+	    {
+			var state = this.graph.view.getState(cells[i]);
+			var style = (state != null) ? state.style : this.graph.getCellStyle(cells[i]);
+	    	
+			if (mxUtils.getValue(style, 'part', true))
+			{
+		        var parent = this.graph.model.getParent(cells[i]);
+	
+		        if (this.graph.model.isVertex(parent))
+		        {
+		            cells[i] = parent;
+		        }
+			}
+	    }
+
+	    return cells;
+	}; 
+
 	// Creates rubberband selection
     var rubberband = new mxRubberband(this);
     
