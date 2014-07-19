@@ -53,6 +53,7 @@ Graph = function(container, model, renderHint, stylesheet)
 	};
 	
 	// Handles parts of cells by checking if part=1 is in the style and returning the parent
+	// LATER: Handle recursive parts
 	this.graphHandler.getCells = function(initialCell)
 	{
 	    var cells = mxGraphHandler.prototype.getCells.apply(this, arguments);
@@ -74,7 +75,26 @@ Graph = function(container, model, renderHint, stylesheet)
 	    }
 
 	    return cells;
-	}; 
+	};
+	
+	// Handles parts of cells when cloning the source for new connections
+	this.connectionHandler.createTargetVertex = function(evt, source)
+	{
+		var state = this.graph.view.getState(source);
+		var style = (state != null) ? state.style : this.graph.getCellStyle(source);
+    	
+		if (mxUtils.getValue(style, 'part', false))
+		{
+	        var parent = this.graph.model.getParent(source);
+
+	        if (this.graph.model.isVertex(parent))
+	        {
+	        	source = parent;
+	        }
+		}
+		
+		return mxConnectionHandler.prototype.createTargetVertex.apply(this, arguments);
+	};
 
 	// Creates rubberband selection
     var rubberband = new mxRubberband(this);
