@@ -22,14 +22,6 @@ function mxVertexHandler(state)
 	if (state != null)
 	{
 		this.state = state;
-		
-		var parent = state.view.graph.model.getParent(state.cell);
-		
-		if (state.view.graph.model.isVertex(parent))
-		{
-			this.parentState = state.view.graph.view.getState(parent);
-		}
-		
 		this.init();
 		
 		// Handles escape keystrokes
@@ -561,6 +553,14 @@ mxVertexHandler.prototype.start = function(x, y, index)
 	this.index = index;
 	this.startX = x;
 	this.startY = y;
+	
+	// Saves reference to parent state
+	var parent = this.state.view.graph.model.getParent(this.state.cell);
+	
+	if (this.state.view.graph.model.isVertex(parent))
+	{
+		this.parentState = this.state.view.graph.view.getState(parent);
+	}
 	
 	// Creates a preview that can be on top of any HTML label
 	this.selectionBorder.node.style.display = (index == mxEvent.ROTATION_HANDLE) ? 'inline' : 'none';
