@@ -765,12 +765,12 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 				var tx = cos * dx - sin * dy;
 				var ty = sin * dx + cos * dy;
 				
-				dx = this.roundLength(tx / scale) * scale;
-				dy = this.roundLength(ty / scale) * scale;
+				dx = tx;
+				dy = ty;
 
 				var geo = this.graph.getCellGeometry(this.state.cell);
-				this.unscaledBounds = this.union(geo, this.roundLength(tx / scale),
-						this.roundLength(ty / scale), this.index, gridEnabled, 1, new mxPoint(0, 0), this.isConstrainedEvent(me));
+				this.unscaledBounds = this.union(geo, dx / scale, dy / scale,
+					this.index, gridEnabled, 1, new mxPoint(0, 0), this.isConstrainedEvent(me));
 				this.bounds = new mxRectangle(((this.parentState != null) ? this.parentState.x : tr.x * scale) +
 						(this.unscaledBounds.x) * scale, ((this.parentState != null) ? this.parentState.y : tr.y * scale) +
 						(this.unscaledBounds.y) * scale, this.unscaledBounds.width * scale, this.unscaledBounds.height * scale);
@@ -794,9 +794,15 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 				
 				var dx5 = cos * dx4 - sin * dy4;
 				var dy5 = sin * dx4 + cos * dy4;
-
+				
 				this.bounds.x += dx3;
 				this.bounds.y += dy3;
+				
+				// Rounds unscaled bounds to int
+				this.unscaledBounds.x = this.roundLength(this.unscaledBounds.x + dx3 / scale);
+				this.unscaledBounds.y = this.roundLength(this.unscaledBounds.y + dy3 / scale);
+				this.unscaledBounds.width = this.roundLength(this.unscaledBounds.width);
+				this.unscaledBounds.height = this.roundLength(this.unscaledBounds.height);
 				
 				// Shifts the children according to parent offset
 				if (!this.graph.isCellCollapsed(this.state.cell) && (dx3 != 0 || dy3 != 0))
