@@ -1524,8 +1524,7 @@ Graph.prototype.initTouch = function()
 			{
 				// Only show connector image on one cell and do not show on containers
 				if (showConnectorImg && this.graph.connectionHandler.isEnabled() &&
-					this.graph.isCellConnectable(this.state.cell) &&
-					!this.graph.isValidRoot(this.state.cell))
+					this.graph.isCellConnectable(this.state.cell))
 				{
 					// Workaround for event redirection via image tag in quirks and IE8
 					if (mxClient.IS_IE && !mxClient.IS_SVG)
