@@ -585,7 +585,7 @@ Actions.prototype.init = function()
 		ui.showDialog(cd.container, 220, 400, true, false);
 		cd.init();
 	}));
-	action = this.addAction('connect', function()
+	action = this.addAction('connectionPoints', function()
 	{
 		graph.setConnectable(!graph.connectionHandler.isEnabled());
 	}, null, null, 'Ctrl+Q');

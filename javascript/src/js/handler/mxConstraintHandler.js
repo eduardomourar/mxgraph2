@@ -326,6 +326,12 @@ mxConstraintHandler.prototype.update = function(me, source)
 			this.destroyFocusHighlight();
 		}
 	}
+	else
+	{
+		this.currentConstraint = null;
+		this.currentFocus = null;
+		this.currentPoint = null;
+	}
 };
 
 /**

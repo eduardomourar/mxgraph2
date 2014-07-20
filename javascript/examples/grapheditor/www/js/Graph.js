@@ -1523,8 +1523,7 @@ Graph.prototype.initTouch = function()
 			if (this.graph.isEnabled() && (touchStyle || urlParams['connect'] == null || urlParams['connect'] == '2'))
 			{
 				// Only show connector image on one cell and do not show on containers
-				if (showConnectorImg && this.graph.connectionHandler.isEnabled() &&
-					this.graph.isCellConnectable(this.state.cell))
+				if (showConnectorImg && this.graph.isCellConnectable(this.state.cell))
 				{
 					// Workaround for event redirection via image tag in quirks and IE8
 					if (mxClient.IS_IE && !mxClient.IS_SVG)
@@ -1673,6 +1672,12 @@ Graph.prototype.initTouch = function()
 		{
 			edgeHandlerInit.apply(this, arguments);
 			
+			// Disables connection points
+			this.constraintHandler.isEnabled = mxUtils.bind(this, function()
+			{
+				return this.state.view.graph.connectionHandler.isEnabled();
+			});
+			
 			var update = mxUtils.bind(this, function()
 			{
 				if (this.linkHint != null)
@@ -1717,6 +1722,19 @@ Graph.prototype.initTouch = function()
 				this.redrawHandles();
 			}
 		};
+	};
+	
+	// Disables connection points
+	var connectionHandlerInit = mxConnectionHandler.prototype.init;
+	
+	mxConnectionHandler.prototype.init = function()
+	{
+		connectionHandlerInit.apply(this, arguments);
+		
+		this.constraintHandler.isEnabled = mxUtils.bind(this, function()
+		{
+			return this.graph.connectionHandler.isEnabled();
+		});
 	};
 
 	var vertexHandlerRedrawHandles = mxVertexHandler.prototype.redrawHandles;

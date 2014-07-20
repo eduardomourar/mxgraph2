@@ -48,6 +48,7 @@ clipart=Clipart
 collapse=Einklappen
 connect=Verbinden
 connection=Verbindung
+connectionPoints=Verbindungspunkte
 copy=Kopieren
 copyConnect=Beim Verbinden kopieren
 create=Erstellen

@@ -48,6 +48,7 @@ clipart=Clipart
 collapse=Collapse
 connect=Connect
 connection=Connection
+connectionPoints=Connection points
 copy=Copy
 copyConnect=Copy on connect
 create=Create
