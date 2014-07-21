@@ -879,7 +879,14 @@ var mxUtils =
 	 */
 	getTextContent: function(node)
 	{
-		return (node != null) ? node[(node.textContent === undefined) ? 'text' : 'textContent'] : '';
+		if (mxClient.IS_QUIRKS)
+		{
+			return node.innerText;
+		}
+		else
+		{
+			return (node != null) ? node[(node.textContent === undefined) ? 'text' : 'textContent'] : '';
+		}
 	},
 	
 	/**
@@ -894,7 +901,14 @@ var mxUtils =
 	 */
 	setTextContent: function(node, text)
 	{
-		node[(node.textContent === undefined) ? 'text' : 'textContent'] = text;
+		if (mxClient.IS_QUIRKS)
+		{
+			node.innerText = text;
+		}
+		else
+		{
+			node[(node.textContent === undefined) ? 'text' : 'textContent'] = text;
+		}
 	},
 	
 	/**
