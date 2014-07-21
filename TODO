@@ -134,6 +134,7 @@
 - Use document fragments for faster rendering
 - Add hook in mxDefaultTextShape.paintShape for y-computation
 - Remove all i18n resources from core, use exceptions instead
+- Fix focus lost in diagrameditor.html after double click on edge
 
 1.1 - Check if dir attribute (html) is set to RTL (http://www.w3.org/TR/html401/struct/dirlang.html) and set SVG and other
       attributes to right-to-left based on that (<tspan style="direction: rtl"> for SVG)

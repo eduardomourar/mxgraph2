@@ -1,6 +1,7 @@
 - Adds mxRadialTreeLayout [JavaScript]
 - Resize bend in mxEdgeHandler if intersects with label handle [JavaScript]
-- Uses display:none to hide label shape in mxEdgeHandler [JavaScript]
+- Uses shape.visible to hide label shape in mxEdgeHandler [JavaScript]
+- Adds mxShape.visible [JavaScript]
 - Fixes mxUtils.getDocumentScrollOrigin for quirks mode [JavaScript]
 - Fixes rounding errors in mxVertexHandler [JavaScript]
 - mxEdgeHandler calls refresh if waypoints have changed [JavaScript]
