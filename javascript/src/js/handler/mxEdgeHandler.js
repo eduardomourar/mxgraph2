@@ -950,7 +950,7 @@ mxEdgeHandler.prototype.updatePreviewState = function(edge, point, terminalState
 			if (this.constraintHandler.currentConstraint != null &&
 				this.constraintHandler.currentFocus != null)
 			{
-				this.marker.highlight.shape.stroke = mxConstants.OUTLINE_HIGHLIGHT_COLOR;;
+				this.marker.highlight.shape.stroke = mxConstants.OUTLINE_HIGHLIGHT_COLOR;
 				this.marker.highlight.shape.strokewidth = mxConstants.OUTLINE_HIGHLIGHT_STROKEWIDTH / this.state.view.scale / this.state.view.scale;
 				this.marker.highlight.repaint();
 			}
@@ -1482,11 +1482,6 @@ mxEdgeHandler.prototype.getHandleFillColor = function(index)
  */
 mxEdgeHandler.prototype.redraw = function()
 {
-	if (this.abspoints.length != this.state.absolutePoints.length)
-	{
-		this.refresh();
-	}
-	
 	this.abspoints = this.state.absolutePoints.slice();
 	this.redrawHandles();
 	
@@ -1625,7 +1620,7 @@ mxEdgeHandler.prototype.checkLabelHandle = function(b)
 	{
 		var b2 = this.labelShape.bounds;
 		
-		if (this.manageLabelHandle && mxUtils.intersects(b, b2))
+		if (mxUtils.intersects(b, b2))
 		{
 			if (b.getCenterY() < b2.getCenterY())
 			{
