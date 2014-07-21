@@ -1,4 +1,5 @@
 - Adds mxRadialTreeLayout [JavaScript]
+- Resize bend in mxEdgeHandler if intersects with label handle [JavaScript]
 - Uses display:none to hide label shape in mxEdgeHandler [JavaScript]
 - Fixes mxUtils.getDocumentScrollOrigin for quirks mode [JavaScript]
 - Fixes rounding errors in mxVertexHandler [JavaScript]

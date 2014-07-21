@@ -1592,12 +1592,20 @@ mxEdgeHandler.prototype.redrawInnerBends = function(p0, pe)
 				this.bends[i].node.style.visibility = 'visible';
 				this.bends[i].bounds = new mxRectangle(Math.round(x - b.width / 2),
 						Math.round(y - b.height / 2), b.width, b.height);
-				this.bends[i].redraw();
 				
 				if (this.manageLabelHandle)
 				{
 					this.checkLabelHandle(this.bends[i].bounds);
 				}
+				else if (this.handleImage == null && this.labelShape.node.style.display != 'none' &&
+						mxUtils.intersects(this.bends[i].bounds, this.labelShape.bounds))
+				{
+					w = mxConstants.HANDLE_SIZE + 3;
+					h = mxConstants.HANDLE_SIZE + 3;
+					this.bends[i].bounds = new mxRectangle(Math.round(x - w / 2), Math.round(y - h / 2), w, h);
+				}
+				
+				this.bends[i].redraw();
 			}
 			else
 			{
