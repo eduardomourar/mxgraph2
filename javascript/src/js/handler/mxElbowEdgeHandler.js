@@ -237,8 +237,7 @@ mxElbowEdgeHandler.prototype.redrawInnerBends = function(p0, pe)
 	{
 		this.checkLabelHandle(bounds);
 	}
-	else if (this.handleImage == null && this.labelShape.node.style.display != 'none' &&
-		mxUtils.intersects(bounds, this.labelShape.bounds))
+	else if (this.handleImage == null && this.labelShape.visible && mxUtils.intersects(bounds, this.labelShape.bounds))
 	{
 		w = mxConstants.HANDLE_SIZE + 3;
 		h = mxConstants.HANDLE_SIZE + 3;

@@ -193,6 +193,13 @@ mxShape.prototype.vmlScale = 1;
 mxShape.prototype.outline = false;
 
 /**
+ * Variable: visible
+ * 
+ * Specifies if the shape is visible. Default is true.
+ */
+mxShape.prototype.visible = true;
+
+/**
  * Function: init
  *
  * Initializes the shape by creaing the DOM node using <create>
@@ -341,7 +348,7 @@ mxShape.prototype.redraw = function()
 {
 	this.updateBoundsFromPoints();
 	
-	if (this.checkBounds())
+	if (this.visible && this.checkBounds())
 	{
 		this.clear();
 		

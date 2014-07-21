@@ -1527,15 +1527,7 @@ mxEdgeHandler.prototype.redrawHandles = function()
 
 	// Shows or hides the label handle depending on the label
 	var lab = this.graph.getLabel(cell);
-	
-	if (lab != null && lab.length > 0 && this.graph.isLabelMovable(cell))
-	{
-		this.labelShape.node.style.display = '';
-	}
-	else
-	{
-		this.labelShape.node.style.display = 'none';
-	}
+	this.labelShape.visible = (lab != null && lab.length > 0 && this.graph.isLabelMovable(cell));
 	
 	if (this.bends != null && this.bends.length > 0)
 	{
@@ -1597,8 +1589,7 @@ mxEdgeHandler.prototype.redrawInnerBends = function(p0, pe)
 				{
 					this.checkLabelHandle(this.bends[i].bounds);
 				}
-				else if (this.handleImage == null && this.labelShape.node.style.display != 'none' &&
-						mxUtils.intersects(this.bends[i].bounds, this.labelShape.bounds))
+				else if (this.handleImage == null && this.labelShape.visible && mxUtils.intersects(this.bends[i].bounds, this.labelShape.bounds))
 				{
 					w = mxConstants.HANDLE_SIZE + 3;
 					h = mxConstants.HANDLE_SIZE + 3;
