@@ -505,7 +505,7 @@ mxEdgeHandler.prototype.isHandleVisible = function(index)
 	var source = this.state.getVisibleTerminalState(true);
 	var target = this.state.getVisibleTerminalState(false);
 	var geo = this.graph.getCellGeometry(this.state.cell);
-	var edgeStyle = this.graph.view.getEdgeStyle(this.state, geo.points, source, target);
+	var edgeStyle = (geo != null) ? this.graph.view.getEdgeStyle(this.state, geo.points, source, target) : null;
 
 	return edgeStyle != mxEdgeStyle.EntityRelation || index == 0 || index == this.abspoints.length - 1;
 };
