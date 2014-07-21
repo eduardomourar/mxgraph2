@@ -1525,6 +1525,18 @@ mxEdgeHandler.prototype.redrawHandles = function()
 	this.labelShape.bounds = new mxRectangle(Math.round(this.label.x - b.width / 2),
 		Math.round(this.label.y - b.height / 2), b.width, b.height);
 
+	// Shows or hides the label handle depending on the label
+	var lab = this.graph.getLabel(cell);
+	
+	if (lab != null && lab.length > 0 && this.graph.isLabelMovable(cell))
+	{
+		this.labelShape.node.style.display = '';
+	}
+	else
+	{
+		this.labelShape.node.style.display = 'none';
+	}
+	
 	if (this.bends != null && this.bends.length > 0)
 	{
 		var n = this.abspoints.length - 1;
@@ -1552,18 +1564,6 @@ mxEdgeHandler.prototype.redrawHandles = function()
 
 		this.redrawInnerBends(p0, pe);
 		this.labelShape.redraw();
-	}
-	
-	// Shows or hides the label handle depending on the label
-	var lab = this.graph.getLabel(cell);
-	
-	if (lab != null && lab.length > 0 && this.graph.isLabelMovable(cell))
-	{
-		this.labelShape.node.style.visibility = 'visible';
-	}
-	else
-	{
-		this.labelShape.node.style.visibility = 'hidden';
 	}
 };
 
@@ -1674,6 +1674,12 @@ mxEdgeHandler.prototype.refresh = function()
 	{
 		this.destroyBends();
 		this.bends = this.createBends();
+	}
+	
+	// Puts label node on top of bends
+	if (this.labelShape != null && this.labelShape.node != null && this.labelShape.node.parentNode != null)
+	{
+		this.labelShape.node.parentNode.appendChild(this.labelShape.node);
 	}
 };
 

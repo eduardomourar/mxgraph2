@@ -231,19 +231,20 @@ mxElbowEdgeHandler.prototype.redrawInnerBends = function(p0, pe)
 	var b = this.bends[1].bounds;
 	var w = b.width;
 	var h = b.height;
-	
+	var bounds = new mxRectangle(Math.round(pt.x - w / 2), Math.round(pt.y - h / 2), w, h);
+
 	if (this.manageLabelHandle)
 	{
-		this.checkLabelHandle(b);
+		this.checkLabelHandle(bounds);
 	}
-	else if (this.handleImage == null && this.labelShape.node.style.visibility != 'hidden' &&
-		mxUtils.intersects(b, this.labelShape.bounds))
+	else if (this.handleImage == null && this.labelShape.node.style.display != 'none' &&
+		mxUtils.intersects(bounds, this.labelShape.bounds))
 	{
 		w = mxConstants.HANDLE_SIZE + 3;
 		h = mxConstants.HANDLE_SIZE + 3;
+		bounds = new mxRectangle(Math.round(pt.x - w / 2), Math.round(pt.y - h / 2), w, h);
 	}
 
-	var bounds = new mxRectangle(Math.round(pt.x - w / 2), Math.round(pt.y - h / 2), w, h);
 	this.bends[1].bounds = bounds;
 	this.bends[1].redraw();
 	

@@ -1,5 +1,6 @@
-- Fixes mxUtils.getDocumentScrollOrigin for quirks mode [JavaScript]
 - Adds mxRadialTreeLayout [JavaScript]
+- Uses display:none to hide label shape in mxEdgeHandler [JavaScript]
+- Fixes mxUtils.getDocumentScrollOrigin for quirks mode [JavaScript]
 - Fixes rounding errors in mxVertexHandler [JavaScript]
 - mxEdgeHandler calls refresh if waypoints have changed [JavaScript]
 - Fixes alignment in mxConnectionHandler.createTargetVertex [JavaScript]
