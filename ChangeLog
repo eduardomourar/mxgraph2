@@ -1,4 +1,4 @@
-- Fixes mxUtils.get/setTextContent for quirks mode [JavaScript]
+- Fixes mxUtils.get/setTextContent for HTML nodes in quirks mode [JavaScript]
 - Adds mxRadialTreeLayout [JavaScript]
 - Resize bend in mxEdgeHandler if intersects with label handle [JavaScript]
 - Uses shape.visible to hide label shape in mxEdgeHandler [JavaScript]

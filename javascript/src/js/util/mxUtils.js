@@ -879,7 +879,7 @@ var mxUtils =
 	 */
 	getTextContent: function(node)
 	{
-		if (mxClient.IS_QUIRKS)
+		if (node.innerText !== undefined)
 		{
 			return node.innerText;
 		}
@@ -901,7 +901,7 @@ var mxUtils =
 	 */
 	setTextContent: function(node, text)
 	{
-		if (mxClient.IS_QUIRKS)
+		if (node.innerText !== undefined)
 		{
 			node.innerText = text;
 		}
