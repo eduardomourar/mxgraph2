@@ -502,8 +502,12 @@ mxEdgeHandler.prototype.isHandleEnabled = function(index)
  */
 mxEdgeHandler.prototype.isHandleVisible = function(index)
 {
-	return this.state.style[mxConstants.STYLE_EDGE] != mxConstants.EDGESTYLE_ENTITY_RELATION ||
-		index == 0 || index == this.abspoints.length - 1;
+	var source = this.state.getVisibleTerminalState(true);
+	var target = this.state.getVisibleTerminalState(false);
+	var geo = this.graph.getCellGeometry(this.state.cell);
+	var edgeStyle = this.graph.view.getEdgeStyle(this.state, geo.points, source, target);
+
+	return edgeStyle != mxEdgeStyle.EntityRelation || index == 0 || index == this.abspoints.length - 1;
 };
 
 /**
