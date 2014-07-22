@@ -11860,69 +11860,66 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 	{
 		var currentTime = new Date().getTime();
 
-		if (this.isEnabled())
+		// NOTE: Second mouseDown for double click missing in quirks mode
+		if ((!mxClient.IS_QUIRKS && evtName == mxEvent.MOUSE_DOWN) || (mxClient.IS_QUIRKS && evtName == mxEvent.MOUSE_UP && !this.fireDoubleClick))
 		{
-			// NOTE: Second mouseDown for double click missing in quirks mode
-			if ((!mxClient.IS_QUIRKS && evtName == mxEvent.MOUSE_DOWN) || (mxClient.IS_QUIRKS && evtName == mxEvent.MOUSE_UP && !this.fireDoubleClick))
+			if (this.lastTouchEvent != null && this.lastTouchEvent != me.getEvent() &&
+				currentTime - this.lastTouchTime < this.doubleTapTimeout &&
+				Math.abs(this.lastTouchX - me.getX()) < this.doubleTapTolerance &&
+				Math.abs(this.lastTouchY - me.getY()) < this.doubleTapTolerance &&
+				this.doubleClickCounter < 2)
 			{
-				if (this.lastTouchEvent != null && this.lastTouchEvent != me.getEvent() &&
-					currentTime - this.lastTouchTime < this.doubleTapTimeout &&
-					Math.abs(this.lastTouchX - me.getX()) < this.doubleTapTolerance &&
-					Math.abs(this.lastTouchY - me.getY()) < this.doubleTapTolerance &&
-					this.doubleClickCounter < 2)
+				this.doubleClickCounter++;
+				
+				if (evtName == mxEvent.MOUSE_UP)
 				{
-					this.doubleClickCounter++;
-					
-					if (evtName == mxEvent.MOUSE_UP)
+					if (me.getCell() == this.lastTouchCell && this.lastTouchCell != null)
 					{
-						if (me.getCell() == this.lastTouchCell && this.lastTouchCell != null)
-						{
-							this.lastTouchTime = 0;
-							var cell = this.lastTouchCell;
-							this.lastTouchCell = null;
-							this.dblClick(me.getEvent(), cell);
-						}
-					}
-					else
-					{
-						this.fireDoubleClick = true;
 						this.lastTouchTime = 0;
+						var cell = this.lastTouchCell;
+						this.lastTouchCell = null;
+						this.dblClick(me.getEvent(), cell);
 					}
-
-					mxEvent.consume(me.getEvent());
-					return;
-				}
-				else if (this.lastTouchEvent == null || this.lastTouchEvent != me.getEvent())
-				{
-					this.lastTouchCell = me.getCell();
-					this.lastTouchX = me.getX();
-					this.lastTouchY = me.getY();
-					this.lastTouchTime = currentTime;
-					this.lastTouchEvent = me.getEvent();
-					this.doubleClickCounter = 0;
-				}
-			}
-			else if ((this.isMouseDown || evtName == mxEvent.MOUSE_UP) && this.fireDoubleClick)
-			{
-				this.fireDoubleClick = false;
-				var cell = this.lastTouchCell;
-				this.lastTouchCell = null;
-				
-				// Workaround for Chrome/Safari not firing native double click events for double touch on background
-				var valid = (cell != null) || (mxEvent.isTouchEvent(me.getEvent()) && (mxClient.IS_GC || mxClient.IS_SF));
-				
-				if (valid && Math.abs(this.lastTouchX - me.getX()) < this.doubleTapTolerance &&
-					Math.abs(this.lastTouchY - me.getY()) < this.doubleTapTolerance)
-				{
-					this.dblClick(me.getEvent(), cell);
 				}
 				else
 				{
-					mxEvent.consume(me.getEvent());
+					this.fireDoubleClick = true;
+					this.lastTouchTime = 0;
 				}
-				
+
+				mxEvent.consume(me.getEvent());
 				return;
 			}
+			else if (this.lastTouchEvent == null || this.lastTouchEvent != me.getEvent())
+			{
+				this.lastTouchCell = me.getCell();
+				this.lastTouchX = me.getX();
+				this.lastTouchY = me.getY();
+				this.lastTouchTime = currentTime;
+				this.lastTouchEvent = me.getEvent();
+				this.doubleClickCounter = 0;
+			}
+		}
+		else if ((this.isMouseDown || evtName == mxEvent.MOUSE_UP) && this.fireDoubleClick)
+		{
+			this.fireDoubleClick = false;
+			var cell = this.lastTouchCell;
+			this.lastTouchCell = null;
+			
+			// Workaround for Chrome/Safari not firing native double click events for double touch on background
+			var valid = (cell != null) || (mxEvent.isTouchEvent(me.getEvent()) && (mxClient.IS_GC || mxClient.IS_SF));
+			
+			if (valid && Math.abs(this.lastTouchX - me.getX()) < this.doubleTapTolerance &&
+				Math.abs(this.lastTouchY - me.getY()) < this.doubleTapTolerance)
+			{
+				this.dblClick(me.getEvent(), cell);
+			}
+			else
+			{
+				mxEvent.consume(me.getEvent());
+			}
+			
+			return;
 		}
 	}
 

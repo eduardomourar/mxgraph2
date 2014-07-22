@@ -1,3 +1,4 @@
+- Fixes virtual dblClick in mxGraph.fireMouseEvent if disabled [JavaScript]
 - Fixes mxUtils.get/setTextContent for HTML nodes in quirks mode [JavaScript]
 - Adds mxRadialTreeLayout [JavaScript]
 - Resize bend in mxEdgeHandler if intersects with label handle [JavaScript]
