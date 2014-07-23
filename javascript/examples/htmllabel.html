@@ -66,10 +66,11 @@
 						if (cell.getAttribute('checked') == 'true')
 						{
 							checkbox.setAttribute('checked', 'checked');
+							checkbox.defaultChecked = true;
 						}
 						
 						// Writes back to cell if checkbox is clicked
-						mxEvent.addListener(checkbox, 'change', function(evt)
+						mxEvent.addListener(checkbox, (mxClient.IS_QUIRKS) ? 'click' : 'change', function(evt)
 						{
 							var elt = cell.value.cloneNode(true);
 							elt.setAttribute('checked', (checkbox.checked) ? 'true' : 'false');
@@ -80,8 +81,6 @@
 						div.appendChild(checkbox);
 						
 						return div;
-						
-						return cell.getAttribute('label') + '<br><input type="checkbox" checked/>';
 					}
 
 					return '';
