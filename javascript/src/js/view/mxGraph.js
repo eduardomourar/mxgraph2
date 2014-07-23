@@ -11912,6 +11912,7 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 			this.fireDoubleClick = false;
 			var cell = this.lastTouchCell;
 			this.lastTouchCell = null;
+			this.isMouseDown = false;
 			
 			// Workaround for Chrome/Safari not firing native double click events for double touch on background
 			var valid = (cell != null) || (mxEvent.isTouchEvent(me.getEvent()) && (mxClient.IS_GC || mxClient.IS_SF));
