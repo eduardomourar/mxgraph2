@@ -1,3 +1,4 @@
+- Uses selectAll command in mxCellEditor.startEditing for iOS [JavaScript]
 - mxGraph.fireMouseEvent fires mouseUp after partial double click for quirks [JavaScript]
 - Ignores document events from container, if mouse not down in mxGraphView [JavaScript]
 - Disables dragStart in quirks mode on anchors in mxConstraintHandler [JavaScript]
