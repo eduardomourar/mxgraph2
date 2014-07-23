@@ -27,7 +27,6 @@
 -------------------------
 
 - Move mxLayoutManager into validation process (resizeParent cycle)
-- Group JS example list, improve descriptions
 - Add single handle for multiple selected cells
 - Fix resize of rotated groups with layouts
 
