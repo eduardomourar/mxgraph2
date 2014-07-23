@@ -2394,8 +2394,7 @@ mxGraphView.prototype.installListeners = function()
 		// Adds basic listeners for graph event dispatching
 		mxEvent.addGestureListeners(container, mxUtils.bind(this, function(evt)
 		{
-			// Condition to avoid scrollbar events starting a rubberband
-			// selection
+			// Condition to avoid scrollbar events starting a rubberband selection
 			if (this.isContainerEvent(evt) && ((!mxClient.IS_IE && 
 				!mxClient.IS_GC && !mxClient.IS_OP && !mxClient.IS_SF) ||
 				!this.isScrollEvent(evt)))
@@ -2476,7 +2475,7 @@ mxGraphView.prototype.installListeners = function()
 			}
 
 			if (this.captureDocumentGesture && graph.isMouseDown && graph.container != null &&
-				graph.container.style.display != 'none' &&
+				!this.isContainerEvent(evt) && graph.container.style.display != 'none' &&
 				graph.container.style.visibility != 'hidden' && !mxEvent.isConsumed(evt))
 			{
 				graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt, getState(evt)));
@@ -2485,8 +2484,8 @@ mxGraphView.prototype.installListeners = function()
 		
 		this.endHandler = mxUtils.bind(this, function(evt)
 		{
-			if (this.captureDocumentGesture && graph.container != null &&
-				graph.container.style.display != 'none' &&
+			if (this.captureDocumentGesture && graph.isMouseDown && graph.container != null &&
+				!this.isContainerEvent(evt) && graph.container.style.display != 'none' &&
 				graph.container.style.visibility != 'hidden')
 			{
 				graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));

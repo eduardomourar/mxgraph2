@@ -1,3 +1,4 @@
+- Ignores document events from container, if mouse not down in mxGraphView [JavaScript]
 - Disables dragStart in quirks mode on anchors in mxConstraintHandler [JavaScript]
 - Fixes virtual dblClick in mxGraph.fireMouseEvent if disabled [JavaScript]
 - Fixes mxUtils.get/setTextContent for HTML nodes in quirks mode [JavaScript]
