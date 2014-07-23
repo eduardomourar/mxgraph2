@@ -11870,6 +11870,7 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 				this.doubleClickCounter < 2)
 			{
 				this.doubleClickCounter++;
+				var doubleClickFired = false;
 				
 				if (evtName == mxEvent.MOUSE_UP)
 				{
@@ -11878,7 +11879,9 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 						this.lastTouchTime = 0;
 						var cell = this.lastTouchCell;
 						this.lastTouchCell = null;
+
 						this.dblClick(me.getEvent(), cell);
+						doubleClickFired = true;
 					}
 				}
 				else
@@ -11887,8 +11890,12 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 					this.lastTouchTime = 0;
 				}
 
-				mxEvent.consume(me.getEvent());
-				return;
+				// Do not ignore mouse up in quirks in this case
+				if (!mxClient.IS_QUIRKS || doubleClickFired)
+				{
+					mxEvent.consume(me.getEvent());
+					return;
+				}
 			}
 			else if (this.lastTouchEvent == null || this.lastTouchEvent != me.getEvent())
 			{
