@@ -656,6 +656,7 @@ Actions.prototype.init = function()
 	this.addAction('shadow', function() { graph.toggleCellStyles(mxConstants.STYLE_SHADOW); });
 	this.addAction('dashed', function() { graph.toggleCellStyles(mxConstants.STYLE_DASHED); });
 	this.addAction('rounded', function() { graph.toggleCellStyles(mxConstants.STYLE_ROUNDED); });
+	this.addAction('collapsible', function() { graph.toggleCellStyles('container'); });
 	this.addAction('curved', function() { graph.toggleCellStyles(mxConstants.STYLE_CURVED); });
 	this.put('style', new Action(mxResources.get('edit') + '...', mxUtils.bind(this, function()
 	{

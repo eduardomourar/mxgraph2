@@ -46,6 +46,7 @@ circle=Circle
 classic=Classic
 clipart=Clipart
 collapse=Collapse
+collapsible=Collapsible
 connect=Connect
 connection=Connection
 connectionPoints=Connection points

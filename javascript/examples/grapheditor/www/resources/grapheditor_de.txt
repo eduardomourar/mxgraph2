@@ -46,6 +46,7 @@ circle=Kreis
 classic=Klassisch
 clipart=Clipart
 collapse=Einklappen
+collapsible=Einklappbar
 connect=Verbinden
 connection=Verbindung
 connectionPoints=Verbindungspunkte

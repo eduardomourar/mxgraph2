@@ -750,7 +750,7 @@ EditorUi.prototype.updateActionStates = function()
 	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'fontColor',
 	           'delete', 'duplicate', 'style', 'fillColor', 'gradientColor', 'strokeColor',
 	           'backgroundColor', 'borderColor', 'toFront', 'toBack', 'dashed', 'rounded',
-	           'shadow', 'tilt', 'autosize', 'lockUnlock', 'editData'];
+	           'shadow', 'tilt', 'autosize', 'collapsible', 'lockUnlock', 'editData'];
 	
 	for (var i = 0; i < actions.length; i++)
 	{

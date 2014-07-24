@@ -427,7 +427,7 @@ Menus.prototype.init = function()
 		this.addMenuItems(menu, ['layers'], parent);
 		this.addSubmenu('navigation', menu, parent);
 		this.addSubmenu('insert', menu, parent);
-		this.addMenuItems(menu, ['-', 'group', 'ungroup', 'removeFromGroup', '-', 'autosize'], parent);
+		this.addMenuItems(menu, ['-', 'group', 'ungroup', 'removeFromGroup', '-', 'collapsible', 'autosize'], parent);
 	}))).isEnabled = isGraphEnabled;
 	this.put('insert', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -789,6 +789,11 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 			{
 				menu.addSeparator();
 				this.addMenuItems(menu, ['group'], null, evt);
+			}
+			else (graph.getSelectionCount() == 1 && graph.getModel().getChildCount(graph.getSelectionCell()) > 0)
+			{
+				menu.addSeparator();
+				this.addMenuItems(menu, ['ungroup'], null, evt);
 			}
 			
 			if (graph.getSelectionCount() == 1)
