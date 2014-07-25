@@ -449,15 +449,15 @@ Graph.prototype.isValidDropTarget = function(cell)
  */
 Graph.prototype.isContainer = function(cell)
 {
+	var state = this.view.getState(cell);
+	var style = (state != null) ? state.style : this.getCellStyle(cell);
+	
 	if (this.isSwimlane(cell))
 	{
-		return true;
+		return style['container'] != '0';
 	}
 	else
 	{
-		var state = this.view.getState(cell);
-		var style = (state != null) ? state.style : this.getCellStyle(cell);
-	
 		return style['container'] == '1';
 	}
 };
