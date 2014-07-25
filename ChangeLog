@@ -1,3 +1,5 @@
+25-JUL-2014: 2.9.0.0
+
 - Uses selectAll command in mxCellEditor.startEditing for iOS [JavaScript]
 - mxGraph.fireMouseEvent fires mouseUp after partial double click for quirks [JavaScript]
 - Ignores document events from container, if mouse not down in mxGraphView [JavaScript]
