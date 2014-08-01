@@ -26,6 +26,7 @@
 --    mxGraph Core     --
 -------------------------
 
+- Fix move of parent and children should not double move children
 - Move mxLayoutManager into validation process (resizeParent cycle)
 - Add single handle for multiple selected cells
 - Fix resize of rotated groups with layouts
