@@ -28,7 +28,8 @@ var mxClient =
 	/**
 	 * Variable: IS_IE
 	 *
-	 * True if the current browser is Internet Explorer 10 or below.
+	 * True if the current browser is Internet Explorer 10 or below. Use <mxClient.IS_IE11>
+	 * to detect IE 11.
 	 */
 	IS_IE: navigator.userAgent.indexOf('MSIE') >= 0,
 
@@ -38,6 +39,13 @@ var mxClient =
 	 * True if the current browser is Internet Explorer 6.x.
 	 */
 	IS_IE6: navigator.userAgent.indexOf('MSIE 6') >= 0,
+
+	/**
+	 * Variable: IS_IE11
+	 *
+	 * True if the current browser is Internet Explorer 6.x.
+	 */
+	IS_IE11: !!navigator.userAgent.match(/Trident\/7\./),
 
 	/**
 	 * Variable: IS_QUIRKS

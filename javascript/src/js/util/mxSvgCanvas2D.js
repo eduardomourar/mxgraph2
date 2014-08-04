@@ -1063,7 +1063,7 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 
 	// Uses DOM API where available. This cannot be used in IE9/10 to avoid
 	// an opening and two (!) closing TBODY tags being added to tables.
-	if (!mxClient.IS_IE && document.createElementNS)
+	if (!mxClient.IS_IE && !mxClient.IS_IE11 && document.createElementNS)
 	{
 		var div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
 		div.setAttribute('style', style);

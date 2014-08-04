@@ -1,3 +1,5 @@
+- Fixes XHTML export in mxSvgCanvas for IE11 standards [JavaScript]
+- Adds mxClient.IS_IE11 [JavaScript]
 - Fixes SVG export for HTML labels in IE9 standards mode [JavaScript]
 - mxUtils.createXmlDocumnt returns ActiveX object in IE9 standards mode [JavaScript]
 
