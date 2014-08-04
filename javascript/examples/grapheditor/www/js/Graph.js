@@ -759,6 +759,7 @@ Graph.prototype.getSvg = function(background, scale, border, nocrop)
 	if (svgDoc.createElementNS == null)
 	{
     	root.setAttribute('xmlns', mxConstants.NS_SVG);
+    	root.setAttribute('xmlns:xlink', mxConstants.NS_XLINK);
 	}
 	else
 	{

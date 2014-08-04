@@ -1,3 +1,6 @@
+- Fixes SVG export for HTML labels in IE9 standards mode [JavaScript]
+- mxUtils.createXmlDocumnt returns ActiveX object in IE9 standards mode [JavaScript]
+
 31-JUL-2014: 2.9.0.1
 
 - Fixes possible NPE in mxEdgeHandler.mouseMove [JavaScript]

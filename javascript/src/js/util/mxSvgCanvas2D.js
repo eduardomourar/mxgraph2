@@ -16,6 +16,7 @@
  * if (svgDoc.createElementNS == null)
  * {
  *   root.setAttribute('xmlns', mxConstants.NS_SVG);
+ *   root.setAttribute('xmlns:xlink', mxConstants.NS_XLINK);
  * }
  * else
  * {
@@ -911,9 +912,8 @@ mxSvgCanvas2D.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
 	node.setAttribute('width', this.format(w * s.scale));
 	node.setAttribute('height', this.format(h * s.scale));
 	
-	// Workaround for implicit namespace handling in HTML5 export, IE adds NS1 namespace so use code below
-	// in all IE versions except quirks mode. KNOWN: Adds xlink namespace to each image tag in output.
-	if (node.setAttributeNS == null || (this.root.ownerDocument != document && document.documentMode == null))
+	// Workaround for missing namespace support
+	if (node.setAttributeNS == null)
 	{
 		node.setAttribute('xlink:href', src);
 	}
@@ -1198,13 +1198,15 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			var ow = 0;
 			var oh = 0;
 			
-			if (mxClient.IS_IE && !mxClient.IS_SVG)
+			// NOTE: IE9 standards is always export as it does not support FO in native output
+			if (mxClient.IS_IE && (document.documentMode == 9 || !mxClient.IS_SVG))
 			{
 				// Handles non-standard namespace for getting size in IE
 				var clone = document.createElement('div');
 				
 				clone.style.cssText = div.getAttribute('style');
 				clone.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+				clone.style.position = 'absolute';
 				clone.style.visibility = 'hidden';
 				clone.innerHTML = (mxUtils.isNode(str)) ? str.outerHTML : str;
 
