@@ -1,3 +1,4 @@
+- Uses graph.cloneCells for cloning templates in toolbars [JavaScript]
 - Adds isCellVisibleFn argument in mxTemporaryCellStates [JavaScript]
 - Adds clip argument in mxPrintPreview.addGraphFragment [JavaScript]
 - Does no longer ignore all clipped labels in graph bounds [Java/JavaScript]
