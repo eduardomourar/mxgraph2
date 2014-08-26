@@ -28,42 +28,40 @@
 
 - Fix move of parent and children should not double move children
 - Move mxLayoutManager into validation process (resizeParent cycle)
+
 - Add single handle for multiple selected cells
 - Fix resize of rotated groups with layouts
-
 - Add dynamic translate with hook in graph view
 - Research alternative namespace solutions
+
 - Use spacing styles with overflow=fill
 - Add support for touchCancel event, use requestAnimationFrame
-
-- Add live preview while moving, reconnect
+- Add live preview while moving, reconnect, rotate
 - Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)
+
 - Check overflow=fill in quirks vs standards with no HTML labels (inconsistent rendering)
 - Fix missing labels for zoom > 4.3 in print preview for IE8 standards
-
 - Fix loops for fixed connection points
 - Fix arcToCurves for special cases (eg. mxgraph.flowchart.data)
+
 - Add bridges for edge crossings
 - Invert loop order in mxGraph.removeCells
-
 - Add circular connector style https://github.com/jgraph/mxgraph/issues/15
 - Fix autoScroll when adding vertex via DnD from sidebar on Win8 with touch (scroll ignored?) (not new)
+
 - Fix scaling of background page in editor for pinch
 - Fix IE10 on Win8 fires double click after double tap editing and click on background
-
 - Fix FF on Win8 fires two (should be one) click events and a double click for double tap on background
 - Fix constrainChild/expandParent for rotation
+
 - Fix ignored ancestors if maximumGraphBounds in constrainChild (see constrain.html)
 - Add workaround for touch support, guides stay visible on move in FF/Win8
-
 - Fix pinch (zoom) on Chromebook, Android and msPointerEvents (not new)
 - Fix hit detection on arrow shape in mxGraph.getCellAt
+
 - Fix edge styles for rotated edges, terminals
 - Cascaded rotation for edges (points)
-
 - Remove duplicates in mxGraph.removeCells
-- Add live preview for move, rotate
-- Fix clipping of oversize labels in IE10
 - Add names (refs) for constraints/ports
 
 - Print preview in IE 9 standards causes GraphEditor to 'corrupt'
@@ -131,7 +129,7 @@
 - Create mxCell via factory method for easier subclassing
 - Fix edge points update process (fixed vs. floating)
 
-- Use document fragments for faster rendering
+- Remove hidden DOM nodes in mxPrintPreview with bounds check
 - Add hook in mxDefaultTextShape.paintShape for y-computation
 - Remove all i18n resources from core, use exceptions instead
 - Fix focus lost in diagrameditor.html after double click on edge
