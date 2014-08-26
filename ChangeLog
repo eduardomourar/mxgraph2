@@ -1,4 +1,4 @@
-- Adds mxClient.IS_IE11 [JavaScript]
+- Adds isCellVisibleFn argument in mxTemporaryCellStates [JavaScript]
 - Adds clip argument in mxPrintPreview.addGraphFragment [JavaScript]
 - Does no longer ignore all clipped labels in graph bounds [Java/JavaScript]
 - Cell style passed to mxText in mxCellRenderer.createLabel [JavaScript]
@@ -11,6 +11,7 @@
 - Fixes XHTML export in mxSvgCanvas for IE11 standards [JavaScript]
 - Fixes SVG export for HTML labels in IE9 standards mode [JavaScript]
 - mxUtils.createXmlDocument returns ActiveX object in IE9 standards mode [JavaScript]
+- Adds mxClient.IS_IE11 [JavaScript]
 
 31-JUL-2014: 2.9.0.1
 
