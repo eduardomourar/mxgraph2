@@ -1,3 +1,5 @@
+29-AUG-2014: 3.0.0.0
+
 - Fixes resize of relative child cells in mxGraph.scaleCell [JavaScript]
 - Uses graph.cloneCells for cloning templates in toolbars [JavaScript]
 - Adds isCellVisibleFn argument in mxTemporaryCellStates [JavaScript]
