@@ -577,7 +577,16 @@ mxSvgCanvas2D.prototype.updateFill = function()
 		if (s.gradientColor != null)
 		{
 			var id = this.getSvgGradient(s.fillColor, s.gradientColor, s.fillAlpha, s.gradientAlpha, s.gradientDirection);
-			this.node.setAttribute('fill', 'url(#' + id + ')');
+
+			if (this.root.ownerDocument == document)
+			{
+				// Workaround for potential base tag
+				this.node.setAttribute('fill', 'url(' + window.location + '#' + id + ')');
+			}
+			else
+			{
+				this.node.setAttribute('fill', 'url(#' + id + ')');
+			}
 		}
 		else
 		{
@@ -1542,7 +1551,15 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 			this.root.appendChild(c);
 		}
 		
-		node.setAttribute('clip-path', 'url(#' + c.getAttribute('id') + ')');
+		if (this.root.ownerDocument == document)
+		{
+			// Workaround for potential base tag
+			node.setAttribute('clip-path', 'url(' + window.location + '#' + c.getAttribute('id') + ')');
+		}
+		else
+		{
+			node.setAttribute('clip-path', 'url(#' + c.getAttribute('id') + ')');
+		}
 	}
 
 	// Default is left

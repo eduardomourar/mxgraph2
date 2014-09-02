@@ -1,4 +1,5 @@
-- Adds new example drop.html [JavaScript] 
+- Fixes gradients, clipping in SVG if base tag is used [JavaScript]
+- Adds new example drop.html [JavaScript]
 
 29-AUG-2014: 3.0.0.0
 
