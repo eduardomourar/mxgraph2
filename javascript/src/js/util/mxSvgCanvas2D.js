@@ -581,7 +581,8 @@ mxSvgCanvas2D.prototype.updateFill = function()
 			if (this.root.ownerDocument == document)
 			{
 				// Workaround for potential base tag
-				this.node.setAttribute('fill', 'url(' + window.location + '#' + id + ')');
+				var base = window.location.origin + window.location.pathname + window.location.search;
+				this.node.setAttribute('fill', 'url(' + base + '#' + id + ')');
 			}
 			else
 			{
@@ -1554,7 +1555,8 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 		if (this.root.ownerDocument == document)
 		{
 			// Workaround for potential base tag
-			node.setAttribute('clip-path', 'url(' + window.location + '#' + c.getAttribute('id') + ')');
+			var base = window.location.origin + window.location.pathname + window.location.search;
+			node.setAttribute('clip-path', 'url(' + base + '#' + c.getAttribute('id') + ')');
 		}
 		else
 		{
