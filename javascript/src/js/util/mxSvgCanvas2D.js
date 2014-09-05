@@ -1040,12 +1040,10 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 		
 	if (align == mxConstants.ALIGN_CENTER)
 	{
-		css += 'text-align:center;';
 		style += 'text-align:center;';
 	}
 	else if (align == mxConstants.ALIGN_RIGHT)
 	{
-		css += 'text-align:right;';
 		style += 'text-align:right;';
 	}
 	
@@ -1071,7 +1069,7 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 		if (overflow != 'fill' && overflow != 'width')
 		{
 			// Inner div always needed to measure wrapped text
-			val = '<div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;' + css + '">' + val + '</div>';
+			val = '<div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;text-align:inherit;text-decoration:inherit;' + css + '">' + val + '</div>';
 		}
 		else
 		{
