@@ -1,3 +1,4 @@
+- Fixes underline text style with foreignObjects [JavaScript]
 - Fixes gradients, clipping in SVG if base tag is used [JavaScript]
 - Adds new example drop.html [JavaScript]
 
