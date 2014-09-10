@@ -73,54 +73,54 @@ mxRadialTreeLayout.prototype.nodeDistance = 20;
 mxRadialTreeLayout.prototype.autoRadius = false;
 
 /**
- * Variable: minradiusx
- * 
- * The minimum radius of each level in x axis
- */
-mxRadialTreeLayout.prototype.minradiusx = 80;
-
-/**
- * Variable: minradiusy
- * 
- * The minimum radius of each level in y axis
- */
-mxRadialTreeLayout.prototype.minradiusy = 80;
-
-/**
- * Variable: maxradiusy
- * 
- * The maximum radius of each level in x axis
- */
-mxRadialTreeLayout.prototype.maxradiusx = 1000;
-
-/**
- * Variable: maxradiusy
- * 
- * The maximum radius of each level in y axis
- */
-mxRadialTreeLayout.prototype.maxradiusy = 1000;
-
-/**
- * Variable: radiusx
- * 
- * x-axis radius of each circle
- */
-mxRadialTreeLayout.prototype.radiusx = 150;
-
-/**
- * Variable: radiusy
- * 
- * y-axis radius of each circle
- */
-mxRadialTreeLayout.prototype.radiusy = 150;
-
-/**
  * Variable: sortEdges
  * 
  * Specifies if edges should be sorted according to the order of their
  * opposite terminal cell in the model.
  */
 mxRadialTreeLayout.prototype.sortEdges = false;
+
+/**
+ * Variable: rowMinX
+ * 
+ * Array of leftmost x coordinate of each row
+ */
+mxRadialTreeLayout.prototype.rowMinX = [];
+
+/**
+ * Variable: rowMaxX
+ * 
+ * Array of rightmost x coordinate of each row
+ */
+mxRadialTreeLayout.prototype.rowMaxX = [];
+
+/**
+ * Variable: rowMinCenX
+ * 
+ * Array of x coordinate of leftmost vertex of each row
+ */
+mxRadialTreeLayout.prototype.rowMinCenX = [];
+
+/**
+ * Variable: rowMaxCenX
+ * 
+ * Array of x coordinate of rightmost vertex of each row
+ */
+mxRadialTreeLayout.prototype.rowMaxCenX = [];
+
+/**
+ * Variable: rowRadi
+ * 
+ * Array of y deltas of each row behind root vertex, also the radius in the tree
+ */
+mxRadialTreeLayout.prototype.rowRadi = [];
+
+/**
+ * Variable: row
+ * 
+ * Array of vertices on each row
+ */
+mxRadialTreeLayout.prototype.row = [];
 
 /**
  * Function: isVertexIgnored
@@ -160,6 +160,7 @@ mxRadialTreeLayout.prototype.execute = function(parent, root)
 	this.edgeRouting = false;
 	this.levelDistance = 120;
 	this.nodeDistance = 10;
+	//this.horizontal = false;
 
 	mxCompactTreeLayout.prototype.execute.apply(this, arguments);
 	
@@ -176,126 +177,143 @@ mxRadialTreeLayout.prototype.execute = function(parent, root)
 		bounds.add(vertexBounds);
 	}
 	
-	// Place root's children proportionally around the first level
-	var child = this.node.child;
+	this.calcRowDims([this.node], 0);
 	
-	this.firstRowMinX = child != null ? this.getVertexBounds(child.cell).x : 0;
-	this.firstRowMaxX = child != null ? this.getVertexBounds(child.cell).x + this.getVertexBounds(child.cell).width : 0;
-	var row = [];
+	var maxLeftGrad = 0;
+	var maxRightGrad = 0;
 
-	while (child != null)
+	// Find the steepest left and right gradients
+	for (var i = 0; i < this.row.length; i++)
 	{
-		var cell = child.cell;
-		var vertexBounds = this.getVertexBounds(cell);
+		var leftGrad = (this.centerX - this.rowMinX[i] - this.nodeDistance) / this.rowRadi[i];
+		var rightGrad = (this.rowMaxX[i] - this.centerX - this.nodeDistance) / this.rowRadi[i];
 		
-		this.firstRowMinX = Math.min(vertexBounds.x, this.firstRowMinX);
-		this.firstRowMaxX = Math.max(vertexBounds.x + vertexBounds.width, this.firstRowMaxX);
+		maxLeftGrad = Math.max (maxLeftGrad, leftGrad);
+		maxRightGrad = Math.max (maxRightGrad, rightGrad);
+	}
+	
+	// Extend out row so they meet the maximum gradient and convert to polar co-ords
+	for (var i = 0; i < this.row.length; i++)
+	{
+		var xLeftLimit = this.centerX - this.nodeDistance - maxLeftGrad * this.rowRadi[i];
+		var xRightLimit = this.centerX + this.nodeDistance + maxRightGrad * this.rowRadi[i];
+		var fullWidth = xRightLimit - xLeftLimit;
 		
-		this.firstRadius = vertexBounds.y - bounds.y;
-		var xProportion = (vertexBounds.x - bounds.x) / bounds.width;
-		var theta =  2 * Math.PI * xProportion;
-		this.setVertexLocation(cell, this.centerX - vertexBounds.width / 2 + this.firstRadius * Math.cos(theta), this.centerY + this.firstRadius * Math.sin(theta));
-		row.push(child);
-		child = child.next;
+		for (var j = 0; j < this.row[i].length; j ++)
+		{
+			var row = this.row[i];
+			var node = row[j];
+			var vertexBounds = this.getVertexBounds(node.cell);
+			var xProportion = (vertexBounds.x + vertexBounds.width / 2 - xLeftLimit) / (fullWidth);
+			var theta =  2 * Math.PI * xProportion;
+			node.theta = theta;
+		}
 	}
 
-	this.layerN([this.node], this.firstRowMinX, this.firstRowMaxX);
-};
-
-mxRadialTreeLayout.prototype.layerN = function(prevRow, prevRowMinX, prevRowMaxX)
-{
-	var nextRowMinX = null;
-	var nextRowMaxX = null;
-	var thisRow = [];
-	var radius = 0;
-	
-	if (prevRow != null && prevRow.length > 0 && prevRow[0] != null && prevRow[0].child != null)
+	// Post-process from outside inwards to try to align parents with children
+	for (var i = this.row.length - 2; i >= 0; i--)
 	{
-		radius = prevRow[0].child.y;
-
-		for (var i = 0; i < prevRow.length; i++)
+		var row = this.row[i];
+		
+		for (var j = 0; j < row.length; j++)
 		{
-			if (prevRow[i].child != null)
+			var node = row[j];
+			var child = node.child;
+			var counter = 0;
+			var totalTheta = 0;
+			
+			while (child != null)
 			{
-				child = prevRow[i].child;
+				totalTheta += child.theta;
+				counter++;
+				child = child.next;
+			}
+			
+			if (counter > 0)
+			{
+				var averTheta = totalTheta / counter;
 				
-				while (child != null)
+				if (averTheta > node.theta && j < row.length - 1)
 				{
-					var cell = child.cell;
-					var vertexBounds = this.getVertexBounds(cell);
-					
-					if (nextRowMinX == null)
-					{
-						nextRowMinX = vertexBounds.x;
-						nextRowMaxX = vertexBounds.x + vertexBounds.width;
-					}
-					else
-					{
-						nextRowMinX = Math.min(vertexBounds.x, nextRowMinX);
-						nextRowMaxX = Math.max(vertexBounds.x + vertexBounds.width, nextRowMaxX);
-					}
-	
-					thisRow.push(child);
-					child = child.next;
+					var nextTheta = row[j+1].theta;
+					node.theta = Math.min (averTheta, nextTheta - Math.PI/10);
+				}
+				else if (averTheta < node.theta && j > 0 )
+				{
+					var lastTheta = row[j-1].theta;
+					node.theta = Math.max (averTheta, lastTheta + Math.PI/10);
 				}
 			}
 		}
 	}
-	else
+	
+	// Set locations
+	for (var i = 0; i < this.row.length; i++)
+	{
+		for (var j = 0; j < this.row[i].length; j ++)
+		{
+			var row = this.row[i];
+			var node = row[j];
+			var vertexBounds = this.getVertexBounds(node.cell);
+			this.setVertexLocation(node.cell,
+									this.centerX - vertexBounds.width / 2 + this.rowRadi[i] * Math.cos(node.theta),
+									this.centerY - vertexBounds.height / 2 + this.rowRadi[i] * Math.sin(node.theta));
+		}
+	}
+};
+
+/**
+ * Function: calcRowDims
+ * 
+ * Recursive function to calculate the dimensions of each row
+ * 
+ * Parameters:
+ * 
+ * row - Array of internal nodes, the children of which are to be processed.
+ * rowNum - Integer indicating which row is being processed.
+ */
+mxRadialTreeLayout.prototype.calcRowDims = function(row, rowNum)
+{
+	if (row == null || row.length == 0)
 	{
 		return;
 	}
-	
-//		radius = vertexBounds.y - bounds.y;
-//		var xProportion = (vertexBounds.x - bounds.x) / bounds.width;
-//		var theta =  2 * Math.PI * xProportion;
-//		this.setVertexLocation(cell, centerX - vertexBounds.width / 2 + radius * Math.cos(theta), centerY + radius * Math.sin(theta));
-//		prevRow.push(child);
-//		child = child.next;
-	
-	var radiusProp = radius / this.firstRadius;
-	var firstRowCenterX = (this.firstRowMinX + this.firstRowMaxX)  / 2;
-	var firstRowNormalVector = (this.firstRowMaxX - this.firstRowMinX) / 2;
-	var newRowMinX = firstRowCenterX - firstRowNormalVector * radiusProp;
-	var newRowMaxX = firstRowCenterX + firstRowNormalVector * radiusProp;
-	
-	var prevRowWidth = prevRowMaxX - prevRowMinX;
-	var prevRowCenter = prevRowMinX + prevRowWidth / 2;
-	
-	for (var i = 0; i < prevRow.length; i++)
-	{
-		var parent = prevRow[i];
-		var nodeCen = parent.x + parent.width / 2;
-		var prevRowRadius = parent.y;
-		var nodeOffset = nodeCen - prevRowCenter;
-		var childrenOffset  = nodeOffset * radiusProp;
-		var rowOffset = nodeOffset - childrenOffset;
-		
-		if (prevRow[i].child != null)
-		{
-			child = prevRow[i].child;
-			
-			while (child != null)
-			{
-				var cell = child.cell;
-				var vertexBounds = this.getVertexBounds(cell);
-				this.setVertexLocation(cell, vertexBounds.x - rowOffset, vertexBounds.y);
 
-				thisRow.push(child);
-				child = child.next;
-			}	
+	// Place root's children proportionally around the first level
+	this.rowMinX[rowNum] = this.centerX;
+	this.rowMaxX[rowNum] = this.centerX;
+	this.rowMinCenX[rowNum] = this.centerX;
+	this.rowMaxCenX[rowNum] = this.centerX;
+	this.row[rowNum] = [];
+
+	var rowHasChildren = false;
+
+	for (var i = 0; i < row.length; i++)
+	{
+		var child = row[i].child;
+
+		while (child != null)
+		{
+			var cell = child.cell;
+			vertexBounds = this.getVertexBounds(cell);
+			
+			this.rowMinX[rowNum] = Math.min(vertexBounds.x, this.rowMinX[rowNum]);
+			this.rowMaxX[rowNum] = Math.max(vertexBounds.x + vertexBounds.width, this.rowMaxX[rowNum]);
+			this.rowMinCenX[rowNum] = Math.min(vertexBounds.x + vertexBounds.width / 2, this.rowMinCenX[rowNum]);
+			this.rowMaxCenX[rowNum] = Math.max(vertexBounds.x + vertexBounds.width / 2, this.rowMaxCenX[rowNum]);
+			this.rowRadi[rowNum] = vertexBounds.y - this.getVertexBounds(this.root).y;
+	
+			if (child.child != null)
+			{
+				rowHasChildren = true;
+			}
+			this.row[rowNum].push(child);
+			child = child.next;
 		}
 	}
 	
-	for (var i = 0; i < thisRow.length; i++)
+	if (rowHasChildren)
 	{
-		var cell = thisRow[i].cell;
-		var vertexBounds = this.getVertexBounds(cell);
-		
-		var xProportion = (vertexBounds.x - newRowMinX) / newRowMaxX - newRowMinX;
-		var theta =  2 * Math.PI * xProportion;
-		this.setVertexLocation(cell, this.centerX - vertexBounds.width / 2 + this.firstRadius * Math.cos(theta), this.centerY + this.firstRadius * Math.sin(theta));
+		this.calcRowDims(this.row[rowNum], rowNum + 1);
 	}
-
-	this.layerN(thisRow, newRowMinX, newRowMaxX);
 };
