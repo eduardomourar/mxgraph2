@@ -1,3 +1,5 @@
+10-SEP-2014: 3.0.1.0
+
 - Improves radial tree output [JavaScript]
 - Fixes artifacts when moving cells on iOS [JavaScript]
 - Fixes underline style for HTML labels in SVG, VML [JavaScript]
