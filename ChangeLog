@@ -1,3 +1,4 @@
+- Improves radial tree output [JavaScript]
 - Fixes artifacts when moving cells on iOS [JavaScript]
 - Fixes underline style for HTML labels in SVG, VML [JavaScript]
 - Fixes gradients, clipping in SVG if base tag is used [JavaScript]
