@@ -31,15 +31,17 @@
 		   	The code below defines the shape. The BoxShape function
 		   	it the constructor which creates a new object instance.
 		*/
-		function BoxShape() { };
-		
+		function BoxShape()
+		{
+			mxCylinder.call(this);
+		};
+
 		/*
 		   	The next lines use an mxCylinder instance to augment the
 		   	prototype of the shape ("inheritance") and reset the
 		   	constructor to the topmost function of the c'tor chain.
 		*/
-		BoxShape.prototype = new mxCylinder();
-		BoxShape.prototype.constructor = BoxShape;
+		mxUtils.extend(BoxShape, mxCylinder);
 		
 		// Defines the extrusion of the box as a "static class variable"
 		BoxShape.prototype.extrude = 10;
