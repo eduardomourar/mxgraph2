@@ -114,7 +114,7 @@ mxImageExport.prototype.drawCellState = function(state, canvas)
 	}
 	
 	// Paints the shape
-	if (state.shape instanceof mxShape)
+	if (state.shape instanceof mxShape && state.shape.checkBounds())
 	{
 		canvas.save();
 		state.shape.paint(canvas);
@@ -122,7 +122,7 @@ mxImageExport.prototype.drawCellState = function(state, canvas)
 	}
 	
 	// Paints the label
-	if (state.text != null)
+	if (state.text != null && state.text.checkBounds())
 	{
 		canvas.save();
 		state.text.paint(canvas);
