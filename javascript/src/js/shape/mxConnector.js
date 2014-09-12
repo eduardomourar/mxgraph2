@@ -75,10 +75,11 @@ mxConnector.prototype.createMarker = function(c, pts, source)
 {
 	var result = null;
 	var n = pts.length;
+	var type = mxUtils.getValue(this.style, (source) ? mxConstants.STYLE_STARTARROW : mxConstants.STYLE_ENDARROW);
 	var p0 = (source) ? pts[1] : pts[n - 2];
 	var pe = (source) ? pts[0] : pts[n - 1];
 	
-	if (p0 != null && pe != null)
+	if (type != null && p0 != null && pe != null)
 	{
 		var count = 1;
 		
@@ -102,7 +103,6 @@ mxConnector.prototype.createMarker = function(c, pts, source)
 		
 		// Allow for stroke width in the end point used and the 
 		// orthogonal vectors describing the direction of the marker
-		var type = mxUtils.getValue(this.style, (source) ? mxConstants.STYLE_STARTARROW : mxConstants.STYLE_ENDARROW);
 		var filled = this.style[(source) ? mxConstants.STYLE_STARTFILL : mxConstants.STYLE_ENDFILL] != 0;
 		
 		result = mxMarker.createMarker(c, this, type, pe, unitX, unitY, size, source, this.arrowStrokewidth, filled);
