@@ -238,26 +238,28 @@ mxGeometry.prototype.setTerminalPoint = function(point, isSource)
 mxGeometry.prototype.translate = function(dx, dy)
 {
 	var clone = this.clone();
+	dx = parseFloat(dx);
+	dy = parseFloat(dy);
 	
 	// Translates the geometry
 	if (!this.relative)
 	{
-		this.x += dx;
-		this.y += dy;
+		this.x = parseFloat(this.x) + dx;
+		this.y = parseFloat(this.y) + dy;
 	}
-	
+
 	// Translates the source point
 	if (this.sourcePoint != null)
 	{
-		this.sourcePoint.x += dx;
-		this.sourcePoint.y += dy;
+		this.sourcePoint.x = parseFloat(this.sourcePoint.x) + dx;
+		this.sourcePoint.y = parseFloat(this.sourcePoint.y) + dy;
 	}
 	
 	// Translates the target point
 	if (this.targetPoint != null)
 	{
-		this.targetPoint.x += dx;
-		this.targetPoint.y += dy;
+		this.targetPoint.x = parseFloat(this.targetPoint.x) + dx;
+		this.targetPoint.y = parseFloat(this.targetPoint.y) + dy;		
 	}
 
 	// Translate the control points
@@ -271,8 +273,8 @@ mxGeometry.prototype.translate = function(dx, dy)
 			
 			if (pt != null)
 			{
-				pt.x += dx;
-				pt.y += dy;
+				pt.x = parseFloat(pt.x) + dx;
+				pt.y = parseFloat(pt.y) + dy;
 			}
 		}
 	}

@@ -1,3 +1,4 @@
+- Fixes possible concatenation in mxGeometry.translate, mxGraph.translateCell [JavaScript]
 - Calls checkBounds in mxImageExport.drawCellState [JavaScript]
 - Adds mxRectangle.getRectangle, rotate90 [JavaScript]
 - Adds handles.html example [JavaScript]

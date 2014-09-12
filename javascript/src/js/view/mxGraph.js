@@ -5689,13 +5689,15 @@ mxGraph.prototype.translateCell = function(cell, dx, dy)
 
 	if (geo != null)
 	{
+		dx = parseFloat(dx);
+		dy = parseFloat(dy);
 		geo = geo.clone();
 		geo.translate(dx, dy);
 
 		if (!geo.relative && this.model.isVertex(cell) && !this.isAllowNegativeCoordinates())
 		{
-			geo.x = Math.max(0, geo.x);
-			geo.y = Math.max(0, geo.y);
+			geo.x = Math.max(0, parseFloat(geo.x));
+			geo.y = Math.max(0, parseFloat(geo.y));
 		}
 		
 		if (geo.relative && !this.model.isEdge(cell))
@@ -5706,8 +5708,8 @@ mxGraph.prototype.translateCell = function(cell, dx, dy)
 			}
 			else
 			{
-				geo.offset.x += dx;
-				geo.offset.y += dy;
+				geo.offset.x = parseFloat(geo.offset.x) + dx;
+				geo.offset.y = parseFloat(geo.offset.y) + dy;
 			}
 		}
 
