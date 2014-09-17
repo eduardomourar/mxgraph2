@@ -183,6 +183,7 @@ cp -r 2>/dev/null mxgraph/java/src jgraphx
 cp ../docs/jgraphx_license.txt jgraphx/license.txt
 
 sed "s/@MXGRAPH-VERSION@/$VERSION/;s/@MXGRAPH-DATE@/$TODAY/" ../etc/build/jgraphx-build.xml > jgraphx/build.xml
+sed "s/@MXGRAPH-VERSION@/$VERSION/;s/@MXGRAPH-DATE@/$TODAY/" ../etc/build/jgraphx-pom.xml > jgraphx/pom.xml
 cd jgraphx
 ant
 cd ..

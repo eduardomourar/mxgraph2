@@ -1,3 +1,4 @@
+- Adds pom.xml for Maven in JGraphX [Java]
 - Fixes relative edge child positions in containers [Java,JavaScript,Dotnet,Php]
 - Fixes possible concatenation in mxGeometry.translate, mxGraph.translateCell [JavaScript]
 - Calls checkBounds in mxImageExport.drawCellState [JavaScript]
