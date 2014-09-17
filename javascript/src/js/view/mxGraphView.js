@@ -1024,11 +1024,11 @@ mxGraphView.prototype.updateCellState = function(state)
 					if (model.isEdge(pState.cell))
 					{
 						var origin = this.getPoint(pState, geo);
-						
+
 						if (origin != null)
 						{
-							state.origin.x += (origin.x / this.scale) - this.translate.x;
-							state.origin.y += (origin.y / this.scale) - this.translate.y;
+							state.origin.x += (origin.x / this.scale) - pState.origin.x - this.translate.x;
+							state.origin.y += (origin.y / this.scale) - pState.origin.y - this.translate.y;
 						}
 					}
 					else
@@ -1060,6 +1060,8 @@ mxGraphView.prototype.updateCellState = function(state)
 			{
 				this.updateEdgeState(state, geo);
 			}
+			
+			state.updateCachedBounds();
 		}
 	}
 };
