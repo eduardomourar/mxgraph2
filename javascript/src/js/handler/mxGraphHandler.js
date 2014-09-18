@@ -702,13 +702,14 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			var target = null;
 			var cell = me.getCell();
 
+			var clone = graph.isCloneEvent(me.getEvent()) && graph.isCellsCloneable() && this.isCloneEnabled();
+			
 			if (graph.isDropEnabled() && this.highlightEnabled)
 			{
 				// Contains a call to getCellAt to find the cell under the mouse
-				target = graph.getDropTarget(this.cells, me.getEvent(), cell);
+				target = graph.getDropTarget(this.cells, me.getEvent(), cell, clone);
 			}
 
-			var clone = graph.isCloneEvent(me.getEvent()) && graph.isCellsCloneable() && this.isCloneEnabled();
 			var state = graph.getView().getState(target);
 			var highlight = false;
 			
