@@ -1,3 +1,4 @@
+- Adds mxEvent.CUSTOM_HANDLE [JavaScript]
 - Adds mxGeometry.rotate [JavaScript]
 - Adds mxCellState.updateCachedBounds, getCellBounds, getPaintBounds [JavaScript]
 - Fixes multiple moves of descendants in mxGraph.cellsMoved [JavaScript]

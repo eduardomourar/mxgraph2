@@ -668,6 +668,15 @@ var mxEvent =
 	 */
 	ROTATION_HANDLE: -2,
 	
+	/**
+	 * Variable: CUSTOM_HANDLE
+	 * 
+	 * Start index for the custom handles in an mxMouseEvent. This should be a
+	 * negative value and is the start index which is decremented for each
+	 * custom handle. Default is -100.
+	 */
+	CUSTOM_HANDLE: -100,
+	
 	//
 	// Event names
 	//
