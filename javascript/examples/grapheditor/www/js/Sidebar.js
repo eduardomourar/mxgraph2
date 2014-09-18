@@ -1201,18 +1201,20 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 				}
 
 				graph.model.beginUpdate();
-				
 				try
 				{
+					x = Math.round(x + dx);
+					y = Math.round(y + dy);
+					
 					// Splits the target edge or inserts into target group
 					if (allowSplit && graph.isSplitEnabled() && graph.isSplitTarget(target, cells, evt))
 					{
-						graph.splitEdge(target, cells, null, x + dx, y + dy);
+						graph.splitEdge(target, cells, null, x, y);
 						select = cells;
 					}
 					else if (cells.length > 0)
 					{
-						select = graph.importCells(cells, x + dx, y + dy, target);
+						select = graph.importCells(cells, x, y, target);
 						this.editorUi.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
 					}
 				}
