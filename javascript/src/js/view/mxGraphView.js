@@ -1088,7 +1088,7 @@ mxGraphView.prototype.updateVertexState = function(state, geo)
 	var model = this.graph.getModel();
 	var pState = this.getState(model.getParent(state.cell));
 	
-	if (geo.relative && pState != null)
+	if (geo.relative && pState != null && !model.isEdge(pState.cell))
 	{
 		var alpha = mxUtils.toRadians(pState.style[mxConstants.STYLE_ROTATION] || '0');
 		
