@@ -1261,14 +1261,14 @@ mxEdgeHandler.prototype.moveLabel = function(edgeState, x, y)
 		{
 			// Resets the relative location stored inside the geometry
 			var pt = this.graph.getView().getRelativePoint(edgeState, x, y);
-			geometry.x = pt.x;
-			geometry.y = pt.y;
+			geometry.x = Math.round(pt.x * 10000) / 10000;
+			geometry.y = Math.round(pt.y);
 			
 			// Resets the offset inside the geometry to find the offset
 			// from the resulting point
 			geometry.offset = new mxPoint(0, 0);
 			var pt = this.graph.view.getPoint(edgeState, geometry);
-			geometry.offset = new mxPoint((x - pt.x) / scale, (y - pt.y) / scale);
+			geometry.offset = new mxPoint(Math.round((x - pt.x) / scale), Math.round((y - pt.y) / scale));
 		}
 		else
 		{
@@ -1281,7 +1281,7 @@ mxEdgeHandler.prototype.moveLabel = function(edgeState, x, y)
 				var cx = p0.x + (pe.x - p0.x) / 2;
 				var cy = p0.y + (pe.y - p0.y) / 2;
 				
-				geometry.offset = new mxPoint((x - cx) / scale, (y - cy) / scale);
+				geometry.offset = new mxPoint(Math.round((x - cx) / scale), Math.round((y - cy) / scale));
 				geometry.x = 0;
 				geometry.y = 0;
 			}
@@ -1580,7 +1580,7 @@ mxEdgeHandler.prototype.redrawHandles = function()
  */
 mxEdgeHandler.prototype.redrawInnerBends = function(p0, pe)
 {
-	for (var i = 1; i < this.bends.length-1; i++)
+	for (var i = 0; i < this.bends.length; i++)
 	{
 		if (this.bends[i] != null)
 		{
