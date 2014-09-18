@@ -5639,6 +5639,9 @@ mxGraph.prototype.cellsMoved = function(cells, dx, dy, disconnect, constrain, ex
 	if (cells != null && (dx != 0 || dy != 0))
 	{
 		extend = (extend != null) ? extend : false;
+
+		// Removes descandants with ancestors in cells to avoid multiple moving
+		cells = this.model.getTopmostCells(cells);
 		
 		this.model.beginUpdate();
 		try
