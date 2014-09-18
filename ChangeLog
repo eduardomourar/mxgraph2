@@ -1,3 +1,5 @@
+- Adds mxCellState.updateCachedBounds, getCellBounds, getPaintBounds [JavaScript]
+- Fixes multiple moves of descendants in mxGraph.cellsMoved [JavaScript]
 - Adds rounding for new label positions in mxEdgeHandler [JavaScript]
 - Adds clone argument in mxGraph.getDropTarget [JavaScript]
 - Fixes rotation of relative edge child cells in mxGraphView.updateVertexState [JavaScript]
