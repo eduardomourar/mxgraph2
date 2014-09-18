@@ -1,3 +1,4 @@
+- Adds clone argument in mxGraph.getDropTarget [JavaScript]
 - Fixes rotation of relative edge child cells in mxGraphView.updateVertexState [JavaScript]
 - Adds mxRectangle.rotate90, fromRectangle static function [JavaScript]
 - Adds pom.xml for Maven in JGraphX [Java]

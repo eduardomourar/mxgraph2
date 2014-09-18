@@ -10191,8 +10191,9 @@ mxGraph.prototype.isSplitTarget = function(target, cells, evt)
  * cells - Array of <mxCells> which are to be dropped onto the target.
  * evt - Mouseevent for the drag and drop.
  * cell - <mxCell> that is under the mousepointer.
+ * clone - Optional boolean to indicate of cells will be cloned.
  */
-mxGraph.prototype.getDropTarget = function(cells, evt, cell)
+mxGraph.prototype.getDropTarget = function(cells, evt, cell, clone)
 {
 	if (!this.isSwimlaneNesting())
 	{
@@ -10238,12 +10239,15 @@ mxGraph.prototype.getDropTarget = function(cells, evt, cell)
 		cell = this.model.getParent(cell);
 	}
 	
-	// Checks if parent is dropped into child
-	var parent = cell;
-	
-	while (parent != null && mxUtils.indexOf(cells, parent) < 0)
+	// Checks if parent is dropped into child if not cloning
+	if (clone == null || !clone)
 	{
-		parent = this.model.getParent(parent);
+		var parent = cell;
+		
+		while (parent != null && mxUtils.indexOf(cells, parent) < 0)
+		{
+			parent = this.model.getParent(parent);
+		}
 	}
 
 	return (!this.model.isLayer(cell) && parent == null) ? cell : null;
