@@ -672,6 +672,7 @@ mxClient.include(mxClient.basePath+'/js/handler/mxSelectionCellsHandler.js');
 mxClient.include(mxClient.basePath+'/js/handler/mxConnectionHandler.js');
 mxClient.include(mxClient.basePath+'/js/handler/mxConstraintHandler.js');
 mxClient.include(mxClient.basePath+'/js/handler/mxRubberband.js');
+mxClient.include(mxClient.basePath+'/js/handler/mxHandle.js');
 mxClient.include(mxClient.basePath+'/js/handler/mxVertexHandler.js');
 mxClient.include(mxClient.basePath+'/js/handler/mxEdgeHandler.js');
 mxClient.include(mxClient.basePath+'/js/handler/mxElbowEdgeHandler.js');
