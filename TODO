@@ -26,7 +26,8 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix move of parent and children should not double move children
+- Fix background image size in export
+- Remove $Id file headers
 - Move mxLayoutManager into validation process (resizeParent cycle)
 - Add image lookup in XML image export
 
@@ -135,11 +136,13 @@
 - Remove all i18n resources from core, use exceptions instead
 - Fix focus lost in diagrameditor.html after double click on edge
 
+1.1 - Check if poor man's max-width in mxGraphicsCanvas2D is still needed
 1.1 - Check if dir attribute (html) is set to RTL (http://www.w3.org/TR/html401/struct/dirlang.html) and set SVG and other
       attributes to right-to-left based on that (<tspan style="direction: rtl"> for SVG)
 1.1 - Coordinate system inside swimlanes should take start-size into account
 1.1 - Provide servlet/handler for creating grids, sync grid with scale/translate (offset)
 
+1.2 - Implement connectable, visible, collapsed as styles
 1.2 - Fix no scrolling via scrollbars after rubberband in IE
 1.2 - Fix 3px-offset for hit-detection (mxMouseEvent.graphX/Y) in IE
 1.2 - Add code for label bounds in mxGraphView for JavaScript (use in canvas)
