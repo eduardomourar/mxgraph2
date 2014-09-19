@@ -208,23 +208,21 @@ mxHierarchicalLayout.prototype.execute = function(parent, roots)
 		return;
 	}
 
-	if (roots != null && parent != null)
+	if (roots != null)
 	{
 		var rootsCopy = [];
 
 		for (var i = 0; i < roots.length; i++)
 		{
-			if (model.isAncestor(parent, roots[i]))
+			var ancestor = parent != null ? model.isAncestor(parent, roots[i]) : true;
+			
+			if (ancestor && model.isVertex(roots[i]))
 			{
 				rootsCopy.push(roots[i]);
 			}
 		}
 
 		this.roots = rootsCopy;
-	}
-	else
-	{
-		this.roots = roots;
 	}
 	
 	model.beginUpdate();

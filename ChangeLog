@@ -1,3 +1,4 @@
+- Fixes inputing edges to roots array of hierarchical layout [JavaScript]
 - Fixes offset in mxEdgeHandler.addPointAt for edges in containers [JavaScript]
 - Fixes moving of edges in mxVertexHandler.moveChildren [JavaScript]
 - Adds mxPrintPreview.printControls [JavaScript]
