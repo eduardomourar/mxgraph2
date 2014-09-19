@@ -579,9 +579,10 @@ mxVertexHandler.prototype.start = function(x, y, index)
 	this.startY = y;
 	
 	// Saves reference to parent state
-	var parent = this.state.view.graph.model.getParent(this.state.cell);
+	var model = this.state.view.graph.model;
+	var parent = model.getParent(this.state.cell);
 	
-	if (this.state.view.currentRoot != parent)
+	if (this.state.view.currentRoot != parent && (model.isVertex(parent) || model.isEdge(parent)))
 	{
 		this.parentState = this.state.view.graph.view.getState(parent);
 	}
