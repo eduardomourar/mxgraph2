@@ -5754,9 +5754,27 @@ mxGraph.prototype.getCellContainmentArea = function(cell)
 				{
 					var size = this.getStartSize(parent);
 					
-					x = size.width;
+					var state = this.view.getState(parent);
+					var style = (state != null) ? state.style : this.getCellStyle(parent);
+					var dir = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
+					var flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, 0) == 1;
+					var flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, 0) == 1;
+					
+					if (dir == mxConstants.DIRECTION_SOUTH || dir == mxConstants.DIRECTION_NORTH)
+					{
+						var tmp = size.width;
+						size.width = size.height;
+						size.height = tmp;
+					}
+					
+					if ((dir == mxConstants.DIRECTION_EAST && !flipV) || (dir == mxConstants.DIRECTION_NORTH && !flipH) ||
+						(dir == mxConstants.DIRECTION_WEST && flipV) || (dir == mxConstants.DIRECTION_SOUTH && flipH))
+					{
+						x = size.width;
+						y = size.height;
+					}
+
 					w -= size.width;
-					y = size.height;
 					h -= size.height;
 				}
 				

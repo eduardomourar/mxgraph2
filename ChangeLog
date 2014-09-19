@@ -1,3 +1,4 @@
+- Fixes mxGraph.getCellContainmentArea for swimlanes with direction, flipH/V [JavaScript]
 - Fixes live preview of relative child resize [JavaScript]
 - Adds handles.html example [JavaScript]
 - Adds mxHandle, mxVertexHandler.createCustomHandles [JavaScript]
