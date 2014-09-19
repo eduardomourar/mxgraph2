@@ -1420,7 +1420,17 @@ mxEdgeHandler.prototype.addPointAt = function(state, x, y)
 		geo = geo.clone();
 		var t = this.graph.view.translate;
 		var s = this.graph.view.scale;
-		var index = mxUtils.findNearestSegment(state, (pt.x + t.x) * s, (pt.y + t.y) * s);
+		var offset = new mxPoint(0, 0);
+		
+		var parent = this.graph.model.getParent(this.state.cell);
+		
+		if (this.graph.model.isVertex(parent))
+		{
+			var pState = this.graph.view.getState(parent);
+			offset = new mxPoint(pState.x, pState.y);
+		}
+		
+		var index = mxUtils.findNearestSegment(state, (pt.x + t.x) * s + offset.x, (pt.y + t.y) * s + offset.y);
 
 		if (geo.points == null)
 		{
