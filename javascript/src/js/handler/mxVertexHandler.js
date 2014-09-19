@@ -1146,8 +1146,8 @@ mxVertexHandler.prototype.resizeCell = function(cell, dx, dy, index, gridEnabled
 		if (index == mxEvent.LABEL_HANDLE)
 		{
 			var scale = this.graph.view.scale;
-			dx = (this.labelShape.bounds.getCenterX() - this.startX) / scale;
-			dy = (this.labelShape.bounds.getCenterY() - this.startY) / scale;
+			dx = Math.round((this.labelShape.bounds.getCenterX() - this.startX) / scale);
+			dy = Math.round((this.labelShape.bounds.getCenterY() - this.startY) / scale);
 			
 			geo = geo.clone();
 			
@@ -1169,7 +1169,7 @@ mxVertexHandler.prototype.resizeCell = function(cell, dx, dy, index, gridEnabled
 
 			if (this.childOffsetX != 0 || this.childOffsetY != 0)
 			{
-				this.moveChildren(cell, this.childOffsetX / scale, this.childOffsetY / scale);
+				this.moveChildren(cell, Math.round(this.childOffsetX / scale), Math.round(this.childOffsetY / scale));
 			}
 
 			this.graph.resizeCell(cell, this.unscaledBounds, recurse);
@@ -1190,19 +1190,13 @@ mxVertexHandler.prototype.moveChildren = function(cell, dx, dy)
 	for (var i = 0; i < childCount; i++)
 	{
 		var child = model.getChildAt(cell, i);
+		var geo = this.graph.getCellGeometry(child);
 		
-		// TODO: Move edge points
-		if (model.isVertex(child))
+		if (geo != null)
 		{
-			var geo = this.graph.getCellGeometry(child);
-	
-			if (geo != null && !geo.relative)
-			{
-				geo = geo.clone();
-				geo.x += dx;
-				geo.y += dy;
-				model.setGeometry(child, geo);
-			}
+			geo = geo.clone();
+			geo.translate(dx, dy);
+			model.setGeometry(child, geo);
 		}
 	}
 };
