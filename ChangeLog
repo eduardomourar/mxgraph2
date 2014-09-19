@@ -1,3 +1,4 @@
+- Fixes moving of relative child cells in rotated parents [JavaScript]
 - Fixes mxGraph.getCellContainmentArea for swimlanes with direction, flipH/V [JavaScript]
 - Fixes live preview of relative child resize [JavaScript]
 - Adds handles.html example [JavaScript]

@@ -5705,6 +5705,27 @@ mxGraph.prototype.translateCell = function(cell, dx, dy)
 		
 		if (geo.relative && !this.model.isEdge(cell))
 		{
+			var parent = this.model.getParent(cell);
+			var angle = 0;
+			
+			if (this.model.isVertex(parent))
+			{
+				var state = this.view.getState(parent);
+				var style = (state != null) ? state.style : this.getCellStyle(parent);
+				
+				angle = mxUtils.getValue(style, mxConstants.STYLE_ROTATION, 0);
+			}
+			
+			if (angle != 0)
+			{
+				var rad = mxUtils.toRadians(-angle);
+				var cos = Math.cos(rad);
+				var sin = Math.sin(rad);
+				var pt = mxUtils.getRotatedPoint(new mxPoint(dx, dy), cos, sin, new mxPoint(0, 0));
+				dx = pt.x;
+				dy = pt.y;
+			}
+			
 			if (geo.offset == null)
 			{
 				geo.offset = new mxPoint(dx, dy);
