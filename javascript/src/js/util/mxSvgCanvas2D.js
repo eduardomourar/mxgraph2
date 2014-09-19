@@ -1415,13 +1415,14 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			
 			x += dx;
 			
+			// FIXME: LINE_HEIGHT not ideal for all text sizes, fix for export
 			if (valign == mxConstants.ALIGN_MIDDLE)
 			{
-				dy -= h / 2;
+				dy -= h / 2 - 1;
 			}
 			else if (valign == mxConstants.ALIGN_BOTTOM)
 			{
-				dy -= h;
+				dy -= h - 2;
 			}
 			
 			y += dy;
