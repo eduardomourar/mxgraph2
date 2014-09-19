@@ -26,14 +26,13 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix background image size in export
 - Remove $Id file headers
+- Fix background image size in export
 - Move mxLayoutManager into validation process (resizeParent cycle)
-- Add image lookup in XML image export
 
+- Add image lookup in XML image export
 - Add single handle for multiple selected cells
 - Fix resize of rotated groups with layouts
-- Add dynamic translate with hook in graph view
 - Research alternative namespace solutions
 
 - Use spacing styles with overflow=fill
@@ -147,6 +146,7 @@
 1.2 - Fix 3px-offset for hit-detection (mxMouseEvent.graphX/Y) in IE
 1.2 - Add code for label bounds in mxGraphView for JavaScript (use in canvas)
 
+1.0 - Avoid validation after panning of graph, individual cells
 1.3 - Add arcs for edge crossings (VPC)
 1.3 - Use mxUtils.getSizeForString in layout base class for overlapping label handling
 1.3 - Add class for painting grid with canvas (see guides.html)
