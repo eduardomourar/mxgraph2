@@ -1657,6 +1657,8 @@ Graph.prototype.initTouch = function()
 					var changeLink = document.createElement('img');
 					changeLink.setAttribute('src', IMAGE_PATH + '/edit.gif');
 					changeLink.setAttribute('title', mxResources.get('editLink'));
+					changeLink.setAttribute('width', '11');
+					changeLink.setAttribute('height', '11');
 					changeLink.style.marginLeft = '10px';
 					changeLink.style.marginBottom = '-1px';
 					changeLink.style.cursor = 'pointer';
