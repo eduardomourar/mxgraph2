@@ -1163,11 +1163,8 @@ Graph.prototype.initTouch = function()
 					this.textarea.value = content.replace(/\r\n/g, '').replace(/\n/g, '');
 					this.setModified(true);
 				}
-				else
-				{
-					this.textarea.value = html_sanitize(this.textarea.value);
-				}
 				
+				this.textarea.value = html_sanitize(this.textarea.value);
 				this.text2.parentNode.removeChild(this.text2);
 				this.text2 = null;
 			}
