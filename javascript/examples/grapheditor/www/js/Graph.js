@@ -1642,9 +1642,16 @@ Graph.prototype.initTouch = function()
 				{
 					label = label.substring(0, head) + '...' + label.substring(label.length - tail);
 				}
+				
+				var a = document.createElement('a');
+				a.setAttribute('href', link);
+				a.setAttribute('title', link);
+				a.setAttribute('target', '_blank');
+				mxUtils.write(a, label);
+				
+				this.linkHint.innerHTML = '';
+				this.linkHint.appendChild(a);
 
-				this.linkHint.innerHTML = '<a href="' + link + '" title="' + link + '" target="_blank">' + label + '</a>';
-	
 				if (this.graph.isEnabled())
 				{
 					var changeLink = document.createElement('img');
