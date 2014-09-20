@@ -164,6 +164,10 @@ Graph = function(container, model, renderHint, stylesheet)
 			{
 				result = mxUtils.htmlEntities(result, false);
 			}
+			else
+			{
+				result = html_sanitize(result);
+			}
 		}
 		
 		return result;
@@ -921,7 +925,7 @@ Graph.prototype.initTouch = function()
 			}
 			else
 			{
-				var content = this.textarea.value.replace(/\n/g, '<br/>');
+				var content = html_sanitize(this.textarea.value.replace(/\n/g, '<br/>'));
 				
 				if (this.text2.innerHTML != content)
 				{
@@ -1085,7 +1089,7 @@ Graph.prototype.initTouch = function()
 			{
 				this.text2 = document.createElement('div');
 				this.text2.className = 'geContentEditable';
-				this.text2.innerHTML = this.textarea.value.replace(/\n/g, '<br/>');
+				this.text2.innerHTML = html_sanitize(this.textarea.value.replace(/\n/g, '<br/>'));
 				
 				// Invokes stop editing and escape hooks
 				mxEvent.addListener(this.text2, 'keydown', mxUtils.bind(this, function(evt)
@@ -1158,6 +1162,10 @@ Graph.prototype.initTouch = function()
 				{
 					this.textarea.value = content.replace(/\r\n/g, '').replace(/\n/g, '');
 					this.setModified(true);
+				}
+				else
+				{
+					this.textarea.value = html_sanitize(this.textarea.value);
 				}
 				
 				this.text2.parentNode.removeChild(this.text2);
