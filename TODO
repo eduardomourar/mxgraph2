@@ -27,6 +27,7 @@
 -------------------------
 
 - Remove $Id file headers
+- Fix live preview for resize of rotated container with children (child offset)
 - Fix background image size in export
 - Move mxLayoutManager into validation process (resizeParent cycle)
 
