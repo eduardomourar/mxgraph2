@@ -166,7 +166,10 @@ Graph = function(container, model, renderHint, stylesheet)
 			}
 			else
 			{
-				result = html_sanitize(result);
+				function urlX(url) { if(/^https?:\/\//.test(url)) { return url }}
+			    function idX(id) { return id }
+			    
+				result = html_sanitize(result, urlX, idX);
 			}
 		}
 		
@@ -909,9 +912,12 @@ Graph.prototype.initTouch = function()
 		{
 			var tmp = this.saveSelection();
 			
+			function urlX(url) { if(/^https?:\/\//.test(url)) { return url }}
+		    function idX(id) { return id }
+		    
 			if (this.textarea.style.display == 'none')
 			{
-				var content = this.text2.innerHTML.replace(/\n/g, '');
+				var content = html_sanitize(this.text2.innerHTML.replace(/\n/g, ''), urlX, idX);
 				
 				if (this.textarea.value != content)
 				{
@@ -925,7 +931,7 @@ Graph.prototype.initTouch = function()
 			}
 			else
 			{
-				var content = html_sanitize(this.textarea.value.replace(/\n/g, '<br/>'));
+				var content = html_sanitize(this.textarea.value.replace(/\n/g, '<br/>'), urlX, idX);
 				
 				if (this.text2.innerHTML != content)
 				{
@@ -1087,9 +1093,12 @@ Graph.prototype.initTouch = function()
 	
 			if (this.textarea.style.display == 'none')
 			{
+				function urlX(url) { if(/^https?:\/\//.test(url)) { return url }}
+			    function idX(id) { return id }
+			    
 				this.text2 = document.createElement('div');
 				this.text2.className = 'geContentEditable';
-				this.text2.innerHTML = html_sanitize(this.textarea.value.replace(/\n/g, '<br/>'));
+				this.text2.innerHTML = html_sanitize(this.textarea.value.replace(/\n/g, '<br/>'), urlX, idX);
 				
 				// Invokes stop editing and escape hooks
 				mxEvent.addListener(this.text2, 'keydown', mxUtils.bind(this, function(evt)
@@ -1164,7 +1173,10 @@ Graph.prototype.initTouch = function()
 					this.setModified(true);
 				}
 				
-				this.textarea.value = html_sanitize(this.textarea.value);
+				function urlX(url) { if(/^https?:\/\//.test(url)) { return url }}
+			    function idX(id) { return id }
+				
+				this.textarea.value = html_sanitize(this.textarea.value, urlX, idX);
 				this.text2.parentNode.removeChild(this.text2);
 				this.text2 = null;
 			}
