@@ -165,8 +165,7 @@ mxCodecRegistry.register(function()
 							 	var text = mxUtils.getTextContent(entry);
 							 	var value = null;
 							 	
-							 	if (text != null &&
-							 		text.length > 0)
+							 	if (text != null && text.length > 0)
 							 	{
 							 		value = mxUtils.eval(text);
 							 	}
