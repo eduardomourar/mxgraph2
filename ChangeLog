@@ -3,7 +3,7 @@
 - Uses mxCellRenderer.getLabelValue in mxGraph.getPreferredSizeForCell [JavaScript]
 - Creates state in mxGraph.getPreferredSizeForCell if required [JavaScript]
 - Adds mxObjectCodec.prototype.allowEval = false switch [JavaScript]
-- Adds HTML label sanitation in grapheditor example [JavaScript]
+- Adds HTML label sanitization in grapheditor example [JavaScript]
 - Fixes inputing edges to roots array of hierarchical layout [JavaScript]
 - Fixes offset in mxEdgeHandler.addPointAt for edges in containers [JavaScript]
 - Fixes moving of edges in mxVertexHandler.moveChildren [JavaScript]
