@@ -5469,32 +5469,18 @@ mxGraph.prototype.scaleCell = function(cell, dx, dy, recurse)
 {
 	var geo = this.model.getGeometry(cell);
 	
-	if (geo != null)
+	if (geo != null && this.isCellMovable(cell) && this.isCellResizable(cell))
 	{
 		geo = geo.clone();
-		var pts = geo.points;
+		geo.scale(dx, dy);
 		
-		if (pts != null)
+		if (this.model.isVertex(cell))
 		{
-			for (var i = 0; i < pts.length; i++)
-			{
-				pts[i].x *= dx;
-				pts[i].y *= dy;
-			}
-			
-			this.model.setGeometry(cell, geo);
-		}
-		else if (this.model.isVertex(cell))
-		{
-			if (!geo.relative)
-			{
-				geo.x *= dx;
-				geo.y *= dy;
-				geo.width *= dx;
-				geo.height *= dy;
-			}
-			
 			this.cellResized(cell, geo, true, recurse);
+		}
+		else
+		{
+			this.model.setGeometry(cell, geo);
 		}
 	}
 };

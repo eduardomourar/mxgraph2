@@ -336,6 +336,61 @@ mxGeometry.prototype.translate = function(dx, dy)
 };
 
 /**
+ * Function: scale
+ * 
+ * Scales the geometry by the given amount. That is, <x> and <y> of the
+ * geometry, the <sourcePoint>, <targetPoint> and all <points> are scaled
+ * by the given amount. <x>, <y>, <width> and <height> are only scaled if
+ * <relative> is false.
+ * 
+ * Parameters:
+ * 
+ * sx - Number that specifies the horizontal scale factor.
+ * sy - Number that specifies the vertical scale factor.
+ */
+mxGeometry.prototype.scale = function(sx, sy)
+{
+	sx = parseFloat(sx);
+	sy = parseFloat(sy);
+	
+	// Translates the geometry
+	if (!this.relative)
+	{
+		this.x = parseFloat(this.x) * sx;
+		this.y = parseFloat(this.y) * sy;
+		this.width = parseFloat(this.width) * sx;
+		this.height = parseFloat(this.height) * sy;
+	}
+
+	// Translates the source point
+	if (this.sourcePoint != null)
+	{
+		this.sourcePoint.x = parseFloat(this.sourcePoint.x) * sx;
+		this.sourcePoint.y = parseFloat(this.sourcePoint.y) * sy;
+	}
+	
+	// Translates the target point
+	if (this.targetPoint != null)
+	{
+		this.targetPoint.x = parseFloat(this.targetPoint.x) * sx;
+		this.targetPoint.y = parseFloat(this.targetPoint.y) * sy;		
+	}
+
+	// Translate the control points
+	if (this.points != null)
+	{
+		for (var i = 0; i < this.points.length; i++)
+		{
+			if (this.points[i] != null)
+			{
+				this.points[i].x = parseFloat(this.points[i].x) * sx;
+				this.points[i].y = parseFloat(this.points[i].y) * sy;
+			}
+		}
+	}
+};
+
+/**
  * Function: equals
  * 
  * Returns true if the given object equals this geometry.

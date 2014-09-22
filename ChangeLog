@@ -14,7 +14,7 @@
 - Adds handles.html example [JavaScript]
 - Adds mxHandle, mxVertexHandler.createCustomHandles [JavaScript]
 - Adds mxEvent.CUSTOM_HANDLE [JavaScript]
-- Adds mxGeometry.rotate [JavaScript]
+- Adds mxGeometry.rotate, scale [JavaScript]
 - Adds mxCellState.updateCachedBounds, getCellBounds, getPaintBounds [JavaScript]
 - Fixes multiple moves of descendants in mxGraph.cellsMoved [JavaScript]
 - Adds rounding for new label positions in mxEdgeHandler [JavaScript]
