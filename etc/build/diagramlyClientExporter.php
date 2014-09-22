@@ -1,6 +1,5 @@
 <?php
 /**
- * $Id: diagramlyClientExporter.php,v 1.1 2012/11/15 13:26:44 gaudenz Exp $
  * Copyright (c) 2010, Gaudenz Alder
  *
  * This file is used to deliver the JavaScript code for mxGraph.

@@ -1,5 +1,4 @@
 <!--
-  $Id: demo.tpl,v 1.11 2011-11-29 10:33:57 gaudenz Exp $
   Copyright (c) 2006, Gaudenz Alder
   
   Template HTML page for the VISA Network Editor - Demo.

@@ -1,5 +1,4 @@
 /**
- * $Id: mxEvent.js,v 1.20 2014/02/16 10:42:49 gaudenz Exp $
  * Copyright (c) 2006-2013, JGraph Ltd
  */
 var mxEvent =

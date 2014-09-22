@@ -1,5 +1,4 @@
 /**
- * $Id: mxSvgCanvas2D.js,v 1.60 2014/02/14 15:48:59 gaudenz Exp $
  * Copyright (c) 2006-2013, JGraph Ltd
  */
 /**

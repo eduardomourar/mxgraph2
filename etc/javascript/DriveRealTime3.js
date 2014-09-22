@@ -1,5 +1,4 @@
 /*
- * $Id: DriveRealTime3.js,v 1.1 2013/02/12 13:25:48 gaudenz Exp $
  * Copyright (c) 2006-2011, JGraph Ltd
  */
 /**

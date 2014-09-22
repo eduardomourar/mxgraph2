@@ -1,6 +1,5 @@
 <?php
 /**
- * $Id: vsNetworkLayout.php,v 1.1 2012/11/15 13:26:47 gaudenz Exp $
  * Copyright (c) 2006, Gaudenz Alder
  *
  * Class: vsNetworkLayout

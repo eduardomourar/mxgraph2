@@ -1,5 +1,4 @@
 /**
- * $Id: pmaLayout.js,v 1.1 2012/11/15 13:26:41 gaudenz Exp $
  * Copyright (c) 2009, JGraph Ltd
  *
  * Class: pmaLayout

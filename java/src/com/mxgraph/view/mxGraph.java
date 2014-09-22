@@ -1,5 +1,4 @@
 /**
- * $Id: mxGraph.java,v 1.6 2014/02/19 09:40:59 gaudenz Exp $
  * Copyright (c) 2007, Gaudenz Alder
  */
 package com.mxgraph.view;

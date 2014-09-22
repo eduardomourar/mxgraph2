@@ -1,5 +1,4 @@
 /**
- * $Id: mxGraph.js,v 1.69 2014/02/17 13:17:19 gaudenz Exp $
  * Copyright (c) 2006-2013, JGraph Ltd
  */
 /**

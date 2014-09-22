@@ -1,5 +1,4 @@
 /**
- * $Id: Graph.js,v 1.40 2014/02/17 13:46:29 gaudenz Exp $
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 /**

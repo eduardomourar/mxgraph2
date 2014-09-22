@@ -1,6 +1,5 @@
 #! /bin/bash
 #
-# $Id: deploy-backup.sh,v 1.1 2013/04/23 21:06:15 david Exp $
 # Copyright (c) 2006-2013, JGraph Ltd
 #
 # See LICENSE file for license details. If you are unable to locate

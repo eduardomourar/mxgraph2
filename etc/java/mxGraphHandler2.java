@@ -1,5 +1,4 @@
 /**
- * $Id: mxGraphHandler2.java,v 1.1 2012/11/15 13:26:42 gaudenz Exp $
  * Copyright (c) 2008, Gaudenz Alder
  * 
  * Known issue: Drag image size depends on the initial position and may sometimes

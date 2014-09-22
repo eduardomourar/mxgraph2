@@ -1,5 +1,4 @@
 /*
- * $Id: rawdeflate.js,v 1.1 2012/11/15 13:26:40 gaudenz Exp $
  *
  * Original:
  *   http://www.onicos.com/staff/iz/amuse/javascript/expert/deflate.txt

@@ -1,6 +1,5 @@
 #! /bin/bash
 #
-# $Id: build.sh,v 1.11 2014/02/20 10:50:50 gaudenz Exp $
 # Copyright (c) 2006-2013, JGraph Ltd
 #
 # See LICENSE file for license details. If you are unable to locate

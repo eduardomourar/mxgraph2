@@ -1,6 +1,5 @@
 <?php
 /**
- * $Id: proxy.php,v 1.1 2012/11/15 13:26:44 gaudenz Exp $
  * Copyright (c) 2006, Gaudenz Alder
  *
  * Simple mechanism to fake the referer for requesting the JS code. The code

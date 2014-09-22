@@ -1,5 +1,4 @@
 /**
- * $Id: vsPerimeter.js,v 1.1 2012/11/15 13:26:49 gaudenz Exp $
  * Copyright (c) 2006, Gaudenz Alder
  *
  * Class: vsPerimeter

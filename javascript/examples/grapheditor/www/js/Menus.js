@@ -1,5 +1,4 @@
 /**
- * $Id: Menus.js,v 1.31 2014/01/17 12:56:03 gaudenz Exp $
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 /**

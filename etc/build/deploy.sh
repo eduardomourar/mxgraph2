@@ -1,6 +1,5 @@
 #! /bin/bash
 #
-# $Id: deploy.sh,v 1.7 2013/07/19 11:28:07 gaudenz Exp $
 # Copyright (c) 2006-2013, JGraph Ltd
 #
 # See LICENSE file for license details. If you are unable to locate

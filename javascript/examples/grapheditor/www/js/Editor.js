@@ -1,5 +1,4 @@
 /**
- * $Id: Editor.js,v 1.36 2014/02/11 09:27:17 gaudenz Exp $
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 // Specifies if local storage should be used (eg. on the iPad which has no filesystem)

@@ -1,6 +1,5 @@
 <?php
 /**
- * $Id: vsPerimeter.php,v 1.1 2012/11/15 13:26:46 gaudenz Exp $
  * Copyright (c) 2006, Gaudenz Alder
  *
  * Class: vsLanPerimeter

@@ -1,5 +1,4 @@
 /**
- * $Id: mxHierarchicalLayout.js,v 1.14 2014/01/16 17:25:04 david Exp $
  * Copyright (c) 2005-2012, JGraph Ltd
  */
 /**

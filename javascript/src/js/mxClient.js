@@ -1,5 +1,4 @@
 /**
- * $Id: mxClient.js,v 1.22 2013/10/28 08:45:09 gaudenz Exp $
  * Copyright (c) 2006-2013, JGraph Ltd
  */
 var mxClient =

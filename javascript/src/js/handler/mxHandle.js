@@ -1,5 +1,4 @@
 /**
- * $Id: mxVertexHandler.js,v 1.41 2014/02/10 12:18:30 gaudenz Exp $
  * Copyright (c) 2006-2013, JGraph Ltd
  */
 /**

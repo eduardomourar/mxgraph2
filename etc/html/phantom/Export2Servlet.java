@@ -1,5 +1,4 @@
 /**
- * $Id: Export2Servlet.java,v 1.1 2013/02/02 10:16:42 gaudenz Exp $
  * Copyright (c) 2011-2012, JGraph Ltd
  */
 package com.mxgraph.examples.web;

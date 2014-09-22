@@ -1,5 +1,4 @@
 /**
- * $Id: mxGeometry.js,v 1.6 2014/01/20 09:55:48 gaudenz Exp $
  * Copyright (c) 2006-2013, JGraph Ltd
  */
 /**

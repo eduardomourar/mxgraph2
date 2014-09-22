@@ -1,5 +1,4 @@
 /**
- * $Id: mxUtils.js,v 1.30 2014/02/10 20:57:07 gaudenz Exp $
  * Copyright (c) 2006-2013, JGraph Ltd
  */
 var mxUtils =
