@@ -493,7 +493,10 @@ Graph.prototype.getTooltipForCell = function(cell)
 		
 		if (tmp != null)
 		{
-			tip = tmp;
+			function urlX(url) { if(/^https?:\/\//.test(url)) { return url }}
+		    function idX(id) { return id }
+			
+			tip = html_sanitize(tmp, urlX, idX);
 		}
 		else
 		{
