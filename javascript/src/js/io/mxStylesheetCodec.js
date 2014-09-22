@@ -14,6 +14,15 @@ mxCodecRegistry.register(function()
 	var codec = new mxObjectCodec(new mxStylesheet());
 
 	/**
+	 * Function: allowEval
+	 * 
+	 * Specifies if the use of eval is allowed for evaluating text content.
+	 * Default is true. Set this to false if stylesheets may contain user
+	 * input (see the section on security in the manual).
+	 */
+	codec.allowEval = true;
+	
+	/**
 	 * Function: encode
 	 *
 	 * Encodes a stylesheet. See <decode> for a description of the
@@ -131,8 +140,7 @@ mxCodecRegistry.register(function()
 		
 		while (node != null)
 		{
-			if (!this.processInclude(dec, node, obj) &&
-				node.nodeName == 'add')
+			if (!this.processInclude(dec, node, obj) && node.nodeName == 'add')
 			{
 				var as = node.getAttribute('as');
 				
@@ -165,7 +173,7 @@ mxCodecRegistry.register(function()
 							 	var text = mxUtils.getTextContent(entry);
 							 	var value = null;
 							 	
-							 	if (text != null && text.length > 0)
+							 	if (text != null && text.length > 0 && this.allowEval)
 							 	{
 							 		value = mxUtils.eval(text);
 							 	}

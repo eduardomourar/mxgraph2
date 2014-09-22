@@ -5121,10 +5121,10 @@ mxGraph.prototype.getPreferredSizeForCell = function(cell)
 	
 	if (cell != null)
 	{
-		var state = this.view.getState(cell);
-		var style = (state != null) ? state.style : this.getCellStyle(cell);
+		var state = this.view.getState(cell) || this.view.createState(cell);
+		var style = state.style;
 
-		if (style != null && !this.model.isEdge(cell))
+		if (!this.model.isEdge(cell))
 		{
 			var fontSize = style[mxConstants.STYLE_FONTSIZE] || mxConstants.DEFAULT_FONTSIZE;
 			var dx = 0;
@@ -5167,14 +5167,18 @@ mxGraph.prototype.getPreferredSizeForCell = function(cell)
 			}
 
 			// Adds space for label
-			var value = this.getLabel(cell);
-			
+			var value = this.cellRenderer.getLabelValue(state);
+
 			if (value != null && value.length > 0)
 			{
+				if (!this.isHtmlLabel(state.cell))
+				{
+					value = mxUtils.htmlEntities(value);
+				}
+				
 				value = value.replace(/\n/g, '<br>');
 				
-				var size = mxUtils.getSizeForString(value,
-					fontSize, style[mxConstants.STYLE_FONTFAMILY]);
+				var size = mxUtils.getSizeForString(value, fontSize, style[mxConstants.STYLE_FONTFAMILY]);
 				var width = size.width + dx;
 				var height = size.height + dy;
 				

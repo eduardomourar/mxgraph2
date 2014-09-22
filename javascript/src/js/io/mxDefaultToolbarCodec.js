@@ -15,6 +15,15 @@ mxCodecRegistry.register(function()
 	var codec = new mxObjectCodec(new mxDefaultToolbar());
 
 	/**
+	 * Function: allowEval
+	 * 
+	 * Specifies if the use of eval is allowed for evaluating custom modes
+	 * and insert functions. Default is true. Set this to false if this may
+	 * contain user input (see the section on security in the manual).
+	 */
+	codec.allowEval = false;
+	
+	/**
 	 * Function: encode
 	 *
 	 * Returns null.
@@ -94,6 +103,8 @@ mxCodecRegistry.register(function()
 	 *   }
 	 * ]]></add>
 	 * (end)
+	 * 
+	 * Both functions require <allowEval> to be set to true.
 	 *
 	 * Modes:
 	 *
@@ -158,7 +169,7 @@ mxCodecRegistry.register(function()
 							}
 							else if (mode != null)
 							{
-								var funct = mxUtils.eval(text);
+								var funct = (this.allowEval) ? mxUtils.eval(text) : null;
 								elt = into.addMode(as, icon, mode, pressedIcon, funct);
 							}
 							else if (template != null || (text != null && text.length > 0))
@@ -174,7 +185,7 @@ mxCodecRegistry.register(function()
 								
 								var insertFunction = null;
 								
-								if (text != null && text.length > 0)
+								if (text != null && text.length > 0 && this.allowEval)
 								{
 									insertFunction = mxUtils.eval(text);
 								}

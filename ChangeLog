@@ -1,3 +1,7 @@
+- Adds allowEval = true in mxStencil, mxStylesheetCodec, mxDefaultToolbarCodec [JavaScript]
+- Converts HTML entities for non-HTML labels in mxGraph.getPreferredSizeForCell [JavaScript]
+- Uses mxCellRenderer.getLabelValue in mxGraph.getPreferredSizeForCell [JavaScript]
+- Creates state in mxGraph.getPreferredSizeForCell if required [JavaScript]
 - Adds mxObjectCodec.prototype.allowEval = false switch [JavaScript]
 - Adds HTML label sanitation in grapheditor example [JavaScript]
 - Fixes inputing edges to roots array of hierarchical layout [JavaScript]

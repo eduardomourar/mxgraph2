@@ -144,6 +144,15 @@ mxStencil.prototype.fgNode = null;
 mxStencil.prototype.strokewidth = null;
 
 /**
+ * Function: allowEval
+ * 
+ * Specifies if the use of eval is allowed for evaluating text content.
+ * Default is true. Set this to false if stencils may contain user
+ * input (see the section on security in the manual).
+ */
+mxStencil.prototype.allowEval = true;
+
+/**
  * Function: parseDescription
  *
  * Reads <w0>, <h0>, <aspect>, <bgNodes> and <fgNodes> from <desc>.
@@ -246,7 +255,7 @@ mxStencil.prototype.evaluateAttribute = function(node, attribute, shape)
 	{
 		var text = mxUtils.getTextContent(node);
 		
-		if (text != null)
+		if (text != null && this.allowEval)
 		{
 			var funct = mxUtils.eval(text);
 			

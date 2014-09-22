@@ -3202,7 +3202,8 @@ var mxUtils =
 	 * 
 	 * Returns an <mxRectangle> with the size (width and height in pixels) of
 	 * the given string. The string may contain HTML markup. Newlines should be
-	 * converted to <br> before calling this method.
+	 * converted to <br> before calling this method. The caller is responsible
+	 * for sanitizing the HTML markup.
 	 * 
 	 * Example:
 	 * 

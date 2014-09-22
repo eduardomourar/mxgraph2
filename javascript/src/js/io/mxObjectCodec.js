@@ -255,6 +255,8 @@ mxObjectCodec.prototype.reverse = null;
  * Variable: allowEval
  *
  * Specifies if expressions in arrays are allowed. Default is false.
+ * NOTE: Enabling this carries a possible security risk (see the section on
+ * security in the manual).
  */
 mxObjectCodec.prototype.allowEval = false;
 
