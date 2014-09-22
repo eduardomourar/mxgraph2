@@ -116,7 +116,12 @@ mxHandle.prototype.positionChanged = function()
  */
 mxHandle.prototype.getRotation = function()
 {
-	return this.state.shape.getRotation();
+	if (this.state.shape != null)
+	{
+		return this.state.shape.getRotation();
+	}
+	
+	return 0;
 };
 
 /**
@@ -127,7 +132,12 @@ mxHandle.prototype.getRotation = function()
  */
 mxHandle.prototype.getTotalRotation = function()
 {
-	return this.state.shape.getShapeRotation();
+	if (this.state.shape != null)
+	{
+		return this.state.shape.getShapeRotation();
+	}
+	
+	return 0;
 };
 
 /**
@@ -197,7 +207,7 @@ mxHandle.prototype.initShape = function(html)
  */
 mxHandle.prototype.redraw = function()
 {
-	if (this.shape != null)
+	if (this.shape != null && this.state.shape != null)
 	{
 		var pt = this.getPosition(this.state.getPaintBounds());
 		
@@ -249,16 +259,19 @@ mxHandle.prototype.rotatePoint = function(pt, alpha)
  */
 mxHandle.prototype.flipPoint = function(pt)
 {
-	var bounds = this.state.getCellBounds();
-	
-	if (this.state.shape.flipH)
+	if (this.state.shape != null)
 	{
-		pt.x = 2 * bounds.x + bounds.width - pt.x;
-	}
-	
-	if (this.state.shape.flipV)
-	{
-		pt.y = 2 * bounds.y + bounds.height - pt.y;
+		var bounds = this.state.getCellBounds();
+		
+		if (this.state.shape.flipH)
+		{
+			pt.x = 2 * bounds.x + bounds.width - pt.x;
+		}
+		
+		if (this.state.shape.flipV)
+		{
+			pt.y = 2 * bounds.y + bounds.height - pt.y;
+		}
 	}
 	
 	return pt;
