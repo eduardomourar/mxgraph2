@@ -172,6 +172,8 @@
  * JavaScript expressions, including function definitions, which are mapped to
  * functions on the resulting object.
  * 
+ * Expressions are only evaluated if <allowEval> is true.
+ * 
  * Constructor: mxObjectCodec
  *
  * Constructs a new codec for the specified template object.
@@ -248,6 +250,13 @@ mxObjectCodec.prototype.mapping = null;
  * Maps from from XML attribute names to fieldnames.
  */
 mxObjectCodec.prototype.reverse = null;
+
+/**
+ * Variable: allowEval
+ *
+ * Specifies if expressions in arrays are allowed. Default is false.
+ */
+mxObjectCodec.prototype.allowEval = false;
 
 /**
  * Function: getName
@@ -893,8 +902,7 @@ mxObjectCodec.prototype.decodeChild = function(dec, child, obj)
 {
 	var fieldname = this.getFieldName(child.getAttribute('as'));
 	
-	if (fieldname == null ||
-		!this.isExcluded(obj, fieldname, child, false))
+	if (fieldname == null || !this.isExcluded(obj, fieldname, child, false))
 	{
 		var template = this.getFieldTemplate(obj, fieldname, child);
 		var value = null;
@@ -903,7 +911,7 @@ mxObjectCodec.prototype.decodeChild = function(dec, child, obj)
 		{
 			value = child.getAttribute('value');
 			
-			if (value == null)
+			if (value == null && this.allowEval)
 			{
 				value = mxUtils.eval(mxUtils.getTextContent(child));
 			}

@@ -1,3 +1,4 @@
+- Adds mxObjectCodec.prototype.allowEval = false switch [JavaScript]
 - Adds HTML label sanitation in grapheditor example [JavaScript]
 - Fixes inputing edges to roots array of hierarchical layout [JavaScript]
 - Fixes offset in mxEdgeHandler.addPointAt for edges in containers [JavaScript]
