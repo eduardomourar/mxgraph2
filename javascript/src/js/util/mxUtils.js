@@ -3550,7 +3550,7 @@ var mxUtils =
 				}
 			}
 
-			html += '</style></head><body>';
+			html += '</style></head><body style="margin:0px;">';
 			
 			// Copies the contents of the graph container
 			html += '<div style="position:absolute;overflow:hidden;width:' + w + 'px;height:' + h + 'px;"><div style="position:relative;left:' + dx + 'px;top:' + dy + 'px;">';
@@ -3585,7 +3585,7 @@ var mxUtils =
 				doc.writeln(mxUtils.getOuterHtml(styles[i]));
 			}
 
-			doc.writeln('</head><body></body></html>');
+			doc.writeln('</head><body style="margin:0px;"></body></html>');
 			doc.close();
 
 			var outer = doc.createElement('div');
@@ -3594,24 +3594,44 @@ var mxUtils =
 			outer.style.width = w + 'px';
 			outer.style.height = h + 'px';
 
+			// Required for HTML labels if foreignObjects are disabled
+			var div = doc.createElement('div');
+			div.style.position = 'absolute';
+			div.style.left = dx + 'px';
+			div.style.top = dy + 'px';
+
 			var node = graph.container.firstChild;
+			var svg = null;
 			
 			while (node != null)
 			{
 				var clone = node.cloneNode(true);
-				outer.appendChild(clone);
+				
+				if (node == graph.view.drawPane.ownerSVGElement)
+				{
+					outer.appendChild(clone);
+					svg = clone;
+				}
+				else
+				{
+					div.appendChild(clone);
+				}
+				
 				node = node.nextSibling;
 			}
-			
+
 			doc.body.appendChild(outer);
 			
-			var svgs = outer.getElementsByTagName('svg');
-			
-			if (svgs.length > 0)
+			if (div.firstChild != null)
 			{
-				svgs[0].style.minWidth = '';
-				svgs[0].style.minHeight = '';
-				svgs[0].firstChild.setAttribute('transform', 'translate(' + dx + ',' + dy + ')');
+				doc.body.appendChild(div);
+			}
+						
+			if (svg != null)
+			{
+				svg.style.minWidth = '';
+				svg.style.minHeight = '';
+				svg.firstChild.setAttribute('transform', 'translate(' + dx + ',' + dy + ')');
 			}
 		}
 		
@@ -3641,8 +3661,8 @@ var mxUtils =
 		var print = function()
 		{
 			wnd.focus();
-			//wnd.print();
-			//wnd.close();
+			wnd.print();
+			wnd.close();
 		};
 		
 		// Workaround for Google Chrome which needs a bit of a
