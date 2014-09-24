@@ -1,3 +1,4 @@
+- Fixes possible cropping of diagram in mxUtils.show [JavaScript]
 - Adds allowEval = true in mxStencil, mxStylesheetCodec, mxDefaultToolbarCodec [JavaScript]
 - Converts HTML entities for non-HTML labels in mxGraph.getPreferredSizeForCell [JavaScript]
 - Uses mxCellRenderer.getLabelValue in mxGraph.getPreferredSizeForCell [JavaScript]

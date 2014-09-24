@@ -3507,19 +3507,19 @@ var mxUtils =
 		}
 		
 		var bounds = graph.getGraphBounds();
-		var dx = -bounds.x + x0;
-		var dy = -bounds.y + y0;
+		var dx = Math.ceil(x0 - bounds.x);
+		var dy = Math.ceil(y0 - bounds.y);
 		
 		if (w == null)
 		{
-			w = bounds.width + x0;
+			w = Math.ceil(bounds.width + x0) + Math.ceil(Math.ceil(bounds.x) - bounds.x);
 		}
 		
 		if (h == null)
 		{
-			h = bounds.height + y0;
+			h = Math.ceil(bounds.height + y0) + Math.ceil(Math.ceil(bounds.y) - bounds.y);
 		}
-
+		
 		// Needs a special way of creating the page so that no click is required
 		// to refresh the contents after the external CSS styles have been loaded.
 		// To avoid a click or programmatic refresh, the styleSheets[].cssText
@@ -3594,22 +3594,25 @@ var mxUtils =
 			outer.style.width = w + 'px';
 			outer.style.height = h + 'px';
 
-			var div = doc.createElement('div');
-			div.style.position = 'relative';
-			div.style.left = dx + 'px';
-			div.style.top = dy + 'px';
-
 			var node = graph.container.firstChild;
 			
 			while (node != null)
 			{
 				var clone = node.cloneNode(true);
-				div.appendChild(clone);
+				outer.appendChild(clone);
 				node = node.nextSibling;
 			}
 			
-			outer.appendChild(div);
 			doc.body.appendChild(outer);
+			
+			var svgs = outer.getElementsByTagName('svg');
+			
+			if (svgs.length > 0)
+			{
+				svgs[0].style.minWidth = '';
+				svgs[0].style.minHeight = '';
+				svgs[0].firstChild.setAttribute('transform', 'translate(' + dx + ',' + dy + ')');
+			}
 		}
 		
 		mxUtils.removeCursors(doc.body);
@@ -3632,13 +3635,14 @@ var mxUtils =
 	printScreen: function(graph)
 	{
 		var wnd = window.open();
+		var bounds = graph.getGraphBounds();
 		mxUtils.show(graph, wnd.document);
 		
 		var print = function()
 		{
 			wnd.focus();
-			wnd.print();
-			wnd.close();
+			//wnd.print();
+			//wnd.close();
 		};
 		
 		// Workaround for Google Chrome which needs a bit of a
