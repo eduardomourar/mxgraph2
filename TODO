@@ -26,9 +26,8 @@
 --    mxGraph Core     --
 -------------------------
 
-- Remove $Id file headers
-- Fix live preview for resize of rotated container with children (child offset)
 - Fix background image size in export
+- Fix live preview for resize of rotated container with children (child offset)
 - Move mxLayoutManager into validation process (resizeParent cycle)
 
 - Add image lookup in XML image export
