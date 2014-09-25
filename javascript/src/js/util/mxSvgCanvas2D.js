@@ -598,7 +598,7 @@ mxSvgCanvas2D.prototype.updateFill = function()
 		{
 			var id = this.getSvgGradient(s.fillColor, s.gradientColor, s.fillAlpha, s.gradientAlpha, s.gradientDirection);
 
-			if (this.root.ownerDocument == document)
+			if (!mxClient.IS_IE && this.root.ownerDocument == document)
 			{
 				// Workaround for potential base tag
 				this.node.setAttribute('fill', 'url(' + this.getBaseUrl() + '#' + id + ')');
@@ -1570,7 +1570,7 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 			this.root.appendChild(c);
 		}
 		
-		if (this.root.ownerDocument == document)
+		if (!mxClient.IS_IE && this.root.ownerDocument == document)
 		{
 			// Workaround for potential base tag
 			node.setAttribute('clip-path', 'url(' + this.getBaseUrl() + '#' + c.getAttribute('id') + ')');
