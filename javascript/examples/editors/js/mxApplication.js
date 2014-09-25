@@ -39,8 +39,10 @@
 			}
 			else
 			{
+				mxObjectCodec.prototype.allowEval = true;
 				var node = mxUtils.load(config).getDocumentElement();
 				var editor = new mxEditor(node);
+				mxObjectCodec.prototype.allowEval = false;
 				
 				// Updates the window title after opening new files
 				var title = document.title;
