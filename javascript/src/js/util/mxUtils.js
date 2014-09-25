@@ -597,8 +597,7 @@ var mxUtils =
 	{
 		var doc = null;
 		
-		// Workaround for IE9 standards mode creating a HTML document
-		if (document.implementation && document.implementation.createDocument && document.documentMode != 9)
+		if (document.implementation && document.implementation.createDocument)
 		{
 			doc = document.implementation.createDocument('', '', null);
 		}
@@ -633,7 +632,7 @@ var mxUtils =
 	 */
 	parseXml: function()
 	{
-		if (window.DOMParser && document.documentMode != 9)
+		if (window.DOMParser)
 		{
 			return function(xml)
 			{
@@ -847,8 +846,7 @@ var mxUtils =
 	{
 		var xml = '';
 
-		// Workaround for IE9 standards mode interface not supported
-		if (window.XMLSerializer != null && document.documentMode != 9)
+		if (window.XMLSerializer != null)
 		{
 			var xmlSerializer = new XMLSerializer();
 			xml = xmlSerializer.serializeToString(node);     
