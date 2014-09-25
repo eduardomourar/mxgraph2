@@ -804,7 +804,7 @@ Graph.prototype.getSvg = function(background, scale, border, nocrop)
 	if (bgImg != null)
 	{
 		var tr = this.view.translate;
-		svgCanvas.image(tr.x, tr.y, bgImg.width, bgImg.height, bgImg.src, false);
+		svgCanvas.image(tr.x, tr.y, bgImg.width * vs / scale, bgImg.height * vs / scale, bgImg.src, false);
 	}
 	
 	imgExport.drawState(this.getView().getState(this.model.root), svgCanvas);

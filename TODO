@@ -26,7 +26,6 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix background image size in export
 - Fix live preview for resize of rotated container with children (child offset)
 - Move mxLayoutManager into validation process (resizeParent cycle)
 
