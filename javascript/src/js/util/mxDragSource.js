@@ -458,8 +458,6 @@ mxDragSource.prototype.mouseUp = function(evt)
  */
 mxDragSource.prototype.dragEnter = function(graph, evt)
 {
-	graph.isMouseDown = true;
-	graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
 	this.previewElement = this.createPreviewElement(graph);
 	
 	// Guide is only needed if preview element is used
@@ -483,7 +481,6 @@ mxDragSource.prototype.dragExit = function(graph, evt)
 {
 	this.currentDropTarget = null;
 	this.currentPoint = null;
-	graph.isMouseDown = false;
 	
 	if (this.previewElement != null)
 	{
