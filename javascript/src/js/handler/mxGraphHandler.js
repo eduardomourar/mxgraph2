@@ -778,7 +778,7 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			}
 		}
 
-		//me.getState().setCursor(cursor);
+		me.getState().setCursor(cursor);
 	}
 };
 
