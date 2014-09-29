@@ -411,18 +411,19 @@ mxPanningHandler.prototype.mouseMove = function(sender, me)
  */
 mxPanningHandler.prototype.mouseUp = function(sender, me)
 {
-	if (this.active && this.dx != null && this.dy != null)
+	if (this.active)
 	{
-		if (!this.graph.useScrollbarsForPanning || !mxUtils.hasScrollbars(this.graph.container))
+		if ((this.dx != null && this.dy != null) && (!this.graph.useScrollbarsForPanning ||
+			!mxUtils.hasScrollbars(this.graph.container)))
 		{
 			var scale = this.graph.getView().scale;
 			var t = this.graph.getView().translate;
 			this.graph.panGraph(0, 0);
 			this.panGraph(t.x + this.dx / scale, t.y + this.dy / scale);
+			me.consume();
 		}
 		
 		this.fireEvent(new mxEventObject(mxEvent.PAN_END, 'event', me));
-		me.consume();
 	}
 	
 	this.panningTrigger = false;

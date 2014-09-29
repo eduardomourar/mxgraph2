@@ -1,3 +1,4 @@
+- Fires PAN_END if PAN_START was fired in mxPanningHandler [JavaScript]
 - Removes possibly blocked ActiveX in mxUtils.createXmlDocument, getXml, parseXml [JavaScript] 
 - mxDragSource no longer updates isMouseDown in dragEnter/-Exit [JavaScript]
 - Fixes possible cropping of diagram in mxUtils.show [JavaScript]
