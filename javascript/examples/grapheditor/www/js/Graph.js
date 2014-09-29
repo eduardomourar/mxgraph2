@@ -1136,6 +1136,7 @@ Graph.prototype.initTouch = function()
 				style.fontWeight = this.textarea.style.fontWeight;
 				style.textAlign = this.textarea.style.textAlign;
 				style.fontSize = this.textarea.style.fontSize;
+				style.textDecoration = this.textarea.style.textDecoration;
 				style.color = this.textarea.style.color;
 				
 				// Matches line height correctionFactor in embedded HTML output
