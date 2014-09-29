@@ -124,7 +124,7 @@ mxGraphHandler.prototype.currentDy = null;
 /**
  * Variable: updateCursor
  * 
- * Specifies if a move cursor should be shown if the mouse is ove a movable
+ * Specifies if a move cursor should be shown if the mouse is over a movable
  * cell. Default is true.
  */
 mxGraphHandler.prototype.updateCursor = true;
@@ -778,7 +778,7 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			}
 		}
 
-		me.getState().setCursor(cursor);
+		//me.getState().setCursor(cursor);
 	}
 };
 
