@@ -211,7 +211,16 @@ function mxObjectCodec(template, exclude, idrefs, mapping)
 		this.reverse[this.mapping[i]] = i;
 	}
 };
-	
+
+/**
+ * Variable: allowEval
+ *
+ * Static global switch that specifies if expressions in arrays are allowed.
+ * Default is false. NOTE: Enabling this carries a possible security risk (see
+ * the section on security in the manual).
+ */
+mxObjectCodec.allowEval = false;
+
 /**
  * Variable: template
  *
@@ -249,15 +258,6 @@ mxObjectCodec.prototype.mapping = null;
  * Maps from from XML attribute names to fieldnames.
  */
 mxObjectCodec.prototype.reverse = null;
-
-/**
- * Variable: allowEval
- *
- * Specifies if expressions in arrays are allowed. Default is false.
- * NOTE: Enabling this carries a possible security risk (see the section on
- * security in the manual).
- */
-mxObjectCodec.prototype.allowEval = false;
 
 /**
  * Function: getName
@@ -912,7 +912,7 @@ mxObjectCodec.prototype.decodeChild = function(dec, child, obj)
 		{
 			value = child.getAttribute('value');
 			
-			if (value == null && this.allowEval)
+			if (value == null && mxObjectCodec.allowEval)
 			{
 				value = mxUtils.eval(mxUtils.getTextContent(child));
 			}

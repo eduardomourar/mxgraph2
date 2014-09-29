@@ -87,6 +87,15 @@ function mxStencil(desc)
 mxStencil.defaultLocalized = false;
 
 /**
+ * Function: allowEval
+ * 
+ * Static global switch that specifies if the use of eval is allowed for
+ * evaluating text content. Default is true. Set this to false if stencils may
+ * contain user input (see the section on security in the manual).
+ */
+mxStencil.allowEval = true;
+
+/**
  * Variable: desc
  *
  * Holds the XML node with the stencil description.
@@ -141,15 +150,6 @@ mxStencil.prototype.fgNode = null;
  * Holds the strokewidth direction from the description.
  */
 mxStencil.prototype.strokewidth = null;
-
-/**
- * Function: allowEval
- * 
- * Specifies if the use of eval is allowed for evaluating text content.
- * Default is true. Set this to false if stencils may contain user
- * input (see the section on security in the manual).
- */
-mxStencil.prototype.allowEval = true;
 
 /**
  * Function: parseDescription
@@ -254,7 +254,7 @@ mxStencil.prototype.evaluateAttribute = function(node, attribute, shape)
 	{
 		var text = mxUtils.getTextContent(node);
 		
-		if (text != null && this.allowEval)
+		if (text != null && mxStencil.allowEval)
 		{
 			var funct = mxUtils.eval(text);
 			
