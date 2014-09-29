@@ -2,7 +2,6 @@
  * Copyright (c) 2006-2013, JGraph Ltd
  *
  * Defines the startup sequence of the application.
- *
  */
 {
 
