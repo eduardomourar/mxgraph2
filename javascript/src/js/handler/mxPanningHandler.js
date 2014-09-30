@@ -413,13 +413,17 @@ mxPanningHandler.prototype.mouseUp = function(sender, me)
 {
 	if (this.active)
 	{
-		if ((this.dx != null && this.dy != null) && (!this.graph.useScrollbarsForPanning ||
-			!mxUtils.hasScrollbars(this.graph.container)))
+		if (this.dx != null && this.dy != null)
 		{
-			var scale = this.graph.getView().scale;
-			var t = this.graph.getView().translate;
-			this.graph.panGraph(0, 0);
-			this.panGraph(t.x + this.dx / scale, t.y + this.dy / scale);
+			// Ignores if scrollbars have been used for panning
+			if (!this.graph.useScrollbarsForPanning || !mxUtils.hasScrollbars(this.graph.container))
+			{
+				var scale = this.graph.getView().scale;
+				var t = this.graph.getView().translate;
+				this.graph.panGraph(0, 0);
+				this.panGraph(t.x + this.dx / scale, t.y + this.dy / scale);
+			}
+			
 			me.consume();
 		}
 		
