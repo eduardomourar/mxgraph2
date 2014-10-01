@@ -1251,7 +1251,8 @@ Graph.prototype.initTouch = function()
 	mxVertexHandler.prototype.isRecursiveResize = function(state, me)
 	{
 		return !this.graph.isSwimlane(state.cell) && this.graph.model.getChildCount(state.cell) > 0 &&
-			!mxEvent.isControlDown(me.getEvent()) && !this.graph.isCellCollapsed(state.cell);
+			!mxEvent.isControlDown(me.getEvent()) && !this.graph.isCellCollapsed(state.cell) &&
+			state.style['childLayout'] == '';
 	};
 
 	/**
