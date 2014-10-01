@@ -655,7 +655,7 @@ Menus.prototype.pickColor = function(key, cmd, defaultValue)
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addMenuItem = function(menu, key, parent, trigger)
+Menus.prototype.addMenuItem = function(menu, key, parent, trigger, sprite)
 {
 	var action = this.editorUi.actions.get(key);
 
@@ -664,7 +664,7 @@ Menus.prototype.addMenuItem = function(menu, key, parent, trigger)
 		var item = menu.addItem(action.label, null, function()
 		{
 			action.funct(trigger);
-		}, parent, null, action.isEnabled());
+		}, parent, sprite, action.isEnabled());
 		
 		// Adds checkmark image
 		if (action.toggleAction && action.isSelected())
@@ -709,7 +709,7 @@ Menus.prototype.addCheckmark = function(item)
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.addMenuItems = function(menu, keys, parent, trigger)
+Menus.prototype.addMenuItems = function(menu, keys, parent, trigger, sprites)
 {
 	for (var i = 0; i < keys.length; i++)
 	{
@@ -719,7 +719,7 @@ Menus.prototype.addMenuItems = function(menu, keys, parent, trigger)
 		}
 		else
 		{
-			this.addMenuItem(menu, keys[i], parent, trigger);
+			this.addMenuItem(menu, keys[i], parent, trigger, (sprites != null) ? sprites[i] : null);
 		}
 	}
 };
