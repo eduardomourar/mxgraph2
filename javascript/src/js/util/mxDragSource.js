@@ -24,6 +24,17 @@ function mxDragSource(element, dropHandler)
 	{
 		this.mouseDown(evt);
 	}));
+	
+	this.eventConsumer = function(sender, evt)
+	{
+		var evtName = evt.getProperty('eventName');
+		var me = evt.getProperty('event');
+		
+		if (evtName != mxEvent.MOUSE_DOWN)
+		{
+			me.consume();
+		}
+	};
 };
 
 /**
@@ -458,6 +469,8 @@ mxDragSource.prototype.mouseUp = function(evt)
  */
 mxDragSource.prototype.dragEnter = function(graph, evt)
 {
+	graph.isMouseDown = true;
+	graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
 	this.previewElement = this.createPreviewElement(graph);
 	
 	// Guide is only needed if preview element is used
@@ -470,6 +483,9 @@ mxDragSource.prototype.dragEnter = function(graph, evt)
 	{
 		this.currentHighlight = new mxCellHighlight(graph, mxConstants.DROP_TARGET_COLOR);
 	}
+	
+	// Consumes all events in the current graph before they are fired
+	graph.addListener(mxEvent.FIRE_MOUSE_EVENT, this.eventConsumer);
 };
 
 /**
@@ -481,6 +497,10 @@ mxDragSource.prototype.dragExit = function(graph, evt)
 {
 	this.currentDropTarget = null;
 	this.currentPoint = null;
+	graph.isMouseDown = false;
+	
+	// Consumes all events in the current graph before they are fired
+	graph.removeListener(this.eventConsumer);
 	
 	if (this.previewElement != null)
 	{
