@@ -3872,8 +3872,7 @@ mxGraph.prototype.ungroupCells = function(cells)
 			}
 
 			this.cellsRemoved(this.addAllEdges(cells));
-			this.fireEvent(new mxEventObject(mxEvent.UNGROUP_CELLS,
-					'cells', cells));
+			this.fireEvent(new mxEventObject(mxEvent.UNGROUP_CELLS, 'cells', cells));
 		}
 		finally
 		{
@@ -3908,8 +3907,7 @@ mxGraph.prototype.removeCellsFromParent = function(cells)
 		var index = this.model.getChildCount(parent);
 
 		this.cellsAdded(cells, parent, index, null, null, true);
-		this.fireEvent(new mxEventObject(mxEvent.REMOVE_CELLS_FROM_PARENT,
-				'cells', cells));
+		this.fireEvent(new mxEventObject(mxEvent.REMOVE_CELLS_FROM_PARENT, 'cells', cells));
 	}
 	finally
 	{
@@ -4498,7 +4496,7 @@ mxGraph.prototype.removeCells = function(cells, includeEdges)
 	try
 	{
 		this.cellsRemoved(cells);
-		this.fireEvent(new mxEventObject(mxEvent.REMOVE_CELLS,
+		this.fireEvent(new mxEventObject(mxEvent.REMOVE_CELLS, 
 				'cells', cells, 'includeEdges', includeEdges));
 	}
 	finally
@@ -4575,8 +4573,7 @@ mxGraph.prototype.cellsRemoved = function(cells)
 				this.model.remove(cells[i]);
 			}
 			
-			this.fireEvent(new mxEventObject(mxEvent.CELLS_REMOVED,
-					'cells', cells));
+			this.fireEvent(new mxEventObject(mxEvent.CELLS_REMOVED, 'cells', cells));
 		}
 		finally
 		{
