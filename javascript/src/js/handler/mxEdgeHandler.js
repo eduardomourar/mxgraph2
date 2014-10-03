@@ -1130,12 +1130,12 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 					pt.y -= this.graph.panDy / this.graph.view.scale;
 										
 					// Destroys and recreates this handler
-					this.changeTerminalPoint(edge, pt, this.isSource, clone);
+					edge = this.changeTerminalPoint(edge, pt, this.isSource, clone);
 				}
 			}
 			else if (this.active)
 			{
-				this.changePoints(edge, this.points, clone);
+				edge = this.changePoints(edge, this.points, clone);
 			}
 			else
 			{
@@ -1379,6 +1379,8 @@ mxEdgeHandler.prototype.changeTerminalPoint = function(edge, point, isSource, cl
 	{
 		model.endUpdate();
 	}
+	
+	return edge;
 };
 
 /**
@@ -1417,6 +1419,8 @@ mxEdgeHandler.prototype.changePoints = function(edge, points, clone)
 	{
 		model.endUpdate();
 	}
+	
+	return edge;
 };
 
 /**

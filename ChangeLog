@@ -1,3 +1,5 @@
+- Selects new edges after cloning in mxEdgeHandler [JavaScript]
+
 03-OCT-2014: 3.1.0.0
 
 - Adds more cloning of edges if control is pressed in mxEdgeHandler [JavaScript]
