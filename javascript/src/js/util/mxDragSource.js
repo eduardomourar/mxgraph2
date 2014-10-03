@@ -352,6 +352,9 @@ mxDragSource.prototype.startDrag = function(evt)
  */
 mxDragSource.prototype.stopDrag = function()
 {
+	// LATER: This used to have a mouse event. If that is still needed we need to add another
+	// final call to the DnD protocol to add a cleanup step in the case of escape press, which
+	// is not associated with a mouse event and which currently calles this method.
 	this.removeDragElement();
 };
 
