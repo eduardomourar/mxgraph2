@@ -1343,8 +1343,8 @@
 			},
 			'step': createDisplayHandleFunction(StepShape.prototype.size),
 			'display': createDisplayHandleFunction(DisplayShape.prototype.size),
-			'cube': createCubeHandleFunction(1, CardShape.prototype.size),
-			'card': createCubeHandleFunction(0.5, CubeShape.prototype.size),
+			'cube': createCubeHandleFunction(1, CubeShape.prototype.size),
+			'card': createCubeHandleFunction(0.5, CardShape.prototype.size),
 			'loopLimit': createCubeHandleFunction(0.5, LoopLimitShape.prototype.size),
 			'trapezoid': createTrapezoidHandleFunction(0.5),
 			'parallelogram': createTrapezoidHandleFunction(1)
