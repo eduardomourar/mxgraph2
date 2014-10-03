@@ -1076,6 +1076,9 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 		// Ignores event if mouse has not been moved
 		if (me.getX() != this.startX || me.getY() != this.startY)
 		{
+			var clone = this.graph.isCloneEvent(me.getEvent()) && this.cloneEnabled &&
+				this.graph.isCellsCloneable();
+			
 			// Displays the reason for not carriying out the change
 			// if there is an error message with non-zero length
 			if (this.error != null)
@@ -1106,9 +1109,7 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 				
 				if (terminal != null)
 				{
-					edge = this.connect(edge, terminal, this.isSource,
-						this.graph.isCloneEvent(me.getEvent()) && this.cloneEnabled &&
-						this.graph.isCellsCloneable(), me);
+					edge = this.connect(edge, terminal, this.isSource, clone, me);
 				}
 				else if (this.graph.isAllowDanglingEdges())
 				{
@@ -1129,12 +1130,12 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 					pt.y -= this.graph.panDy / this.graph.view.scale;
 										
 					// Destroys and recreates this handler
-					this.changeTerminalPoint(edge, pt, this.isSource);
+					this.changeTerminalPoint(edge, pt, this.isSource, clone);
 				}
 			}
 			else if (this.active)
 			{
-				this.changePoints(edge, this.points);
+				this.changePoints(edge, this.points, clone);
 			}
 			else
 			{
@@ -1317,7 +1318,7 @@ mxEdgeHandler.prototype.connect = function(edge, terminal, isSource, isClone, me
 		// Clones and adds the cell
 		if (isClone)
 		{
-			var clone = edge.clone();
+			var clone = this.graph.cloneCells([edge])[0];
 			model.add(parent, clone, model.getChildCount(parent));
 			
 			var other = model.getTerminal(edge, !isSource);
@@ -1348,25 +1349,35 @@ mxEdgeHandler.prototype.connect = function(edge, terminal, isSource, isClone, me
  * 
  * Changes the terminal point of the given edge.
  */
-mxEdgeHandler.prototype.changeTerminalPoint = function(edge, point, isSource)
+mxEdgeHandler.prototype.changeTerminalPoint = function(edge, point, isSource, clone)
 {
 	var model = this.graph.getModel();
-	var geo = model.getGeometry(edge);
-	
-	if (geo != null)
+
+	model.beginUpdate();
+	try
 	{
-		model.beginUpdate();
-		try
+		if (clone)
+		{
+			var parent = model.getParent(edge);
+			var terminal = model.getTerminal(edge, !isSource);
+			edge = this.graph.cloneCells([edge])[0];
+			model.add(parent, edge, model.getChildCount(parent));
+			model.setTerminal(edge, terminal, !isSource);
+		}
+
+		var geo = model.getGeometry(edge);
+		
+		if (geo != null)
 		{
 			geo = geo.clone();
 			geo.setTerminalPoint(point, isSource);
 			model.setGeometry(edge, geo);
 			this.graph.connectCell(edge, null, isSource, new mxConnectionConstraint());
 		}
-		finally
-		{
-			model.endUpdate();
-		}
+	}
+	finally
+	{
+		model.endUpdate();
 	}
 };
 
@@ -1375,17 +1386,36 @@ mxEdgeHandler.prototype.changeTerminalPoint = function(edge, point, isSource)
  * 
  * Changes the control points of the given edge in the graph model.
  */
-mxEdgeHandler.prototype.changePoints = function(edge, points)
+mxEdgeHandler.prototype.changePoints = function(edge, points, clone)
 {
 	var model = this.graph.getModel();
-	var geo = model.getGeometry(edge);
-	
-	if (geo != null)
+	model.beginUpdate();
+	try
 	{
-		geo = geo.clone();
-		geo.points = points;
+		if (clone)
+		{
+			var parent = model.getParent(edge);
+			var source = model.getTerminal(edge, true);
+			var target = model.getTerminal(edge, false);
+			edge = this.graph.cloneCells([edge])[0];
+			model.add(parent, edge, model.getChildCount(parent));
+			model.setTerminal(edge, source, true);
+			model.setTerminal(edge, target, false);
+		}
 		
-		model.setGeometry(edge, geo);
+		var geo = model.getGeometry(edge);
+		
+		if (geo != null)
+		{
+			geo = geo.clone();
+			geo.points = points;
+			
+			model.setGeometry(edge, geo);
+		}
+	}
+	finally
+	{
+		model.endUpdate();
 	}
 };
 
@@ -1589,7 +1619,7 @@ mxEdgeHandler.prototype.redrawHandles = function()
  */
 mxEdgeHandler.prototype.redrawInnerBends = function(p0, pe)
 {
-	for (var i = 0; i < this.bends.length; i++)
+	for (var i = 1; i < this.bends.length - 1; i++)
 	{
 		if (this.bends[i] != null)
 		{

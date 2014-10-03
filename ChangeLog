@@ -1,3 +1,6 @@
+03-OCT-2014: 3.1.0.0
+
+- Adds more cloning of edges if control is pressed in mxEdgeHandler [JavaScript]
 - Removes event argument for mxDragSource.stopDrag [JavaScript]
 - Adds mxDragSource.isActive, reset, removeDragElement/Listeners [JavaScript]
 - Adds terminalInserted for mxEvent.CONNECT in mxConnectionHandler [JavaScript]
