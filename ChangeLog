@@ -1,3 +1,5 @@
+- Removes event argument for mxDragSource.stopDrag [JavaScript]
+- Adds mxDragSource.isActive, reset, removeDragElement/Listeners [JavaScript]
 - Adds terminalInserted for mxEvent.CONNECT in mxConnectionHandler [JavaScript]
 - Consumes all mxMouseEvents in mxDragSource for current graph while active [JavaScript]
 - Consumes event in mxPanningHandler.mouseUp if active [JavaScript]

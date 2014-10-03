@@ -263,6 +263,34 @@ mxDragSource.prototype.createPreviewElement = function(graph)
 };
 
 /**
+ * Function: isActive
+ * 
+ * Returns true if this drag source is active.
+ */
+mxDragSource.prototype.isActive = function()
+{
+	return this.mouseMoveHandler != null;
+};
+
+/**
+ * Function: reset
+ * 
+ * Stops and removes everything and restores the state of the object.
+ */
+mxDragSource.prototype.reset = function()
+{
+	if (this.currentGraph != null)
+	{
+		this.dragExit(this.currentGraph);
+		this.currentGraph = null;
+	}
+	
+	this.removeDragElement();
+	this.removeListeners();
+	this.stopDrag();
+};
+
+/**
  * Function: mouseDown
  * 
  * Returns the drop target for the given graph and coordinates. This
@@ -317,13 +345,22 @@ mxDragSource.prototype.startDrag = function(evt)
 	mxUtils.setOpacity(this.dragElement, this.dragElementOpacity);
 };
 
-
 /**
  * Function: stopDrag
  * 
+ * Invokes <removeDragElement>.
+ */
+mxDragSource.prototype.stopDrag = function()
+{
+	this.removeDragElement();
+};
+
+/**
+ * Function: removeDragElement
+ * 
  * Removes and destroys the <dragElement>.
  */
-mxDragSource.prototype.stopDrag = function(evt)
+mxDragSource.prototype.removeDragElement = function()
 {
 	if (this.dragElement != null)
 	{
@@ -444,10 +481,22 @@ mxDragSource.prototype.mouseUp = function(evt)
 		}
 		
 		this.dragExit(this.currentGraph);
+		this.currentGraph = null;
 	}
 
-	this.stopDrag(evt);
+	this.stopDrag();
+	this.removeListeners();
 	
+	mxEvent.consume(evt);
+};
+
+/**
+ * Function: removeListeners
+ * 
+ * Actives the given graph as a drop target.
+ */
+mxDragSource.prototype.removeListeners = function()
+{
 	if (this.eventSource != null)
 	{
 		mxEvent.removeGestureListeners(this.eventSource, null, this.mouseMoveHandler, this.mouseUpHandler);
@@ -457,9 +506,6 @@ mxDragSource.prototype.mouseUp = function(evt)
 	mxEvent.removeGestureListeners(document, null, this.mouseMoveHandler, this.mouseUpHandler);
 	this.mouseMoveHandler = null;
 	this.mouseUpHandler = null;
-	this.currentGraph = null;
-	
-	mxEvent.consume(evt);
 };
 
 /**
