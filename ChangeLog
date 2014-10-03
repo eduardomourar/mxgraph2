@@ -1,3 +1,4 @@
+- Adds terminalInserted for mxEvent.CONNECT in mxConnectionHandler [JavaScript]
 - Consumes all mxMouseEvents in mxDragSource for current graph while active [JavaScript]
 - Consumes event in mxPanningHandler.mouseUp if active [JavaScript]
 - Fires PAN_END if PAN_START was fired in mxPanningHandler [JavaScript]
