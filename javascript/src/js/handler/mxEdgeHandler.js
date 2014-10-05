@@ -177,7 +177,7 @@ mxEdgeHandler.prototype.outlineConnect = false;
  * Specifies if the label handle should be moved if it intersects with another
  * handle. Uses <checkLabelHandle> for checking and moving. Default is false.
  */
-mxVertexHandler.prototype.manageLabelHandle = false;
+mxEdgeHandler.prototype.manageLabelHandle = false;
 
 /**
  * Function: init
