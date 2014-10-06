@@ -284,13 +284,17 @@ Menus.prototype.init = function()
 	})));
 	this.put('position', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-	    this.styleChange(menu, mxResources.get('left'), [mxConstants.STYLE_LABEL_POSITION, mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_LEFT, mxConstants.ALIGN_RIGHT], null, parent);
-	    this.styleChange(menu, mxResources.get('center'), [mxConstants.STYLE_LABEL_POSITION, mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_CENTER, mxConstants.ALIGN_CENTER], null, parent);
-	    this.styleChange(menu, mxResources.get('right'), [mxConstants.STYLE_LABEL_POSITION, mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_RIGHT, mxConstants.ALIGN_LEFT], null, parent);
+		this.styleChange(menu, mxResources.get('top'), [mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.STYLE_LABEL_POSITION, mxConstants.STYLE_ALIGN, mxConstants.STYLE_VERTICAL_ALIGN],
+			[mxConstants.ALIGN_TOP, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_BOTTOM], null, parent);
+		this.styleChange(menu, mxResources.get('right'), [mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.STYLE_LABEL_POSITION, mxConstants.STYLE_ALIGN, mxConstants.STYLE_VERTICAL_ALIGN],
+			[mxConstants.ALIGN_MIDDLE, mxConstants.ALIGN_RIGHT, mxConstants.ALIGN_LEFT, mxConstants.ALIGN_MIDDLE], null, parent);
+		this.styleChange(menu, mxResources.get('bottom'), [mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.STYLE_LABEL_POSITION, mxConstants.STYLE_ALIGN, mxConstants.STYLE_VERTICAL_ALIGN],
+			[mxConstants.ALIGN_BOTTOM, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_TOP], null, parent);
+		this.styleChange(menu, mxResources.get('left'), [mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.STYLE_LABEL_POSITION, mxConstants.STYLE_ALIGN, mxConstants.STYLE_VERTICAL_ALIGN],
+			[mxConstants.ALIGN_MIDDLE, mxConstants.ALIGN_LEFT, mxConstants.ALIGN_RIGHT, mxConstants.ALIGN_MIDDLE], null, parent);
 		menu.addSeparator(parent);
-		this.styleChange(menu, mxResources.get('top'), [mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_TOP, mxConstants.ALIGN_BOTTOM], null, parent);
-		this.styleChange(menu, mxResources.get('middle'), [mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_MIDDLE, mxConstants.ALIGN_MIDDLE], null, parent);
-		this.styleChange(menu, mxResources.get('bottom'), [mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_BOTTOM, mxConstants.ALIGN_TOP], null, parent);
+		this.styleChange(menu, mxResources.get('center'), [mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.STYLE_LABEL_POSITION, mxConstants.STYLE_ALIGN, mxConstants.STYLE_VERTICAL_ALIGN],
+			[mxConstants.ALIGN_MIDDLE, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_MIDDLE], null, parent);
 	})));
 	this.put('direction', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -462,8 +466,8 @@ Menus.prototype.init = function()
 	this.put('edit', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['undo', 'redo', '-', 'cut', 'copy', 'paste', 'delete', '-', 'duplicate', '-',
-		                         'editData', 'editLink', 'openLink', 'editTooltip', '-', 'selectVertices', 'selectEdges', 'selectAll',
-		                         '-', 'setAsDefaultEdge', 'lockUnlock']);
+		                         'editData', 'editLink', 'openLink', 'editTooltip', '-', 'selectVertices',
+		                         'selectEdges', 'selectAll', '-', 'lockUnlock']);
 	})));
 	this.put('options', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -546,7 +550,8 @@ Menus.prototype.styleChange = function(menu, label, keys, values, sprite, parent
 					graph.setCellStyles(keys[i], values[i]);
 				}
 				
-				this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', keys, 'values', values));
+				this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', keys, 'values', values,
+					'cells', graph.getSelectionCells()));
 			}
 			finally
 			{
@@ -653,6 +658,17 @@ Menus.prototype.pickColor = function(key, cmd, defaultValue)
 };
 
 /**
+ * Adds a handler for showing a menu in the given element.
+ */
+Menus.prototype.toggleStyle = function(key)
+{
+	var graph = this.editorUi.editor.graph;
+	var value = graph.toggleCellStyles(key);
+	this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', [key], 'values', [value],
+			'cells', graph.getSelectionCells()));
+};
+
+/**
  * Creates the keyboard event handler for the current graph and history.
  */
 Menus.prototype.addMenuItem = function(menu, key, parent, trigger, sprite)
@@ -738,14 +754,7 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 	}
 	else
 	{
-		this.addMenuItems(menu, ['delete', '-', 'cut', 'copy', '-', 'duplicate'], null, evt);
-
-		if (graph.getSelectionCount() == 1 && graph.getModel().isEdge(graph.getSelectionCell()))
-		{
-			this.addMenuItems(menu, ['setAsDefaultEdge'], null, evt);
-		}
-		
-		menu.addSeparator();
+		this.addMenuItems(menu, ['delete', '-', 'cut', 'copy', '-', 'duplicate', '-'], null, evt);
 	}
 	
 	if (graph.getSelectionCount() > 0)
