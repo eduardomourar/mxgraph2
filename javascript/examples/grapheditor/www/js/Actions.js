@@ -652,11 +652,11 @@ Actions.prototype.init = function()
 	this.addAction('borderColor...', function() { ui.menus.pickColor(mxConstants.STYLE_LABEL_BORDERCOLOR); });
 	
 	// Format actions
-	this.addAction('shadow', function() { graph.toggleCellStyles(mxConstants.STYLE_SHADOW); });
-	this.addAction('dashed', function() { graph.toggleCellStyles(mxConstants.STYLE_DASHED); });
-	this.addAction('rounded', function() { graph.toggleCellStyles(mxConstants.STYLE_ROUNDED); });
-	this.addAction('collapsible', function() { graph.toggleCellStyles('container'); });
-	this.addAction('curved', function() { graph.toggleCellStyles(mxConstants.STYLE_CURVED); });
+	this.addAction('shadow', function() { ui.menus.toggleStyle(mxConstants.STYLE_SHADOW); });
+	this.addAction('dashed', function() { ui.menus.toggleStyle(mxConstants.STYLE_DASHED); });
+	this.addAction('rounded', function() { ui.menus.toggleStyle(mxConstants.STYLE_ROUNDED); });
+	this.addAction('collapsible', function() { ui.menus.toggleStyle('container'); });
+	this.addAction('curved', function() { ui.menus.toggleStyle(mxConstants.STYLE_CURVED); });
 	this.put('style', new Action(mxResources.get('edit') + '...', mxUtils.bind(this, function()
 	{
 		var cells = graph.getSelectionCells();
@@ -677,10 +677,6 @@ Actions.prototype.init = function()
 			dlg.init();
 		}
 	}), null, null, 'Ctrl+E'));
-	this.addAction('setAsDefaultEdge', function()
-	{
-		graph.setDefaultEdge(graph.getSelectionCell());
-	});
 	this.addAction('addWaypoint', function()
 	{
 		var cell = graph.getSelectionCell();
