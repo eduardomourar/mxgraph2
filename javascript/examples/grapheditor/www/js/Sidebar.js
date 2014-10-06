@@ -115,11 +115,6 @@ Sidebar.prototype.tooltipBorder = 16;
 Sidebar.prototype.tooltipDelay = 300;
 
 /**
- * Specifies if edges should be used as templates if clicked. Default is true.
- */
-Sidebar.prototype.installEdges = true;
-
-/**
  * Specifies the URL of the gear image.
  */
 Sidebar.prototype.gearImage = STENCIL_PATH + '/clipart/Gear_128x128.png';
@@ -391,7 +386,7 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	    content.appendChild(this.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top', 30, 60, '', 'Actor', true));
 	    content.appendChild(this.createVertexTemplate('ellipse;shape=cloud;whiteSpace=wrap', 120, 80, '', 'Cloud', true));
 
-	    content.appendChild(this.createVertexTemplate('shape=card;whiteSpace=wrap', 60, 80, '', 'Card', true));
+	    content.appendChild(this.createVertexTemplate('shape=card;whiteSpace=wrap', 80, 100, '', 'Card', true));
 	    content.appendChild(this.createVertexTemplate('shape=folder;whiteSpace=wrap', 120, 120, '', 'Folder', true));
 	    content.appendChild(this.createVertexTemplate('shape=internalStorage;whiteSpace=wrap', 80, 80, '', 'Internal Storage', true));
 	    content.appendChild(this.createVertexTemplate('shape=cylinder;whiteSpace=wrap', 60, 80, '', 'Cylinder', true));
@@ -483,9 +478,9 @@ Sidebar.prototype.addConnectionShapes = function(dir, content)
     content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=none;', 100, 100, '', 'Line', true));
     content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=none;dashed=1;', 100, 100, '', 'Dashed Line', true));
     content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=none;dashed=1;dashPattern=1 4', 100, 100, '', 'Dotted Line', true));
-    content.appendChild(this.createEdgeTemplate('edgeStyle=none', 100, 100, '', 'Connection', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=classic;', 100, 100, '', 'Connection', true));
 
-	var cells = [new mxCell('', new mxGeometry(0, 0, 100, 100), 'curved=1')];
+	var cells = [new mxCell('', new mxGeometry(0, 0, 100, 100), 'curved=1;endArrow=classic;')];
 	cells[0].geometry.setTerminalPoint(new mxPoint(0, 100), true);
 	cells[0].geometry.setTerminalPoint(new mxPoint(100, 0), false);
 	cells[0].geometry.points = [new mxPoint(100, 100), new mxPoint(0, 0)];
@@ -493,12 +488,12 @@ Sidebar.prototype.addConnectionShapes = function(dir, content)
 	cells[0].edge = true;
     content.appendChild(this.createEdgeTemplateFromCells(cells, 100, 100, 'Curve', true));
     
-    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=horizontal', 100, 100, '', 'Horizontal Elbow', true));
-    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical', 100, 100, '', 'Vertical Elbow', true));
-    content.appendChild(this.createEdgeTemplate('edgeStyle=entityRelationEdgeStyle', 100, 100, '', 'Entity Relation', true));
-    content.appendChild(this.createEdgeTemplate('edgeStyle=segmentEdgeStyle', 100, 100, '', 'Manual Line', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;', 100, 100, '', 'Horizontal Elbow', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;', 100, 100, '', 'Vertical Elbow', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=entityRelationEdgeStyle;endArrow=classic;', 100, 100, '', 'Entity Relation', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=segmentEdgeStyle;endArrow=classic;', 100, 100, '', 'Manual Line', true));
 
-	var cells = [new mxCell('', new mxGeometry(0, 0, 100, 100), 'edgeStyle=orthogonalEdgeStyle')];
+	var cells = [new mxCell('', new mxGeometry(0, 0, 100, 100), 'edgeStyle=orthogonalEdgeStyle;endArrow=classic;')];
 	cells[0].geometry.setTerminalPoint(new mxPoint(0, 100), true);
 	cells[0].geometry.setTerminalPoint(new mxPoint(100, 0), false);
 	cells[0].geometry.points = [new mxPoint(30, 100), new mxPoint(30, 50), new mxPoint(70, 50), new mxPoint(70, 0)];
@@ -1054,7 +1049,7 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 		dy = (bounds.height - height - 1) / 2;
 		
 		var ds = this.createDragSource(elt, this.createDropHandler(cells, true, dx, dy),
-				this.createDragPreview(bounds.width - 1, bounds.height - 1));
+				this.createDragPreview(bounds.width - 1, bounds.height - 1), cells);
 		this.addClickHandler(elt, ds, cells);
 	
 		// Uses guides for vertices only if enabled in graph
@@ -1237,10 +1232,100 @@ Sidebar.prototype.createDragPreview = function(width, height)
 /**
  * Creates a drag source for the given element.
  */
-Sidebar.prototype.createDragSource = function(elt, dropHandler, preview)
+Sidebar.prototype.dropAndConnect = function(source, target, direction)
 {
-	var dragSource = mxUtils.makeDraggable(elt, this.editorUi.editor.graph, dropHandler,
-		preview, 0, 0, this.editorUi.editor.graph.autoscroll, true, true);
+	var geo = this.getDropAndConnectGeometry(source, target, direction);
+
+	if (geo != null)
+	{
+		var graph = this.editorUi.editor.graph;
+		
+		graph.model.beginUpdate();
+		try
+		{
+			target = graph.importCells([target], 0, 0, graph.model.getParent(source))[0];
+			graph.model.setGeometry(target, geo);
+			var geo2 = graph.getCellGeometry(target);
+			var edge = graph.insertEdge(null, null, '', source, target);
+			this.editorUi.fireEvent(new mxEventObject('cellsInserted', 'cells', [edge, target]));
+		}
+		finally
+		{
+			graph.model.endUpdate();
+		}
+		
+		graph.setSelectionCell(target);
+	}
+};
+
+/**
+ * Creates a drag source for the given element.
+ */
+Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction)
+{
+	var graph = this.editorUi.editor.graph;
+	var geo = graph.getCellGeometry(source);
+	var geo2 = graph.getCellGeometry(target);
+	
+	if (geo != null && geo2 != null)
+	{
+		var length = Math.min(80, geo.height);
+		geo2 = geo2.clone();
+		
+		// Try match size
+		geo2.width = geo2.width * (geo.height / geo2.height);
+		geo2.height = geo.height;
+		
+		geo2.x = geo.x + geo.width / 2 - geo2.width / 2;
+		geo2.y = geo.y + geo.height / 2 - geo2.height / 2;
+		
+		if (direction == mxConstants.DIRECTION_NORTH)
+		{
+			geo2.y = geo2.y - geo.height / 2 - geo2.height / 2 - length;
+		}
+		else if (direction == mxConstants.DIRECTION_EAST)
+		{
+			geo2.x = geo2.x + geo.width / 2 + geo2.width / 2 + length;
+		}
+		else if (direction == mxConstants.DIRECTION_SOUTH)
+		{
+			geo2.y = geo2.y + geo.height / 2 + geo2.height / 2 + length;
+		}
+		else if (direction == mxConstants.DIRECTION_WEST)
+		{
+			geo2.x = geo2.x - geo.width / 2 - geo2.width / 2 - length;
+		}
+	}
+	
+	return geo2;
+};
+
+/**
+ * Creates a drag source for the given element.
+ */
+Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
+{
+	var dragSource = mxUtils.makeDraggable(elt, this.editorUi.editor.graph, mxUtils.bind(this, function(graph, evt, target, x, y)
+	{
+		if (cells != null && activeArrow != null && currentTargetState != null)
+		{
+			this.dropAndConnect(currentTargetState.cell, cells[0], direction);
+		}
+		else
+		{
+			dropHandler.apply(this, arguments);
+		}
+	}),
+	preview, 0, 0, this.editorUi.editor.graph.autoscroll, true, true);
+	
+	// Stops dragging if cancel is pressed
+	this.editorUi.editor.graph.addListener(mxEvent.ESCAPE, function(sender, evt)
+	{
+		if (dragSource.isActive())
+		{
+			dragSource.reset();
+		}
+	});
 
 	// Overrides mouseDown to ignore popup triggers
 	var mouseDown = dragSource.mouseDown;
@@ -1253,11 +1338,235 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview)
 		}
 	};
 
-	// Allows drop into cell only if target is a valid root
-	dragSource.getDropTarget = function(graph, x, y)
+	// Workaround for event redirection via image tag in quirks and IE8
+	function createArrow(img)
 	{
-		var target = mxDragSource.prototype.getDropTarget.apply(this, arguments);
+		var arrow = null;
 		
+		if (mxClient.IS_IE && !mxClient.IS_SVG)
+		{
+			// Workaround for PNG images in IE6
+			if (mxClient.IS_IE6 && document.compatMode != 'CSS1Compat')
+			{
+				arrow = document.createElement(mxClient.VML_PREFIX + ':image');
+				arrow.setAttribute('src', img.src);
+				arrow.style.borderStyle = 'none';
+			}
+			else
+			{
+				arrow = document.createElement('div');
+				arrow.style.backgroundImage = 'url(' + img.src + ')';
+				arrow.style.backgroundPosition = 'center';
+				arrow.style.backgroundRepeat = 'no-repeat';
+			}
+			
+			arrow.style.width = (img.width + 4) + 'px';
+			arrow.style.height = (img.height + 4) + 'px';
+			arrow.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+		}
+		else
+		{
+			arrow = mxUtils.createImage(img.src);
+			
+			if (touchStyle)
+			{
+				arrow.style.width = '29px';
+				arrow.style.height = '29px';
+			}
+			else
+			{
+				arrow.style.width = img.width + 'px';
+				arrow.style.height = img.height + 'px';
+			}
+		}
+		
+		mxUtils.setOpacity(arrow, 20);
+		arrow.style.position = 'absolute';
+		arrow.style.cursor = 'crosshair';
+		
+		return arrow;
+	};
+
+	var currentTargetState = null;
+	var currentStateHandle = null;
+	var activeTarget = false;
+	
+	var arrowUp = createArrow(this.triangleUp);
+	var arrowRight = createArrow(this.triangleRight);
+	var arrowDown = createArrow(this.triangleDown);
+	var arrowLeft = createArrow(this.triangleLeft);
+	var direction = mxConstants.DIRECTION_NORTH;
+	var activeArrow = null;
+	
+	function checkArrow(x, y, bounds, arrow)
+	{
+		if (mxUtils.contains(bounds, x, y))
+		{
+			mxUtils.setOpacity(arrow, 100);
+			activeArrow = arrow;
+		}
+		else
+		{
+			mxUtils.setOpacity(arrow, 20);
+		}
+		
+		return bounds;
+	};
+	
+	// Hides guides and preview if target is active
+	var sidebar = this;
+	var dsCreatePreviewElement = dragSource.createPreviewElement;
+	
+	// Stores initial size of preview element
+	dragSource.createPreviewElement = function(graph)
+	{
+		var elt = dsCreatePreviewElement.apply(this, arguments);
+		
+		this.previewElementWidth = elt.style.width;
+		this.previewElementHeight = elt.style.height;
+		
+		return elt;
+	};
+	
+	dragSource.dragOver = function(graph, evt)
+	{
+		mxDragSource.prototype.dragOver.apply(this, arguments);
+		
+		if (this.currentGuide != null && activeArrow != null)
+		{
+			this.currentGuide.hide();
+		}
+
+		if (this.previewElement != null)
+		{
+			if (activeArrow != null)
+			{
+				var graph = sidebar.editorUi.editor.graph;
+				var view = graph.view;
+				var geo = sidebar.getDropAndConnectGeometry(currentTargetState.cell, cells[0], direction);
+				var parent = graph.model.getParent(currentTargetState.cell);
+				var dx = view.translate.x * view.scale;
+				var dy = view.translate.y * view.scale;
+				
+				if (graph.model.isVertex(parent))
+				{
+					var pState = view.getState(parent);
+					dx = pState.x;
+					dy = pState.y;
+				}
+				
+				// Shows preview at drop location
+				this.previewElement.style.left = (geo.x * view.scale + dx) + 'px';
+				this.previewElement.style.top = (geo.y * view.scale + dy) + 'px';
+				this.previewElement.style.width = (geo.width * view.scale) + 'px';
+				this.previewElement.style.height = (geo.height * view.scale) + 'px';
+			}
+			else
+			{
+				this.previewElement.style.width = this.previewElementWidth;
+				this.previewElement.style.height = this.previewElementHeight;
+			}
+		}
+	};
+	
+	// Allows drop into cell only if target is a valid root
+	dragSource.getDropTarget = mxUtils.bind(this, function(graph, x, y, evt)
+	{
+		// LATER: Show preview where result will go
+		var cell = (!mxEvent.isAltDown(evt)) ? graph.getCellAt(x, y) : null;
+		var state = graph.view.getState(cell);
+		activeArrow = null;
+		var bbox = null;
+		
+		// Checks if inside bounds
+		if (activeTarget && currentTargetState != null && !mxEvent.isAltDown(evt))
+		{
+			bbox = mxRectangle.fromRectangle(currentTargetState);
+			
+			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.getCenterX() - this.triangleUp.width / 2,
+				currentTargetState.y - this.triangleUp.height, this.triangleUp.width, this.triangleUp.height), arrowUp));
+			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.x + currentTargetState.width,
+				currentTargetState.getCenterY() - this.triangleRight.height / 2,
+				this.triangleRight.width, this.triangleRight.height), arrowRight));
+			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.getCenterX() - this.triangleDown.width / 2,
+					currentTargetState.y + currentTargetState.height,
+					this.triangleDown.width, this.triangleDown.height), arrowDown));
+			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.x - this.triangleLeft.width,
+					currentTargetState.getCenterY() - this.triangleLeft.height / 2,
+					this.triangleLeft.width, this.triangleLeft.height), arrowLeft));
+		}
+		
+		direction = mxConstants.DIRECTION_NORTH;
+		
+		if (activeArrow == arrowRight)
+		{
+			direction = mxConstants.DIRECTION_EAST;
+		}
+		else if (activeArrow == arrowDown)
+		{
+			direction = mxConstants.DIRECTION_SOUTH;
+		}
+		else if (activeArrow == arrowLeft)
+		{
+			direction = mxConstants.DIRECTION_WEST;
+		}
+		
+		if (currentTargetState != state && (bbox == null || !mxUtils.contains(bbox, x, y)))
+		{
+			activeTarget = false;
+			
+			// Hides handle for cell under mouse
+			if (state != null)
+			{
+				currentStateHandle = graph.selectionCellsHandler.getHandler(state.cell);
+				
+				if (currentStateHandle != null && currentStateHandle.hideSizers != null)
+				{
+					currentStateHandle.hideSizers();
+				}
+			}
+			
+			if (currentTargetState != null && currentStateHandle != null)
+			{
+				currentStateHandle.reset();
+			}
+			
+			currentTargetState = state;
+			
+			if (currentTargetState != null && graph.model.isVertex(cell) &&
+				graph.isCellConnectable(cell) && !graph.isContainer(cell))
+			{
+				arrowUp.style.left = (state.getCenterX() - this.triangleUp.width / 2) + 'px';
+				arrowUp.style.top = (state.y - this.triangleUp.height) + 'px';
+				
+				arrowRight.style.left = (state.x + state.width) + 'px';
+				arrowRight.style.top = (state.getCenterY() - this.triangleRight.height / 2) + 'px';
+				
+				arrowDown.style.left = arrowUp.style.left
+				arrowDown.style.top = (state.y + state.height) + 'px';
+				
+				arrowLeft.style.left = (state.x - this.triangleLeft.width) + 'px';
+				arrowLeft.style.top = arrowRight.style.top;
+				
+				graph.container.appendChild(arrowUp);
+				graph.container.appendChild(arrowRight);
+				graph.container.appendChild(arrowDown);
+				graph.container.appendChild(arrowLeft);
+				
+				activeTarget = true;
+			}
+			else if (arrowDown.parentNode != null)
+			{
+				arrowDown.parentNode.removeChild(arrowUp);
+				arrowRight.parentNode.removeChild(arrowRight);
+				arrowDown.parentNode.removeChild(arrowDown);
+				arrowLeft.parentNode.removeChild(arrowLeft);
+			}
+		}
+		
+		// Handles drop target
+		var target = (!activeTarget) ? mxDragSource.prototype.getDropTarget.apply(this, arguments) : null;
+
 		if (target != null)
 		{
 			// Selects parent group as drop target
@@ -1276,6 +1585,33 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview)
 		}
 		
 		return target;
+	});
+	
+	dragSource.stopDrag = function()
+	{
+		mxDragSource.prototype.stopDrag.apply(this, arguments);
+		
+		if (arrowDown.parentNode != null)
+		{
+			arrowDown.parentNode.removeChild(arrowUp);
+			arrowRight.parentNode.removeChild(arrowRight);
+			arrowDown.parentNode.removeChild(arrowDown);
+			arrowLeft.parentNode.removeChild(arrowLeft);
+		}
+		
+		if (activeArrow != null)
+		{
+			mxUtils.setOpacity(activeArrow, 80);
+		}
+		
+		if (currentTargetState != null && currentStateHandle != null)
+		{
+			currentStateHandle.reset();
+		}
+		
+		currentStateHandle = null;
+		currentTargetState = null;
+		activeArrow = null;
 	};
 	
 	return dragSource;
@@ -1294,19 +1630,6 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 		{
 			graph.setSelectionCells(this.updateShapes(cells[0], graph.getSelectionCells()));
 		}
-	}
-	else if (graph.getModel().isEdge(cells[0]) && this.installEdges)
-	{
-		// Installs the default edge
-		graph.setDefaultEdge(cells[0]);
-
-		// Highlights the entry for 200ms
-		elt.style.backgroundColor = '#ffffff';
-		
-		window.setTimeout(function()
-		{
-			elt.style.backgroundColor = '';
-		}, 300);
 	}
 	else
 	{
