@@ -207,7 +207,6 @@ selectAll=Alles markieren
 selectEdges=Kanten markieren
 selectFont=Schriftart wählen
 selectVertices=Knoten markieren
-setAsDefaultEdge=Als Standardkante festlegen
 shadow=Schatten
 shape=Shape
 size=Grösse
