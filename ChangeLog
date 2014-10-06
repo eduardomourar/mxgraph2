@@ -1,3 +1,4 @@
+- Adds event argument in mxDragSource.getDropTarget [JavaScript]
 - mxGraph.toggleCellStyle(s) returns new value [JavaScript]
 - Fixes possible NPE in mxEdgeHandler.reset [JavaScript]
 - Selects new edges after cloning in mxEdgeHandler [JavaScript]
