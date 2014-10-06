@@ -1514,23 +1514,6 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		if (currentTargetState != state && (bbox == null || !mxUtils.contains(bbox, x, y)))
 		{
 			activeTarget = false;
-			
-			// Hides handle for cell under mouse
-			if (state != null)
-			{
-				currentStateHandle = graph.selectionCellsHandler.getHandler(state.cell);
-				
-				if (currentStateHandle != null && currentStateHandle.hideSizers != null)
-				{
-					currentStateHandle.hideSizers();
-				}
-			}
-			
-			if (currentTargetState != null && currentStateHandle != null)
-			{
-				currentStateHandle.reset();
-			}
-			
 			currentTargetState = state;
 			
 			if (currentTargetState != null && graph.model.isVertex(cell) &&
@@ -1553,6 +1536,17 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				graph.container.appendChild(arrowDown);
 				graph.container.appendChild(arrowLeft);
 				
+				// Hides handle for cell under mouse
+				if (state != null)
+				{
+					currentStateHandle = graph.selectionCellsHandler.getHandler(state.cell);
+					
+					if (currentStateHandle != null && currentStateHandle.hideSizers != null)
+					{
+						currentStateHandle.hideSizers();
+					}
+				}
+				
 				activeTarget = true;
 			}
 			else if (arrowDown.parentNode != null)
@@ -1562,6 +1556,11 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				arrowDown.parentNode.removeChild(arrowDown);
 				arrowLeft.parentNode.removeChild(arrowLeft);
 			}
+		}
+
+		if (!activeTarget && currentStateHandle != null)
+		{
+			currentStateHandle.reset();
 		}
 		
 		// Handles drop target
