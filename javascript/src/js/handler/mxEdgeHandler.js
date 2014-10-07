@@ -1600,6 +1600,11 @@ mxEdgeHandler.prototype.redrawHandles = function()
 		this.bends[0].fill = this.getHandleFillColor(0);
 		this.bends[0].redraw();
 		
+		if (this.manageLabelHandle)
+		{
+			this.checkLabelHandle(this.bends[0].bounds);
+		}
+				
 		var pe = this.abspoints[n];
 		var xn = pe.x;
 		var yn = pe.y;
@@ -1610,7 +1615,12 @@ mxEdgeHandler.prototype.redrawHandles = function()
 				Math.round(yn - b.height / 2), b.width, b.height);
 		this.bends[bn].fill = this.getHandleFillColor(bn);
 		this.bends[bn].redraw();
-
+		
+		if (this.manageLabelHandle)
+		{
+			this.checkLabelHandle(this.bends[bn].bounds);
+		}
+		
 		this.redrawInnerBends(p0, pe);
 		this.labelShape.redraw();
 	}
