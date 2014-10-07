@@ -1,3 +1,4 @@
+- Fixes translation of relative geometries in mxGraph.cloneCells [JavaScript]
 - Adds event argument in mxDragSource.getDropTarget [JavaScript]
 - mxGraph.toggleCellStyle(s) returns new value [JavaScript]
 - Fixes possible NPE in mxEdgeHandler.reset [JavaScript]

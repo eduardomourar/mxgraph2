@@ -4107,8 +4107,7 @@ mxGraph.prototype.cloneCells = function(cells, allowInvalidEdges)
 							}
 							else
 							{
-								g.x += dx;
-								g.y += dy;
+								g.translate(dx, dy);
 							}
 						}
 					}
