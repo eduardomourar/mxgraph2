@@ -206,7 +206,7 @@ EditorUi = function(editor, container)
 	// Stores the current style and assigns it to new cells
 	// LATER: Update after copyStyle (handle defaults) and after menu Format, Style
 	var styles = ['shadow', 'dashed', 'dashPattern'];
-	var connectStyles = ['shape', 'edgeStyle', 'curved'];
+	var connectStyles = ['shape', 'edgeStyle', 'curved', 'rounded'];
 	
 	// Sets the default edge style
 	var currentEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle'};
@@ -400,7 +400,7 @@ EditorUi = function(editor, container)
 		graph.connectionHandler.createEdgeState = function(me)
 		{
 			var edge = graph.createEdge(null, null, null, null, null, 'edgeStyle=' + (currentEdgeStyle['edgeStyle'] || 'none') +
-					';curved=' + (currentEdgeStyle['curved'] || '0'));
+					';curved=' + (currentEdgeStyle['curved'] || '0') + ';rounded=' + (currentEdgeStyle['rounded'] || '0'));
 			
 			return new mxCellState(graph.view, edge, graph.getCellStyle(edge));
 		};
