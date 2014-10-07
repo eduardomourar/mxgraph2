@@ -574,7 +574,7 @@ Graph.prototype.setAttributeForCell = function(cell, attributeName, attributeVal
 		var doc = mxUtils.createXmlDocument();
 		
 		value = doc.createElement('UserObject');
-		value.setAttribute('label', cell.value);
+		value.setAttribute('label', cell.value || '');
 	}
 	
 	if (attributeValue != null && attributeValue.length > 0)
