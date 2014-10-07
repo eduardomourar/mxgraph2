@@ -1,3 +1,4 @@
+- Uses edgeState style for preview shape in mxConnectionHandler [JavaScript]
 - Fixes translation of relative geometries in mxGraph.cloneCells [JavaScript]
 - Adds event argument in mxDragSource.getDropTarget [JavaScript]
 - mxGraph.toggleCellStyle(s) returns new value [JavaScript]
