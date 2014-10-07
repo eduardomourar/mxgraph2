@@ -95,10 +95,26 @@ Actions.prototype.init = function()
 		}
 	}, null, null, 'Delete');
 	this.addAction('duplicate', function()
-    {
+	{
 		var s = graph.gridSize;
-		graph.setSelectionCells(graph.moveCells(graph.getSelectionCells(), s, s, true));
-    }, null, null, 'Ctrl+D');
+		var cells = graph.getSelectionCells();
+		var select = [];
+		
+		graph.getModel().beginUpdate();
+		try
+		{
+			for (var i = 0; i < cells.length; i++)
+			{
+				select.push(graph.moveCells([cells[i]], s, s, true, graph.getModel().getParent(cells[i]))[0]);
+			}
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+
+		graph.setSelectionCells(select);
+	}, null, null, 'Ctrl+D');
 	this.addAction('selectVertices', function() { graph.selectVertices(); }, null, null, 'Ctrl+Shift+A').isEnabled = isGraphEnabled;
 	this.addAction('selectEdges', function() { graph.selectEdges(); }, null, null, 'Ctrl+Shift+E').isEnabled = isGraphEnabled;
 	this.addAction('selectAll', function() { graph.selectAll(); }, null, null, 'Ctrl+A').isEnabled = isGraphEnabled;
@@ -656,7 +672,6 @@ Actions.prototype.init = function()
 	this.addAction('dashed', function() { ui.menus.toggleStyle(mxConstants.STYLE_DASHED); });
 	this.addAction('rounded', function() { ui.menus.toggleStyle(mxConstants.STYLE_ROUNDED); });
 	this.addAction('collapsible', function() { ui.menus.toggleStyle('container'); });
-	this.addAction('curved', function() { ui.menus.toggleStyle(mxConstants.STYLE_CURVED); });
 	this.put('style', new Action(mxResources.get('edit') + '...', mxUtils.bind(this, function()
 	{
 		var cells = graph.getSelectionCells();
@@ -741,7 +756,6 @@ Actions.prototype.init = function()
 			
 						if (geo != null)
 						{
-							// Rotates the size and position in the geometry
 							geo = geo.clone();
 							geo.points = null;
 							graph.getModel().setGeometry(cell, geo);
