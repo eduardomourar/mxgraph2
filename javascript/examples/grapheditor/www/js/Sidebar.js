@@ -1532,6 +1532,9 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.x - this.triangleLeft.width,
 					currentTargetState.getCenterY() - this.triangleLeft.height / 2,
 					this.triangleLeft.width, this.triangleLeft.height), arrowLeft));
+			
+			// Adds tolerance
+			bbox.grow(10);
 		}
 		
 		direction = mxConstants.DIRECTION_NORTH;
