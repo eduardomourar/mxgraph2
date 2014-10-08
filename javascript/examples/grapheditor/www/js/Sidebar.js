@@ -81,6 +81,7 @@ Sidebar.prototype.init = function()
 	
 	this.addGeneralPalette(true);
 	this.addTextAndImagePalette(false);
+	this.addConnectionPalette(false);
 	this.addAdvancedPalette(true);
 	this.addStencilPalette('basic', mxResources.get('basic'), dir + '/basic.xml',
 		';fillColor=#ffffff;strokeColor=#000000;strokeWidth=2');
@@ -456,6 +457,53 @@ Sidebar.prototype.addTextAndImageShapes = function(dir, content)
 
     content.appendChild(this.createVertexTemplate('icon;image=' + this.gearImage, 60, 60, 'Icon', 'Icon', false));
     content.appendChild(this.createVertexTemplate('whiteSpace=wrap;label;image=' + this.gearImage, 140, 60, 'Label', 'Label', true));
+};
+
+/**
+ * Adds the container palette to the sidebar.
+ */
+Sidebar.prototype.addConnectionPalette = function(dir, expand)
+{
+	this.addPalette('connections', mxResources.get('connection'), (expand != null) ? expand : false, mxUtils.bind(this, function(content)
+	{
+		this.addConnectionShapes(dir, content);
+	}));
+};
+
+/**
+ * Adds the container palette to the sidebar.
+ */
+Sidebar.prototype.addConnectionShapes = function(dir, content)
+{
+    content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=none;', 100, 100, '', 'Line', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=none;dashed=1;', 100, 100, '', 'Dashed Line', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=none;dashed=1;dashPattern=1 4', 100, 100, '', 'Dotted Line', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=classic;', 100, 100, '', 'Connection', true));
+
+	var cells = [new mxCell('', new mxGeometry(0, 0, 100, 100), 'curved=1;endArrow=classic;')];
+	cells[0].geometry.setTerminalPoint(new mxPoint(0, 100), true);
+	cells[0].geometry.setTerminalPoint(new mxPoint(100, 0), false);
+	cells[0].geometry.points = [new mxPoint(100, 100), new mxPoint(0, 0)];
+	cells[0].geometry.relative = true;
+	cells[0].edge = true;
+    content.appendChild(this.createEdgeTemplateFromCells(cells, 100, 100, 'Curve', true));
+    
+    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;', 100, 100, '', 'Horizontal Elbow', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;', 100, 100, '', 'Vertical Elbow', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=entityRelationEdgeStyle;endArrow=classic;', 100, 100, '', 'Entity Relation', true));
+    content.appendChild(this.createEdgeTemplate('edgeStyle=segmentEdgeStyle;endArrow=classic;', 100, 100, '', 'Manual Line', true));
+
+	var cells = [new mxCell('', new mxGeometry(0, 0, 100, 100), 'edgeStyle=orthogonalEdgeStyle;endArrow=classic;')];
+	cells[0].geometry.setTerminalPoint(new mxPoint(0, 100), true);
+	cells[0].geometry.setTerminalPoint(new mxPoint(100, 0), false);
+	cells[0].geometry.points = [new mxPoint(30, 100), new mxPoint(30, 50), new mxPoint(70, 50), new mxPoint(70, 0)];
+	cells[0].geometry.relative = true;
+	cells[0].edge = true;
+	
+	content.appendChild(this.createEdgeTemplateFromCells(cells, 100, 100, 'Automatic Line', true));
+    
+    content.appendChild(this.createEdgeTemplate('shape=link', 100, 100, '', 'Link', true));
+    content.appendChild(this.createEdgeTemplate('arrow', 100, 100, '', 'Arrow', true));
 };
 
 /**
