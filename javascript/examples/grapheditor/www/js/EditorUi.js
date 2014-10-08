@@ -411,7 +411,7 @@ EditorUi = function(editor, container)
 		var fs = String(currentStyle['fontSize'] || '12');
 		this.toolbar.sizeMenu.innerHTML = mxUtils.htmlEntities(fs);
 
-		// Updates toolbar icon
+		// Updates toolbar icon for edge style
 		var edgeStyleDiv = this.toolbar.edgeStyleMenu.getElementsByTagName('div')[0];
 		
 		if (currentEdgeStyle['shape'] == 'arrow')
