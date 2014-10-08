@@ -405,65 +405,71 @@ EditorUi = function(editor, container)
 			return new mxCellState(graph.view, edge, graph.getCellStyle(edge));
 		};
 		
-		var ff = currentStyle['fontFamily'] || 'Helvetica';
-		this.toolbar.fontMenu.innerHTML = mxUtils.htmlEntities(ff);
-		
-		var fs = String(currentStyle['fontSize'] || '12');
-		this.toolbar.sizeMenu.innerHTML = mxUtils.htmlEntities(fs);
-
-		// Updates toolbar icon for edge style
-		var edgeStyleDiv = this.toolbar.edgeStyleMenu.getElementsByTagName('div')[0];
-		
-		if (currentEdgeStyle['shape'] == 'arrow')
+		if (this.toolbar != null)
 		{
-			edgeStyleDiv.className = 'geSprite geSprite-arrow';
-		}
-		else if (currentEdgeStyle['shape'] == 'link')
-		{
-			edgeStyleDiv.className = 'geSprite geSprite-linkedge';
-		}
-		else if (currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle' && currentEdgeStyle['curved'] == '1')
-		{
-			edgeStyleDiv.className = 'geSprite geSprite-curved';
-		}
-		else if (currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle')
-		{
-			edgeStyleDiv.className = 'geSprite geSprite-orthogonal';
-		}
-		else if (currentEdgeStyle['edgeStyle'] == 'entityRelationEdgeStyle')
-		{
-			edgeStyleDiv.className = 'geSprite geSprite-entity';
-		}
-		else
-		{
-			edgeStyleDiv.className = 'geSprite geSprite-straight';
+			var ff = currentStyle['fontFamily'] || 'Helvetica';
+			this.toolbar.fontMenu.innerHTML = mxUtils.htmlEntities(ff);
+			
+			var fs = String(currentStyle['fontSize'] || '12');
+			this.toolbar.sizeMenu.innerHTML = mxUtils.htmlEntities(fs);
+	
+			// Updates toolbar icon for edge style
+			var edgeStyleDiv = this.toolbar.edgeStyleMenu.getElementsByTagName('div')[0];
+			
+			if (currentEdgeStyle['shape'] == 'arrow')
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-arrow';
+			}
+			else if (currentEdgeStyle['shape'] == 'link')
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-linkedge';
+			}
+			else if (currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle' && currentEdgeStyle['curved'] == '1')
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-curved';
+			}
+			else if (currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle')
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-orthogonal';
+			}
+			else if (currentEdgeStyle['edgeStyle'] == 'entityRelationEdgeStyle')
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-entity';
+			}
+			else
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-straight';
+			}
 		}
 	}));
 	
 	// Update font size and font family labels
-	var update = mxUtils.bind(this, function()
+	if (this.toolbar != null)
 	{
-		var ff = currentStyle['fontFamily'] || 'Helvetica';
-		var fs = String(currentStyle['fontSize'] || '12');
-    	var state = graph.getView().getState(graph.getSelectionCell());
-    	
-    	if (state != null)
-    	{
-    		ff = state.style[mxConstants.STYLE_FONTFAMILY] || ff;
-    		fs = state.style[mxConstants.STYLE_FONTSIZE] || fs;
-    		
-    		if (ff.length > 10)
-    		{
-    			ff = ff.substring(0, 8) + '...';
-    		}
-    	}
-
-		this.toolbar.fontMenu.innerHTML = ff;
-		this.toolbar.sizeMenu.innerHTML = fs;
-	});
+		var update = mxUtils.bind(this, function()
+		{
+			var ff = currentStyle['fontFamily'] || 'Helvetica';
+			var fs = String(currentStyle['fontSize'] || '12');
+	    	var state = graph.getView().getState(graph.getSelectionCell());
+	    	
+	    	if (state != null)
+	    	{
+	    		ff = state.style[mxConstants.STYLE_FONTFAMILY] || ff;
+	    		fs = state.style[mxConstants.STYLE_FONTSIZE] || fs;
+	    		
+	    		if (ff.length > 10)
+	    		{
+	    			ff = ff.substring(0, 8) + '...';
+	    		}
+	    	}
 	
-    graph.getSelectionModel().addListener(mxEvent.CHANGE, update);
-    graph.getModel().addListener(mxEvent.CHANGE, update);
+			this.toolbar.fontMenu.innerHTML = ff;
+			this.toolbar.sizeMenu.innerHTML = fs;
+		});
+		
+	    graph.getSelectionModel().addListener(mxEvent.CHANGE, update);
+	    graph.getModel().addListener(mxEvent.CHANGE, update);
+	}
 	
 	// Makes sure the current layer is visible when cells are added
 	graph.addListener(mxEvent.CELLS_ADDED, function(sender, evt)
