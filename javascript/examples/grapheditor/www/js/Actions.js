@@ -96,8 +96,8 @@ Actions.prototype.init = function()
 	}, null, null, 'Delete');
 	this.addAction('duplicate', function()
 	{
-		var s = graph.gridSize;
 		var cells = graph.getSelectionCells();
+		var s = graph.gridSize;
 		var select = [];
 		
 		graph.getModel().beginUpdate();
@@ -115,6 +115,56 @@ Actions.prototype.init = function()
 
 		graph.setSelectionCells(select);
 	}, null, null, 'Ctrl+D');
+	this.addAction('reverseEdge', function()
+	{
+		var cells = graph.getSelectionCells();
+		var model = graph.getModel();
+		var select = [];
+		
+		model.beginUpdate();
+		try
+		{
+			for (var i = 0; i < cells.length; i++)
+			{
+				if (model.isEdge(cells[i]))
+				{
+					var src = model.getTerminal(cells[i], true);
+					var trg = model.getTerminal(cells[i], false);
+					
+					model.setTerminal(cells[i], trg, true);
+					model.setTerminal(cells[i], src, false);
+					
+					var geo = model.getGeometry(cells[i]);
+					
+					if (geo != null)
+					{
+						geo = geo.clone();
+						
+						if (geo.points != null)
+						{
+							geo.points.reverse();
+						}
+						
+						var sp = geo.getTerminalPoint(true);
+						var tp = geo.getTerminalPoint(false)
+						
+						geo.setTerminalPoint(sp, false);
+						geo.setTerminalPoint(tp, true);
+						
+						model.setGeometry(cells[i], geo);
+					}
+					
+					select.push(cells[i]);
+				}
+			}
+		}
+		finally
+		{
+			model.endUpdate();
+		}
+
+		graph.setSelectionCells(select);
+	});
 	this.addAction('selectVertices', function() { graph.selectVertices(); }, null, null, 'Ctrl+Shift+A').isEnabled = isGraphEnabled;
 	this.addAction('selectEdges', function() { graph.selectEdges(); }, null, null, 'Ctrl+Shift+E').isEnabled = isGraphEnabled;
 	this.addAction('selectAll', function() { graph.selectAll(); }, null, null, 'Ctrl+A').isEnabled = isGraphEnabled;

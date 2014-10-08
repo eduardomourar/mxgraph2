@@ -195,6 +195,7 @@ replace={1} existiert bereits. Soll die Datei überschrieben werden?
 replaceExistingDrawing=Vorhandene Zeichnung ersetzen
 reset=Zurücksetzen
 resetWaypoints=Wegpunkte zurücksetzen
+reverseEdge=Kante umdrehen
 right=Rechts
 rightAlign=Rechts
 rotate=Rotieren
