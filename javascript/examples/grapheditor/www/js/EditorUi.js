@@ -440,6 +440,31 @@ EditorUi = function(editor, container)
 		}
 	}));
 	
+	// Update font size and font family labels
+	var update = mxUtils.bind(this, function()
+	{
+		var ff = currentStyle['fontFamily'] || 'Helvetica';
+		var fs = String(currentStyle['fontSize'] || '12');
+    	var state = graph.getView().getState(graph.getSelectionCell());
+    	
+    	if (state != null)
+    	{
+    		ff = state.style[mxConstants.STYLE_FONTFAMILY] || ff;
+    		fs = state.style[mxConstants.STYLE_FONTSIZE] || fs;
+    		
+    		if (ff.length > 10)
+    		{
+    			ff = ff.substring(0, 8) + '...';
+    		}
+    	}
+
+		this.toolbar.fontMenu.innerHTML = ff;
+		this.toolbar.sizeMenu.innerHTML = fs;
+	});
+	
+    graph.getSelectionModel().addListener(mxEvent.CHANGE, update);
+    graph.getModel().addListener(mxEvent.CHANGE, update);
+	
 	// Makes sure the current layer is visible when cells are added
 	graph.addListener(mxEvent.CELLS_ADDED, function(sender, evt)
 	{
