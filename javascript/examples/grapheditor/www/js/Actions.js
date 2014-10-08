@@ -669,7 +669,51 @@ Actions.prototype.init = function()
 	
 	// Format actions
 	this.addAction('shadow', function() { ui.menus.toggleStyle(mxConstants.STYLE_SHADOW); });
-	this.addAction('dashed', function() { ui.menus.toggleStyle(mxConstants.STYLE_DASHED); });
+	this.addAction('plain', function()
+	{
+		graph.getModel().beginUpdate();
+		try
+		{
+			graph.setCellStyles(mxConstants.STYLE_DASHED, null);
+			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, null);
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED,
+			    mxConstants.STYLE_DASH_PATTERN], 'values', [null, null], 'cells', graph.getSelectionCells()));
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+	});
+	this.addAction('dashed', function()
+	{
+		graph.getModel().beginUpdate();
+		try
+		{
+			graph.setCellStyles(mxConstants.STYLE_DASHED, '1');
+			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, null);
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED,
+			    mxConstants.STYLE_DASH_PATTERN], 'values', ['1', null], 'cells', graph.getSelectionCells()));
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+	});
+	this.addAction('dotted', function()
+	{
+		graph.getModel().beginUpdate();
+		try
+		{
+			graph.setCellStyles(mxConstants.STYLE_DASHED, '1');
+			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, '1 4');
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED,
+			    mxConstants.STYLE_DASH_PATTERN], 'values', ['1', '1 4'], 'cells', graph.getSelectionCells()));
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+	});
 	this.addAction('rounded', function() { ui.menus.toggleStyle(mxConstants.STYLE_ROUNDED); });
 	this.addAction('collapsible', function() { ui.menus.toggleStyle('container'); });
 	this.put('style', new Action(mxResources.get('edit') + '...', mxUtils.bind(this, function()

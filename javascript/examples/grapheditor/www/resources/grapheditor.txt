@@ -65,6 +65,7 @@ diamond=Diamond
 diamondThin=Diamond (thin)
 direction=Direction
 distribute=Distribute
+dotted=Dotted
 drawing=Drawing{1}
 drawingEmpty=Drawing is empty
 drawingTooLarge=Drawing is too large
