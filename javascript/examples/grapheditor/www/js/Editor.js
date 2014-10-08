@@ -198,7 +198,7 @@ Editor.prototype.setGraphXml = function(node)
 		try
 		{
 			this.graph.model.clear();
-			this.graph.view.scale = parseFloat(node.getAttribute('scale')) || 1;
+			this.graph.view.scale = 1;
 			this.graph.gridEnabled = node.getAttribute('grid') != '0';
 			this.graph.gridSize = parseFloat(node.getAttribute('gridSize')) || mxGraph.prototype.gridSize;
 			this.graph.graphHandler.guidesEnabled = node.getAttribute('guides') != '0';
@@ -259,18 +259,7 @@ Editor.prototype.setGraphXml = function(node)
 			this.graph.model.endUpdate();
 		}
 
-		var top = node.getAttribute('scrollTop');
-		var left = node.getAttribute('scrollLeft');
-		
-		if (top != null && left != null && mxUtils.hasScrollbars(this.graph.container))
-		{
-			this.graph.container.scrollTop = parseInt(top);
-			this.graph.container.scrollLeft = parseInt(left);
-		}
-		else
-		{
-			this.fireEvent(new mxEventObject('resetGraphView'));
-		}
+		this.fireEvent(new mxEventObject('resetGraphView'));
 	}
 	else if (node.nodeName == 'root')
 	{
@@ -318,13 +307,6 @@ Editor.prototype.getGraphXml = function()
 	node.setAttribute('pageScale', this.graph.pageScale);
 	node.setAttribute('pageWidth', this.graph.pageFormat.width);
 	node.setAttribute('pageHeight', this.graph.pageFormat.height);
-	node.setAttribute('scale', this.graph.view.scale);
-	
-	if (mxUtils.hasScrollbars(this.graph.container))
-	{
-		node.setAttribute('scrollTop', this.graph.container.scrollTop);
-		node.setAttribute('scrollLeft', this.graph.container.scrollLeft);
-	}
 
 	if (this.graph.background != null)
 	{
