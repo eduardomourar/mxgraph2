@@ -56,7 +56,7 @@ Toolbar.prototype.init = function()
 		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_MIDDLE], 'geIcon geSprite geSprite-middle', null).setAttribute('title', mxResources.get('middle'));
 		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_BOTTOM], 'geIcon geSprite geSprite-bottom', null).setAttribute('title', mxResources.get('bottom'));
 	}));
-	this.fontColorMenu = this.addItems(['fontColor', '-']);
+	this.addItems(['fontColor', '-']);
 	this.edgeStyleMenu = this.addMenuFunction('geSprite-orthogonal', mxResources.get('line'), false, mxUtils.bind(this, function(menu)
 	{
 		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, 'noedgestyle'], [null, null, null, null], 'geIcon geSprite geSprite-straight', null, true).setAttribute('title', mxResources.get('straight'));
@@ -96,29 +96,8 @@ Toolbar.prototype.init = function()
 		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_ENDARROW, 'endFill'], [mxConstants.ARROW_DIAMOND, 0], 'geIcon geSprite geSprite-enddiamondtrans', null, false).setAttribute('title', mxResources.get('diamond'));
 		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_ENDARROW, 'endFill'], [mxConstants.ARROW_DIAMOND_THIN, 0], 'geIcon geSprite geSprite-endthindiamondtrans', null, false).setAttribute('title', mxResources.get('diamondThin'));
 	}));
-	var items = this.addItems(['-', 'image', 'link', '-', 'strokeColor', 'fillColor']);
-	
-	// Adds dynamic color boxes for toolbar items
-	/*this.strokeColorMenu = items[4];
-	this.strokeColorMenu.getElementsByTagName('div')[0].style.position = 'absolute';
-
-	var div = document.createElement('div');
-	div.style.position = 'absolute';
-	div.style.marginTop = '17px';
-	div.style.background = 'red';
-	div.style.width = '21px';
-	div.style.height = '5px';
-	this.strokeColorMenu.appendChild(div);
-	
-	this.fillColorMenu = items[5];
-	this.fillColorMenu.getElementsByTagName('div')[0].style.position = 'absolute';
-	this.fillColorMenu.appendChild(div.cloneNode(true));
-	
-	this.gradientColorMenu = this.addItem('geSprite-gradientcolor', 'gradientColor');
-	this.gradientColorMenu.setAttribute('title', mxResources.get('gradient'));
-	this.gradientColorMenu.getElementsByTagName('div')[0].style.position = 'absolute';
-	this.gradientColorMenu.appendChild(div.cloneNode(true));*/
-
+	this.addItems(['-', 'image', 'link', '-', 'strokeColor', 'fillColor']);
+	this.addItem('geSprite-gradientcolor', 'gradientColor').setAttribute('title', mxResources.get('gradient'));
 	this.addItems(['shadow']);
 	var items = this.addItems(['-', 'grid', 'guides']);
 	
