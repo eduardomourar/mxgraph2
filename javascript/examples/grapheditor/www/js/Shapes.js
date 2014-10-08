@@ -719,7 +719,7 @@
 	mxUtils.extend(LinkShape, mxArrow);
 	LinkShape.prototype.paintEdgeShape = function(c, pts)
 	{
-		var width = 10;
+		var width = 10 + Math.max(0, this.strokewidth - 1) * 4;
 
 		// Base vector (between end points)
 		var p0 = pts[0];
