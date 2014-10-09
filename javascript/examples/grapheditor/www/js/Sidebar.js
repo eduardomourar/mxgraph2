@@ -1432,6 +1432,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	var arrowRight = createArrow(this.triangleRight);
 	var arrowDown = createArrow(this.triangleDown);
 	var arrowLeft = createArrow(this.triangleLeft);
+	var arrowSpacing = 4;
 	var direction = mxConstants.DIRECTION_NORTH;
 	var activeArrow = null;
 	
@@ -1522,14 +1523,14 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			bbox = mxRectangle.fromRectangle(currentTargetState);
 			
 			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.getCenterX() - this.triangleUp.width / 2,
-				currentTargetState.y - this.triangleUp.height, this.triangleUp.width, this.triangleUp.height), arrowUp));
-			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.x + currentTargetState.width,
+				currentTargetState.y - this.triangleUp.height - arrowSpacing, this.triangleUp.width, this.triangleUp.height), arrowUp));
+			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.x + currentTargetState.width + arrowSpacing,
 				currentTargetState.getCenterY() - this.triangleRight.height / 2,
 				this.triangleRight.width, this.triangleRight.height), arrowRight));
 			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.getCenterX() - this.triangleDown.width / 2,
-					currentTargetState.y + currentTargetState.height,
+					currentTargetState.y + currentTargetState.height + arrowSpacing,
 					this.triangleDown.width, this.triangleDown.height), arrowDown));
-			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.x - this.triangleLeft.width,
+			bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.x - this.triangleLeft.width - arrowSpacing,
 					currentTargetState.getCenterY() - this.triangleLeft.height / 2,
 					this.triangleLeft.width, this.triangleLeft.height), arrowLeft));
 			
@@ -1561,15 +1562,15 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				graph.isCellConnectable(cell) && !graph.isContainer(cell))
 			{
 				arrowUp.style.left = (state.getCenterX() - this.triangleUp.width / 2) + 'px';
-				arrowUp.style.top = (state.y - this.triangleUp.height) + 'px';
+				arrowUp.style.top = (state.y - this.triangleUp.height - arrowSpacing) + 'px';
 				
-				arrowRight.style.left = (state.x + state.width) + 'px';
+				arrowRight.style.left = (state.x + state.width + arrowSpacing) + 'px';
 				arrowRight.style.top = (state.getCenterY() - this.triangleRight.height / 2) + 'px';
 				
 				arrowDown.style.left = arrowUp.style.left
-				arrowDown.style.top = (state.y + state.height) + 'px';
+				arrowDown.style.top = (state.y + state.height + arrowSpacing) + 'px';
 				
-				arrowLeft.style.left = (state.x - this.triangleLeft.width) + 'px';
+				arrowLeft.style.left = (state.x - this.triangleLeft.width - arrowSpacing) + 'px';
 				arrowLeft.style.top = arrowRight.style.top;
 				
 				graph.container.appendChild(arrowUp);
