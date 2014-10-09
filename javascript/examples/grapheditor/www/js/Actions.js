@@ -164,7 +164,7 @@ Actions.prototype.init = function()
 		}
 
 		graph.setSelectionCells(select);
-	});
+	}, null, null, 'Ctrl+Shift+R');
 	this.addAction('selectVertices', function() { graph.selectVertices(); }, null, null, 'Ctrl+Shift+A').isEnabled = isGraphEnabled;
 	this.addAction('selectEdges', function() { graph.selectEdges(); }, null, null, 'Ctrl+Shift+E').isEnabled = isGraphEnabled;
 	this.addAction('selectAll', function() { graph.selectAll(); }, null, null, 'Ctrl+A').isEnabled = isGraphEnabled;
@@ -786,6 +786,13 @@ Actions.prototype.init = function()
 			dlg.init();
 		}
 	}), null, null, 'Ctrl+E'));
+	this.addAction('setAsDefaultStyle', function()
+	{
+		if (graph.isEnabled() && !graph.isSelectionEmpty())
+		{
+			ui.setDefaultStyle(graph.getSelectionCell());
+		}
+	}, null, null, 'Ctrl+Shift+X');
 	this.addAction('addWaypoint', function()
 	{
 		var cell = graph.getSelectionCell();

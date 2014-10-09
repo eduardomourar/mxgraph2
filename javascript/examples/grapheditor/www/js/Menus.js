@@ -234,8 +234,7 @@ Menus.prototype.init = function()
 		this.addMenuItems(menu, ['-'], parent);
 		this.addSubmenu('linestart', menu, parent);
 		this.addSubmenu('lineend', menu, parent);
-		menu.addSeparator(parent);
-		this.addMenuItem(menu, 'style', parent);
+		this.addMenuItems(menu, ['-', 'setAsDefaultStyle', 'style'], parent);
 	})));
 	this.put('gradient', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -800,12 +799,20 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 	
 	if (graph.isSelectionEmpty())
 	{
-		this.addMenuItems(menu, ['undo', 'redo', '-', 'paste', '-'], null, evt);	
+		this.addMenuItems(menu, ['undo', 'redo', '-', 'paste'], null, evt);	
 	}
 	else
 	{
-		this.addMenuItems(menu, ['delete', '-', 'cut', 'copy', '-', 'duplicate', '-'], null, evt);
+		this.addMenuItems(menu, ['delete', '-', 'cut', 'copy', '-', 'duplicate'], null, evt);
+
 	}
+
+	if (graph.getSelectionCount() == 1)
+	{
+		this.addMenuItems(menu, ['setAsDefaultStyle'], null, evt);
+	}
+	
+	menu.addSeparator();
 	
 	if (graph.getSelectionCount() > 0)
 	{

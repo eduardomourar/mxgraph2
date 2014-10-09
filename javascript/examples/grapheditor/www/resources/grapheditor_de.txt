@@ -209,6 +209,7 @@ selectAll=Alles markieren
 selectEdges=Kanten markieren
 selectFont=Schriftart wählen
 selectVertices=Knoten markieren
+setAsDefaultStyle=Als Standardstyle festlegen
 shadow=Schatten
 shape=Shape
 size=Grösse
