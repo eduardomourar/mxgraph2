@@ -621,8 +621,37 @@
 		c.stroke();
 	};
 
-	// Replaces existing actor shape
 	mxCellRenderer.prototype.defaultShapes['lollipop'] = LollipopShape;
+
+	// Lollipop Shape
+	function RequiresShape()
+	{
+		mxShape.call(this);
+	};
+	mxUtils.extend(RequiresShape, mxShape);
+	RequiresShape.prototype.size = 10;
+	RequiresShape.prototype.inset = 2;
+	RequiresShape.prototype.paintBackground = function(c, x, y, w, h)
+	{
+		var sz = parseFloat(mxUtils.getValue(this.style, 'size', this.size));
+		var inset = parseFloat(mxUtils.getValue(this.style, 'inset', this.inset));
+		c.translate(x, y);
+
+		c.begin();
+		c.moveTo(w / 2, sz + inset);
+		c.lineTo(w / 2, h);
+		c.end();
+		c.stroke();
+		
+		c.begin();
+		c.moveTo((w - sz) / 2 - inset, sz / 2);
+		c.quadTo((w - sz) / 2 - inset, sz + inset, w / 2, sz + inset);
+		c.quadTo((w + sz) / 2 + inset, sz + inset, (w + sz) / 2 + inset, sz / 2);
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['requires'] = RequiresShape;
 	
 	// Component shape
 	function ComponentShape()

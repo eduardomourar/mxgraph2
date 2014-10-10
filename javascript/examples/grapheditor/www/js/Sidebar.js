@@ -609,8 +609,6 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		classCell.insert(classCell1);
 		
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 180, 90, 'Component with Attributes', true));
-		
-		content.appendChild(this.createVertexTemplate('shape=lollipop;direction=south;', 30, 10, '', 'Lollipop', true));
 
     	var cardCell = new mxCell('Block', new mxGeometry(0, 0, 180, 120),
     			'verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;');
@@ -627,7 +625,10 @@ Sidebar.prototype.addUmlPalette = function(expand)
 				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1');
     	classCell.vertex = true;
     	content.appendChild(this.createVertexTemplateFromCells([classCell], 160, 90, 'Object', true));
-
+    	
+		content.appendChild(this.createVertexTemplate('shape=lollipop;direction=south;', 30, 10, '', 'Provided Interface', true));
+		content.appendChild(this.createVertexTemplate('shape=requires;direction=north;', 30, 20, '', 'Required Interface', true));
+		
     	var tableCell = new mxCell('<div style="box-sizing:border-box;width:100%;background:#e4e4e4;margin:1px;padding:2px;">Tablename</div><table style="width:100%;">' +
 				'<tr><td>PK</td><td style="padding:2px;">uniqueId</td></tr>' +
 				'<tr><td>FK1</td><td style="padding:2px;">foreignKey</td></tr>' +
@@ -635,7 +636,6 @@ Sidebar.prototype.addUmlPalette = function(expand)
 				'</table>', new mxGeometry(0, 0, 180, 90), 'verticalAlign=top;align=left;overflow=fill;html=1');
     	tableCell.vertex = true;
     	content.appendChild(this.createVertexTemplateFromCells([tableCell], 180, 90, 'Entity', true));
-	    content.appendChild(this.createVertexTemplate('shape=note', 80, 100, '', 'Note', true));
 
     	content.appendChild(this.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top', 40, 80, 'Actor', 'Actor', false));
 	    content.appendChild(this.createVertexTemplate('ellipse', 140, 70, 'Use Case', 'Use Case', true));
