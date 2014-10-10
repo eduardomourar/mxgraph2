@@ -1,3 +1,5 @@
+- Fixes possible NPE in mxEdgeHandler.reset [JavaScript]
+
 09-OCT-2014: 3.1.0.1
 
 - Uses edgeState style for preview shape in mxConnectionHandler [JavaScript]

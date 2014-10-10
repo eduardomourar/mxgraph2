@@ -1183,7 +1183,11 @@ mxEdgeHandler.prototype.reset = function()
 		this.marker.reset();
 	}
 	
-	this.constraintHandler.reset();
+	if (this.constraintHandler != null)
+	{
+		this.constraintHandler.reset();
+	}
+
 	this.setPreviewColor(mxConstants.EDGE_SELECTION_COLOR);
 	this.removeHint();
 	this.redraw();
