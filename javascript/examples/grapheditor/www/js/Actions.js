@@ -755,9 +755,9 @@ Actions.prototype.init = function()
 		try
 		{
 			graph.setCellStyles(mxConstants.STYLE_DASHED, '1');
-			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, '1 4');
+			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, '1 2');
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED,
-			    mxConstants.STYLE_DASH_PATTERN], 'values', ['1', '1 4'], 'cells', graph.getSelectionCells()));
+			    mxConstants.STYLE_DASH_PATTERN], 'values', ['1', '1 2'], 'cells', graph.getSelectionCells()));
 		}
 		finally
 		{
