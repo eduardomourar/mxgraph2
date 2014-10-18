@@ -1,3 +1,4 @@
+- Adds caching for HTML labels in htmllabel.html example [JavaScript]
 - Fixes possible NPE in mxEdgeHandler.reset [JavaScript]
 
 09-OCT-2014: 3.1.0.1
