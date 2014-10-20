@@ -66,7 +66,7 @@ Actions.prototype.init = function()
 		});
 	}).isEnabled = isGraphEnabled;
 	this.addAction('save', function() { ui.saveFile(false); }, null, null, 'Ctrl+S').isEnabled = isGraphEnabled;
-	this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, 'Ctrl+Shift-S').isEnabled = isGraphEnabled;
+	this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, 'Ctrl+Shift+S').isEnabled = isGraphEnabled;
 	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 210, true, true); });
 	this.put('editFile', new Action(mxResources.get('edit') + '...', function()
 	{
@@ -755,9 +755,9 @@ Actions.prototype.init = function()
 		try
 		{
 			graph.setCellStyles(mxConstants.STYLE_DASHED, '1');
-			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, '1 2');
+			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, '1 4');
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED,
-			    mxConstants.STYLE_DASH_PATTERN], 'values', ['1', '1 2'], 'cells', graph.getSelectionCells()));
+			    mxConstants.STYLE_DASH_PATTERN], 'values', ['1', '1 4'], 'cells', graph.getSelectionCells()));
 		}
 		finally
 		{
@@ -792,7 +792,7 @@ Actions.prototype.init = function()
 		{
 			ui.setDefaultStyle(graph.getSelectionCell());
 		}
-	}, null, null, 'Ctrl+Shift+X');
+	}, null, null, 'Ctrl+Shift+D');
 	this.addAction('addWaypoint', function()
 	{
 		var cell = graph.getSelectionCell();
@@ -1042,7 +1042,7 @@ Actions.prototype.init = function()
 		{
 			this.layersWindow.window.setVisible(!this.layersWindow.window.isVisible());
 		}
-	}), null, null, 'Ctrl+Shift-L');
+	}), null, null, 'Ctrl+Shift+L');
 	action.setToggleAction(true);
 	action.setSelectedCallback(mxUtils.bind(this, function() { return this.layersWindow != null && this.layersWindow.window.isVisible(); }));
 	action = this.addAction('outline', mxUtils.bind(this, function()
@@ -1057,7 +1057,7 @@ Actions.prototype.init = function()
 		{
 			this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
 		}
-	}), null, null, 'Ctrl+Shift-O');
+	}), null, null, 'Ctrl+Shift+O');
 	
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.scrollbars; });
