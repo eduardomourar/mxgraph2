@@ -1,3 +1,5 @@
+- Fixes rounding for image position in mxHandle [JavaScript]
+- Adds mxVertexHandler, mxEdgeHandler.setHandlesVisible [JavaScript]
 - Replaces deprecated nodeValue with value for DOM attributes [JavaScript]
 - Adds mxShape.addPoints, rounded mxTriangle, mxRhombus, mxHexagon [JavaScript]
 - Adds caching for HTML labels in htmllabel.html example [JavaScript]
