@@ -1719,7 +1719,7 @@ mxEdgeHandler.prototype.drawPreview = function()
 		this.labelShape.bounds = bounds;
 		this.labelShape.redraw();
 	}
-	else
+	else if (this.shape != null)
 	{
 		this.shape.points = this.abspoints;
 		this.shape.scale = this.state.view.scale;
