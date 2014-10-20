@@ -546,13 +546,11 @@ Menus.prototype.edgeStyleChange = function(menu, label, keys, values, sprite, pa
 					{
 						var geo = graph.getCellGeometry(cell);
 			
-						// Resets all edge points and the label position
+						// Resets all edge points
 						if (geo != null)
 						{
 							geo = geo.clone();
 							geo.points = null;
-							geo.x = 0;
-							geo.y = 0;
 							graph.getModel().setGeometry(cell, geo);
 						}
 					}
