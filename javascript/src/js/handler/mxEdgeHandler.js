@@ -1178,6 +1178,25 @@ mxEdgeHandler.prototype.reset = function()
 	this.isSource = false;
 	this.isTarget = false;
 	
+	if (this.livePreview && this.sizers != null)
+	{
+		for (var i = 0; i < this.sizers.length; i++)
+		{
+			if (this.sizers[i] != null)
+			{
+				this.sizers[i].node.style.display = '';
+			}
+		}
+	}
+
+	if (this.customHandles != null)
+	{
+		for (var i = 0; i < this.customHandles.length; i++)
+		{
+			this.customHandles[i].reset();
+		}
+	}
+	
 	if (this.marker != null)
 	{
 		this.marker.reset();
@@ -1627,6 +1646,27 @@ mxEdgeHandler.prototype.redrawHandles = function()
 		
 		this.redrawInnerBends(p0, pe);
 		this.labelShape.redraw();
+	}
+};
+
+/**
+ * Function: hideHandles
+ * 
+ * Shortcut to <hideSizers>.
+ */
+mxEdgeHandler.prototype.setHandlesVisible = function(visible)
+{
+	if (this.bends != null)
+	{
+		for (var i = 0; i < this.bends.length; i++)
+		{
+			this.bends[i].node.style.display = (visible) ? '' : 'none';
+		}
+	}
+
+	if (this.labelShape != null)
+	{
+		this.labelShape.node.style.display = (visible) ? '' : 'none';
 	}
 };
 

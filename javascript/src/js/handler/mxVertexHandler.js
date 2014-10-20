@@ -643,6 +643,30 @@ mxVertexHandler.prototype.start = function(x, y, index)
 };
 
 /**
+ * Function: hideHandles
+ * 
+ * Shortcut to <hideSizers>.
+ */
+mxVertexHandler.prototype.setHandlesVisible = function(visible)
+{
+	if (this.sizers != null)
+	{
+		for (var i = 0; i < this.sizers.length; i++)
+		{
+			this.sizers[i].node.style.display = (visible) ? '' : 'none';
+		}
+	}
+
+	if (this.customHandles != null)
+	{
+		for (var i = 0; i < this.customHandles.length; i++)
+		{
+			this.customHandles[i].setVisible(visible);
+		}
+	}
+};
+
+/**
  * Function: hideSizers
  * 
  * Hides all sizers except.
@@ -651,21 +675,7 @@ mxVertexHandler.prototype.start = function(x, y, index)
  */
 mxVertexHandler.prototype.hideSizers = function()
 {
-	if (this.sizers != null)
-	{
-		for (var i = 0; i < this.sizers.length; i++)
-		{
-			this.sizers[i].node.style.display = 'none';
-		}
-	}
-
-	if (this.customHandles != null)
-	{
-		for (var i = 0; i < this.customHandles.length; i++)
-		{
-			this.customHandles[i].setVisible(false);
-		}
-	}
+	this.setHandlesVisible(false);
 };
 
 /**
@@ -1415,26 +1425,20 @@ mxVertexHandler.prototype.redrawHandles = function()
 			// KNOWN: Tolerance depends on event type (eg. 0 for mouse events)
 			var tol = this.tolerance;
 			
-			if (s.width < 2 * this.sizers[0].bounds.width - 2 + 2 * tol)
+			if ((s.width < 2 * this.sizers[0].bounds.width - 2 + 2 * tol) ||
+				(s.height < 2 * this.sizers[0].bounds.height - 2 + 2 * tol))
 			{
-				this.sizers[1].node.style.display = 'none';
-				this.sizers[6].node.style.display = 'none';
+				this.sizers[0].node.style.display = 'none';
+				this.sizers[2].node.style.display = 'none';
+				this.sizers[5].node.style.display = 'none';
+				this.sizers[7].node.style.display = 'none';
 			}
 			else
 			{
-				this.sizers[1].node.style.display = '';
-				this.sizers[6].node.style.display = '';
-			}
-			
-			if (s.height < 2 * this.sizers[0].bounds.height - 2 + 2 * tol)
-			{
-				this.sizers[3].node.style.display = 'none';
-				this.sizers[4].node.style.display = 'none';
-			}
-			else
-			{
-				this.sizers[3].node.style.display = '';
-				this.sizers[4].node.style.display = '';
+				this.sizers[0].node.style.display = '';
+				this.sizers[2].node.style.display = '';
+				this.sizers[5].node.style.display = '';
+				this.sizers[7].node.style.display = '';
 			}
 			
 			if (s.width < 2 * this.sizers[0].bounds.width - 2 + 3 * tol ||
