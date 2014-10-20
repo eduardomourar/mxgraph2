@@ -1,3 +1,4 @@
+- Replaces deprecated nodeValue with value for DOM attributes [JavaScript]
 - Adds mxShape.addPoints, rounded mxTriangle, mxRhombus, mxHexagon [JavaScript]
 - Adds caching for HTML labels in htmllabel.html example [JavaScript]
 - Fixes possible NPE in mxEdgeHandler.reset, drawPreview [JavaScript]
