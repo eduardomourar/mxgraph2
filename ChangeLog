@@ -1,3 +1,4 @@
+- Fixes printing for mxUtils.show/printScreen in IE9 standards [JavaScript]
 - Fixes rounding for image position in mxHandle [JavaScript]
 - Adds mxVertexHandler, mxEdgeHandler.setHandlesVisible [JavaScript]
 - Replaces deprecated nodeValue with value for DOM attributes [JavaScript]

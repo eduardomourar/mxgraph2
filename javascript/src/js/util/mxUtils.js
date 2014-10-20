@@ -3503,6 +3503,12 @@ var mxUtils =
 		{
 			doc.open();
 		}
+
+		// Workaround for missing print output in IE9 standards
+		if (document.documentMode > 8)
+		{
+			doc.writeln('<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->');
+		}
 		
 		var bounds = graph.getGraphBounds();
 		var dx = Math.ceil(x0 - bounds.x);
