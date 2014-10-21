@@ -24,6 +24,8 @@
 -------------------------
 
 - Fix vertical text editing offset
+- Fix routing for overlapping vertices in orthogonalEdgeStyle
+
 - Add single handle for multiple selected cells
 - Show dotted rectangle for parent group in selection
 - Fix live preview for resize of rotated container with children (child offset)

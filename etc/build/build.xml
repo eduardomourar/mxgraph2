@@ -7,16 +7,15 @@
 		<delete file=".tmp.js"/>
 		<java fork="false" classname="Preprocessor" classpath=".">
 			<arg value="../../javascript/src/js/mxClient.js"/>
-			<arg value=".tmp.js"/>
+			<arg value="mxClient-debug.js"/>
 		</java>
 		<loadfile property="version" srcFile="../../VERSION"/>
-		<replace file=".tmp.js" token="@MXGRAPH-VERSION@" value="${version}"/>
+		<replace file="mxClient-debug.js" token="@MXGRAPH-VERSION@" value="${version}"/>
 		<jscomp compilationLevel="simple" debug="false" output="mxClient.js">
 			<sources dir=".">
-				<file name=".tmp.js"/>
+				<file name="mxClient-debug.js"/>
 			</sources>
 		</jscomp>
-		<delete file=".tmp.js"/>
 	</target>
 	
 	<target name="grapheditor" depends="mxclient">

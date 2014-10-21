@@ -99,21 +99,11 @@ $DOXYGEN ../../../etc/build/Doxyfile
 # -recurse:src/*.cs -out:dotnet.dll -doc:dotnet.xml
 cd - >/dev/null
 
-cp -r javascript/src/js build/tmp
-
-# Merges Javascript
-echo "Merging Javascript..."
-cat build/tmp/mxClient.js | sed "s/@MXGRAPH-VERSION@/$VERSION/;s/@MXGRAPH-DATE@/$TODAY/" | $PERL etc/build/mxpp.pl > build/tmp/mxClient2.js
-
-# Minifies JS file, keeps original merged copy for debugging
-mkdir -p $DIR/javascript/debug/js
-cp build/tmp/mxClient2.js $DEBUGFILE
-
-java -jar etc/build/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js $DEBUGFILE --js_output_file=$JSFILE
-# cat $DEBUGFILE | tr -d "\n" > $JSFILE
-
-# Removes temporary files
-rm -rf build/tmp
+# Builds JavaScript version
+cd etc/build
+ant
+mv mxClient-debug.js $DEBUGFILE
+mv mxClient.js $JSFILE
 
 # Removes CVS directories
 find $DIR -name CVS | xargs rm -rf
