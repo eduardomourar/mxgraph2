@@ -1031,14 +1031,13 @@ mxShape.prototype.addPoints = function(c, pts, rounded, arcSize, close)
 	// Draws the line segments
 	c.moveTo(pt.x, pt.y);
 	
-	// FIXME: Draw all rounded corners for closed, rounded path
 	while (i < ((close) ? pts.length : pts.length - 1))
 	{
 		var tmp = pts[mxUtils.mod(i, pts.length)];
 		var dx = pt.x - tmp.x;
 		var dy = pt.y - tmp.y;
 
-		if ((rounded) && (dx != 0 || dy != 0))
+		if (rounded && (dx != 0 || dy != 0))
 		{
 			// Draws a line from the last point to the current
 			// point with a spacing of size off the current point
