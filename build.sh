@@ -102,14 +102,17 @@ cd - >/dev/null
 # Builds JavaScript version
 cd etc/build
 ant
-mv mxClient-debug.js $DEBUGFILE
-mv mxClient.js $JSFILE
+cd - >/dev/null
+mkdir -p $DIR/javascript/debug/js
+mkdir -p $DIR/javascript/src/js
+mv etc/build/mxClient-debug.js $DEBUGFILE
+mv etc/build/mxClient.js $JSFILE
 
 # Removes CVS directories
 find $DIR -name CVS | xargs rm -rf
 
 # Creates JavaScript source archive
-mkdir $DIR/javascript/src/src
+mkdir -p $DIR/javascript/src/src
 cp -r 2>/dev/null javascript/src/js $DIR/javascript/src/src
 
 rm -f $DIR/javascript/src/src/js/mxClient.js
