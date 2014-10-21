@@ -1324,6 +1324,7 @@ Graph.prototype.initTouch = function()
 	var triangleRight = new mxImage(IMAGE_PATH + '/triangle-right.png', 26, 26);
 	var triangleDown = new mxImage(IMAGE_PATH + '/triangle-down.png', 26, 26);
 	var triangleLeft = new mxImage(IMAGE_PATH + '/triangle-left.png', 26, 26);
+	var roundDrop = new mxImage(IMAGE_PATH + '/round-drop.png', 26, 26);
 
 	mxVertexHandler.prototype.rotationHandleVSpacing = -20;
 
@@ -1337,6 +1338,7 @@ Graph.prototype.initTouch = function()
 	Sidebar.prototype.triangleRight = triangleRight;
 	Sidebar.prototype.triangleDown = triangleDown;
 	Sidebar.prototype.triangleLeft = triangleLeft;
+	Sidebar.prototype.roundDrop = roundDrop;
 	
 	// Enables connections along the outline
 	mxConnectionHandler.prototype.outlineConnect = true;
@@ -1353,6 +1355,7 @@ Graph.prototype.initTouch = function()
 	new Image().src = triangleRight.src;
 	new Image().src = triangleDown.src;
 	new Image().src = triangleLeft.src;
+	new Image().src = roundDrop.src;
 	
 	var vertexHandlerCreateSizerShape = mxVertexHandler.prototype.createSizerShape;
 	mxVertexHandler.prototype.createSizerShape = function(bounds, index, fillColor)
@@ -1797,19 +1800,19 @@ Graph.prototype.initTouch = function()
 		}
 	};
 	
-	var vertexHandlerHideSizers = mxVertexHandler.prototype.hideSizers;
-	mxVertexHandler.prototype.hideSizers = function()
+	var vertexHandlerSetHandlesVisible = mxVertexHandler.prototype.setHandlesVisible;
+	mxVertexHandler.prototype.setHandlesVisible = function(visible)
 	{
-		vertexHandlerHideSizers.apply(this, arguments);
+		vertexHandlerSetHandlesVisible.apply(this, arguments);
 		
 		if (this.connectorImg != null)
 		{
-			this.connectorImg.style.visibility = 'hidden';
+			this.connectorImg.style.visibility = (visible) ? '' : 'hidden';
 		}
 		
 		if (this.linkHint != null)
 		{
-			this.linkHint.style.visibility = 'hidden';
+			this.linkHint.style.visibility = (visible) ? '' : 'hidden';
 		}
 	};
 	
