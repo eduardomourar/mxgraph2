@@ -193,7 +193,7 @@ mxGraphView.prototype.lastForegroundNode = null;
 /**
  * Variable: lastForegroundHtmlNode
  * 
-During validation, this contains the last edge HTML DOM node that was processed.
+ * During validation, this contains the last edge HTML DOM node that was processed.
  */
 mxGraphView.prototype.lastForegroundHtmlNode = null;
 
