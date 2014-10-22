@@ -42,7 +42,7 @@ var mxClient =
 	/**
 	 * Variable: IS_IE11
 	 *
-	 * True if the current browser is Internet Explorer 6.x.
+	 * True if the current browser is Internet Explorer 11.x.
 	 */
 	IS_IE11: !!navigator.userAgent.match(/Trident\/7\./),
 
@@ -52,6 +52,13 @@ var mxClient =
 	 * True if the current browser is Internet Explorer and it is in quirks mode.
 	 */
 	IS_QUIRKS: navigator.userAgent.indexOf('MSIE') >= 0 && (document.documentMode == null || document.documentMode == 5),
+
+	/**
+	 * Variable: IS_EM
+	 * 
+	 * True if the browser is IE11 in enterprise mode (IE8 standards mode).
+	 */
+	IS_EM: 'spellcheck' in document.createElement('textarea') && document.documentMode == 8,
 
 	/**
 	 * Variable: VML_PREFIX

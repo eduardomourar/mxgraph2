@@ -1,3 +1,5 @@
+- Fixes rendering of clipped HTML labels in SVG [JavaScript]
+- Adds mxClient.IS_EM, support for IE11 enterprise mode [JavaScript]
 - Adds Editor.cancelFirst option in grapheditor example [JavaScript]
 - Fixes rounding errors in mxEdgeStyle.OrthConnector [JavaScript]
 - Fixes printing for mxUtils.show/printScreen in IE9 standards [JavaScript]

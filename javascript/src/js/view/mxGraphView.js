@@ -544,7 +544,7 @@ mxGraphView.prototype.validate = function(cell)
 	var prevDisplay = null;
 	
 	if (this.optimizeVmlReflows && this.canvas != null && this.textDiv == null &&
-		(document.documentMode == 8 || mxClient.IS_QUIRKS))
+		((document.documentMode == 8 && !mxClient.IS_EM) || mxClient.IS_QUIRKS))
 	{
 		// Placeholder keeps scrollbar positions when canvas is hidden
 		this.placeholder = document.createElement('div');
@@ -716,7 +716,7 @@ mxGraphView.prototype.validateBackgroundImage = function()
 			this.backgroundImage.redraw();
 
 			// Workaround for ignored event on background in IE8 standards mode
-			if (document.documentMode == 8)
+			if (document.documentMode == 8 && !mxClient.IS_EM)
 			{
 				mxEvent.addGestureListeners(this.backgroundImage.node,
 					mxUtils.bind(this, function(evt)
