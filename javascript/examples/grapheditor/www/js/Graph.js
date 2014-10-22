@@ -301,6 +301,14 @@ Graph.prototype.minFitScale = null;
 Graph.prototype.maxFitScale = null;
 
 /**
+ * Hook for subclassers.
+ */
+Graph.prototype.getPagePadding = function()
+{
+	return new mxPoint(0, 0);
+};
+
+/**
  * Loads the stylesheet for this graph.
  */
 Graph.prototype.loadStylesheet = function()
