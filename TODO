@@ -24,7 +24,9 @@
 -------------------------
 
 - Fix vertical text editing offset
-- Fix routing for overlapping vertices in orthogonalEdgeStyle
+- Restore straight, curved edges (virtual waypoints in straight edges)
+- Fix routing for overlapping ("straight edge" jumps back) vertices in orthogonalEdgeStyle
+- Add support for IE11 enterprise mode
 
 - Add single handle for multiple selected cells
 - Show dotted rectangle for parent group in selection
