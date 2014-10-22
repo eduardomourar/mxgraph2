@@ -116,6 +116,12 @@ Editor.prototype.defaultPageVisible = false;
 Editor.prototype.transparentImage = IMAGE_PATH + '/transparent.gif';
 
 /**
+ * Specifies the order of OK/Cancel buttons in dialogs. Default is true.
+ * Cancel first is used on Macs, Windows/Confluence uses cancel last.
+ */
+Editor.prototype.cancelFirst = true;
+
+/**
  * Specifies if the editor is enabled. Default is true.
  */
 Editor.prototype.enabled = true;

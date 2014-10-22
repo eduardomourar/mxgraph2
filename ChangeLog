@@ -1,3 +1,4 @@
+- Adds Editor.cancelFirst option in grapheditor example [JavaScript]
 - Fixes rounding errors in mxEdgeStyle.OrthConnector [JavaScript]
 - Fixes printing for mxUtils.show/printScreen in IE9 standards [JavaScript]
 - Fixes rounding for image position in mxHandle [JavaScript]
