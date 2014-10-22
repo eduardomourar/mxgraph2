@@ -23,11 +23,12 @@
 --    mxGraph Core     --
 -------------------------
 
+- Center mouse in mxHandle
+- Add support for IE11 enterprise mode
 - Fix vertical text editing offset
 - Restore straight, curved edges (virtual waypoints in straight edges)
-- Fix routing for overlapping ("straight edge" jumps back) vertices in orthogonalEdgeStyle
-- Add support for IE11 enterprise mode
 
+- Fix routing for overlapping ("straight edge" jumps back) vertices in orthogonalEdgeStyle
 - Add single handle for multiple selected cells
 - Show dotted rectangle for parent group in selection
 - Fix live preview for resize of rotated container with children (child offset)
