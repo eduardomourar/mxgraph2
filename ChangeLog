@@ -4,6 +4,7 @@
 - Fixes rounding errors in mxEdgeStyle.OrthConnector [JavaScript]
 - Fixes printing for mxUtils.show/printScreen in IE9 standards [JavaScript]
 - Fixes rounding for image position in mxHandle [JavaScript]
+- Uses center handles for managedSizers in mxVertexHandler [JavaScript]
 - Adds mxVertexHandler, mxEdgeHandler.setHandlesVisible [JavaScript]
 - Replaces deprecated nodeValue with value for DOM attributes [JavaScript]
 - Adds mxShape.addPoints, rounded mxTriangle, mxRhombus, mxHexagon [JavaScript]
