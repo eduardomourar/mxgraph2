@@ -160,6 +160,19 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 			input.focus();
 		}
 	};
+	
+	mxEvent.addListener(input, 'keyup', function(e)
+	{
+		if (e.keyCode == 27)
+		{
+			editorUi.hideDialog();
+			
+			if (cancelFn != null)
+			{
+				cancelFn();
+			}
+		}
+	});
 
 	var picker = new jscolor.color(input);
 	picker.pickerOnfocus = false;
