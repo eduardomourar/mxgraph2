@@ -160,19 +160,6 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 			input.focus();
 		}
 	};
-	
-	mxEvent.addListener(input, 'keyup', function(e)
-	{
-		if (e.keyCode == 27)
-		{
-			editorUi.hideDialog();
-			
-			if (cancelFn != null)
-			{
-				cancelFn();
-			}
-		}
-	});
 
 	var picker = new jscolor.color(input);
 	picker.pickerOnfocus = false;
@@ -314,6 +301,24 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 	div.appendChild(buttons);
 	this.picker = picker;
 	this.colorInput = input;
+
+	// LATER: Only fires if input if focused, should always
+	// fire if this dialog is showing.
+	mxEvent.addListener(div, 'keydown', function(e)
+	{
+		if (e.keyCode == 27)
+		{
+			editorUi.hideDialog();
+			
+			if (cancelFn != null)
+			{
+				cancelFn();
+			}
+			
+			mxEvent.consume(e);
+		}
+	});
+	
 	this.container = div;
 };
 
@@ -824,10 +829,6 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 		if (e.keyCode == 13)
 		{
 			genericBtn.click();
-		}
-		else if (e.keyCode == 27)
-		{
-			editorUi.hideDialog();
 		}
 	});
 	
@@ -1784,10 +1785,6 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn)
 		{
 			editorUi.hideDialog();
 			fn(linkInput.value);
-		}
-		else if (e.keyCode == 27)
-		{
-			editorUi.hideDialog();
 		}
 	});
 

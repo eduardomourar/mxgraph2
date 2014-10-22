@@ -602,6 +602,16 @@ EditorUi = function(editor, container)
 			this.editor.resetScrollbars();
 		}), 0);
 	}));
+   	
+   	// Escape key hides dialogs
+	mxEvent.addListener(document, 'keydown', mxUtils.bind(this, function(evt)
+	{
+		// Cancels the editing if escape is pressed
+		if (!mxEvent.isConsumed(evt) && evt.keyCode == 27 /* Escape */)
+		{
+			this.hideDialog();
+		}
+	}));
 
    	// Resets UI, updates action and menu states
    	this.editor.resetGraph();
@@ -1750,7 +1760,6 @@ EditorUi.prototype.createKeyHandler = function(editor)
     var keyHandleEscape = keyHandler.escape;
     keyHandler.escape = function(evt)
     {
-    	ui.hideDialog();
     	keyHandleEscape.apply(this, arguments);
     };
     
