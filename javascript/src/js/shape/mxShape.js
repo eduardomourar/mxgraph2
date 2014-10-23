@@ -706,7 +706,7 @@ mxShape.prototype.updateHtmlColors = function(node)
 		node.style.borderWidth = '0px';
 	}
 
-	color = this.fill;
+	color = (this.outline) ? null : this.fill;
 	
 	if (color != null && color != mxConstants.NONE)
 	{

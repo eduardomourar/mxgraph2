@@ -21,6 +21,7 @@
 --    mxGraph Core     --
 -------------------------
 
+- Fix maximimGraphBounds for relative children
 - Fix vertical text editing offset
 - Center mouse in mxHandle
 - Restore straight, curved edges (virtual waypoints in straight edges)
