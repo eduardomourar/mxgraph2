@@ -479,7 +479,8 @@ mxShape.prototype.redrawShape = function()
 		if (this.node.nodeName == 'DIV' && document.documentMode == 8)
 		{
 			// Makes DIV transparent to events for IE8 in IE8 standards
-			// mode (Note: Does not work for IE9 in IE8 standards mode)
+			// mode (Note: Does not work for IE9 in IE8 standards mode
+			// and not for IE11 in enterprise mode)
 			this.node.style.filter = '';
 			
 			// Adds event transparency in IE8 standards
