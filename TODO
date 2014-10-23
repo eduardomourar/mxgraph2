@@ -3,11 +3,9 @@
 -------------------------
 
 - https://developers.google.com/appengine/docs/java/tools/ant
-
 - Fix touch detection in FF (defaultScrollbars)
 - Add arcSize handle in Shapes.js
 - Cleanup App.save/saveFile and file.save/saveAs
-- Fix focus on text in mxPopupMenu
 
 - No table if selection empty, selectNode not working in quirks for rich text editing
 - Add find dialog, find again function
@@ -23,9 +21,8 @@
 --    mxGraph Core     --
 -------------------------
 
-- Center mouse in mxHandle
-- Add support for IE11 enterprise mode
 - Fix vertical text editing offset
+- Center mouse in mxHandle
 - Restore straight, curved edges (virtual waypoints in straight edges)
 
 - Fix routing for overlapping ("straight edge" jumps back) vertices in orthogonalEdgeStyle
