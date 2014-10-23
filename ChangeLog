@@ -1,3 +1,4 @@
+- Fixes mxShape.updateHtmlColors if shape.outline is true [JavaScript]
 - Fixes cleared selection in mxPopupMenu items in IE8 and before [JavaScript]
 - Fixes item size for CSS icons with no labels in mxPopupMenu in IE8 standards [JavaScript]
 - Resets current cursor in mxShape.clear [JavaScript]
