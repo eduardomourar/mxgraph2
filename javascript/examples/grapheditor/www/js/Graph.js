@@ -972,23 +972,23 @@ Graph.prototype.initTouch = function()
 	 */
 	mxCellEditor.prototype.restoreSelection = function(savedSel)
 	{
-	    if (savedSel)
-	    {
-	        if (window.getSelection)
-	        {
-	            sel = window.getSelection();
-	            sel.removeAllRanges();
-	            
-	            for (var i = 0, len = savedSel.length; i < len; ++i)
-	            {
-	                sel.addRange(savedSel[i]);
-	            }
-	        }
-	        else if (document.selection && savedSel.select)
-	        {
-	            savedSel.select();
-	        }
-	    }
+		if (savedSel)
+		{
+			if (window.getSelection)
+			{
+				sel = window.getSelection();
+				sel.removeAllRanges();
+
+				for (var i = 0, len = savedSel.length; i < len; ++i)
+				{
+					sel.addRange(savedSel[i]);
+				}
+			}
+			else if (document.selection && savedSel.select)
+			{
+				savedSel.select();
+			}
+		}
 	};
 
 	if ('contentEditable' in document.documentElement)
