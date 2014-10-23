@@ -386,7 +386,8 @@ mxShape.prototype.clear = function()
 	}
 	else
 	{
-		this.node.style.cssText = 'position:absolute;';
+		this.node.style.cssText = 'position:absolute;' + ((this.cursor != null) ?
+			('cursor:' + this.cursor + ';') : '');
 		this.node.innerHTML = '';
 	}
 };

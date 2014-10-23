@@ -184,7 +184,7 @@ mxVertexHandler.prototype.init = function()
 	
 	if (this.graph.isCellMovable(this.state.cell))
 	{
-		this.selectionBorder.node.style.cursor = mxConstants.CURSOR_MOVABLE_VERTEX;
+		this.selectionBorder.setCursor(mxConstants.CURSOR_MOVABLE_VERTEX);
 	}
 	
 	// Adds the sizer handles
@@ -388,7 +388,7 @@ mxVertexHandler.prototype.createSizer = function(cursor, index, size, fillColor)
 	
 	if (this.graph.isEnabled())
 	{
-		sizer.node.style.cursor = cursor;
+		sizer.setCursor(cursor);
 	}
 	
 	if (!this.isSizerVisible(index))
@@ -1482,56 +1482,56 @@ mxVertexHandler.prototype.redrawHandles = function()
 				var pt = mxUtils.getRotatedPoint(new mxPoint(s.x, s.y), cos, sin, ct);
 				
 				this.moveSizerTo(this.sizers[0], pt.x, pt.y);
-				this.sizers[0].node.style.cursor = crs[mxUtils.mod(0 + da, crs.length)];
+				this.sizers[0].setCursor(crs[mxUtils.mod(0 + da, crs.length)]);
 				
 				pt.x = cx;
 				pt.y = s.y;
 				pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
 				
 				this.moveSizerTo(this.sizers[1], pt.x, pt.y);
-				this.sizers[1].node.style.cursor = crs[mxUtils.mod(1 + da, crs.length)];
+				this.sizers[1].setCursor(crs[mxUtils.mod(1 + da, crs.length)]);
 				
 				pt.x = r;
 				pt.y = s.y;
 				pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
 				
 				this.moveSizerTo(this.sizers[2], pt.x, pt.y);
-				this.sizers[2].node.style.cursor = crs[mxUtils.mod(2 + da, crs.length)];
+				this.sizers[2].setCursor(crs[mxUtils.mod(2 + da, crs.length)]);
 				
 				pt.x = s.x;
 				pt.y = cy;
 				pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
 				
 				this.moveSizerTo(this.sizers[3], pt.x, pt.y);
-				this.sizers[3].node.style.cursor = crs[mxUtils.mod(7 + da, crs.length)];
+				this.sizers[3].setCursor(crs[mxUtils.mod(7 + da, crs.length)]);
 
 				pt.x = r;
 				pt.y = cy;
 				pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
 				
 				this.moveSizerTo(this.sizers[4], pt.x, pt.y);
-				this.sizers[4].node.style.cursor = crs[mxUtils.mod(3 + da, crs.length)];
+				this.sizers[4].setCursor(crs[mxUtils.mod(3 + da, crs.length)]);
 
 				pt.x = s.x;
 				pt.y = b;
 				pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
 				
 				this.moveSizerTo(this.sizers[5], pt.x, pt.y);
-				this.sizers[5].node.style.cursor = crs[mxUtils.mod(6 + da, crs.length)];
+				this.sizers[5].setCursor(crs[mxUtils.mod(6 + da, crs.length)]);
 
 				pt.x = cx;
 				pt.y = b;
 				pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
 				
 				this.moveSizerTo(this.sizers[6], pt.x, pt.y);
-				this.sizers[6].node.style.cursor = crs[mxUtils.mod(5 + da, crs.length)];
+				this.sizers[6].setCursor(crs[mxUtils.mod(5 + da, crs.length)]);
 
 				pt.x = r;
 				pt.y = b;
 				pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
 				
 				this.moveSizerTo(this.sizers[7], pt.x, pt.y);
-				this.sizers[7].node.style.cursor = crs[mxUtils.mod(4 + da, crs.length)];
+				this.sizers[7].setCursor(crs[mxUtils.mod(4 + da, crs.length)]);
 				
 				this.moveSizerTo(this.sizers[8], cx + this.state.absoluteOffset.x, cy + this.state.absoluteOffset.y);
 			}

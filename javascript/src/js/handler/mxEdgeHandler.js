@@ -202,7 +202,7 @@ mxEdgeHandler.prototype.init = function()
 		mxConstants.DIALECT_MIXEDHTML : mxConstants.DIALECT_SVG;
 	this.shape.init(this.graph.getView().getOverlayPane());
 	this.shape.pointerEvents = false;
-	this.shape.node.style.cursor = mxConstants.CURSOR_MOVABLE_EDGE;
+	this.shape.setCursor(mxConstants.CURSOR_MOVABLE_EDGE);
 	mxEvent.redirectMouseEvents(this.shape.node, this.graph, this.state);
 
 	// Updates preferHtml
@@ -245,8 +245,7 @@ mxEdgeHandler.prototype.init = function()
 	this.label = new mxPoint(this.state.absoluteOffset.x, this.state.absoluteOffset.y);
 	this.labelShape = this.createLabelHandleShape();
 	this.initBend(this.labelShape);
-	this.labelShape.node.style.cursor = mxConstants.CURSOR_LABEL_HANDLE;
-	mxEvent.redirectMouseEvents(this.labelShape.node, this.graph, this.state);
+	this.labelShape.setCursor(mxConstants.CURSOR_LABEL_HANDLE);
 	
 	this.redraw();
 };
@@ -456,19 +455,7 @@ mxEdgeHandler.prototype.validateConnection = function(source, target)
 
 				if (this.isHandleEnabled(i))
 				{
-					bend.node.style.cursor = mxConstants.CURSOR_BEND_HANDLE;
-					mxEvent.redirectMouseEvents(bend.node, this.graph, this.state);
-					
-					// Fixes lost event tracking for images in quirks / IE8 standards
-					if (mxClient.IS_QUIRKS || document.documentMode == 8)
-					{
-						mxEvent.addListener(bend.node, 'dragstart', function(evt)
-						{
-							mxEvent.consume(evt);
-							
-							return false;
-						});
-					}
+					bend.setCursor(mxConstants.CURSOR_BEND_HANDLE);
 				}
 				
 				bends.push(bend);
@@ -573,7 +560,7 @@ mxEdgeHandler.prototype.createLabelHandleShape = function()
  * 
  * bend - <mxShape> that represents the bend to be initialized.
  */
-mxEdgeHandler.prototype.initBend = function(bend)
+mxEdgeHandler.prototype.initBend = function(bend, dblClick)
 {
 	if (this.preferHtml)
 	{
@@ -585,6 +572,25 @@ mxEdgeHandler.prototype.initBend = function(bend)
 		bend.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ?
 			mxConstants.DIALECT_MIXEDHTML : mxConstants.DIALECT_SVG;
 		bend.init(this.graph.getView().getOverlayPane());
+	}
+	
+	mxEvent.redirectMouseEvents(bend.node, this.graph, this.state,
+			null, null, null, dblClick);
+	
+	// Fixes lost event tracking for images in quirks / IE8 standards
+	if (mxClient.IS_QUIRKS || document.documentMode == 8)
+	{
+		mxEvent.addListener(bend.node, 'dragstart', function(evt)
+		{
+			mxEvent.consume(evt);
+			
+			return false;
+		});
+	}
+	
+	if (mxClient.IS_TOUCH)
+	{
+		bend.node.setAttribute('pointer-events', 'none');
 	}
 };
 
@@ -1639,7 +1645,7 @@ mxEdgeHandler.prototype.redrawHandles = function()
 				Math.round(yn - b.height / 2), b.width, b.height);
 		this.bends[bn].fill = this.getHandleFillColor(bn);
 		this.bends[bn].redraw();
-		
+				
 		if (this.manageLabelHandle)
 		{
 			this.checkLabelHandle(this.bends[bn].bounds);

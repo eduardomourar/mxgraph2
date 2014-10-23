@@ -1,3 +1,8 @@
+- Disables focus event on menu items in IE8 standards and quirks mode [JavaScript]
+- Fixes item size for CSS icons with no labels in mxPopupMenu for IE8 standards [JavaScript]
+- Resets current cursor in mxShape.clear [JavaScript]
+- Fixes cursors for edge handles in IE [JavaScript]
+- Disables dragstart for handles in mxEdgeSegmentHandler, mxElbowEdgeHandler [JavaScript]
 - Adds alt-shift to disable connect to outline [JavaScript]
 - Fixes rendering of clipped HTML labels in SVG [JavaScript]
 - Adds mxClient.IS_EM, support for IE11 enterprise mode [JavaScript]
