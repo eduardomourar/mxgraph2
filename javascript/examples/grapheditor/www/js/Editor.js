@@ -573,7 +573,7 @@ Editor.prototype.init = function()
 				this.backgroundPageShape.isShadow = !mxClient.IS_QUIRKS;
 				this.backgroundPageShape.dialect = mxConstants.DIALECT_STRICTHTML;
 				this.backgroundPageShape.init(this.graph.container);
-				
+
 				// Required for the browser to render the background page in correct order
 				this.graph.container.firstChild.style.position = 'absolute';
 				this.graph.container.insertBefore(this.backgroundPageShape.node, this.graph.container.firstChild);
@@ -629,11 +629,6 @@ Editor.prototype.init = function()
 			
 			this.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ?
 					'url(' + editor.gridImage + ')' : 'none';
-			
-			if (this.graph.isGridEnabled())
-			{
-				
-			}
 		}
 		else if (this.backgroundPageShape != null)
 		{
