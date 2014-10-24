@@ -909,7 +909,7 @@ mxGraphView.prototype.validateCell = function(cell, visible)
 };
 
 /**
- * Function: validateCellStates
+ * Function: validateCellState
  * 
  * Validates and repaints the <mxCellState> for the given <mxCell>.
  * 
