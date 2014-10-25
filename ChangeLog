@@ -1,3 +1,4 @@
+- Adds mxDoubleEllipse.getLabelBounds for margin size [JavaScript]
 - Handles child cells in mxGraph.constrainChild [JavaScript]
 - Handles relative geometries, offsets in mxGraph.getBoundingBoxFromGeometry [JavaScript]
 - Fixes optional border argument in mxGraph.getBoundsForGroup [JavaScript]
