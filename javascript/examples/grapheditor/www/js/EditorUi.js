@@ -290,6 +290,9 @@ EditorUi = function(editor, container)
 	// Keys that should be ignored if the cell has a value
 	var valueStyles = ['fontFamily', 'fontSize', 'fontColor', 'align'];
 	
+	// Keys that always update the current edge style regardless of selection
+	var alwaysEdgeStyles = ['edgeStyle', 'startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize'];
+	
 	// Keys that are ignored together (if one appears all are ignored)
 	var keyGroups = [['startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize'],
 	                 ['strokeColor', 'strokeWidth'],
@@ -447,7 +450,7 @@ EditorUi = function(editor, container)
 			// Special case: Edge style and shape
 			if (mxUtils.indexOf(connectStyles, keys[i]) >= 0)
 			{
-				if (edge)
+				if (edge || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
 				{
 					currentEdgeStyle[keys[i]] = values[i];
 				}
@@ -459,7 +462,7 @@ EditorUi = function(editor, container)
 					currentStyle[keys[i]] = values[i];
 				}
 				
-				if (edge || common)
+				if (edge || common || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
 				{
 					currentEdgeStyle[keys[i]] = values[i];
 				}
