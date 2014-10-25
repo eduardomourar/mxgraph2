@@ -345,21 +345,32 @@
 	
 	// Overrides painting of rhombus shape to allow for double style
 	var mxRhombusPaintVertexShape = mxRhombus.prototype.paintVertexShape;
+	mxRhombus.prototype.getLabelBounds = function(rect)
+	{
+		if (this.style['double'] == 1)
+		{
+			var margin = (Math.max(2, this.strokewidth + 1) * 2 + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0)) * this.scale;
+		
+			return new mxRectangle(rect.x + margin, rect.y + margin, rect.width - 2 * margin, rect.height - 2 * margin);
+		}
+		
+		return rect;
+	};
 	mxRhombus.prototype.paintVertexShape = function(c, x, y, w, h)
 	{
 		mxRhombusPaintVertexShape.apply(this, arguments);
 
 		if (!this.outline && this.style['double'] == 1)
 		{
-			var inset = Math.max(2, this.strokewidth + 1) * 2;
+			var margin = Math.max(2, this.strokewidth + 1) * 2 + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0);
+			x += margin;
+			y += margin;
+			w -= 2 * margin;
+			h -= 2 * margin;
 			
-			if (w - 2 * inset > 0 && h - 2 * inset > 0)
+			if (w > 0 && h > 0)
 			{
-				x += inset;
-				y += inset;
-				w -= 2 * inset;
-				h -= 2 * inset;
-	
+				c.setShadow(false);
 				mxRhombusPaintVertexShape.apply(this, arguments);
 			}
 		}
@@ -375,25 +386,36 @@
 	{
 		return false;
 	};
+	ExtendedShape.prototype.getLabelBounds = function(rect)
+	{
+		if (this.style['double'] == 1)
+		{
+			var margin = (Math.max(2, this.strokewidth + 1) + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0)) * this.scale;
+		
+			return new mxRectangle(rect.x + margin, rect.y + margin, rect.width - 2 * margin, rect.height - 2 * margin);
+		}
+		
+		return rect;
+	};
+	
 	ExtendedShape.prototype.paintForeground = function(c, x, y, w, h)
 	{
 		if (this.style != null)
 		{
+			mxRectangleShape.prototype.paintBackground.apply(this, arguments);
+			
 			if (!this.outline && this.style['double'] == 1)
 			{
-				var inset = Math.max(2, this.strokewidth + 1);
+				var margin = Math.max(2, this.strokewidth + 1) + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0);
+				x += margin;
+				y += margin;
+				w -= 2 * margin;
+				h -= 2 * margin;
 				
-				if (w - 2 * inset > 0 && h - 2 * inset > 0)
+				if (w > 0 && h > 0)
 				{
-					mxRectangleShape.prototype.paintBackground.call(this, c, x + inset, y + inset, w - 2 * inset, h - 2 * inset);
+					mxRectangleShape.prototype.paintBackground.apply(this, arguments);
 				}
-
-				mxRectangleShape.prototype.paintForeground.apply(this, arguments);
-				
-				x += inset;
-				y += inset;
-				w -= 2 * inset;
-				h -= 2 * inset;
 			}
 			
 			c.setDashed(false);
