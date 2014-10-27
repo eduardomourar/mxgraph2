@@ -1,5 +1,7 @@
+- Fixes offset for vertical position on mxCellEditor [JavaScript]
 - Adds mxDoubleEllipse.getLabelBounds for margin size [JavaScript]
-- Handles child cells in mxGraph.constrainChild [JavaScript]
+- Includes child cells bounds in mxGraph.constrainChild [JavaScript]
+- mxGraph.cellsFolded calls constrainChild if constrainChildrenOnResize is true [JavaScript]
 - Handles relative geometries, offsets in mxGraph.getBoundingBoxFromGeometry [JavaScript]
 - Fixes optional border argument in mxGraph.getBoundsForGroup [JavaScript]
 - Fixes mxGraph.getCells to return vertices and edges only [JavaScript]
