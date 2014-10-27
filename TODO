@@ -21,7 +21,6 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix vertical text editing offset
 - Center mouse in mxHandle
 - Restore straight, curved edges (virtual waypoints in straight edges)
 
