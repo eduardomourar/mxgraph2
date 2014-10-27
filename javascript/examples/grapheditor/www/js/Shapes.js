@@ -371,7 +371,10 @@
 			if (w > 0 && h > 0)
 			{
 				c.setShadow(false);
-				mxRhombusPaintVertexShape.apply(this, arguments);
+				
+				// Workaround for closure compiler bug where the lines with x and y above
+				// are removed if arguments is used as second argument in call below.
+				mxRhombusPaintVertexShape.apply(this, [c, x, y, w, h]);
 			}
 		}
 	};
