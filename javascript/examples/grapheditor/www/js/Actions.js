@@ -764,7 +764,45 @@ Actions.prototype.init = function()
 			graph.getModel().endUpdate();
 		}
 	});
-	this.addAction('rounded', function() { ui.menus.toggleStyle(mxConstants.STYLE_ROUNDED); });
+	this.addAction('straight', function()
+	{
+		graph.getModel().beginUpdate();
+		try
+		{
+			graph.setCellStyles(mxConstants.STYLE_ROUNDED, '0');
+			graph.setCellStyles(mxConstants.STYLE_CURVED, '0');
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+	});
+	this.addAction('rounded', function()
+	{
+		graph.getModel().beginUpdate();
+		try
+		{
+			graph.setCellStyles(mxConstants.STYLE_ROUNDED, '1');
+			graph.setCellStyles(mxConstants.STYLE_CURVED, '0');
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+	});
+	this.addAction('curved', function()
+	{
+		graph.getModel().beginUpdate();
+		try
+		{
+			graph.setCellStyles(mxConstants.STYLE_ROUNDED, '0');
+			graph.setCellStyles(mxConstants.STYLE_CURVED, '1');
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+	});
 	this.addAction('collapsible', function() { ui.menus.toggleStyle('container'); });
 	this.put('style', new Action(mxResources.get('edit') + '...', mxUtils.bind(this, function()
 	{
