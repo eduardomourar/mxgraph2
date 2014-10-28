@@ -20,7 +20,6 @@
 --    mxGraph Core     --
 -------------------------
 
-- Center mouse in mxHandle
 - Restore straight, curved edges (virtual waypoints in straight edges)
 
 - Fix routing for overlapping ("straight edge" jumps back) vertices in orthogonalEdgeStyle
