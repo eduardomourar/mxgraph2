@@ -461,7 +461,6 @@ Actions.prototype.init = function()
 		graph.zoomOut();
 	}, null, null, 'Subtract');
 	this.addAction('fitWindow', function() { graph.fit(); });
-
 	this.addAction('fitPage', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
