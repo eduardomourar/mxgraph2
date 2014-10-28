@@ -5508,11 +5508,11 @@ mxGraph.prototype.extendParent = function(cell)
 	if (cell != null)
 	{
 		var parent = this.model.getParent(cell);
-		var p = this.model.getGeometry(parent);
+		var p = this.getCellGeometry(parent);
 		
 		if (parent != null && p != null && !this.isCellCollapsed(parent))
 		{
-			var geo = this.model.getGeometry(cell);
+			var geo = this.getCellGeometry(cell);
 			
 			if (geo != null && (p.width < geo.x + geo.width ||
 				p.height < geo.y + geo.height))
