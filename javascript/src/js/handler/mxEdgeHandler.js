@@ -1784,8 +1784,12 @@ mxEdgeHandler.prototype.drawPreview = function()
 mxEdgeHandler.prototype.refresh = function()
 {
 	this.abspoints = this.getSelectionPoints(this.state);
-	this.shape.points = this.abspoints;
 	this.points = [];
+
+	if (this.shape != null)
+	{
+		this.shape.points = this.abspoints;
+	}
 	
 	if (this.bends != null)
 	{
