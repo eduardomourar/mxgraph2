@@ -1,6 +1,7 @@
 - Centers handle shape in mxHandle [JavaScript]
 - Fixes possible NPE in mxEdgeHandler.refresh [JavaScript]
-- Adds mxVertexHandler.parentHighlightEnabled switch [JavaScript]
+- Adds mxEdgeHandler.parentHighlightEnabled, createParentHighlightShape [JavaScript]
+- Adds mxVertexHandler.parentHighlightEnabled, createParentHighlightShape [JavaScript]
 - Fixes offset for vertical position on mxCellEditor [JavaScript]
 - Adds mxDoubleEllipse.getLabelBounds for margin size [JavaScript]
 - Includes child cells bounds in mxGraph.constrainChild [JavaScript]

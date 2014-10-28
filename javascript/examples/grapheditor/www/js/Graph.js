@@ -1336,6 +1336,7 @@ Graph.prototype.initTouch = function()
 
 	mxVertexHandler.prototype.parentHighlightEnabled = true;
 	mxVertexHandler.prototype.rotationHandleVSpacing = -20;
+	mxEdgeHandler.prototype.parentHighlightEnabled = true;
 
 	mxConnectionHandler.prototype.connectImage = connectHandle;
 	mxVertexHandler.prototype.handleImage = mainHandle;

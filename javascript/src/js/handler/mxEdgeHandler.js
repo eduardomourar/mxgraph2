@@ -124,6 +124,14 @@ mxEdgeHandler.prototype.addEnabled = false;
 mxEdgeHandler.prototype.removeEnabled = false;
 
 /**
+ * Variable: parentHighlightEnabled
+ * 
+ * Specifies if the parent should be highlighted if a child cell is selected.
+ * Default is false.
+ */
+mxEdgeHandler.prototype.parentHighlightEnabled = false;
+
+/**
  * Variable: preferHtml
  * 
  * Specifies if bends should be added to the graph container. This is updated
@@ -232,7 +240,28 @@ mxEdgeHandler.prototype.init = function()
 			}
 		}
 	}
-
+	
+	// Adds highlight for parent group
+	if (this.parentHighlightEnabled)
+	{
+		var parent = this.graph.model.getParent(this.state.cell);
+		
+		if (this.graph.model.isVertex(parent))
+		{
+			var pstate = this.graph.view.getState(parent);
+			
+			if (pstate != null)
+			{
+				this.parentHighlight = this.createParentHighlightShape(pstate);
+				// VML dialect required here for event transparency in IE
+				this.parentHighlight.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
+				this.parentHighlight.pointerEvents = false;
+				this.parentHighlight.rotation = Number(pstate.style[mxConstants.STYLE_ROTATION] || '0');
+				this.parentHighlight.init(this.graph.getView().getOverlayPane());
+			}
+		}
+	}
+	
 	// Creates bends for the non-routed absolute points
 	// or bends that don't correspond to points
 	if (this.graph.getSelectionCount() < mxGraphHandler.prototype.maxCells ||
@@ -280,6 +309,20 @@ mxEdgeHandler.prototype.isRemovePointEvent = function(evt)
 mxEdgeHandler.prototype.getSelectionPoints = function(state)
 {
 	return state.absolutePoints;
+};
+
+/**
+ * Function: createSelectionShape
+ * 
+ * Creates the shape used to draw the selection border.
+ */
+mxEdgeHandler.prototype.createParentHighlightShape = function(bounds)
+{
+	var shape = new mxRectangleShape(bounds, null, this.getSelectionColor());
+	shape.strokewidth = this.getSelectionStrokeWidth();
+	shape.isDashed = this.isSelectionDashed();
+	
+	return shape;
 };
 
 /**
@@ -1774,6 +1817,11 @@ mxEdgeHandler.prototype.drawPreview = function()
 		this.shape.arrowStrokewidth = this.getSelectionStrokeWidth();
 		this.shape.redraw();
 	}
+	
+	if (this.parentHighlight != null)
+	{
+		this.parentHighlight.redraw();
+	}
 };
 
 /**
@@ -1850,6 +1898,12 @@ mxEdgeHandler.prototype.destroy = function()
 	{
 		this.shape.destroy();
 		this.shape = null;
+	}
+	
+	if (this.parentHighlight != null)
+	{
+		this.parentHighlight.destroy();
+		this.parentHighlight = null;
 	}
 	
 	if (this.labelShape != null)

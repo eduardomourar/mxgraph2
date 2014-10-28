@@ -206,7 +206,7 @@ mxVertexHandler.prototype.init = function()
 			
 			if (pstate != null)
 			{
-				this.parentHighlight = this.createSelectionShape(pstate);
+				this.parentHighlight = this.createParentHighlightShape(pstate);
 				// VML dialect required here for event transparency in IE
 				this.parentHighlight.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
 				this.parentHighlight.pointerEvents = false;
@@ -340,6 +340,16 @@ mxVertexHandler.prototype.updateMinBounds = function()
 mxVertexHandler.prototype.getSelectionBounds = function(state)
 {
 	return new mxRectangle(Math.round(state.x), Math.round(state.y), Math.round(state.width), Math.round(state.height));
+};
+
+/**
+ * Function: createParentHighlightShape
+ * 
+ * Creates the shape used to draw the selection border.
+ */
+mxVertexHandler.prototype.createParentHighlightShape = function(bounds)
+{
+	return this.createSelectionShape(bounds);
 };
 
 /**
@@ -1660,11 +1670,6 @@ mxVertexHandler.prototype.destroy = function()
 		this.preview.destroy();
 		this.preview = null;
 	}
-
-	this.selectionBorder.destroy();
-	this.selectionBorder = null;
-	this.labelShape = null;
-	this.removeHint();
 	
 	if (this.parentHighlight != null)
 	{
@@ -1672,6 +1677,11 @@ mxVertexHandler.prototype.destroy = function()
 		this.parentHighlight = null;
 	}
 	
+	this.selectionBorder.destroy();
+	this.selectionBorder = null;
+	this.labelShape = null;
+	this.removeHint();
+
 	if (this.sizers != null)
 	{
 		for (var i = 0; i < this.sizers.length; i++)
