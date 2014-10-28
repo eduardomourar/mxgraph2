@@ -1034,7 +1034,7 @@ EditorUi.prototype.updateActionStates = function()
 	// Updates action states
 	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'delete', 'duplicate',
 	               'style', 'backgroundColor', 'borderColor', 'toFront', 'toBack',
-	               'tilt', 'autosize', 'collapsible', 'lockUnlock', 'editData'];
+	               'tilt', 'lockUnlock', 'editData'];
 	
 	for (var i = 0; i < actions.length; i++)
 	{
@@ -1042,9 +1042,12 @@ EditorUi.prototype.updateActionStates = function()
 	}
 	
 	this.actions.get('setAsDefaultStyle').setEnabled(graph.getSelectionCount() == 1);
+	this.actions.get('reverseEdge').setEnabled(edgeSelected);
 	this.actions.get('curved').setEnabled(edgeSelected);
 	this.actions.get('rotation').setEnabled(vertexSelected);
 	this.actions.get('wordWrap').setEnabled(vertexSelected);
+	this.actions.get('autosize').setEnabled(vertexSelected);
+	this.actions.get('collapsible').setEnabled(vertexSelected);
 	this.actions.get('group').setEnabled(graph.getSelectionCount() > 1);
    	this.actions.get('ungroup').setEnabled(graph.getSelectionCount() == 1 &&
    			graph.getModel().getChildCount(graph.getSelectionCell()) > 0);
