@@ -403,9 +403,17 @@ mxCellEditor.prototype.resize = function()
 			if (m != null)
 			{
 				// TODO: Keep in visible area, add spacing
-				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
-				this.textarea.style.left = Math.max(0, Math.round(this.bounds.x - m.x * this.bounds.width + m.x * (ow + 8))) + 'px';
-				this.textarea.style.top = Math.max(0, Math.round(this.bounds.y - m.y * this.bounds.height + m.y * (oh - size * 0.5 - 3)) + 4) + 'px';
+				if (isEdge)
+				{
+					this.textarea.style.left = Math.max(0, Math.round(this.bounds.x - m.x * this.bounds.width + m.x * ow) - 4) + 'px';
+					this.textarea.style.top = Math.max(0, Math.round(this.bounds.y - m.y * this.bounds.height + m.y * oh - m.y * 4) + 6) + 'px';
+				}
+				else
+				{
+					var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
+					this.textarea.style.left = Math.max(0, Math.round(this.bounds.x - m.x * this.bounds.width + m.x * (ow + 8))) + 'px';
+					this.textarea.style.top = Math.max(0, Math.round(this.bounds.y - m.y * this.bounds.height + m.y * (oh - size * 0.5 - 3)) + 4) + 'px';
+				}
 			}
 
 			var dx = this.textarea.offsetWidth - this.textarea.clientWidth + 4;

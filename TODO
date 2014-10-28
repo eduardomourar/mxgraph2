@@ -3,17 +3,16 @@
 -------------------------
 
 - https://developers.google.com/appengine/docs/java/tools/ant
-- Fix touch detection in FF (defaultScrollbars)
-- Add arcSize handle in Shapes.js
 - Cleanup App.save/saveFile and file.save/saveAs
+- Fix touch detection in FF (defaultScrollbars)
 
+- Add arcSize handle in Shapes.js
 - No table if selection empty, selectNode not working in quirks for rich text editing
-- Add find dialog, find again function
 - Remove dependency on urlParams, global vars
 - Build WAR, grapheditor.min.js for grapheditor in build step
 
+- Add find dialog, find again function
 - Add gradient in page background
-- Use perimeter.html example to avoid labels
 - Fix wrapping for toolbar, menubar in quirks
 - Make UI more generic (add borderlayout, splitlayout)
 
