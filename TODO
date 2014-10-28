@@ -21,10 +21,8 @@
 -------------------------
 
 - Restore straight, curved edges (virtual waypoints in straight edges)
-
 - Fix routing for overlapping ("straight edge" jumps back) vertices in orthogonalEdgeStyle
 - Add single handle for multiple selected cells
-- Show dotted rectangle for parent group in selection
 - Fix live preview for resize of rotated container with children (child offset)
 
 - Move mxLayoutManager into validation process (resizeParent cycle)

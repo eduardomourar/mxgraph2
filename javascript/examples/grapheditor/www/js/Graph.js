@@ -1334,6 +1334,7 @@ Graph.prototype.initTouch = function()
 	var triangleLeft = new mxImage(IMAGE_PATH + '/triangle-left.png', 26, 26);
 	var roundDrop = new mxImage(IMAGE_PATH + '/round-drop.png', 26, 26);
 
+	mxVertexHandler.prototype.parentHighlightEnabled = true;
 	mxVertexHandler.prototype.rotationHandleVSpacing = -20;
 
 	mxConnectionHandler.prototype.connectImage = connectHandle;

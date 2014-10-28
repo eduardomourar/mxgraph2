@@ -103,6 +103,14 @@ mxVertexHandler.prototype.tolerance = 0;
 mxVertexHandler.prototype.rotationEnabled = false;
 
 /**
+ * Variable: parentHighlightEnabled
+ * 
+ * Specifies if the parent should be highlighted if a child cell is selected.
+ * Default is false.
+ */
+mxVertexHandler.prototype.parentHighlightEnabled = false;
+
+/**
  * Variable: rotationRaster
  * 
  * Specifies if rotation steps should be "rasterized" depening on the distance
@@ -185,6 +193,27 @@ mxVertexHandler.prototype.init = function()
 	if (this.graph.isCellMovable(this.state.cell))
 	{
 		this.selectionBorder.setCursor(mxConstants.CURSOR_MOVABLE_VERTEX);
+	}
+	
+	// Adds highlight for parent group
+	if (this.parentHighlightEnabled)
+	{
+		var parent = this.graph.model.getParent(this.state.cell);
+		
+		if (this.graph.model.isVertex(parent))
+		{
+			var pstate = this.graph.view.getState(parent);
+			
+			if (pstate != null)
+			{
+				this.parentHighlight = this.createSelectionShape(pstate);
+				// VML dialect required here for event transparency in IE
+				this.parentHighlight.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
+				this.parentHighlight.pointerEvents = false;
+				this.parentHighlight.rotation = Number(pstate.style[mxConstants.STYLE_ROTATION] || '0');
+				this.parentHighlight.init(this.graph.getView().getOverlayPane());
+			}
+		}
 	}
 	
 	// Adds the sizer handles
@@ -1606,6 +1635,11 @@ mxVertexHandler.prototype.drawPreview = function()
 	
 	this.selectionBorder.bounds = this.bounds;
 	this.selectionBorder.redraw();
+	
+	if (this.parentHighlight != null)
+	{
+		this.parentHighlight.redraw();
+	}
 };
 
 /**
@@ -1631,6 +1665,12 @@ mxVertexHandler.prototype.destroy = function()
 	this.selectionBorder = null;
 	this.labelShape = null;
 	this.removeHint();
+	
+	if (this.parentHighlight != null)
+	{
+		this.parentHighlight.destroy();
+		this.parentHighlight = null;
+	}
 	
 	if (this.sizers != null)
 	{

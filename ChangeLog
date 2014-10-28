@@ -1,4 +1,5 @@
 - Centers handle shape in mxHandle [JavaScript]
+- Adds mxVertexHandler.parentHighlightEnabled switch [JavaScript]
 - Fixes offset for vertical position on mxCellEditor [JavaScript]
 - Adds mxDoubleEllipse.getLabelBounds for margin size [JavaScript]
 - Includes child cells bounds in mxGraph.constrainChild [JavaScript]
