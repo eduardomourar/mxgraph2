@@ -646,6 +646,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
     	
 		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(15, 80), false);
+		assoc2.geometry.relative = true;
 		assoc2.edge = true;
 		
 		cardCell.insertEdge(assoc2, true);
@@ -658,6 +659,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
     	
 		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(60, 80), false);
+		assoc2.geometry.relative = true;
 		assoc2.edge = true;
 		
 		cardCell.insertEdge(assoc2, true);
@@ -670,6 +672,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		
 		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(80, 100), false);
+		assoc2.geometry.relative = true;
 		assoc2.edge = true;
 		
 		cardCell.insertEdge(assoc2, true);
@@ -704,6 +707,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		
 		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(100, 50), false);
+		assoc2.geometry.relative = true;
 		assoc2.edge = true;
 		
 		cardCell.insertEdge(assoc2, true);
@@ -722,6 +726,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 
 		var assoc1 = new mxCell('invoke', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=vertical;verticalAlign=bottom;endArrow=block;');
 		assoc1.geometry.setTerminalPoint(new mxPoint(0, 0), true);
+		assoc1.geometry.relative = true;
 		assoc1.edge = true;
 		
 		classCell1.insertEdge(assoc1, false);
@@ -733,17 +738,20 @@ Sidebar.prototype.addUmlPalette = function(expand)
 
 		var assoc1 = new mxCell('invoke', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=vertical;verticalAlign=bottom;endArrow=block;');
 		assoc1.geometry.setTerminalPoint(new mxPoint(0, 0), true);
+		assoc1.geometry.relative = true;
 		assoc1.edge = true;
 		
 		classCell1.insertEdge(assoc1, false);
 		
 		var assoc2 = new mxCell('return', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=vertical;verticalAlign=bottom;dashed=1;endArrow=open;endSize=8;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(0, 70), false);
+		assoc2.geometry.relative = true;
 		assoc2.edge = true;
 		
 		classCell1.insertEdge(assoc2, true);
 		
 		var assoc3 = new mxCell('invoke', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=vertical;align=left;endArrow=open;');
+		assoc3.geometry.relative = true;
 		assoc3.edge = true;
 		
 		classCell1.insertEdge(assoc3, true);
@@ -769,6 +777,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		var assoc = new mxCell('', new mxGeometry(0, 0, 0, 0), 'endArrow=none;edgeStyle=orthogonalEdgeStyle;');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(160, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 		
     	var sourceLabel = new mxCell('parent', new mxGeometry(-1, 0, 0, 0), 'resizable=0;align=left;verticalAlign=bottom;labelBackgroundColor=#ffffff;fontSize=10');
@@ -806,6 +815,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		var assoc = new mxCell('Relation', new mxGeometry(0, 0, 0, 0), 'endArrow=open;endSize=12;startArrow=diamondThin;startSize=14;startFill=0;edgeStyle=orthogonalEdgeStyle;');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(160, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 		
     	var sourceLabel = new mxCell('0..n', new mxGeometry(-1, 0, 0, 0), 'resizable=0;align=left;verticalAlign=top;labelBackgroundColor=#ffffff;fontSize=10');
@@ -825,6 +835,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		var assoc = new mxCell('Use', new mxGeometry(0, 0, 0, 0), 'endArrow=open;endSize=12;dashed=1');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(160, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 		
 		content.appendChild(this.createEdgeTemplateFromCells([assoc], 160, 0, 'Dependency', true));
@@ -832,6 +843,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		var assoc = new mxCell('Extends', new mxGeometry(0, 0, 0, 0), 'endArrow=block;endSize=16;endFill=0');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(160, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 		
 		content.appendChild(this.createEdgeTemplateFromCells([assoc], 160, 0, 'Generalization'));
@@ -839,6 +851,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		var assoc = new mxCell('', new mxGeometry(0, 0, 0, 0), 'endArrow=block;startArrow=block;endFill=1;startFill=1');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(160, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 		
 		content.appendChild(this.createEdgeTemplateFromCells([assoc], 160, 0, 'Association 2'));
@@ -917,6 +930,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		var assoc = new mxCell('', new mxGeometry(0, 0, 0, 0), 'endArrow=block;endFill=1;endSize=6');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(100, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 
 		content.appendChild(this.createEdgeTemplateFromCells([assoc], 100, 0, 'Sequence Flow', true));
@@ -924,6 +938,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		var assoc = new mxCell('', new mxGeometry(0, 0, 0, 0), 'startArrow=dash;startSize=8;endArrow=block;endFill=1;endSize=6');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(100, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 		
 		content.appendChild(this.createEdgeTemplateFromCells([assoc], 100, 0, 'Default Flow', true));
@@ -931,6 +946,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		var assoc = new mxCell('', new mxGeometry(0, 0, 0, 0), 'startArrow=diamondThin;startFill=0;startSize=14;endArrow=block;endFill=1;endSize=6');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(100, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 		
 		content.appendChild(this.createEdgeTemplateFromCells([assoc], 100, 0, 'Conditional Flow', true));
@@ -938,6 +954,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		var assoc = new mxCell('', new mxGeometry(0, 0, 0, 0), 'startArrow=oval;startFill=0;startSize=7;endArrow=block;endFill=0;endSize=10;dashed=1');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(100, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 
 		content.appendChild(this.createEdgeTemplateFromCells([assoc], 100, 0, 'Message Flow 1'));
@@ -945,6 +962,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		var assoc = new mxCell('', new mxGeometry(0, 0, 0, 0), 'startArrow=oval;startFill=0;startSize=7;endArrow=block;endFill=0;endSize=10;dashed=1');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(100, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 		
     	var sourceLabel = new mxCell('', new mxGeometry(0, 0, 20, 14), 'shape=message');
@@ -959,6 +977,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		var assoc = new mxCell('', new mxGeometry(0, 0, 0, 0), 'shape=link');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
 		assoc.geometry.setTerminalPoint(new mxPoint(100, 0), false);
+		assoc.geometry.relative = true;
 		assoc.edge = true;
 
 		content.appendChild(this.createEdgeTemplateFromCells([assoc], 100, 0, 'Link', true));
@@ -1271,8 +1290,9 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 		{
 			var sourceGeo = graph.getCellGeometry(source);
 			var geo2 = graph.getCellGeometry(targets[dropCellIndex]);
-			targets = graph.importCells(targets, geo.x - geo2.x, geo.y - geo2.y, (sourceGeo != null && !sourceGeo.relative) ? graph.model.getParent(source) : null);
-
+			targets = graph.importCells(targets, geo.x - geo2.x, geo.y - geo2.y, (graph.model.isEdge(source) ||
+					(sourceGeo != null && !sourceGeo.relative)) ? graph.model.getParent(source) : null);
+			
 			if (graph.model.isEdge(source))
 			{
 				// LATER: Push new terminal out radially from edge start point
@@ -1288,10 +1308,12 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			else
 			{
 				geo2 = graph.getCellGeometry(targets[dropCellIndex]);
+				var dx = geo.x - geo2.x;
+				var dy = geo.y - geo2.y;
 				geo.x = geo2.x;
 				geo.y = geo2.y;
 				graph.model.setGeometry(targets[dropCellIndex], geo);
-				
+				graph.cellsMoved(targets, dx, dy, null, null, true);
 				targets.push(graph.insertEdge(null, null, '', source, targets[dropCellIndex]));
 			}
 			
@@ -1597,7 +1619,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				var view = graph.view;
 				var index = (graph.model.isEdge(currentTargetState.cell) || freeSourceEdge == null) ? firstVertex : freeSourceEdge;
 				var geo = sidebar.getDropAndConnectGeometry(currentTargetState.cell, cells[index], direction, cells.length > 1);
-				var geo2 = graph.getCellGeometry(currentTargetState.cell);
+				var geo2 = (!graph.model.isEdge(currentTargetState.cell)) ? graph.getCellGeometry(currentTargetState.cell) : null;
+				var geo3 = graph.getCellGeometry(cells[index]);
 				var parent = graph.model.getParent(currentTargetState.cell);
 				var dx = view.translate.x * view.scale;
 				var dy = view.translate.y * view.scale;
@@ -1610,8 +1633,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				}
 				
 				// Shows preview at drop location
-				this.previewElement.style.left = (geo.x * view.scale + dx) + 'px';
-				this.previewElement.style.top = (geo.y * view.scale + dy) + 'px';
+				this.previewElement.style.left = ((geo.x - geo3.x) * view.scale + dx) + 'px';
+				this.previewElement.style.top = ((geo.y - geo3.y) * view.scale + dy) + 'px';
 				
 				if (cells.length == 1)
 				{
