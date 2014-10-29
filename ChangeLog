@@ -1,6 +1,6 @@
 - Adds bends argument in mxEdgeHandler.destroyBends [JavaScript]
 - Adds mxEdgeHandler.mergeRemoveEnabled, dblClickRemoveEnabled [JavaScript]
-- Adds mxEdgeHandler.virtualBendsEnabled with getter, createVirtualBends [JavaScript]
+- Adds mxEdgeHandler.virtualBendsEnabled and getter, createVirtualBends [JavaScript]
 - Fixes double click handling on edge handles in quirks mode [JavaScript]
 - Fires native dblclick event in mxGraph.fireMouseEvent for quirks [JavaScript]
 - Adds mxConstants.CURSOR_TERMINAL/VIRTUAL_BEND_HANDLE [JavaScript]
