@@ -725,8 +725,8 @@ Actions.prototype.init = function()
 		{
 			graph.setCellStyles(mxConstants.STYLE_DASHED, null);
 			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, null);
-			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED,
-			    mxConstants.STYLE_DASH_PATTERN], 'values', [null, null], 'cells', graph.getSelectionCells()));
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN],
+				'values', [null, null], 'cells', graph.getSelectionCells()));
 		}
 		finally
 		{
@@ -740,8 +740,8 @@ Actions.prototype.init = function()
 		{
 			graph.setCellStyles(mxConstants.STYLE_DASHED, '1');
 			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, null);
-			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED,
-			    mxConstants.STYLE_DASH_PATTERN], 'values', ['1', null], 'cells', graph.getSelectionCells()));
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN],
+				'values', ['1', null], 'cells', graph.getSelectionCells()));
 		}
 		finally
 		{
@@ -755,8 +755,8 @@ Actions.prototype.init = function()
 		{
 			graph.setCellStyles(mxConstants.STYLE_DASHED, '1');
 			graph.setCellStyles(mxConstants.STYLE_DASH_PATTERN, '1 4');
-			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED,
-			    mxConstants.STYLE_DASH_PATTERN], 'values', ['1', '1 4'], 'cells', graph.getSelectionCells()));
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN],
+				'values', ['1', '1 4'], 'cells', graph.getSelectionCells()));
 		}
 		finally
 		{
@@ -770,6 +770,8 @@ Actions.prototype.init = function()
 		{
 			graph.setCellStyles(mxConstants.STYLE_ROUNDED, '0');
 			graph.setCellStyles(mxConstants.STYLE_CURVED, '0');
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_ROUNDED, mxConstants.STYLE_CURVED],
+					'values', ['0', '0'], 'cells', graph.getSelectionCells()));
 		}
 		finally
 		{
@@ -783,6 +785,8 @@ Actions.prototype.init = function()
 		{
 			graph.setCellStyles(mxConstants.STYLE_ROUNDED, '1');
 			graph.setCellStyles(mxConstants.STYLE_CURVED, '0');
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_ROUNDED, mxConstants.STYLE_CURVED],
+					'values', ['1', '0'], 'cells', graph.getSelectionCells()));
 		}
 		finally
 		{
@@ -796,6 +800,8 @@ Actions.prototype.init = function()
 		{
 			graph.setCellStyles(mxConstants.STYLE_ROUNDED, '0');
 			graph.setCellStyles(mxConstants.STYLE_CURVED, '1');
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_ROUNDED, mxConstants.STYLE_CURVED],
+					'values', ['0', '1'], 'cells', graph.getSelectionCells()));
 		}
 		finally
 		{
