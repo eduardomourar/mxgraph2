@@ -1601,9 +1601,13 @@ Graph.prototype.initTouch = function()
 						})
 					);
 					
-					mxEvent.addListener(this.connectorImg, 'click', function()
+					mxEvent.addListener(this.connectorImg, 'click', function(evt)
 					{
-						ui.actions.get('duplicate').funct();
+						if (mxClient.IS_IE || evt.detail < 2)
+						{
+							ui.actions.get('duplicate').funct();
+							mxEvent.consume(evt);
+						}
 					});
 	
 					this.graph.container.appendChild(this.connectorImg);
