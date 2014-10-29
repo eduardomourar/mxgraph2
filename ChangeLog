@@ -1,3 +1,4 @@
+- Adds mxConstants.CURSOR_TERMINAL/VIRTUAL_BEND_HANDLE [JavaScript]
 - Centers handle shape in mxHandle [JavaScript]
 - Fixes possible NPE in mxEdgeHandler.refresh [JavaScript]
 - Adds mxEdgeHandler.parentHighlightEnabled, createParentHighlightShape [JavaScript]
