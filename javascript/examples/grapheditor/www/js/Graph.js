@@ -1600,6 +1600,11 @@ Graph.prototype.initTouch = function()
 							}
 						})
 					);
+					
+					mxEvent.addListener(this.connectorImg, 'click', function()
+					{
+						ui.actions.get('duplicate').funct();
+					});
 	
 					this.graph.container.appendChild(this.connectorImg);
 					redraw = true;
