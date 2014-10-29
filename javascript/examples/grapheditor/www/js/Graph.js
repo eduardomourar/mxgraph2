@@ -1334,10 +1334,6 @@ Graph.prototype.initTouch = function()
 	var triangleLeft = new mxImage(IMAGE_PATH + '/triangle-left.png', 26, 26);
 	var roundDrop = new mxImage(IMAGE_PATH + '/round-drop.png', 26, 26);
 
-	mxVertexHandler.prototype.parentHighlightEnabled = true;
-	mxVertexHandler.prototype.rotationHandleVSpacing = -20;
-	mxEdgeHandler.prototype.parentHighlightEnabled = true;
-
 	mxConnectionHandler.prototype.connectImage = connectHandle;
 	mxVertexHandler.prototype.handleImage = mainHandle;
 	mxVertexHandler.prototype.secondaryHandleImage = secondaryHandle;
@@ -1350,11 +1346,18 @@ Graph.prototype.initTouch = function()
 	Sidebar.prototype.triangleLeft = triangleLeft;
 	Sidebar.prototype.roundDrop = roundDrop;
 	
-	// Enables connections along the outline
+	// Enables connections along the outline, virtual waypoints, parent highlight etc
 	mxConnectionHandler.prototype.outlineConnect = true;
+	mxCellHighlight.prototype.keepOnTop = true;
+	mxVertexHandler.prototype.parentHighlightEnabled = true;
+	mxVertexHandler.prototype.rotationHandleVSpacing = -20;
+	
+	mxEdgeHandler.prototype.parentHighlightEnabled = true;
+	mxEdgeHandler.prototype.dblClickRemoveEnabled = true;
+	mxEdgeHandler.prototype.virtualBendsEnabled = true;
+	mxEdgeHandler.prototype.mergeRemoveEnabled = true;
 	mxEdgeHandler.prototype.manageLabelHandle = true;
 	mxEdgeHandler.prototype.outlineConnect = true;
-	mxCellHighlight.prototype.keepOnTop = true;
 	
 	// Pre-fetches images
 	new Image().src = connectHandle.src;

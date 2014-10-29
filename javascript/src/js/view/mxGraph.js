@@ -11966,6 +11966,12 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 						var cell = this.lastTouchCell;
 						this.lastTouchCell = null;
 
+						// Fires native dblclick event via event source
+						if (mxClient.IS_QUIRKS)
+						{
+							me.getSource().fireEvent('ondblclick');
+						}
+						
 						this.dblClick(me.getEvent(), cell);
 						doubleClickFired = true;
 					}
