@@ -551,10 +551,24 @@ if (mxClient.IS_VML)
 			document.namespaces.add(mxClient.VML_PREFIX, 'urn:schemas-microsoft-com:vml');
 			document.namespaces.add(mxClient.OFFICE_PREFIX, 'urn:schemas-microsoft-com:office:office');
 		}
-		
-	    var ss = document.createStyleSheet();
-	    ss.cssText = mxClient.VML_PREFIX + '\\:*{behavior:url(#default#VML)}' +
-	    	mxClient.OFFICE_PREFIX + '\\:*{behavior:url(#default#VML)}';
+
+		// Workaround for limited number of stylesheets in IE (does not work in standards mode)
+		if (mxClient.IS_QUIRKS && document.styleSheets.length >= 30)
+		{
+			(function()
+			{
+				var node = document.createElement('style');
+				node.type = 'text/css';
+				node.styleSheet.cssText = mxClient.VML_PREFIX + '\\:*{behavior:url(#default#VML)}' +
+		        	mxClient.OFFICE_PREFIX + '\\:*{behavior:url(#default#VML)}';
+		        document.getElementsByTagName('head')[0].appendChild(node);
+			})();
+		}
+		else
+		{
+			document.createStyleSheet().cssText = mxClient.VML_PREFIX + '\\:*{behavior:url(#default#VML)}' +
+		    	mxClient.OFFICE_PREFIX + '\\:*{behavior:url(#default#VML)}';
+		}
 	    
 	    if (mxLoadStylesheets)
 	    {
