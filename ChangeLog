@@ -1,9 +1,11 @@
+30-OCT-2014: 3.1.1.0
+
 - Adds workarond for limited number of stylesheets in quirks mode [JavaScript]
 - Adds bends argument in mxEdgeHandler.destroyBends [JavaScript]
 - Adds mxEdgeHandler.mergeRemoveEnabled, dblClickRemoveEnabled [JavaScript]
 - Adds mxEdgeHandler.virtualBendsEnabled and getter, createVirtualBends [JavaScript]
 - Fixes double click handling on edge handles in quirks mode [JavaScript]
-- Fires native dblclick event in mxGraph.fireMouseEvent for quirks [JavaScript]
+- mxGraph.fireMouseEvent fires native dblclick event in quirks mode [JavaScript]
 - Adds mxConstants.CURSOR_TERMINAL/VIRTUAL_BEND_HANDLE [JavaScript]
 - Centers handle shape in mxHandle [JavaScript]
 - Fixes possible NPE in mxEdgeHandler.refresh [JavaScript]
@@ -11,7 +13,7 @@
 - Adds mxVertexHandler.parentHighlightEnabled, createParentHighlightShape [JavaScript]
 - Fixes offset for vertical position on mxCellEditor [JavaScript]
 - Adds mxDoubleEllipse.getLabelBounds for margin size [JavaScript]
-- Includes child cells bounds in mxGraph.constrainChild [JavaScript]
+- Includes child cell bounds in mxGraph.constrainChild [JavaScript]
 - mxGraph.cellsFolded calls constrainChild if constrainChildrenOnResize is true [JavaScript]
 - Handles relative geometries, offsets in mxGraph.getBoundingBoxFromGeometry [JavaScript]
 - Fixes optional border argument in mxGraph.getBoundsForGroup [JavaScript]
