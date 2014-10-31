@@ -1,3 +1,4 @@
+- Fixes text and image rendering in mxStencil in outline mode [JavaScript]
 - Fixes tolerance check in mxPopupMenuHandler for touch events [JavaScript]
 
 30-OCT-2014: 3.1.1.0
