@@ -1359,6 +1359,14 @@ Graph.prototype.initTouch = function()
 	mxEdgeHandler.prototype.manageLabelHandle = true;
 	mxEdgeHandler.prototype.outlineConnect = true;
 	
+	mxEdgeHandlerIsVirtualBendsEnabled = mxEdgeHandler.prototype.isVirtualBendsEnabled;
+	
+	mxEdgeHandler.prototype.isVirtualBendsEnabled = function()
+	{
+		return mxEdgeHandlerIsVirtualBendsEnabled.apply(this, arguments) &&
+			mxUtils.getValue(this.state.style, mxConstants.STYLE_SHAPE, null) != 'link';
+	};
+	
 	// Pre-fetches images
 	new Image().src = connectHandle.src;
 	new Image().src = mainHandle.src;
