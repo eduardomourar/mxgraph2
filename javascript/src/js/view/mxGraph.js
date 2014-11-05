@@ -1694,17 +1694,77 @@ mxGraph.prototype.collapseExpandResource = (mxClient.language != 'none') ? 'coll
  * Creates the tooltip-, panning-, connection- and graph-handler (in this
  * order). This is called in the constructor before <init> is called.
  */
-mxGraph.prototype.createHandlers = function(container)
+mxGraph.prototype.createHandlers = function()
 {
-	this.tooltipHandler = new mxTooltipHandler(this);
+	this.tooltipHandler = this.createTooltipHandler();
 	this.tooltipHandler.setEnabled(false);
-	this.selectionCellsHandler = new mxSelectionCellsHandler(this);
-	this.connectionHandler = new mxConnectionHandler(this);
+	this.selectionCellsHandler = this.createSelectionCellsHandler();
+	this.connectionHandler = this.createConnectionHandler();
 	this.connectionHandler.setEnabled(false);
-	this.graphHandler = new mxGraphHandler(this);
-	this.panningHandler = new mxPanningHandler(this);
+	this.graphHandler = this.createGraphHandler();
+	this.panningHandler = this.createPanningHandler();
 	this.panningHandler.panningEnabled = false;
-	this.popupMenuHandler = new mxPopupMenuHandler(this);
+	this.popupMenuHandler = this.createPopupMenuHandler();
+};
+
+/**
+ * Function: createTooltipHandler
+ * 
+ * Creates and returns a new <mxTooltipHandler> to be used in this graph.
+ */
+mxGraph.prototype.createTooltipHandler = function()
+{
+	return new mxTooltipHandler(this);
+};
+
+/**
+ * Function: createSelectionCellsHandler
+ * 
+ * Creates and returns a new <mxTooltipHandler> to be used in this graph.
+ */
+mxGraph.prototype.createSelectionCellsHandler = function()
+{
+	return new mxSelectionCellsHandler(this);
+};
+
+/**
+ * Function: createConnectionHandler
+ * 
+ * Creates and returns a new <mxConnectionHandler> to be used in this graph.
+ */
+mxGraph.prototype.createConnectionHandler = function()
+{
+	return new mxConnectionHandler(this);
+};
+
+/**
+ * Function: createGraphHandler
+ * 
+ * Creates and returns a new <mxGraphHandler> to be used in this graph.
+ */
+mxGraph.prototype.createGraphHandler = function()
+{
+	return new mxGraphHandler(this);
+};
+
+/**
+ * Function: createPanningHandler
+ * 
+ * Creates and returns a new <mxPanningHandler> to be used in this graph.
+ */
+mxGraph.prototype.createPanningHandler = function()
+{
+	return new mxPanningHandler(this);
+};
+
+/**
+ * Function: createPopupMenuHandler
+ * 
+ * Creates and returns a new <mxPopupMenuHandler> to be used in this graph.
+ */
+mxGraph.prototype.createPopupMenuHandler = function()
+{
+	return new mxPopupMenuHandler(this);
 };
 
 /**

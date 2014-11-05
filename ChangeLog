@@ -1,3 +1,5 @@
+- Adds mxGraph.createTooltipHandler, createSelectionCellsHandler, createConnectionHandler [JavaScript]
+- Adds mxGraph.createGraphHandler, createPanningHandler, createPopupMenuHandler [JavaScript]
 - Adds mxCompactTreeLayout.groupPaddingTop, -Right, -Bottom and -Left [JavaScript]
 - Adds top-, right-, bottom- and leftBorder in mxGraphLayout.arrangeGroups [JavaScript]
 - Fixes ID attributes in SVG for URLs with brackets [JavaScript]
