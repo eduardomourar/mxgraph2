@@ -1,3 +1,5 @@
+- Adds mxCompactTreeLayout.groupPaddingTop, -Right, -Bottom and -Left [JavaScript]
+- Adds top-, right-, bottom- and leftBorder in mxGraphLayout.arrangeGroups [JavaScript]
 - Fixes ID attributes in SVG for URLs with brackets [JavaScript]
 - Fixes text and image rendering in mxStencil in outline mode [JavaScript]
 - Fixes tolerance check in mxPopupMenuHandler for touch events [JavaScript]
