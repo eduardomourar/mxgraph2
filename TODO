@@ -8,8 +8,8 @@
 
 - Add arcSize handle in Shapes.js
 - No table if selection empty, selectNode not working in quirks for rich text editing
-- Remove dependency on urlParams, global vars
 - Build WAR, grapheditor.min.js for grapheditor in build step
+- Fix duplicate encoding in simulate requests (optional decode in save/export)
 
 - Add find dialog, find again function
 - Add gradient in page background
