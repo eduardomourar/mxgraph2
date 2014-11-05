@@ -5893,7 +5893,8 @@ mxGraph.prototype.constrainChild = function(cell)
 	if (cell != null)
 	{
 		var geo = this.getCellGeometry(cell);
-		var area = (this.isConstrainChild(cell)) ? this.getCellContainmentArea(cell) : this.getMaximumGraphBounds();		
+		var max = this.getMaximumGraphBounds();
+		var area = (this.isConstrainChild(cell)) ? this.getCellContainmentArea(cell) : max;
 		
 		if (geo != null && !geo.relative && area != null)
 		{
@@ -5913,29 +5914,76 @@ mxGraph.prototype.constrainChild = function(cell)
 			}
 			
 			var bbox = this.getBoundingBoxFromGeometry(cells, false);
-
+			
 			if (bbox != null)
 			{
-				// Keeps child within the content area of the parent
-				if (bbox.x < area.x || bbox.y < area.y || area.width < bbox.x +
-					bbox.width || area.height < bbox.y + bbox.height)
+				var overlap = (area == max) ? 0 : this.getOverlap(cell);
+				
+				// Includes max area to constrain child overlap
+				var areaUpdate = area == max;
+				max = mxRectangle.fromRectangle(max);
+				
+				// Max is relative to the parent origin
+				var parent = this.model.getParent(cell);
+				
+				while (this.model.isVertex(parent))
 				{
-					var overlap = this.getOverlap(cell);
+					var pgeo = this.getCellGeometry(parent);
+					
+					if (pgeo != null)
+					{
+						max.x -= pgeo.x;
+						max.y -= pgeo.y;
+					}
+					
+					parent = this.model.getParent(parent);
+				}
+
+				if (areaUpdate)
+				{
+					area = max;
+				}
+				
+				var left = area.x - bbox.width * overlap;
+				var top = area.y - bbox.height * overlap;
+				var right = area.x + area.width + bbox.width * overlap;
+				var bottom = area.y + area.height + bbox.height * overlap;
+				
+				// Includes max area to constrain child overlap
+				if (area != max)
+				{
+					left = Math.max(left, max.x);
+					top = Math.max(top, max.y);
+				}
+
+				// Keeps child within the content area of the parent
+				if (bbox.x < left || bbox.x + bbox.width > right || 
+					bbox.y < top || bbox.y + bbox.height > bottom)
+				{
 					geo = geo.clone();
 					
-					if (area.width > 0)
+					if (bbox.x < left)
 					{
-						geo.x = Math.min(bbox.x, area.x + area.width - (1 - overlap) * bbox.width);
+						var dx = left - bbox.x;
+						geo.x += dx;
+					}
+					else if (area.width > 0 && bbox.x + bbox.width > right)
+					{
+						var dx = bbox.x + bbox.width - right;
+						geo.x -= dx;
 					}
 					
-					if (area.height > 0)
+					if (bbox.y < top)
 					{
-						geo.y = Math.min(bbox.y, area.y + area.height - (1 - overlap) * bbox.height);
+						var dy = top - bbox.y;
+						geo.y += dy;
 					}
-					
-					geo.x = Math.max(geo.x, area.x - bbox.width * overlap);
-					geo.y = Math.max(geo.y, area.y - bbox.height * overlap);
-					
+					else if (area.width > 0 && bbox.y + bbox.height > bottom)
+					{
+						var dy = bbox.y + bbox.height - bottom;
+						geo.y -= dy;
+					}
+
 					geo.width = Math.min(geo.width, area.width + geo.width - bbox.width);
 					geo.height = Math.min(geo.height, area.height + geo.height - bbox.height);
 					
@@ -6931,6 +6979,7 @@ mxGraph.prototype.getBoundingBoxFromGeometry = function(cells, includeEdges)
 						if (pts != null && pts.length > 0)
 						{
 							var tmp = new mxRectangle(pts[0].x, pts[0].y, 0, 0);
+							
 							var addPoint = function(pt)
 							{
 								if (pt != null)
@@ -6955,16 +7004,32 @@ mxGraph.prototype.getBoundingBoxFromGeometry = function(cells, includeEdges)
 						if (geo.relative)
 						{
 							var parent = this.model.getParent(cells[i]);
-							var tmp = this.getBoundingBoxFromGeometry([parent], false);
-
-							if (tmp != null)
+							
+							if (this.model.isVertex(parent) && mxUtils.indexOf(cells, parent) >= 0)
 							{
-								bbox = new mxRectangle(tmp.x + geo.x * tmp.width, tmp.y + geo.y * tmp.height, geo.width, geo.height);
+								var tmp = this.getBoundingBoxFromGeometry([parent], false);
+	
+								if (tmp != null)
+								{
+									bbox = new mxRectangle(tmp.x + geo.x * tmp.width, tmp.y + geo.y * tmp.height, geo.width, geo.height);
+								}
 							}
 						}
 						else
 						{
-							bbox = geo;
+							bbox = mxRectangle.fromRectangle(geo);
+							var parent = this.model.getParent(cells[i]);
+							
+							if (this.model.isVertex(parent) && mxUtils.indexOf(cells, parent) >= 0)
+							{
+								var tmp = this.getBoundingBoxFromGeometry([parent], false);
+
+								if (tmp != null)
+								{
+									bbox.x += tmp.x;
+									bbox.y += tmp.y;
+								}
+							}
 						}
 						
 						if (geo.offset != null)
