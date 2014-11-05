@@ -1,3 +1,4 @@
+- Fixes handling for style overflow=fill in mxCellEditor, adds getCurrentHtmlValue [JavaScript]
 - Adds mxGraph.createTooltipHandler, createSelectionCellsHandler, createConnectionHandler [JavaScript]
 - Adds mxGraph.createGraphHandler, createPanningHandler, createPopupMenuHandler [JavaScript]
 - Adds mxCompactTreeLayout.groupPaddingTop, -Right, -Bottom and -Left [JavaScript]
