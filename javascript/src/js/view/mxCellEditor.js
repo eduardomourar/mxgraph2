@@ -374,16 +374,11 @@ mxCellEditor.prototype.resize = function()
 				ow = Math.max(ow, 40);
 				oh = Math.max(oh, 20);
 
-				if (clip)
-				{
-					ow = Math.min(this.bounds.width, ow);
-					oh = Math.min(this.bounds.height, oh);
-				}
-				else if (wrap)
+				if (wrap)
 				{
 					ow = Math.max(this.bounds.width, this.textDiv.scrollWidth);
 				}
-				
+
 				var m = (state.text != null) ? state.text.margin : null;
 				
 				if (m == null)
@@ -405,8 +400,8 @@ mxCellEditor.prototype.resize = function()
 					else
 					{
 						var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
-						this.textarea.style.left = Math.max(0, Math.round(this.bounds.x - m.x * this.bounds.width + m.x * (ow + 8))) + 'px';
-						this.textarea.style.top = Math.max(0, Math.round(this.bounds.y - m.y * this.bounds.height + m.y * (oh - size * 0.5 - 3)) + 4) + 'px';
+						this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * this.bounds.width + m.x * (ow + 7))) + 'px';
+						this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh + size * 0.1 + 8)) + 5) + 'px';
 					}
 				}
 	

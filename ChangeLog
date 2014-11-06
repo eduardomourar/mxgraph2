@@ -1,3 +1,4 @@
+- Improves vertical position in mxCellEditor [JavaScript]
 - Adds Curly Bracket in General, Parallel Marker in BPMN sidebar
 - Adds Corner, Tee, Vertical/Horizontal Tree in Advanced sidebar
 - Merges tilt and reverseEdge into switchDirection in grapheditor
