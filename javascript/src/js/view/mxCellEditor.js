@@ -695,7 +695,7 @@ mxCellEditor.prototype.getMinimumSize = function(state)
 {
 	var scale = this.graph.getView().scale;
 	
-	return new mxRectangle(0, 0, (state.text == null) ? 30 :  state.text.size * scale + 20,
+	return new mxRectangle(0, 0, (state.text == null) ? 30 : state.text.size * scale + 20,
 			(this.textarea.style.textAlign == 'left') ? 120 : 40);
 };
 
