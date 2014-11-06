@@ -912,7 +912,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		classCell1.geometry.offset = new mxPoint(-15, 10);
 		classCell.insert(classCell1);
 		
-		content.appendChild(this.createVertexTemplateFromCells([classCell], 120, 95, 'Attached Timer Event 2', true));
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 135, 80, 'Attached Timer Event 2', true));
 
 		content.appendChild(this.createVertexTemplate('swimlane;html=1;horizontal=0;startSize=20', 320, 240, 'Pool', 'Pool', true));
 		content.appendChild(this.createVertexTemplate('swimlane;html=1;horizontal=0;swimlaneFillColor=white;swimlaneLine=0;', 300, 120, 'Lane', 'Lane', true));
@@ -2161,7 +2161,7 @@ Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, 
     	for (var i = 0; i < items.length; i++)
 		{
 			var icon = prefix + items[i] + postfix;
-			content.appendChild(this.createVertexTemplate('image;image=' + icon, 80, 80, '', (showTitles) ? titles[i] : null, showTitles));
+			content.appendChild(this.createVertexTemplate('image;html=1;image=' + icon, 80, 80, '', (showTitles) ? titles[i] : null, showTitles));
 		}
     }));
 };
