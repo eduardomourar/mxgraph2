@@ -367,7 +367,7 @@ mxCellEditor.prototype.resize = function()
 					value = value.replace(/ /g, '&nbsp;');
 				}
 				
-				this.textDiv.innerHTML = value;
+				this.textDiv.innerHTML = (value.length > 0) ? value : '&nbsp;';
 				var ow = this.textDiv.offsetWidth + 30;
 				var oh = this.textDiv.offsetHeight + 16;
 				
