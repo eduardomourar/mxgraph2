@@ -205,11 +205,11 @@ EditorUi = function(editor, container)
 	
 	// Stores the current style and assigns it to new cells
 	// LATER: Update after copyStyle (handle defaults) and after menu Format, Style
-	var styles = ['shadow', 'dashed', 'dashPattern'];
-	var connectStyles = ['shape', 'edgeStyle', 'curved', 'rounded'];
+	var styles = ['shadow', 'dashed', 'dashPattern', 'rounded'];
+	var connectStyles = ['shape', 'edgeStyle', 'curved'];
 	
 	// Sets the default edge style
-	var currentEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0'};
+	var currentEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1'};
 	var currentStyle = {};
 	
 	this.setDefaultStyle = function(cell)
@@ -270,6 +270,12 @@ EditorUi = function(editor, container)
 		}
 	};
 	
+	this.resetDefaultStyle = function()
+	{
+		currentEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1'};
+		currentStyle = {};
+	};
+	
 	// Constructs the style for the initial edge type defined in the initial value for the currentEdgeStyle
 	// This function is overridden below as soon as any style is set in the app.
 	var initialEdgeCellStyle = '';
@@ -287,7 +293,8 @@ EditorUi = function(editor, container)
 		return new mxCellState(graph.view, edge, graph.getCellStyle(edge));
     };
 	
-	// Keys that should be ignored if the cell has a value
+	// Keys that should be ignored if the cell has a value (known: new default for all cells is html=1 so
+    // for the html key this effecticely only works for edges inserted via the connection handler)
 	var valueStyles = ['fontFamily', 'fontSize', 'fontColor', 'align'];
 	
 	// Keys that always update the current edge style regardless of selection
@@ -296,7 +303,8 @@ EditorUi = function(editor, container)
 	// Keys that are ignored together (if one appears all are ignored)
 	var keyGroups = [['startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize'],
 	                 ['strokeColor', 'strokeWidth'],
-	                 ['fillColor', 'gradientColor']];
+	                 ['fillColor', 'gradientColor'],
+	                 ['html']];
 	
 	// Adds all keys used above to the styles array
 	for (var i = 0; i < valueStyles.length; i++)
@@ -482,6 +490,20 @@ EditorUi = function(editor, container)
 			if (currentEdgeStyle['rounded'] != null)
 			{
 				style += 'rounded=' + currentEdgeStyle['rounded'] + ';';
+			}
+			
+			if (currentEdgeStyle['rounded'] != null)
+			{
+				style += 'rounded=' + currentEdgeStyle['rounded'] + ';';
+			}
+			
+			if (currentEdgeStyle['html'] != null)
+			{
+				style += 'html=' + currentEdgeStyle['html'] + ';';
+			}
+			else
+			{
+				style += 'html=1;';
 			}
 			
 			var edge = graph.createEdge(null, null, null, null, null, style);
@@ -1034,7 +1056,7 @@ EditorUi.prototype.updateActionStates = function()
 	// Updates action states
 	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'delete', 'duplicate',
 	               'style', 'backgroundColor', 'borderColor', 'toFront', 'toBack',
-	               'tilt', 'lockUnlock', 'editData'];
+	               'lockUnlock', 'editData'];
 	
 	for (var i = 0; i < actions.length; i++)
 	{
@@ -1042,7 +1064,7 @@ EditorUi.prototype.updateActionStates = function()
 	}
 	
 	this.actions.get('setAsDefaultStyle').setEnabled(graph.getSelectionCount() == 1);
-	this.actions.get('reverseEdge').setEnabled(edgeSelected);
+	this.actions.get('switchDirection').setEnabled(!graph.isSelectionEmpty());
 	this.actions.get('curved').setEnabled(edgeSelected);
 	this.actions.get('rotation').setEnabled(vertexSelected);
 	this.actions.get('wordWrap').setEnabled(vertexSelected);
@@ -1068,8 +1090,6 @@ EditorUi.prototype.updateActionStates = function()
     this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
     this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
     this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected && state != null && graph.isLoop(state)));
-    this.menus.get('navigation').setEnabled(graph.foldingEnabled && ((graph.view.currentRoot != null) ||
-			(graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell()))));
     this.actions.get('home').setEnabled(graph.view.currentRoot != null);
     this.actions.get('exitGroup').setEnabled(graph.view.currentRoot != null);
     var groupEnabled = graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell());
@@ -1789,8 +1809,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
     keyHandler.bindAction(8, false, 'delete'); // Backspace
     keyHandler.bindAction(46, false, 'delete'); // Delete
-    keyHandler.bindAction(82, true, 'tilt'); // Ctrl+R
-    keyHandler.bindAction(82, true, 'reverseEdge', true); // Ctrl+Shift+R
+    keyHandler.bindAction(82, true, 'switchDirection'); // Ctrl+R
     keyHandler.bindAction(83, true, 'save'); // Ctrl+S
     keyHandler.bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
     keyHandler.bindAction(107, false, 'zoomIn'); // Add
