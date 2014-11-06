@@ -1,3 +1,17 @@
+- Adds Curly Bracket in General, Parallel Marker in BPMN sidebar
+- Adds Corner, Tee, Vertical/Horizontal Tree in Advanced sidebar
+- Merges tilt and reverseEdge into switchDirection in grapheditor
+- Replaces alt-drag from sidebar with refresh icon in grapheditor
+- Alt-/shift-drag from sidebar disables actions in grapheditor
+- Adds formatted text state for new connections in grapheditor
+- Moves collapsible item to Navigation submenu in grapheditor
+- Shows focus rectangle for edge label editing in grapheditor
+- Makes formatted text default for all cells in grapheditor
+- Resizes text editor for rich text editing in grapheditor
+- Rearranges general shapes based on usage in grapheditor
+- Hides custom handles for locked cells in grapheditor
+- Adds reset default style menu item in grapheditor
+- Removes Text & Images sidebar in grapheditor
 - Fixes tolerances for managed sizers in mxVertexHandler.redrawHandles [JavaScript]
 - mxGraph.getBoundingBoxFromGeometry uses relative child bounds for selected parents [JavaScript]
 - Fixes mxGraph.constrainChild maximumGraphBounds ignored for child cells [JavaScript]
