@@ -1,3 +1,4 @@
+- Fixes tolerances for managed sizers in mxVertexHandler.redrawHandles [JavaScript]
 - mxGraph.getBoundingBoxFromGeometry uses relative child bounds for selected parents [JavaScript]
 - Fixes mxGraph.constrainChild maximumGraphBounds ignored for child cells [JavaScript]
 - Fixes white-space CSS in mxUtils.createTable [Java]
