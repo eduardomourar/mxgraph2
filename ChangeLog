@@ -18,6 +18,7 @@
 - Fixes mxGraph.constrainChild maximumGraphBounds ignored for child cells [JavaScript]
 - Fixes white-space CSS in mxUtils.createTable [Java]
 - Fixes handling for style overflow=fill in mxCellEditor, adds getCurrentHtmlValue [JavaScript]
+- Adds mxGraph.createElbowEdgeHandler, createEdgeSegmentHandler, createEdgeHandler, createVertexHandler [JavaScript]
 - Adds mxGraph.createTooltipHandler, createSelectionCellsHandler, createConnectionHandler [JavaScript]
 - Adds mxGraph.createGraphHandler, createPanningHandler, createPopupMenuHandler [JavaScript]
 - Adds mxCompactTreeLayout.groupPaddingTop, -Right, -Bottom and -Left [JavaScript]

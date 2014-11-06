@@ -11775,25 +11775,81 @@ mxGraph.prototype.createHandler = function(state)
 				style == mxEdgeStyle.SideToSide ||
 				style == mxEdgeStyle.TopToBottom)
 			{
-				result = new mxElbowEdgeHandler(state);
+				result = this.createElbowEdgeHandler(state);
 			}
 			else if (style == mxEdgeStyle.SegmentConnector || 
 					 style == mxEdgeStyle.OrthConnector)
 			{
-				result = new mxEdgeSegmentHandler(state);
+				result = this.createEdgeSegmentHandler(state);
 			}
 			else
 			{
-				result = new mxEdgeHandler(state);
+				result = this.createEdgeHandler(state);
 			}
 		}
 		else
 		{
-			result = new mxVertexHandler(state);
+			result = this.createVertexHandler(state);
 		}
 	}
 	
 	return result;
+};
+
+/**
+ * Function: createVertexHandler
+ * 
+ * Hooks to create a new <mxVertexHandler> for the given <mxCellState>.
+ * 
+ * Parameters:
+ * 
+ * state - <mxCellState> to create the handler for.
+ */
+mxGraph.prototype.createVertexHandler = function(state)
+{
+	return new mxVertexHandler(state);
+};
+
+/**
+ * Function: createEdgeHandler
+ * 
+ * Hooks to create a new <mxEdgeHandler> for the given <mxCellState>.
+ * 
+ * Parameters:
+ * 
+ * state - <mxCellState> to create the handler for.
+ */
+mxGraph.prototype.createEdgeHandler = function(state)
+{
+	return new mxEdgeHandler(state);
+};
+
+/**
+ * Function: createEdgeSegmentHandler
+ * 
+ * Hooks to create a new <mxEdgeSegmentHandler> for the given <mxCellState>.
+ * 
+ * Parameters:
+ * 
+ * state - <mxCellState> to create the handler for.
+ */
+mxGraph.prototype.createEdgeSegmentHandler = function(state)
+{
+	return new mxEdgeSegmentHandler(state);
+};
+
+/**
+ * Function: createElbowEdgeHandler
+ * 
+ * Hooks to create a new <mxElbowEdgeHandler> for the given <mxCellState>.
+ * 
+ * Parameters:
+ * 
+ * state - <mxCellState> to create the handler for.
+ */
+mxGraph.prototype.createElbowEdgeHandler = function(state)
+{
+	return new mxElbowEdgeHandler(state);
 };
 
 /**
