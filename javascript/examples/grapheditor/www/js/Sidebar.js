@@ -917,7 +917,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		content.appendChild(this.createVertexTemplate('swimlane;html=1;horizontal=0;startSize=20', 320, 240, 'Pool', 'Pool', true));
 		content.appendChild(this.createVertexTemplate('swimlane;html=1;horizontal=0;swimlaneFillColor=white;swimlaneLine=0;', 300, 120, 'Lane', 'Lane', true));
 		
-		content.appendChild(this.createVertexTemplate('shape=hexagon;html=1;', 60, 50, '', 'Conversation', true));
+		content.appendChild(this.createVertexTemplate('shape=hexagon;html=1;perimeter=hexagonPerimeter;', 60, 50, '', 'Conversation', true));
 		content.appendChild(this.createVertexTemplate('shape=hexagon;html=1;strokeWidth=4', 60, 50, '', 'Call Conversation', true));
 		
 	    var classCell = new mxCell('', new mxGeometry(0, 0, 40, 30), 'shape=message;html=1;fillColor=#000000;strokeColor=#ffffff;strokeWidth=2;');
