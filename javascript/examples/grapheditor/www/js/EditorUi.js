@@ -205,8 +205,8 @@ EditorUi = function(editor, container)
 	
 	// Stores the current style and assigns it to new cells
 	// LATER: Update after copyStyle (handle defaults) and after menu Format, Style
-	var styles = ['shadow', 'dashed', 'dashPattern', 'rounded'];
-	var connectStyles = ['shape', 'edgeStyle', 'curved'];
+	var styles = ['shadow', 'dashed', 'dashPattern'];
+	var connectStyles = ['shape', 'edgeStyle', 'curved', 'rounded'];
 	
 	// Sets the default edge style
 	var currentEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1'};
@@ -489,11 +489,6 @@ EditorUi = function(editor, container)
 			if (currentEdgeStyle['curved'] != null)
 			{
 				style += 'curved=' + currentEdgeStyle['curved'] + ';';
-			}
-			
-			if (currentEdgeStyle['rounded'] != null)
-			{
-				style += 'rounded=' + currentEdgeStyle['rounded'] + ';';
 			}
 			
 			if (currentEdgeStyle['rounded'] != null)
