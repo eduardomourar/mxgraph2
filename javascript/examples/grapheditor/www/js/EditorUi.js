@@ -295,7 +295,7 @@ EditorUi = function(editor, container)
 	
 	// Keys that should be ignored if the cell has a value (known: new default for all cells is html=1 so
     // for the html key this effecticely only works for edges inserted via the connection handler)
-	var valueStyles = ['fontFamily', 'fontSize', 'fontColor', 'align'];
+	var valueStyles = ['fontFamily', 'fontSize', 'fontColor'];
 	
 	// Keys that always update the current edge style regardless of selection
 	var alwaysEdgeStyles = ['edgeStyle', 'startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize'];
@@ -304,14 +304,11 @@ EditorUi = function(editor, container)
 	var keyGroups = [['startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize'],
 	                 ['strokeColor', 'strokeWidth'],
 	                 ['fillColor', 'gradientColor'],
+	                 valueStyles,
+	                 ['align'],
 	                 ['html']];
 	
 	// Adds all keys used above to the styles array
-	for (var i = 0; i < valueStyles.length; i++)
-	{
-		styles.push(valueStyles[i]);
-	}
-	
 	for (var i = 0; i < keyGroups.length; i++)
 	{
 		for (var j = 0; j < keyGroups[i].length; j++)
@@ -386,8 +383,7 @@ EditorUi = function(editor, container)
 					var key = appliedStyles[j];
 					var styleValue = current[key];
 
-					// Ignores text formatting styles if cell has an predefined value
-					if (styleValue != null && (value == null || value.length == 0 || mxUtils.indexOf(valueStyles, key) < 0))
+					if (styleValue != null)
 					{
 						// Special case: Connect styles are not applied here but in the connection handler
 						if (!edge || mxUtils.indexOf(connectStyles, key) < 0)

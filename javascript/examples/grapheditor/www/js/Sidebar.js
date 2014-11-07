@@ -365,7 +365,8 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 		content.appendChild(this.createVertexTemplate('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', true));
 	    content.appendChild(this.createVertexTemplate('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', true));
 	    content.appendChild(this.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', true));
-	    content.appendChild(this.createVertexTemplate('text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
+	    // Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
+	    content.appendChild(this.createVertexTemplate('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
 	    		60, 30, 'Text', 'Text', true));
 	    
 	    content.appendChild(this.createVertexTemplate('shape=ext;double=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rectangle', true));
