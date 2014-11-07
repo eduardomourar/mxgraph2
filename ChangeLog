@@ -1,3 +1,5 @@
+- Adds validation for fixed points in mxEdgeHandler, mxConnectionHandler [JavaScript]
+- Fixes dangling edge validation for fixed points in mxEdgeHandler, mxConnectionHandler [JavaScript]
 - Removes mxSession, mxEvent.SESSION and all related resources [Java,JavaScript,Dotnet,Php]
 - Improves vertical position in mxCellEditor [JavaScript]
 - Adds Curly Bracket in General, Parallel Marker in BPMN sidebar
