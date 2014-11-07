@@ -421,10 +421,10 @@ Sidebar.prototype.addConnectionPalette = function(dir, expand)
  */
 Sidebar.prototype.addConnectionShapes = function(dir, content)
 {
-    content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=none;html=1;', 100, 100, '', 'Line', true));
-    content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=none;dashed=1;html=1;', 100, 100, '', 'Dashed Line', true));
-    content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=none;html=1;dashed=1;dashPattern=1 4', 100, 100, '', 'Dotted Line', true));
-    content.appendChild(this.createEdgeTemplate('edgeStyle=none;endArrow=classic;html=1;', 100, 100, '', 'Connection', true));
+    content.appendChild(this.createEdgeTemplate('endArrow=none;html=1;', 100, 100, '', 'Line', true));
+    content.appendChild(this.createEdgeTemplate('endArrow=none;dashed=1;html=1;', 100, 100, '', 'Dashed Line', true));
+    content.appendChild(this.createEdgeTemplate('endArrow=none;html=1;dashed=1;dashPattern=1 4', 100, 100, '', 'Dotted Line', true));
+    content.appendChild(this.createEdgeTemplate('endArrow=classic;html=1;', 100, 100, '', 'Connection', true));
 
 	var cells = [new mxCell('', new mxGeometry(0, 0, 100, 100), 'curved=1;endArrow=classic;html=1;')];
 	cells[0].geometry.setTerminalPoint(new mxPoint(0, 100), true);
