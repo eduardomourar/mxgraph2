@@ -446,8 +446,6 @@
 	{
 		if (this.style != null)
 		{
-			mxRectangleShape.prototype.paintBackground.apply(this, arguments);
-			
 			if (!this.outline && this.style['double'] == 1)
 			{
 				var margin = Math.max(2, this.strokewidth + 1) + parseFloat(this.style[mxConstants.STYLE_MARGIN] || 0);
@@ -531,6 +529,9 @@
 			}
 			while (shape != null);
 		}
+		
+		// Paints glass effect
+		mxRectangleShape.prototype.paintForeground.apply(this, arguments);
 	};
 
 	mxCellRenderer.prototype.defaultShapes['ext'] = ExtendedShape;
