@@ -335,6 +335,9 @@ mxCellEditor.prototype.resize = function()
 				}
 				else if (this.bounds != null)
 				{
+					var bds = mxRectangle.fromRectangle(state);
+				 	bds = (state.shape != null) ? state.shape.getLabelBounds(bds) : bds;
+				 	
 					var scale = this.graph.getView().scale;
 					var spacing = parseInt(state.style[mxConstants.STYLE_SPACING] || 0) * scale;
 					var spacingTop = (parseInt(state.style[mxConstants.STYLE_SPACING_TOP] || 0) + mxText.prototype.baseSpacingTop) * scale + spacing;
@@ -342,8 +345,7 @@ mxCellEditor.prototype.resize = function()
 					var spacingBottom = (parseInt(state.style[mxConstants.STYLE_SPACING_BOTTOM] || 0) + mxText.prototype.baseSpacingBottom) * scale + spacing;
 					var spacingLeft = (parseInt(state.style[mxConstants.STYLE_SPACING_LEFT] || 0) + mxText.prototype.baseSpacingLeft) * scale + spacing;
 	
-					var bds = new mxRectangle(state.x, state.y, state.width - spacingLeft - spacingRight, state.height - spacingTop - spacingBottom);
-				 	bds = (state.shape != null) ? state.shape.getLabelBounds(bds) : bds;
+					bds = new mxRectangle(bds.x, bds.y, bds.width - spacingLeft - spacingRight, bds.height - spacingTop - spacingBottom);
 					
 					this.bounds.x = bds.x + state.absoluteOffset.x;
 					this.bounds.y = bds.y + state.absoluteOffset.y;

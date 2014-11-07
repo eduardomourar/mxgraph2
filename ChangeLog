@@ -1,3 +1,4 @@
+- Moves spacing after call to mxShape.getLabelBounds in mxCellEditor.resize [JavaScript]
 - Adds validation for fixed points in mxEdgeHandler, mxConnectionHandler [JavaScript]
 - Fixes dangling edge validation for fixed points in mxEdgeHandler, mxConnectionHandler [JavaScript]
 - Removes mxSession, mxEvent.SESSION and all related resources [Java,JavaScript,Dotnet,Php]
