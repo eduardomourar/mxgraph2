@@ -417,6 +417,48 @@ EditorUi = function(editor, container)
 		insertHandler(cells, true);
 	});
 	
+	// This is used below and in Sidebar.dropAndConnect
+	this.createCurrentEdgeStyle = function()
+	{
+		var style = 'edgeStyle=' + (currentEdgeStyle['edgeStyle'] || 'none') + ';';
+		
+		if (currentEdgeStyle['shape'] != null)
+		{
+			style += 'shape=' + currentEdgeStyle['shape'] + ';';
+		}
+		
+		if (currentEdgeStyle['curved'] != null)
+		{
+			style += 'curved=' + currentEdgeStyle['curved'] + ';';
+		}
+		
+		if (currentEdgeStyle['rounded'] != null)
+		{
+			style += 'rounded=' + currentEdgeStyle['rounded'] + ';';
+		}
+		
+		if (currentEdgeStyle['html'] != null)
+		{
+			style += 'html=' + currentEdgeStyle['html'] + ';';
+		}
+		else
+		{
+			style += 'html=1;';
+		}
+		
+		return style;
+	};
+
+	// Uses current edge style for connect preview
+	// NOTE: Do not use "this" in here as it points to the UI
+	graph.connectionHandler.createEdgeState = mxUtils.bind(this, function(me)
+	{
+		var style = this.createCurrentEdgeStyle();
+		var edge = graph.createEdge(null, null, null, null, null, style);
+		
+		return new mxCellState(graph.view, edge, graph.getCellStyle(edge));
+	});
+	
 	this.addListener('styleChanged', mxUtils.bind(this, function(sender, evt)
 	{
 		// Checks if edges and/or vertices were modified
@@ -472,40 +514,6 @@ EditorUi = function(editor, container)
 			}
 		}
 
-		// Uses current edge style for connect preview
-		graph.connectionHandler.createEdgeState = function(me)
-		{
-			var style = 'edgeStyle=' + (currentEdgeStyle['edgeStyle'] || 'none') + ';';
-			
-			if (currentEdgeStyle['shape'] != null)
-			{
-				style += 'shape=' + currentEdgeStyle['shape'] + ';';
-			}
-			
-			if (currentEdgeStyle['curved'] != null)
-			{
-				style += 'curved=' + currentEdgeStyle['curved'] + ';';
-			}
-			
-			if (currentEdgeStyle['rounded'] != null)
-			{
-				style += 'rounded=' + currentEdgeStyle['rounded'] + ';';
-			}
-			
-			if (currentEdgeStyle['html'] != null)
-			{
-				style += 'html=' + currentEdgeStyle['html'] + ';';
-			}
-			else
-			{
-				style += 'html=1;';
-			}
-			
-			var edge = graph.createEdge(null, null, null, null, null, style);
-			
-			return new mxCellState(graph.view, edge, graph.getCellStyle(edge));
-		};
-		
 		if (this.toolbar != null)
 		{
 			var ff = currentStyle['fontFamily'] || 'Helvetica';

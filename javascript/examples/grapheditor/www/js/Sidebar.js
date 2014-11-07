@@ -1322,7 +1322,8 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				graph.model.setGeometry(targets[dropCellIndex], geo);
 				graph.cellsMoved(targets, dx, dy, null, null, true);
 				tmp = targets.slice();
-				targets.push(graph.insertEdge(null, null, '', source, targets[dropCellIndex]));
+				targets.push(graph.insertEdge(null, null, '', source, targets[dropCellIndex],
+						this.editorUi.createCurrentEdgeStyle()));
 			}
 			
 			this.editorUi.fireEvent(new mxEventObject('cellsInserted', 'cells', targets));

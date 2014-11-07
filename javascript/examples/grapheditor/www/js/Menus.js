@@ -535,6 +535,7 @@ Menus.prototype.edgeStyleChange = function(menu, label, keys, values, sprite, pa
 		try
 		{
 			var cells = graph.getSelectionCells();
+			var edges = [];
 			
 			for (var i = 0; i < cells.length; i++)
 			{
@@ -559,11 +560,13 @@ Menus.prototype.edgeStyleChange = function(menu, label, keys, values, sprite, pa
 					{
 						graph.setCellStyles(keys[j], values[j], [cell]);
 					}
+					
+					edges.push(cell);
 				}
 			}
 			
-			this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', keys, 'values', values,
-				'cells', graph.getSelectionCells()));
+			this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', keys,
+				'values', values, 'cells', edges));
 		}
 		finally
 		{
