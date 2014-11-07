@@ -601,7 +601,6 @@ mxClient.include(mxClient.basePath+'/js/util/mxImage.js');
 mxClient.include(mxClient.basePath+'/js/util/mxDivResizer.js');
 mxClient.include(mxClient.basePath+'/js/util/mxDragSource.js');
 mxClient.include(mxClient.basePath+'/js/util/mxToolbar.js');
-mxClient.include(mxClient.basePath+'/js/util/mxSession.js');
 mxClient.include(mxClient.basePath+'/js/util/mxUndoableEdit.js');
 mxClient.include(mxClient.basePath+'/js/util/mxUndoManager.js');
 mxClient.include(mxClient.basePath+'/js/util/mxUrlConverter.js');
