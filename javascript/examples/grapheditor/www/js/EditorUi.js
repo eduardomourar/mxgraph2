@@ -389,9 +389,8 @@ EditorUi = function(editor, container)
 					// Ignores text formatting styles if cell has an predefined value
 					if (styleValue != null && (value == null || value.length == 0 || mxUtils.indexOf(valueStyles, key) < 0))
 					{
-						// Special case: Shape and edge style only applied on edges via connect
-						// which means the source terminal is not null at this point
-						if (!edge || (mxUtils.indexOf(connectStyles, key) < 0 || graph.getModel().getTerminal(cell, true) != null))
+						// Special case: Connect styles are not applied here but in the connection handler
+						if (!edge || mxUtils.indexOf(connectStyles, key) < 0)
 						{
 							graph.setCellStyles(key, styleValue, [cell]);
 						}
@@ -481,6 +480,11 @@ EditorUi = function(editor, container)
 		graph.connectionHandler.createEdgeState = function(me)
 		{
 			var style = 'edgeStyle=' + (currentEdgeStyle['edgeStyle'] || 'none') + ';';
+			
+			if (currentEdgeStyle['shape'] != null)
+			{
+				style += 'shape=' + currentEdgeStyle['shape'] + ';';
+			}
 			
 			if (currentEdgeStyle['curved'] != null)
 			{
