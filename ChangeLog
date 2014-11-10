@@ -1,3 +1,5 @@
+- Fixes merging of 2 segments in mxEdgeSegmentHandler [JavaScript]
+
 10-NOV-2014: 3.1.1.1
 
 - Fixes ignored fixed aspect style in mxGraph.scaleCell [JavaScript]

@@ -215,11 +215,13 @@ mxEdgeSegmentHandler.prototype.changePoints = function(edge, points)
 		for (var i = 2; i < pts.length; i++)
 		{
 			var pt2 = pts[i];
-			
-			if ((Math.round(pt0.x) != Math.round(pt1.x) || 
+		
+			// Merges adjacent segments only if more than 2 segments
+			if (pts.length <= 4 ||
+				((Math.round(pt0.x) != Math.round(pt1.x) || 
 					Math.round(pt1.x) != Math.round(pt2.x)) &&
 				(Math.round(pt0.y) != Math.round(pt1.y) || 
-						Math.round(pt1.y) != Math.round(pt2.y)))
+						Math.round(pt1.y) != Math.round(pt2.y))))
 			{
 				pt0 = pt1;
 				pt1 = pt1.clone();
