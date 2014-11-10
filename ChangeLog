@@ -1,9 +1,11 @@
-- No longer ignores fixed aspect in mxGraph.scaleCell [JavaScript]
+10-NOV-2014: 3.1.1.1
+
+- Fixes ignored fixed aspect style in mxGraph.scaleCell [JavaScript]
 - Adds fixedAspect argument in mxGeometry.scale [JavaScript]
-- Moves spacing after call to mxShape.getLabelBounds in mxCellEditor.resize [JavaScript]
-- Adds validation for fixed points in mxEdgeHandler, mxConnectionHandler [JavaScript]
+- Fixes spacing for mxShape.getLabelBounds in mxCellEditor.resize [JavaScript]
 - Fixes dangling edge validation for fixed points in mxEdgeHandler, mxConnectionHandler [JavaScript]
-- Removes mxSession, mxEvent.SESSION and all related resources [Java,JavaScript,Dotnet,Php]
+- Adds validation for fixed points in mxEdgeHandler, mxConnectionHandler [JavaScript]
+- Removes mxSession, mxEvent.SESSION and related resources [Java,JavaScript,Dotnet,Php]
 - Improves vertical position in mxCellEditor [JavaScript]
 - Adds Curly Bracket in General, Parallel Marker in BPMN sidebar
 - Adds Corner, Tee, Vertical/Horizontal Tree in Advanced sidebar
@@ -21,7 +23,7 @@
 - Removes Text & Images sidebar in grapheditor
 - Fixes tolerances for managed sizers in mxVertexHandler.redrawHandles [JavaScript]
 - mxGraph.getBoundingBoxFromGeometry uses relative child bounds for selected parents [JavaScript]
-- Fixes mxGraph.constrainChild maximumGraphBounds ignored for child cells [JavaScript]
+- Fixes ignored maximumGraphBounds for child cells in mxGraph.constrainChild [JavaScript]
 - Fixes white-space CSS in mxUtils.createTable [Java]
 - Fixes handling for style overflow=fill in mxCellEditor, adds getCurrentHtmlValue [JavaScript]
 - Adds mxGraph.createElbowEdgeHandler, createEdgeSegmentHandler, createEdgeHandler, createVertexHandler [JavaScript]
