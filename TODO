@@ -20,7 +20,6 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix routing for overlapping ("straight edge" jumps back) vertices in orthogonalEdgeStyle
 - Add single handle for multiple selected cells
 - Fix live preview for resize of rotated container with children (child offset)
 - Fix moving of relative childre between parents (offset)
