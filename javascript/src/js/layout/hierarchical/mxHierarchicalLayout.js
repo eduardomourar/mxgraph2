@@ -47,6 +47,15 @@ mxHierarchicalLayout.prototype.roots = null;
 mxHierarchicalLayout.prototype.resizeParent = false;
 
 /**
+ * Variable: maintainParentLocation
+ * 
+ * Specifies if the parent location should be maintained, so that the
+ * top, left corner stays the same before and after execution of
+ * the layout. Default is false for backwards compatibility.
+ */
+mxCompactTreeLayout.prototype.maintainParentLocation = false;
+
+/**
  * Variable: moveParent
  * 
  * Specifies if the parent should be moved if <resizeParent> is enabled.
@@ -206,7 +215,22 @@ mxHierarchicalLayout.prototype.execute = function(parent, roots)
 		// TODO indicate the problem
 		return;
 	}
-
+	
+	//  Maintaining parent location
+	this.parentX = null;
+	this.parentY = null;
+	
+	if (parent != this.root && model.isVertex(parent) != null && this.maintainParentLocation)
+	{
+		var geo = this.graph.getCellGeometry(parent);
+		
+		if (geo != null)
+		{
+			this.parentX = geo.x;
+			this.parentY = geo.y;
+		}
+	}
+	
 	if (roots != null)
 	{
 		var rootsCopy = [];
@@ -234,6 +258,20 @@ mxHierarchicalLayout.prototype.execute = function(parent, roots)
 		{
 			this.graph.updateGroupBounds([parent],
 				this.parentBorder, this.moveParent);
+		}
+		
+		// Maintaining parent location
+		if (this.parentX != null && this.parentY != null)
+		{
+			var geo = this.graph.getCellGeometry(parent);
+			
+			if (geo != null)
+			{
+				geo = geo.clone();
+				geo.x = this.parentX;
+				geo.y = this.parentY;
+				model.setGeometry(parent, geo);
+			}
 		}
 	}
 	finally
