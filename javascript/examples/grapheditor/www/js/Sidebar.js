@@ -1195,6 +1195,20 @@ Sidebar.prototype.updateShapes = function(source, targets)
 					}
 				}
 				
+				// Removes existing edge points if edge is source for update
+				if (graph.getModel().isEdge(targetCell) == graph.getModel().isEdge(source))
+				{
+					var geo = graph.getCellGeometry(targetCell);
+					
+					// Resets all edge points
+					if (geo != null)
+					{
+						geo = geo.clone();
+						geo.points = null;
+						graph.getModel().setGeometry(targetCell, geo);
+					}
+				}
+				
 				result.push(targetCell);
 			}
 		}
@@ -1489,7 +1503,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		if (cells != null && currentStyleTarget != null && activeArrow == styleTarget)
 		{
 			var tmp = graph.isCellSelected(currentStyleTarget.cell) ? graph.getSelectionCells() : [currentStyleTarget.cell];
-			var updatedCells = this.updateShapes(cells[firstVertex], tmp);
+			var updatedCells = this.updateShapes((graph.model.isEdge(currentStyleTarget.cell)) ? cells[0] : cells[firstVertex], tmp);
 			graph.setSelectionCells(updatedCells);
 		}
 		else if (cells != null && activeArrow != null && currentTargetState != null && activeArrow != styleTarget)
@@ -1685,11 +1699,15 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		var bbox = null;
 
 		// Shift means no style targets - containers are ignored to simplify the UX
-		if (state != null && graph.model.isVertex(state.cell) && (graph.isContainer(state.cell) == mxEvent.isShiftDown(evt)) && firstVertex != null)
+		if (state != null && (graph.isContainer(state.cell) == mxEvent.isShiftDown(evt)) &&
+			((graph.model.isVertex(state.cell) && firstVertex != null) ||
+			(graph.model.isEdge(state.cell) && graph.model.isEdge(cells[0]))))
 		{
 			currentStyleTarget = state;
-			var tmp = new mxRectangle(currentStyleTarget.getCenterX() - this.refreshTarget.width / 2,
-					currentStyleTarget.getCenterY() - this.refreshTarget.height / 2, this.refreshTarget.width, this.refreshTarget.height);
+			var tmp = (graph.model.isEdge(state.cell)) ? graph.view.getPoint(state) :
+				new mxPoint(state.getCenterX(), state.getCenterY());
+			tmp = new mxRectangle(tmp.x - this.refreshTarget.width / 2, tmp.y - this.refreshTarget.height / 2,
+				this.refreshTarget.width, this.refreshTarget.height);
 			
 			styleTarget.style.left = Math.floor(tmp.x) + 'px';
 			styleTarget.style.top = Math.floor(tmp.y) + 'px';
@@ -1714,9 +1732,10 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		else if (currentStyleTarget != null && styleTarget.parentNode != null)
 		{
 			// Sets active Arrow as side effect
-			checkArrow(x, y, new mxRectangle(currentStyleTarget.getCenterX() - this.refreshTarget.width / 2,
-					currentStyleTarget.getCenterY() - this.refreshTarget.height / 2, this.refreshTarget.width, this.refreshTarget.height),
-					styleTarget);
+			var tmp = (graph.model.isEdge(currentStyleTarget.cell)) ? graph.view.getPoint(currentStyleTarget) : new mxPoint(currentStyleTarget.getCenterX(), currentStyleTarget.getCenterY());
+			tmp = new mxRectangle(tmp.x - this.refreshTarget.width / 2, tmp.y - this.refreshTarget.height / 2,
+				this.refreshTarget.width, this.refreshTarget.height);
+			checkArrow(x, y, tmp, styleTarget);
 		}
 		
 		// Checks if inside bounds
