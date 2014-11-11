@@ -1685,7 +1685,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		var bbox = null;
 
 		// Shift means no style targets - containers are ignored to simplify the UX
-		if (state != null && graph.model.isVertex(state.cell) && !graph.isContainer(state.cell) && firstVertex != null && !mxEvent.isShiftDown(evt))
+		if (state != null && graph.model.isVertex(state.cell) && (graph.isContainer(state.cell) == mxEvent.isShiftDown(evt)) && firstVertex != null)
 		{
 			currentStyleTarget = state;
 			var tmp = new mxRectangle(currentStyleTarget.getCenterX() - this.refreshTarget.width / 2,
