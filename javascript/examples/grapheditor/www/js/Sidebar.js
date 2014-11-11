@@ -1316,15 +1316,17 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			
 			if (graph.model.isEdge(source))
 			{
+				// Adds new terminal to edge
 				// LATER: Push new terminal out radially from edge start point
 				graph.model.setTerminal(source, targets[dropCellIndex], direction == mxConstants.DIRECTION_NORTH);
 			}
 			else if (graph.model.isEdge(targets[dropCellIndex]))
 			{
+				// Adds new outgoing connection to vertex and clears points
 				graph.model.setTerminal(targets[dropCellIndex], source, true);
-				
 				geo2 = graph.getCellGeometry(targets[dropCellIndex]);
 				geo2.setTerminalPoint(geo.getTerminalPoint(false), false);
+				geo2.points = null;
 			}
 			else
 			{
@@ -1646,6 +1648,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		{
 			if (currentStyleTarget != null && activeArrow == styleTarget)
 			{
+				this.previewElement.style.display = (graph.model.isEdge(currentStyleTarget.cell)) ? 'none' : '';
+				
 				this.previewElement.style.left = currentStyleTarget.x + 'px';
 				this.previewElement.style.top = currentStyleTarget.y + 'px';
 				this.previewElement.style.width = currentStyleTarget.width + 'px';
@@ -1679,11 +1683,14 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 					this.previewElement.style.width = (geo.width * view.scale) + 'px';
 					this.previewElement.style.height = (geo.height * view.scale) + 'px';
 				}
+				
+				this.previewElement.style.display = '';
 			}
 			else
 			{
 				this.previewElement.style.width = this.previewElementWidth;
 				this.previewElement.style.height = this.previewElementHeight;
+				this.previewElement.style.display = '';
 			}
 		}
 	};
