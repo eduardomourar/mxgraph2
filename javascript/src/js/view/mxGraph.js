@@ -3830,7 +3830,7 @@ mxGraph.prototype.getCellsForGroup = function(cells)
  */
 mxGraph.prototype.getBoundsForGroup = function(group, children, border)
 {
-	var result = this.getBoundingBoxFromGeometry(children);
+	var result = this.getBoundingBoxFromGeometry(children, true);
 	
 	if (result != null)
 	{
@@ -4031,7 +4031,7 @@ mxGraph.prototype.updateGroupBounds = function(cells, border, moveGroup, topBord
 				
 				if (children != null && children.length > 0)
 				{
-					var bounds = this.getBoundingBoxFromGeometry(children);
+					var bounds = this.getBoundingBoxFromGeometry(children, true);
 					
 					if (bounds != null && bounds.width > 0 && bounds.height > 0)
 					{
