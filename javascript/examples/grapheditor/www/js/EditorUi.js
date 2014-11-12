@@ -1233,6 +1233,7 @@ EditorUi.prototype.createDivs = function()
 	this.footerContainer.style.left = '0px';
 	this.footerContainer.style.right = '0px';
 	this.footerContainer.style.bottom = '0px';
+	this.footerContainer.style.zIndex = mxPopupMenu.prototype.zIndex;
 	this.hsplit.style.width = this.splitSize + 'px';
 	
 	this.sidebarFooterContainer = this.createSidebarFooterContainer();
