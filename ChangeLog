@@ -1,3 +1,4 @@
+- Fixes mxGraph.getConnectionPoint for direction=north [JavaScript]
 - Adds mxCompactTreeLayout, mxHierarchicalLayout.maintainParentLocation switch [JavaScript]
 - Increments version number to reflect API changes [JavaScript]
 - Fixes merging of 2 segments in mxEdgeSegmentHandler [JavaScript]

@@ -5960,7 +5960,7 @@ mxGraph.prototype.constrainChild = function(cell)
 				}
 
 				// Keeps child within the content area of the parent
-				if (bbox.x < left || bbox.x + bbox.width > right || 
+				if (bbox.x < left || bbox.x + bbox.width > right ||
 					bbox.y < top || bbox.y + bbox.height > bottom)
 				{
 					geo = geo.clone();
@@ -5981,7 +5981,7 @@ mxGraph.prototype.constrainChild = function(cell)
 						var dy = top - bbox.y;
 						geo.y += dy;
 					}
-					else if (area.width > 0 && bbox.y + bbox.height > bottom)
+					else if (area.height > 0 && bbox.y + bbox.height > bottom)
 					{
 						var dy = bbox.y + bbox.height - bottom;
 						geo.y -= dy;
@@ -6329,11 +6329,7 @@ mxGraph.prototype.getConnectionPoint = function(vertex, constraint)
 			// Bounds need to be rotated by 90 degrees for further computation
 			if (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH)
 			{
-				bounds.x += bounds.width / 2 - bounds.height / 2;
-				bounds.y += bounds.height / 2 - bounds.width / 2;
-				var tmp = bounds.width;
-				bounds.width = bounds.height;
-				bounds.height = tmp;
+				bounds.rotate90();
 			}
 		}
 
@@ -6357,7 +6353,7 @@ mxGraph.prototype.getConnectionPoint = function(vertex, constraint)
 					flipV = mxUtils.getValue(vertex.style, 'stencilFlipV', 0) == 1 || flipV;
 				}
 				
-				if (direction == 'north' || direction == 'south')
+				if (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH)
 				{
 					var tmp = flipH;
 					flipH = flipV;
@@ -6400,8 +6396,7 @@ mxGraph.prototype.getConnectionPoint = function(vertex, constraint)
 				{
 					cos = -1;
 				}
-				// This really is r2, not r1
-				else if (r2 == 270)
+				else if (r1 == 270)
 				{
 					sin = -1;
 				}
