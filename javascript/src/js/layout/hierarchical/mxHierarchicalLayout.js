@@ -253,11 +253,9 @@ mxHierarchicalLayout.prototype.execute = function(parent, roots)
 	{
 		this.run(parent);
 		
-		if (this.resizeParent &&
-			!this.graph.isCellCollapsed(parent))
+		if (this.resizeParent && !this.graph.isCellCollapsed(parent))
 		{
-			this.graph.updateGroupBounds([parent],
-				this.parentBorder, this.moveParent);
+			this.graph.updateGroupBounds([parent], this.parentBorder, this.moveParent);
 		}
 		
 		// Maintaining parent location
