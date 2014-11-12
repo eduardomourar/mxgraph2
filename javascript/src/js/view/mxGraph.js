@@ -3987,17 +3987,24 @@ mxGraph.prototype.removeCellsFromParent = function(cells)
 /**
  * Function: updateGroupBounds
  * 
- * Updates the bounds of the given array of groups so that it includes
- * all child vertices.
+ * Updates the bounds of the given groups to include all children and returns
+ * the passed-in cells. Call this with the groups in parent to child order,
+ * top-most group first, the cells are processed in reverse order and cells
+ * with no children are ignored.
  * 
  * Parameters:
  * 
- * cells - The groups whose bounds should be updated.
+ * cells - The groups whose bounds should be updated. If this is null, then
+ * the selection cells are used.
  * border - Optional border to be added in the group. Default is 0.
  * moveGroup - Optional boolean that allows the group to be moved. Default
  * is false.
+ * topBorder - Optional top border to be added in the group. Default is 0.
+ * rightBorder - Optional top border to be added in the group. Default is 0.
+ * bottomBorder - Optional top border to be added in the group. Default is 0.
+ * leftBorder - Optional top border to be added in the group. Default is 0.
  */
-mxGraph.prototype.updateGroupBounds = function(cells, border, moveGroup)
+mxGraph.prototype.updateGroupBounds = function(cells, border, moveGroup, topBorder, rightBorder, bottomBorder, leftBorder)
 {
 	if (cells == null)
 	{
@@ -4006,11 +4013,15 @@ mxGraph.prototype.updateGroupBounds = function(cells, border, moveGroup)
 	
 	border = (border != null) ? border : 0;
 	moveGroup = (moveGroup != null) ? moveGroup : false;
+	topBorder = (topBorder != null) ? topBorder : 0;
+	rightBorder = (rightBorder != null) ? rightBorder : 0;
+	bottomBorder = (bottomBorder != null) ? bottomBorder : 0;
+	leftBorder = (leftBorder != null) ? leftBorder : 0;
 
 	this.model.beginUpdate();
 	try
 	{
-		for (var i = 0; i < cells.length; i++)
+		for (var i = cells.length - 1; i >= 0; i--)
 		{
 			var geo = this.getCellGeometry(cells[i]);
 			
@@ -4020,27 +4031,35 @@ mxGraph.prototype.updateGroupBounds = function(cells, border, moveGroup)
 				
 				if (children != null && children.length > 0)
 				{
-					var childBounds = this.getBoundingBoxFromGeometry(children);
+					var bounds = this.getBoundingBoxFromGeometry(children);
 					
-					if (childBounds.width > 0 && childBounds.height > 0)
+					if (bounds != null && bounds.width > 0 && bounds.height > 0)
 					{
-						var size = (this.isSwimlane(cells[i])) ?
-								this.getStartSize(cells[i]) : new mxRectangle();
-
+						var left = 0;
+						var top = 0;
+						
+						// Adds the size of the title area for swimlanes
+						if (this.isSwimlane(cells[i]))
+						{
+							var size = this.getStartSize(cells[i]);
+							left = size.width;
+							top = size.height;
+						}
+						
 						geo = geo.clone();
 						
 						if (moveGroup)
 						{
-							geo.x += childBounds.x - size.width - border;
-							geo.y += childBounds.y - size.height - border;
+							geo.x = geo.x + bounds.x - border - left - leftBorder;
+							geo.y = geo.y + bounds.y - border - top - topBorder;
 						}
 						
-						geo.width = childBounds.width + size.width + 2 * border;
-						geo.height = childBounds.height + size.height + 2 * border;
+						geo.width = bounds.width + 2 * border + left + leftBorder + rightBorder;
+						geo.height = bounds.height + 2 * border + top + topBorder + bottomBorder;
 						
 						this.model.setGeometry(cells[i], geo);
-						this.moveCells(children, -childBounds.x + size.width + border,
-							-childBounds.y + size.height + border);
+						this.moveCells(children, border + left - bounds.x + leftBorder,
+								border + top - bounds.y + topBorder);
 					}
 				}
 			}
