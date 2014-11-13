@@ -48,6 +48,23 @@
 	opacity:0.8;
 	_filter:alpha(opacity=80);
 }
+.geAlert {
+	position:absolute;
+	white-space:nowrap;
+	padding:14px;
+	background-color:#f2dede;
+	border:1px solid #ebccd1;
+	color:#a94442;
+	border-radius:3px;
+	-webkit-box-shadow: 2px 2px 3px 0px #ddd;
+	-moz-box-shadow: 2px 2px 3px 0px #ddd;
+	box-shadow: 2px 2px 3px 0px #ddd;
+}
+.geAlertLink {
+	color:#843534;
+	font-weight:700;
+	text-decoration:none;
+}
 .geMenubarContainer {
 	background-color:#ffffff;
 }

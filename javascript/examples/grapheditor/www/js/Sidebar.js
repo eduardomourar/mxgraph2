@@ -869,6 +869,21 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		classCell.insert(classCell1);
 		
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 120, 80, 'Sub-Process', true));
+	
+		var classCell = new mxCell('Looped\nSub-Process', new mxGeometry(0, 0, 120, 80), 'html=1;rounded=1');
+		classCell.vertex = true;
+		var classCell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=mxgraph.bpmn.loop;');
+		classCell1.vertex = true;
+		classCell1.geometry.relative = true;
+		classCell1.geometry.offset = new mxPoint(-15, -14);
+		classCell.insert(classCell1);
+		var classCell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=plus;');
+		classCell1.vertex = true;
+		classCell1.geometry.relative = true;
+		classCell1.geometry.offset = new mxPoint(1, -14);
+		classCell.insert(classCell1);
+		
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 120, 80, 'Sub-Process', true));
 		
 		var classCell = new mxCell('Receive', new mxGeometry(0, 0, 120, 80), 'html=1;rounded=1;');
 		classCell.vertex = true;
@@ -882,7 +897,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		
 		var classCell = new mxCell('User', new mxGeometry(0, 0, 120, 80), 'html=1;rounded=1;');
 		classCell.vertex = true;
-		var classCell1 = new mxCell('', new mxGeometry(0, 0, 14, 14), 'html=1;shape=actor;');
+		var classCell1 = new mxCell('', new mxGeometry(0, 0, 14, 14), 'html=1;shape=mxgraph.bpmn.user_task;');
 		classCell1.vertex = true;
 		classCell1.geometry.relative = true;
 		classCell1.geometry.offset = new mxPoint(7, 7);
@@ -920,6 +935,67 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		
 		content.appendChild(this.createVertexTemplate('shape=hexagon;html=1;perimeter=hexagonPerimeter;', 60, 50, '', 'Conversation', true));
 		content.appendChild(this.createVertexTemplate('shape=hexagon;html=1;perimeter=hexagonPerimeter;strokeWidth=4', 60, 50, '', 'Call Conversation', true));
+
+		var classCell = new mxCell('', new mxGeometry(0, 0, 60, 50), 'shape=hexagon;html=1;perimeter=hexagonPerimeter;');
+		classCell.vertex = true;
+		var classCell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=plus;');
+		classCell1.vertex = true;
+		classCell1.geometry.relative = true;
+		classCell1.geometry.offset = new mxPoint(-7, -14);
+		classCell.insert(classCell1);
+		
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 60, 50, 'Sub-Conversation', true));
+		content.appendChild(this.createVertexTemplate('shape=note;size=16;html=1;', 40, 60, '', 'Data Object', true));
+		
+		var classCell = new mxCell('', new mxGeometry(0, 0, 40, 60), 'shape=note;size=16;html=1;');
+		classCell.vertex = true;
+		var classCell1 = new mxCell('', new mxGeometry(0, 0, 14, 14), 'html=1;shape=singleArrow;arrowWidth=0.4;arrowSize=0.4;');
+		classCell1.vertex = true;
+		classCell1.geometry.relative = true;
+		classCell1.geometry.offset = new mxPoint(2, 2);
+		classCell.insert(classCell1);
+		var classCell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=parallelMarker;');
+		classCell1.vertex = true;
+		classCell1.geometry.relative = true;
+		classCell1.geometry.offset = new mxPoint(-7, -14);
+		classCell.insert(classCell1);
+		
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 40, 60, 'Annotated Data Object', true));
+		
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=plus;html=1;');
+	    classCell.connectable = false;
+    	classCell.vertex = true;
+
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Sub-Process Marker', true));
+		
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=mxgraph.bpmn.loop;html=1;');
+	    classCell.connectable = false;
+    	classCell.vertex = true;
+
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Loop Marker', true));
+		
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=parallelMarker;html=1;');
+    	classCell.vertex = true;
+
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Parallel MI Marker', true));
+		
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=parallelMarker;direction=south;html=1;');
+    	classCell.vertex = true;
+
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Sequential MI Marker', true));
+		
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=mxgraph.bpmn.ad_hoc;fillColor=#000000;html=1;');
+	    classCell.connectable = false;
+    	classCell.vertex = true;
+
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Ad Hoc Marker', true));
+		
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=mxgraph.bpmn.compensation;html=1;');
+	    classCell.connectable = false;
+    	classCell.vertex = true;
+
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Compensation Marker', true));
+		
 		
 	    var classCell = new mxCell('', new mxGeometry(0, 0, 40, 30), 'shape=message;html=1;fillColor=#000000;strokeColor=#ffffff;strokeWidth=2;');
     	classCell.vertex = true;
@@ -931,21 +1007,35 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 40, 30, 'Receive Task', true));
 		
-	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=plus;html=1;');
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=mxgraph.bpmn.user_task;html=1;');
 	    classCell.connectable = false;
     	classCell.vertex = true;
 
-		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Sub-Process Marker', true));
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'User Task', true));
 		
-	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=parallelMarker;html=1;');
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=mxgraph.bpmn.manual_task;html=1;');
+	    classCell.connectable = false;
     	classCell.vertex = true;
 
-		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Parallel MI Marker', true));
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Manual Task', true));
 		
-	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=parallelMarker;direction=south;html=1;');
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=mxgraph.bpmn.business_rule_task;html=1;');
+	    classCell.connectable = false;
     	classCell.vertex = true;
 
-		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Sequential MI Marker', true));
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Business Rule Task', true));
+		
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=mxgraph.bpmn.service_task;html=1;');
+	    classCell.connectable = false;
+    	classCell.vertex = true;
+
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Service Task', true));
+	    
+		var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=mxgraph.bpmn.script_task;html=1;');
+	    classCell.connectable = false;
+    	classCell.vertex = true;
+
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Script Task', true));
 
 		var assoc = new mxCell('', new mxGeometry(0, 0, 0, 0), 'endArrow=block;endFill=1;endSize=6;html=1;');
 		assoc.geometry.setTerminalPoint(new mxPoint(0, 0), true);
