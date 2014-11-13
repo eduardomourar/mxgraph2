@@ -100,6 +100,31 @@
 			c.close();
 		}
 	};
+	DataStoreShape.prototype.getLabelBounds = function(rect)
+	{
+		var dy = 2.5 * Math.min(rect.height / 2, Math.round(rect.height / 8) + this.strokewidth - 1);
+		
+		if (this.direction == null || this.direction == mxConstants.DIRECTION_EAST)
+		{
+			rect.y += dy;
+			rect.height -= dy;
+		}
+		else if (this.direction == mxConstants.DIRECTION_SOUTH)
+		{
+			rect.width -= dy;
+		}
+		if (this.direction == mxConstants.DIRECTION_WEST)
+		{
+			rect.height -= dy;
+		}
+		if (this.direction == mxConstants.DIRECTION_NORTH)
+		{
+			rect.x += dy;
+			rect.width -= dy;
+		}
+		
+		return rect;
+	};
 
 	mxCellRenderer.prototype.defaultShapes['datastore'] = DataStoreShape;
 
