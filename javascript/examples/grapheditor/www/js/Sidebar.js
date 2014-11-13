@@ -945,7 +945,6 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		classCell.insert(classCell1);
 		
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 60, 50, 'Sub-Conversation', true));
-		content.appendChild(this.createVertexTemplate('shape=note;size=16;html=1;', 40, 60, '', 'Data Object', true));
 		
 		var classCell = new mxCell('', new mxGeometry(0, 0, 40, 60), 'shape=note;size=16;html=1;');
 		classCell.vertex = true;
@@ -960,7 +959,9 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		classCell1.geometry.offset = new mxPoint(-7, -14);
 		classCell.insert(classCell1);
 		
-		content.appendChild(this.createVertexTemplateFromCells([classCell], 40, 60, 'Annotated Data Object', true));
+		content.appendChild(this.createVertexTemplateFromCells([classCell], 40, 60, 'Data Object', true));
+
+		content.appendChild(this.createVertexTemplate('shape=datastore;html=1;', 60, 60, '', 'Data Store', true));
 		
 	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=plus;html=1;');
 	    classCell.connectable = false;
