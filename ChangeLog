@@ -1,4 +1,7 @@
-- Adds activity markers and task types in BPMN sidebar
+- Fixes ignored scale for handle center in mxHandle.processEvent [JavaScript]
+- Fixes tooltip, dblclick for mxEdgeSegmentHandler bends [JavaScript]
+- Adds dblClickHandler argument in mxElbowEdgeHandler.createVirtualBend [JavaScript]
+- Adds data store, activity markers and task types in BPMN sidebar
 - Fixes possible NPE in mxGraph.constrainChild [JavaScript]
 - mxGraph.getBoundsForGroup no longer ignores child edges [JavaScript]
 - Uses mxGraph.updateGroupBounds in mxGraphLayout.arrangeGroups [JavaScript]
