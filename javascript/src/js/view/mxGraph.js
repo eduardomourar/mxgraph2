@@ -5943,27 +5943,31 @@ mxGraph.prototype.constrainChild = function(cell)
 				
 				// Includes max area to constrain child overlap
 				var areaUpdate = area == max;
-				max = mxRectangle.fromRectangle(max);
 				
-				// Max is relative to the parent origin
-				var parent = this.model.getParent(cell);
-				
-				while (this.model.isVertex(parent))
+				if (max != null)
 				{
-					var pgeo = this.getCellGeometry(parent);
+					max = mxRectangle.fromRectangle(max);
 					
-					if (pgeo != null)
+					// Max is relative to the parent origin
+					var parent = this.model.getParent(cell);
+					
+					while (this.model.isVertex(parent))
 					{
-						max.x -= pgeo.x;
-						max.y -= pgeo.y;
+						var pgeo = this.getCellGeometry(parent);
+						
+						if (pgeo != null)
+						{
+							max.x -= pgeo.x;
+							max.y -= pgeo.y;
+						}
+						
+						parent = this.model.getParent(parent);
 					}
-					
-					parent = this.model.getParent(parent);
-				}
-
-				if (areaUpdate)
-				{
-					area = max;
+	
+					if (areaUpdate)
+					{
+						area = max;
+					}
 				}
 				
 				var left = area.x - bbox.width * overlap;
@@ -5972,7 +5976,7 @@ mxGraph.prototype.constrainChild = function(cell)
 				var bottom = area.y + area.height + bbox.height * overlap;
 				
 				// Includes max area to constrain child overlap
-				if (area != max)
+				if (area != max && max != null)
 				{
 					left = Math.max(left, max.x);
 					top = Math.max(top, max.y);

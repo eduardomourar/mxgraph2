@@ -1,3 +1,4 @@
+- Fixes possible NPE in mxGraph.constrainChild [JavaScript]
 - mxGraph.getBoundsForGroup no longer ignores child edges [JavaScript]
 - Uses mxGraph.updateGroupBounds in mxGraphLayout.arrangeGroups [JavaScript]
 - Inverts cells order, adds child edges in mxGraph.updateGroupBounds [JavaScript]
