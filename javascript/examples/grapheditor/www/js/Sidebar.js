@@ -544,7 +544,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 {
 	this.addPalette('uml', 'UML', expand || false, mxUtils.bind(this, function(content)
 	{
-	    content.appendChild(this.createVertexTemplate('', 110, 50, 'Object', 'Object', true));
+	    content.appendChild(this.createVertexTemplate('html=1;', 110, 50, 'Object', 'Object', true));
     	
 	    var classCell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
     			'<b>Class</b></p>' +
