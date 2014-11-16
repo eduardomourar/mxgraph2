@@ -503,7 +503,7 @@ Sidebar.prototype.addAdvancedShapes = function(dir, content)
         	'<p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p></div></div>' +
         	'<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script><script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script></body></html>', 'IFrame', true));*/
     
-    var linkCell = new mxCell('Link', new mxGeometry(0, 0, 60, 40), 'text;html=1;align=center;verticalAlign=middle;fontColor=#0000EE;fontStyle=4;');
+    var linkCell = new mxCell('Link', new mxGeometry(0, 0, 60, 40), 'text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontColor=#0000EE;fontStyle=4;');
     linkCell.vertex = true;
     this.graph.setLinkForCell(linkCell, 'https://www.draw.io');
 	content.appendChild(this.createVertexTemplateFromCells([linkCell], 60, 40, 'Link', true));
@@ -855,12 +855,12 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 {
 	this.addPalette('bpmn', 'BPMN ' + mxResources.get('general'), false, mxUtils.bind(this, function(content)
 	{
-		content.appendChild(this.createVertexTemplate('shape=ext;rounded=1;html=1;', 120, 80, 'Task', 'Process', true));
-		content.appendChild(this.createVertexTemplate('shape=ext;rounded=1;html=1;double=1;', 120, 80, 'Transaction', 'Transaction', true));
-		content.appendChild(this.createVertexTemplate('shape=ext;rounded=1;html=1;dashed=1;dashPattern=1 4;', 120, 80, 'Event\nSub-Process', 'Event Sub-Process', true));
-		content.appendChild(this.createVertexTemplate('shape=ext;rounded=1;html=1;strokeWidth=3;', 120, 80, 'Call Activity', 'Call Activity', true));
+		content.appendChild(this.createVertexTemplate('shape=ext;rounded=1;html=1;whiteSpace=wrap;', 120, 80, 'Task', 'Process', true));
+		content.appendChild(this.createVertexTemplate('shape=ext;rounded=1;html=1;whiteSpace=wrap;double=1;', 120, 80, 'Transaction', 'Transaction', true));
+		content.appendChild(this.createVertexTemplate('shape=ext;rounded=1;html=1;whiteSpace=wrap;dashed=1;dashPattern=1 4;', 120, 80, 'Event\nSub-Process', 'Event Sub-Process', true));
+		content.appendChild(this.createVertexTemplate('shape=ext;rounded=1;html=1;whiteSpace=wrap;strokeWidth=3;', 120, 80, 'Call Activity', 'Call Activity', true));
 
-		var classCell = new mxCell('Sub-Process', new mxGeometry(0, 0, 120, 80), 'html=1;rounded=1');
+		var classCell = new mxCell('Sub-Process', new mxGeometry(0, 0, 120, 80), 'html=1;whiteSpace=wrap;rounded=1');
 		classCell.vertex = true;
 		var classCell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=plus;');
 		classCell1.vertex = true;
@@ -870,7 +870,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 120, 80, 'Sub-Process', true));
 	
-		var classCell = new mxCell('Looped\nSub-Process', new mxGeometry(0, 0, 120, 80), 'html=1;rounded=1');
+		var classCell = new mxCell('Looped\nSub-Process', new mxGeometry(0, 0, 120, 80), 'html=1;whiteSpace=wrap;rounded=1');
 		classCell.vertex = true;
 		var classCell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=mxgraph.bpmn.loop;');
 		classCell1.vertex = true;
@@ -885,7 +885,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 120, 80, 'Sub-Process', true));
 		
-		var classCell = new mxCell('Receive', new mxGeometry(0, 0, 120, 80), 'html=1;rounded=1;');
+		var classCell = new mxCell('Receive', new mxGeometry(0, 0, 120, 80), 'html=1;whiteSpace=wrap;rounded=1;');
 		classCell.vertex = true;
 		var classCell1 = new mxCell('', new mxGeometry(0, 0, 20, 14), 'html=1;shape=message;');
 		classCell1.vertex = true;
@@ -895,7 +895,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 120, 80, 'Receive Task', true));
 		
-		var classCell = new mxCell('User', new mxGeometry(0, 0, 120, 80), 'html=1;rounded=1;');
+		var classCell = new mxCell('User', new mxGeometry(0, 0, 120, 80), 'html=1;whiteSpace=wrap;rounded=1;');
 		classCell.vertex = true;
 		var classCell1 = new mxCell('', new mxGeometry(0, 0, 14, 14), 'html=1;shape=mxgraph.bpmn.user_task;');
 		classCell1.vertex = true;
@@ -910,7 +910,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 120, 80, 'User Task', true));
 		
-		var classCell = new mxCell('Process', new mxGeometry(0, 0, 120, 80), 'html=1;rounded=1;');
+		var classCell = new mxCell('Process', new mxGeometry(0, 0, 120, 80), 'html=1;whiteSpace=wrap;rounded=1;');
 		classCell.vertex = true;
 		var classCell1 = new mxCell('', new mxGeometry(1, 1, 30, 30), 'shape=mxgraph.bpmn.timer_start;perimeter=ellipsePerimeter;html=1;');
 		classCell1.vertex = true;
@@ -920,7 +920,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 120, 95, 'Attached Timer Event 1 ', true));
 		
-		var classCell = new mxCell('Process', new mxGeometry(0, 0, 120, 80), 'html=1;rounded=1;');
+		var classCell = new mxCell('Process', new mxGeometry(0, 0, 120, 80), 'html=1;whiteSpace=wrap;rounded=1;');
 		classCell.vertex = true;
 		var classCell1 = new mxCell('', new mxGeometry(1, 0, 30, 30), 'shape=mxgraph.bpmn.timer_start;perimeter=ellipsePerimeter;html=1;');
 		classCell1.vertex = true;
@@ -933,10 +933,10 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		content.appendChild(this.createVertexTemplate('swimlane;html=1;horizontal=0;startSize=20', 320, 240, 'Pool', 'Pool', true));
 		content.appendChild(this.createVertexTemplate('swimlane;html=1;horizontal=0;swimlaneFillColor=white;swimlaneLine=0;', 300, 120, 'Lane', 'Lane', true));
 		
-		content.appendChild(this.createVertexTemplate('shape=hexagon;html=1;perimeter=hexagonPerimeter;', 60, 50, '', 'Conversation', true));
-		content.appendChild(this.createVertexTemplate('shape=hexagon;html=1;perimeter=hexagonPerimeter;strokeWidth=4', 60, 50, '', 'Call Conversation', true));
+		content.appendChild(this.createVertexTemplate('shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;', 60, 50, '', 'Conversation', true));
+		content.appendChild(this.createVertexTemplate('shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;strokeWidth=4', 60, 50, '', 'Call Conversation', true));
 
-		var classCell = new mxCell('', new mxGeometry(0, 0, 60, 50), 'shape=hexagon;html=1;perimeter=hexagonPerimeter;');
+		var classCell = new mxCell('', new mxGeometry(0, 0, 60, 50), 'shape=hexagon;whiteSpace=wrap;html=1;perimeter=hexagonPerimeter;');
 		classCell.vertex = true;
 		var classCell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=plus;');
 		classCell1.vertex = true;
@@ -946,14 +946,14 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 60, 50, 'Sub-Conversation', true));
 		
-		var classCell = new mxCell('', new mxGeometry(0, 0, 40, 60), 'shape=note;size=16;html=1;');
+		var classCell = new mxCell('', new mxGeometry(0, 0, 40, 60), 'shape=note;whiteSpace=wrap;size=16;html=1;');
 		classCell.vertex = true;
 		var classCell1 = new mxCell('', new mxGeometry(0, 0, 14, 14), 'html=1;shape=singleArrow;arrowWidth=0.4;arrowSize=0.4;');
 		classCell1.vertex = true;
 		classCell1.geometry.relative = true;
 		classCell1.geometry.offset = new mxPoint(2, 2);
 		classCell.insert(classCell1);
-		var classCell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;shape=parallelMarker;');
+		var classCell1 = new mxCell('', new mxGeometry(0.5, 1, 14, 14), 'html=1;whiteSpace=wrap;shape=parallelMarker;');
 		classCell1.vertex = true;
 		classCell1.geometry.relative = true;
 		classCell1.geometry.offset = new mxPoint(-7, -14);
@@ -961,7 +961,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 40, 60, 'Data Object', true));
 
-		content.appendChild(this.createVertexTemplate('shape=datastore;html=1;', 60, 60, '', 'Data Store', true));
+		content.appendChild(this.createVertexTemplate('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', true));
 		
 	    var classCell = new mxCell('', new mxGeometry(0, 0, 14, 14), 'shape=plus;html=1;');
 	    classCell.connectable = false;
@@ -998,12 +998,12 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 14, 14, 'Compensation Marker', true));
 		
 		
-	    var classCell = new mxCell('', new mxGeometry(0, 0, 40, 30), 'shape=message;html=1;fillColor=#000000;strokeColor=#ffffff;strokeWidth=2;');
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 40, 30), 'shape=message;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#ffffff;strokeWidth=2;');
     	classCell.vertex = true;
 
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 40, 30, 'Send Task', true));
 		
-	    var classCell = new mxCell('', new mxGeometry(0, 0, 40, 30), 'shape=message;html=1;');
+	    var classCell = new mxCell('', new mxGeometry(0, 0, 40, 30), 'shape=message;whiteSpace=wrap;html=1;');
     	classCell.vertex = true;
 
 		content.appendChild(this.createVertexTemplateFromCells([classCell], 40, 30, 'Receive Task', true));
