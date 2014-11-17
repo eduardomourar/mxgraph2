@@ -1,3 +1,5 @@
+- Adds mouse event argument in mxConstraintHandler.getTolerance [JavaScript]
+- Uses nearest instead of first point in mxConstraintHandler.update [JavaScript]
 - Fixes ignored scale for handle center in mxHandle.processEvent [JavaScript]
 - Fixes tooltip, dblclick for mxEdgeSegmentHandler bends [JavaScript]
 - Adds dblClickHandler argument in mxElbowEdgeHandler.createVirtualBend [JavaScript]
