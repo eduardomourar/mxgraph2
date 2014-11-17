@@ -1473,7 +1473,7 @@ Graph.prototype.initTouch = function()
 		 */
 		if (touchStyle)
 		{
-			// Larger tolerance and grid for real touch devices
+			// Larger tolerance for real touch devices
 			if (mxClient.IS_TOUCH || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0)
 			{
 				mxShape.prototype.svgStrokeTolerance = 18;
@@ -1482,6 +1482,13 @@ Graph.prototype.initTouch = function()
 				Graph.prototype.tolerance = 12;
 				
 				mxVertexHandler.prototype.rotationHandleVSpacing = -24;
+				
+				// Implements a smaller tolerance for mouse events and a larger tolerance for touch
+				// events on touch devices. The default tolerance (4px) is used for mouse events.
+				mxConstraintHandler.prototype.getTolerance = function(me)
+				{
+					return (mxEvent.isMouseEvent(me.getEvent())) ? 4 : this.graph.getTolerance();
+				};
 			}
 				
 			// One finger pans (no rubberband selection) must start regardless of mouse button
