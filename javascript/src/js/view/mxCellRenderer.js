@@ -68,7 +68,7 @@ mxCellRenderer.prototype.legacyControlPosition = true;
  * Specifies if spacing and label position should be ignored if overflow is
  * fill or width. Default is true for backwards compatiblity.
  */
-mxCellRenderer.prototype.legacySpacing = false;
+mxCellRenderer.prototype.legacySpacing = true;
 
 /**
  * Variable: defaultShapes
