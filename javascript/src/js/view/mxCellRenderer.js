@@ -63,6 +63,14 @@ mxCellRenderer.prototype.defaultTextShape = mxText;
 mxCellRenderer.prototype.legacyControlPosition = true;
 
 /**
+ * Variable: legacySpacing
+ * 
+ * Specifies if spacing and label position should be ignored if overflow is
+ * fill or width. Default is true for backwards compatiblity.
+ */
+mxCellRenderer.prototype.legacySpacing = false;
+
+/**
  * Variable: defaultShapes
  * 
  * Static array that contains the globally registered shapes which are
@@ -941,7 +949,7 @@ mxCellRenderer.prototype.rotateLabelBounds = function(state, bounds)
 	bounds.x -= state.text.margin.x * bounds.width;
 	bounds.y -= state.text.margin.y * bounds.height;
 	
-	if (state.style[mxConstants.STYLE_OVERFLOW] != 'fill' && state.style[mxConstants.STYLE_OVERFLOW] != 'width')
+	if (!this.legacySpacing || (state.style[mxConstants.STYLE_OVERFLOW] != 'fill' && state.style[mxConstants.STYLE_OVERFLOW] != 'width'))
 	{
 		var s = state.view.scale;
 		var spacing = state.text.getSpacing();

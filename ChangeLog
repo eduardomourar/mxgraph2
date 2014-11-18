@@ -1,3 +1,4 @@
+- Adds mxCellRenderer.legacySpacing for spacing with overflow fill/width [JavaScript]
 - Fixes top-/leftSpacing in mxCellEditor.resize [JavaScript]
 - Fixes special label bounds in mxCellEditor.getEditorBounds for overflow=fill [JavaScript]
 - Fixes width in mxCellEditor.resize if word wrapping is enabled [JavaScript]

@@ -338,15 +338,18 @@ mxCellEditor.prototype.resize = function()
 					var bds = mxRectangle.fromRectangle(state);
 				 	bds = (state.shape != null) ? state.shape.getLabelBounds(bds) : bds;
 				 	
-					var scale = this.graph.getView().scale;
-					var spacing = parseInt(state.style[mxConstants.STYLE_SPACING] || 0) * scale;
-					var spacingTop = (parseInt(state.style[mxConstants.STYLE_SPACING_TOP] || 0) + mxText.prototype.baseSpacingTop) * scale + spacing;
-					var spacingRight = (parseInt(state.style[mxConstants.STYLE_SPACING_RIGHT] || 0) + mxText.prototype.baseSpacingRight) * scale + spacing;
-					var spacingBottom = (parseInt(state.style[mxConstants.STYLE_SPACING_BOTTOM] || 0) + mxText.prototype.baseSpacingBottom) * scale + spacing;
-					var spacingLeft = (parseInt(state.style[mxConstants.STYLE_SPACING_LEFT] || 0) + mxText.prototype.baseSpacingLeft) * scale + spacing;
-
-					bds = new mxRectangle(bds.x + spacingLeft, bds.y + spacingTop, bds.width - spacingLeft - spacingRight, bds.height - spacingTop - spacingBottom);
-					
+				 	if (!state.view.graph.cellRenderer.legacySpacing || state.style[mxConstants.STYLE_OVERFLOW] != 'width')
+				 	{
+					 	var scale = this.graph.getView().scale;
+						var spacing = parseInt(state.style[mxConstants.STYLE_SPACING] || 0) * scale;
+						var spacingTop = (parseInt(state.style[mxConstants.STYLE_SPACING_TOP] || 0) + mxText.prototype.baseSpacingTop) * scale + spacing;
+						var spacingRight = (parseInt(state.style[mxConstants.STYLE_SPACING_RIGHT] || 0) + mxText.prototype.baseSpacingRight) * scale + spacing;
+						var spacingBottom = (parseInt(state.style[mxConstants.STYLE_SPACING_BOTTOM] || 0) + mxText.prototype.baseSpacingBottom) * scale + spacing;
+						var spacingLeft = (parseInt(state.style[mxConstants.STYLE_SPACING_LEFT] || 0) + mxText.prototype.baseSpacingLeft) * scale + spacing;
+	
+						bds = new mxRectangle(bds.x + spacingLeft, bds.y + spacingTop, bds.width - spacingLeft - spacingRight, bds.height - spacingTop - spacingBottom);
+				 	}
+				 	
 					this.bounds.x = bds.x + state.absoluteOffset.x;
 					this.bounds.y = bds.y + state.absoluteOffset.y;
 					this.bounds.width = bds.width;
@@ -721,7 +724,7 @@ mxCellEditor.prototype.getEditorBounds = function(state)
  	var minHeight = minSize.height;
  	var result = null;
  	
- 	if (!isEdge && state.style[mxConstants.STYLE_OVERFLOW] == 'fill')
+ 	if (!isEdge && state.view.graph.cellRenderer.legacySpacing && state.style[mxConstants.STYLE_OVERFLOW] == 'fill')
  	{
  		result = state.shape.getLabelBounds(mxRectangle.fromRectangle(state));
  	}
