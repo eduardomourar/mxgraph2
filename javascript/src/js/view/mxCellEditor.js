@@ -362,7 +362,18 @@ mxCellEditor.prototype.resize = function()
 				{
 					// TODO: Invert initial for vertical
 					this.textDiv.style.whiteSpace = 'normal';
-					this.textDiv.style.width = this.bounds.width + 'px';
+					
+					// Simulating maxWidth by checking the offsetWidth and setting the width if that is
+					// larger doesn't solve the problem of HR taking up the width of the page instead
+					// of the text around it, so there is no need to simulate maxWidth in quirks mode.
+					if (mxClient.IS_QUIRKS)
+					{
+						this.textDiv.style.width = this.bounds.width + 'px';
+					}
+					else
+					{
+						this.textDiv.style.maxWidth = this.bounds.width + 'px';
+					}
 				}
 				else
 				{
@@ -378,7 +389,7 @@ mxCellEditor.prototype.resize = function()
 
 				if (wrap)
 				{
-					ow = Math.max(this.bounds.width, this.textDiv.scrollWidth);
+					ow = Math.min(this.bounds.width, ow);
 				}
 
 				var m = (state.text != null) ? state.text.margin : null;
