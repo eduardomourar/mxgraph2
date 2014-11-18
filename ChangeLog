@@ -1,3 +1,5 @@
+- Fixes top-/leftSpacing in mxCellEditor.resize [JavaScript]
+- Fixes special label bounds in mxCellEditor.getEditorBounds for overflow=fill [JavaScript]
 - Fixes width in mxCellEditor.resize if word wrapping is enabled [JavaScript]
 - Adds mouse event argument in mxConstraintHandler.getTolerance [JavaScript]
 - Uses nearest instead of first point in mxConstraintHandler.update [JavaScript]

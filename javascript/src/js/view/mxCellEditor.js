@@ -344,8 +344,8 @@ mxCellEditor.prototype.resize = function()
 					var spacingRight = (parseInt(state.style[mxConstants.STYLE_SPACING_RIGHT] || 0) + mxText.prototype.baseSpacingRight) * scale + spacing;
 					var spacingBottom = (parseInt(state.style[mxConstants.STYLE_SPACING_BOTTOM] || 0) + mxText.prototype.baseSpacingBottom) * scale + spacing;
 					var spacingLeft = (parseInt(state.style[mxConstants.STYLE_SPACING_LEFT] || 0) + mxText.prototype.baseSpacingLeft) * scale + spacing;
-	
-					bds = new mxRectangle(bds.x, bds.y, bds.width - spacingLeft - spacingRight, bds.height - spacingTop - spacingBottom);
+
+					bds = new mxRectangle(bds.x + spacingLeft, bds.y + spacingTop, bds.width - spacingLeft - spacingRight, bds.height - spacingTop - spacingBottom);
 					
 					this.bounds.x = bds.x + state.absoluteOffset.x;
 					this.bounds.y = bds.y + state.absoluteOffset.y;
@@ -404,7 +404,7 @@ mxCellEditor.prototype.resize = function()
 				
 				if (m != null)
 				{
-					// TODO: Keep in visible area, add spacing
+					// TODO: Keep in visible area
 					if (isEdge)
 					{
 						this.textarea.style.left = Math.max(0, Math.round(this.bounds.x - m.x * this.bounds.width + m.x * ow) - 4) + 'px';
@@ -414,7 +414,7 @@ mxCellEditor.prototype.resize = function()
 					{
 						var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
 						this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * this.bounds.width + m.x * (ow + 7))) + 'px';
-						this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh + size * 0.1 + 8)) + 5) + 'px';
+						this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh + size * 0.1 + 8))) + 'px';
 					}
 				}
 	
@@ -723,7 +723,7 @@ mxCellEditor.prototype.getEditorBounds = function(state)
  	
  	if (!isEdge && state.style[mxConstants.STYLE_OVERFLOW] == 'fill')
  	{
- 		result = mxRectangle.fromRectangle(state);
+ 		result = state.shape.getLabelBounds(mxRectangle.fromRectangle(state));
  	}
  	else
  	{
