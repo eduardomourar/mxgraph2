@@ -511,26 +511,11 @@ mxVertexHandler.prototype.getHandleForEvent = function(me)
 	var tol = (!mxEvent.isMouseEvent(me.getEvent())) ? this.tolerance : 1;
 	var hit = (this.allowHandleBoundsCheck && (mxClient.IS_IE || tol > 0)) ?
 		new mxRectangle(me.getGraphX() - tol, me.getGraphY() - tol, 2 * tol, 2 * tol) : null;
-	var minDistSq = null;
 	
 	function checkShape(shape)
 	{
-		if (shape != null && (me.isSource(shape) || (hit != null && mxUtils.intersects(shape.bounds, hit) &&
-			shape.node.style.display != 'none' && shape.node.style.visibility != 'hidden')))
-		{
-			var dx = me.getGraphX() - shape.bounds.getCenterX();
-			var dy = me.getGraphY() - shape.bounds.getCenterY();
-			var tmp = dx * dx + dy * dy;
-
-			if (minDistSq == null || tmp <= minDistSq)
-			{
-				minDistSq = tmp;
-			
-				return true;
-			}
-		}
-		
-		return false;
+		return shape != null && (me.isSource(shape) || (hit != null && mxUtils.intersects(shape.bounds, hit) &&
+			shape.node.style.display != 'none' && shape.node.style.visibility != 'hidden'));
 	}
 
 	if (this.customHandles != null)
