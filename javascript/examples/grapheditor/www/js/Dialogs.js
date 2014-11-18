@@ -108,8 +108,12 @@ Dialog.prototype.close = function(cancel)
 		this.dialogImg = null;
 	}
 	
+	if (this.bg.parentNode != null)
+	{
+		this.bg.parentNode.removeChild(this.bg);
+	}
+	
 	this.container.parentNode.removeChild(this.container);
-	this.bg.parentNode.removeChild(this.bg);
 };
 
 /**
