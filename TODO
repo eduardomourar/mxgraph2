@@ -20,19 +20,17 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix connect to fixed points on Windows 8
 - Fix vertical segment edge handler for straight horizontal lines
-- Rotation on edges should rotate label (only)
 
+- Rotation on edges should rotate label (only)
 - Add single handle for multiple selected cells
 - Fix live preview for resize of rotated container with children (child offset)
 - Fix moving of relative childre between parents (offset)
-- Move mxLayoutManager into validation process (resizeParent cycle)
 
+- Move mxLayoutManager into validation process (resizeParent cycle)
 - Add image lookup in XML image export
 - Fix resize of rotated groups with layouts
 - Research alternative namespace solutions
-- Use spacing styles with overflow=fill
 
 - Add support for touchCancel event, use requestAnimationFrame
 - Add live preview while moving, reconnect, rotate
