@@ -1314,11 +1314,6 @@ mxCoordinateAssignment.prototype.setCellLocations = function(graph, model)
 		}
 	}
 	
-	if (this.layout.resizeParent && parentsChanged != null)
-	{
-		this.adjustParents(parentsChanged);
-	}
-	
 	// Post process edge styles. Needs the vertex locations set for initial
 	// values of the top and bottoms of each rank
 	if (this.edgeStyle == mxHierarchicalEdgeStyle.ORTHOGONAL
@@ -1333,6 +1328,11 @@ mxCoordinateAssignment.prototype.setCellLocations = function(graph, model)
 	for (var i = 0; i < edges.length; i++)
 	{
 		this.setEdgePosition(edges[i]);
+	}
+	
+	if (this.layout.resizeParent && parentsChanged != null)
+	{
+		this.adjustParents(parentsChanged);
 	}
 };
 
