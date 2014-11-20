@@ -730,7 +730,7 @@ var mxEdgeStyle =
 		{
 			while (result.length > 1 && mxUtils.contains(source, result[1].x, result[1].y))
 			{
-				result = result.splice(1, 1);
+				result.splice(1, 1);
 			}
 		}
 		
@@ -739,10 +739,11 @@ var mxEdgeStyle =
 		{
 			while (result.length > 1 && mxUtils.contains(target, result[result.length - 1].x, result[result.length - 1].y))
 			{
-				result = result.splice(result.length - 1, 1);
+				result.splice(result.length - 1, 1);
 			}
 		}
 		
+		return result;
 	},
 	
 	orthBuffer: 10,
@@ -836,7 +837,15 @@ var mxEdgeStyle =
 
 		if (mxEdgeStyle.orthPointsFallback && (points != null && points.length > 0) || (sourceEdge) || (targetEdge))
 		{
-			mxEdgeStyle.SegmentConnector(state, source, target, points, result);
+//			if (points.length == 2 && points[0].x == points[1].x && points[0].y == points[1].y)
+//			{
+//				mxEdgeStyle.ElbowConnector(state, source, target, [points[0]], result);
+//			}
+//			else
+			{
+				mxEdgeStyle.SegmentConnector(state, source, target, points, result);
+			}
+			
 			return;
 		}
 

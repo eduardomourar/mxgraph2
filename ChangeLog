@@ -1,3 +1,4 @@
+- Fixes handling of overlapping waypoints in SegmentConnector [JavaScript]
 - Uses nearest instead of first handle in mxEdgeHandler.getHandleForEvent [JavaScript]
 - Updates visible terminal state for preview in mxEdgeHandler.updatePreviewState [JavaScript]
 - Adds alt-wheel zoom, chromeless mode, page view, infinite canvas in grapheditor [JavaScript]
