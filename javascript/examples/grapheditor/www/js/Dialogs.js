@@ -669,8 +669,8 @@ var PrintDialog = function(editorUi)
 		var y0 = 0;
 		
 		// Computes unscaled, untranslated graph bounds
-		var x = (gb.width > 0) ? gb.x / graph.view.scale - graph.view.translate.x : 0;
-		var y = (gb.height > 0) ? gb.y / graph.view.scale - graph.view.translate.y : 0;
+		var x = (gb.width > 0) ? Math.ceil(gb.x / graph.view.scale - graph.view.translate.x) : 0;
+		var y = (gb.height > 0) ? Math.ceil(gb.y / graph.view.scale - graph.view.translate.y) : 0;
 
 		if (x < 0 || y < 0)
 		{
