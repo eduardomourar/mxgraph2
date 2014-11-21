@@ -604,6 +604,9 @@ var mxEdgeStyle =
 		{
 			pt = pt.clone();
 		}
+		
+		pt.x = Math.round(pt.x);
+		pt.y = Math.round(pt.y);
 
 		var lastInx = pts.length - 1;
 		
@@ -611,6 +614,9 @@ var mxEdgeStyle =
 		if (hints != null && hints.length > 0)
 		{
 			hint = state.view.transformControlPoint(state, hints[0]);
+			
+			hint.x = Math.round(hint.x);
+			hint.y = Math.round(hint.y);
 
 			var currentTerm = source;
 			var currentPt = pts[0];
@@ -618,6 +624,12 @@ var mxEdgeStyle =
 			var vertChan = false;
 			var currentHint = hint;
 			var hintsLen = hints.length;
+			
+			if (currentPt != null)
+			{
+				currentPt.x = Math.round(currentPt.x);
+				currentPt.y = Math.round(currentPt.y);
+			}
 			
 			for (var i = 0; i < 2; i++)
 			{
@@ -652,7 +664,14 @@ var mxEdgeStyle =
 				
 				currentTerm = target;
 				currentPt = pts[lastInx];
+				
+				currentPt.x = Math.round(currentPt.x);
+				currentPt.y = Math.round(currentPt.y);
+				
 				currentHint = state.view.transformControlPoint(state, hints[hintsLen - 1]);
+				
+				currentHint.x = Math.round(currentHint.x);
+				currentHint.y = Math.round(currentHint.y);
 			}
 
 			if (horizontal && ((pts[0] != null && pts[0].y != hint.y) ||
@@ -681,6 +700,9 @@ var mxEdgeStyle =
 			{
 				horizontal = !horizontal;
 				hint = state.view.transformControlPoint(state, hints[i]);
+				
+				hint.x = Math.round(hint.x);
+				hint.y = Math.round(hint.y);
 		
 //				mxLog.show();
 //				mxLog.debug('hint', i, hint.x, hint.y);
@@ -710,6 +732,12 @@ var mxEdgeStyle =
 		if (pt == null && target != null)
 		{
 			pt = new mxPoint(state.view.getRoutingCenterX(target), state.view.getRoutingCenterY(target));
+		}
+		
+		if (pt != null)
+		{
+			pt.x = Math.round(pt.x);
+			pt.y = Math.round(pt.y);
 		}
 
 		if (horizontal && ((pts[lastInx] != null && pts[lastInx].y != hint.y) ||
