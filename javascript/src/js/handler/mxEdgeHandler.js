@@ -659,7 +659,7 @@ mxEdgeHandler.prototype.createLabelHandleShape = function()
 {
 	if (this.labelHandleImage != null)
 	{
-		var shape = new mxImageShape(new mxRectangle(0, 0, this.labelHandleImage.width, this.handleImage.height), this.labelHandleImage.src);
+		var shape = new mxImageShape(new mxRectangle(0, 0, this.labelHandleImage.width, this.labelHandleImage.height), this.labelHandleImage.src);
 		
 		// Allows HTML rendering of the images
 		shape.preserveImageAspect = false;
