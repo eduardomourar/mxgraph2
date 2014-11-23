@@ -1398,6 +1398,7 @@ Graph.prototype.initTouch = function()
 	 */
 	var connectHandle = new mxImage(IMAGE_PATH + '/handle-connect.png', 26, 26);
 	var mainHandle = new mxImage(IMAGE_PATH + '/handle-main.png', 17, 17);
+	var fixedHandle = new mxImage(IMAGE_PATH + '/handle-fixed.png', 17, 17);
 	var secondaryHandle = new mxImage(IMAGE_PATH + '/handle-secondary.png', 17, 17);
 	var rotationHandle = new mxImage(IMAGE_PATH + '/handle-rotate.png', 19, 21);
 	var triangleUp = new mxImage(IMAGE_PATH + '/triangle-up.png', 26, 26);
@@ -1411,6 +1412,7 @@ Graph.prototype.initTouch = function()
 	mxVertexHandler.prototype.handleImage = mainHandle;
 	mxVertexHandler.prototype.secondaryHandleImage = secondaryHandle;
 	mxEdgeHandler.prototype.handleImage = mainHandle;
+	mxEdgeHandler.prototype.fixedHandleImage = fixedHandle;
 	mxEdgeHandler.prototype.labelHandleImage = secondaryHandle;
 	mxOutline.prototype.sizerImage = mainHandle;
 	Sidebar.prototype.triangleUp = triangleUp;
@@ -1441,9 +1443,41 @@ Graph.prototype.initTouch = function()
 			mxUtils.getValue(this.state.style, mxConstants.STYLE_SHAPE, null) != 'link';
 	};
 	
+	// Shows secondars handle for fixed connection points
+	mxEdgeHandler.prototype.createHandleShape = function(index)
+	{
+		var source = index == 0;
+		var c = (index == 0 || index >= this.state.absolutePoints.length - 1) ?
+			this.graph.getConnectionConstraint(this.state, this.state.getVisibleTerminalState(source), source) : null;
+		var pt = (c != null) ? this.graph.getConnectionPoint(this.state.getVisibleTerminalState(source), c) : null;
+		var img = (pt != null) ? this.fixedHandleImage : this.handleImage;
+
+		if (img != null)
+		{
+			var shape = new mxImageShape(new mxRectangle(0, 0, img.width, img.height), img.src);
+			
+			// Allows HTML rendering of the images
+			shape.preserveImageAspect = false;
+
+			return shape;
+		}
+		else
+		{
+			var s = mxConstants.HANDLE_SIZE;
+			
+			if (this.preferHtml)
+			{
+				s -= 1;
+			}
+			
+			return new mxRectangleShape(new mxRectangle(0, 0, s, s), mxConstants.HANDLE_FILLCOLOR, mxConstants.HANDLE_STROKECOLOR);
+		}
+	};
+	
 	// Pre-fetches images
 	new Image().src = connectHandle.src;
 	new Image().src = mainHandle.src;
+	new Image().src = fixedHandle.src;
 	new Image().src = secondaryHandle.src;
 	new Image().src = rotationHandle.src;
 	new Image().src = triangleUp.src;
