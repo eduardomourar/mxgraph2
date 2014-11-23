@@ -6325,11 +6325,10 @@ mxGraph.prototype.getConnectionPoint = function(vertex, constraint)
 {
 	var point = null;
 	
-	if (vertex != null)
+	if (vertex != null && constraint.point != null)
 	{
 		var bounds = this.view.getPerimeterBounds(vertex);
         var cx = new mxPoint(bounds.getCenterX(), bounds.getCenterY());
-
 		var direction = vertex.style[mxConstants.STYLE_DIRECTION];
 		var r1 = 0;
 		
