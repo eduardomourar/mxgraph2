@@ -1,3 +1,4 @@
+- Fixes scrollbars.html example in FF [JavaScript]
 - Fixes rounding errors, intersecting points in mxEdgeStyle.SegmentConnector [JavaScript]
 - Uses nearest instead of first handle in mxEdgeHandler.getHandleForEvent [JavaScript]
 - Updates visible terminal state for preview in mxEdgeHandler.updatePreviewState [JavaScript]
