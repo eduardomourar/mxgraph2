@@ -1,3 +1,4 @@
+- Fixes handling of special cases in mxEdgeStyle.SegmentConnector, mxEdgeSegmentHandler [JavaScript]
 - Allows for fixed points in mxGraphView.getNextPoint [Java,JavaScript,Dotnet,Php]
 - Adds CSS styles for all buttons in grapheditor
 - Click on background closes modal dialogs, makes color dialogs closable in grapheditor

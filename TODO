@@ -20,7 +20,7 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix vertical segment edge handler for straight horizontal lines
+- Migrate changes in mxEdgeStyle to Java
 
 - Rotation on edges should rotate label (only)
 - Add single handle for multiple selected cells

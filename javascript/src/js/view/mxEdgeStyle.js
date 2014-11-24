@@ -590,6 +590,7 @@ var mxEdgeStyle =
 	{
 		// Creates array of all way- and terminalpoints
 		var pts = state.absolutePoints;
+		// Whether the first segment outgoing from the source end is horizontal
 		var horizontal = true;
 		var hint = null;
 		
@@ -623,55 +624,77 @@ var mxEdgeStyle =
 			var hozChan = false;
 			var vertChan = false;
 			var currentHint = hint;
-			var hintsLen = hints.length;
 			
 			if (currentPt != null)
 			{
 				currentPt.x = Math.round(currentPt.x);
 				currentPt.y = Math.round(currentPt.y);
+				currentTerm = null;
 			}
 			
+			// Check for alignment with fixed points and with channels
+			// at source and target segments only
 			for (var i = 0; i < 2; i++)
 			{
 				var fixedVertAlign = currentPt != null && currentPt.x == currentHint.x;
 				var fixedHozAlign = currentPt != null && currentPt.y == currentHint.y;
+				
 				var inHozChan = currentTerm != null && (currentHint.y >= currentTerm.y &&
 						currentHint.y <= currentTerm.y + currentTerm.height);
 				var inVertChan = currentTerm != null && (currentHint.x >= currentTerm.x &&
 						currentHint.x <= currentTerm.x + currentTerm.width);
-				
-				hozChan = fixedHozAlign || (currentPt == null && inHozChan);
-				vertChan = fixedVertAlign ||	(currentPt == null && inVertChan);
-				
-				if (currentPt != null && (!fixedHozAlign && !fixedVertAlign) && (inHozChan || inVertChan)) 
-				{
-					horizontal = inHozChan ? false : true;
-					break;
-				}
-		
-				if (vertChan || hozChan)
-				{
-					horizontal = hozChan;
-					
-					if (i == 1)
-					{
-						// Work back from target end
-						horizontal = hints.length % 2 == 0 ? hozChan : vertChan;
-					}
 
-					break;
+				hozChan = fixedHozAlign || (currentPt == null && inHozChan);
+				vertChan = fixedVertAlign || (currentPt == null && inVertChan);
+				
+				// If the current hint falls in both the hor and vert channels in the case
+				// of a floating port, or if the hint is exactly co-incident with a 
+				// fixed point, ignore the source and try to work out the orientation
+				// from the target end
+				if (i==0 && ((hozChan && vertChan) || (fixedVertAlign && fixedHozAlign)))
+				{
+				}
+				else
+				{
+					if (currentPt != null && (!fixedHozAlign && !fixedVertAlign) && (inHozChan || inVertChan)) 
+					{
+						horizontal = inHozChan ? false : true;
+						break;
+					}
+			
+					if (vertChan || hozChan)
+					{
+						horizontal = hozChan;
+						
+						if (i == 1)
+						{
+							// Work back from target end
+							horizontal = hints.length % 2 == 0 ? hozChan : vertChan;
+						}
+	
+						break;
+					}
 				}
 				
 				currentTerm = target;
 				currentPt = pts[lastInx];
 				
-				currentPt.x = Math.round(currentPt.x);
-				currentPt.y = Math.round(currentPt.y);
+				if (currentPt != null)
+				{
+					currentPt.x = Math.round(currentPt.x);
+					currentPt.y = Math.round(currentPt.y);
+					currentTerm = null;
+				}
 				
-				currentHint = state.view.transformControlPoint(state, hints[hintsLen - 1]);
+				currentHint = state.view.transformControlPoint(state, hints[hints.length - 1]);
 				
 				currentHint.x = Math.round(currentHint.x);
 				currentHint.y = Math.round(currentHint.y);
+				
+				if (fixedVertAlign && fixedHozAlign)
+				{
+					hints = hints.slice(1);
+				}
 			}
 
 			if (horizontal && ((pts[0] != null && pts[0].y != hint.y) ||
@@ -865,14 +888,7 @@ var mxEdgeStyle =
 
 		if (mxEdgeStyle.orthPointsFallback && (points != null && points.length > 0) || (sourceEdge) || (targetEdge))
 		{
-//			if (points.length == 2 && points[0].x == points[1].x && points[0].y == points[1].y)
-//			{
-//				mxEdgeStyle.ElbowConnector(state, source, target, [points[0]], result);
-//			}
-//			else
-			{
-				mxEdgeStyle.SegmentConnector(state, source, target, points, result);
-			}
+			mxEdgeStyle.SegmentConnector(state, source, target, points, result);
 			
 			return;
 		}
