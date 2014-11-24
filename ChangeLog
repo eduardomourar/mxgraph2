@@ -1,3 +1,4 @@
+- Adds CSS styles for all buttons in grapheditor
 - Click on background closes modal dialogs, makes color dialogs closable in grapheditor
 - Adds mxCellEditor.minResize [JavaScript]
 - Fixes rendering of glass effect for mxRectangleShape in outline mode [JavaScript]
