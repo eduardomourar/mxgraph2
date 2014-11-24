@@ -333,7 +333,9 @@ mxCellEditor.prototype.resize = function()
 
 		 	if (isEdge || state.style[mxConstants.STYLE_OVERFLOW] != 'fill')
 		 	{
-				if (isEdge)
+			 	var scale = this.graph.getView().scale;
+		 		
+		 		if (isEdge)
 				{
 					this.bounds.x = state.absoluteOffset.x;
 					this.bounds.y = state.absoluteOffset.y;
@@ -347,7 +349,6 @@ mxCellEditor.prototype.resize = function()
 				 	
 				 	if (!state.view.graph.cellRenderer.legacySpacing || state.style[mxConstants.STYLE_OVERFLOW] != 'width')
 				 	{
-					 	var scale = this.graph.getView().scale;
 						var spacing = parseInt(state.style[mxConstants.STYLE_SPACING] || 0) * scale;
 						var spacingTop = (parseInt(state.style[mxConstants.STYLE_SPACING_TOP] || 0) + mxText.prototype.baseSpacingTop) * scale + spacing;
 						var spacingRight = (parseInt(state.style[mxConstants.STYLE_SPACING_RIGHT] || 0) + mxText.prototype.baseSpacingRight) * scale + spacing;
@@ -392,9 +393,9 @@ mxCellEditor.prototype.resize = function()
 				
 				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
 				this.textDiv.innerHTML = (value.length > 0) ? value : '&nbsp;';
-				var ow = this.textDiv.offsetWidth + size / 2;
+				var ow = this.textDiv.offsetWidth + size;
 				var oh = this.textDiv.offsetHeight + 16;
-				
+
 				if (this.minResize != null)
 				{
 					ow = Math.max(ow, this.minResize.width);
