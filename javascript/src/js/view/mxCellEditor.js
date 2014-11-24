@@ -184,6 +184,13 @@ mxCellEditor.prototype.textNode = '';
 mxCellEditor.prototype.zIndex = 5;
 
 /**
+ * Variable: minResize
+ * 
+ * Defines the minimum width and height to be used in <resize>. Default is 0x20px.
+ */
+mxCellEditor.prototype.minResize = new mxRectangle(0, 20);
+
+/**
  * Function: init
  *
  * Creates the <textarea> and installs the event listeners. The key handler
@@ -383,12 +390,16 @@ mxCellEditor.prototype.resize = function()
 					value = value.replace(/ /g, '&nbsp;');
 				}
 				
+				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
 				this.textDiv.innerHTML = (value.length > 0) ? value : '&nbsp;';
-				var ow = this.textDiv.offsetWidth + 30;
+				var ow = this.textDiv.offsetWidth + size / 2;
 				var oh = this.textDiv.offsetHeight + 16;
 				
-				ow = Math.max(ow, 40);
-				oh = Math.max(oh, 20);
+				if (this.minResize != null)
+				{
+					ow = Math.max(ow, this.minResize.width);
+					oh = Math.max(oh, this.minResize.height);
+				}
 
 				if (wrap)
 				{
@@ -415,7 +426,6 @@ mxCellEditor.prototype.resize = function()
 					}
 					else
 					{
-						var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
 						this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * this.bounds.width + m.x * (ow + 7))) + 'px';
 						this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh + size * 0.1 + 8))) + 'px';
 					}

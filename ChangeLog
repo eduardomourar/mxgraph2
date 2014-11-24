@@ -1,3 +1,4 @@
+- Adds mxCellEditor.minResize [JavaScript]
 - Fixes rendering of glass effect for mxRectangleShape in outline mode [JavaScript]
 - Fixes scrollbars.html example in FF [JavaScript]
 - Fixes rounding errors, intersecting points in mxEdgeStyle.SegmentConnector [JavaScript]
