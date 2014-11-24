@@ -926,6 +926,7 @@ Graph.prototype.initTouch = function()
 			}
 			
 			this.switchSelectionState = tmp;
+			this.resize();
 		}
 	};
 	
@@ -1162,14 +1163,30 @@ Graph.prototype.initTouch = function()
 		var mxCellEditorResize = mxCellEditor.prototype.resize;
 		mxCellEditor.prototype.resize = function()
 		{
-			mxCellEditorResize.apply(this, arguments);
-			
-			if (this.textarea.style.display == 'none' && this.text2 != null)
+			// Shows in full size for HTML source mode
+			if (this.text2 != null && this.textarea.style.display != 'none')
 			{
-				this.text2.style.top = parseInt(this.textarea.style.top) + 2 + 'px';
-				this.text2.style.left = parseInt(this.textarea.style.left) + 1 + 'px';
-				this.text2.style.width = this.textarea.style.width;
-				this.text2.style.height = this.textarea.style.height;
+				var state = this.graph.getView().getState(this.editingCell);
+				
+				if (state != null && this.graph.getModel().isVertex(state.cell))
+				{
+					this.textarea.style.top = state.y + 'px';
+					this.textarea.style.left = state.x + 'px';
+					this.textarea.style.width = state.width + 'px';
+					this.textarea.style.height = state.height + 'px';
+				}
+			}
+			else
+			{
+				mxCellEditorResize.apply(this, arguments);
+				
+				if (this.textarea.style.display == 'none' && this.text2 != null)
+				{
+					this.text2.style.top = parseInt(this.textarea.style.top) + 2 + 'px';
+					this.text2.style.left = parseInt(this.textarea.style.left) + 1 + 'px';
+					this.text2.style.width = this.textarea.style.width;
+					this.text2.style.height = this.textarea.style.height;
+				}				
 			}
 		};
 		

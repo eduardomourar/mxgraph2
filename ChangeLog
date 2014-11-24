@@ -1,3 +1,4 @@
+- Fixes HTML source mode editor size in grapheditor [JavaScript]
 - Fixes possible NPE in mxEdgeSegmentHandler.start [JavaScript]
 - Fixes bug in mxCellEditor.resize for edge labels [JavaScript]
 - Fixes handling of special cases in mxEdgeStyle.SegmentConnector, mxEdgeSegmentHandler [JavaScript]
