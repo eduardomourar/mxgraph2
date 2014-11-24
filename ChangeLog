@@ -1,4 +1,4 @@
-- Fixes handling of &quot; HTML entities in mxSvgCanvas2D.createDiv [JavaScript]
+- Fixes handling of XHTML entities in mxSvgCanvas2D.createDiv [JavaScript]
 - Fixes HTML source mode editor size in grapheditor [JavaScript]
 - Fixes possible NPE in mxEdgeSegmentHandler.start [JavaScript]
 - Fixes bug in mxCellEditor.resize for edge labels [JavaScript]
