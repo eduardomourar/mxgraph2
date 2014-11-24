@@ -1083,7 +1083,7 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 	{
 		// Converts HTML entities to unicode since HTML entities are not allowed in XHTML
 		var ta = document.createElement('textarea');
-		ta.innerHTML = val.replace(/&lt;/g, '&amp;lt;').replace(/&gt;/g, '&amp;gt;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		ta.innerHTML = val.replace(/&quot;/g, '&amp;quot;').replace(/&lt;/g, '&amp;lt;').replace(/&gt;/g, '&amp;gt;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 		val = ta.value;
 
 		if (overflow != 'fill' && overflow != 'width')
