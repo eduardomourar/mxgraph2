@@ -1698,7 +1698,7 @@ mxGraphView.prototype.getNextPoint = function(edge, opposite, source)
 	var pts = edge.absolutePoints;
 	var point = null;
 	
-	if (pts != null && (source || pts.length > 2 || opposite == null))
+	if (pts != null && pts.length >= 2)
 	{
 		var count = pts.length;
 		point = pts[(source) ? Math.min(1, count - 1) : Math.max(0, count - 2)];
