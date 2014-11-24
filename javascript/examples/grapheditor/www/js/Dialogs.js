@@ -73,6 +73,11 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 		
 		document.body.appendChild(img);
 		this.dialogImg = img;
+		
+		mxEvent.addListener(this.bg, 'click', mxUtils.bind(this, function()
+		{
+			editorUi.hideDialog(true);
+		}));
 	}
 	
 	this.onDialogClose = onClose;
@@ -108,7 +113,7 @@ Dialog.prototype.close = function(cancel)
 		this.dialogImg = null;
 	}
 	
-	if (this.bg.parentNode != null)
+	if (this.bg != null && this.bg.parentNode != null)
 	{
 		this.bg.parentNode.removeChild(this.bg);
 	}
