@@ -1124,6 +1124,7 @@ Graph.prototype.initTouch = function()
 				style.top = parseInt(this.textarea.style.top) + 'px';
 				style.fontFamily = this.textarea.style.fontFamily;
 				style.fontWeight = this.textarea.style.fontWeight;
+				style.fontStyle = this.textarea.style.fontStyle;
 				style.textAlign = this.textarea.style.textAlign;
 				style.fontSize = this.textarea.style.fontSize;
 				style.textDecoration = this.textarea.style.textDecoration;
