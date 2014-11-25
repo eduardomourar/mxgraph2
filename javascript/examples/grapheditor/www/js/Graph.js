@@ -140,7 +140,7 @@ Graph = function(container, model, renderHint, stylesheet)
 	{
 		return mxEvent.isMouseEvent(me.getEvent());
 	};
-	
+
     // Adds support for HTML labels via style. Note: Currently, only the Java
     // backend supports HTML labels but CSS support is limited to the following:
     // http://docs.oracle.com/javase/6/docs/api/index.html?javax/swing/text/html/CSS.html
@@ -1047,7 +1047,7 @@ Graph.prototype.initTouch = function()
 		mxCellEditor.prototype.startEditing = function(cell, trigger)
 		{
 			this.switchSelectionState = null;
-			
+
 			// First run cannot set display before supercall because textarea is lazy created
 			// Lazy instantiates textarea to save memory in IE
 			if (this.textarea == null)
@@ -1068,8 +1068,12 @@ Graph.prototype.initTouch = function()
 	
 			mxCellEditorStartEditing.apply(this, arguments);
 			
-			// Enables focus outline for edges
-			if (this.graph.getModel().isEdge(cell))
+			// Enables focus outline for edges and edge labels
+			var parent = this.graph.getModel().getParent(cell);
+			var geo = this.graph.getCellGeometry(cell);
+			
+			if ((this.graph.getModel().isEdge(parent) && geo != null && geo.relative) ||
+				this.graph.getModel().isEdge(cell))
 			{
 				this.textarea.style.outline = '';
 			}
@@ -1158,6 +1162,14 @@ Graph.prototype.initTouch = function()
 				{
 					document.execCommand('selectAll');
 				}
+				
+				// Hides handles on selected cell
+				this.currentStateHandle = this.graph.selectionCellsHandler.getHandler(cell);
+				
+				if (this.currentStateHandle != null && this.currentStateHandle.setHandlesVisible != null)
+				{
+					this.currentStateHandle.setHandlesVisible(false);
+				}
 			}
 		};
 
@@ -1171,10 +1183,33 @@ Graph.prototype.initTouch = function()
 				
 				if (state != null && this.graph.getModel().isVertex(state.cell))
 				{
-					this.textarea.style.top = state.y + 'px';
-					this.textarea.style.left = state.x + 'px';
-					this.textarea.style.width = state.width + 'px';
-					this.textarea.style.height = state.height + 'px';
+					var x = state.x;
+					var y = state.y;
+					var w = state.width;
+					var h = state.height;
+					
+					if (w <= 1 && h <= 1)
+					{
+						w = Math.max(w, 120);
+						h = Math.max(h, 40);
+						var m = (state.text != null) ? state.text.margin : null;
+						
+						if (m == null)
+						{
+							var align = mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER);
+							var valign = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE);
+					
+							m = mxUtils.getAlignmentAsPoint(align, valign);
+						}
+						
+						x += m.x * w;
+						y += m.y * h;
+					}
+					
+					this.textarea.style.left = Math.round(x) + 'px';
+					this.textarea.style.top = Math.round(y) + 'px';
+					this.textarea.style.width = Math.round(w) + 'px';
+					this.textarea.style.height = Math.round(h) + 'px';
 				}
 			}
 			else
@@ -1194,6 +1229,17 @@ Graph.prototype.initTouch = function()
 		var mxCellEditorStopEditing = mxCellEditor.prototype.stopEditing;
 		mxCellEditor.prototype.stopEditing = function(cancel)
 		{
+			// Hides handles on selected cell
+			if (this.currentStateHandle != null)
+			{
+				if (this.currentStateHandle.setHandlesVisible != null)
+				{
+					this.currentStateHandle.setHandlesVisible(true);
+				}
+				
+				this.currentStateHandle = null;
+			}
+			
 			if (this.text2 != null)
 			{
 				var content = this.text2.innerHTML;
@@ -1210,7 +1256,27 @@ Graph.prototype.initTouch = function()
 				this.text2 = null;
 			}
 			
-			mxCellEditorStopEditing.apply(this, arguments);
+			// Removes empty relative child labels in edges
+			var cell = this.editingCell;
+			this.graph.getModel().beginUpdate();
+			
+			try
+			{
+				mxCellEditorStopEditing.apply(this, arguments);
+
+				var parent = this.graph.getModel().getParent(cell);
+				var geo = this.graph.getCellGeometry(cell);
+				
+				if (this.textarea != null && mxUtils.trim(this.textarea.value) == '' &&
+					this.graph.getModel().isEdge(parent) && geo != null && geo.relative)
+				{
+					this.graph.removeCells([cell]);
+				}
+			}
+			finally
+			{
+				this.graph.getModel().endUpdate();
+			}
 		};
 		
 		// Allows resizing for current HTML value

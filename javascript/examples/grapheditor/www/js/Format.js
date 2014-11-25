@@ -47,7 +47,12 @@ Format.prototype.refresh = function()
 	var editor = ui.editor;
 	var graph = editor.graph;
 	
-	if (graph.isSelectionEmpty())
+	// TODO: To draw.io
+	if (ui.getCurrentFile() == null)
+	{
+		
+	}
+	else if (graph.isSelectionEmpty())
 	{
 		mxUtils.write(this.container, 'Document Title');
 		
