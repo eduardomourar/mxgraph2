@@ -1,3 +1,6 @@
+- Hides handles for editing cell in grapheditor
+- Automatically removes empty edge labels in grapheditor
+- Double click on edge adds new label in grapheditor
 - Adds mxCellRenderer.antiAlias, mxShape.antiAlias switches [JavaScript]
 - Rounds all numbers in mxSvgCanvas2D to 2 decimal points [JavaScript]
 - Uses helper method in mxShape.createBoundingBox [JavaScript]
