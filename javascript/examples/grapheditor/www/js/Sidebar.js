@@ -11,6 +11,7 @@ function Sidebar(editorUi, container)
 	this.palettes = new Object();
 	this.showTooltips = true;
 	this.graph = new Graph(document.createElement('div'), null, null, this.editorUi.editor.graph.getStylesheet());
+	this.graph.cellRenderer.antiAlias = false;
 	this.graph.resetViewOnRootChange = false;
 	this.graph.foldingEnabled = false;
 	this.graph.setConnectable(false);

@@ -80,6 +80,13 @@ mxCellRenderer.prototype.legacySpacing = true;
 mxCellRenderer.prototype.defaultShapes = new Object();
 
 /**
+ * Variable: antiAlias
+ * 
+ * Anti-aliasing option for new shapes. Default is true.
+ */
+mxCellRenderer.prototype.antiAlias = true;
+
+/**
  * Function: registerShape
  * 
  * Registers the given constructor under the specified key in this instance
@@ -161,6 +168,8 @@ mxCellRenderer.prototype.createShape = function(state)
 			var ctor = this.getShapeConstructor(state);
 			state.shape = new ctor();
 		}
+		
+		state.shape.antiAlias = this.antiAlias;
 	}
 };
 
