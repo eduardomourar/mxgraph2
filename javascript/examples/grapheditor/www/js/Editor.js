@@ -956,11 +956,12 @@ Editor.prototype.createUndoManager = function()
 	var undoHandler = function(sender, evt)
 	{
 		var cand = graph.getSelectionCellsForChanges(evt.getProperty('edit').changes);
+		var model = graph.getModel();
 		var cells = [];
 		
 		for (var i = 0; i < cand.length; i++)
 		{
-			if (graph.view.getState(cand[i]) != null)
+			if ((model.isVertex(cand[i]) || model.isEdge(cand[i])) && graph.view.getState(cand[i]) != null)
 			{
 				cells.push(cand[i]);
 			}
