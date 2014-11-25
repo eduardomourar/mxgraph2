@@ -296,15 +296,22 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel, dx,
 				}
 				
 				this.tooltip.style.height = height + 'px';
-				var x0 = -Math.min(0, bounds.x - this.tooltipBorder);
-				var y0 = -Math.min(0, bounds.y - this.tooltipBorder);
+				var x0 = -Math.min(0, Math.round(bounds.x - this.tooltipBorder));
+				var y0 = -Math.min(0, Math.round(bounds.y - this.tooltipBorder));
 
 				var left = this.container.clientWidth + this.editorUi.splitSize + 3;
 				var top = Math.max(0, (this.container.offsetTop + elt.offsetTop - this.container.scrollTop - height / 2 + 16));
 				
 				if (mxClient.IS_SVG)
 				{
-					this.graph2.view.canvas.setAttribute('transform', 'translate(' + x0 + ',' + y0 + ')');
+					if (x0 != 0 || y0 != 0)
+					{
+						this.graph2.view.canvas.setAttribute('transform', 'translate(' + x0 + ',' + y0 + ')');
+					}
+					else
+					{
+						this.graph2.view.canvas.removeAttribute('transform');
+					}
 				}
 				else
 				{
