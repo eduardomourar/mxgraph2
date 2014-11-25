@@ -1,3 +1,4 @@
+- Rounds all numbers in mxSvgCanvas2D to 2 decimal points [JavaScript]
 - Uses helper method in mxShape.createBoundingBox [JavaScript]
 - Fixes italic rich text editing in grapheditor
 - Fixes handling of XHTML entities in mxSvgCanvas2D.createDiv [JavaScript]

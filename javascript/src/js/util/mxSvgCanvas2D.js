@@ -223,6 +223,16 @@ mxSvgCanvas2D.prototype.pointerEventsValue = 'all';
 mxSvgCanvas2D.prototype.fontMetricsPadding = 10;
 
 /**
+ * Function: format
+ * 
+ * Rounds all numbers to 2 decimal points.
+ */
+mxSvgCanvas2D.prototype.format = function(value)
+{
+	return parseFloat(parseFloat(value).toFixed(2));
+};
+
+/**
  * Function: getBaseUrl
  * 
  * Returns the URL of the page without the hash part. This needs to use href to
@@ -832,14 +842,14 @@ mxSvgCanvas2D.prototype.rotate = function(theta, flipH, flipV, cx, cy)
 		{
 			theta += 180;
 		}
-		else if (flipH ^ flipV)
+		else if (flipH != flipV)
 		{
 			var tx = (flipH) ? cx : 0;
 			var sx = (flipH) ? -1 : 1;
 	
 			var ty = (flipV) ? cy : 0;
 			var sy = (flipV) ? -1 : 1;
-	
+
 			s.transform += 'translate(' + this.format(tx) + ',' + this.format(ty) + ')' +
 				'scale(' + this.format(sx) + ',' + this.format(sy) + ')' +
 				'translate(' + this.format(-tx) + ',' + this.format(-ty) + ')';
