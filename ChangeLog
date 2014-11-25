@@ -1,5 +1,4 @@
-- Fixes dangling edge handling in mxHierarchicalLayout.getVisibleTerminal [JavaScript]
-- Fixes jetty positioning for South and East hierarchical orientation [JavaScript]
+- Uses helper method in mxShape.createBoundingBox [JavaScript]
 - Fixes italic rich text editing in grapheditor
 - Fixes handling of XHTML entities in mxSvgCanvas2D.createDiv [JavaScript]
 - Fixes HTML source mode editor size in grapheditor [JavaScript]

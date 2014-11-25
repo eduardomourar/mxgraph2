@@ -1264,12 +1264,7 @@ mxShape.prototype.createBoundingBox = function()
 	if ((this.stencil != null && (this.direction == mxConstants.DIRECTION_NORTH ||
 		this.direction == mxConstants.DIRECTION_SOUTH)) || this.isPaintBoundsInverted())
 	{
-		var t = (bb.width - bb.height) / 2;
-		bb.x += t;
-		bb.y -= t;
-		var tmp = bb.width;
-		bb.width = bb.height;
-		bb.height = tmp;
+		bb.rotate90();
 	}
 	
 	return bb;
