@@ -87,6 +87,13 @@ mxShape.prototype.dialect = null;
 mxShape.prototype.scale = 1;
 
 /**
+ * Variable: antiAlias
+ * 
+ * Rendering hint for configuring the canvas.
+ */
+mxShape.prototype.antiAlias = true;
+
+/**
  * Variable: bounds
  *
  * Holds the <mxRectangle> that specifies the bounds of this shape.
@@ -553,6 +560,15 @@ mxShape.prototype.createSvgCanvas = function()
 	else
 	{
 		this.node.removeAttribute('transform');
+	}
+	
+	if (!this.antiAlias)
+	{
+		// Rounds all numbers in the SVG output to integers
+		canvas.format = function(value)
+		{
+			return Math.round(parseFloat(value));
+		};
 	}
 	
 	return canvas;
