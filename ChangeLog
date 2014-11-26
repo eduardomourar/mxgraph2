@@ -1,3 +1,4 @@
+- Adds mxVertexHandler.isRotationHandleVisible, fixes possible NPEs [JavaScript]
 - mxCellEditor.resize ignores wrapping for cells with size 1 or 0 [JavaScript]
 - No longer replaces spaces with &nbsp; in mxCellEditor.resize
 - Adds nl2Br style to disable conversion of linefeeds in grapheditor
