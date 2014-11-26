@@ -1,5 +1,5 @@
 .geEditor {
-	font-family:'Helvetica Neue',Arial Unicode MS,Arial,Helvetica;
+	font-family:Helvetica Neue,Helvetica,Arial Unicode MS,Arial;
 	font-size:10pt;
 	border:none;
 	margin:0px;
@@ -442,7 +442,7 @@ html table.mxPopupMenu {
 }
 html td.mxPopupMenuItem {
 	padding:7px 30px 7px 30px;
-	font-family:'Helvetica Neue',Arial Unicode MS,Arial,Helvetica;
+	font-family:Helvetica Neue,Helvetica,Arial Unicode MS,Arial;
 	font-size:10pt;
 }
 html td.mxPopupMenuIcon {
