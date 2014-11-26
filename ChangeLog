@@ -1,3 +1,5 @@
+- No longer replaces spaces with &nbsp; in mxCellEditor.resize
+- Adds nl2Br style to disable conversion of linefeeds in grapheditor
 - Hides handles for editing cell in grapheditor
 - Automatically removes empty edge labels in grapheditor
 - Double click on edge adds new label in grapheditor

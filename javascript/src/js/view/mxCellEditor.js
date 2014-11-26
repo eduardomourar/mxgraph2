@@ -386,10 +386,6 @@ mxCellEditor.prototype.resize = function()
 						this.textDiv.style.maxWidth = this.bounds.width + 'px';
 					}
 				}
-				else
-				{
-					value = value.replace(/ /g, '&nbsp;');
-				}
 				
 				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
 				this.textDiv.innerHTML = (value.length > 0) ? value : '&nbsp;';
