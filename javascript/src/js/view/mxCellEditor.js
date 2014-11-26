@@ -367,7 +367,7 @@ mxCellEditor.prototype.resize = function()
 				// Measures string using a hidden div
 				var value = this.getCurrentHtmlValue();
 				var clip = this.graph.isLabelClipped(state.cell);
-				var wrap = this.graph.isWrapping(state.cell);
+				var wrap = this.graph.isWrapping(state.cell) && (state.width >= 2 || state.height >= 2);
 				
 				if (wrap)
 				{
