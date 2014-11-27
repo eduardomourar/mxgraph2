@@ -201,13 +201,14 @@
 	_filter:none !important;
 }
 .geSidebarContainer {
+	background:#ffffff;
 	overflow:hidden;
 	position:absolute;
 	border-top:1px solid #e5e5e5;
-	background:whiteSmoke;
 	overflow:auto;
 }
 .geSidebar {
+	background:whiteSmoke;
 	border-bottom:1px solid #e5e5e5;
 	padding:5px;
 	_padding:1px;

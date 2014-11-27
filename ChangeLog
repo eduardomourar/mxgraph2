@@ -1,3 +1,6 @@
+- Changes background color of sidebar to white in grapheditor
+- Fixes autosize in mxCellEditor for IE11 [JavaScript]
+- mxCellEditor.resize no longer ignores labelWidth style [JavaScript]
 - Uses text bounding box for edge label cells in grapheditor
 - Uses state position in handle for vertex with size 1 or 0 [JavaScript]
 - Moves cellsInserted event from EditorUi to Graph in grapheditor
@@ -90,7 +93,7 @@
 
 30-OCT-2014: 3.1.1.0
 
-- Adds workarond for limited number of stylesheets in quirks mode [JavaScript]
+- Adds workaround for limited number of stylesheets in quirks mode [JavaScript]
 - Adds bends argument in mxEdgeHandler.destroyBends [JavaScript]
 - Adds mxEdgeHandler.mergeRemoveEnabled, dblClickRemoveEnabled [JavaScript]
 - Adds mxEdgeHandler.virtualBendsEnabled and getter, createVirtualBends [JavaScript]
