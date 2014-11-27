@@ -95,7 +95,7 @@
 
 30-OCT-2014: 3.1.1.0
 
-- Adds workarond for limited number of stylesheets in quirks mode [JavaScript]
+- Adds workaround for limited number of stylesheets in quirks mode [JavaScript]
 - Adds bends argument in mxEdgeHandler.destroyBends [JavaScript]
 - Adds mxEdgeHandler.mergeRemoveEnabled, dblClickRemoveEnabled [JavaScript]
 - Adds mxEdgeHandler.virtualBendsEnabled and getter, createVirtualBends [JavaScript]
