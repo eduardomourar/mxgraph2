@@ -18,6 +18,8 @@
 - Double click on edge adds new label in grapheditor
 - Adds mxCellRenderer.antiAlias, mxShape.antiAlias switches [JavaScript]
 - Rounds all numbers in mxSvgCanvas2D to 2 decimal points [JavaScript]
+- Fixes dangling edge handling in mxHierarchicalLayout.getVisibleTerminal [JavaScript]
+- Fixes jetty positioning for South and East hierarchical orientation [JavaScript]
 - Uses helper method in mxShape.createBoundingBox [JavaScript]
 - Fixes italic rich text editing in grapheditor
 - Fixes handling of XHTML entities in mxSvgCanvas2D.createDiv [JavaScript]
@@ -93,7 +95,7 @@
 
 30-OCT-2014: 3.1.1.0
 
-- Adds workaround for limited number of stylesheets in quirks mode [JavaScript]
+- Adds workarond for limited number of stylesheets in quirks mode [JavaScript]
 - Adds bends argument in mxEdgeHandler.destroyBends [JavaScript]
 - Adds mxEdgeHandler.mergeRemoveEnabled, dblClickRemoveEnabled [JavaScript]
 - Adds mxEdgeHandler.virtualBendsEnabled and getter, createVirtualBends [JavaScript]
