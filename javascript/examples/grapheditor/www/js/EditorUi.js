@@ -162,65 +162,6 @@ EditorUi = function(editor, container)
 	}
     
     graph.container.focus();
-   	
-	// Overrides double click handling to add the tolerance
-    var ui = this;
-    
-	var graphDblClick = graph.dblClick;
-	graph.dblClick = function(evt, cell)
-	{
-		if (cell == null)
-		{
-			var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-			cell = this.getCellAt(pt.x, pt.y);
-		}
-		
-		// Automatically adds new child cells to edges on double click
-		if (evt != null && this.model.isEdge(cell))
-		{
-			var state = this.view.getState(cell);
-			
-			if (state.text == null || state.text.node == null || !mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))
-			{
-				var pt1 = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-				
-				var label = new mxCell();
-				label.value = 'Text';
-				label.style = 'text;html=1;resizable=0;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;'
-				label.geometry = new mxGeometry(0, 0, 0, 0);
-				label.geometry.relative = true;
-				label.connectable = false;
-				label.vertex = true;
-				
-				// Resets the relative location stored inside the geometry
-				var edgeState = this.view.getState(cell);
-				var pt = this.view.getRelativePoint(edgeState, pt1.x, pt1.y);
-				label.geometry.x = Math.round(pt.x * 10000) / 10000;
-				label.geometry.y = Math.round(pt.y);
-				
-				// Resets the offset inside the geometry to find the offset from the resulting point
-				label.geometry.offset = new mxPoint(0, 0);
-				var pt = this.view.getPoint(edgeState, label.geometry);
-				var scale = this.view.scale;
-				label.geometry.offset = new mxPoint(Math.round((pt1.x - pt.x) / scale), Math.round((pt1.y - pt.y) / scale));
-				
-				this.getModel().beginUpdate();
-				try
-				{
-					this.addCells([label], cell);
-					ui.fireEvent(new mxEventObject('cellsInserted', 'cells', [label]));
-				}
-				finally
-				{
-					this.getModel().endUpdate();
-				}
-				
-				cell = label;
-			}
-		}
-
-		graphDblClick.call(this, evt, cell);
-	};
 
    	// Keeps graph container focused on mouse down
    	var graphFireMouseEvent = graph.fireMouseEvent;
@@ -455,7 +396,7 @@ EditorUi = function(editor, container)
 		}
 	};
 
-	this.addListener('cellsInserted', function(sender, evt)
+	graph.addListener('cellsInserted', function(sender, evt)
 	{
 		insertHandler(evt.getProperty('cells'));
 	});
@@ -722,6 +663,11 @@ EditorUi.prototype.splitSize = (mxClient.IS_TOUCH || mxClient.IS_POINTER) ? 12 :
 EditorUi.prototype.menubarHeight = 30;
 
 /**
+ * Specifies the width of the format sidebar. Default is 0.
+ */
+EditorUi.prototype.formatWidth = 0;
+
+/**
  * Specifies the height of the toolbar. Default is 36.
  */
 EditorUi.prototype.toolbarHeight = 34;
@@ -737,7 +683,7 @@ EditorUi.prototype.footerHeight = 28;
 EditorUi.prototype.sidebarFooterHeight = 34;
 
 /**
- * Specifies the height of the horizontal split bar. Default is 212.
+ * Specifies the height of the horizontal split bar. Default is 204.
  */
 EditorUi.prototype.hsplitPosition = 204;
 
@@ -1088,7 +1034,7 @@ EditorUi.prototype.initCanvas = function()
  */
 EditorUi.prototype.isSelectionAllowed = function(evt)
 {
-	return mxEvent.getSource(evt).nodeName == 'SELECT';
+	return mxEvent.getSource(evt).nodeName == 'SELECT' || mxUtils.isAncestorNode(this.formatContainer, mxEvent.getSource(evt));
 };
 
 /**
@@ -1203,7 +1149,14 @@ EditorUi.prototype.undo = function()
 {
 	if (this.editor.graph.cellEditor.isContentEditing())
 	{
+		// Stops editing if undo doesn't change anything in the editing value
+		var value = this.editor.graph.cellEditor.getCurrentValue();
 		document.execCommand('undo');
+		
+		if (value == this.editor.graph.cellEditor.getCurrentValue())
+		{
+			this.editor.graph.stopEditing(false);
+		}
 	}
 	else
 	{
@@ -1480,7 +1433,7 @@ EditorUi.prototype.refresh = function()
 	this.sidebarContainer.style.top = tmp + 'px';
 	this.sidebarContainer.style.width = effHsplitPosition + 'px';
 	this.formatContainer.style.top = tmp + 'px';
-	this.formatContainer.style.width = '220px';
+	this.formatContainer.style.width = this.formatWidth + 'px';
 	
 	this.diagramContainer.style.left = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) + 'px' : '0px';
 	this.diagramContainer.style.top = this.sidebarContainer.style.top;
@@ -1496,7 +1449,7 @@ EditorUi.prototype.refresh = function()
 		var sidebarHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
 		this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
 		this.formatContainer.style.height = sidebarHeight + 'px';
-		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize - 220) + 'px' : w + 'px';
+		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize - this.formatWidth) + 'px' : w + 'px';
 		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
 		this.diagramContainer.style.height = diagramHeight + 'px';
 		this.footerContainer.style.width = this.menubarContainer.style.width;
@@ -1538,7 +1491,7 @@ EditorUi.prototype.createDivs = function()
 	this.toolbarContainer.style.right = '0px';
 	this.sidebarContainer.style.left = '0px';
 	this.formatContainer.style.right = '0px';
-	this.diagramContainer.style.right = '220px';
+	this.diagramContainer.style.right = this.formatWidth + 'px';
 	this.footerContainer.style.left = '0px';
 	this.footerContainer.style.right = '0px';
 	this.footerContainer.style.bottom = '0px';

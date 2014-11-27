@@ -617,6 +617,74 @@ Graph.prototype.getLinkForCell = function(cell)
 	return null;
 };
 
+/**
+ * Overrides double click handling to add the tolerance.
+ */
+Graph.prototype.dblClick = function(evt, cell)
+{
+	var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+	
+	if (cell == null)
+	{
+		cell = this.getCellAt(pt.x, pt.y);
+	}
+
+	// Automatically adds new child cells to edges on double click
+	if (evt != null && this.model.isEdge(cell))
+	{
+		var state = this.view.getState(cell);
+		
+		// FIXME: Called twice in quirks mode
+		if (state != null && (state.text == null || state.text.node == null || (!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
+			!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
+		{
+			cell = this.addEdgeLabelAt(state, pt.x, pt.y);
+		}
+	}
+
+	mxGraph.prototype.dblClick.call(this, evt, cell);
+};
+
+/**
+ * Adds a new edge label at the given position and returns the new cell.
+ */
+Graph.prototype.addEdgeLabelAt = function(state, x, y)
+{
+	// Creates a new edge label with a predefined text
+	var label = new mxCell();
+	label.value = 'Text';
+	label.style = 'text;html=1;resizable=0;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;'
+	label.geometry = new mxGeometry(0, 0, 0, 0);
+	label.geometry.relative = true;
+	label.connectable = false;
+	label.vertex = true;
+	
+	// Resets the relative location stored inside the geometry
+	var pt2 = this.view.getRelativePoint(state, x, y);
+	label.geometry.x = Math.round(pt2.x * 10000) / 10000;
+	label.geometry.y = Math.round(pt2.y);
+	
+	// Resets the offset inside the geometry to find the offset from the resulting point
+	label.geometry.offset = new mxPoint(0, 0);
+	pt2 = this.view.getPoint(state, label.geometry);
+
+	var scale = this.view.scale;
+	label.geometry.offset = new mxPoint(Math.round((x - pt2.x) / scale), Math.round((y - pt2.y) / scale));
+	
+	this.getModel().beginUpdate();
+	try
+	{
+		this.addCells([label], state.cell);
+		this.fireEvent(new mxEventObject('cellsInserted', 'cells', [label]));
+	}
+	finally
+	{
+		this.getModel().endUpdate();
+	}
+	
+	return label;
+};
+
 
 /**
  * Function: alignCells
@@ -889,11 +957,13 @@ Graph.prototype.initTouch = function()
 	{
 		if (this.text2 != null)
 		{
+			var state = this.graph.view.getState(this.editingCell);
+			var nl2Br = state != null && mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
 			var tmp = this.saveSelection();
 			
 			if (this.textarea.style.display == 'none')
 			{
-				var content = this.graph.sanitizeHtml(this.text2.innerHTML.replace(/\n/g, ''));
+				var content = this.graph.sanitizeHtml((nl2Br) ? this.text2.innerHTML.replace(/\n/g, '') : this.text2.innerHTML);
 				
 				if (this.textarea.value != content)
 				{
@@ -907,7 +977,7 @@ Graph.prototype.initTouch = function()
 			}
 			else
 			{
-				var content = this.graph.sanitizeHtml(this.textarea.value.replace(/\n/g, '<br/>'));
+				var content = this.graph.sanitizeHtml((nl2Br) ? this.textarea.value.replace(/\n/g, '<br/>') : this.textarea.value);
 				
 				if (this.text2.innerHTML != content)
 				{
@@ -995,6 +1065,22 @@ Graph.prototype.initTouch = function()
 			}
 		}
 	};
+	
+	/**
+	 * Handling of special nl2Br style for not converting newlines to breaks in HTML labels.
+	 * NOTE: Since it's easier to set this when the label is created we assume that it does
+	 * not change during the lifetime of the mxText instance.
+	 */
+	var mxCellRendererInitializeLabel = mxCellRenderer.prototype.initializeLabel;
+	mxCellRenderer.prototype.initializeLabel = function(state)
+	{
+		if (state.text != null)
+		{
+			state.text.replaceLinefeeds = mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
+		}
+		
+		mxCellRendererInitializeLabel.apply(this, arguments);
+	};
 
 	if ('contentEditable' in document.documentElement)
 	{
@@ -1075,16 +1161,34 @@ Graph.prototype.initTouch = function()
 			if ((this.graph.getModel().isEdge(parent) && geo != null && geo.relative) ||
 				this.graph.getModel().isEdge(cell))
 			{
-				this.textarea.style.outline = '';
+				// Quirks does not support outline at all so use border instead
+				if (mxClient.IS_QUIRKS)
+				{
+					this.textarea.style.border = 'gray dotted 1px';
+				}
+				// IE>8 uses outline default of none
+				else if (mxClient.IS_IE || mxClient.IS_IE11)
+				{
+					this.textarea.style.outline = 'gray dotted 1px';
+				}
+				else
+				{
+					this.textarea.style.outline = '';
+				}
+			}
+			else if (mxClient.IS_QUIRKS)
+			{
+				this.textarea.style.border = '';
 			}
 	
 			if (this.textarea.style.display == 'none')
 			{
 				this.text2 = document.createElement('div');
 				this.text2.className = 'geContentEditable';
-				this.text2.innerHTML = this.graph.sanitizeHtml(this.textarea.value.replace(/\n/g, '<br/>'));
+				var nl2Br = mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
+				this.text2.innerHTML = this.graph.sanitizeHtml((nl2Br) ? this.textarea.value.replace(/\n/g, '<br/>') : this.textarea.value);
 				
-				var evtName = (!mxClient.IS_IE || document.documentMode >= 9) ? 'input' : 'keypress';
+				var evtName = (!mxClient.IS_IE11 && (!mxClient.IS_IE || document.documentMode >= 9)) ? 'input' : 'keypress';
 				mxEvent.addListener(this.text2, evtName, mxUtils.bind(this, function(evt)
 				{
 					if (this.autoSize && !mxEvent.isConsumed(evt))
@@ -1121,6 +1225,7 @@ Graph.prototype.initTouch = function()
 
 				style.cursor = 'text';
 				style.position = 'absolute';
+				style.border = this.textarea.style.border;
 				style.outline = this.textarea.style.outline;
 				style.width = parseInt(this.textarea.style.width) + 'px';
 				style.height = (parseInt(this.textarea.style.height) - 4) + 'px';
@@ -1169,6 +1274,19 @@ Graph.prototype.initTouch = function()
 				if (this.currentStateHandle != null && this.currentStateHandle.setHandlesVisible != null)
 				{
 					this.currentStateHandle.setHandlesVisible(false);
+
+					// Hides the bounding box while editing edge labels
+					if (this.currentStateHandle.selectionBorder != null)
+					{
+						var model = this.graph.getModel();
+						var parent = model.getParent(state.cell);
+						var geo = this.graph.getCellGeometry(state.cell);
+						
+						if (model.isEdge(parent) && geo != null && geo.relative && state.width < 2 && state.height < 2 && state.text != null && state.text.boundingBox != null)
+						{
+							this.currentStateHandle.selectionBorder.node.style.display = 'none';
+						}
+					}
 				}
 			}
 		};
@@ -1235,6 +1353,11 @@ Graph.prototype.initTouch = function()
 				if (this.currentStateHandle.setHandlesVisible != null)
 				{
 					this.currentStateHandle.setHandlesVisible(true);
+					
+					if (this.currentStateHandle.selectionBorder != null)
+					{
+						this.currentStateHandle.selectionBorder.node.style.display = '';
+					}
 				}
 				
 				this.currentStateHandle = null;
@@ -1249,6 +1372,16 @@ Graph.prototype.initTouch = function()
 				{
 					this.textarea.value = content.replace(/\r\n/g, '').replace(/\n/g, '');
 					this.setModified(true);
+				}
+				else
+				{
+					var state = this.graph.view.getState(this.editingCell);
+					var nl2Br = state != null && mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
+					
+					if (nl2Br)
+					{
+						this.textarea.value = this.textarea.value.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>');
+					}
 				}
 				
 				this.textarea.value = this.graph.sanitizeHtml(this.textarea.value);
@@ -1491,7 +1624,19 @@ Graph.prototype.initTouch = function()
 	var triangleLeft = new mxImage(IMAGE_PATH + '/triangle-left.png', 26, 26);
 	var refreshTarget = new mxImage(IMAGE_PATH + '/refresh.png', 38, 38);
 	var roundDrop = new mxImage(IMAGE_PATH + '/round-drop.png', 26, 26);
-
+	
+	// Pre-fetches images
+	new Image().src = connectHandle.src;
+	new Image().src = mainHandle.src;
+	new Image().src = fixedHandle.src;
+	new Image().src = secondaryHandle.src;
+	new Image().src = rotationHandle.src;
+	new Image().src = triangleUp.src;
+	new Image().src = triangleRight.src;
+	new Image().src = triangleDown.src;
+	new Image().src = triangleLeft.src;
+	new Image().src = roundDrop.src;
+	
 	mxConnectionHandler.prototype.connectImage = connectHandle;
 	mxVertexHandler.prototype.handleImage = mainHandle;
 	mxVertexHandler.prototype.secondaryHandleImage = secondaryHandle;
@@ -1520,14 +1665,13 @@ Graph.prototype.initTouch = function()
 	mxEdgeHandler.prototype.outlineConnect = true;
 	
 	mxEdgeHandlerIsVirtualBendsEnabled = mxEdgeHandler.prototype.isVirtualBendsEnabled;
-	
 	mxEdgeHandler.prototype.isVirtualBendsEnabled = function()
 	{
 		return mxEdgeHandlerIsVirtualBendsEnabled.apply(this, arguments) &&
 			mxUtils.getValue(this.state.style, mxConstants.STYLE_SHAPE, null) != 'link';
 	};
 	
-	// Shows secondars handle for fixed connection points
+	// Shows secondary handle for fixed connection points
 	mxEdgeHandler.prototype.createHandleShape = function(index)
 	{
 		var source = index == 0;
@@ -1557,26 +1701,73 @@ Graph.prototype.initTouch = function()
 			return new mxRectangleShape(new mxRectangle(0, 0, s, s), mxConstants.HANDLE_FILLCOLOR, mxConstants.HANDLE_STROKECOLOR);
 		}
 	};
-	
-	// Pre-fetches images
-	new Image().src = connectHandle.src;
-	new Image().src = mainHandle.src;
-	new Image().src = fixedHandle.src;
-	new Image().src = secondaryHandle.src;
-	new Image().src = rotationHandle.src;
-	new Image().src = triangleUp.src;
-	new Image().src = triangleRight.src;
-	new Image().src = triangleDown.src;
-	new Image().src = triangleLeft.src;
-	new Image().src = roundDrop.src;
-	
+
 	var vertexHandlerCreateSizerShape = mxVertexHandler.prototype.createSizerShape;
 	mxVertexHandler.prototype.createSizerShape = function(bounds, index, fillColor)
 	{
-		this.handleImage = (index == mxEvent.ROTATION_HANDLE) ? rotationHandle : mxVertexHandler.prototype.handleImage;
+		this.handleImage = (index == mxEvent.ROTATION_HANDLE) ? rotationHandle : (index == mxEvent.LABEL_HANDLE) ? this.secondaryHandleImage : this.handleImage;
 		return vertexHandlerCreateSizerShape.apply(this, arguments);
 	};
 	
+	// Special case for single edge label handle moving in which case the text bounding box is used
+	var mxGraphHandlerGetBoundingBox = mxGraphHandler.prototype.getBoundingBox;
+	mxGraphHandler.prototype.getBoundingBox = function(cells)
+	{
+		if (cells != null && cells.length == 1)
+		{
+			var model = this.graph.getModel();
+			var parent = model.getParent(cells[0]);
+			var geo = this.graph.getCellGeometry(cells[0]);
+			
+			if (model.isEdge(parent) && geo != null && geo.relative)
+			{
+				var state = this.graph.view.getState(cells[0]);
+				
+				if (state != null && state.width < 2 && state.height < 2 && state.text != null && state.text.boundingBox != null)
+				{
+					return mxRectangle.fromRectangle(state.text.boundingBox);
+				}
+			}
+		}
+		
+		return mxGraphHandlerGetBoundingBox.apply(this, arguments);
+	};
+	
+	// Uses text bounding box for edge labels
+	var mxVertexHandlerGetSelectionBounds = mxVertexHandler.prototype.getSelectionBounds;
+	mxVertexHandler.prototype.getSelectionBounds = function(state)
+	{
+		var model = this.graph.getModel();
+		var parent = model.getParent(state.cell);
+		var geo = this.graph.getCellGeometry(state.cell);
+		
+		if (model.isEdge(parent) && geo != null && geo.relative && state.width < 2 && state.height < 2 && state.text != null && state.text.boundingBox != null)
+		{
+			var bbox = state.text.boundingBox;
+			
+			return new mxRectangle(Math.round(bbox.x), Math.round(bbox.y), Math.round(bbox.width), Math.round(bbox.height));
+		}
+		else
+		{
+			return mxVertexHandlerGetSelectionBounds.apply(this, arguments);
+		}
+	};
+
+	// Redirects moving of edge labels to mxGraphHandler by not starting here.
+	// This will use the move preview of mxGraphHandler (see above).
+	var mxVertexHandlerMouseDown = mxVertexHandler.prototype.mouseDown;
+	mxVertexHandler.prototype.mouseDown = function(sender, me)
+	{
+		var model = this.graph.getModel();
+		var parent = model.getParent(this.state.cell);
+		var geo = this.graph.getCellGeometry(this.state.cell);
+		
+		if (!model.isEdge(parent) || geo == null || !geo.relative || this.state == null || this.state.width >= 2 || this.state.height >= 2)
+		{
+			mxVertexHandlerMouseDown.apply(this, arguments);
+		}
+	};
+
 	// Requires callback to editorUi in edit link so override editorUi.init
 	var editorUiInit3 = EditorUi.prototype.init;
 	EditorUi.prototype.init = function()
