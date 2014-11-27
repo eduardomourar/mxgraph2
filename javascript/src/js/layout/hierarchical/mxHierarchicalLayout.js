@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2005-2012, JGraph Ltd
+ * Copyright (c) 2005-2014, JGraph Ltd
  */
 /**
  * Class: mxHierarchicalLayout
@@ -443,12 +443,15 @@ mxHierarchicalLayout.prototype.getVisibleTerminal = function(edge, source)
 		terminal = (state != null) ? state.getVisibleTerminal(source) : this.graph.view.getVisibleTerminal(edge, source);
 	}
 
-	if (this.isPort(terminal))
+	if (terminal != null)
 	{
-		terminal = this.graph.model.getParent(terminal);
+		if (this.isPort(terminal))
+		{
+			terminal = this.graph.model.getParent(terminal);
+		}
+		
+		terminalCache.put(edge, terminal);
 	}
-	
-	terminalCache.put(edge, terminal);
 
 	return terminal;
 };
