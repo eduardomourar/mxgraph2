@@ -274,8 +274,8 @@ mxCellEditor.prototype.installListeners = function(elt)
 	this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
 	
 	// Adds automatic resizing of the textbox while typing
-	// Use input event in all browsers and IE >= 9 for resize
-	var evtName = (!mxClient.IS_IE || document.documentMode >= 9) ? 'input' : 'keypress';
+	// Use input event in all browsers and IE >= 9 (but not IE11) for resize
+	var evtName = (!mxClient.IS_IE11 && (!mxClient.IS_IE || document.documentMode >= 9)) ? 'input' : 'keypress';
 	mxEvent.addListener(elt, evtName, mxUtils.bind(this, function(evt)
 	{
 		if (this.autoSize && !mxEvent.isConsumed(evt))
@@ -333,45 +333,73 @@ mxCellEditor.prototype.resize = function()
 
 		 	if (isEdge || state.style[mxConstants.STYLE_OVERFLOW] != 'fill')
 		 	{
-			 	var scale = this.graph.getView().scale;
-		 		
+		 		var scale = this.graph.getView().scale;
+		 		var lw = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_WIDTH, null);
+				var m = (state.text != null) ? state.text.margin : null;
+				
+				if (m == null)
+				{
+					m = mxUtils.getAlignmentAsPoint(mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER),
+							mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE));
+				}
+				
 		 		if (isEdge)
 				{
 					this.bounds.x = state.absoluteOffset.x;
 					this.bounds.y = state.absoluteOffset.y;
 					this.bounds.width = 0;
 					this.bounds.height = 0;
+					
+					if (lw != null)
+				 	{
+						var tmp = (parseFloat(lw) + 2) * scale;
+						this.bounds.width = tmp;
+						this.bounds.x += m.x * tmp;
+				 	}
 				}
 				else if (this.bounds != null)
 				{
 					var bds = mxRectangle.fromRectangle(state);
 				 	bds = (state.shape != null) ? state.shape.getLabelBounds(bds) : bds;
 				 	
+				 	if (lw != null)
+				 	{
+				 		bds.width = parseFloat(lw) * scale;
+				 	}
+				 	
 				 	if (!state.view.graph.cellRenderer.legacySpacing || state.style[mxConstants.STYLE_OVERFLOW] != 'width')
 				 	{
-						var spacing = parseInt(state.style[mxConstants.STYLE_SPACING] || 0) * scale;
+						var spacing = parseInt(state.style[mxConstants.STYLE_SPACING] || 2) * scale;
 						var spacingTop = (parseInt(state.style[mxConstants.STYLE_SPACING_TOP] || 0) + mxText.prototype.baseSpacingTop) * scale + spacing;
 						var spacingRight = (parseInt(state.style[mxConstants.STYLE_SPACING_RIGHT] || 0) + mxText.prototype.baseSpacingRight) * scale + spacing;
 						var spacingBottom = (parseInt(state.style[mxConstants.STYLE_SPACING_BOTTOM] || 0) + mxText.prototype.baseSpacingBottom) * scale + spacing;
 						var spacingLeft = (parseInt(state.style[mxConstants.STYLE_SPACING_LEFT] || 0) + mxText.prototype.baseSpacingLeft) * scale + spacing;
-	
-						bds = new mxRectangle(bds.x + spacingLeft, bds.y + spacingTop, bds.width - spacingLeft - spacingRight, bds.height - spacingTop - spacingBottom);
+						
+						var hpos = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER);
+						var vpos = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE);
+
+						bds = new mxRectangle(bds.x + spacingLeft, bds.y + spacingTop,
+							bds.width - ((hpos == mxConstants.ALIGN_CENTER && lw == null) ? (spacingLeft + spacingRight) : 0),
+							bds.height - ((vpos == mxConstants.ALIGN_MIDDLE) ? (spacingTop + spacingBottom) : 0));
 				 	}
 				 	
 					this.bounds.x = bds.x + state.absoluteOffset.x;
 					this.bounds.y = bds.y + state.absoluteOffset.y;
 					this.bounds.width = bds.width;
 					this.bounds.height = bds.height;
+					
+					// Workaround for different box model in quirks mode
+					if (mxClient.IS_QUIRKS)
+					{
+						this.bounds.width += 2;
+					}
 				}
 				
 				// Measures string using a hidden div
-				var value = this.getCurrentHtmlValue();
-				var clip = this.graph.isLabelClipped(state.cell);
-				var wrap = this.graph.isWrapping(state.cell) && (state.width >= 2 || state.height >= 2);
+				var wrap = this.graph.isWrapping(state.cell) && (this.bounds.width >= 2 || this.bounds.height >= 2);
 				
 				if (wrap)
 				{
-					// TODO: Invert initial for vertical
 					this.textDiv.style.whiteSpace = 'normal';
 					
 					// Simulating maxWidth by checking the offsetWidth and setting the width if that is
@@ -379,16 +407,17 @@ mxCellEditor.prototype.resize = function()
 					// of the text around it, so there is no need to simulate maxWidth in quirks mode.
 					if (mxClient.IS_QUIRKS)
 					{
-						this.textDiv.style.width = this.bounds.width + 'px';
+						this.textDiv.style.width = Math.ceil(this.bounds.width) + 'px';
 					}
 					else
 					{
-						this.textDiv.style.maxWidth = this.bounds.width + 'px';
+						this.textDiv.style.maxWidth = Math.ceil(this.bounds.width) + 'px';
 					}
 				}
 				
-				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
+				var value = this.getCurrentHtmlValue();
 				this.textDiv.innerHTML = (value.length > 0) ? value : '&nbsp;';
+				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
 				var ow = this.textDiv.offsetWidth + size;
 				var oh = this.textDiv.offsetHeight + 16;
 
@@ -402,35 +431,22 @@ mxCellEditor.prototype.resize = function()
 				{
 					ow = Math.min(this.bounds.width, ow);
 				}
+								
+				// LATER: Keep in visible area
+				this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * (this.bounds.width - ow - 3))) + 'px';
 
-				var m = (state.text != null) ? state.text.margin : null;
-				
-				if (m == null)
+				if (isEdge)
 				{
-					var align = mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER);
-					var valign = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE);
-			
-					m = mxUtils.getAlignmentAsPoint(align, valign);
+					this.textarea.style.top = Math.max(0, Math.round(this.bounds.y - m.y * this.bounds.height + m.y * oh - m.y * 4) + 6) + 'px';
 				}
-				
-				if (m != null)
+				else
 				{
-					// TODO: Keep in visible area
-					if (isEdge)
-					{
-						this.textarea.style.left = Math.max(0, Math.round(this.bounds.x - m.x * this.bounds.width + m.x * ow) - 4) + 'px';
-						this.textarea.style.top = Math.max(0, Math.round(this.bounds.y - m.y * this.bounds.height + m.y * oh - m.y * 4) + 6) + 'px';
-					}
-					else
-					{
-						this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * this.bounds.width + m.x * (ow + 7))) + 'px';
-						this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh + size * 0.1 + 8))) + 'px';
-					}
+
+					this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh + size * 0.1 + 8))) + 'px';
 				}
-	
-				var dx = this.textarea.offsetWidth - this.textarea.clientWidth + 4;
-				this.textarea.style.width = (ow + dx) + 'px';
-				this.textarea.style.height = oh + 'px';
+
+				this.textarea.style.width = Math.ceil(ow + this.textarea.offsetWidth - this.textarea.clientWidth) + 'px';
+				this.textarea.style.height = Math.ceil(oh) + 'px';
 		 	}
 		}
 	}
