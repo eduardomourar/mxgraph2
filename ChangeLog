@@ -1,3 +1,4 @@
+- Fixes dangling edge handling in mxHierarchicalLayout.getVisibleTerminal [JavaScript]
 - Fixes jetty positioning for South and East hierarchical orientation [JavaScript]
 - Fixes italic rich text editing in grapheditor
 - Fixes handling of XHTML entities in mxSvgCanvas2D.createDiv [JavaScript]
