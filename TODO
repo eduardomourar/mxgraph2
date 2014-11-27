@@ -21,6 +21,8 @@
 -------------------------
 
 - Migrate changes in mxEdgeStyle to Java
+- Add preview box for edge label moving
+- Add parent highlight for edges in mxVertexHandler
 
 - Rotation on edges should rotate label (only)
 - Add single handle for multiple selected cells
