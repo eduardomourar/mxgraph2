@@ -653,7 +653,7 @@ mxShape.prototype.updateHtmlFilters = function(node)
 			'Color=\'' + mxConstants.SHADOWCOLOR + '\')';
 	}
 	
-	if (this.gradient)
+	if (this.fill != null && this.fill != mxConstants.NONE && this.gradient && this.gradient != mxConstants.NONE)
 	{
 		var start = this.fill;
 		var end = this.gradient;
@@ -907,8 +907,8 @@ mxShape.prototype.configureCanvas = function(c, x, y, w, h)
 	{
 		c.setDashPattern(dash);
 	}
-	
-	if (this.gradient != null)
+
+	if (this.fill != null && this.fill != mxConstants.NONE && this.gradient && this.gradient != mxConstants.NONE)
 	{
 		var b = this.getGradientBounds(c, x, y, w, h);
 		c.setGradient(this.fill, this.gradient, b.x, b.y, b.width, b.height, this.gradientDirection);
@@ -1189,17 +1189,17 @@ mxShape.prototype.apply = function(state)
 		this.isRounded = mxUtils.getValue(this.style, mxConstants.STYLE_ROUNDED, this.isRounded) == 1;
 		this.glass = mxUtils.getValue(this.style, mxConstants.STYLE_GLASS, this.glass) == 1;
 		
-		if (this.fill == 'none')
+		if (this.fill == mxConstants.NONE)
 		{
 			this.fill = null;
 		}
 
-		if (this.gradient == 'none')
+		if (this.gradient == mxConstants.NONE)
 		{
 			this.gradient = null;
 		}
 
-		if (this.stroke == 'none')
+		if (this.stroke == mxConstants.NONE)
 		{
 			this.stroke = null;
 		}

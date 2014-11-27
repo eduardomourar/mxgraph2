@@ -1,3 +1,4 @@
+- Fixes gradients with no fill color in mxShape for VML [JavaScript]
 - Fixes autoscroll after click on scrollbar in IE11 [JavaScript]
 - Uses Helvetica Neue as default CSS font family in grapheditor
 - Adds mxVertexHandler.isRotationHandleVisible, fixes possible NPEs [JavaScript]
