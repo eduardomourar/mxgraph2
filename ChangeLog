@@ -1,3 +1,8 @@
+- Uses text bounding box for edge label cells in grapheditor
+- Uses state position in handle for vertex with size 1 or 0 [JavaScript]
+- Moves cellsInserted event from EditorUi to Graph in grapheditor
+- Undo in text editor stops editing after last change in grapheditor
+- Fixes focus rectangle for edge label editing in IE in grapheditor
 - Fixes gradients with no fill color in mxShape for VML [JavaScript]
 - Fixes autoscroll after click on scrollbar in IE11 [JavaScript]
 - Uses Helvetica Neue as default CSS font family in grapheditor

@@ -1575,7 +1575,7 @@ mxVertexHandler.prototype.redrawHandles = function()
 			}
 			else
 			{
-				this.moveSizerTo(this.sizers[0], s.x, s.y);
+				this.moveSizerTo(this.sizers[0], this.state.x, this.state.y);
 			}
 		}
 	}
