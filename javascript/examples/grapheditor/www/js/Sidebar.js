@@ -1358,7 +1358,7 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 						select = graph.importCells(cells, x, y, target);
 					}
 
-					this.editorUi.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
+					graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
 				}
 				finally
 				{
@@ -1441,7 +1441,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 						this.editorUi.createCurrentEdgeStyle()));
 			}
 			
-			this.editorUi.fireEvent(new mxEventObject('cellsInserted', 'cells', targets));
+			graph.fireEvent(new mxEventObject('cellsInserted', 'cells', targets));
 		}
 		finally
 		{
