@@ -1,3 +1,5 @@
+28-NOV-2014: 3.1.2.0
+
 - Changes background color of sidebar to white in grapheditor
 - Fixes autosize in mxCellEditor for IE11 [JavaScript]
 - mxCellEditor.resize no longer ignores labelWidth style [JavaScript]

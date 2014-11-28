@@ -1639,7 +1639,7 @@ EditorUi.prototype.createSidebar = function(container)
  */
 EditorUi.prototype.createFormat = function(container)
 {
-	return new Format(this, container);
+	return null;// new Format(this, container);
 };
 
 /**
