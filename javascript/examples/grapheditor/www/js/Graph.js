@@ -1166,8 +1166,8 @@ Graph.prototype.initTouch = function()
 				{
 					this.textarea.style.border = 'gray dotted 1px';
 				}
-				// IE>8 uses outline default of none
-				else if (mxClient.IS_IE || mxClient.IS_IE11)
+				// IE>8 and FF on Windows uses outline default of none
+				else if (mxClient.IS_IE || mxClient.IS_IE11 || (mxClient.IS_FF && mxClient.IS_WIN))
 				{
 					this.textarea.style.outline = 'gray dotted 1px';
 				}
