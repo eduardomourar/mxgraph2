@@ -385,14 +385,9 @@ mxCellEditor.prototype.resize = function()
 				 	
 					this.bounds.x = bds.x + state.absoluteOffset.x;
 					this.bounds.y = bds.y + state.absoluteOffset.y;
-					this.bounds.width = bds.width;
+					// +2 is used to match the box model workarounds in the rendering code
+					this.bounds.width = bds.width + 2;
 					this.bounds.height = bds.height;
-					
-					// Workaround for different box model in quirks mode
-					if (mxClient.IS_QUIRKS)
-					{
-						this.bounds.width += 2;
-					}
 				}
 				
 				// Measures string using a hidden div
