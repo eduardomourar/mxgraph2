@@ -825,11 +825,9 @@ mxGraph.prototype.portsEnabled = true;
 /**
  * Variable: nativeDoubleClickEnabled
  * 
- * Specifies if native double click events should be deteced. Default is false
- * for IE in quirks mode or IE10+, true for all other browsers. The
- * <doubleTapTimeout> value is used to specify the double click speed.
+ * Specifies if native double click events should be deteced. Default is false.
  */
-mxGraph.prototype.nativeDblClickEnabled = !mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode < 10);
+mxGraph.prototype.nativeDblClickEnabled = true;
 
 /**
  * Variable: doubleTapEnabled
@@ -12168,6 +12166,10 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 						this.lastTouchCell = null;
 
 						// Fires native dblclick event via event source
+						// NOTE: This fires two double click events on edges in quirks mode. While
+						// trying to fix this, we realized that nativeDoubleClick can be disabled for
+						// quirks and IE10+ (or we didn't find the case mentioned above where it
+						// would not work), ie. all double clicks seem to be working without this.
 						if (mxClient.IS_QUIRKS)
 						{
 							me.getSource().fireEvent('ondblclick');
