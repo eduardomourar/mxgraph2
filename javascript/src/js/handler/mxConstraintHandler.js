@@ -188,6 +188,17 @@ mxConstraintHandler.prototype.destroyFocusHighlight = function()
 };
 
 /**
+ * Function: isKeepFocusEvent
+ * 
+ * Returns true if the current focused state should not be changed for the given event.
+ * This returns true if shift and alt are pressed.
+ */
+mxConstraintHandler.prototype.isKeepFocusEvent = function(me)
+{
+	return mxEvent.isShiftDown(me.getEvent());
+};
+
+/**
  * Function: update
  * 
  * Updates the state of this handler based on the given <mxMouseEvent>.
@@ -200,88 +211,93 @@ mxConstraintHandler.prototype.update = function(me, source)
 		var tol = this.getTolerance(me);
 		var mouse = new mxRectangle(me.getGraphX() - tol, me.getGraphY() - tol, 2 * tol, 2 * tol);
 		var connectable = (me.getCell() != null) ? this.graph.isCellConnectable(me.getCell()) : false;
-
-		if ((this.currentFocusArea == null || (!mxUtils.intersects(this.currentFocusArea, mouse) ||
-			(me.getState() != null && this.currentFocus != null && connectable))))
+		
+		// Keeps focus icons visible while over vertex bounds and no other cell under mouse or shift is pressed
+		if (!this.isKeepFocusEvent(me) && (this.currentFocus == null || me.getState() != null ||
+			!this.graph.getModel().isVertex(this.currentFocus.cell) || !mxUtils.intersects(this.currentFocus, mouse)))
 		{
-			this.currentFocusArea = null;
-	
-			if (me.getState() != this.currentFocus)
+			if ((this.currentFocusArea == null || (!mxUtils.intersects(this.currentFocusArea, mouse) ||
+				(me.getState() != null && this.currentFocus != null && connectable))))
 			{
-				this.currentFocus = null;
-				this.constraints = (me.getState() != null && connectable && !this.isStateIgnored(me.getState(), source)) ?
-					this.graph.getAllConnectionConstraints(me.getState(), source) : null;
-				
-				// Only uses cells which have constraints
-				if (this.constraints != null)
+				this.currentFocusArea = null;
+		
+				if (me.getState() != this.currentFocus)
 				{
-					this.currentFocus = me.getState();
-					this.currentFocusArea = new mxRectangle(me.getState().x, me.getState().y, me.getState().width, me.getState().height);
+					this.currentFocus = null;
+					this.constraints = (me.getState() != null && connectable && !this.isStateIgnored(me.getState(), source)) ?
+						this.graph.getAllConnectionConstraints(me.getState(), source) : null;
 					
-					if (this.focusIcons != null)
+					// Only uses cells which have constraints
+					if (this.constraints != null)
 					{
-						for (var i = 0; i < this.focusIcons.length; i++)
-						{
-							this.focusIcons[i].destroy();
-						}
+						this.currentFocus = me.getState();
+						this.currentFocusArea = new mxRectangle(me.getState().x, me.getState().y, me.getState().width, me.getState().height);
 						
-						this.focusIcons = null;
-						this.focusPoints = null;
-					}
-					
-					this.focusIcons = [];
-					this.focusPoints = [];
-					
-					for (var i = 0; i < this.constraints.length; i++)
-					{
-						var cp = this.graph.getConnectionPoint(me.getState(), this.constraints[i]);
-						var img = this.getImageForConstraint(me.getState(), this.constraints[i], cp);
-	
-						var src = img.src;
-						var bounds = new mxRectangle(cp.x - img.width / 2,
-							cp.y - img.height / 2, img.width, img.height);
-						var icon = new mxImageShape(bounds, src);
-						icon.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ?
-								mxConstants.DIALECT_MIXEDHTML : mxConstants.DIALECT_SVG;
-						icon.preserveImageAspect = false;
-						icon.init(this.graph.getView().getDecoratorPane());
-						
-						// Fixes lost event tracking for images in quirks / IE8 standards
-						if (mxClient.IS_QUIRKS || document.documentMode == 8)
+						if (this.focusIcons != null)
 						{
-							mxEvent.addListener(icon.node, 'dragstart', function(evt)
+							for (var i = 0; i < this.focusIcons.length; i++)
 							{
-								mxEvent.consume(evt);
-								
-								return false;
+								this.focusIcons[i].destroy();
+							}
+							
+							this.focusIcons = null;
+							this.focusPoints = null;
+						}
+						
+						this.focusIcons = [];
+						this.focusPoints = [];
+						
+						for (var i = 0; i < this.constraints.length; i++)
+						{
+							var cp = this.graph.getConnectionPoint(me.getState(), this.constraints[i]);
+							var img = this.getImageForConstraint(me.getState(), this.constraints[i], cp);
+		
+							var src = img.src;
+							var bounds = new mxRectangle(cp.x - img.width / 2,
+								cp.y - img.height / 2, img.width, img.height);
+							var icon = new mxImageShape(bounds, src);
+							icon.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ?
+									mxConstants.DIALECT_MIXEDHTML : mxConstants.DIALECT_SVG;
+							icon.preserveImageAspect = false;
+							icon.init(this.graph.getView().getDecoratorPane());
+							
+							// Fixes lost event tracking for images in quirks / IE8 standards
+							if (mxClient.IS_QUIRKS || document.documentMode == 8)
+							{
+								mxEvent.addListener(icon.node, 'dragstart', function(evt)
+								{
+									mxEvent.consume(evt);
+									
+									return false;
+								});
+							}
+							
+							// Move the icon behind all other overlays
+							if (icon.node.previousSibling != null)
+							{
+								icon.node.parentNode.insertBefore(icon.node, icon.node.parentNode.firstChild);
+							}
+		
+							var getState = mxUtils.bind(this, function()
+							{
+								return (this.currentFocus != null) ? this.currentFocus : me.getState();
 							});
+							
+							icon.redraw();
+		
+							mxEvent.redirectMouseEvents(icon.node, this.graph, getState);
+							this.currentFocusArea.add(icon.bounds);
+							this.focusIcons.push(icon);
+							this.focusPoints.push(cp);
 						}
 						
-						// Move the icon behind all other overlays
-						if (icon.node.previousSibling != null)
-						{
-							icon.node.parentNode.insertBefore(icon.node, icon.node.parentNode.firstChild);
-						}
-	
-						var getState = mxUtils.bind(this, function()
-						{
-							return (this.currentFocus != null) ? this.currentFocus : me.getState();
-						});
-						
-						icon.redraw();
-	
-						mxEvent.redirectMouseEvents(icon.node, this.graph, getState);
-						this.currentFocusArea.add(icon.bounds);
-						this.focusIcons.push(icon);
-						this.focusPoints.push(cp);
+						this.currentFocusArea.grow(tol);
 					}
-					
-					this.currentFocusArea.grow(tol);
-				}
-				else
-				{
-					this.destroyIcons();
-					this.destroyFocusHighlight();
+					else
+					{
+						this.destroyIcons();
+						this.destroyFocusHighlight();
+					}
 				}
 			}
 		}
