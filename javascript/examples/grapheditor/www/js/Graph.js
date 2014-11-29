@@ -634,7 +634,6 @@ Graph.prototype.dblClick = function(evt, cell)
 	{
 		var state = this.view.getState(cell);
 		
-		// FIXME: Called twice in quirks mode
 		if (state != null && (state.text == null || state.text.node == null || (!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
 			!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
 		{
@@ -643,6 +642,24 @@ Graph.prototype.dblClick = function(evt, cell)
 	}
 
 	mxGraph.prototype.dblClick.call(this, evt, cell);
+};
+
+/**
+ * Overridden to stop moving edge labels between cells.
+ */
+Graph.prototype.getDropTarget = function(cells, evt, cell, clone)
+{
+	var model = this.getModel();
+	
+	for (var i = 0; i < cells.length; i++)
+	{
+		if (this.model.isEdge(this.model.getParent(cells[i])))
+		{
+			return null;
+		}
+	}
+	
+	mxGraph.prototype.getDropTarget.apply(this, arguments);
 };
 
 /**
