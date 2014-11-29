@@ -11682,6 +11682,7 @@ mxGraph.prototype.selectEdges = function(parent)
  * Selects all vertices and/or edges depending on the given boolean
  * arguments recursively, starting at the given parent or the default
  * parent if no parent is specified. Use <selectAll> to select all cells.
+ * For vertices, only cells with no children are selected.
  * 
  * Parameters:
  * 
@@ -11697,8 +11698,7 @@ mxGraph.prototype.selectCells = function(vertices, edges, parent)
 	var filter = mxUtils.bind(this, function(cell)
 	{
 		return this.view.getState(cell) != null &&
-			this.model.getChildCount(cell) == 0 &&
-			((this.model.isVertex(cell) && vertices) ||
+			((this.model.getChildCount(cell) == 0 && this.model.isVertex(cell) && vertices) ||
 			(this.model.isEdge(cell) && edges));
 	});
 	
