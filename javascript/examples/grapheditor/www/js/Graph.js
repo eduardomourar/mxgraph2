@@ -1003,7 +1003,7 @@ Graph.prototype.initTouch = function()
 	var mxConstraintHandlerUpdate = mxConstraintHandler.prototype.update;
 	mxConstraintHandler.prototype.update = function(me, source)
 	{
-		if (!mxEvent.isAltDown(me.getEvent()))
+		if (this.isKeepFocusEvent(me) || !mxEvent.isAltDown(me.getEvent()))
 		{
 			mxConstraintHandlerUpdate.apply(this, arguments);
 		}
