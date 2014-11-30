@@ -74,23 +74,50 @@
 	min-width: 72px;
 	outline: 0;
 	padding: 0 8px;
+	cursor: pointer;
 }
 .geBtn:hover {
+	-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+	-moz-box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
 	box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
 	border: 1px solid #c6c6c6;
 	background-color: #f8f8f8;
-	background-image: -webkit-linear-gradient(top,#f8f8f8,#f1f1f1);
+	background-image: linear-gradient(#f8f8f8 0px,#f1f1f1 100%);
 	color: #111;
+}
+.geColorBtn {
+	background-color: #f5f5f5;
+	background-image: linear-gradient(#f5f5f5 0px,#e1e1e1 100%);
+	border-radius: 4px;
+	border: 1px solid rgba(0,0,0,0.5);
+	color: #333;
+	cursor: default;
+	margin: 0px;
+	outline: 0;
+	padding: 0px;
+	cursor: pointer;		
+}
+.geColorBtn:hover {
+	-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+	-moz-box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+	box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+	border: 1px solid rgba(0,0,0,0.7);
+}
+.geColorBtn:active {
+	background-color: #4d90fe;
+	background-image: linear-gradient(#4d90fe 0px,#357ae8 100%);
+	border: 1px solid #2f5bb7;
+	color: #fff;
 }
 .gePrimaryBtn {
 	background-color: #4d90fe;
-	background-image: linear-gradient(top,#4d90fe,#4787ed);
+	background-image: linear-gradient(#4d90fe 0px,#4787ed 100%);
 	border: 1px solid #3079ed;
 	color: #fff;
 }
 .gePrimaryBtn:hover {
 	background-color: #357ae8;
-	background-image: -webkit-linear-gradient(top,#4d90fe,#357ae8);
+	background-image: linear-gradient(#4d90fe 0px,#357ae8 100%);
 	border: 1px solid #2f5bb7;
 	color: #fff;
 }
@@ -202,6 +229,13 @@
 }
 .geSidebarContainer {
 	background:#ffffff;
+	overflow:hidden;
+	position:absolute;
+	border-top:1px solid #e5e5e5;
+	overflow:auto;
+}
+.geFormatContainer {
+	background:whiteSmoke;
 	overflow:hidden;
 	position:absolute;
 	border-top:1px solid #e5e5e5;

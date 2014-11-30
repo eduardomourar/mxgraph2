@@ -1329,7 +1329,7 @@ EditorUi.prototype.updateActionStates = function()
 	}
 	
 	this.actions.get('setAsDefaultStyle').setEnabled(graph.getSelectionCount() == 1);
-	this.actions.get('switchDirection').setEnabled(!graph.isSelectionEmpty());
+	this.actions.get('turn').setEnabled(!graph.isSelectionEmpty());
 	this.actions.get('curved').setEnabled(edgeSelected);
 	this.actions.get('rotation').setEnabled(vertexSelected);
 	this.actions.get('wordWrap').setEnabled(vertexSelected);
@@ -1478,7 +1478,7 @@ EditorUi.prototype.createDivs = function()
 	this.menubarContainer = this.createDiv('geMenubarContainer');
 	this.toolbarContainer = this.createDiv('geToolbarContainer');
 	this.sidebarContainer = this.createDiv('geSidebarContainer');
-	this.formatContainer = this.createDiv('geSidebarContainer');
+	this.formatContainer = this.createDiv('geFormatContainer');
 	this.diagramContainer = this.createDiv('geDiagramContainer');
 	this.footerContainer = this.createDiv('geFooterContainer');
 	this.hsplit = this.createDiv('geHsplit');
@@ -2097,7 +2097,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
     keyHandler.bindAction(8, false, 'delete'); // Backspace
     keyHandler.bindAction(46, false, 'delete'); // Delete
-    keyHandler.bindAction(82, true, 'switchDirection'); // Ctrl+R
+    keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
     keyHandler.bindAction(83, true, 'save'); // Ctrl+S
     keyHandler.bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
     keyHandler.bindAction(107, false, 'zoomIn'); // Add

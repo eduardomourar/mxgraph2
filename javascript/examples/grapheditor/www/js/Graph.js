@@ -32,7 +32,7 @@ Graph = function(container, model, renderHint, stylesheet)
 	{
 		return mxConnectionHandler.prototype.isValidSource.apply(this, arguments) &&
 			((urlParams['connect'] != '2' && urlParams['connect'] != null) ||
-			mxEvent.isShiftDown(me.getEvent()));
+			(!this.graph.isCellSelected(cell) && mxEvent.isControlDown(me.getEvent())));
 	};
 
 	// Sets the style to be used when an elbow edge is double clicked
@@ -1150,6 +1150,9 @@ Graph.prototype.initTouch = function()
 		mxCellEditor.prototype.startEditing = function(cell, trigger)
 		{
 			this.switchSelectionState = null;
+			
+			// Selects editing cell
+			this.graph.setSelectionCell(cell);
 
 			// First run cannot set display before supercall because textarea is lazy created
 			// Lazy instantiates textarea to save memory in IE
@@ -1252,6 +1255,8 @@ Graph.prototype.initTouch = function()
 				style.fontWeight = this.textarea.style.fontWeight;
 				style.fontStyle = this.textarea.style.fontStyle;
 				style.textAlign = this.textarea.style.textAlign;
+				// FIXME: Use zoom, not font style for scaling (fix affected position)
+				//style.zoom = Math.round(state.view.scale * 100) + '%';
 				style.fontSize = this.textarea.style.fontSize;
 				style.textDecoration = this.textarea.style.textDecoration;
 				style.color = this.textarea.style.color;

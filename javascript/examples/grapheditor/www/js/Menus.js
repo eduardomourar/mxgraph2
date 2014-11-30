@@ -420,7 +420,7 @@ Menus.prototype.init = function()
 	{
 		this.addMenuItems(menu, ['toFront', 'toBack', '-'], parent);
 		this.addSubmenu('direction', menu, parent);
-		this.addMenuItems(menu, ['switchDirection', '-'], parent);
+		this.addMenuItems(menu, ['turn', '-'], parent);
 		this.addSubmenu('align', menu, parent);
 		this.addSubmenu('distribute', menu, parent);
 		this.addMenuItems(menu, ['layers'], parent);

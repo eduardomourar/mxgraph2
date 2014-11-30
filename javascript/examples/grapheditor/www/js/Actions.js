@@ -115,7 +115,7 @@ Actions.prototype.init = function()
 
 		graph.setSelectionCells(select);
 	}, null, null, 'Ctrl+D');
-	this.addAction('switchDirection', function()
+	this.addAction('turn', function()
 	{
 		var cells = graph.getSelectionCells();
 		var model = graph.getModel();
