@@ -152,8 +152,22 @@ Actions.prototype.init = function()
 						
 						geo.setTerminalPoint(sp, false);
 						geo.setTerminalPoint(tp, true);
-						
 						model.setGeometry(cell, geo);
+						
+						// Inverts constraints
+						var edgeState = graph.view.getState(cell);
+						var sourceState = graph.view.getState(src);
+						var targetState = graph.view.getState(trg);
+						
+						if (edgeState != null)
+						{
+							var sc = (sourceState != null) ? graph.getConnectionConstraint(edgeState, sourceState, true) : null;
+							var tc = (targetState != null) ? graph.getConnectionConstraint(edgeState, targetState, false) : null;
+							
+							graph.setConnectionConstraint(cell, src, true, tc);
+							graph.setConnectionConstraint(cell, trg, false, sc);
+						}
+
 						select.push(cell);
 					}
 				}
