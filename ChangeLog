@@ -1,3 +1,4 @@
+- Rounds coordinates in mxGraph.getConnectionPoint result [JavaScript]
 - Adds mxConstraintHandler.isKeepFocusEvent to keep focus with shift key [JavaScript]
 - Keeps connection points visible in constraint handler while over cell [JavaScript]
 - Fixes group resize for multiple hierarchies in mxHierarchicalLayout [JavaScript]

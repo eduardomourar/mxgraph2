@@ -6445,6 +6445,12 @@ mxGraph.prototype.getConnectionPoint = function(vertex, constraint)
 		}
 	}
 	
+	if (point != null)
+	{
+		point.x = Math.round(point.x);
+		point.y = Math.round(point.y);
+	}
+	
 	return point;
 };
 
