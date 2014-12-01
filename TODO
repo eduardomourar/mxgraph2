@@ -22,12 +22,12 @@
 
 - Migrate changes in mxEdgeStyle to Java
 - Add preview box for edge label moving
-- Add parent highlight for edges in mxVertexHandler
+- Add parent highlight for edge childs in mxVertexHandler
 
 - Rotation on edges should rotate label (only)
 - Add single handle for multiple selected cells
 - Fix live preview for resize of rotated container with children (child offset)
-- Fix moving of relative childre between parents (offset)
+- Fix moving of relative children between parents (offset)
 
 - Move mxLayoutManager into validation process (resizeParent cycle)
 - Add image lookup in XML image export

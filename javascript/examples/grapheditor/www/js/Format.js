@@ -138,13 +138,12 @@ StyleFormatPanel.prototype.init = function()
 	
 	this.container.appendChild((function(div)
 	{
-		var stylenames = ['gray', 'blue', 'green', 'turquoise', 'yellow', 'red', 'purple', 'pink'];
+		var stylenames = ['gray', 'blue', 'green', 'turquoise', 'yellow', 'red', 'purple'/*, 'pink'*/, null];
 		div.style.paddingBottom = '4px';
 		
 		function addButton(stylename)
 		{
-			var tmp = graph.stylesheet.styles[stylename];
-			var used = mxUtils.indexOfStylename(graph.getModel().getStyle(graph.getSelectionCell()), stylename) >= 0;
+			var tmp = (stylename != null) ? graph.stylesheet.styles[stylename] : null;
 			
 			var btn = mxUtils.button(''/*mxResources.get(stylename)*/, function(evt)
 			{
@@ -160,7 +159,7 @@ StyleFormatPanel.prototype.init = function()
 						style = mxUtils.removeStylename(style, stylenames[j]);
 					}
 					
-					if (!used && stylename != null)
+					if (stylename != null)
 					{
 						// Removes styles that are defined in this style from the current
 						// style so that they are added behind the stylename if changed
@@ -178,27 +177,29 @@ StyleFormatPanel.prototype.init = function()
 				graph.getModel().endUpdate();
 			})
 
-			var start = tmp['fillColor'];
-			var end = tmp['gradientColor'];
-			var border = tmp['strokeColor'];
+			var start = (tmp != null) ? tmp['fillColor'] : 'whiteSmoke';
+			var end = (tmp != null) ? tmp['gradientColor'] : 'whiteSmoke';
+			var border = (tmp != null) ? tmp['strokeColor'] : '#c0c0c0';
 			
 			btn.style.width = '45px';
 			btn.style.height = '34px';
-			btn.style.border = '1px solid ' + border;
+			btn.style.lineHeight = '24px';
 			btn.style.margin = '1px 10px 10px 1px';
-			btn.style.border = '1px solid ' + border;
 			btn.style.cursor = 'pointer';
-			
-			if (!used)
+			mxUtils.setPrefixedStyle(btn.style, 'box-shadow', '2px 2px 2px 0px #bbb');
+
+			if (tmp != null)
 			{
-				mxUtils.setPrefixedStyle(btn.style, 'box-shadow', '2px 2px 2px 0px #bbb');
-				btn.style.backgroundImage = 'linear-gradient(' + start + ' 0px,' + end + ' 100%)';
+				// TODO: Add support for quirks gradient
+				btn.style.backgroundImage = 'linear-gradient(' + tmp['fillColor'] + ' 0px,' + tmp['gradientColor'] + ' 100%)';
+				btn.style.border = '1px solid ' + tmp['strokeColor'];
 			}
 			else
-			{ 
-				btn.style.backgroundImage = 'url(' + IMAGE_PATH + '/checked.png), linear-gradient(' + start + ' 0px,' + end + ' 100%)';
-				btn.style.backgroundRepeat = 'no-repeat';
-				btn.style.backgroundPosition = '50% 50%';
+			{
+				btn.style.backgroundColor = 'whiteSmoke';
+				btn.style.border = '1px solid #c0c0c0';
+				// TODO: Fix vertical offset
+				btn.innerHTML = 'X';
 			}
 			
 			div.appendChild(btn);
@@ -513,14 +514,12 @@ StyleFormatPanel.prototype.init = function()
 	
 	this.container.appendChild((function(div)
 	{
-		var btn = mxUtils.button(''/*mxResources.get('turn')*/, function(evt)
+		var btn = mxUtils.button(mxResources.get('turn'), function(evt)
 		{
 			ui.actions.get('turn').funct();
 		})
 		
-		btn.style.backgroundImage = 'url(' + IMAGE_PATH + '/handle-rotate.png)';
-		btn.style.width = '28px';
-		btn.style.height = '28px';
+		btn.style.height = '24px';
 		btn.style.backgroundRepeat = 'no-repeat';
 		btn.style.backgroundPosition = '50% 50%';
 		btn.style.marginRight = '8px';
@@ -580,12 +579,125 @@ DiagramFormatPanel.prototype.init = function()
 	var editor = ui.editor;
 	var graph = editor.graph;
 	
+	function addOption(parent, label, isCheckedFn, setCheckedFn)
+	{
+		var cb = document.createElement('input');
+		cb.setAttribute('type', 'checkbox');
+		cb.style.margin = '0px';
+		cb.style.marginRight = '6px';
+		
+		if (isCheckedFn())
+		{
+			cb.setAttribute('checked', 'checked');
+			cb.defaultChecked = true;
+		}
+
+		var span = document.createElement('span');
+		span.style.lineHeight = '24px';
+		span.appendChild(cb);
+		mxUtils.write(span, label);
+		
+		mxEvent.addListener(span, 'click', function(evt)
+		{
+			// Toggles checkbox state for click on label
+			if (mxEvent.getSource(evt) != cb)
+			{
+				cb.checked = !cb.checked;
+			}
+			
+			setCheckedFn(cb.checked);
+		});
+		
+		parent.appendChild(span);
+		mxUtils.br(parent);
+	};
+	
+	function addColorOption(parent, label, getColorFn, setColorFn)
+	{
+		var cb = document.createElement('input');
+		cb.setAttribute('type', 'checkbox');
+		cb.style.margin = '0px';
+		cb.style.marginRight = '6px';
+		
+		var value = getColorFn();
+		
+		var apply = function(color)
+		{
+			btn.innerHTML = '<div style="width:36px;height:12px;margin:4px;border:1px solid black;background-color:' +
+				((color != null && color != mxConstants.NONE) ? color : '#ffffff') + ';"></div>';
+			
+			if (color != null && color != mxConstants.NONE)
+			{
+				cb.setAttribute('checked', 'checked');
+				cb.defaultChecked = true;
+			}
+			else
+			{
+				cb.removeAttribute('checked');
+				cb.defaultChecked = false;
+			}
+
+			btn.style.display = (cb.checked) ? '' : 'none';
+			
+			if (value != color)
+			{
+				value = color;
+				setColorFn(value);
+			}
+		};
+
+		var span = document.createElement('span');
+		span.style.lineHeight = '24px';
+		span.appendChild(cb);
+		mxUtils.write(span, label);
+		parent.appendChild(span);
+
+		var btn = mxUtils.button(''/*mxResources.get('color')*/, function(evt)
+		{
+			var cd = new ColorDialog(ui, value, apply);
+			ui.showDialog(cd.container, 220, 400, true, false);
+			cd.init();
+		});
+		
+		btn.style.position = 'absolute';
+		btn.style.right = '24px';
+		btn.style.height = '24px';
+		btn.style.marginTop = '-1px';
+		btn.className = 'geColorBtn';
+		btn.style.display = (cb.checked) ? '' : 'none';
+		parent.appendChild(btn);
+		
+		mxEvent.addListener(span, 'click', function(evt)
+		{
+			// Toggles checkbox state for click on label
+			if (mxEvent.getSource(evt) != cb)
+			{
+				cb.checked = !cb.checked;
+			}
+			
+			apply((cb.checked) ? value : null); //'#ffffff');
+		});
+		
+		apply(value);
+		mxUtils.br(parent);
+	};
+	
 	var clone = this.container.cloneNode(true);
 	clone.style.paddingTop = '4px';
 	clone.style.paddingBottom = '12px';
-	clone.style.paddingLeft = '10px';
+	clone.style.paddingLeft = '14px';
 	
 	this.container.style.borderBottom = 'none';
+	
+	var options = clone.cloneNode(true);
+	options.style.fontWeight = 'normal';
+	
+	var span = document.createElement('span');
+	span.style.lineHeight = '24px';
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, mxResources.get('options'));
+	options.appendChild(span);
+	mxUtils.br(options);
 	
 	this.container.appendChild((function(div)
 	{
@@ -622,7 +734,7 @@ DiagramFormatPanel.prototype.init = function()
 		var span2 = document.createElement('span');
 		span2.style.position = 'absolute';
 		span2.style.right = '20px';
-		span2.style.lineHeight = '22px';
+		span2.style.lineHeight = '24px';
 		mxUtils.write(span2, mxResources.get('size') + ':');
 		span2.style.display = (cb.checked) ? '' : 'none';
 		
@@ -642,7 +754,7 @@ DiagramFormatPanel.prototype.init = function()
 		});
 
 		var span = document.createElement('span');
-		span.style.lineHeight = '22px';
+		span.style.lineHeight = '24px';
 		cb.style.margin = '0px';
 		cb.style.marginRight = '6px';
 		span.appendChild(cb);
@@ -658,92 +770,78 @@ DiagramFormatPanel.prototype.init = function()
 		div.appendChild(span2);
 		
 		return div;
-	})(clone.cloneNode(true)));
-	
+	})(options));
+
+	mxUtils.br(options);
+
 	// Guides
-	this.container.appendChild((function(div)
+	// TODO: Handle pageViewChanged event
+	addOption(options, mxResources.get('guides'), function()
 	{
-		var cb2 = document.createElement('input');
-		cb2.setAttribute('type', 'checkbox');
-		cb2.style.margin = '0px';
-		
-		if (graph.graphHandler.guidesEnabled)
-		{
-			cb2.setAttribute('checked', 'checked');
-			cb2.defaultChecked = true;
-		}
-		
-		ui.addListener('guidesEnabledChanged', function()
-		{
-			cb2.checked = graph.graphHandler.guidesEnabled;
-		});
-		
-		div.appendChild(cb2);
-		
-		mxEvent.addListener(cb2, 'change', function(evt)
-		{
-			graph.graphHandler.guidesEnabled = !cb2.checked;
-			ui.actions.get('guides').funct();
-			mxEvent.consume(evt);
-		});
-		
-		var span = document.createElement('span');
-		span.style.marginLeft = '6px';
-		span.style.lineHeight = '22px';
-		mxUtils.write(span, mxResources.get('guides'));
-		
-		mxEvent.addListener(span, 'click', function(evt)
-		{
-			cb2.checked = !cb2.checked;
-			graph.graphHandler.guidesEnabled = !cb2.checked;
-			ui.actions.get('guides').funct();
-			mxEvent.consume(evt);
-		});
-		
-		div.appendChild(span);
-		
-		return div;
-	})(clone.cloneNode(true)));
-	
+		return graph.graphHandler.guidesEnabled;
+	}, function(checked)
+	{
+		ui.actions.get('guides').funct();
+	});
+
 	// Page view
-	this.container.appendChild((function(div)
+	// TODO: Handle pageViewChanged event
+	addOption(options, mxResources.get('pageView'), function()
 	{
-		var cb3 = document.createElement('input');
-		cb3.setAttribute('type', 'checkbox');
-		cb3.style.margin = '0px';
-		cb3.checked = graph.pageVisible;
-		
-		ui.addListener('pageViewChanged', function()
+		return graph.pageVisible;
+	}, function(checked)
+	{
+		ui.actions.get('pageView').funct();
+	});
+	
+	// Connection points
+	addOption(options, mxResources.get('connectionPoints'), function()
+	{
+		return graph.connectionHandler.isEnabled();
+	}, function(checked)
+	{
+		graph.setConnectable(checked);
+	});
+
+	var options = clone.cloneNode(true);
+	options.style.fontWeight = 'normal';
+	
+	var span = document.createElement('span');
+	span.style.lineHeight = '24px';
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, mxResources.get('documentProperties'));
+	options.appendChild(span);
+	mxUtils.br(options);
+	
+	this.container.appendChild(options);
+	
+	addColorOption(options, mxResources.get('background'), function()
+	{
+		return graph.background;
+	}, function(color)
+	{
+		ui.setBackgroundColor(color);
+	});
+	
+	if (typeof(MathJax) !== 'undefined')
+	{
+		addOption(options, mxResources.get('mathematicalTypesetting'), function()
 		{
-			cb3.checked = graph.pageVisible;
-		});
-		
-		div.appendChild(cb3);
-		
-		mxEvent.addListener(cb3, 'change', function(evt)
+			return graph.mathEnabled;
+		}, function(checked)
 		{
-			graph.pageVisible = !cb3.checked;
-			ui.actions.get('pageView').funct();
-			mxEvent.consume(evt);
+			ui.setMathEnabled(checked);
 		});
-		
-		var span = document.createElement('span');
-		span.style.marginLeft = '6px';
-		span.style.lineHeight = '22px';
-		mxUtils.write(span, mxResources.get('pageView'));
-		
-		mxEvent.addListener(span, 'click', function(evt)
-		{
-			cb3.checked = !cb3.checked;
-			graph.pageVisible = !cb3.checked;
-			ui.actions.get('pageView').funct();
-			mxEvent.consume(evt);
-		});
-		
-		div.appendChild(span);
-		
-		return div;
-	})(clone.cloneNode(true)));
+	}
+
+	//if (file != null && file.isAutosaveOptional())
+	addOption(options, mxResources.get('autosave'), function()
+	{
+		return ui.editor.autosave;
+	}, function(checked)
+	{
+		ui.editor.autosave = checked;
+	});
 };
 
 /**

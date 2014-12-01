@@ -1034,7 +1034,8 @@ EditorUi.prototype.initCanvas = function()
  */
 EditorUi.prototype.isSelectionAllowed = function(evt)
 {
-	return mxEvent.getSource(evt).nodeName == 'SELECT' || mxUtils.isAncestorNode(this.formatContainer, mxEvent.getSource(evt));
+	return mxEvent.getSource(evt).nodeName == 'SELECT' || (mxEvent.getSource(evt).nodeName == 'INPUT' &&
+		mxUtils.isAncestorNode(this.formatContainer, mxEvent.getSource(evt)));
 };
 
 /**
