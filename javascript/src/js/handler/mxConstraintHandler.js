@@ -214,9 +214,10 @@ mxConstraintHandler.prototype.update = function(me, source)
 				this.graph.getAllConnectionConstraints(me.getState(), source) : null;
 		
 		// Keeps focus icons visible while over vertex bounds and no other cell under mouse or shift is pressed
-		if (!this.isKeepFocusEvent(me) && (this.currentFocusArea == null || (me.getState() != null && cst != null) ||
-			!this.graph.getModel().isVertex(this.currentFocus.cell) || !mxUtils.intersects(this.currentFocusArea, mouse)) &&
-			(me.getState() != this.currentFocus && (me.getCell() == null || this.graph.isCellConnectable(me.getCell()))))
+		if (!this.isKeepFocusEvent(me) && (this.currentFocusArea == null || this.currentFocus == null ||
+			(me.getState() != null && cst != null) || !this.graph.getModel().isVertex(this.currentFocus.cell) ||
+			!mxUtils.intersects(this.currentFocusArea, mouse)) && (me.getState() != this.currentFocus &&
+			(me.getCell() == null || this.graph.isCellConnectable(me.getCell()))))
 		{
 			this.currentFocusArea = null;
 			this.currentFocus = null;
