@@ -1,3 +1,5 @@
+- Adds mxConstraintHandler.isKeepFocusEvent to keep focus with shift key [JavaScript]
+- Keeps connection points visible in constraint handler while over cell [JavaScript]
 - Fixes group resize for multiple hierarchies in mxHierarchicalLayout [JavaScript]
 - mxGraph.selectCells ignores child count for edges [JavaScript]
 - Sets mxGraph.nativeDblClickEnabled to false for all browsers [JavaScript]
