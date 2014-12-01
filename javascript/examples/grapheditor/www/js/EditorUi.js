@@ -1564,7 +1564,7 @@ EditorUi.prototype.createUi = function()
 	}
 	
 	// Creates the format sidebar
-	this.format = (this.editor.chromeless) ? null : this.createFormat(this.formatContainer);
+	this.format = (this.editor.chromeless || urlParams['format'] != '1') ? null : this.createFormat(this.formatContainer);
 	
 	if (this.format != null)
 	{
