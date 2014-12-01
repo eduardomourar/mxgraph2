@@ -1,3 +1,5 @@
+- Fixes group resize for multiple hierarchies in mxHierarchicalLayout [JavaScript]
+
 28-NOV-2014: 3.1.2.0
 
 - Changes background color of sidebar to white in grapheditor
