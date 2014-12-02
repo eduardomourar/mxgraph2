@@ -298,6 +298,11 @@ Graph.prototype.minFitScale = null;
 Graph.prototype.maxFitScale = null;
 
 /**
+ * Sets the default target for all links in cells.
+ */
+Graph.prototype.linkTarget = '_blank';
+
+/**
  * Sanitizes the given HTML markup.
  */
 Graph.prototype.sanitizeHtml = function(value)
@@ -2086,7 +2091,12 @@ Graph.prototype.initTouch = function()
 				var a = document.createElement('a');
 				a.setAttribute('href', link);
 				a.setAttribute('title', link);
-				a.setAttribute('target', '_blank');
+				
+				if (this.graph.linkTarget != null)
+				{
+					a.setAttribute('target', this.graph.linkTarget);
+				}
+				
 				mxUtils.write(a, label);
 				
 				this.linkHint.innerHTML = '';

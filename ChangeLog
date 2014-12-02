@@ -1,3 +1,4 @@
+- Adds Graph.linkTarget option in grapheditor
 - Shows connect icon with control instead of shift, for selected cells in grapheditor
 - Renames switchDirection action to turn in grapheditor
 - Rounds coordinates in mxGraph.getConnectionPoint result [JavaScript]
