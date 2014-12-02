@@ -397,17 +397,6 @@ var AboutDialog = function(editorUi)
  */
 var PageSetupDialog = function(editorUi)
 {
-	// Defines possible page sizes. Needs to be lazy initialized to add any translations.
-	if (PageSetupDialog.formats == null)
-	{
-		PageSetupDialog.formats = [{key: 'a3', title: 'A3 (297 mm x 420 mm)', format: new mxRectangle(0, 0, 1169, 1652)},
-		                           {key: 'a4', title: 'A4 (210 mm x 297 mm)', format: mxConstants.PAGE_FORMAT_A4_PORTRAIT},
-		                           {key: 'a5', title: 'A5 (148 mm x 210 mm)', format: new mxRectangle(0, 0, 584, 826)},
-		                           {key: 'letter', title: 'US-Letter (8,5" x 11")', format: mxConstants.PAGE_FORMAT_LETTER_PORTRAIT},
-		                           {key: 'tabloid', title: 'US-Tabloid (279 mm x 432 mm)', format: new mxRectangle(0, 0, 1100, 1700)},
-		                           {key: 'custom', title: mxResources.get('custom'), format: null}];
-	}
-
 	var graph = editorUi.editor.graph;
 	var row, td;
 
@@ -442,10 +431,11 @@ var PageSetupDialog = function(editorUi)
 	var paperSizeSelect = document.createElement('select');
 	var detected = false;
 	var pf = new Object();
-
-	for (var i = 0; i < PageSetupDialog.formats.length; i++)
+	var formats = PageSetupDialog.getFormats();
+	
+	for (var i = 0; i < formats.length; i++)
 	{
-		var f = PageSetupDialog.formats[i];
+		var f = formats[i];
 		pf[f.key] = f;
 
 		var paperSizeOption = document.createElement('option');
@@ -616,6 +606,19 @@ var PageSetupDialog = function(editorUi)
 	tbody.appendChild(row);
 	table.appendChild(tbody);
 	this.container = table;
+};
+
+/**
+ * 
+ */
+PageSetupDialog.getFormats = function()
+{
+	return [{key: 'a3', title: 'A3 (297 mm x 420 mm)', format: new mxRectangle(0, 0, 1169, 1652)},
+	        {key: 'a4', title: 'A4 (210 mm x 297 mm)', format: mxConstants.PAGE_FORMAT_A4_PORTRAIT},
+	        {key: 'a5', title: 'A5 (148 mm x 210 mm)', format: new mxRectangle(0, 0, 584, 826)},
+	        {key: 'letter', title: 'US-Letter (8,5" x 11")', format: mxConstants.PAGE_FORMAT_LETTER_PORTRAIT},
+	        {key: 'tabloid', title: 'US-Tabloid (279 mm x 432 mm)', format: new mxRectangle(0, 0, 1100, 1700)},
+	        {key: 'custom', title: mxResources.get('custom'), format: null}];
 };
 
 /**

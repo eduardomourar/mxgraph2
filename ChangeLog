@@ -1,3 +1,4 @@
+- Adds PageSetupDialog.getFormats hook in grapheditor
 - Fixes arrow directions in SegmentConnector [JavaScript]
 - Adds rounding in OrthConnector [JavaScript]
 - Adds Graph.linkTarget option in grapheditor
