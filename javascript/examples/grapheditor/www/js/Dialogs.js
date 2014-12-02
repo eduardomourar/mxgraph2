@@ -1442,7 +1442,9 @@ var ExportDialog = function(editorUi)
 	        	var w = 0;
 	        	var h = 0;
 	        	
-	        	if (ExportDialog.imgExportFormat == 'svg')
+	        	var exportFormat = ExportDialog.getExportFormat(format);
+	        	
+	        	if (exportFormat == 'svg')
 	        	{
 	        		var svgRoot = getSvg();
 	        			
@@ -1528,6 +1530,15 @@ var ExportDialog = function(editorUi)
  */
 ExportDialog.imgExportFormat = 'xml';
 ExportDialog.showXmlOption = true;
+
+/**
+ * Hook for getting the export format. Return svg, xml or
+ * model (for model XML).
+ */
+ExportDialog.getExportFormat = function(format)
+{
+	return ExportDialog.imgExportFormat;
+};
 
 /**
  * Constructs a new metadata dialog.
