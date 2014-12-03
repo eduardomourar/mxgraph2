@@ -1442,7 +1442,7 @@ var ExportDialog = function(editorUi)
 	        	var w = 0;
 	        	var h = 0;
 	        	
-	        	var exportFormat = ExportDialog.getExportFormat(format);
+	        	var exportFormat = ExportDialog.getExportFormat(editorUi, format);
 	        	
 	        	if (exportFormat == 'svg')
 	        	{
@@ -1535,7 +1535,7 @@ ExportDialog.showXmlOption = true;
  * Hook for getting the export format. Return svg, xml or
  * model (for model XML).
  */
-ExportDialog.getExportFormat = function(format)
+ExportDialog.getExportFormat = function(ui, format)
 {
 	return ExportDialog.imgExportFormat;
 };
