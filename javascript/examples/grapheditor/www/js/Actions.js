@@ -453,11 +453,11 @@ Actions.prototype.init = function()
 	this.addAction('zoomIn', function()
 	{
 		graph.zoomIn();
-	}, null, null, 'Add');
+	}, null, null, 'Ctrl+Plus');
 	this.addAction('zoomOut', function()
 	{
 		graph.zoomOut();
-	}, null, null, 'Subtract');
+	}, null, null, 'Ctrl+Minus');
 	this.addAction('fitWindow', function() { graph.fit(); });
 	this.addAction('fitPage', mxUtils.bind(this, function()
 	{

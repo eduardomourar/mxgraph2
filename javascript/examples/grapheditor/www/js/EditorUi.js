@@ -2101,8 +2101,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
     keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
     keyHandler.bindAction(83, true, 'save'); // Ctrl+S
     keyHandler.bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
-    keyHandler.bindAction(107, false, 'zoomIn'); // Add
-    keyHandler.bindAction(109, false, 'zoomOut'); // Subtract
+    keyHandler.bindAction(107, true, 'zoomIn'); // Ctrl+Plus
+    keyHandler.bindAction(109, true, 'zoomOut'); // Ctrl+Minus
     keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
     keyHandler.bindAction(65, true, 'selectVertices', true); // Ctrl+Shift+A
     keyHandler.bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
