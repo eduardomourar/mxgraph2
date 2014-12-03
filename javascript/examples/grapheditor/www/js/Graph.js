@@ -62,7 +62,7 @@ Graph = function(container, model, renderHint, stylesheet)
 			var state = this.graph.view.getState(cells[i]);
 			var style = (state != null) ? state.style : this.graph.getCellStyle(cells[i]);
 	    	
-			if (mxUtils.getValue(style, 'part', false))
+			if (mxUtils.getValue(style, 'part', '0') == '1')
 			{
 		        var parent = this.graph.model.getParent(cells[i]);
 	
