@@ -54,6 +54,7 @@ Format.prototype.refresh = function()
 	var graph = editor.graph;
 	
 	// TODO: To draw.io
+	// TODO: Attention for updates during realtime, refresh needs to go
 	//if (ui.getCurrentFile() != null)
 	{
 		if (graph.isSelectionEmpty())
@@ -771,7 +772,7 @@ DiagramFormatPanel.prototype.init = function()
 		var span2 = document.createElement('span');
 		span2.style.position = 'absolute';
 		span2.style.right = '20px';
-		span2.style.lineHeight = '24px';
+		span2.style.marginTop = '-4px';
 		mxUtils.write(span2, mxResources.get('size') + ':');
 		span2.style.display = (cb.checked) ? '' : 'none';
 		
@@ -791,8 +792,8 @@ DiagramFormatPanel.prototype.init = function()
 			mxEvent.consume(evt);
 		});
 
-		var span = document.createElement('span');
-		span.style.lineHeight = '24px';
+		var span = document.createElement('div');
+		span.style.height = '24px';
 		cb.style.margin = '0px';
 		cb.style.marginRight = '6px';
 		span.appendChild(cb);
@@ -804,13 +805,11 @@ DiagramFormatPanel.prototype.init = function()
 			mxEvent.consume(evt);
 		});
 		
-		div.appendChild(span);			
-		div.appendChild(span2);
+		span.appendChild(span2);
+		div.appendChild(span);
 		
 		return div;
 	})(options));
-
-	mxUtils.br(options);
 
 	// Guides
 	// TODO: Handle pageViewChanged event
