@@ -1438,19 +1438,15 @@ var ExportDialog = function(editorUi)
 	    	}
 	        else
 	        {
-	        	var xml = null;
-	        	var w = 0;
-	        	var h = 0;
+	        	var param = null;
+	        	var w = parseInt(widthInput.value) || 0;
+	        	var h = parseInt(heightInput.value) || 0;
 	        	
-	        	var exportFormat = ExportDialog.getExportFormat(editorUi, format);
+	        	var exp = ExportDialog.getExportParameter(editorUi, format);
 	        	
-	        	if (exportFormat == 'svg')
+	        	if (typeof exp == 'function')
 	        	{
-	        		var svgRoot = getSvg();
-	        			
-	        		w = parseInt(svgRoot.getAttribute('width'));
-					h = parseInt(svgRoot.getAttribute('height'));
-	        		xml = mxUtils.getXml(svgRoot);
+	        		param = exp();
 	        	}
 	        	else
 	        	{
@@ -1473,11 +1469,11 @@ var ExportDialog = function(editorUi)
 					// Puts request data together
 					w = Math.ceil(bounds.width * scale / vs + 2 * b);
 					h = Math.ceil(bounds.height * scale / vs + 2 * b);
-					xml = mxUtils.getXml(root);
+					param = 'xml=' + encodeURIComponent(mxUtils.getXml(root));
 	        	}
 	
 				// Requests image if request is valid
-				if (xml != null && xml.length <= MAX_REQUEST_SIZE && w > 0 && h > 0 && w * h < MAX_AREA)
+				if (param != null && param.length <= MAX_REQUEST_SIZE && w * h < MAX_AREA)
 				{
 					var bg = '';
 					
@@ -1488,8 +1484,7 @@ var ExportDialog = function(editorUi)
 					}
 					
 					new mxXmlRequest(EXPORT_URL, 'filename=' + name + '&format=' + format +
-	        			bg + '&w=' + w + '&h=' + h + '&' + ExportDialog.imgExportFormat + '=' +
-	        			encodeURIComponent(xml)).simulate(document, '_blank');
+	        			bg + '&w=' + w + '&h=' + h + '&' + param).simulate(document, '_blank');
 				}
 				else
 				{
@@ -1528,16 +1523,17 @@ var ExportDialog = function(editorUi)
 /**
  * Global switches for the export dialog.
  */
-ExportDialog.imgExportFormat = 'xml';
 ExportDialog.showXmlOption = true;
 
 /**
- * Hook for getting the export format. Return svg, xml or
- * model (for model XML).
+ * Hook for getting the export format. Returns null for the default
+ * intermediate XML export format or a function that returns the
+ * parameter and value to be used in the request in the form
+ * key=value, where value should be URL encoded.
  */
-ExportDialog.getExportFormat = function(ui, format)
+ExportDialog.getExportParameter = function(ui, format)
 {
-	return ExportDialog.imgExportFormat;
+	return null;
 };
 
 /**

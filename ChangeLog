@@ -1,6 +1,6 @@
 - Adds mxGraphicsCanvas2D.createHtmlDocument hook [Java]
 - Changes shortcuts for zoomin, zoomout to ctrl+plus/minus in grapheditor
-- Adds PageSetupDialog.getFormats, ExportDialog.getExportFormat in grapheditor
+- Adds PageSetupDialog.getFormats, ExportDialog.getExportParameter in grapheditor
 - Fixes arrow directions in SegmentConnector [JavaScript]
 - Adds rounding in OrthConnector [JavaScript]
 - Adds Graph.linkTarget option in grapheditor
