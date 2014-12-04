@@ -1441,6 +1441,7 @@ var ExportDialog = function(editorUi)
 	        	var param = null;
 	        	var w = parseInt(widthInput.value) || 0;
 	        	var h = parseInt(heightInput.value) || 0;
+				var b = Math.max(0, parseInt(borderInput.value)) + 1;
 	        	
 	        	var exp = ExportDialog.getExportParameter(editorUi, format);
 	        	
@@ -1450,7 +1451,6 @@ var ExportDialog = function(editorUi)
 	        	}
 	        	else
 	        	{
-					var b = Math.max(0, parseInt(borderInput.value)) + 1;
 					var scale = parseInt(widthInput.value) / width;
 					var bounds = graph.getGraphBounds();
 					var vs = graph.view.scale;
@@ -1484,7 +1484,8 @@ var ExportDialog = function(editorUi)
 					}
 					
 					new mxXmlRequest(EXPORT_URL, 'filename=' + name + '&format=' + format +
-	        			bg + '&w=' + w + '&h=' + h + '&' + param).simulate(document, '_blank');
+	        			bg + '&w=' + w + '&h=' + h + '&border=' + b + '&' + param).
+	        			simulate(document, '_blank');
 				}
 				else
 				{
