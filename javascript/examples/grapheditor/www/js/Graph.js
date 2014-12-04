@@ -806,10 +806,11 @@ Graph.prototype.distributeCells = function(horizontal, cells)
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
-Graph.prototype.getSvg = function(background, scale, border, nocrop)
+Graph.prototype.getSvg = function(background, scale, border, nocrop, antiAlias)
 {
 	scale = (scale != null) ? scale : 1;
 	border = (border != null) ? border : 1;
+	antiAlias = (antiAlias != null) ? antiAlias : true;
 
 	var imgExport = new mxImageExport();
 	var bounds = (nocrop) ? this.view.getBackgroundPageBounds() : this.getGraphBounds();
@@ -848,14 +849,24 @@ Graph.prototype.getSvg = function(background, scale, border, nocrop)
 	root.setAttribute('version', '1.1');
 	
     // Adds group for anti-aliasing via transform
-	var group = (svgDoc.createElementNS != null) ?
-			svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
-	group.setAttribute('transform', 'translate(0.5,0.5)');
-	root.appendChild(group);
-	svgDoc.appendChild(root);
+	var node = root;
+	
+	if (antiAlias)
+	{
+		var group = (svgDoc.createElementNS != null) ?
+				svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
+		group.setAttribute('transform', 'translate(0.5,0.5)');
+		root.appendChild(group);
+		svgDoc.appendChild(root);
+		node = group;
+	}
+	else
+	{
+		svgDoc.appendChild(root);
+	}
 
     // Renders graph. Offset will be multiplied with state's scale when painting state.
-	var svgCanvas = new mxSvgCanvas2D(group);
+	var svgCanvas = new mxSvgCanvas2D(node);
 	svgCanvas.translate(Math.floor((border / scale - bounds.x) / vs), Math.floor((border / scale - bounds.y) / vs));
 	svgCanvas.scale(scale / vs);
 	
