@@ -607,19 +607,7 @@ var mxEdgeStyle =
 			
 			return lastPushed;
 		};
-		
-		// Converts all hints
-		var newHints = [];
-		
-		for (var i = 0; i < hints.length; i++)
-		{
-			newHints[i] = state.view.transformControlPoint(state, hints[i]);
-			newHints[i].x = Math.round(newHints[i].x);
-			newHints[i].y = Math.round(newHints[i].y);
-		}
-		
-		hints = newHints;
-		
+
 		// Adds the first point
 		var pt = pts[0];
 		
@@ -637,38 +625,50 @@ var mxEdgeStyle =
 		
 		var lastInx = pts.length - 1;
 
-		// Aligns source and target hint to fixed points
-		if (pt != null && hints[0] != null)
-		{
-			if (Math.abs(hints[0].x - pt.x) <= tol)
-			{
-				hints[0].x = pt.x;
-			}
-			
-			if (Math.abs(hints[0].y - pt.y) <= tol)
-			{
-				hints[0].y = pt.y;
-			}
-		}
-		
-		var pe = pts[lastInx];
-		
-		if (pe != null && hints[hints.length - 1] != null)
-		{
-			if (Math.abs(hints[hints.length - 1].x - pe.x) <= tol)
-			{
-				hints[hints.length - 1].x = pe.x;
-			}
-			
-			if (Math.abs(hints[hints.length - 1].y - pe.y) <= tol)
-			{
-				hints[hints.length - 1].y = pe.y;
-			}
-		}
-		
 		// Adds the waypoints
 		if (hints != null && hints.length > 0)
 		{
+			// Converts all hints
+			var newHints = [];
+			
+			for (var i = 0; i < hints.length; i++)
+			{
+				newHints[i] = state.view.transformControlPoint(state, hints[i]);
+				newHints[i].x = Math.round(newHints[i].x);
+				newHints[i].y = Math.round(newHints[i].y);
+			}
+			
+			hints = newHints;
+			
+			// Aligns source and target hint to fixed points
+			if (pt != null && hints[0] != null)
+			{
+				if (Math.abs(hints[0].x - pt.x) <= tol)
+				{
+					hints[0].x = pt.x;
+				}
+				
+				if (Math.abs(hints[0].y - pt.y) <= tol)
+				{
+					hints[0].y = pt.y;
+				}
+			}
+			
+			var pe = pts[lastInx];
+			
+			if (pe != null && hints[hints.length - 1] != null)
+			{
+				if (Math.abs(hints[hints.length - 1].x - pe.x) <= tol)
+				{
+					hints[hints.length - 1].x = pe.x;
+				}
+				
+				if (Math.abs(hints[hints.length - 1].y - pe.y) <= tol)
+				{
+					hints[hints.length - 1].y = pe.y;
+				}
+			}
+			
 			hint = hints[0];
 
 			var currentTerm = source;
