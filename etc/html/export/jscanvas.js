@@ -274,6 +274,18 @@ var jsCanvas = function(canvas){
 			lastMoveX = x2;
 			lastMoveY = y2;
 		},
+		arcTo: function(value)
+		{
+			// TODO
+		},
+		setFontBackgroundColor: function(value)
+		{
+			// TODO
+		},
+		setFontBorderColor: function(value)
+		{
+			// TODO
+		},
 		curveTo: function(x1, y1, x2, y2, x3, y3) {
 			x1 += tx;
 			y1 += ty;
@@ -344,9 +356,9 @@ var jsCanvas = function(canvas){
 			ctx.fill();
 			ctx.stroke();
 		},
-		shadow: function(value, filled)
+		setShadow: function(value)
 		{
-			ctx.save();
+			/*ctx.save();
 			ctx.strokeStyle = value;
 			
 			if (filled == null || filled)
@@ -356,7 +368,7 @@ var jsCanvas = function(canvas){
 			}
 			
 			ctx.stroke();
-			ctx.restore();
+			ctx.restore();*/
 		},
 		text: function(x, y, w, h, str, align, valign, vertical, wrap, format)
 		{

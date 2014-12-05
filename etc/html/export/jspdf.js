@@ -4,6 +4,7 @@
  * 
  * Open Issues:
  * 
+ * - HTML rendering
  * - Add rotation
  * - Add support for dash patterns
  * - Add clipped/vertical (PDF) labels
@@ -1168,6 +1169,18 @@ var jsPDF = function()
 			lastMoveX = x2;
 			lastMoveY = y2;
 		},
+		arcTo: function(value)
+		{
+			// TODO
+		},
+		setFontBackgroundColor: function(value)
+		{
+			// TODO
+		},
+		setFontBorderColor: function(value)
+		{
+			// TODO
+		},
 		curveTo: function(x1, y1, x2, y2, x3, y3)
 		{
 			x1 += tx;
@@ -1240,10 +1253,10 @@ var jsPDF = function()
 		{
 			out('W n');
 		},
-		shadow: function(value, filled)
+		setShadow: function(value)
 		{
 			// TODO: mxConstants.SHADOW_COLOR must be hex value for parsing instead of 'gray'
-			this.save();
+			/*this.save();
 			this.setStrokeColor(value);
 			
 			if (filled)
@@ -1256,7 +1269,7 @@ var jsPDF = function()
 				this.stroke();
 			}
 			
-			this.restore();
+			this.restore();*/
 		},
 		text: function(x, y, w, h, str, align, valign, vertical)
 		{
