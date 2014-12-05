@@ -26,9 +26,6 @@ Format.prototype.init = function()
 	var editor = ui.editor;
 	var graph = editor.graph;
 
-	this.customFonts = [];
-	this.customFontSizes = [];
-	
 	this.update = mxUtils.bind(this, function(sender, evt)
 	{
 		this.container.innerHTML = '';
@@ -924,50 +921,7 @@ DiagramFormatPanel.prototype.init = function()
 	var paperSizeSelect = document.createElement('select');
 	paperSizeSelect.style.marginBottom = '6px';
 	paperSizeSelect.style.width = '206px';
-	var detected = false;
-	var pf = new Object();
-	var formats = PageSetupDialog.getFormats();
 
-	for (var i = 0; i < formats.length; i++)
-	{
-		var f = formats[i];
-		pf[f.key] = f;
-
-		var paperSizeOption = document.createElement('option');
-		paperSizeOption.setAttribute('value', f.key);
-		mxUtils.write(paperSizeOption, f.title);
-		paperSizeSelect.appendChild(paperSizeOption);
-		
-		if (f.format != null)
-		{
-			if (graph.pageFormat.width == f.format.width && graph.pageFormat.height == f.format.height)
-			{
-				paperSizeOption.setAttribute('selected', 'selected');
-				portraitCheckBox.setAttribute('checked', 'checked');
-				portraitCheckBox.defaultChecked = true;
-				//formatRow.style.display = '';
-				detected = true;
-			}
-			else if (graph.pageFormat.width == f.format.height && graph.pageFormat.height == f.format.width)
-			{
-				paperSizeOption.setAttribute('selected', 'selected');
-				landscapeCheckBox.setAttribute('checked', 'checked');
-				portraitCheckBox.defaultChecked = true;
-				//formatRow.style.display = '';
-				detected = true;
-			}
-		}
-		// Selects custom format which is last in list
-		else if (!detected)
-		{
-			paperSizeOption.setAttribute('selected', 'selected');
-			customRow.style.display = '';
-		}
-	}
-
-	options.appendChild(paperSizeSelect);
-	mxUtils.br(options);
-	
 	var formatDiv = document.createElement('div');
 	formatDiv.style.marginLeft = '4px';
 	formatDiv.style.width = '210px';
@@ -1000,8 +954,6 @@ DiagramFormatPanel.prototype.init = function()
 		mxEvent.consume(evt);
 	});
 	
-	options.appendChild(formatDiv);
-	
 	var customDiv = document.createElement('div');
 	customDiv.style.marginLeft = '4px';
 	customDiv.style.width = '210px';
@@ -1018,8 +970,77 @@ DiagramFormatPanel.prototype.init = function()
 	heightInput.setAttribute('value', graph.pageFormat.height);
 	customDiv.appendChild(heightInput);
 	mxUtils.write(customDiv, ' Pixel');
+
+	formatDiv.style.display = 'none';
+	customDiv.style.display = 'none';
 	
+	var detected = false;
+	var pf = new Object();
+	var formats = PageSetupDialog.getFormats();
+
+	for (var i = 0; i < formats.length; i++)
+	{
+		var f = formats[i];
+		pf[f.key] = f;
+
+		var paperSizeOption = document.createElement('option');
+		paperSizeOption.setAttribute('value', f.key);
+		mxUtils.write(paperSizeOption, f.title);
+		paperSizeSelect.appendChild(paperSizeOption);
+		
+		if (f.format != null)
+		{
+			if (graph.pageFormat.width == f.format.width && graph.pageFormat.height == f.format.height)
+			{
+				paperSizeOption.setAttribute('selected', 'selected');
+				portraitCheckBox.setAttribute('checked', 'checked');
+				portraitCheckBox.defaultChecked = true;
+				formatDiv.style.display = '';
+				detected = true;
+			}
+			else if (graph.pageFormat.width == f.format.height && graph.pageFormat.height == f.format.width)
+			{
+				paperSizeOption.setAttribute('selected', 'selected');
+				landscapeCheckBox.setAttribute('checked', 'checked');
+				portraitCheckBox.defaultChecked = true;
+				formatDiv.style.display = '';
+				detected = true;
+			}
+		}
+		// Selects custom format which is last in list
+		else if (!detected)
+		{
+			paperSizeOption.setAttribute('selected', 'selected');
+			customDiv.style.display = '';
+		}
+	}
+
+	options.appendChild(paperSizeSelect);
+	mxUtils.br(options);
+
+	options.appendChild(formatDiv);
 	options.appendChild(customDiv);
+	
+	var updateInputs = function()
+	{
+		var f = pf[paperSizeSelect.value];
+		
+		if (f.format != null)
+		{
+			widthInput.value = f.format.width;
+			heightInput.value = f.format.height;
+			customDiv.style.display = 'none';
+			formatDiv.style.display = '';
+		}
+		else
+		{
+			formatDiv.style.display = 'none';
+			customDiv.style.display = '';
+		}
+	};
+	
+	mxEvent.addListener(paperSizeSelect, 'change', updateInputs);
+	updateInputs();
 };
 
 /**
