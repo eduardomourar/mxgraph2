@@ -807,25 +807,29 @@ var mxEdgeStyle =
 		{
 			pt.x = Math.round(pt.x);
 			pt.y = Math.round(pt.y);
-		}
-
-		if (horizontal && ((pts[lastInx] != null && pts[lastInx].y != hint.y) ||
-			(pts[lastInx] == null && target != null &&
-			(hint.y < target.y || hint.y > target.y + target.height))))
-		{
-			pushPoint(new mxPoint(pt.x, hint.y));
-		}
-		else if (!horizontal && ((pts[lastInx] != null && pts[lastInx].x != hint.x) ||
-				(pts[lastInx] == null && target != null &&
-				(hint.x < target.x || hint.x > target.x + target.width))))
-		{
-			pushPoint(new mxPoint(hint.x, pt.y));
+			
+			if (hint != null)
+			{
+				if (horizontal && ((pts[lastInx] != null && pts[lastInx].y != hint.y) ||
+					(pts[lastInx] == null && target != null &&
+					(hint.y < target.y || hint.y > target.y + target.height))))
+				{
+					pushPoint(new mxPoint(pt.x, hint.y));
+				}
+				else if (!horizontal && ((pts[lastInx] != null && pts[lastInx].x != hint.x) ||
+						(pts[lastInx] == null && target != null &&
+						(hint.x < target.x || hint.x > target.x + target.width))))
+				{
+					pushPoint(new mxPoint(hint.x, pt.y));
+				}
+			}
 		}
 		
 		// Removes bends inside the source terminal for floating ports
 		if (pts[0] == null && source != null)
 		{
-			while (result.length > 1 && mxUtils.contains(source, result[1].x, result[1].y))
+			while (result.length > 1 && result[1] != null &&
+				mxUtils.contains(source, result[1].x, result[1].y))
 			{
 				result.splice(1, 1);
 			}
@@ -834,19 +838,22 @@ var mxEdgeStyle =
 		// Removes bends inside the target terminal
 		if (pts[lastInx] == null && target != null)
 		{
-			while (result.length > 1 && mxUtils.contains(target, result[result.length - 1].x, result[result.length - 1].y))
+			while (result.length > 1 && result[result.length - 1] != null &&
+				mxUtils.contains(target, result[result.length - 1].x, result[result.length - 1].y))
 			{
 				result.splice(result.length - 1, 1);
 			}
 		}
 		
 		// Removes last point if inside tolerance with end point
-		if (pe != null && Math.abs(pe.x - result[result.length - 1].x) <= tol && Math.abs(pe.y - result[result.length - 1].y) <= tol)
+		if (pe != null && result[result.length - 1] != null &&
+			Math.abs(pe.x - result[result.length - 1].x) <= tol &&
+			Math.abs(pe.y - result[result.length - 1].y) <= tol)
 		{
 			result.splice(result.length - 1, 1);
 			
 			// Lines up second last point in result with end point
-			if (pe != null && result[result.length - 1] != null)
+			if (result[result.length - 1] != null)
 			{
 				if (Math.abs(result[result.length - 1].x - pe.x) <= tol)
 				{
