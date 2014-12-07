@@ -656,6 +656,7 @@ Graph.prototype.getDropTarget = function(cells, evt, cell, clone)
 {
 	var model = this.getModel();
 	
+	// Disables dragging edge labels out of edges
 	for (var i = 0; i < cells.length; i++)
 	{
 		if (this.model.isEdge(this.model.getParent(cells[i])))
@@ -664,7 +665,7 @@ Graph.prototype.getDropTarget = function(cells, evt, cell, clone)
 		}
 	}
 	
-	mxGraph.prototype.getDropTarget.apply(this, arguments);
+	return mxGraph.prototype.getDropTarget.apply(this, arguments);
 };
 
 /**
