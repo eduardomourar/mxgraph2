@@ -907,6 +907,18 @@ mxCellRenderer.prototype.getLabelBounds = function(state)
 		// Minimum of 1 fixes alignment bug in HTML labels
 		bounds.width = Math.max(1, state.width);
 		bounds.height = Math.max(1, state.height);
+
+		var sc = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
+		
+		if (sc != mxConstants.NONE && sc != '')
+		{
+			var s = Math.ceil(mxUtils.getValue(state.style, mxConstants.STYLE_STROKEWIDTH, 1) / 2);
+			
+			bounds.x += s;
+			bounds.y += s;
+			bounds.width -= 2 * s;
+			bounds.height -= 2 * s;
+		}
 	}
 
 	if (state.text.isPaintBoundsInverted())

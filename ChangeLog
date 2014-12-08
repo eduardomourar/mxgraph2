@@ -1,3 +1,4 @@
+- Adds padding to avoid border in mxCellRenderer.getLabelBounds [JavaScript]
 - Fixes possible NPE in AnalyzeGraph [Java]
 - Fixes mxEdgeSegmentHandler, merges segments in connect [JavaScript]
 - Returns point in mxElbowEdgeHandler.convertPoint [JavaScript]
