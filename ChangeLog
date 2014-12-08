@@ -1,3 +1,4 @@
+- Adds alt key to disable drop into groups for existing cells in grapheditor
 - Adds padding to avoid border in mxCellRenderer.getLabelBounds [JavaScript]
 - Fixes possible NPE in AnalyzeGraph [Java]
 - Fixes mxEdgeSegmentHandler, merges segments in connect [JavaScript]

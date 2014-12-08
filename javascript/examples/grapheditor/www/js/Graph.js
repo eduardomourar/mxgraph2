@@ -656,6 +656,12 @@ Graph.prototype.getDropTarget = function(cells, evt, cell, clone)
 {
 	var model = this.getModel();
 	
+	// Disables drop into group if alt is pressed
+	if (mxEvent.isAltDown(evt))
+	{
+		return null;
+	}
+	
 	// Disables dragging edge labels out of edges
 	for (var i = 0; i < cells.length; i++)
 	{
