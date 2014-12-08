@@ -14,18 +14,12 @@ Format = function(editorUi, container)
 /**
  * Adds the label menu items to the given menu and parent.
  */
-Format.prototype.defaultFonts = ['Helvetica', 'Verdana', 'Times New Roman', 'Garamond', 'Comic Sans MS',
-           		             'Courier New', 'Georgia', 'Lucida Console', 'Tahoma'];
-
-/**
- * Adds the label menu items to the given menu and parent.
- */
 Format.prototype.init = function()
 {
 	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
-
+	
 	this.update = mxUtils.bind(this, function(sender, evt)
 	{
 		this.container.innerHTML = '';
@@ -46,6 +40,17 @@ Format.prototype.init = function()
  */
 Format.prototype.refresh = function()
 {
+	// Destroy existing panels
+	if (this.panels != null)
+	{
+		for (var i = 0; i < this.panels.length; i++)
+		{
+			this.panels[i].destroy();
+		}
+	}
+	
+	this.panels = [];
+	
 	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
@@ -75,7 +80,7 @@ Format.prototype.refresh = function()
 			//div.style.color = 'rgb(81, 81, 81)';
 			this.container.appendChild(div);
 			
-			var diagramFormatPanel = new DiagramFormatPanel(ui, div);
+			this.panels.push(new DiagramFormatPanel(ui, div));
 			// TODO: Remove all listeners in destroy of panel
 		}
 		else
@@ -101,7 +106,7 @@ Format.prototype.refresh = function()
 			
 			this.container.appendChild(div);
 			
-			var styleFormatPanel = new StyleFormatPanel(ui, div);
+			this.panels.push(new StyleFormatPanel(ui, div));
 		}
 	}
 };
@@ -231,16 +236,21 @@ BaseFormatPanel.prototype.addColorOption = function(parent, label, getColorFn, s
 	apply(value);
 };
 
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+BaseFormatPanel.prototype.destroy = function() { };
 
 /**
  * Adds the label menu items to the given menu and parent.
  */
 StyleFormatPanel = function(editorUi, container)
 {
-	this.editorUi = editorUi;
-	this.container = container;
+	BaseFormatPanel.call(this, editorUi, container);
 	this.init();
 };
+
+mxUtils.extend(StyleFormatPanel, BaseFormatPanel);
 
 /**
  * Adds the label menu items to the given menu and parent.
@@ -262,7 +272,7 @@ StyleFormatPanel.prototype.init = function()
 	
 	this.container.appendChild((function(div)
 	{
-		var stylenames = ['gray', 'blue', 'green', 'turquoise', 'yellow', 'red', 'purple'/*, 'pink'*/, null];
+		var stylenames = ['gray', 'blue', 'green', 'turquoise', 'yellow', 'red', 'purple', null];
 		div.style.paddingBottom = '4px';
 		
 		function addButton(stylename)
@@ -685,14 +695,6 @@ StyleFormatPanel.prototype.init = function()
 /**
  * Adds the label menu items to the given menu and parent.
  */
-StyleFormatPanel.prototype.destroy = function()
-{
-	
-};
-
-/**
- * Adds the label menu items to the given menu and parent.
- */
 DiagramFormatPanel = function(editorUi, container)
 {
 	BaseFormatPanel.call(this, editorUi, container);
@@ -726,15 +728,8 @@ DiagramFormatPanel.prototype.init = function()
 	span.style.fontWeight = 'bold';
 	mxUtils.write(span, mxResources.get('options'));
 	options.appendChild(span);
-	
-	/*var span = document.createElement('span');
-	span.style.lineHeight = '24px';
-	span.style.fontWeight = 'bold';
-	mxUtils.write(span, mxResources.get('options'));
-	options.appendChild(span);
-	mxUtils.br(options);*/
-	
-	this.container.appendChild((function(div)
+
+	this.container.appendChild((mxUtils.bind(this, function(div)
 	{
 		var cb = document.createElement('input');
 		cb.setAttribute('type', 'checkbox');
@@ -745,27 +740,15 @@ DiagramFormatPanel.prototype.init = function()
 			cb.setAttribute('checked', 'checked');
 			cb.defaultChecked = true;	
 		}
-
-		ui.addListener('gridEnabledChanged', function()
+		
+		this.gridEnabledListener = function()
 		{
-			console.log('gridEnabledChanged', graph.isGridEnabled(), cb.checked);
 			cb.checked = graph.isGridEnabled();
 			span2.style.display = (cb.checked) ? '' : 'none';
-		});
-		
-		/*mxEvent.addListener(cb, 'change', function(evt)
-		{
-			if (!updating)
-			{
-				updating = true;
-				console.log('entering change', graph.isGridEnabled(), cb.checked);
-				ui.actions.get('grid').funct();
-				mxEvent.consume(evt);
-				console.log('leaving change', graph.isGridEnabled(), cb.checked);
-				updating = false;
-			}
-		});*/
-		
+		};
+
+		ui.addListener('gridEnabledChanged', this.gridEnabledListener);
+
 		var span2 = document.createElement('span');
 		span2.style.position = 'absolute';
 		span2.style.right = '20px';
@@ -797,16 +780,19 @@ DiagramFormatPanel.prototype.init = function()
 		mxUtils.write(span, mxResources.get('grid'));
 		
 		mxEvent.addListener(span, 'click', function(evt)
-		{				
-			ui.actions.get('grid').funct();
-			mxEvent.consume(evt);
+		{
+			if (mxEvent.getSource(evt) != gridSizeInput)
+			{
+				ui.actions.get('grid').funct();
+				mxEvent.consume(evt);
+			}
 		});
 		
 		span.appendChild(span2);
 		div.appendChild(span);
 		
 		return div;
-	})(options));
+	}))(options));
 
 	// Guides
 	// TODO: Handle pageViewChanged event
@@ -1048,5 +1034,9 @@ DiagramFormatPanel.prototype.init = function()
  */
 DiagramFormatPanel.prototype.destroy = function()
 {
-	
+	if (this.gridEnabledListener)
+	{
+		this.editorUi.removeListener(this.gridEnabledListener);
+		this.gridEnabledListener = null;
+	}
 };
