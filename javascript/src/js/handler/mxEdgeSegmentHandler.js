@@ -28,17 +28,17 @@ mxEdgeSegmentHandler.prototype.getCurrentPoints = function()
 	
 	if (pts != null)
 	{
-		// Special case for straight edge between routing centers with no
-		// points in which case we add 2 segments and a middle handle
-		if (pts.length == 2)
+		// Special case for straight edges where we add a virtual middle handle for moving the edge
+		if (pts.length == 2 || (pts.length == 3 && (pts[0].x == pts[1].x && pts[1].x == pts[2].x ||
+				pts[0].y == pts[1].y && pts[1].y == pts[2].y)))
 		{
-			var cx = pts[0].x + (pts[1].x - pts[0].x) / 2;
-			var cy = pts[0].y + (pts[1].y - pts[0].y) / 2;
+			var cx = pts[0].x + (pts[pts.length - 1].x - pts[0].x) / 2;
+			var cy = pts[0].y + (pts[pts.length - 1].y - pts[0].y) / 2;
 			
-			pts = [pts[0], new mxPoint(cx, cy), new mxPoint(cx, cy), pts[1]];
+			pts = [pts[0], new mxPoint(cx, cy), new mxPoint(cx, cy), pts[pts.length - 1]];	
 		}
 	}
-	
+
 	return pts;
 };
 
@@ -56,32 +56,23 @@ mxEdgeSegmentHandler.prototype.getPreviewPoints = function(point)
 	else
 	{
 		var pts = this.getCurrentPoints();
-		var last = pts[0].clone();
-		this.convertPoint(last, false);
-		point = point.clone();
-		this.convertPoint(point, false);
+		var last = this.convertPoint(pts[0].clone(), false);
+		point = this.convertPoint(point.clone(), false);
 		var result = [];
 
 		for (var i = 1; i < pts.length; i++)
 		{
-			var pt = pts[i].clone();
-			this.convertPoint(pt, false);
+			var pt = this.convertPoint(pts[i].clone(), false);
 			
 			if (i == this.index)
 			{
-				if (Math.round(last.x - pt.x) == 0 && Math.round(last.y - pt.y) == 0)
-				{
-					last.x = point.x;
-					pt.x = point.x;
-					last.y = point.y;
-		 			pt.y = point.y;
-				}
-				else if (Math.round(last.x - pt.x) == 0)
+				if (Math.round(last.x - pt.x) == 0)
 		 		{
 					last.x = point.x;
 					pt.x = point.x;
 		 		}
-		 		else
+		 		
+				if (Math.round(last.y - pt.y) == 0)
 		 		{
 		 			last.y = point.y;
 		 			pt.y = point.y;
@@ -94,24 +85,6 @@ mxEdgeSegmentHandler.prototype.getPreviewPoints = function(point)
 			}
 
 			last = pt;
-		}
-		
-		// Replaces single point that intersects with source or target
-		if (result.length == 1)
-		{
-			var source = this.state.getVisibleTerminalState(true);
-			var target = this.state.getVisibleTerminalState(false);
-			var scale = this.state.view.getScale();
-			var tr = this.state.view.getTranslate();
-			
-			var x = result[0].x * scale + tr.x;
-			var y = result[0].y * scale + tr.y;
-			
-			if ((source != null && mxUtils.contains(source, x, y)) ||
-				(target != null && mxUtils.contains(target, x, y)))
-			{
-				result = [point, point];
-			}
 		}
 
 		return result;
@@ -130,13 +103,12 @@ mxEdgeSegmentHandler.prototype.updatePreviewState = function(edge, point, termin
 	// Checks and corrects preview by running edge style again
 	if (!this.isSource && !this.isTarget)
 	{
-		point = point.clone();
-		this.convertPoint(point, false);
+		point = this.convertPoint(point.clone(), false);
 		var pts = edge.absolutePoints;
-		var result = [];
-
 		var pt0 = pts[0];
 		var pt1 = pts[1];
+
+		var result = [];
 		
 		for (var i = 2; i < pts.length; i++)
 		{
@@ -146,12 +118,10 @@ mxEdgeSegmentHandler.prototype.updatePreviewState = function(edge, point, termin
 			if ((Math.round(pt0.x - pt1.x) != 0 || Math.round(pt1.x - pt2.x) != 0) &&
 				(Math.round(pt0.y - pt1.y) != 0 || Math.round(pt1.y - pt2.y) != 0))
 			{
-				pt0 = pt1;
-				pt1 = pt1.clone();
-				this.convertPoint(pt1, false);
-				result.push(pt1);
+				result.push(this.convertPoint(pt1.clone(), false));
 			}
-			
+
+			pt0 = pt1;
 			pt1 = pt2;
 		}
 		
@@ -164,51 +134,46 @@ mxEdgeSegmentHandler.prototype.updatePreviewState = function(edge, point, termin
 		{
 			result = [point, point];
 		}
-		// Hack to handle transitions from straight vertical to routed
-		else if (pts.length == 6 && result.length <= 2 && source != null && target != null)
+		// Handles transitions from straight vertical to routed
+		else if (pts.length == 5 && result.length == 2 && source != null && target != null)
 		{
-			var pts = this.state.absolutePoints;
+			var view = this.graph.getView();
+			var scale = view.getScale();
+			var tr = view.getTranslate();
 			
-			if (Math.round(pts[0].x - pts[pts.length - 1].x) == 0)
+			var y0 = view.getRoutingCenterY(source) / scale - tr.y;
+			
+			// Use fixed connection point y-coordinate if one exists
+			var sc = this.graph.getConnectionConstraint(edge, source, true);
+			
+			if (sc != null)
 			{
-				var view = this.graph.getView();
-				var scale = view.getScale();
-				var tr = view.getTranslate();
+				var pt = this.graph.getConnectionPoint(source, sc);
 				
-				var y0 = view.getRoutingCenterY(source) / scale - tr.y;
-				
-				// Use fixed connection point y-coordinate if one exists
-				var sc = this.graph.getConnectionConstraint(edge, source, true);
-				
-				if (sc != null)
+				if (pt != null)
 				{
-					var pt = this.graph.getConnectionPoint(source, sc);
-					
-					if (pt != null)
-					{
-						this.convertPoint(pt, false);
-						y0 = pt.y;
-					}
+					this.convertPoint(pt, false);
+					y0 = pt.y;
 				}
-				
-				var ye = view.getRoutingCenterY(target) / scale - tr.y;
-				
-				// Use fixed connection point y-coordinate if one exists
-				var tc = this.graph.getConnectionConstraint(edge, target, false);
-				
-				if (tc)
-				{
-					var pt = this.graph.getConnectionPoint(target, tc);
-					
-					if (pt != null)
-					{
-						this.convertPoint(pt, false);
-						ye = pt.y;
-					}
-				}
-				
-				result = [new mxPoint(point.x, y0), new mxPoint(point.x, ye)];
 			}
+			
+			var ye = view.getRoutingCenterY(target) / scale - tr.y;
+			
+			// Use fixed connection point y-coordinate if one exists
+			var tc = this.graph.getConnectionConstraint(edge, target, false);
+			
+			if (tc)
+			{
+				var pt = this.graph.getConnectionPoint(target, tc);
+				
+				if (pt != null)
+				{
+					this.convertPoint(pt, false);
+					ye = pt.y;
+				}
+			}
+			
+			result = [new mxPoint(point.x, y0), new mxPoint(point.x, ye)];
 		}
 
 		this.points = result;
@@ -218,6 +183,56 @@ mxEdgeSegmentHandler.prototype.updatePreviewState = function(edge, point, termin
 		edge.view.updatePoints(edge, this.points, source, target);
 		edge.view.updateFloatingTerminalPoints(edge, source, target);
 	}
+};
+
+/**
+ * Overriden to merge edge segments.
+ */
+mxEdgeSegmentHandler.prototype.connect = function(edge, terminal, isSource, isClone, me)
+{
+	// Merges adjacent edge segments
+	var pts = this.abspoints;
+	var pt0 = pts[0];
+	var pt1 = pts[1];
+	var result = [];
+	
+	for (var i = 2; i < pts.length; i++)
+	{
+		var pt2 = pts[i];
+	
+		// Merges adjacent segments only if more than 2 to allow for straight edges
+		if ((Math.round(pt0.x - pt1.x) != 0 || Math.round(pt1.x - pt2.x) != 0) &&
+			(Math.round(pt0.y - pt1.y) != 0 || Math.round(pt1.y - pt2.y) != 0))
+		{
+			result.push(this.convertPoint(pt1.clone(), false));
+		}
+
+		pt0 = pt1;
+		pt1 = pt2;
+	}
+	
+	var model = this.graph.getModel();
+	
+	model.beginUpdate();
+	try
+	{
+		var edge = mxEdgeHandler.prototype.connect.apply(this, arguments);
+		var geo = model.getGeometry(edge);
+		
+		if (geo != null)
+		{
+			geo = geo.clone();
+			geo.points = result;
+			
+			model.setGeometry(edge, geo);
+		}
+	}
+	finally
+	{
+		model.endUpdate();
+	}
+	
+	return edge;
 };
 
 /**

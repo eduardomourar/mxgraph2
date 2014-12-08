@@ -1,3 +1,4 @@
+- Fixes mxEdgeSegmentHandler, merges segments in connect [JavaScript]
 - Returns point in mxElbowEdgeHandler.convertPoint [JavaScript]
 - Adds mxGraphicsCanvas2D.createHtmlDocument hook [Java]
 - Changes shortcuts for zoomin, zoomout to ctrl+plus/minus in grapheditor
