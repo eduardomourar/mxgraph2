@@ -86,6 +86,24 @@ mxEdgeSegmentHandler.prototype.getPreviewPoints = function(point)
 
 			last = pt;
 		}
+		
+		// Replaces single point that intersects with source or target
+		if (result.length == 1)
+		{
+			var source = this.state.getVisibleTerminalState(true);
+			var target = this.state.getVisibleTerminalState(false);
+			var scale = this.state.view.getScale();
+			var tr = this.state.view.getTranslate();
+			
+			var x = result[0].x * scale + tr.x;
+			var y = result[0].y * scale + tr.y;
+			
+			if ((source != null && mxUtils.contains(source, x, y)) ||
+				(target != null && mxUtils.contains(target, x, y)))
+			{
+				result = [point, point];
+			}
+		}
 
 		return result;
 	}
@@ -127,6 +145,7 @@ mxEdgeSegmentHandler.prototype.updatePreviewState = function(edge, point, termin
 		
 		var source = this.state.getVisibleTerminalState(true);
 		var target = this.state.getVisibleTerminalState(false);
+		var rpts = this.state.absolutePoints;
 		
 		// A straight line is represented by 3 handles
 		if (result.length == 0 && (Math.round(pts[0].x - pts[pts.length - 1].x) == 0 ||
@@ -134,8 +153,9 @@ mxEdgeSegmentHandler.prototype.updatePreviewState = function(edge, point, termin
 		{
 			result = [point, point];
 		}
-		// Handles transitions from straight vertical to routed
-		else if (pts.length == 5 && result.length == 2 && source != null && target != null)
+		// Handles special case of transitions from straight vertical to routed
+		else if (pts.length == 5 && result.length == 2 && source != null && target != null &&
+				rpts != null && Math.round(rpts[0].x - rpts[rpts.length - 1].x) == 0)
 		{
 			var view = this.graph.getView();
 			var scale = view.getScale();
