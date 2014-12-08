@@ -912,7 +912,7 @@ mxCellRenderer.prototype.getLabelBounds = function(state)
 		
 		if (sc != mxConstants.NONE && sc != '')
 		{
-			var s = Math.ceil(mxUtils.getValue(state.style, mxConstants.STYLE_STROKEWIDTH, 1) / 2);
+			var s = Math.ceil(parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STROKEWIDTH, 1)) * scale / 2);
 			
 			bounds.x += s;
 			bounds.y += s;
