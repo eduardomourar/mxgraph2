@@ -1557,6 +1557,12 @@ mxGraphView.prototype.getPerimeterPoint = function(terminal, next, orthogonal, b
 			if (bounds.width > 0 || bounds.height > 0)
 			{
 				point = perimeter(bounds, terminal, next, orthogonal);
+				
+				if (point != null)
+				{
+					point.x = Math.round(point.x);
+					point.y = Math.round(point.y);
+				}
 			}
 		}
 		

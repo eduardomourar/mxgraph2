@@ -3,7 +3,7 @@
 - Changes shortcuts for zoomin, zoomout to ctrl+plus/minus in grapheditor
 - Adds PageSetupDialog.getFormats, ExportDialog.getExportParameter in grapheditor
 - Fixes arrow directions, possible NPEs in SegmentConnector [JavaScript]
-- Adds rounding in OrthConnector [JavaScript]
+- Adds rounding in OrthConnector, mxGraphView.getPerimeterPoint [JavaScript]
 - Adds Graph.linkTarget option in grapheditor
 - Shows connect icon with control instead of shift, for selected cells in grapheditor
 - Renames switchDirection action to turn in grapheditor
