@@ -1,3 +1,4 @@
+- Adds switch shape in grapheditor
 - Adds mxVertexHandler.updateParentHighlight called from redrawHandles [JavaScript]
 - Adds mxImageExport.drawShape, drawText hooks [JavaScript]
 - Adds alt key to disable drop into groups for existing cells in grapheditor
