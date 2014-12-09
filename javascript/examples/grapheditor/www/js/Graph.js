@@ -813,11 +813,11 @@ Graph.prototype.distributeCells = function(horizontal, cells)
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
-Graph.prototype.getSvg = function(background, scale, border, nocrop, antiAlias)
+Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp)
 {
 	scale = (scale != null) ? scale : 1;
 	border = (border != null) ? border : 1;
-	antiAlias = (antiAlias != null) ? antiAlias : true;
+	crisp = (crisp != null) ? crisp : true;
 
 	var imgExport = new mxImageExport();
 	var bounds = (nocrop) ? this.view.getBackgroundPageBounds() : this.getGraphBounds();
@@ -858,7 +858,7 @@ Graph.prototype.getSvg = function(background, scale, border, nocrop, antiAlias)
     // Adds group for anti-aliasing via transform
 	var node = root;
 	
-	if (antiAlias)
+	if (crisp)
 	{
 		var group = (svgDoc.createElementNS != null) ?
 				svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
