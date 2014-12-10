@@ -1,0 +1,36 @@
+<html>
+<head>
+	<script type="text/javascript" src="https://github.com/niklasvh/html2canvas/releases/download/0.4.1/html2canvas.js"></script>
+	<script type="text/javascript">
+		function main()
+		{
+			var w = 200;
+			var h = 200;
+			
+			var c1 = document.createElement('canvas');
+			c1.style.border = '1px solid gray';
+			c1.setAttribute('width', w);
+			c1.setAttribute('height', h);
+			
+			var ctx1 = c1.getContext('2d');
+			
+			var div = document.createElement('div');
+			div.style.width = w + 'px';
+			div.style.height = h + 'px';
+			div.innerHTML = '<table border="1" width="100%" cellpadding="4" style="width: 100% ; height: 100% ; border-collapse: collapse"><tbody><tr><th align="center"><b>Title</b></th></tr><tr><td align="center">Section&nbsp;1.1<br>Section 1.2<br>Section 1.3</td></tr><tr><td align="center">Section 2.1<br>Section 2.2<br>Section 2.3</td></tr></tbody></table>';
+			document.body.appendChild(div);
+
+			html2canvas(div, {
+			    onrendered: function(c3) {
+			    	ctx1.drawImage(c3, 0, 0);
+			    	document.body.removeChild(div);
+			    }
+			});
+			
+			document.body.appendChild(c1);
+		};
+	</script>
+</head>
+<body onload="main()">
+</body>
+</html>
