@@ -1,3 +1,4 @@
+- Fixes 1px offset in mxGraphHandler.getPreviewBounds [JavaScript]
 - Adds switch shape in grapheditor
 - Adds mxVertexHandler.updateParentHighlight called from redrawHandles [JavaScript]
 - Adds mxImageExport.drawShape, drawText hooks [JavaScript]
