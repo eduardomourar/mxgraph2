@@ -33,6 +33,7 @@
 	<script type="text/javascript" src="jscanvas.js"></script>
 	<script type="text/javascript" src="jstxt.js"></script>
 	<script type="text/javascript" src="jspdf.js"></script>
+	<script type="text/javascript" src="html2canvas"></script>
 	<script type="text/javascript" src="mxOutputHandler.js"></script>
 	<script type="text/vbscript">
      Function BinaryToArray(Binary)
@@ -125,7 +126,7 @@
 			var bounds = graph.getGraphBounds();
 			canvas.setAttribute('width', bounds.x + bounds.width + 4);
 			canvas.setAttribute('height', bounds.y + bounds.height + 4);
-			var htmlCanvas = new jsCanvas(canvas);
+			var htmlCanvas = new mxJsCanvas(canvas);
 
 			// Render graph
 			var imgExport = new mxImageExport();
@@ -379,6 +380,7 @@
 			var graph = new mxGraph(container);
 			graph.setConnectable(true);
 			graph.setDropEnabled(true);
+			graph.setHtmlLabels(true);
 			new mxRubberband(graph);
 			var parent = graph.getDefaultParent();
 			
@@ -395,7 +397,7 @@
 				{
 					//var v1 = graph.insertVertex(parent, null, 'XOR', 0, 0, 200, 200, 'shape=xor');
 					//var v1 = graph.insertVertex(parent, null, 'mxGraph.com', 20, 20, 120, 40, 'rounded=1');
-					var v1 = graph.insertVertex(parent, null, 'Container', 10, 10, 520, 640,
+ 					var v1 = graph.insertVertex(parent, null, 'Container', 10, 10, 520, 640,
 							'shape=swimlane;shadow=1;startSize=28;fontStyle=3;fontSize=14;glass=1');
 					graph.setCellWarning(v1, 'Overlay');
 					var v2 = graph.insertVertex(v1, null, 'Bold + Glass', 20, 40, 120, 40,
@@ -420,8 +422,8 @@
 							ims + 'image=logo.png;imageFlipH=1;imageBackground=#FFFF00;imageBorder=#FF00FF;');
 					var v8 = graph.insertVertex(v1, null, 'PNG Image\n(alpha)', 320, 110, 80, 40,
 							ims + 'image=bell.png;align=right');
-					/*var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
-							ims + 'image=image.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');*/
+					var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
+							ims + 'image=image.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');
 					var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
 							ims + 'image=http://www.jgraph.com/images/mxgraph.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');
 					var v10 = graph.insertVertex(v1, null, 'OR', 20, 200, 80, 80,
@@ -449,10 +451,10 @@
 					var v21 = graph.insertVertex(v1, null, 'XOR', 420, 400, 80, 80,
 							'shape=xor;shadow=1;horizontal=0;strokeWidth=2;labelBackgroundColor=#ffff00;labelBorderColor=#000000;direction=west;');
 					var v22 = graph.insertVertex(v1, null, 'AND', 20, 500, 80, 80,
-							'shape=gate;shadow=1;');
+							'shape=gate;shadow=1;'); 
 					var v23 = graph.insertVertex(v1, null, 'AND', 140, 500, 80, 80,
 							'shape=gate;glass=1;shadow=1;flipV=1');
-					var v24 = graph.insertVertex(v1, null, 'AND', 260, 500, 80, 80,
+ 					var v24 = graph.insertVertex(v1, null, 'AND', 260, 500, 80, 80,
 							'shape=gate;glass=1;shadow=1;flipH=1');
 					var v25 = graph.insertVertex(v1, null, 'AND', 420, 500, 80, 80,
 							'shape=gate;shadow=1;horizontal=0;labelBackgroundColor=#ffff00;labelBorderColor=#000000;flipV=1;flipH=1');
@@ -477,16 +479,16 @@
 				{
 					//var v1 = graph.insertVertex(parent, null, 'mxGraph.com', 20, 20, 120, 40, 'rounded=1');
 					var v1 = graph.insertVertex(parent, null, 'Container', 20, 20, 680, 680,
-							'shape=swimlane;shadow=1;startSize=28;fontStyle=3;fontSize=14;glass=1');
+							'shape=swimlane;shadow=1;startSize=28;fontStyle=3;fontSize=14;glass=1;align=right');
 					//graph.setCellWarning(v1, 'Overlay');
-					var v2 = graph.insertVertex(v1, null, 'Bold + Glass', 20, 40, 120, 40,
-							'shape=label;rounded=1;shadow=1;glass=1;image=test/logo.png;'+
+   					 var v2 = graph.insertVertex(v1, null, 'Bold + Glass', 20, 40, 120, 40,
+							'shape=label;rounded=1;shadow=1;glass=1;image=logo.png;'+
 							'imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1');
 					var v22 = graph.insertVertex(v1, null, 'Bold 14pt', 60, 60, 120, 40,
-							'shape=label;rounded=1;shadow=1;glass=1;image=test/logo.png;'+
+							'shape=label;rounded=1;shadow=1;glass=1;image=logo.png;'+
 							'imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1;fontSize=14');
 					var v23 = graph.insertVertex(v1, null, 'Bold 18pt', 100, 50, 140, 40,
-							'shape=label;rounded=1;shadow=1;glass=1;image=test/logo.png;'+
+							'shape=label;rounded=1;shadow=1;glass=1;image=logo.png;'+
 							'imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1;fontSize=18');
 					var v3 = graph.insertVertex(v1, null, 'Blue Gradient', 260, 40, 120, 40,
 							'rounded=1');
@@ -496,20 +498,20 @@
 							'rounded=1;opacity=25;textOpacity=25;');
 					var ims = 'shape=image;verticalLabelPosition=bottom;verticalAlign=top;';
 					var v6 = graph.insertVertex(v1, null, 'JPG Image\n(flipped)', 20, 110, 80, 40,
-							ims + 'image=test/mxlogo.jpg;imageFlipV=1;opacity=50;');
-					var v7 = graph.insertVertex(v1, null, 'PNG Image\n(non-alpha)', 120, 110, 80, 40,
-							ims + 'image=test/logo.png;align=left');
+							ims + 'image=mxlogo.jpg;imageFlipV=1;opacity=50;');
+ 					var v7 = graph.insertVertex(v1, null, 'PNG Image\n(non-alpha)', 120, 110, 80, 40,
+							ims + 'image=logo.png;align=left');
 					var v71 = graph.insertVertex(v1, null, 'PNG Image\n(flipped w/ bg)', 220, 110, 80, 40,
-							ims + 'image=test/logo.png;imageFlipH=1;imageBackground=#FFFF00;imageBorder=#FF00FF;');
+							ims + 'image=logo.png;imageFlipH=1;imageBackground=#FFFF00;imageBorder=#FF00FF;');
 					var v8 = graph.insertVertex(v1, null, 'PNG Image\n(alpha)', 320, 110, 80, 40,
-							ims + 'image=test/bell.png;align=right');
+							ims + 'image=bell.png;align=right');
 					var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
-							ims + 'image=test/image.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');
+							ims + 'image=image.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');
 					var v10 = graph.insertVertex(v1, null, 'OR (flipH)', 20, 200, 80, 80,
 							'shape=or;shadow=1;stencilFlipH=1;dashed=1');
 					var v11 = graph.insertVertex(v1, null, 'AND', 140, 200, 80, 80,
 							'shape=and;glass=1;shadow=1;strokeColor=#0000ff;direction=south');
-					var v12 = graph.insertVertex(v1, null, 'XOR', 260, 200, 80, 80,
+ 					var v12 = graph.insertVertex(v1, null, 'XOR', 260, 200, 80, 80,
 							'shape=xor;glass=1;shadow=1;opacity=50;');
 					var v13 = graph.insertVertex(v1, null, 'Lorem Ipsum\nDolor Sit Amet', 380, 200, 120, 80,
 							'shape=rectangle;shadow=1;horizontal=0;labelBackgroundColor=#ffff00;labelBorderColor=#000000;dashed=1');
@@ -533,22 +535,22 @@
 							'shape=and;shadow=1;');
 					var v23 = graph.insertVertex(v1, null, 'AND', 140, 500, 80, 80,
 							'shape=and;glass=1;shadow=1;stencilFlipH=1;labelBackgroundColor=#ffff00;labelBorderColor=#000000;textOpacity=50;');
-					var v24 = graph.insertVertex(v1, null, 'Timer', 260, 500, 80, 80,
+ 					var v24 = graph.insertVertex(v1, null, 'Timer', 260, 500, 80, 80,
 							'shape=label;glass=1;shadow=1;stencilFlipH=1;labelBackgroundColor=#ffff00;labelBorderColor=#000000;textOpacity=50;opacity=50;');
 					var v25 = graph.insertVertex(v1, null, 'FlipV', 400, 500, 80, 80,
 							'shape=cloud;shadow=1;horizontal=0;labelBackgroundColor=#ffff00;labelBorderColor=#000000;');
 					var v26 = graph.insertVertex(v1, null, 'Bold + Glass\nTest Line 2\nTest Line 3', 520, 40, 140, 80,
-						'shape=rectangle;rounded=1;shadow=1;glass=1;align=left;fontStyle=1;');
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=left;fontStyle=1;labelBorderColor=#0000ff;');
 					var v27 = graph.insertVertex(v1, null, 'Bold + Glass\nTest Line 2\nTest Line 3', 520, 140, 140, 80,
-						'shape=rectangle;rounded=1;shadow=1;glass=1;align=center;fontStyle=1;');
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=center;fontStyle=1;labelBorderColor=#0000ff;');
 					var v27 = graph.insertVertex(v1, null, 'Bold + Glass\nTest Line 2\nTest Line 3', 520, 240, 140, 80,
-						'shape=rectangle;rounded=1;shadow=1;glass=1;align=right;fontStyle=1;');
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=right;fontStyle=1;labelBorderColor=#0000ff;');
 					var v28 = graph.insertVertex(v1, null, 'Top + Left\nTest Line 2\nTest Line 3', 520, 340, 140, 80,
-						'shape=rectangle;rounded=1;shadow=1;glass=1;align=left;verticalAlign=top;fontStyle=1;horizontal=0;');
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=left;verticalAlign=top;fontStyle=1;horizontal=0;labelBorderColor=#0000ff;');
 					var v29 = graph.insertVertex(v1, null, 'Middle + Center\nTest Line 2\nTest Line 3', 520, 440, 140, 80,
-						'shape=rectangle;rounded=1;shadow=1;glass=1;align=center;verticalAlign=middle;fontStyle=1;horizontal=0;');
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=center;verticalAlign=middle;fontStyle=1;horizontal=0;labelBorderColor=#0000ff;');
 					var v30 = graph.insertVertex(v1, null, 'Bottom + Right\nTest Line 2\nTest Line 3', 520, 540, 140, 80,
-						'shape=rectangle;rounded=1;shadow=1;glass=1;align=right;verticalAlign=bottom;fontStyle=1;horizontal=0;');
+						'shape=rectangle;rounded=1;shadow=1;glass=1;align=right;verticalAlign=bottom;fontStyle=1;horizontal=0;labelBorderColor=#0000ff;');
 					var e1 = graph.insertEdge(v1, null, 'e1', v10, v11, 'labelBackgroundColor=#ffffff;startArrow=oval;endArrow=classic');
 					var e2 = graph.insertEdge(v1, null, 'e22', v11, v12, 'labelBackgroundColor=#ffffff;startArrow=diamond;endArrow=open');
 					var e3 = graph.insertEdge(v1, null, 'e3', v12, v13, 'labelBackgroundColor=#ffff00;labelBorderColor=#000000;startArrow=none;endArrow=block;dashed=1');
@@ -569,7 +571,7 @@
 			document.body.appendChild(mxUtils.button('Test 3', function()
 			{
 				graph.getModel().clear();
-				var req = mxUtils.load('Diagram1.xml');
+				var req = mxUtils.load('Diagram2.xml');
 				var codec = new mxCodec(req.getDocumentElement().ownerDocument);
 				codec.decode(req.getDocumentElement(), graph.getModel());
 			}));
@@ -639,7 +641,7 @@
 </head>
 <body onload="main(document.getElementById('graphContainer'))">
 	<div id="graphContainer"
-		style="overflow:hidden;width:801px;height:801px;cursor:default;border:solid gray 1px;">
+		style="overflow:hidden;width:2001px;height:801px;cursor:default;border:solid gray 1px;">
 	</div>
 	<a href="alpha-gradient.pdf" target="_blank">PDF sample with opacity and gradients</a>
 	Note: This can only be tested in Chrome currently due to use of data-url for PDF viewing in new window.
