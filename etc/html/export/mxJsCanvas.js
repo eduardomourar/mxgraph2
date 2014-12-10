@@ -658,9 +658,13 @@ mxJsCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, forma
 		return;
 	}
 
-	// Create SVG with foreignObject and render as image for HTML text
-	// see http://robert.ocallahan.org/2011/11/drawing-dom-content-to-canvas.html
-	
+	if (rotation != 0)
+	{
+		this.ctx.translate(x, y);
+		this.ctx.rotate(rotation * Math.PI / 180);
+		this.ctx.translate(-x, -y);
+	}
+
 	if (format == 'html')
 	{
 		var style = 'vertical-align:top;';
@@ -751,13 +755,6 @@ mxJsCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, forma
 		
 		this.ctx.save();
 		this.updateFont();
-		
-		if (rotation != 0)
-		{
-			this.ctx.translate(x, y);
-			this.ctx.rotate(rotation * Math.PI / 180);
-			this.ctx.translate(-x, -y);
-		}
 			
 		var div = document.createElement("div");
 	    div.innerHTML = str;
