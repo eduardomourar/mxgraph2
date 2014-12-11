@@ -854,13 +854,14 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 					this.addMenuItems(menu, ['resetWaypoints'], null, evt);	
 				}
 			}
-			
+
 			if (graph.getSelectionCount() > 1)	
 			{
 				menu.addSeparator();
 				this.addMenuItems(menu, ['group'], null, evt);
 			}
-			else (graph.getSelectionCount() == 1 && graph.getModel().getChildCount(graph.getSelectionCell()) > 0)
+			else if (graph.getSelectionCount() == 1 && !graph.getModel().isEdge(cell) && !graph.isSwimlane(cell) &&
+					graph.getModel().getChildCount(cell) > 0)
 			{
 				menu.addSeparator();
 				this.addMenuItems(menu, ['ungroup'], null, evt);
