@@ -1599,6 +1599,10 @@ EditorUi.prototype.createDivs = function()
 	this.footerContainer.style.zIndex = mxPopupMenu.prototype.zIndex;
 	this.hsplit.style.width = this.splitSize + 'px';
 	
+	// Only vertical scrollbars in format sidebar
+	this.formatContainer.style.overflowX = 'hidden';
+	this.formatContainer.style.overflowY = 'auto';
+	
 	this.sidebarFooterContainer = this.createSidebarFooterContainer();
 	
 	if (this.sidebarFooterContainer)
