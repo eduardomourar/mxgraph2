@@ -20,6 +20,8 @@
 --    mxGraph Core     --
 -------------------------
 
+- Fix flip for image tag in stencils
+
 - Migrate changes in mxEdgeStyle to Java
 - Add preview box for edge label moving
 - Add parent highlight for edge childs in mxVertexHandler

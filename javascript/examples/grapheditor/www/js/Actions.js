@@ -448,7 +448,7 @@ Actions.prototype.init = function()
 	this.addAction('actualSize', function()
 	{
 		graph.zoomTo(1);
-		editor.resetScrollbars();
+		ui.resetScrollbars();
 	});
 	this.addAction('zoomIn', function()
 	{
@@ -573,33 +573,7 @@ Actions.prototype.init = function()
 	action.setSelectedCallback(function() { return graph.foldingEnabled; });
 	action = this.addAction('scrollbars', function()
 	{
-		var prev = graph.container.style.overflow;
-		graph.scrollbars = !graph.scrollbars;
-		editor.updateGraphComponents();
-
-		if (prev != graph.container.style.overflow)
-		{
-			if (graph.container.style.overflow == 'hidden')
-			{
-				var t = graph.view.translate;
-				graph.view.setTranslate(t.x - graph.container.scrollLeft / graph.view.scale, t.y - graph.container.scrollTop / graph.view.scale);
-				graph.container.scrollLeft = 0;
-				graph.container.scrollTop = 0;
-				graph.minimumGraphSize = null;
-				graph.sizeDidChange();
-			}
-			else
-			{
-				var dx = graph.view.translate.x;
-				var dy = graph.view.translate.y;
-	
-				graph.view.translate.x = 0;
-				graph.view.translate.y = 0;
-				graph.sizeDidChange();
-				graph.container.scrollLeft -= Math.round(dx * graph.view.scale);
-				graph.container.scrollTop -= Math.round(dy * graph.view.scale);
-			}
-		}
+		ui.setScrollbars(!ui.hasScrollbars());
 	});
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.scrollbars; });

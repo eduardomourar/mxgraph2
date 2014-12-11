@@ -629,7 +629,7 @@ EditorUi = function(editor, container)
 		// Timeout is a workaround for delay needed in older browsers and IE
 		window.setTimeout(mxUtils.bind(this, function()
 		{
-			this.editor.resetScrollbars();
+			this.resetScrollbars();
 		}), 0);
 	}));
    	
@@ -1207,6 +1207,106 @@ EditorUi.prototype.getUrl = function(pathname)
 	}
 	
 	return href;
+};
+
+/**
+ * Specifies if the graph has scrollbars.
+ */
+EditorUi.prototype.setScrollbars = function(value)
+{
+	var graph = this.editor.graph;
+	var prev = graph.container.style.overflow;
+	graph.scrollbars = value;
+	this.editor.updateGraphComponents();
+
+	if (prev != graph.container.style.overflow)
+	{
+		if (graph.container.style.overflow == 'hidden')
+		{
+			var t = graph.view.translate;
+			graph.view.setTranslate(t.x - graph.container.scrollLeft / graph.view.scale, t.y - graph.container.scrollTop / graph.view.scale);
+			graph.container.scrollLeft = 0;
+			graph.container.scrollTop = 0;
+			graph.minimumGraphSize = null;
+			graph.sizeDidChange();
+		}
+		else
+		{
+			var dx = graph.view.translate.x;
+			var dy = graph.view.translate.y;
+
+			graph.view.translate.x = 0;
+			graph.view.translate.y = 0;
+			graph.sizeDidChange();
+			graph.container.scrollLeft -= Math.round(dx * graph.view.scale);
+			graph.container.scrollTop -= Math.round(dy * graph.view.scale);
+		}
+	}
+	
+	this.fireEvent(new mxEventObject('scrollbarsChanged'));
+};
+
+/**
+ * Returns true if the graph has scrollbars.
+ */
+EditorUi.prototype.hasScrollbars = function()
+{
+	return this.editor.graph.scrollbars;
+};
+
+/**
+ * Resets the state of the scrollbars.
+ */
+EditorUi.prototype.resetScrollbars = function()
+{
+	var graph = this.editor.graph;
+	
+	if (!this.editor.extendCanvas)
+	{
+		graph.container.scrollTop = 0;
+		graph.container.scrollLeft = 0;
+	
+		if (!mxUtils.hasScrollbars(graph.container))
+		{
+			graph.view.setTranslate(0, 0);
+		}
+	}
+	else if (!this.editor.chromeless)
+	{
+		if (mxUtils.hasScrollbars(graph.container))
+		{
+			if (graph.pageVisible)
+			{
+				var pad = graph.getPagePadding();
+				graph.container.scrollTop = Math.floor(pad.y - this.editor.initialTopSpacing);
+				graph.container.scrollLeft = Math.floor(Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2));
+			}
+			else
+			{
+				var bounds = graph.getGraphBounds();
+				var width = Math.max(bounds.width, graph.scrollTileSize.width * graph.view.scale);
+				var height = Math.max(bounds.height, graph.scrollTileSize.height * graph.view.scale);
+				graph.container.scrollTop = Math.floor(Math.max(0, bounds.y - Math.max(20, (graph.container.clientHeight - height) / 4)));
+				graph.container.scrollLeft = Math.floor(Math.max(0, bounds.x - Math.max(0, (graph.container.clientWidth - width) / 2)));
+			}
+		}
+		else
+		{
+			// This code is not actively used since the default for scrollbars is always true
+			if (graph.pageVisible)
+			{
+				var b = graph.view.getBackgroundPageBounds();
+				graph.view.setTranslate(Math.floor(Math.max(0, (graph.container.clientWidth - b.width) / 2) - b.x),
+					Math.floor(Math.max(0, (graph.container.clientHeight - b.height) / 2) - b.y));
+			}
+			else
+			{
+				var bounds = graph.getGraphBounds();
+				graph.view.setTranslate(Math.floor(Math.max(0, Math.max(0, (graph.container.clientWidth - bounds.width) / 2) - bounds.x)),
+					Math.floor(Math.max(0, Math.max(20, (graph.container.clientHeight - bounds.height) / 4)) - bounds.y));
+			}
+		}
+	}
 };
 
 /**
