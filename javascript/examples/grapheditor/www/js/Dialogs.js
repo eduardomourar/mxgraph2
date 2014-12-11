@@ -344,10 +344,9 @@ ColorDialog.prototype.createApplyFunction = function()
 		graph.getModel().beginUpdate();
 		try
 		{
-			var value = (color == 'none') ? 'none' : color;
-			graph.setCellStyles(this.currentColorKey, value);
+			graph.setCellStyles(this.currentColorKey, color);
 			this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', [this.currentColorKey],
-				'values', [value], 'cells', graph.getSelectionCells()));
+				'values', [color], 'cells', graph.getSelectionCells()));
 		}
 		finally
 		{
