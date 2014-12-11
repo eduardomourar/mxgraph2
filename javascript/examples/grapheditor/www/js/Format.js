@@ -487,7 +487,7 @@ StyleFormatPanel.prototype.init = function()
 	this.container.appendChild(this.addEffects(clone.cloneNode(true)));
 
 	// TODO: Move to arrange
-	/*this.container.appendChild((function(div)
+	this.container.appendChild((function(div)
 	{
 		var btn = mxUtils.button(mxResources.get('turn'), function(evt)
 		{
@@ -520,7 +520,7 @@ StyleFormatPanel.prototype.init = function()
 		div.appendChild(span);
 
 		return div;
-	})(clone.cloneNode(true)));*/
+	})(clone.cloneNode(true)));
 	
 	// TODO: To draw.io
 	this.container.appendChild((function(div)
@@ -547,14 +547,7 @@ StyleFormatPanel.prototype.init = function()
 		btn.style.width = '100px';
 		
 		div.appendChild(btn);
-
-		return div;
-	})(clone.cloneNode(true)));
-	
-	// TODO: To draw.io
-	this.container.appendChild((function(div)
-	{
-		div.style.paddingBottom = '12px';
+		mxUtils.br(div);
 
 		var btn = mxUtils.button(mxResources.get('setAsDefaultStyle'), function(evt)
 		{
@@ -562,6 +555,7 @@ StyleFormatPanel.prototype.init = function()
 		})
 		
 		btn.setAttribute('title', 'Ctrl+Shift+D');
+		btn.style.marginTop = '8px';
 		btn.style.width = '206px';
 		div.appendChild(btn);
 
@@ -782,6 +776,28 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	// TODO: Add dashed, edge style, markers etc
 	var stylePanel = colorPanel.cloneNode(true);
 	stylePanel.style.fontWeight = 'normal';
+	stylePanel.style.marginBottom = '8px';
+	
+	// Adds gradient direction option
+	var styleSelect = document.createElement('select');
+	styleSelect.style.width = '80px';
+
+	var directions = ['plain', 'dashed', 'dotted'];
+
+	for (var i = 0; i < directions.length; i++)
+	{
+		var styleOption = document.createElement('option');
+		styleOption.setAttribute('value', directions[i]);
+		mxUtils.write(styleOption, mxResources.get(directions[i]));
+		styleSelect.appendChild(styleOption);
+		
+		/*if (directions[i] == current)
+		{
+			gradientOption.setAttribute('selected', 'selected');
+		}*/
+	}
+	
+	stylePanel.appendChild(styleSelect);
 
 	var input = document.createElement('input');
 	input.setAttribute('type', 'number');
@@ -946,7 +962,8 @@ StyleFormatPanel.prototype.addEffects = function(container)
 	var graph = editor.graph;
 	var state = graph.view.getState(graph.getSelectionCell());
 	
-	container.style.paddingBottom = '8px';
+	container.style.paddingBottom = '6px';
+	container.style.marginTop = '2px';
 	
 	var span = document.createElement('div');
 	span.style.marginBottom = '12px';
@@ -1330,7 +1347,9 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(container)
 		ui.actions.get('pageView').funct();
 	});
 	
-	this.addColorOption(container, mxResources.get('background'), function()
+	var bg = document.createElement('div');
+	
+	container.appendChild(this.addColorOption(bg, mxResources.get('background'), function()
 	{
 		return graph.background;
 	}, function(color)
@@ -1351,41 +1370,26 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(container)
 		{
 			ui.removeListener(this.listener);
 		}
-	});
+	}));
 	
-	// Background image
-	(function()
+	var btn = mxUtils.button(mxResources.get('image'), function(evt)
 	{
-		var changeImageLink = document.createElement('a');
-		changeImageLink.style.textDecoration = 'underline';
-		changeImageLink.style.cursor = 'pointer';
-		changeImageLink.style.color = '#a0a0a0';
-		changeImageLink.innerHTML = mxResources.get('backgroundImage') + '...';
-		
-		var defaultBgImage = graph.backgroundImage;
-		
-		var span = document.createElement('div');
-		span.style.width = '210px';
-		span.style.height = '24px';
-		span.style.paddingLeft = '18px';
-		span.style.whiteSpace = 'nowrap';
-		span.style.overflow = 'hidden';
-		span.appendChild(changeImageLink);
-		
-		container.appendChild(span);
-	
-		mxEvent.addListener(changeImageLink, 'click', function(evt)
+		var dlg = new BackgroundImageDialog(ui, function(image)
 		{
-			var dlg = new BackgroundImageDialog(ui, function(image)
-			{
-				ui.setBackgroundImage(image);
-			});
-			ui.showDialog(dlg.container, 360, 200, true, true);
-			dlg.init();
-			
-			mxEvent.consume(evt);
+			ui.setBackgroundImage(image);
 		});
-	})();
+		ui.showDialog(dlg.container, 360, 200, true, true);
+		dlg.init();
+		
+		mxEvent.consume(evt);
+	})
+
+	btn.style.position = 'absolute';
+	btn.style.marginTop = '-1px';
+	btn.style.right = '78px';
+	btn.style.width = '52px';
+
+	container.appendChild(btn);
 	
 	if (typeof(MathJax) !== 'undefined')
 	{

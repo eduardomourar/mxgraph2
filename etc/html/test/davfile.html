@@ -94,7 +94,15 @@
 						{
 							if (req2.readyState == 4)
 							{
-								window.location.reload();
+								if (req2.status != 200)
+								{
+									console.log('data', evt.data);
+									alert('Error ' + req2.status);
+								}
+								else
+								{
+									window.location.reload();
+								}
 							}
 						};
 	
