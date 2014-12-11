@@ -1,4 +1,5 @@
-- Renames reset- to clearDefaultStyle, assigns Ctrl+Shift+R in grapheditor
+- Assigns Ctrl+Shift+R to clearDefaultStyle in grapheditor
+- Renames reset- to clearDefaultStyle, reset- to clearWaypoints in grapheditor
 - Hides ungroup for containers and edges with labels in grapheditor
 - Fixes 1px offset in mxGraphHandler.getPreviewBounds [JavaScript]
 - Adds EditorUi.set/getScrollbars, scrollbarsChanged event in grapheditor

@@ -860,7 +860,7 @@ Actions.prototype.init = function()
 			rmWaypointAction.handler.removePoint(rmWaypointAction.handler.state, rmWaypointAction.index);
 		}
 	});
-	this.addAction('resetWaypoints', function()
+	this.addAction('clearWaypoints', function()
 	{
 		var cells = graph.getSelectionCells();
 		

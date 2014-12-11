@@ -851,7 +851,7 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 				
 				if (geo != null && geo.points != null && geo.points.length > 0)
 				{
-					this.addMenuItems(menu, ['resetWaypoints'], null, evt);	
+					this.addMenuItems(menu, ['clearWaypoints'], null, evt);	
 				}
 			}
 
