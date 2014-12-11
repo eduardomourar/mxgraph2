@@ -808,13 +808,13 @@ Actions.prototype.init = function()
 			ui.setDefaultStyle(graph.getSelectionCell());
 		}
 	}, null, null, 'Ctrl+Shift+D');
-	this.addAction('resetDefaultStyle', function()
+	this.addAction('clearDefaultStyle', function()
 	{
 		if (graph.isEnabled())
 		{
-			ui.resetDefaultStyle();
+			ui.clearDefaultStyle();
 		}
-	});
+	}, null, null, 'Ctrl+Shift+R');
 	this.addAction('addWaypoint', function()
 	{
 		var cell = graph.getSelectionCell();

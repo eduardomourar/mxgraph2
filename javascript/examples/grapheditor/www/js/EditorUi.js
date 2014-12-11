@@ -266,7 +266,7 @@ EditorUi = function(editor, container)
 		}
 	};
 	
-	this.resetDefaultStyle = function()
+	this.clearDefaultStyle = function()
 	{
 		currentEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1'};
 		currentStyle = {};
@@ -2096,141 +2096,142 @@ EditorUi.prototype.createOutline = function(wnd)
 EditorUi.prototype.createKeyHandler = function(editor)
 {
 	var graph = this.editor.graph;
-    var keyHandler = new mxKeyHandler(graph);
-    
-    // Routes command-key to control-key on Mac
-    keyHandler.isControlDown = function(evt)
-    {
-    	return mxEvent.isControlDown(evt) || (mxClient.IS_MAC && evt.metaKey);
-    };
+	var keyHandler = new mxKeyHandler(graph);
+	
+	// Routes command-key to control-key on Mac
+	keyHandler.isControlDown = function(evt)
+	{
+		return mxEvent.isControlDown(evt) || (mxClient.IS_MAC && evt.metaKey);
+	};
 	
 	// Helper function to move cells with the cursor keys
-    function nudge(keyCode, stepSize)
-    {
-    	if (!graph.isSelectionEmpty() && graph.isEnabled())
+	function nudge(keyCode, stepSize)
+	{
+		if (!graph.isSelectionEmpty() && graph.isEnabled())
 		{
-    		stepSize = (stepSize != null) ? stepSize : 1;
-    		
-    		var dx = 0;
-    		var dy = 0;
-    		
-    		if (keyCode == 37)
+			stepSize = (stepSize != null) ? stepSize : 1;
+			
+			var dx = 0;
+			var dy = 0;
+			
+			if (keyCode == 37)
 			{
-    			dx = -stepSize;
+				dx = -stepSize;
 			}
-    		else if (keyCode == 38)
-    		{
-    			dy = -stepSize;
-    		}
-    		else if (keyCode == 39)
-    		{
-    			dx = stepSize;
-    		}
-    		else if (keyCode == 40)
-    		{
-    			dy = stepSize;
-    		}
-    		
-    		graph.moveCells(graph.getSelectionCells(), dx, dy);
-    		graph.scrollCellToVisible(graph.getSelectionCell());
+			else if (keyCode == 38)
+			{
+				dy = -stepSize;
+			}
+			else if (keyCode == 39)
+			{
+				dx = stepSize;
+			}
+			else if (keyCode == 40)
+			{
+				dy = stepSize;
+			}
+			
+			graph.moveCells(graph.getSelectionCells(), dx, dy);
+			graph.scrollCellToVisible(graph.getSelectionCell());
 		}
-    };
-
-    // Binds keystrokes to actions
-    keyHandler.bindAction = mxUtils.bind(this, function(code, control, key, shift)
-    {
-    	var action = this.actions.get(key);
-    	
-    	if (action != null)
-    	{
-    		var f = function()
-    		{
+	};
+	
+	// Binds keystrokes to actions
+	keyHandler.bindAction = mxUtils.bind(this, function(code, control, key, shift)
+	{
+		var action = this.actions.get(key);
+		
+		if (action != null)
+		{
+			var f = function()
+			{
 				if (action.isEnabled())
 				{
 					action.funct();
 				}
-    		};
+			};
     		
-    		if (control)
-    		{
-    			if (shift)
-    			{
-    				keyHandler.bindControlShiftKey(code, f);
-    			}
-    			else
-    			{
-    				keyHandler.bindControlKey(code, f);
-    			}
-    		}
-    		else
-    		{
-    			if (shift)
-    			{
-    				keyHandler.bindShiftKey(code, f);
-    			}
-    			else
-    			{
-    				keyHandler.bindKey(code, f);
-    			}
-    		}
-    	}
-    });
-    
-    var ui = this;
-    var keyHandleEscape = keyHandler.escape;
-    keyHandler.escape = function(evt)
-    {
-    	keyHandleEscape.apply(this, arguments);
-    };
-    
-    // Ignores enter keystroke. Remove this line if you want the
-    // enter keystroke to stop editing.
-    keyHandler.enter = function() {};
-    keyHandler.bindControlKey(13, function() { graph.foldCells(false); }); // Ctrl+Enter
-    keyHandler.bindControlKey(8, function() { graph.foldCells(true); }); // Ctrl+Backspace
-    keyHandler.bindKey(33, function() { graph.exitGroup(); }); // Page Up
-    keyHandler.bindKey(34, function() { graph.enterGroup(); }); // Page Down
-    keyHandler.bindKey(36, function() { graph.home(); }); // Home
-    keyHandler.bindKey(35, function() { graph.refresh(); }); // End
-    keyHandler.bindKey(37, function() { nudge(37); }); // Left arrow
-    keyHandler.bindKey(38, function() { nudge(38); }); // Up arrow
-    keyHandler.bindKey(39, function() { nudge(39); }); // Right arrow
-    keyHandler.bindKey(40, function() { nudge(40); }); // Down arrow
-    keyHandler.bindShiftKey(37, function() { nudge(37, graph.gridSize); }); // Shift+Left arrow
-    keyHandler.bindShiftKey(38, function() { nudge(38, graph.gridSize); }); // Shift+Up arrow
-    keyHandler.bindShiftKey(39, function() { nudge(39, graph.gridSize); }); // Shift+Right arrow
-    keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
-    keyHandler.bindAction(8, false, 'delete'); // Backspace
-    keyHandler.bindAction(46, false, 'delete'); // Delete
-    keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
-    keyHandler.bindAction(83, true, 'save'); // Ctrl+S
-    keyHandler.bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
-    keyHandler.bindAction(107, true, 'zoomIn'); // Ctrl+Plus
-    keyHandler.bindAction(109, true, 'zoomOut'); // Ctrl+Minus
-    keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
-    keyHandler.bindAction(65, true, 'selectVertices', true); // Ctrl+Shift+A
-    keyHandler.bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
-    keyHandler.bindAction(69, true, 'style'); // Ctrl+E
-    keyHandler.bindAction(66, true, 'toBack'); // Ctrl+B
-    keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
-    keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
-    keyHandler.bindAction(68, true, 'setAsDefaultStyle', true); // Ctrl+Shift+D   
-    keyHandler.bindAction(90, true, 'undo'); // Ctrl+Z
-    keyHandler.bindAction(89, true, 'redo'); // Ctrl+Y
-    keyHandler.bindAction(88, true, 'cut'); // Ctrl+X
-    keyHandler.bindAction(67, true, 'copy'); // Ctrl+C
-    keyHandler.bindAction(81, true, 'connectionPoints'); // Ctrl+Q
-    keyHandler.bindAction(86, true, 'paste'); // Ctrl+V
-    keyHandler.bindAction(71, true, 'group'); // Ctrl+G
-    keyHandler.bindAction(77, true, 'editData'); // Ctrl+M
-    keyHandler.bindAction(71, true, 'grid', true); // Ctrl+Shift+G
-    keyHandler.bindAction(76, true, 'lockUnlock'); // Ctrl+L
-    keyHandler.bindAction(76, true, 'layers', true); // Ctrl+Shift+L
-    keyHandler.bindAction(79, true, 'outline', true); // Ctrl+Shift+O
-    keyHandler.bindAction(80, true, 'print'); // Ctrl+P
-    keyHandler.bindAction(85, true, 'ungroup'); // Ctrl+U
-    keyHandler.bindAction(112, false, 'about'); // F1
-    keyHandler.bindKey(113, function() { graph.startEditingAtCell(); }); // F2
-    
-    return keyHandler;
+			if (control)
+			{
+				if (shift)
+				{
+					keyHandler.bindControlShiftKey(code, f);
+				}
+				else
+				{
+					keyHandler.bindControlKey(code, f);
+				}
+			}
+			else
+			{
+				if (shift)
+				{
+					keyHandler.bindShiftKey(code, f);
+				}
+				else
+				{
+					keyHandler.bindKey(code, f);
+				}
+			}
+		}
+	});
+
+	var ui = this;
+	var keyHandleEscape = keyHandler.escape;
+	keyHandler.escape = function(evt)
+	{
+		keyHandleEscape.apply(this, arguments);
+	};
+
+	// Ignores enter keystroke. Remove this line if you want the
+	// enter keystroke to stop editing.
+	keyHandler.enter = function() {};
+	keyHandler.bindControlKey(13, function() { graph.foldCells(false); }); // Ctrl+Enter
+	keyHandler.bindControlKey(8, function() { graph.foldCells(true); }); // Ctrl+Backspace
+	keyHandler.bindKey(33, function() { graph.exitGroup(); }); // Page Up
+	keyHandler.bindKey(34, function() { graph.enterGroup(); }); // Page Down
+	keyHandler.bindKey(36, function() { graph.home(); }); // Home
+	keyHandler.bindKey(35, function() { graph.refresh(); }); // End
+	keyHandler.bindKey(37, function() { nudge(37); }); // Left arrow
+	keyHandler.bindKey(38, function() { nudge(38); }); // Up arrow
+	keyHandler.bindKey(39, function() { nudge(39); }); // Right arrow
+	keyHandler.bindKey(40, function() { nudge(40); }); // Down arrow
+	keyHandler.bindShiftKey(37, function() { nudge(37, graph.gridSize); }); // Shift+Left arrow
+	keyHandler.bindShiftKey(38, function() { nudge(38, graph.gridSize); }); // Shift+Up arrow
+	keyHandler.bindShiftKey(39, function() { nudge(39, graph.gridSize); }); // Shift+Right arrow
+	keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
+	keyHandler.bindAction(8, false, 'delete'); // Backspace
+	keyHandler.bindAction(46, false, 'delete'); // Delete
+	keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
+	keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
+	keyHandler.bindAction(83, true, 'save'); // Ctrl+S
+	keyHandler.bindAction(83, true, 'saveAs', true); // Ctrl+Shift+S
+	keyHandler.bindAction(107, true, 'zoomIn'); // Ctrl+Plus
+	keyHandler.bindAction(109, true, 'zoomOut'); // Ctrl+Minus
+	keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
+	keyHandler.bindAction(65, true, 'selectVertices', true); // Ctrl+Shift+A
+	keyHandler.bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
+	keyHandler.bindAction(69, true, 'style'); // Ctrl+E
+	keyHandler.bindAction(66, true, 'toBack'); // Ctrl+B
+	keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
+	keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
+	keyHandler.bindAction(68, true, 'setAsDefaultStyle', true); // Ctrl+Shift+D   
+	keyHandler.bindAction(90, true, 'undo'); // Ctrl+Z
+	keyHandler.bindAction(89, true, 'redo'); // Ctrl+Y
+	keyHandler.bindAction(88, true, 'cut'); // Ctrl+X
+	keyHandler.bindAction(67, true, 'copy'); // Ctrl+C
+	keyHandler.bindAction(81, true, 'connectionPoints'); // Ctrl+Q
+	keyHandler.bindAction(86, true, 'paste'); // Ctrl+V
+	keyHandler.bindAction(71, true, 'group'); // Ctrl+G
+	keyHandler.bindAction(77, true, 'editData'); // Ctrl+M
+	keyHandler.bindAction(71, true, 'grid', true); // Ctrl+Shift+G
+	keyHandler.bindAction(76, true, 'lockUnlock'); // Ctrl+L
+	keyHandler.bindAction(76, true, 'layers', true); // Ctrl+Shift+L
+	keyHandler.bindAction(79, true, 'outline', true); // Ctrl+Shift+O
+	keyHandler.bindAction(80, true, 'print'); // Ctrl+P
+	keyHandler.bindAction(85, true, 'ungroup'); // Ctrl+U
+	keyHandler.bindAction(112, false, 'about'); // F1
+	keyHandler.bindKey(113, function() { graph.startEditingAtCell(); }); // F2
+
+	return keyHandler;
 };

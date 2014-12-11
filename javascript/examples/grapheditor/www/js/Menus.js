@@ -234,7 +234,7 @@ Menus.prototype.init = function()
 		this.addMenuItems(menu, ['-'], parent);
 		this.addSubmenu('linestart', menu, parent);
 		this.addSubmenu('lineend', menu, parent);
-		this.addMenuItems(menu, ['-', 'setAsDefaultStyle', 'resetDefaultStyle', '-', 'style'], parent);
+		this.addMenuItems(menu, ['-', 'setAsDefaultStyle', 'clearDefaultStyle', '-', 'style'], parent);
 	})));
 	this.put('gradient', new Menu(mxUtils.bind(this, function(menu, parent)
 	{

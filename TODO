@@ -20,6 +20,7 @@
 --    mxGraph Core     --
 -------------------------
 
+- Fix guide lengths (see Apple)
 - Fix flip for image tag in stencils
 
 - Migrate changes in mxEdgeStyle to Java
