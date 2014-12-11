@@ -320,13 +320,6 @@ mxEdgeSegmentHandler.prototype.createBends = function()
 			bend.setCursor((horizontal) ? 'col-resize' : 'row-resize');
 			this.points.push(new mxPoint(0,0));
 		}
-		
-		// Special case where all three bends are in a orthogonal segment (straight line)
-		if (pts.length == 4 && Math.round(pts[1].x - pts[2].x) == 0 && Math.round(pts[1].y - pts[2].y) == 0)
-		{
-			mxUtils.setOpacity(bends[1].node, 20);
-			mxUtils.setOpacity(bends[3].node, 20);
-		}
 	}
 
 	// Target
@@ -362,9 +355,13 @@ mxEdgeSegmentHandler.prototype.redrawInnerBends = function(p0, pe)
 		
 		if (pts != null && pts.length > 1)
 		{
+			var straight = false;
+			
 			// Puts handle in the center of straight edges
 			if (pts.length == 4 && Math.round(pts[1].x - pts[2].x) == 0 && Math.round(pts[1].y - pts[2].y) == 0)
 			{
+				straight = true;
+				
 				if (Math.round(pts[0].y - pts[pts.length - 1].y) == 0)
 				{
 					var cx = pts[0].x + (pts[pts.length - 1].x - pts[0].x) / 2;
@@ -396,6 +393,12 @@ mxEdgeSegmentHandler.prototype.redrawInnerBends = function(p0, pe)
 						this.checkLabelHandle(this.bends[i + 1].bounds);
 					}
 				}
+			}
+			
+			if (straight)
+			{
+				mxUtils.setOpacity(this.bends[1].node, 20);
+				mxUtils.setOpacity(this.bends[3].node, 20);
 			}
 		}
 	}
