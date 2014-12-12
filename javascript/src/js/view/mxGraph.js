@@ -7327,8 +7327,8 @@ mxGraph.prototype.zoomTo = function(scale, center)
  */
 mxGraph.prototype.center = function(horizontal, vertical)
 {
-	vertical = (vertical != null) ? vertical : true;
 	horizontal = (horizontal != null) ? horizontal : true;
+	vertical = (vertical != null) ? vertical : true;
 	
 	var hasScrollbars = mxUtils.hasScrollbars(this.container);
 	var cw = this.container.clientWidth;
@@ -7338,8 +7338,8 @@ mxGraph.prototype.center = function(horizontal, vertical)
 	bounds.x -= t.x;
 	bounds.y -= t.y;
 	
-	var dx = (vertical) ? cw - bounds.width : 0;
-	var dy = (horizontal) ? ch - bounds.height : 0;
+	var dx = (horizontal) ? cw - bounds.width : 0;
+	var dy = (vertical) ? ch - bounds.height : 0;
 	
 	if (!hasScrollbars)
 	{
