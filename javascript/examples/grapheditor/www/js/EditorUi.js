@@ -1894,59 +1894,70 @@ EditorUi.prototype.openFile = function()
 };
 
 /**
+ * Extracs the graph model from the given HTML data from a data transfer event.
+ */
+EditorUi.prototype.extractGraphModelFromHtml = function(data)
+{
+	var result = null;
+	
+	try
+	{
+    	var idx = data.indexOf('&lt;mxGraphModel ');
+    	
+    	if (idx >= 0)
+    	{
+    		var idx2 = data.lastIndexOf('&lt;/mxGraphModel&gt;');
+    		
+    		if (idx2 > idx)
+    		{
+    			result = data.substring(idx, idx2 + 21).replace(/&gt;/g, '>').replace(/&lt;/g, '<');
+    		}
+    	}
+	}
+	catch (e)
+	{
+		// ignore
+	}
+	
+	return result;
+};
+
+/**
+ * Returns true if the given string contains a compatible graph model.
+ */
+EditorUi.prototype.isCompatibleString = function(data)
+{
+	return data.substring(0, 14) == '<mxGraphModel ';
+};
+
+/**
  * Opens the given files in the editor.
  */
 EditorUi.prototype.extractGraphModelFromEvent = function(evt)
 {
 	var result = null;
+	var data = null;
 	
 	if (evt != null && evt.dataTransfer != null)
 	{
 		if (mxUtils.indexOf(evt.dataTransfer.types, 'text/html') >= 0)
 	    {
-	    	try
-	    	{
-		    	var data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('text/html')));
-		    	var idx = data.indexOf('&lt;mxfile ');
-		    	
-		    	if (idx >= 0)
-		    	{
-		    		var idx2 = data.lastIndexOf('&lt;/mxfile&gt;');
-		    		
-		    		if (idx2 > idx)
-		    		{
-		    			data = data.substring(idx, idx2 + 15).replace(/&gt;/g, '>').replace(/&lt;/g, '<');
-			    	
-		    			if (data.substring(0, 8) == '<mxfile ' || data.substring(0, 14) == '<mxGraphModel ')
-		    			{
-		    				result = data;
-		    			}
-		    		}
-		    	}
-	    	}
-	    	catch (e)
-	    	{
-	    		// ignore
-	    	}
+			data = this.extractGraphModelFromHtml(this.editor.graph.zapGremlins(
+				mxUtils.trim(evt.dataTransfer.getData('text/html'))));
 	    }
 	    else if (mxUtils.indexOf(evt.dataTransfer.types, 'text/plain') >= 0)
 	    {
-	    	var data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('text/plain')));
-	    	
-	    	if (data.substring(0, 8) == '<mxfile ' || data.substring(0, 14) == '<mxGraphModel ')
-	    	{
-	    		result = data;
-	    	}
+	    	data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('text/plain')));
 	    }
 	    else if (document.documentMode == 11)
 	    {
-	    	var data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('Text')));
-	    	
-	    	if (data.substring(0, 8) == '<mxfile ' || data.substring(0, 14) == '<mxGraphModel ')
-	    	{
-	    		result = data;
-	    	}
+	    	data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('Text')));
 	    }
+	}
+	
+	if (data != null && this.isCompatibleString(data))
+	{
+		result = data;
 	}
 	
 	return result;
