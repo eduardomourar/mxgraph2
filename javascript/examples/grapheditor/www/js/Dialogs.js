@@ -1012,14 +1012,19 @@ var EditFileDialog = function(editorUi)
 		    if (evt.dataTransfer.files.length > 0)
 		    {
     			var file = evt.dataTransfer.files[0];
-    			
-				var reader = new FileReader();
+    			var reader = new FileReader();
+				
 				reader.onload = function(e)
 				{
 					textarea.value = e.target.result;
 				};
+				
 				reader.readAsText(file);
     		}
+		    else
+		    {
+		    	textarea.value = editorUi.extractGraphModelFromEvent(evt);
+		    }
 		};
 		
 		function handleDragOver(evt)

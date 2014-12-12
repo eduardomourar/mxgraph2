@@ -1894,6 +1894,65 @@ EditorUi.prototype.openFile = function()
 };
 
 /**
+ * Opens the given files in the editor.
+ */
+EditorUi.prototype.extractGraphModelFromEvent = function(evt)
+{
+	var result = null;
+	
+	if (evt != null && evt.dataTransfer != null)
+	{
+		if (mxUtils.indexOf(evt.dataTransfer.types, 'text/html') >= 0)
+	    {
+	    	try
+	    	{
+		    	var data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('text/html')));
+		    	var idx = data.indexOf('&lt;mxfile ');
+		    	
+		    	if (idx >= 0)
+		    	{
+		    		var idx2 = data.lastIndexOf('&lt;/mxfile&gt;');
+		    		
+		    		if (idx2 > idx)
+		    		{
+		    			data = data.substring(idx, idx2 + 15).replace(/&gt;/g, '>').replace(/&lt;/g, '<');
+			    	
+		    			if (data.substring(0, 8) == '<mxfile ' || data.substring(0, 14) == '<mxGraphModel ')
+		    			{
+		    				result = data;
+		    			}
+		    		}
+		    	}
+	    	}
+	    	catch (e)
+	    	{
+	    		// ignore
+	    	}
+	    }
+	    else if (mxUtils.indexOf(evt.dataTransfer.types, 'text/plain') >= 0)
+	    {
+	    	var data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('text/plain')));
+	    	
+	    	if (data.substring(0, 8) == '<mxfile ' || data.substring(0, 14) == '<mxGraphModel ')
+	    	{
+	    		result = data;
+	    	}
+	    }
+	    else if (document.documentMode == 11)
+	    {
+	    	var data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('Text')));
+	    	
+	    	if (data.substring(0, 8) == '<mxfile ' || data.substring(0, 14) == '<mxGraphModel ')
+	    	{
+	    		result = data;
+	    	}
+	    }
+	}
+	
+	return result;
+};
+
+/**
  * Adds the label menu items to the given menu and parent.
  */
 EditorUi.prototype.saveFile = function(forceDialog)
