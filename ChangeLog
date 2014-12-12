@@ -1,3 +1,4 @@
+- Adds vertical, horizontal arguments, rounding in mxGraph.center [JavaScript]
 - Assigns Ctrl+Shift+R to clearDefaultStyle in grapheditor
 - Renames reset- to clearDefaultStyle, reset- to clearWaypoints in grapheditor
 - Hides ungroup for containers and edges with labels in grapheditor

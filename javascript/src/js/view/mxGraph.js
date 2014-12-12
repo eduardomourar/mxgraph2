@@ -7317,9 +7317,19 @@ mxGraph.prototype.zoomTo = function(scale, center)
  * Function: center
  * 
  * Centers the graph in the container.
+ * 
+ * Parameters:
+ * 
+ * horizontal - Optional boolean that specifies if the graph should be centered
+ * horizontally. Default is true.
+ * vertical - Optional boolean that specifies if the graph should be centered
+ * vertically. Default is true.
  */
-mxGraph.prototype.center = function()
+mxGraph.prototype.center = function(horizontal, vertical)
 {
+	vertical = (vertical != null) ? vertical : true;
+	horizontal = (horizontal != null) ? horizontal : true;
+	
 	var hasScrollbars = mxUtils.hasScrollbars(this.container);
 	var cw = this.container.clientWidth;
 	var ch = this.container.clientHeight;
@@ -7328,12 +7338,12 @@ mxGraph.prototype.center = function()
 	bounds.x -= t.x;
 	bounds.y -= t.y;
 	
-	var dx = cw - bounds.width;
-	var dy = ch - bounds.height;
+	var dx = (vertical) ? cw - bounds.width : 0;
+	var dy = (horizontal) ? ch - bounds.height : 0;
 	
 	if (!hasScrollbars)
 	{
-		this.view.setTranslate(dx / 2 - bounds.x, dy / 2 - bounds.y);
+		this.view.setTranslate(Math.floor(dx / 2 - bounds.x), Math.floor(dy / 2 - bounds.y));
 	}
 	else
 	{
@@ -7350,7 +7360,7 @@ mxGraph.prototype.center = function()
 			dy = 0;
 		}
 
-		this.view.setTranslate(dx / 2 - bounds.x, dy / 2 - bounds.y);
+		this.view.setTranslate(Math.floor(dx / 2 - bounds.x), Math.floor(dy / 2 - bounds.y));
 		this.container.scrollLeft = (sw - cw) / 2;
 		this.container.scrollTop = (sh - ch) / 2;
 	}
