@@ -2000,6 +2000,11 @@ EditorUi.prototype.save = function(name)
 {
 	if (name != null)
 	{
+		if (this.editor.graph.isEditing())
+		{
+			this.editor.graph.stopEditing();
+		}
+		
 		var xml = mxUtils.getXml(this.editor.getGraphXml());
 		
 		try
