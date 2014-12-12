@@ -1910,7 +1910,8 @@ EditorUi.prototype.extractGraphModelFromHtml = function(data)
     		
     		if (idx2 > idx)
     		{
-    			result = data.substring(idx, idx2 + 21).replace(/&gt;/g, '>').replace(/&lt;/g, '<');
+    			result = data.substring(idx, idx2 + 21).replace(/&gt;/g, '>').
+    				replace(/&lt;/g, '<').replace(/\n/g, '');
     		}
     	}
 	}
@@ -1927,7 +1928,7 @@ EditorUi.prototype.extractGraphModelFromHtml = function(data)
  */
 EditorUi.prototype.isCompatibleString = function(data)
 {
-	return data.substring(0, 14) == '<mxGraphModel ';
+	return data.substring(0, 13) == '<mxGraphModel';
 };
 
 /**
@@ -1938,20 +1939,22 @@ EditorUi.prototype.extractGraphModelFromEvent = function(evt)
 	var result = null;
 	var data = null;
 	
-	if (evt != null && evt.dataTransfer != null)
+	if (evt != null && (evt.dataTransfer != null || evt.clipboardData != null))
 	{
-		if (mxUtils.indexOf(evt.dataTransfer.types, 'text/html') >= 0)
+		var provider = (evt.dataTransfer != null) ? evt.dataTransfer : evt.clipboardData;
+
+		if (mxUtils.indexOf(provider.types, 'text/html') >= 0)
 	    {
 			data = this.extractGraphModelFromHtml(this.editor.graph.zapGremlins(
-				mxUtils.trim(evt.dataTransfer.getData('text/html'))));
+				mxUtils.trim(provider.getData('text/html'))));
 	    }
-	    else if (mxUtils.indexOf(evt.dataTransfer.types, 'text/plain') >= 0)
+	    else if (mxUtils.indexOf(provider.types, 'text/plain') >= 0)
 	    {
-	    	data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('text/plain')));
+	    	data = this.editor.graph.zapGremlins(mxUtils.trim(provider.getData('text/plain')));
 	    }
 	    else if (document.documentMode == 11)
 	    {
-	    	data = this.editor.graph.zapGremlins(mxUtils.trim(evt.dataTransfer.getData('Text')));
+	    	data = this.editor.graph.zapGremlins(mxUtils.trim(provider.getData('Text')));
 	    }
 	}
 	
