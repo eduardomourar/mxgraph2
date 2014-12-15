@@ -2327,7 +2327,7 @@ Graph.prototype.initTouch = function()
 		
 		if  (this.changeHandler != null)
 		{
-			this.graph.getModel().removeListener(this.cahngeHandler);
+			this.graph.getModel().removeListener(this.changeHandler);
 			this.changeHandler = null;
 		}
 	};
@@ -2387,7 +2387,7 @@ Graph.prototype.initTouch = function()
 
 		if  (this.changeHandler != null)
 		{
-			this.graph.getModel().removeListener(this.cahngeHandler);
+			this.graph.getModel().removeListener(this.changeHandler);
 			this.changeHandler = null;
 		}
 	};

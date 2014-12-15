@@ -1,3 +1,5 @@
+- Removes graph model listener for overridden handlers in grapheditor [JavaScript]
+- Fixes possible parent highlight in destroyed mxVertexHandler [JavaScript]
 - Adds vertical, horizontal arguments, rounding in mxGraph.center [JavaScript]
 - Assigns Ctrl+Shift+R to clearDefaultStyle in grapheditor
 - Renames reset- to clearDefaultStyle, reset- to clearWaypoints in grapheditor
