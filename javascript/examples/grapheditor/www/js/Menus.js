@@ -1013,7 +1013,6 @@ Menubar.prototype.addMenuHandler = function(elt, funct)
 				this.currentElt = elt;
 			}
 			
-			show = true;
 			mxEvent.consume(evt);
 		});
 		
@@ -1033,7 +1032,11 @@ Menubar.prototype.addMenuHandler = function(elt, funct)
 			show = this.currentElt != elt;
 		}));
 		
-		mxEvent.addListener(elt, 'click', clickHandler);
+		mxEvent.addListener(elt, 'click', mxUtils.bind(this, function(evt)
+		{
+			clickHandler(evt);
+			show = true;
+		}));
 	}
 };
 

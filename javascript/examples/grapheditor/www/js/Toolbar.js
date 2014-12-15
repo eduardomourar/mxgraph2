@@ -807,7 +807,6 @@ Toolbar.prototype.hideMenu = function()
 	{
 		this.currentMenu.hideMenu();
 		this.currentMenu.destroy();
-		this.currentMenu = null;
 	}
 };
 
@@ -832,10 +831,18 @@ Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name)
  */
 Toolbar.prototype.addMenuFunction = function(label, tooltip, showLabels, funct)
 {
+	return this.addMenuFunctionInContainer(this.container, label, tooltip, showLabels, funct);
+};
+
+/**
+ * Adds a label to the toolbar.
+ */
+Toolbar.prototype.addMenuFunctionInContainer = function(container, label, tooltip, showLabels, funct)
+{
 	var elt = (showLabels) ? this.createLabel(label) : this.createButton(label);
 	this.initElement(elt, tooltip);
 	this.addMenuHandler(elt, showLabels, funct);
-	this.container.appendChild(elt);
+	container.appendChild(elt);
 	
 	return elt;
 };
@@ -1023,10 +1030,11 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll)
 	{
 		var graph = this.editorUi.editor.graph;
 		var menu = null;
+		var show = true;
 
 		mxEvent.addListener(elt, 'click', mxUtils.bind(this, function(evt)
 		{
-			if (elt.enabled == null || elt.enabled)
+			if (show && (elt.enabled == null || elt.enabled))
 			{
 				graph.popupMenuHandler.hideMenu();
 				menu = new mxPopupMenu(funct);
@@ -1034,22 +1042,39 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll)
 				menu.showDisabled = showAll;
 				menu.labels = showLabels;
 				menu.autoExpand = true;
-
+				
 				var offset = mxUtils.getOffset(elt);
 				menu.popup(offset.x, offset.y + elt.offsetHeight, null, evt);
 				this.currentMenu = menu;
+				this.currentElt = elt;
+				
+				var self = this;
+				
+				// Extends destroy to reset global state
+				var menuDestroy = menu.destroy;
+				menu.destroy = function()
+				{
+					menuDestroy.apply(this, arguments);
+					
+					self.currentMenu = null;
+					self.currentElt = null;
+				};
 			}
 			
+			show = true;
 			mxEvent.consume(evt);
 		}));
-		
-		if (document.documentMode != null && document.documentMode >= 9)
+
+		// Hides menu if already showing
+		mxEvent.addListener(elt, 'mousedown', mxUtils.bind(this, function()
 		{
+			show = this.currentElt != elt;
+			
 			// Prevents focus
-			mxEvent.addListener(elt, 'mousedown', function(evt)
+			if (document.documentMode != null && document.documentMode >= 9)
 			{
 				evt.preventDefault();
-			});
-		}
+			}
+		}));
 	}
 };
