@@ -1939,23 +1939,26 @@ EditorUi.prototype.extractGraphModelFromEvent = function(evt)
 	var result = null;
 	var data = null;
 	
-	if (evt != null && (evt.dataTransfer != null || evt.clipboardData != null))
+	if (evt != null)
 	{
 		var provider = (evt.dataTransfer != null) ? evt.dataTransfer : evt.clipboardData;
-
-		if (mxUtils.indexOf(provider.types, 'text/html') >= 0)
-	    {
-			data = this.extractGraphModelFromHtml(this.editor.graph.zapGremlins(
-				mxUtils.trim(provider.getData('text/html'))));
-	    }
-	    else if (mxUtils.indexOf(provider.types, 'text/plain') >= 0)
-	    {
-	    	data = this.editor.graph.zapGremlins(mxUtils.trim(provider.getData('text/plain')));
-	    }
-	    else if (document.documentMode == 11)
-	    {
-	    	data = this.editor.graph.zapGremlins(mxUtils.trim(provider.getData('Text')));
-	    }
+		
+		if (provider != null)
+		{
+			if (mxUtils.indexOf(provider.types, 'text/html') >= 0)
+		    {
+				data = this.extractGraphModelFromHtml(this.editor.graph.zapGremlins(
+					mxUtils.trim(provider.getData('text/html'))));
+		    }
+		    else if (mxUtils.indexOf(provider.types, 'text/plain') >= 0)
+		    {
+		    	data = this.editor.graph.zapGremlins(mxUtils.trim(provider.getData('text/plain')));
+		    }
+		    else if (document.documentMode == 11)
+		    {
+		    	data = this.editor.graph.zapGremlins(mxUtils.trim(provider.getData('Text')));
+		    }
+		}
 	}
 	
 	if (data != null && this.isCompatibleString(data))
