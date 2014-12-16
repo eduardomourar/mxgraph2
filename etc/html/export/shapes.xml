@@ -35,7 +35,7 @@
 	</background>
 	<foreground>
 		<fillstroke/>
-		<image src="bell.png" x="30" y="30" w="40" h="40" flipH="1"/>
+		<image src="bell.png" x="30" y="30" w="40" h="40"/>
 		<fontcolor color="#ffffff"/>
 		<fontstyle style="1"/>
 		<text str="Oben" x="14" y="6" align="left" valign="top"/>

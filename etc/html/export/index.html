@@ -31,6 +31,7 @@
 	<script type="text/javascript" src="rawinflate.js"></script>
 	<script type="text/javascript" src="jspdf.js"></script>
 	<script type="text/javascript" src="mxJsCanvas.js"></script>
+	<script type="text/javascript" src="mxAsyncCanvas.js"></script>
 	<script type="text/javascript" src="jstxt.js"></script>
 	<script type="text/javascript" src="jspdf.js"></script>
 	<script type="text/javascript" src="html2canvas"></script>
@@ -127,17 +128,18 @@
 			canvas.setAttribute('width', bounds.x + bounds.width + 4);
 			canvas.setAttribute('height', bounds.y + bounds.height + 4);
 			var htmlCanvas = new mxJsCanvas(canvas);
+			var asynCanvas = new mxAsyncCanvas(htmlCanvas);
 
 			// Render graph
 			var imgExport = new mxImageExport();
 			imgExport.includeOverlays = true;
-			imgExport.drawState(graph.getView().getState(graph.model.root), htmlCanvas);
+			imgExport.drawState(graph.getView().getState(graph.model.root), asynCanvas);
 
-			// Display result
-			var wnd = window.open('about:blank');
-
-			htmlCanvas.finish(function()
+			asynCanvas.finish(function()
 			{
+				imgExport.drawState(graph.getView().getState(graph.model.root), htmlCanvas);
+				// Display result
+				var wnd = window.open('about:blank');
 				wnd.location.href = canvas.toDataURL();
 				// see above
 			});
@@ -424,8 +426,8 @@
 							ims + 'image=bell.png;align=right');
 					var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
 							ims + 'image=image.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');
-					var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
-							ims + 'image=http://www.jgraph.com/images/mxgraph.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');
+//					var v9 = graph.insertVertex(v1, null, 'GIF Image\n(GIF89a)', 420, 110, 80, 40,
+//							ims + 'image=http://www.jgraph.com/images/mxgraph.gif;labelBackgroundColor=#ff0000;labelBorderColor=#0000ff;fontColor=#ffffff;fontStyle=1;');
 					var v10 = graph.insertVertex(v1, null, 'OR', 20, 200, 80, 80,
 							'shape=or;shadow=1;rotation=25');
 					var v11 = graph.insertVertex(v1, null, 'AND', 140, 200, 80, 80,
@@ -481,7 +483,7 @@
 					var v1 = graph.insertVertex(parent, null, 'Container', 20, 20, 680, 680,
 							'shape=swimlane;shadow=1;startSize=28;fontStyle=3;fontSize=14;glass=1;align=right');
 					//graph.setCellWarning(v1, 'Overlay');
-   					 var v2 = graph.insertVertex(v1, null, 'Bold + Glass', 20, 40, 120, 40,
+     					 var v2 = graph.insertVertex(v1, null, 'Bold + Glass', 20, 40, 120, 40,
 							'shape=label;rounded=1;shadow=1;glass=1;image=logo.png;'+
 							'imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1');
 					var v22 = graph.insertVertex(v1, null, 'Bold 14pt', 60, 60, 120, 40,
@@ -499,7 +501,7 @@
 					var ims = 'shape=image;verticalLabelPosition=bottom;verticalAlign=top;';
 					var v6 = graph.insertVertex(v1, null, 'JPG Image\n(flipped)', 20, 110, 80, 40,
 							ims + 'image=mxlogo.jpg;imageFlipV=1;opacity=50;');
- 					var v7 = graph.insertVertex(v1, null, 'PNG Image\n(non-alpha)', 120, 110, 80, 40,
+   					var v7 = graph.insertVertex(v1, null, 'PNG Image\n(non-alpha)', 120, 110, 80, 40,
 							ims + 'image=logo.png;align=left');
 					var v71 = graph.insertVertex(v1, null, 'PNG Image\n(flipped w/ bg)', 220, 110, 80, 40,
 							ims + 'image=logo.png;imageFlipH=1;imageBackground=#FFFF00;imageBorder=#FF00FF;');
@@ -576,6 +578,16 @@
 				codec.decode(req.getDocumentElement(), graph.getModel());
 			}));
 			
+			document.body.appendChild(mxUtils.button('Zoom Out', function()
+			{
+				graph.zoomOut();
+			}));
+			
+			document.body.appendChild(mxUtils.button('Zoom In', function()
+			{
+				graph.zoomIn();
+			}));
+
 			mxUtils.br(document.body);
 			mxUtils.br(document.body);
 			
@@ -641,7 +653,7 @@
 </head>
 <body onload="main(document.getElementById('graphContainer'))">
 	<div id="graphContainer"
-		style="overflow:hidden;width:2001px;height:801px;cursor:default;border:solid gray 1px;">
+		style="overflow:hidden;width:2001px;height:1201px;cursor:default;border:solid gray 1px;">
 	</div>
 	<a href="alpha-gradient.pdf" target="_blank">PDF sample with opacity and gradients</a>
 	Note: This can only be tested in Chrome currently due to use of data-url for PDF viewing in new window.

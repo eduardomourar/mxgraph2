@@ -1,4 +1,3 @@
-
 /**
  * mxJsCanvas
  * 
@@ -16,7 +15,8 @@
  */
 function mxJsCanvas(canvas)
 {
-	this.reset();
+	mxAbstractCanvas2D.call(this);
+
 	this.ctx = canvas.getContext('2d');
 	this.ctx.textBaseline = 'top';
 	this.ctx.fillStyle = 'rgba(255,255,255,0)';
@@ -24,8 +24,15 @@ function mxJsCanvas(canvas)
 	//this.ctx.translate(0.5, 0.5);
 	
 	this.M_RAD_PER_DEG = Math.PI / 180;
-	this.images = [];
+	
+	this.images = this.images == null ? [] : this.images;
+	this.subCanvas = this.subCanvas == null ? [] : this.subCanvas;
 };
+
+/**
+ * Extends mxAbstractCanvas2D
+ */
+mxUtils.extend(mxJsCanvas, mxAbstractCanvas2D);
 
 /**
  * Variable: ctx
@@ -49,77 +56,25 @@ mxJsCanvas.prototype.waitCounter = 0;
 mxJsCanvas.prototype.onComplete = null;
 
 /**
- * Variable: state
+ * Variable: images
  * 
- * Holds the current state.
- */
-mxJsCanvas.prototype.state = null;
-
-/**
- * Variable: states
- * 
- * Stack of states.
- */
-mxJsCanvas.prototype.states = null;
-
-/**
- * Variable: ctx
- * 
- * Holds the current canvas context
+ * Ordered array of images used in this canvas
  */
 mxJsCanvas.prototype.images = null;
 
 /**
- * Function: reset
+ * Variable: subCanvas
  * 
- * Resets the state of this canvas.
+ * Ordered array of sub canvas elements in this canvas
  */
-mxJsCanvas.prototype.reset = function()
-{
-	this.state = this.createState();
-	this.states = [];
-};
+mxJsCanvas.prototype.subCanvas = null;
 
 /**
- * Function: createState
+ * Variable: canvasIndex
  * 
- * Creates the state of the this canvas.
+ * The current index into the canvas sub-canvas array being processed
  */
-mxJsCanvas.prototype.createState = function()
-{
-	return {
-		dx: 0,
-		dy: 0,
-		scale: 1,
-		alpha: 1,
-		fillColor: null,
-		fillAlpha: 1,
-		gradientColor: null,
-		gradientAlpha: 1,
-		gradientDirection: null,
-		strokeColor: null,
-		strokeWidth: 1,
-		dashed: false,
-		dashPattern: '3 3',
-		lineCap: 'flat',
-		lineJoin: 'miter',
-		miterLimit: 10,
-		fontColor: '#000000',
-		fontBackgroundColor: null,
-		fontBorderColor: null,
-		fontSize: mxConstants.DEFAULT_FONTSIZE,
-		fontFamily: mxConstants.DEFAULT_FONTFAMILY,
-		fontStyle: 0,
-		shadow: false,
-		shadowColor: mxConstants.SHADOWCOLOR,
-		shadowAlpha: mxConstants.SHADOW_OPACITY,
-		shadowDx: mxConstants.SHADOW_OFFSET_X,
-		shadowDy: mxConstants.SHADOW_OFFSET_Y,
-		rotation: 0,
-		rotationCx: 0,
-		rotationCy: 0
-	};
-};
+mxJsCanvas.prototype.canvasIndex = 0;
 
 mxJsCanvas.prototype.hexToRgb = function(hex) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -151,7 +106,7 @@ mxJsCanvas.prototype.decWaitCounter = function()
 		this.onComplete = null;
 	}
 };
-	
+
 mxJsCanvas.prototype.updateFont = function()
 {
 	var style = '';
@@ -167,6 +122,37 @@ mxJsCanvas.prototype.updateFont = function()
 	}
 	
 	this.ctx.font = style + this.state.fontSize + 'px ' + this.state.fontFamily;
+};
+
+mxJsCanvas.prototype.save = function()
+{
+	this.states.push(this.state);
+	this.state = mxUtils.clone(this.state);
+	this.ctx.save();
+};
+
+mxJsCanvas.prototype.restore = function()
+{
+	this.state = this.states.pop();
+	this.ctx.restore();
+};
+
+mxJsCanvas.prototype.scale = function(s)
+{
+	mxLog.show();
+
+	mxLog.debug('dx = ', this.state.dx, ' , dy = ', this.state.dy );
+
+	this.state.scale *= s;
+	this.state.strokeWidth *= s;
+	this.ctx.scale(s, s);
+};
+
+mxJsCanvas.prototype.translate = function(dx, dy)
+{
+	this.state.dx += dx;
+	this.state.dy += dy;
+	this.ctx.translate(dx, dy);
 };
 
 mxJsCanvas.prototype.rotate = function(theta, flipH, flipV, cx, cy)
@@ -193,33 +179,65 @@ mxJsCanvas.prototype.rotate = function(theta, flipH, flipV, cx, cy)
 	this.ctx.translate(-cx, -cy);
 };
 
-mxJsCanvas.prototype.save = function()
+mxJsCanvas.prototype.setAlpha = function(alpha)
 {
-	this.states.push(this.state);
-	this.state = mxUtils.clone(this.state);
-	this.ctx.save();
+	this.state.alpha = alpha;
+	this.ctx.globalAlpha = alpha;
 };
 
-mxJsCanvas.prototype.restore = function()
+/**
+ * Function: setFillColor
+ * 
+ * Sets the current fill color.
+ */
+mxJsCanvas.prototype.setFillColor = function(value)
 {
-	this.state = this.states.pop();
-	this.ctx.restore();
+	if (value == mxConstants.NONE)
+	{
+		value = null;
+	}
+	
+	this.state.fillColor = value;
+	this.state.gradientColor = null;
+	this.ctx.fillStyle = value;
 };
 
-mxJsCanvas.prototype.scale = function(s)
+mxJsCanvas.prototype.setGradient = function(color1, color2, x, y, w, h, direction, alpha1, alpha2)
 {
-	this.state.scale *= s;
-	this.state.strokeWidth *= s;
-	this.ctx.scale(s, s);
+	var gradient = this.ctx.createLinearGradient(0, y, 0, y + h);
+	
+	var s = this.state;
+	s.fillColor = color1;
+	s.fillAlpha = (alpha1 != null) ? alpha1 : 1;
+	s.gradientColor = color2;
+	s.gradientAlpha = (alpha2 != null) ? alpha2 : 1;
+	s.gradientDirection = direction;
+
+	var rgb1 = this.hexToRgb(color1);
+	var rgb2 = this.hexToRgb(color2);
+	
+	if (rgb1 != null)
+	{
+		gradient.addColorStop(0, 'rgba(' + rgb1.r + ',' + rgb1.g + ',' + rgb1.b + ',' + s.fillAlpha + ')');
+	}	
+	
+	if (rgb2 != null)
+	{
+		gradient.addColorStop(1, 'rgba(' + rgb2.r + ',' + rgb2.g + ',' + rgb2.b + ',' + s.gradientAlpha + ')');
+	}
+	
+	this.ctx.fillStyle = gradient;
 };
 
-mxJsCanvas.prototype.translate = function(dx, dy)
+mxJsCanvas.prototype.setStrokeColor = function(value)
 {
-	this.state.dx += dx;
-	this.state.dy += dy;
-	this.ctx.translate(dx, dy);
+	this.ctx.strokeStyle = value;
 };
 
+mxJsCanvas.prototype.setStrokeWidth = function(value)
+{
+	this.ctx.lineWidth = value;
+};
 
 mxJsCanvas.prototype.setDashed = function(value)
 {
@@ -274,6 +292,31 @@ mxJsCanvas.prototype.setMiterLimit = function(value)
 	this.ctx.lineJoin = value;
 };
 
+mxJsCanvas.prototype.setFontColor = function(value)
+{
+	this.ctx.fillStyle = value;
+};
+
+mxJsCanvas.prototype.setFontBackgroundColor = function(value)
+{
+	if (value == mxConstants.NONE)
+	{
+		value = null;
+	}
+	
+	this.state.fontBackgroundColor = value;
+};
+
+mxJsCanvas.prototype.setFontBorderColor = function(value)
+{
+	if (value == mxConstants.NONE)
+	{
+		value = null;
+	}
+	
+	this.state.fontBorderColor = value;
+};
+
 mxJsCanvas.prototype.setFontSize = function(value)
 {
 	this.state.fontSize = value;
@@ -289,133 +332,79 @@ mxJsCanvas.prototype.setFontStyle = function(value)
 	this.state.fontStyle = value;
 };
 
-mxJsCanvas.prototype.setStrokeWidth = function(value)
+/**
+* Function: setShadow
+* 
+* Enables or disables and configures the current shadow.
+*/
+mxJsCanvas.prototype.setShadow = function(enabled)
 {
-	this.ctx.lineWidth = value;
-};
+	this.state.shadow = enabled;
 
-mxJsCanvas.prototype.setStrokeColor = function(value)
-{
-	this.ctx.strokeStyle = value;
-};
-
-mxJsCanvas.prototype.setFontColor = function(value)
-{
-	this.ctx.fillStyle = value;
-};
-
-mxJsCanvas.prototype.setFillColor = function(value)
-{
-	this.ctx.fillStyle = value;
-};
-
-mxJsCanvas.prototype.setGradient = function(color1, color2, x, y, w, h, direction, alpha1, alpha2)
-{
-	var gradient = this.ctx.createLinearGradient(0, y, 0, y + h);
-	
-	var s = this.state;
-	s.fillColor = color1;
-	s.fillAlpha = (alpha1 != null) ? alpha1 : 1;
-	s.gradientColor = color2;
-	s.gradientAlpha = (alpha2 != null) ? alpha2 : 1;
-	s.gradientDirection = direction;
-
-	var rgb1 = this.hexToRgb(color1);
-	var rgb2 = this.hexToRgb(color2);
-	
-	if (rgb1 != null)
+	if (enabled)
 	{
-		gradient.addColorStop(0, 'rgba(' + rgb1.r + ',' + rgb1.g + ',' + rgb1.b + ',' + s.fillAlpha + ')');
-	}	
-	
-	if (rgb2 != null)
-	{
-		gradient.addColorStop(1, 'rgba(' + rgb2.r + ',' + rgb2.g + ',' + rgb2.b + ',' + s.gradientAlpha + ')');
-	}
-	
-	this.ctx.fillStyle = gradient;
-};
-
-mxJsCanvas.prototype.setAlpha = function(alpha)
-{
-	this.ctx.globalAlpha = alpha;
-};
-
-// Redirect can be implemented via a hook
-mxJsCanvas.prototype.rewriteImageSource = function(src)
-{
-	if (src.substring(0, 7) == 'http://' || src.substring(0, 8) == 'https://')
-	{
-		src = '/redirect?url=' + encodeURIComponent(src);
-	}
-	
-	return src;
-};
-
-mxJsCanvas.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
-{
-	src = this.rewriteImageSource(src);
-	var image = this.images[src];
-	
-	function drawImage(ctx, image, x, y, w, h)
-	{
-		ctx.save();
-		
-		if (aspect)
-		{
-			var iw = image.width;
-			var ih = image.height;
-			
-			var s = Math.min(w / iw, h / ih);
-			var x0 = (w - iw * s) / 2;
-			var y0 = (h - ih * s) / 2;
-			
-			x += x0;
-			y += y0;
-			w = iw * s;
-			h = ih * s;
-		}
-		
-		if (flipH)
-		{
-			ctx.translate(2 * x + w, 0);
-			ctx.scale(-1, 1);
-		}
-		
-		if (flipV)
-		{
-			ctx.translate(0, 2 * y + h);
-			ctx.scale(1, -1);
-		}
-
-		ctx.drawImage(image, x, y, w, h);
-		ctx.restore();
-	};
-	
-	if (image != null)
-	{
-		drawImage.call(this, this.ctx, image, x, y, w, h);
+		this.setShadowOffset(this.state.shadowDx, this.state.shadowDy);
+		this.setShadowAlpha(this.state.shadowAlpha);
 	}
 	else
 	{
-		// TODO: Use XHR to make this synchronous
-		var image = new Image();
-		
-		image.onload = mxUtils.bind(this, function()
-		{
-			// Async may affect painting order
-			drawImage.call(this, this.ctx, image, x, y, w, h);
-			this.decWaitCounter();
-		});
-		
-		image.onerror = mxUtils.bind(this, function()
-		{
-			this.decWaitCounter();
-		});
+		this.ctx.shadowColor = 'transparent';
+		this.ctx.shadowBlur = 0;
+		this.ctx.shadowOffsetX = 0;
+		this.ctx.shadowOffsetY = 0;
+	}
+};
 
-		this.incWaitCounter();
-		this.images[src] = image;
-		image.src = src;
+/**
+* Function: setShadowColor
+* 
+* Enables or disables and configures the current shadow.
+*/
+mxJsCanvas.prototype.setShadowColor = function(value)
+{
+	if (value == null || value == mxConstants.NONE)
+	{
+		value = null;
+		this.ctx.shadowColor = 'transparent';
+	}
+	
+	this.state.shadowColor = value;
+	
+	if (this.state.shadow && value != null)
+	{
+		var alpha = (this.state.shadowAlpha != null) ? this.state.shadowAlpha : 1;
+		var rgb = this.hexToRgb(value);
+		
+		this.ctx.shadowColor = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + alpha + ')';
+	}
+};
+
+/**
+* Function: setShadowAlpha
+* 
+* Enables or disables and configures the current shadow.
+*/
+mxJsCanvas.prototype.setShadowAlpha = function(value)
+{
+	this.state.shadowAlpha = value;
+	this.setShadowColor(this.state.shadowColor);
+};
+
+/**
+* Function: setShadowOffset
+* 
+* Enables or disables and configures the current shadow.
+*/
+
+mxJsCanvas.prototype.setShadowOffset = function(dx, dy)
+{
+	this.state.shadowDx = dx;
+	this.state.shadowDy = dy;
+	
+	if (this.state.shadow)
+	{
+		this.ctx.shadowOffsetX = dx;
+		this.ctx.shadowOffsetY = dy;
 	}
 };
 
@@ -452,26 +441,6 @@ mxJsCanvas.prototype.arcTo = function(rx, ry, angle, largeArcFlag, sweepFlag, x,
 				curves[i + 3], curves[i + 4], curves[i + 5]);
 		}
 	}
-};
-
-mxJsCanvas.prototype.setFontBackgroundColor = function(value)
-{
-	if (value == mxConstants.NONE)
-	{
-		value = null;
-	}
-	
-	this.state.fontBackgroundColor = value;
-};
-
-mxJsCanvas.prototype.setFontBorderColor = function(value)
-{
-	if (value == mxConstants.NONE)
-	{
-		value = null;
-	}
-	
-	this.state.fontBorderColor = value;
 };
 
 mxJsCanvas.prototype.curveTo = function(x1, y1, x2, y2, x3, y3)
@@ -516,6 +485,81 @@ mxJsCanvas.prototype.ellipse = function(x, y, w, h)
 	this.ctx.restore();
 };
 
+//Redirect can be implemented via a hook
+mxJsCanvas.prototype.rewriteImageSource = function(src)
+{
+	if (src.substring(0, 7) == 'http://' || src.substring(0, 8) == 'https://')
+	{
+		src = '/redirect?url=' + encodeURIComponent(src);
+	}
+	
+	return src;
+};
+
+mxJsCanvas.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
+{
+	mxLog.show();
+	mxLog.debug('x = ', x, ' , y = ', y);
+	mxLog.debug('flipH = ', flipH, ' , flipV = ', flipV );
+	
+	var scale = this.state.scale;
+	mxLog.debug('scale = ', scale);
+
+	x = this.state.tx + x / scale;
+	y = this.state.ty + y / scale;
+	w /= scale;
+	h /= scale;
+
+	src = this.rewriteImageSource(src);
+	var image = this.images[src];
+	
+	function drawImage(ctx, image, x, y, w, h)
+	{
+		ctx.save();
+		
+		if (aspect)
+		{
+			var iw = image.width;
+			var ih = image.height;
+			
+			var s = Math.min(w / iw, h / ih);
+			var x0 = (w - iw * s) / 2;
+			var y0 = (h - ih * s) / 2;
+			
+			x += x0;
+			y += y0;
+			w = iw * s;
+			h = ih * s;
+		}
+		
+		var s = this.state.scale;
+
+		if (flipH)
+		{
+			ctx.translate(2 * x + w, 0);
+			ctx.scale(-1, 1);
+		}
+		
+		if (flipV)
+		{
+			ctx.translate(0, 2 * y + h);
+			ctx.scale(1, -1);
+		}
+
+		ctx.drawImage(image, x, y, w, h);
+		ctx.restore();
+	};
+	
+	if (image != null)
+	{
+		drawImage.call(this, this.ctx, image, x, y, w, h);
+	}
+	else
+	{
+		// TODO flag error that image wasn't obtaining in canvas preprocessing
+	}
+};
+
 mxJsCanvas.prototype.begin = function()
 {
 	this.ctx.beginPath();
@@ -534,11 +578,6 @@ mxJsCanvas.prototype.fill = function()
 mxJsCanvas.prototype.stroke = function()
 {
 	this.ctx.stroke();
-};
-
-mxJsCanvas.prototype.clip = function()
-{
-	this.ctx.clip();
 };
 
 mxJsCanvas.prototype.fillAndStroke = function()
@@ -571,86 +610,6 @@ mxJsCanvas.prototype.fillAndStroke = function()
 	}
 };
 
-/**
-* Function: setShadow
-* 
-* Enables or disables and configures the current shadow.
-*/
-mxJsCanvas.prototype.setShadow = function(enabled)
-{
-	this.state.shadow = enabled;
-
-	if (enabled)
-	{
-		this.setShadowOffset(this.state.shadowDx, this.state.shadowDy);
-		this.setShadowAlpha(this.state.shadowAlpha);
-	}
-	else
-	{
-		this.ctx.shadowColor = 'transparent';
-		this.ctx.shadowBlur = 0;
-		this.ctx.shadowOffsetX = 0;
-		this.ctx.shadowOffsetY = 0;
-	}
-};
-
-/**
-* Function: setShadowColor
-* 
-* Enables or disables and configures the current shadow.
-*/
-mxJsCanvas.prototype.setShadowColor = function(value)
-{
-	mxLog.show();
-	mxLog.debug('setShadowColor = ', value);
-	
-	if (value == null || value == mxConstants.NONE)
-	{
-		value = null;
-		this.ctx.shadowColor = 'transparent';
-	}
-	
-	this.state.shadowColor = value;
-	
-	if (this.state.shadow && value != null)
-	{
-		var alpha = (this.state.shadowAlpha != null) ? this.state.shadowAlpha : 1;
-		var rgb = this.hexToRgb(value);
-		
-		this.ctx.shadowColor = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + alpha + ')';
-		mxLog.show();
-		mxLog.debug('rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + alpha + ')');
-	}
-};
-
-/**
-* Function: setShadowAlpha
-* 
-* Enables or disables and configures the current shadow.
-*/
-mxJsCanvas.prototype.setShadowAlpha = function(value)
-{
-	this.state.shadowAlpha = value;
-	this.setShadowColor(this.state.shadowColor);
-};
-
-/**
-* Function: setShadowOffset
-* 
-* Enables or disables and configures the current shadow.
-*/
-mxJsCanvas.prototype.setShadowOffset = function(dx, dy)
-{
-	this.state.shadowDx = dx;
-	this.state.shadowDy = dy;
-	
-	if (this.state.shadow)
-	{
-		this.ctx.shadowOffsetX = dx;
-		this.ctx.shadowOffsetY = dy;
-	}
-};
-
 mxJsCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation)
 {
 	if (str == null || str.length == 0)
@@ -658,101 +617,66 @@ mxJsCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, forma
 		return;
 	}
 
+	w *= this.state.scale;
+	h *= this.state.scale;
+	
 	if (rotation != 0)
 	{
-		this.ctx.translate(x, y);
+		this.ctx.translate(Math.round(x), Math.round(y));
 		this.ctx.rotate(rotation * Math.PI / 180);
-		this.ctx.translate(-x, -y);
+		this.ctx.translate(Math.round(-x), Math.round(-y));
 	}
 
 	if (format == 'html')
 	{
-		var style = 'vertical-align:top;';
+		var subCanvas = this.subCanvas[this.canvasIndex++];
+
+		switch (valign)
+		{
+		 case mxConstants.ALIGN_MIDDLE:
+			 y -= subCanvas.height / 2;
+			 break;
+		 case mxConstants.ALIGN_BOTTOM:
+			 y -= subCanvas.height;
+			 break;
+		}
 		
-		if (clip)
+		switch (align)
 		{
-			style += 'overflow:hidden;max-height:' + Math.round(h) + 'px;max-width:' + Math.round(w) + 'px;';
+		 case mxConstants.ALIGN_CENTER:
+			 x -= subCanvas.width / 2;
+			 break;
+		 case mxConstants.ALIGN_RIGHT:
+			 x -= subCanvas.width;
+			 break;
 		}
-		else if (overflow == 'fill')
+		
+		x = Math.round(x);
+		y = Math.round(y);
+
+		if (this.state.fontBackgroundColor != null || this.state.fontBorderColor != null)
 		{
-			style += 'width:' + Math.round(w) + 'px;height:' + Math.round(h) + 'px;';
-		}
-		else if (overflow == 'width')
-		{
-			style += 'width:' + Math.round(w) + 'px;';
+			this.ctx.save();
 			
-			if (h > 0)
+			if (this.state.fontBackgroundColor != null)
 			{
-				style += 'max-height:' + Math.round(h) + 'px;';
+				this.ctx.fillStyle = this.state.fontBackgroundColor;
+				this.ctx.fillRect(x - 0.5, y - 0.5, subCanvas.width, subCanvas.height);
 			}
+			if (this.state.fontBorderColor != null)
+			{
+				this.ctx.strokeStyle = this.state.fontBorderColor;
+				this.ctx.lineWidth = 1;
+				this.ctx.strokeRect(x - 0.5, y - 0.5, subCanvas.width, subCanvas.height);
+			}
+			
+			this.ctx.restore();
 		}
 
-		if (wrap && w > 0)
-		{
-			style += 'width:' + Math.round(w) + 'px;white-space:normal;';
-		}
-		else
-		{
-			style += 'white-space:nowrap;';
-		}
-		
-		var div = this.createDiv(str, align, valign, style, overflow);
-//		
-//		// Ignores invalid XHTML labels
-//		if (div == null)
-//		{
-//			return;
-//		}
-//
-//		div.style.cssText = div.getAttribute('style');
-//		div.style.display = 'inline-block';
-//		div.style.position = 'absolute';
-//		div.style.top  = '-9999px';
-//		div.style.left = '-9999px';
-//		div.innerHTML = (mxUtils.isNode(str)) ? str.outerHTML : str;
-		
-		//var div = document.createElement('div');
-		div.innerHTML = str;
-
-		document.body.appendChild(div);
-		this.incWaitCounter();
-		
-	    html2canvas(div,
-	    {
-	        onrendered: mxUtils.bind(this, function(canvas)
-	        {
-	        	//document.body.appendChild(canvas);
-	    		switch (valign)
-	    		{
-	    		 case mxConstants.ALIGN_MIDDLE:
-	    			 y -= canvas.height / 2;
-	    			 break;
-	    		 case mxConstants.ALIGN_BOTTOM:
-	    			 y -= canvas.height;
-	    			 break;
-	    		}
-	    		
-	    		switch (align)
-	    		{
-	    		 case mxConstants.ALIGN_CENTER:
-	    			 x -= canvas.width / 2;
-	    			 break;
-	    		 case mxConstants.ALIGN_RIGHT:
-	    			 x -= canvas.width;
-	    			 break;
-	    		}
-	    		
-	        	this.ctx.drawImage(canvas, x ,y);
-	        	document.body.removeChild(div);
-	        	this.decWaitCounter();
-	        })
-	    });
+    	this.ctx.drawImage(subCanvas, x ,y);
 	}
 	else
 	{
-		w *= this.state.scale;
-		h *= this.state.scale;
-		
 		this.ctx.save();
 		this.updateFont();
 			
@@ -820,6 +744,9 @@ mxJsCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, forma
 	
 			this.ctx.save();
 			
+			startMostX = Math.round(startMostX) - 0.5;
+			backgroundY = Math.round(backgroundY) - 0.5;
+			
 			if (this.state.fontBackgroundColor != null)
 			{
 				this.ctx.fillStyle = this.state.fontBackgroundColor;
@@ -842,125 +769,6 @@ mxJsCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, forma
 		}
 		
 		this.ctx.restore();
-	}
-};
-
-/**
- * Function: createDiv
- * 
- * Private helper function to create SVG elements
- */
-mxJsCanvas.prototype.createDiv = function(str, align, valign, style, overflow)
-{
-	var s = this.state;
-
-	// Inline block for rendering HTML background over SVG in Safari
-	var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
-		(mxConstants.LINE_HEIGHT * this.lineHeightCorrection);
-	
-	style = 'display:inline-block;font-size:' + Math.round(s.fontSize) + 'px;font-family:' + s.fontFamily +
-		';color:' + s.fontColor + ';line-height:' + lh + ';' + style;
-
-	if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
-	{
-		style += 'font-weight:bold;';
-	}
-
-	if ((s.fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC)
-	{
-		style += 'font-style:italic;';
-	}
-	
-	if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
-	{
-		style += 'text-decoration:underline;';
-	}
-	
-	if (align == mxConstants.ALIGN_CENTER)
-	{
-		style += 'text-align:center;';
-	}
-	else if (align == mxConstants.ALIGN_RIGHT)
-	{
-		style += 'text-align:right;';
-	}
-
-	var css = '';
-	
-	if (s.fontBackgroundColor != null)
-	{
-		css += 'background-color:' + s.fontBackgroundColor + ';';
-	}
-	
-	if (s.fontBorderColor != null)
-	{
-		css += 'border:1px solid ' + s.fontBorderColor + ';';
-	}
-	
-	var val = str;
-	
-	if (!mxUtils.isNode(val))
-	{
-		// Converts HTML entities to unicode since HTML entities are not allowed in XHTML
-		var ta = document.createElement('textarea');
-		ta.innerHTML = val.replace(/&quot;/g, '&amp;quot;').replace(/&#34;/g, '&amp;#34;').
-			replace(/&#60;/g, '&amp;#60;').replace(/&#62;/g, '&amp;#62;').
-			replace(/&lt;/g, '&amp;lt;').replace(/&gt;/g, '&amp;gt;').
-			replace(/</g, '&lt;').replace(/>/g, '&gt;');
-		val = ta.value;
-
-		if (overflow != 'fill' && overflow != 'width')
-		{
-			// Inner div always needed to measure wrapped text
-			val = '<div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;text-align:inherit;text-decoration:inherit;' + css + '">' + val + '</div>';
-		}
-		else
-		{
-			style += css;
-		}
-	}
-
-	// Uses DOM API where available. This cannot be used in IE9/10 to avoid
-	// an opening and two (!) closing TBODY tags being added to tables.
-	if (!mxClient.IS_IE && !mxClient.IS_IE11 && document.createElementNS)
-	{
-		var div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
-		div.setAttribute('style', style);
-		
-		if (mxUtils.isNode(val))
-		{
-			// Creates a copy for export
-			if (this.root.ownerDocument != document)
-			{
-				div.appendChild(val.cloneNode(true));
-			}
-			else
-			{
-				div.appendChild(val);
-			}
-		}
-		else
-		{
-			div.innerHTML = val;
-		}
-		
-		return div;
-	}
-	else
-	{
-		// Serializes for export
-		if (mxUtils.isNode(val) && this.root.ownerDocument != document)
-		{
-			val = val.outerHTML;
-		}
-		
-		// Converts invalid tags to XHTML
-		// LATER: Check for all unclosed tags
-		val = val.replace(/<br>/g, '<br />').replace(/<hr>/g, '<hr />');
-
-		// NOTE: FF 3.6 crashes if content CSS contains "height:100%"
-		return mxUtils.parseXml('<div xmlns="http://www.w3.org/1999/xhtml" style="' + style + 
-			'">' + val + '</div>').documentElement;
 	}
 };
 
