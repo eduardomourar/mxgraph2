@@ -614,7 +614,7 @@ Menus.prototype.styleChange = function(menu, label, keys, values, sprite, parent
 /**
  * Adds a style change item with a prompt to the given menu.
  */
-Menus.prototype.promptChange = function(menu, label, hint, defaultValue, key, parent, enabled, fn)
+Menus.prototype.promptChange = function(menu, label, hint, defaultValue, key, parent, enabled, fn, sprite)
 {
 	return menu.addItem(label, null, mxUtils.bind(this, function()
 	{
@@ -650,7 +650,7 @@ Menus.prototype.promptChange = function(menu, label, hint, defaultValue, key, pa
 		}), mxResources.get('enterValue') + ((hint.length > 0) ? (' ' + hint) : ''));
 		this.editorUi.showDialog(dlg.container, 300, 80, true, true);
 		dlg.init();
-	}), parent, null, enabled);
+	}), parent, sprite, enabled);
 };
 
 /**

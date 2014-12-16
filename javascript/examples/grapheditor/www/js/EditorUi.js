@@ -2120,10 +2120,15 @@ EditorUi.prototype.showImageDialog = function(title, value, fn)
 		};
 		img.onerror = function()
 		{
+			fn(null);
 			mxUtils.alert(mxResources.get('fileNotFound'));
 		};
 		
 		img.src = newValue;
+	}
+	else
+	{
+		fn(null);
 	}
 };
 

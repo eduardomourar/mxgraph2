@@ -960,94 +960,101 @@ Actions.prototype.init = function()
 	    			graph.cellEditor.restoreSelection(selectionState);
 	    			
 					// To find the new image, we create a list of all existing links first
-					var tmp = graph.cellEditor.text2.getElementsByTagName('img');
-					var oldImages = [];
-					
-					for (var i = 0; i < tmp.length; i++)
-					{
-						oldImages.push(tmp[i]);
-					}
-			
-					document.execCommand('insertimage', false, newValue);
-					
-					// Sets size of new image
-					var newImages = graph.cellEditor.text2.getElementsByTagName('img');
-					
-					if (newImages.length == oldImages.length + 1)
-					{
-						// Inverse order in favor of appended images
-						for (var i = newImages.length - 1; i >= 0; i--)
+	    			if (newValue != null)
+	    			{
+						var tmp = graph.cellEditor.text2.getElementsByTagName('img');
+						var oldImages = [];
+						
+						for (var i = 0; i < tmp.length; i++)
 						{
-							if (i == 0 || newImages[i] != oldImages[i - 1])
+							oldImages.push(tmp[i]);
+						}
+				
+						document.execCommand('insertimage', false, newValue);
+						
+						// Sets size of new image
+						var newImages = graph.cellEditor.text2.getElementsByTagName('img');
+						
+						if (newImages.length == oldImages.length + 1)
+						{
+							// Inverse order in favor of appended images
+							for (var i = newImages.length - 1; i >= 0; i--)
 							{
-								// LATER: Add dialog for image size
-								newImages[i].style.width = w + 'px';
-								newImages[i].style.height = h + 'px';
-								
-								break;
+								if (i == 0 || newImages[i] != oldImages[i - 1])
+								{
+									// LATER: Add dialog for image size
+									newImages[i].style.width = w + 'px';
+									newImages[i].style.height = h + 'px';
+									
+									break;
+								}
 							}
 						}
-					}
+	    			}
 	    		}
 	    		else
 	    		{
-					var select = null;
 					var cells = graph.getSelectionCells();
-					
-					graph.getModel().beginUpdate();
-		        	try
-		        	{
-		        		// Inserts new cell if no cell is selected
-		    			if (cells.length == 0)
-		    			{
-		    				var gs = graph.getGridSize();
-							var dx = graph.container.scrollLeft / graph.view.scale - graph.view.translate.x;
-							var dy = graph.container.scrollTop / graph.view.scale - graph.view.translate.y;
-		    				
-		    				cells = [graph.insertVertex(graph.getDefaultParent(), null, '',
-		    						graph.snap(dx + gs), graph.snap(dy + gs), w, h,
-		    						'shape=image;verticalLabelPosition=bottom;verticalAlign=top;')];
-		    				select = cells;
-		    			}
-		    			
-		        		graph.setCellStyles(mxConstants.STYLE_IMAGE, newValue, cells);
-		        		
-		        		// Sets shape only if not already shape with image (label or image)
-		        		var state = graph.view.getState(cells[0]);
-		        		var style = (state != null) ? state.style : graph.getCellStyle(cells[0]);
-		        		
-		        		if (style[mxConstants.STYLE_SHAPE] != 'image' && style[mxConstants.STYLE_SHAPE] != 'label')
-		        		{
-		        			graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
-		        		}
-			        	
-			        	if (graph.getSelectionCount() == 1)
+
+					if (cells.length > 0 || newValue != null)
+					{
+						var select = null;
+						
+						graph.getModel().beginUpdate();
+			        	try
 			        	{
-				        	if (w != null && h != null)
+			        		// Inserts new cell if no cell is selected
+			    			if (cells.length == 0)
+			    			{
+			    				var gs = graph.getGridSize();
+								var dx = graph.container.scrollLeft / graph.view.scale - graph.view.translate.x;
+								var dy = graph.container.scrollTop / graph.view.scale - graph.view.translate.y;
+			    				
+			    				cells = [graph.insertVertex(graph.getDefaultParent(), null, '',
+			    						graph.snap(dx + gs), graph.snap(dy + gs), w, h,
+			    						'shape=image;verticalLabelPosition=bottom;verticalAlign=top;')];
+			    				select = cells;
+			    			}
+			    			
+			        		graph.setCellStyles(mxConstants.STYLE_IMAGE, newValue, cells);
+			        		
+			        		// Sets shape only if not already shape with image (label or image)
+			        		var state = graph.view.getState(cells[0]);
+			        		var style = (state != null) ? state.style : graph.getCellStyle(cells[0]);
+			        		
+			        		if (style[mxConstants.STYLE_SHAPE] != 'image' && style[mxConstants.STYLE_SHAPE] != 'label')
+			        		{
+			        			graph.setCellStyles(mxConstants.STYLE_SHAPE, 'image', cells);
+			        		}
+				        	
+				        	if (graph.getSelectionCount() == 1)
 				        	{
-				        		var cell = cells[0];
-				        		var geo = graph.getModel().getGeometry(cell);
-				        		
-				        		if (geo != null)
-				        		{
-				        			geo = geo.clone();
-					        		geo.width = w;
-					        		geo.height = h;
-					        		graph.getModel().setGeometry(cell, geo);
-				        		}
+					        	if (w != null && h != null)
+					        	{
+					        		var cell = cells[0];
+					        		var geo = graph.getModel().getGeometry(cell);
+					        		
+					        		if (geo != null)
+					        		{
+					        			geo = geo.clone();
+						        		geo.width = w;
+						        		geo.height = h;
+						        		graph.getModel().setGeometry(cell, geo);
+					        		}
+					        	}
 				        	}
 			        	}
-		        	}
-		        	finally
-		        	{
-		        		graph.getModel().endUpdate();
-		        	}
-		        	
-		        	if (select != null)
-		        	{
-		        		graph.setSelectionCells(select);
-		        		graph.scrollCellToVisible(select[0]);
-		        	}
+			        	finally
+			        	{
+			        		graph.getModel().endUpdate();
+			        	}
+			        	
+			        	if (select != null)
+			        	{
+			        		graph.setSelectionCells(select);
+			        		graph.scrollCellToVisible(select[0]);
+			        	}
+					}
 	    		}
 			});
 		}
