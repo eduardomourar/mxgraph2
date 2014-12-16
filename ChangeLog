@@ -1,3 +1,4 @@
+- Fixes rendering of image border in mxImageShape [JavaScript]
 - Fixes mxEvent.EVENT_HIDE in mxPopupMenu.hideMenu [JavaScript]
 - Removes graph model listener for overridden handlers in grapheditor [JavaScript]
 - Fixes possible parent highlight in destroyed mxVertexHandler [JavaScript]
