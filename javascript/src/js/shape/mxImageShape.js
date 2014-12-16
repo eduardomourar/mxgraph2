@@ -130,9 +130,11 @@ mxImageShape.prototype.paintVertexShape = function(c, x, y, w, h)
 		
 		if (fill != null)
 		{
+			// Stroke rendering required for shadow
 			c.setFillColor(fill);
+			c.setStrokeColor(stroke);
 			c.rect(x, y, w, h);
-			c.fill();
+			c.fillAndStroke();
 		}
 
 		// FlipH/V are implicit via mxShape.updateTransform
@@ -142,6 +144,7 @@ mxImageShape.prototype.paintVertexShape = function(c, x, y, w, h)
 		
 		if (stroke != null)
 		{
+			c.setShadow(false);
 			c.setStrokeColor(stroke);
 			c.rect(x, y, w, h);
 			c.stroke();
