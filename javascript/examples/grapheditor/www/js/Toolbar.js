@@ -1048,17 +1048,11 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll)
 				this.currentMenu = menu;
 				this.currentElt = elt;
 				
-				var self = this;
-				
 				// Extends destroy to reset global state
-				var menuDestroy = menu.destroy;
-				menu.destroy = function()
+				menu.addListener(mxEvent.EVENT_HIDE, mxUtils.bind(this, function()
 				{
-					menuDestroy.apply(this, arguments);
-					
-					self.currentMenu = null;
-					self.currentElt = null;
-				};
+					this.currentElt = null;
+				}));
 			}
 			
 			show = true;
