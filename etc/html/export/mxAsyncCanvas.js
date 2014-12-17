@@ -184,16 +184,8 @@ mxAsyncCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 		return;
 	}
 
-	w *= this.state.scale;
-	h *= this.state.scale;
+	var sc = this.state.scale;
 	
-	if (rotation != 0)
-	{
-//		this.ctx.translate(x, y);
-//		this.ctx.rotate(rotation * Math.PI / 180);
-//		this.ctx.translate(-x, -y);
-	}
-
 	if (format == 'html')
 	{
 		var style = 'vertical-align:top;';
@@ -222,10 +214,12 @@ mxAsyncCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 		}
 		else
 		{
+			//style += 'width:' + Math.round(w) + 'px;height:' + Math.round(h) + 'px;white-space:nowrap;';
 			style += 'white-space:nowrap;';
 		}
 		
 		var div = this.createDiv(str, align, valign, style, overflow);
+		
 		
 //		
 //		// Ignores invalid XHTML labels
@@ -243,19 +237,22 @@ mxAsyncCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 		
 		//var div = document.createElement('div');
 		div.innerHTML = str;
-
+		
 		document.body.appendChild(div);
+		
 		this.incWaitCounter();
 		var canvasIndex = this.canvasIndex++;
+		//sc = sc < 1 ? 1 : sc;
 		
 	    html2canvas(div,
 	    {
 	        onrendered: mxUtils.bind(this, function(canvas)
 	        {
 	        	this.htmlCanvas.subCanvas[canvasIndex] = canvas;
-	        	document.body.removeChild(div);
+	        	//document.body.removeChild(div);
 	        	this.decWaitCounter();
-	        })
+	        }),
+	        scale: sc
 	    });
 	}
 };

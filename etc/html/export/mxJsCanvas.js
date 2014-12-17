@@ -139,10 +139,6 @@ mxJsCanvas.prototype.restore = function()
 
 mxJsCanvas.prototype.scale = function(s)
 {
-	mxLog.show();
-
-	mxLog.debug('dx = ', this.state.dx, ' , dy = ', this.state.dy );
-
 	this.state.scale *= s;
 	this.state.strokeWidth *= s;
 	this.ctx.scale(s, s);
@@ -157,9 +153,6 @@ mxJsCanvas.prototype.translate = function(dx, dy)
 
 mxJsCanvas.prototype.rotate = function(theta, flipH, flipV, cx, cy)
 {
-    cx *= this.state.scale;
-    cy *= this.state.scale;
-
     // This is a special case where the rotation center is scaled so dx/dy,
     // which are also scaled, must be applied after scaling the center.
     cx -= this.state.dx;
@@ -498,17 +491,12 @@ mxJsCanvas.prototype.rewriteImageSource = function(src)
 
 mxJsCanvas.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
 {
-	mxLog.show();
-	mxLog.debug('x = ', x, ' , y = ', y);
-	mxLog.debug('flipH = ', flipH, ' , flipV = ', flipV );
-	
 	var scale = this.state.scale;
-	mxLog.debug('scale = ', scale);
 
-	x = this.state.tx + x / scale;
-	y = this.state.ty + y / scale;
-	w /= scale;
-	h /= scale;
+//	x = this.state.tx + x / scale;
+//	y = this.state.ty + y / scale;
+//	w /= scale;
+//	h /= scale;
 
 	src = this.rewriteImageSource(src);
 	var image = this.images[src];
@@ -617,8 +605,9 @@ mxJsCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, forma
 		return;
 	}
 
-	w *= this.state.scale;
-	h *= this.state.scale;
+	var sc = this.state.scale;
+	w *= sc;
+	h *= sc;
 	
 	if (rotation != 0)
 	{
@@ -630,50 +619,56 @@ mxJsCanvas.prototype.text = function(x, y, w, h, str, align, valign, wrap, forma
 	if (format == 'html')
 	{
 		var subCanvas = this.subCanvas[this.canvasIndex++];
+		var cavHeight = subCanvas.height;
+		var cavWidth = subCanvas.width;
 
 		switch (valign)
 		{
 		 case mxConstants.ALIGN_MIDDLE:
-			 y -= subCanvas.height / 2;
+			 y -= cavHeight / 2 /sc;
 			 break;
 		 case mxConstants.ALIGN_BOTTOM:
-			 y -= subCanvas.height;
+			 y -= cavHeight / sc;
 			 break;
 		}
 		
 		switch (align)
 		{
 		 case mxConstants.ALIGN_CENTER:
-			 x -= subCanvas.width / 2;
+			 x -= cavWidth / 2 / sc;
 			 break;
 		 case mxConstants.ALIGN_RIGHT:
-			 x -= subCanvas.width;
+			 x -= cavWidth / sc;
 			 break;
 		}
 		
-		x = Math.round(x);
-		y = Math.round(y);
+		this.ctx.save();
 
 		if (this.state.fontBackgroundColor != null || this.state.fontBorderColor != null)
 		{
-			this.ctx.save();
 			
 			if (this.state.fontBackgroundColor != null)
 			{
 				this.ctx.fillStyle = this.state.fontBackgroundColor;
-				this.ctx.fillRect(x - 0.5, y - 0.5, subCanvas.width, subCanvas.height);
+				this.ctx.fillRect(Math.round(x) - 0.5, Math.round(y) - 0.5, Math.round(subCanvas.width / sc), Math.round(subCanvas.height / sc));
 			}
 			if (this.state.fontBorderColor != null)
 			{
 				this.ctx.strokeStyle = this.state.fontBorderColor;
 				this.ctx.lineWidth = 1;
-				this.ctx.strokeRect(x - 0.5, y - 0.5, subCanvas.width, subCanvas.height);
+				this.ctx.strokeRect(Math.round(x) - 0.5, Math.round(y) - 0.5, Math.round(subCanvas.width / sc), Math.round(subCanvas.height / sc));
 			}
-			
-			this.ctx.restore();
 		}
 
-    	this.ctx.drawImage(subCanvas, x ,y);
+		//if (sc < 1)
+		//{
+			this.ctx.scale(1/sc, 1/sc);
+		//}
+
+    	this.ctx.drawImage(subCanvas, Math.round(x * sc) ,Math.round(y * sc));
+    	
+		this.ctx.restore();
+
 	}
 	else
 	{

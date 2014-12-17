@@ -34,7 +34,7 @@
 	<script type="text/javascript" src="mxAsyncCanvas.js"></script>
 	<script type="text/javascript" src="jstxt.js"></script>
 	<script type="text/javascript" src="jspdf.js"></script>
-	<script type="text/javascript" src="html2canvas"></script>
+	<script type="text/javascript" src="html2canvas-0_4_1.js"></script>
 	<script type="text/javascript" src="mxOutputHandler.js"></script>
 	<script type="text/vbscript">
      Function BinaryToArray(Binary)
@@ -483,7 +483,7 @@
 					var v1 = graph.insertVertex(parent, null, 'Container', 20, 20, 680, 680,
 							'shape=swimlane;shadow=1;startSize=28;fontStyle=3;fontSize=14;glass=1;align=right');
 					//graph.setCellWarning(v1, 'Overlay');
-     					 var v2 = graph.insertVertex(v1, null, 'Bold + Glass', 20, 40, 120, 40,
+ 					var v2 = graph.insertVertex(v1, null, 'Bold + Glass', 20, 40, 120, 40,
 							'shape=label;rounded=1;shadow=1;glass=1;image=logo.png;'+
 							'imageWidth=22;imageHeight=22;spacingLeft=32;align=left;fontStyle=1');
 					var v22 = graph.insertVertex(v1, null, 'Bold 14pt', 60, 60, 120, 40,
@@ -501,7 +501,7 @@
 					var ims = 'shape=image;verticalLabelPosition=bottom;verticalAlign=top;';
 					var v6 = graph.insertVertex(v1, null, 'JPG Image\n(flipped)', 20, 110, 80, 40,
 							ims + 'image=mxlogo.jpg;imageFlipV=1;opacity=50;');
-   					var v7 = graph.insertVertex(v1, null, 'PNG Image\n(non-alpha)', 120, 110, 80, 40,
+    					var v7 = graph.insertVertex(v1, null, 'PNG Image\n(non-alpha)', 120, 110, 80, 40,
 							ims + 'image=logo.png;align=left');
 					var v71 = graph.insertVertex(v1, null, 'PNG Image\n(flipped w/ bg)', 220, 110, 80, 40,
 							ims + 'image=logo.png;imageFlipH=1;imageBackground=#FFFF00;imageBorder=#FF00FF;');
@@ -545,13 +545,13 @@
 						'shape=rectangle;rounded=1;shadow=1;glass=1;align=left;fontStyle=1;labelBorderColor=#0000ff;');
 					var v27 = graph.insertVertex(v1, null, 'Bold + Glass\nTest Line 2\nTest Line 3', 520, 140, 140, 80,
 						'shape=rectangle;rounded=1;shadow=1;glass=1;align=center;fontStyle=1;labelBorderColor=#0000ff;');
-					var v27 = graph.insertVertex(v1, null, 'Bold + Glass\nTest Line 2\nTest Line 3', 520, 240, 140, 80,
+					var v28 = graph.insertVertex(v1, null, 'Bold + Glass\nTest Line 2\nTest Line 3', 520, 240, 140, 80,
 						'shape=rectangle;rounded=1;shadow=1;glass=1;align=right;fontStyle=1;labelBorderColor=#0000ff;');
-					var v28 = graph.insertVertex(v1, null, 'Top + Left\nTest Line 2\nTest Line 3', 520, 340, 140, 80,
+					var v29 = graph.insertVertex(v1, null, 'Top + Left\nTest Line 2\nTest Line 3', 520, 340, 140, 80,
 						'shape=rectangle;rounded=1;shadow=1;glass=1;align=left;verticalAlign=top;fontStyle=1;horizontal=0;labelBorderColor=#0000ff;');
-					var v29 = graph.insertVertex(v1, null, 'Middle + Center\nTest Line 2\nTest Line 3', 520, 440, 140, 80,
+					var v30 = graph.insertVertex(v1, null, 'Middle + Center\nTest Line 2\nTest Line 3', 520, 440, 140, 80,
 						'shape=rectangle;rounded=1;shadow=1;glass=1;align=center;verticalAlign=middle;fontStyle=1;horizontal=0;labelBorderColor=#0000ff;');
-					var v30 = graph.insertVertex(v1, null, 'Bottom + Right\nTest Line 2\nTest Line 3', 520, 540, 140, 80,
+					var v31 = graph.insertVertex(v1, null, 'Bottom + Right\nTest Line 2\nTest Line 3', 520, 540, 140, 80,
 						'shape=rectangle;rounded=1;shadow=1;glass=1;align=right;verticalAlign=bottom;fontStyle=1;horizontal=0;labelBorderColor=#0000ff;');
 					var e1 = graph.insertEdge(v1, null, 'e1', v10, v11, 'labelBackgroundColor=#ffffff;startArrow=oval;endArrow=classic');
 					var e2 = graph.insertEdge(v1, null, 'e22', v11, v12, 'labelBackgroundColor=#ffffff;startArrow=diamond;endArrow=open');
