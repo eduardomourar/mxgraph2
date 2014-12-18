@@ -33,12 +33,12 @@ Toolbar.prototype.unselectedBackground = 'none';
 Toolbar.prototype.init = function()
 {
 	this.addItems(['undo', 'redo', 'delete', '-', 'actualSize', 'zoomIn', 'zoomOut', '-']);
-	this.fontMenu = this.addMenu('Helvetica', mxResources.get('fontFamily'), true, 'fontFamily');
+	this.fontMenu = this.addMenu(Menus.prototype.defaultFont, mxResources.get('fontFamily'), true, 'fontFamily');
 	this.fontMenu.style.whiteSpace = 'nowrap';
 	this.fontMenu.style.overflow = 'hidden';
 	this.fontMenu.style.width = (mxClient.IS_QUIRKS) ? '76px' : '56px';
 	this.addSeparator();
-	this.sizeMenu = this.addMenu('12', mxResources.get('fontSize'), true, 'fontSize');
+	this.sizeMenu = this.addMenu(Menus.prototype.defaultFontSize, mxResources.get('fontSize'), true, 'fontSize');
 	this.sizeMenu.style.whiteSpace = 'nowrap';
 	this.sizeMenu.style.overflow = 'hidden';
 	this.sizeMenu.style.width = (mxClient.IS_QUIRKS) ? '42px' : '22px';
@@ -137,14 +137,14 @@ Toolbar.prototype.createTextToolbar = function()
 	fontElt.style.whiteSpace = 'nowrap';
 	fontElt.style.overflow = 'hidden';
 	
-	var fontElt = this.addMenu('Helvetica', mxResources.get('fontFamily'), true, 'fontFamily');
+	var fontElt = this.addMenu(Menus.prototype.defaultFont, mxResources.get('fontFamily'), true, 'fontFamily');
 	fontElt.style.whiteSpace = 'nowrap';
 	fontElt.style.overflow = 'hidden';
 	fontElt.style.width = (mxClient.IS_QUIRKS) ? '76px' : '56px';
 	
 	this.addSeparator();
 	
-	var sizeElt = this.addMenu('12', mxResources.get('fontSize'), true, 'fontSize');
+	var sizeElt = this.addMenu(Menus.prototype.defaultFontSize, mxResources.get('fontSize'), true, 'fontSize');
 	sizeElt.style.whiteSpace = 'nowrap';
 	sizeElt.style.overflow = 'hidden';
 	sizeElt.style.width = (mxClient.IS_QUIRKS) ? '42px' : '22px';
@@ -541,7 +541,7 @@ Toolbar.prototype.createTextToolbar = function()
 			
 			var label = document.createElement('div');
 			label.style.padding = '4px';
-			label.style.fontSize = '12px';
+			label.style.fontSize = Menus.prototype.defaultFontSize + 'px';
 			label.innerHTML = '1x1';
 			elt2.firstChild.appendChild(label);
 			
@@ -813,10 +813,10 @@ Toolbar.prototype.hideMenu = function()
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name)
+Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name, c)
 {
 	var menu = this.editorUi.menus.get(name);
-	var elt = this.addMenuFunction(label, tooltip, showLabels, menu.funct);
+	var elt = this.addMenuFunction(label, tooltip, showLabels, menu.funct, c);
 	
 	menu.addListener('stateChanged', function()
 	{
@@ -829,9 +829,9 @@ Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name)
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenuFunction = function(label, tooltip, showLabels, funct)
+Toolbar.prototype.addMenuFunction = function(label, tooltip, showLabels, funct, c)
 {
-	return this.addMenuFunctionInContainer(this.container, label, tooltip, showLabels, funct);
+	return this.addMenuFunctionInContainer((c != null) ? c : this.container, label, tooltip, showLabels, funct);
 };
 
 /**
@@ -850,11 +850,12 @@ Toolbar.prototype.addMenuFunctionInContainer = function(container, label, toolti
 /**
  * Adds a separator to the separator.
  */
-Toolbar.prototype.addSeparator = function()
+Toolbar.prototype.addSeparator = function(c)
 {
+	c = (c != null) ? c : this.container;
 	var elt = document.createElement('div');
 	elt.className = 'geSeparator';
-	this.container.appendChild(elt);
+	c.appendChild(elt);
 	
 	return elt;
 };
@@ -862,7 +863,7 @@ Toolbar.prototype.addSeparator = function()
 /**
  * Adds given action item
  */
-Toolbar.prototype.addItems = function(keys)
+Toolbar.prototype.addItems = function(keys, c, ignoreDisabled)
 {
 	var items = [];
 	
@@ -872,11 +873,11 @@ Toolbar.prototype.addItems = function(keys)
 		
 		if (key == '-')
 		{
-			items.push(this.addSeparator());
+			items.push(this.addSeparator(c));
 		}
 		else
 		{
-			items.push(this.addItem('geSprite-' + key.toLowerCase(), key));
+			items.push(this.addItem('geSprite-' + key.toLowerCase(), key, c, ignoreDisabled));
 		}
 	}
 	
@@ -886,20 +887,24 @@ Toolbar.prototype.addItems = function(keys)
 /**
  * Adds given action item
  */
-Toolbar.prototype.addItem = function(sprite, key)
+Toolbar.prototype.addItem = function(sprite, key, c, ignoreDisabled)
 {
 	var action = this.editorUi.actions.get(key);
 	var elt = null;
 	
 	if (action != null)
 	{
-		elt = this.addButton(sprite, action.label, action.funct);
-		elt.setEnabled(action.enabled);
-		
-		action.addListener('stateChanged', function()
+		elt = this.addButton(sprite, action.label, action.funct, c);
+
+		if (!ignoreDisabled)
 		{
 			elt.setEnabled(action.enabled);
-		});
+			
+			action.addListener('stateChanged', function()
+			{
+				elt.setEnabled(action.enabled);
+			});
+		}
 	}
 	
 	return elt;
@@ -908,13 +913,14 @@ Toolbar.prototype.addItem = function(sprite, key)
 /**
  * Adds a button to the toolbar.
  */
-Toolbar.prototype.addButton = function(classname, tooltip, funct)
+Toolbar.prototype.addButton = function(classname, tooltip, funct, c)
 {
 	var elt = this.createButton(classname);
+	c = (c != null) ? c : this.container;
 	
 	this.initElement(elt, tooltip);
 	this.addClickHandler(elt, funct);
-	this.container.appendChild(elt);
+	c.appendChild(elt);
 	
 	return elt;
 };
@@ -947,12 +953,10 @@ Toolbar.prototype.addEnabledState = function(elt)
 		if (value)
 		{
 			elt.className = classname;
-			//elt.style.display = '';
 		}
 		else
 		{
 			elt.className = classname + ' mxDisabled';
-			//elt.style.display = 'none';
 		}
 	};
 	

@@ -125,26 +125,26 @@ Format.prototype.refresh = function()
 	this.clear();
 	var ui = this.editorUi;
 	var graph = ui.editor.graph;
-
+	
+	var div = document.createElement('div');
+	div.style.whiteSpace = 'nowrap';
+	div.style.fontSize = '12px';
+	div.style.height = '35px';
+	div.style.color = 'rgb(112, 112, 112)';
+	div.style.fontWeight = 'bold';
+	div.style.textAlign = 'center';
+	div.style.cursor = 'default';
+	
 	if (graph.isSelectionEmpty())
 	{
-		var div = document.createElement('div');
-		div.style.whiteSpace = 'nowrap';
-		div.style.fontSize = '12px';
-		div.style.color = 'rgb(112, 112, 112)';
-		div.style.fontWeight = 'bold';
-		div.style.textAlign = 'center';
-		div.style.cursor = 'default';
-		
 		var label = document.createElement('div');
 		label.style.border = '1px solid #c0c0c0';
 		label.style.borderBottomWidth = '1px';
 		label.style.borderRightWidth = '0px';
 		label.style.borderLeftWidth = '0px';
-		label.style.display = 'inline-block';
+		label.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
 		label.style.paddingTop = '8px';
-		label.style.paddingBottom = '8px';
-		label.style.height = '100%';
+		label.style.height = (mxClient.IS_QUIRKS) ? '100%' : '26px';
 		label.style.width = '100%';
 		mxUtils.write(label, mxResources.get('diagram'));
 		div.appendChild(label);
@@ -164,75 +164,88 @@ Format.prototype.refresh = function()
 	else
 	{
 		// TODO: Show style section only if width/height >= 2
-		var div = document.createElement('div');
-		div.style.whiteSpace = 'nowrap';
-		div.style.fontSize = '12px';
-		div.style.color = 'rgb(112, 112, 112)';
-		div.style.fontWeight = 'bold';
-		div.style.textAlign = 'center';
-		div.style.cursor = 'default';
-		div.style.marginTop = '8px';
-		
 		var label = document.createElement('div');
 		label.style.border = '1px solid #c0c0c0';
 		label.style.borderTopWidth = '0px';
 		label.style.borderBottomWidth = '0px';
 		label.style.borderRightWidth = '0px';
 		label.style.borderLeftWidth = '0px';
-		label.style.display = 'inline-block';
+		label.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
 		label.style.paddingTop = '8px';
-		label.style.paddingBottom = '8px';
-		label.style.height = '100%';
+		label.style.height = (mxClient.IS_QUIRKS) ? '100%' : '26px';
 		label.style.width = '33.3%';
 		mxUtils.write(label, mxResources.get('style'));
 		div.appendChild(label);
 		
-		var currentLabel = label;
+		var stylePanel = div.cloneNode(false);
+		stylePanel.style.borderBottom = '1px solid #c0c0c0';
+		stylePanel.style.textAlign = 'left';
+		stylePanel.style.marginTop = '8px';
+		stylePanel.style.fontWeight = 'normal';
+		stylePanel.style.height = 'auto';
 		
-		var addClickHandler = function(elt)
+		var textPanel = stylePanel.cloneNode(false);
+		var arrangePanel = textPanel.cloneNode(false);
+		
+		var currentLabel = label;
+		var currentPanel = stylePanel;
+		
+		var addClickHandler = mxUtils.bind(this, function(elt, panel, index)
 		{
 			mxEvent.addListener(elt, 'click', mxUtils.bind(this, function(evt)
 			{
-				currentLabel.style.backgroundColor = '#d7d7d7';
-				currentLabel.style.borderBottomWidth = '1px';
-
-				currentLabel = elt;
-				currentLabel.style.backgroundColor = '';
-				currentLabel.style.borderBottomWidth = '0px';
+				if (currentLabel != elt)
+				{
+					this.currentIndex = index;
+					currentLabel.style.backgroundColor = '#d7d7d7';
+					currentLabel.style.borderBottomWidth = '1px';
+	
+					currentLabel = elt;
+					currentLabel.style.backgroundColor = '';
+					currentLabel.style.borderBottomWidth = '0px';
+					
+					if (currentPanel != panel)
+					{
+						currentPanel.style.display = 'none';
+						currentPanel = panel;
+						currentPanel.style.display = '';
+					}
+				}
 			}));
-		};
+			
+			if (index == this.currentIndex)
+			{
+				elt.click();
+			}
+		});
 		
-		addClickHandler(label);
+		this.panels.push(new StyleFormatPanel(ui, stylePanel));
 		
-		this.container.appendChild(div);
+		var label2 = label.cloneNode(false);
+		label2.style.backgroundColor = '#d7d7d7';
+		label2.style.borderBottomWidth = '1px';
+		label2.style.borderLeftWidth = '1px';
+		mxUtils.write(label2, mxResources.get('text'));
+		div.appendChild(label2);
+		
+		this.panels.push(new TextFormatPanel(ui, textPanel));
+		textPanel.style.display = 'none';
+		
+		var label3 = label2.cloneNode(false);
+		mxUtils.write(label3, mxResources.get('arrange'));
+		div.appendChild(label3);
+		
+		this.panels.push(new ArrangePanel(ui, arrangePanel));
+		arrangePanel.style.display = 'none';
 
-		label = label.cloneNode(false);
-		label.style.backgroundColor = '#d7d7d7';
-		label.style.borderBottomWidth = '1px';
-		label.style.borderLeftWidth = '1px';
-		mxUtils.write(label, mxResources.get('text'));
-		div.appendChild(label);
-
-		addClickHandler(label);
-		
-		label = label.cloneNode(false);
-		mxUtils.write(label, mxResources.get('arrange'));
-		div.appendChild(label);
-		
-		addClickHandler(label);
+		addClickHandler(label, stylePanel, 0);
+		addClickHandler(label2, textPanel, 1);
+		addClickHandler(label3, arrangePanel, 2);
 		
 		this.container.appendChild(div);
-		
-		div = div.cloneNode(false);
-		div.style.borderBottom = '1px solid #c0c0c0';
-		div.style.textAlign = 'left';
-		div.style.marginTop = '8px';
-		div.style.fontWeight = 'normal';
-		div.style.height = 'auto';
-		
-		this.container.appendChild(div);
-		
-		this.panels.push(new StyleFormatPanel(ui, div));
+		this.container.appendChild(stylePanel);
+		this.container.appendChild(textPanel);
+		this.container.appendChild(arrangePanel);
 	}
 };
 
@@ -405,7 +418,7 @@ BaseFormatPanel.prototype.addColorOption = function(parent, label, getColorFn, s
 	cb.style.marginRight = '6px';
 
 	var span = document.createElement('div');
-	span.style.display = 'inline-block';
+	span.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
 	span.style.width = '210px';
 	span.style.height = '22px';
 	span.style.whiteSpace = 'nowrap';
@@ -557,6 +570,58 @@ BaseFormatPanel.prototype.addCellColorOption = function(parent, label, colorKey,
 };
 
 /**
+ * 
+ */
+BaseFormatPanel.prototype.addArrow = function(elt, height)
+{
+	height = (height != null) ? height : 10;
+	
+	var arrow = document.createElement('div');
+	arrow.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+	arrow.style.padding = '6px';
+	arrow.style.paddingRight = '4px';
+	
+	var m = (10 - height);
+	
+	if (m > 0)
+	{
+		arrow.style.paddingTop = (6 - m) + 'px';
+	}
+	else
+	{
+		arrow.style.marginTop = '-2px';
+	}
+	
+	arrow.style.height = height + 'px';
+	arrow.style.borderLeft = '1px solid #a0a0a0';
+	arrow.innerHTML = '<img border="0" src="' + IMAGE_PATH + '/dropdown.png" style="margin-bottom:4px;">';
+	mxUtils.setOpacity(arrow, 70);
+	
+	var symbol = elt.getElementsByTagName('div')[0];
+	
+	if (symbol != null)
+	{
+		symbol.style.paddingRight = '6px';
+		symbol.style.marginLeft = '4px';
+		symbol.style.marginTop = '-1px';
+		symbol.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+		mxUtils.setOpacity(symbol, 60);
+	}
+
+	mxUtils.setOpacity(elt, 100);
+	elt.style.border = '1px solid #a0a0a0';
+	elt.style.backgroundColor = 'white';
+	elt.style.backgroundImage = 'none';
+	elt.style.width = 'auto';
+	elt.className += ' geColorBtn';
+	mxUtils.setPrefixedStyle(elt.style, 'borderRadius', '3px');
+	
+	elt.appendChild(arrow);
+	
+	return symbol;
+};
+
+/**
  * The string 'null' means use null in values.
  */
 BaseFormatPanel.prototype.addCellOption = function(parent, label, key, defaultValue, enabledValue, disabledValue)
@@ -634,9 +699,432 @@ BaseFormatPanel.prototype.addUnitInput = function(container, unit, right, width)
 };
 
 /**
+ * 
+ */
+BaseFormatPanel.prototype.addRelativeOption = function(container, label, key)
+{
+	var graph = this.editorUi.editor.graph;
+
+	container.style.paddingLeft = '18px';
+	container.style.paddingBottom = '12px';
+	container.style.fontWeight = 'bold';
+	
+	mxUtils.write(container, label);
+	
+	var input = this.addUnitInput(container, '%', 20, 40);
+	
+	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	{
+		input.setAttribute('type', 'number');
+		input.setAttribute('min', '0');
+		input.setAttribute('max', '100');
+		input.setAttribute('step', '10');
+	}
+
+	var listener = function()
+	{
+		input.value = mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, 100);
+	};
+	
+	mxEvent.addListener(input, 'keydown', function(e)
+	{
+		if (e.keyCode == 13)
+		{
+			graph.container.focus();
+			mxEvent.consume(e);
+		}
+		else if (e.keyCode == 27)
+		{
+			listener();
+			graph.container.focus();
+			mxEvent.consume(e);
+		}
+	});
+	
+	graph.getModel().addListener(mxEvent.CHANGE, listener);
+	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
+	listener();
+	
+	function update(evt)
+	{
+		var value = parseInt(input.value);
+		value = Math.min(100, Math.max(0, (isNaN(value)) ? 100 : value));
+		
+		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, 100))
+		{
+			graph.setCellStyles(key, value, graph.getSelectionCells());
+			input.value = value;
+		}
+		
+		mxEvent.consume(evt);
+	};
+
+	mxEvent.addListener(input, 'blur', update);
+	mxEvent.addListener(input, 'click', update);
+
+	return container;
+};
+
+
+/**
  * Adds the label menu items to the given menu and parent.
  */
-BaseFormatPanel.prototype.destroy = function() { };
+BaseFormatPanel.prototype.destroy = function()
+{
+	if (this.listeners != null)
+	{
+		for (var i = 0; i < this.listeners.length; i++)
+		{
+			this.listeners[i].destroy();
+		}
+		
+		this.listeners = null;
+	}
+};
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+ArrangePanel = function(editorUi, container)
+{
+	BaseFormatPanel.call(this, editorUi, container);
+	this.init();
+};
+
+mxUtils.extend(ArrangePanel, BaseFormatPanel);
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+ArrangePanel.prototype.init = function()
+{
+	var ui = this.editorUi;
+	var editor = ui.editor;
+	var graph = editor.graph;
+	var state = graph.view.getState(graph.getSelectionCell());
+	var shape = this.getCurrentShape();
+	
+	var clone = this.container.cloneNode(true);
+	clone.style.display = 'block';
+	clone.style.paddingTop = '4px';
+	clone.style.paddingBottom = '10px';
+	clone.style.paddingLeft = '18px';
+	clone.style.fontWeight = 'normal';
+	
+	this.container.style.borderBottom = 'none';
+
+	// TODO: Move to arrange
+	this.container.appendChild((function(div)
+	{
+		var btn = mxUtils.button(mxResources.get('turn'), function(evt)
+		{
+			ui.actions.get('turn').funct();
+		})
+		
+		btn.setAttribute('title', 'Ctrl+R');
+		btn.style.marginRight = '8px';
+		
+		var valueInput = document.createElement('input');
+		valueInput.setAttribute('type', 'number');
+		valueInput.setAttribute('min', '0');
+		valueInput.setAttribute('max', '360');
+		valueInput.style.textAlign = 'right';
+		valueInput.style.width = '30px';
+		valueInput.style.marginLeft = '8px';
+		valueInput.value = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION, '0');
+		
+		mxEvent.addListener(valueInput, 'change', function(evt)
+		{
+			graph.setCellStyles(mxConstants.STYLE_ROTATION, parseInt(valueInput.value));
+			mxEvent.consume(evt);
+		});
+
+		var span = document.createElement('span');
+		span.style.lineHeight = '30px';
+		span.appendChild(btn);
+		mxUtils.write(span, mxResources.get('rotation'));
+		span.appendChild(valueInput);
+		div.appendChild(span);
+
+		return div;
+	})(clone));
+	
+};
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+TextFormatPanel = function(editorUi, container)
+{
+	BaseFormatPanel.call(this, editorUi, container);
+	this.init();
+};
+
+mxUtils.extend(TextFormatPanel, BaseFormatPanel);
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+TextFormatPanel.prototype.init = function()
+{
+	var ui = this.editorUi;
+	var editor = ui.editor;
+	var graph = editor.graph;
+	var state = graph.view.getState(graph.getSelectionCell());
+	var shape = this.getCurrentShape();
+	
+	var clone = this.container.cloneNode(true);
+	clone.style.display = 'block';
+	clone.style.whiteSpace = 'normal';
+	clone.style.paddingTop = '4px';
+	clone.style.paddingBottom = '10px';
+	clone.style.fontWeight = 'normal';
+	
+	this.container.style.borderBottom = 'none';
+	this.container.appendChild(this.addFont(clone));
+};
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+TextFormatPanel.prototype.addFont = function(container)
+{
+	var ui = this.editorUi;
+	var editor = ui.editor;
+	var graph = editor.graph;
+	var state = graph.view.getState(graph.getSelectionCell());
+	
+	var div = document.createElement('div');
+	div.style.marginBottom = '8px';
+	div.style.marginTop = '4px';
+	div.style.paddingLeft = '18px';
+	
+	var stylePanel = div.cloneNode(false);
+	stylePanel.style.borderBottom = '1px solid #c0c0c0';
+	
+	div.style.fontWeight = 'bold';
+	mxUtils.write(div, 'Schrift'/*TODO*/);
+	container.appendChild(div);
+
+	var colorPanel = stylePanel.cloneNode(false);
+	colorPanel.style.marginTop = '12px';
+	colorPanel.style.marginBottom = '0px';
+	
+	stylePanel.style.position = 'relative';
+	stylePanel.style.marginLeft = '-1px';
+	stylePanel.style.marginTop = '4px';
+	stylePanel.style.marginBottom = '8px';
+	stylePanel.style.borderWidth = '0px';
+	stylePanel.className = 'geToolbarContainer';
+	
+	if (mxClient.IS_QUIRKS)
+	{
+		stylePanel.style.display = 'block';
+	}
+	
+	container.appendChild(stylePanel);
+	
+	var fontMenu = this.editorUi.toolbar.addMenu('Helvetica', mxResources.get('fontFamily'), true, 'fontFamily', stylePanel);
+	fontMenu.style.color = 'rgb(112, 112, 112)';
+	fontMenu.style.whiteSpace = 'nowrap';
+	fontMenu.style.overflow = 'hidden';
+	fontMenu.style.margin = '0px';
+	
+	this.addArrow(fontMenu);
+	fontMenu.style.width = '191px';
+	fontMenu.style.height = '15px';
+	
+	var stylePanel2 = stylePanel.cloneNode(false);
+	stylePanel2.style.marginLeft = '-3px';
+	var fontStyleItems = this.editorUi.toolbar.addItems(['bold', 'italic', 'underline'], stylePanel2, true);
+	container.appendChild(stylePanel2);
+	
+	function style(elts)
+	{
+		for (var i = 0; i < elts.length; i++)
+		{
+			// FIXME: Style changes after container was made visible
+			mxUtils.setPrefixedStyle(elts[i].style, 'borderRadius', '3px');
+			mxUtils.setOpacity(elts[i], 100);
+			elts[i].style.border = '1px solid #a0a0a0';
+			elts[i].style.padding = '2px';
+			elts[i].style.paddingLeft = '3px';
+			elts[i].style.paddingRight = '1px';
+			elts[i].style.width = '23px';
+			elts[i].style.height = '21px';
+			elts[i].className += ' geColorBtn';
+		}
+	};
+	
+	style(fontStyleItems);
+	
+	var stylePanel3 = stylePanel.cloneNode(false);
+	stylePanel3.style.marginLeft = '-3px';
+	
+	var left = this.editorUi.toolbar.addButton('geSprite-left', mxResources.get('left'),
+		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_LEFT]), stylePanel3);
+	var center = this.editorUi.toolbar.addButton('geSprite-center', mxResources.get('center'),
+		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_CENTER]), stylePanel3);
+	var right = this.editorUi.toolbar.addButton('geSprite-right', mxResources.get('right'),
+		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_RIGHT]), stylePanel3);
+	right.style.marginRight = '8px';
+
+	style([left, center, right]);
+	container.appendChild(stylePanel3);
+	
+	var stylePanel4 = stylePanel.cloneNode(false);
+	stylePanel4.style.marginLeft = '-3px';
+	
+	var top = this.editorUi.toolbar.addButton('geSprite-top', mxResources.get('top'),
+		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_TOP]), stylePanel3);
+	var middle = this.editorUi.toolbar.addButton('geSprite-middle', mxResources.get('middle'),
+		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_MIDDLE]), stylePanel3);
+	var bottom = this.editorUi.toolbar.addButton('geSprite-bottom', mxResources.get('bottom'),
+		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_BOTTOM]), stylePanel3);
+	
+	style([top, middle, bottom]);
+	container.appendChild(stylePanel4);
+	
+	// Stroke width
+	var input = document.createElement('input');
+	input.setAttribute('type', 'number');
+	input.setAttribute('min', '1');
+	input.style.position = 'absolute';
+	input.style.textAlign = 'right';
+	input.style.paddingRight = '12px';
+	input.style.marginTop = '2px';
+	input.style.right = '22px';
+	input.style.width = '41px';
+	input.style.height = '15px';
+
+	stylePanel2.appendChild(input);
+	
+	var unit = document.createElement('span');
+	unit.style.position = 'absolute';
+	unit.style.fontWeight = 'normal';
+	unit.style.fontSize = '11px';
+	unit.style.fontColor = '#000';
+	unit.style.right = (mxClient.IS_SF) ? '37px': '26px';
+	unit.style.marginTop = '7px';
+	mxUtils.write(unit, 'pt');
+	stylePanel2.appendChild(unit);
+
+	if (mxClient.IS_MT)
+	{
+		mxUtils.setPrefixedStyle(input.style, 'boxSizing', 'padding-box');
+		input.style.width = '52px';
+		unit.style.marginTop = '5px';
+	}
+	else
+	{
+		unit.style.marginTop = '7px';		
+	}
+
+	function update(evt)
+	{
+		// Maximum stroke width is 999
+		var value = parseInt(input.value);
+		value = Math.min(999, Math.max(1, (isNaN(value)) ? 1 : value));
+		
+		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style,
+			mxConstants.STYLE_FONTSIZE, 1))
+		{
+			graph.setCellStyles(mxConstants.STYLE_FONTSIZE, value, graph.getSelectionCells());
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_FONTSIZE],
+					'values', [value], 'cells', graph.getSelectionCells()));
+			input.value = value;
+		}
+		
+		mxEvent.consume(evt);
+	};
+
+	mxEvent.addListener(input, 'blur', update);
+	mxEvent.addListener(input, 'click', update);
+	
+	var arrow = fontMenu.getElementsByTagName('div')[0];
+	arrow.style.cssFloat = 'right';
+
+	this.addCellColorOption(colorPanel, mxResources.get('fontColor'),
+			mxConstants.STYLE_FONTCOLOR, '#000000');
+	
+	this.addCellColorOption(colorPanel, mxResources.get('backgroundColor'),
+			mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#ffffff');
+	
+	this.addCellColorOption(colorPanel, mxResources.get('borderColor'),
+			mxConstants.STYLE_LABEL_BORDERCOLOR, '#000000');
+
+	container.appendChild(colorPanel);
+	container.appendChild(this.addRelativeOption(colorPanel.cloneNode(false), mxResources.get('opacity'), mxConstants.STYLE_TEXT_OPACITY));
+	
+	var extraPanel = colorPanel.cloneNode(false);
+	
+	// TODO: Fix toggle using '' instead of 'null'
+	this.addCellOption(extraPanel, mxResources.get('wordWrap'), mxConstants.STYLE_WHITE_SPACE, 'wrap', 'wrap', 'null');
+	this.addCellOption(extraPanel, mxResources.get('formattedText'), 'html', '1');
+	this.addCellOption(extraPanel, mxResources.get('hide'), mxConstants.STYLE_NOLABEL, '1');
+	
+	container.appendChild(extraPanel);
+
+	function setSelected(elt, selected)
+	{
+		if (mxClient.IS_IE && (mxClient.IS_QUIRKS || document.documentMode < 10))
+		{
+			elt.style.filter = (selected) ? 'progid:DXImageTransform.Microsoft.Gradient('+
+            	'StartColorStr=\'#c5ecff\', EndColorStr=\'#87d4fb\', GradientType=0)' : '';
+		}
+		else
+		{
+			elt.style.backgroundImage = (selected) ? 'linear-gradient(#c5ecff 0px,#87d4fb 100%)' : '';
+		}
+	};
+	
+	var listener = mxUtils.bind(this, function()
+	{
+		state = graph.view.getState(graph.getSelectionCell());
+		
+		if (state != null)
+		{
+			input.value = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, 1);
+			var fontStyle = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0);
+			setSelected(fontStyleItems[0], (fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD);
+			setSelected(fontStyleItems[1], (fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC);
+			setSelected(fontStyleItems[2], (fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE);
+			fontMenu.firstChild.nodeValue = mxUtils.htmlEntities(mxUtils.getValue(state.style, mxConstants.STYLE_FONTFAMILY, Menus.prototype.defaultFont));
+			input.value = parseInt(mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize));
+			
+			var align = mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER);
+			setSelected(left, align == mxConstants.ALIGN_LEFT);
+			setSelected(center, align == mxConstants.ALIGN_CENTER);
+			setSelected(right, align == mxConstants.ALIGN_RIGHT);
+			
+			var valign = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE);
+			setSelected(top, valign == mxConstants.ALIGN_TOP);
+			setSelected(middle, valign == mxConstants.ALIGN_MIDDLE);
+			setSelected(bottom, valign == mxConstants.ALIGN_BOTTOM);
+		}
+	});
+
+	mxEvent.addListener(input, 'keydown', function(e)
+	{
+		if (e.keyCode == 13)
+		{
+			graph.container.focus();
+			mxEvent.consume(e);
+		}
+		else if (e.keyCode == 27)
+		{
+			listener();
+			graph.container.focus();
+			mxEvent.consume(e);
+		}
+	});
+
+	graph.getModel().addListener(mxEvent.CHANGE, listener);
+	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
+	listener();
+
+	return container;
+}
 
 /**
  * Adds the label menu items to the given menu and parent.
@@ -680,8 +1168,7 @@ StyleFormatPanel.prototype.init = function()
 			ui.actions.get('image').funct();
 		})
 		
-		//btn.style.marginTop = '8px';
-		btn.style.width = '206px';
+		btn.style.width = '202px';
 		
 		var panel = clone.cloneNode(true);
 		panel.appendChild(btn);
@@ -699,45 +1186,9 @@ StyleFormatPanel.prototype.init = function()
 	var strokePanel = this.addStroke(panel.cloneNode(true));
 	this.container.appendChild(strokePanel);
 	strokePanel.style.paddingBottom = '8px';
-	this.container.appendChild(this.addOpacity(panel.cloneNode(true)));
+	this.container.appendChild(this.addRelativeOption(panel.cloneNode(true), mxResources.get('opacity'), mxConstants.STYLE_OPACITY));
 	this.container.appendChild(this.addEffects(clone.cloneNode(true)));
 
-	// TODO: Move to arrange
-	this.container.appendChild((function(div)
-	{
-		var btn = mxUtils.button(mxResources.get('turn'), function(evt)
-		{
-			ui.actions.get('turn').funct();
-		})
-		
-		btn.setAttribute('title', 'Ctrl+R');
-		btn.style.marginRight = '8px';
-		
-		var valueInput = document.createElement('input');
-		valueInput.setAttribute('type', 'number');
-		valueInput.setAttribute('min', '0');
-		valueInput.setAttribute('max', '360');
-		valueInput.style.textAlign = 'right';
-		valueInput.style.width = '30px';
-		valueInput.style.marginLeft = '8px';
-		valueInput.value = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION, '0');
-		
-		mxEvent.addListener(valueInput, 'change', function(evt)
-		{
-			graph.setCellStyles(mxConstants.STYLE_ROTATION, parseInt(valueInput.value));
-			mxEvent.consume(evt);
-		});
-
-		var span = document.createElement('span');
-		span.style.lineHeight = '30px';
-		span.appendChild(btn);
-		mxUtils.write(span, mxResources.get('rotation'));
-		span.appendChild(valueInput);
-		div.appendChild(span);
-
-		return div;
-	})(clone.cloneNode(true)));
-	
 	// TODO: To draw.io
 	this.container.appendChild((function(div)
 	{
@@ -750,7 +1201,7 @@ StyleFormatPanel.prototype.init = function()
 		
 		btn.setAttribute('title', 'Ctrl+Shift+C');
 		btn.style.width = '100px';
-		btn.style.marginRight = '6px';
+		btn.style.marginRight = '2px';
 		
 		div.appendChild(btn);
 		
@@ -772,7 +1223,7 @@ StyleFormatPanel.prototype.init = function()
 		
 		btn.setAttribute('title', 'Ctrl+Shift+D');
 		btn.style.marginTop = '8px';
-		btn.style.width = '206px';
+		btn.style.width = '202px';
 		div.appendChild(btn);
 
 		return div;
@@ -996,7 +1447,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	styleSelect.style.position = 'absolute';
 	styleSelect.style.marginTop = '-2px';
 	styleSelect.style.right = '72px';
-	styleSelect.style.width = '70px';
+	styleSelect.style.width = '80px';
 	
 	var state = graph.view.getState(graph.getSelectionCell());
 	var shape = this.getCurrentShape();
@@ -1056,6 +1507,11 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	stylePanel.style.marginTop = '2px';
 	stylePanel.className = 'geToolbarContainer';
 	stylePanel.style.borderWidth = '0px';
+	
+	if (mxClient.IS_QUIRKS)
+	{
+		stylePanel.style.display = 'block';
+	}
 
 	var stylePanel2 = stylePanel.cloneNode(false);
 
@@ -1095,21 +1551,6 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	}
 
 	this.addCellColorOption(colorPanel, mxResources.get('line'), strokeKey, '#000000').style.height = '18px';
-
-	mxEvent.addListener(input, 'keydown', function(e)
-	{
-		if (e.keyCode == 13)
-		{
-			graph.container.focus();
-			mxEvent.consume(e);
-		}
-		else if (e.keyCode == 27)
-		{
-			listener();
-			graph.container.focus();
-			mxEvent.consume(e);
-		}
-	});
 
 	function update(evt)
 	{
@@ -1204,58 +1645,12 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		
 		this.editorUi.menus.promptChange(menu, '', '(px)', '0', mxConstants.STYLE_TARGET_PERIMETER_SPACING, null, true, null, 'geIcon geSprite geSprite-bottom').setAttribute('title', mxResources.get('targetSpacing'));
 	}));
-	
-	function addArrow(elt, height)
-	{
-		height = (height != null) ? height : 10;
-		
-		var arrow = document.createElement('div');
-		arrow.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
-		arrow.style.padding = '6px';
-		arrow.style.paddingRight = '4px';
-		
-		var m = (10 - height);
-		
-		if (m > 0)
-		{
-			arrow.style.paddingTop = (6 - m) + 'px';
-		}
-		else
-		{
-			arrow.style.marginTop = '-2px';
-		}
-		
-		arrow.style.height = height + 'px';
-		arrow.style.borderLeft = '1px solid #a0a0a0';
-		arrow.innerHTML = '<img src="' + IMAGE_PATH + '/dropdown.png" style="margin-bottom:4px;">';
-		mxUtils.setOpacity(arrow, 70);
-		
-		var symbol = elt.getElementsByTagName('div')[0];
-		symbol.style.paddingRight = '6px';
-		symbol.style.marginLeft = '4px';
-		symbol.style.marginTop = '-1px';
-		symbol.style.display = 'inline-block';
-		mxUtils.setOpacity(symbol, 60);
 
-		mxUtils.setOpacity(elt, 100);
-		elt.style.width = 'auto';
-		elt.style.border = '1px solid #a0a0a0';
-		mxUtils.setPrefixedStyle(elt.style, 'borderRadius', '3px');
-		
-		elt.style.backgroundImage = 'none';
-		elt.style.backgroundColor = 'white';
-		elt.className += ' geColorBtn';
-		
-		elt.appendChild(arrow);
-		
-		return symbol;
-	};
+	this.addArrow(edgeStyle);
+	this.addArrow(lineStart);
+	this.addArrow(lineEnd);
 	
-	addArrow(edgeStyle);
-	addArrow(lineStart);
-	addArrow(lineEnd);
-	
-	var symbol = addArrow(pattern, 9);
+	var symbol = this.addArrow(pattern, 9);
 	symbol.className = 'geIcon';
 	symbol.style.width = '83px';
 	
@@ -1359,42 +1754,6 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		}
 	});
 	
-	graph.getModel().addListener(mxEvent.CHANGE, listener);
-	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
-	listener();
-
-	return container;
-};
-
-/**
- * Adds the label menu items to the given menu and parent.
- */
-StyleFormatPanel.prototype.addOpacity = function(container)
-{
-	var graph = this.editorUi.editor.graph;
-
-	container.style.paddingLeft = '18px';
-	container.style.paddingBottom = '12px';
-	container.style.fontWeight = 'bold';
-	
-	mxUtils.write(container, mxResources.get('opacity'));
-	
-	var input = this.addUnitInput(container, '%', 20, 40);
-	
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
-	{
-		input.setAttribute('type', 'number');
-		input.setAttribute('min', '0');
-		input.setAttribute('max', '100');
-		input.setAttribute('step', '10');
-	}
-
-	var listener = function()
-	{
-		input.value = mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style,
-				mxConstants.STYLE_OPACITY, 100);
-	};
-	
 	mxEvent.addListener(input, 'keydown', function(e)
 	{
 		if (e.keyCode == 13)
@@ -1409,28 +1768,10 @@ StyleFormatPanel.prototype.addOpacity = function(container)
 			mxEvent.consume(e);
 		}
 	});
-	
+
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
 	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
 	listener();
-	
-	function update(evt)
-	{
-		var value = parseInt(input.value);
-		value = Math.min(100, Math.max(0, (isNaN(value)) ? 100 : value));
-		
-		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style,
-			mxConstants.STYLE_OPACITY, 100))
-		{
-			graph.setCellStyles(mxConstants.STYLE_OPACITY, value, graph.getSelectionCells());
-			input.value = value;
-		}
-		
-		mxEvent.consume(evt);
-	};
-
-	mxEvent.addListener(input, 'blur', update);
-	mxEvent.addListener(input, 'click', update);
 
 	return container;
 };
@@ -1510,22 +1851,6 @@ StyleFormatPanel.prototype.addEffects = function(container)
 
 	return container;
 }
-
-/**
- * Adds the label menu items to the given menu and parent.
- */
-StyleFormatPanel.prototype.destroy = function()
-{
-	if (this.listeners != null)
-	{
-		for (var i = 0; i < this.listeners.length; i++)
-		{
-			this.listeners[i].destroy();
-		}
-		
-		this.listeners = null;
-	}
-};
 
 /**
  * Adds the label menu items to the given menu and parent.
@@ -2033,19 +2358,11 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
  */
 DiagramFormatPanel.prototype.destroy = function()
 {
+	BaseFormatPanel.prototype.destroy.apply(this, arguments);
+	
 	if (this.gridEnabledListener)
 	{
 		this.editorUi.removeListener(this.gridEnabledListener);
 		this.gridEnabledListener = null;
-	}
-	
-	if (this.listeners != null)
-	{
-		for (var i = 0; i < this.listeners.length; i++)
-		{
-			this.listeners[i].destroy();
-		}
-		
-		this.listeners = null;
 	}
 };

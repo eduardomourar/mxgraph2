@@ -15,6 +15,16 @@ Menus = function(editorUi)
 };
 
 /**
+ * Sets the default font family.
+ */
+Menus.prototype.defaultFont = 'Helvetica';
+
+/**
+ * Sets the default font size.
+ */
+Menus.prototype.defaultFontSize = '12';
+
+/**
  * Adds the label menu items to the given menu and parent.
  */
 Menus.prototype.defaultFonts = ['Helvetica', 'Verdana', 'Times New Roman', 'Garamond', 'Comic Sans MS',
@@ -580,6 +590,8 @@ Menus.prototype.edgeStyleChange = function(menu, label, keys, values, sprite, pa
  */
 Menus.prototype.styleChange = function(menu, label, keys, values, sprite, parent, fn)
 {
+	var apply = this.createStyleChangeFunction(keys, values);
+	
 	return menu.addItem(label, null, mxUtils.bind(this, function()
 	{
 		var graph = this.editorUi.editor.graph;
@@ -590,25 +602,37 @@ Menus.prototype.styleChange = function(menu, label, keys, values, sprite, parent
 		}
 		else
 		{
-			graph.stopEditing(false);
-			
-			graph.getModel().beginUpdate();
-			try
-			{
-				for (var i = 0; i < keys.length; i++)
-				{
-					graph.setCellStyles(keys[i], values[i]);
-				}
-				
-				this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', keys, 'values', values,
-					'cells', graph.getSelectionCells()));
-			}
-			finally
-			{
-				graph.getModel().endUpdate();
-			}
+			apply();
 		}
 	}), parent, sprite);
+};
+
+/**
+ * 
+ */
+Menus.prototype.createStyleChangeFunction = function(keys, values)
+{
+	return mxUtils.bind(this, function()
+	{
+		var graph = this.editorUi.editor.graph;
+		graph.stopEditing(false);
+		
+		graph.getModel().beginUpdate();
+		try
+		{
+			for (var i = 0; i < keys.length; i++)
+			{
+				graph.setCellStyles(keys[i], values[i]);
+			}
+			
+			this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', keys, 'values', values,
+				'cells', graph.getSelectionCells()));
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+	});
 };
 
 /**

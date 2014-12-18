@@ -518,10 +518,10 @@ EditorUi = function(editor, container)
 
 		if (this.toolbar != null)
 		{
-			var ff = currentStyle['fontFamily'] || 'Helvetica';
+			var ff = currentStyle['fontFamily'] || Menus.prototype.defaultFont;
 			this.toolbar.fontMenu.innerHTML = mxUtils.htmlEntities(ff);
 			
-			var fs = String(currentStyle['fontSize'] || '12');
+			var fs = String(currentStyle['fontSize'] || Menus.prototype.defaultFontSize);
 			this.toolbar.sizeMenu.innerHTML = mxUtils.htmlEntities(fs);
 	
 			// Updates toolbar icon for edge style
@@ -1579,7 +1579,7 @@ EditorUi.prototype.createDivs = function()
 	this.menubarContainer = this.createDiv('geMenubarContainer');
 	this.toolbarContainer = this.createDiv('geToolbarContainer');
 	this.sidebarContainer = this.createDiv('geSidebarContainer');
-	this.formatContainer = this.createDiv('geFormatContainer');
+	this.formatContainer = this.createDiv('geSidebarContainer');
 	this.diagramContainer = this.createDiv('geDiagramContainer');
 	this.footerContainer = this.createDiv('geFooterContainer');
 	this.hsplit = this.createDiv('geHsplit');
@@ -1599,7 +1599,8 @@ EditorUi.prototype.createDivs = function()
 	this.footerContainer.style.zIndex = mxPopupMenu.prototype.zIndex;
 	this.hsplit.style.width = this.splitSize + 'px';
 	
-	// Only vertical scrollbars in format sidebar
+	// Only vertical scrollbars, no background in format sidebar
+	this.formatContainer.style.backgroundColor = 'transparent';
 	this.formatContainer.style.overflowX = 'hidden';
 	this.formatContainer.style.overflowY = 'auto';
 	
