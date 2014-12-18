@@ -546,12 +546,22 @@ mxGraphView.prototype.validate = function(cell)
 	if (this.optimizeVmlReflows && this.canvas != null && this.textDiv == null &&
 		((document.documentMode == 8 && !mxClient.IS_EM) || mxClient.IS_QUIRKS))
 	{
+		if (this.scrollCaptured == null)
+		{
+			this.scrollCaptured = true;
+			this.scrollTop = this.graph.container.scrollTop;
+			this.scrollLeft = this.graph.container.scrollLeft;
+		}
+		
 		// Placeholder keeps scrollbar positions when canvas is hidden
-		this.placeholder = document.createElement('div');
-		this.placeholder.style.position = 'absolute';
-		this.placeholder.style.width = this.canvas.clientWidth + 'px';
-		this.placeholder.style.height = this.canvas.clientHeight + 'px';
-		this.canvas.parentNode.appendChild(this.placeholder);
+		if (mxClient.IS_QUIRKS)
+		{
+			this.placeholder = document.createElement('div');
+			this.placeholder.style.position = 'absolute';
+			this.placeholder.style.width = this.canvas.clientWidth + 'px';
+			this.placeholder.style.height = this.canvas.clientHeight + 'px';
+			this.canvas.parentNode.appendChild(this.placeholder);
+		}
 
 		prevDisplay = this.drawPane.style.display;
 		this.canvas.style.display = 'none';
@@ -576,11 +586,39 @@ mxGraphView.prototype.validate = function(cell)
 	if (prevDisplay != null)
 	{
 		this.canvas.style.display = prevDisplay;
-		this.placeholder.parentNode.removeChild(this.placeholder);
 		this.textDiv.parentNode.removeChild(this.textDiv);
 		
+		if (this.placeholder != null)
+		{
+			this.placeholder.parentNode.removeChild(this.placeholder);
+		}
+				
 		// Textdiv cannot be reused
 		this.textDiv = null;
+		
+		// Restores scrollbar positions in IE8 standards
+		if (document.documentMode == 8)
+		{
+			if (this.scrollTop > 0 && this.scrollLeft > 0)
+			{
+				if (!this.scrollScheduled)
+				{
+					this.scrollScheduled = true;
+					
+					window.setTimeout(mxUtils.bind(this, function()
+					{
+						this.graph.container.scrollTop = this.scrollTop;
+						this.graph.container.scrollLeft = this.scrollLeft;
+						this.scrollScheduled = null;
+						this.scrollCaptured = null;
+					}), 0);
+				}
+			}
+			else
+			{
+				this.scrollCaptured = null;
+			}
+		}
 	}
 	
 	this.resetValidationState();
