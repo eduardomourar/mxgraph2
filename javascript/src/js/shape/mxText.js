@@ -561,8 +561,6 @@ mxText.prototype.updateHtmlTransform = function()
 	{
 		style.opacity = '';
 	}
-	
-	console.log('op', this.value, this.opacity);
 };
 
 /**
