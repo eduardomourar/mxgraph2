@@ -529,7 +529,7 @@ BaseFormatPanel.prototype.addColorOption = function(parent, label, getColorFn, s
 /**
  * 
  */
-BaseFormatPanel.prototype.addCellColorOption = function(parent, label, colorKey, defaultColor, callbackFn)
+BaseFormatPanel.prototype.addCellColorOption = function(parent, label, colorKey, defaultColor, callbackFn, setStyleFn)
 {
 	var ui = this.editorUi;
 	var editor = ui.editor;
@@ -543,6 +543,11 @@ BaseFormatPanel.prototype.addCellColorOption = function(parent, label, colorKey,
 		graph.getModel().beginUpdate();
 		try
 		{
+			if (setStyleFn != null)
+			{
+				setStyleFn(color);
+			}
+			
 			graph.setCellStyles(colorKey, color, graph.getSelectionCells());
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [colorKey],
 				'values', [color], 'cells', graph.getSelectionCells()));
@@ -872,16 +877,9 @@ TextFormatPanel.prototype.init = function()
 	var graph = editor.graph;
 	var state = graph.view.getState(graph.getSelectionCell());
 	var shape = this.getCurrentShape();
-	
-	var clone = this.container.cloneNode(true);
-	clone.style.display = 'block';
-	clone.style.whiteSpace = 'normal';
-	clone.style.paddingTop = '4px';
-	clone.style.paddingBottom = '10px';
-	clone.style.fontWeight = 'normal';
-	
+
 	this.container.style.borderBottom = 'none';
-	this.container.appendChild(this.addFont(clone));
+	this.addFont(this.container);
 };
 
 /**
@@ -895,25 +893,31 @@ TextFormatPanel.prototype.addFont = function(container)
 	var state = graph.view.getState(graph.getSelectionCell());
 	
 	var div = document.createElement('div');
-	div.style.marginBottom = '8px';
-	div.style.marginTop = '4px';
+	div.style.marginTop = '8px';
+	div.style.marginBottom = '4px';
 	div.style.paddingLeft = '18px';
+	div.style.paddingBottom = '10px';
 	
 	var stylePanel = div.cloneNode(false);
 	stylePanel.style.borderBottom = '1px solid #c0c0c0';
+	
+	div.style.marginTop = '16px';
+	div.style.marginBottom = '2px';
+	div.style.paddingBottom = '0px';
 	
 	div.style.fontWeight = 'bold';
 	mxUtils.write(div, 'Schrift'/*TODO*/);
 	container.appendChild(div);
 
 	var colorPanel = stylePanel.cloneNode(false);
-	colorPanel.style.marginTop = '12px';
+	colorPanel.style.borderTop = '1px solid #c0c0c0';
 	colorPanel.style.marginBottom = '0px';
+	colorPanel.style.paddingTop = '16px';
 	
 	stylePanel.style.position = 'relative';
 	stylePanel.style.marginLeft = '-1px';
-	stylePanel.style.marginTop = '4px';
-	stylePanel.style.marginBottom = '8px';
+	stylePanel.style.marginTop = '8px';
+	stylePanel.style.paddingBottom = '0px';
 	stylePanel.style.borderWidth = '0px';
 	stylePanel.className = 'geToolbarContainer';
 	
@@ -947,11 +951,12 @@ TextFormatPanel.prototype.addFont = function(container)
 			mxUtils.setPrefixedStyle(elts[i].style, 'borderRadius', '3px');
 			mxUtils.setOpacity(elts[i], 100);
 			elts[i].style.border = '1px solid #a0a0a0';
-			elts[i].style.padding = '2px';
-			elts[i].style.paddingLeft = '3px';
+			elts[i].style.padding = '4px';
+			elts[i].style.paddingTop = '3px';
 			elts[i].style.paddingRight = '1px';
-			elts[i].style.width = '23px';
-			elts[i].style.height = '21px';
+			elts[i].style.margin = '1px';
+			elts[i].style.width = '24px';
+			elts[i].style.height = '20px';
 			elts[i].className += ' geColorBtn';
 		}
 	};
@@ -960,6 +965,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	
 	var stylePanel3 = stylePanel.cloneNode(false);
 	stylePanel3.style.marginLeft = '-3px';
+	stylePanel3.style.paddingBottom = '0px';
 	
 	var left = this.editorUi.toolbar.addButton('geSprite-left', mxResources.get('left'),
 		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_LEFT]), stylePanel3);
@@ -967,14 +973,10 @@ TextFormatPanel.prototype.addFont = function(container)
 		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_CENTER]), stylePanel3);
 	var right = this.editorUi.toolbar.addButton('geSprite-right', mxResources.get('right'),
 		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_RIGHT]), stylePanel3);
-	right.style.marginRight = '8px';
 
 	style([left, center, right]);
-	container.appendChild(stylePanel3);
-	
-	var stylePanel4 = stylePanel.cloneNode(false);
-	stylePanel4.style.marginLeft = '-3px';
-	
+	right.style.marginRight = '9px';
+
 	var top = this.editorUi.toolbar.addButton('geSprite-top', mxResources.get('top'),
 		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_TOP]), stylePanel3);
 	var middle = this.editorUi.toolbar.addButton('geSprite-middle', mxResources.get('middle'),
@@ -983,7 +985,41 @@ TextFormatPanel.prototype.addFont = function(container)
 		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_BOTTOM]), stylePanel3);
 	
 	style([top, middle, bottom]);
+	container.appendChild(stylePanel3);
+	
+	var stylePanel4 = stylePanel.cloneNode(false);
+	stylePanel4.style.marginLeft = '-3px';
+	stylePanel4.style.paddingTop = '6px';
+	stylePanel4.style.paddingBottom = '6px';
+	stylePanel4.style.fontWeight = 'bold';
+	
+	mxUtils.write(stylePanel4, mxResources.get('position'));
+	
+	// Adds gradient direction option
+	var positionSelect = document.createElement('select');
+	positionSelect.style.position = 'absolute';
+	positionSelect.style.right = '20px';
+	positionSelect.style.width = '97px';
+	positionSelect.style.marginTop = '-2px';
+	
+	var directions = ['top', 'right', 'bottom', 'left', 'center'];
+
+	for (var i = 0; i < directions.length; i++)
+	{
+		var positionOption = document.createElement('option');
+		positionOption.setAttribute('value', directions[i]);
+		mxUtils.write(positionOption, mxResources.get(directions[i]));
+		positionSelect.appendChild(positionOption);
+	}
+
+	stylePanel4.appendChild(positionSelect);
 	container.appendChild(stylePanel4);
+	
+	mxEvent.addListener(positionSelect, 'change', function(evt)
+	{
+		// TODO: Set label position
+		mxEvent.consume(evt);
+	});
 	
 	// Stroke width
 	var input = document.createElement('input');
@@ -993,7 +1029,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	input.style.textAlign = 'right';
 	input.style.paddingRight = '12px';
 	input.style.marginTop = '2px';
-	input.style.right = '22px';
+	input.style.right = '20px';
 	input.style.width = '41px';
 	input.style.height = '15px';
 
@@ -1004,7 +1040,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	unit.style.fontWeight = 'normal';
 	unit.style.fontSize = '11px';
 	unit.style.fontColor = '#000';
-	unit.style.right = (mxClient.IS_SF) ? '37px': '26px';
+	unit.style.right = (mxClient.IS_SF) ? '35px': '24px';
 	unit.style.marginTop = '7px';
 	mxUtils.write(unit, 'pt');
 	stylePanel2.appendChild(unit);
@@ -1043,27 +1079,68 @@ TextFormatPanel.prototype.addFont = function(container)
 	
 	var arrow = fontMenu.getElementsByTagName('div')[0];
 	arrow.style.cssFloat = 'right';
-
-	this.addCellColorOption(colorPanel, mxResources.get('fontColor'),
-			mxConstants.STYLE_FONTCOLOR, '#000000');
 	
-	this.addCellColorOption(colorPanel, mxResources.get('backgroundColor'),
-			mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#ffffff');
-	
-	this.addCellColorOption(colorPanel, mxResources.get('borderColor'),
-			mxConstants.STYLE_LABEL_BORDERCOLOR, '#000000');
+	var panel = document.createElement('div');
+	panel.style.fontWeight = 'bold';
 
+	this.addCellColorOption(panel, mxResources.get('fontColor'), mxConstants.STYLE_FONTCOLOR, '#000000', null, function(color)
+	{
+		// TODO: Add another callback to hide the cell and remove hide option
+		if (color == null || color == mxConstants.NONE)
+		{
+			graph.setCellStyles(mxConstants.STYLE_NOLABEL, '1', graph.getSelectionCells());
+		}
+		else
+		{
+			graph.setCellStyles(mxConstants.STYLE_NOLABEL, null, graph.getSelectionCells());
+		}
+	});
+	colorPanel.appendChild(panel);
+	
+	panel = panel.cloneNode(false);
+	this.addCellColorOption(panel, mxResources.get('backgroundColor'), mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#ffffff');
+	colorPanel.appendChild(panel);
+	
+	panel = panel.cloneNode(false);
+	this.addCellColorOption(panel, mxResources.get('borderColor'), mxConstants.STYLE_LABEL_BORDERCOLOR, '#000000');
+	colorPanel.appendChild(panel);
+	
 	container.appendChild(colorPanel);
-	container.appendChild(this.addRelativeOption(colorPanel.cloneNode(false), mxResources.get('opacity'), mxConstants.STYLE_TEXT_OPACITY));
 	
-	var extraPanel = colorPanel.cloneNode(false);
+	var clone = colorPanel.cloneNode(false);
+	clone.style.paddingTop = '6px';
+	clone.style.borderTop = 'none';
+	container.appendChild(this.addRelativeOption(clone, mxResources.get('opacity'), mxConstants.STYLE_TEXT_OPACITY));
+	
+	var extraPanel = clone.cloneNode(false);
+	extraPanel.style.paddingBottom = '12px';
+	extraPanel.style.fontWeight = 'normal';
+	
+	var span = document.createElement('div');
+	span.style.marginBottom = '12px';
+	span.style.marginTop = '4px';
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, mxResources.get('options'));
+	extraPanel.appendChild(span);
 	
 	// TODO: Fix toggle using '' instead of 'null'
 	this.addCellOption(extraPanel, mxResources.get('wordWrap'), mxConstants.STYLE_WHITE_SPACE, 'wrap', 'wrap', 'null');
 	this.addCellOption(extraPanel, mxResources.get('formattedText'), 'html', '1');
-	this.addCellOption(extraPanel, mxResources.get('hide'), mxConstants.STYLE_NOLABEL, '1');
 	
 	container.appendChild(extraPanel);
+	
+	var spacingPanel = clone.cloneNode(false);
+	spacingPanel.style.paddingBottom = '12px';
+	spacingPanel.style.fontWeight = 'normal';
+	
+	var span = document.createElement('div');
+	span.style.marginBottom = '12px';
+	span.style.marginTop = '4px';
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, mxResources.get('spacing'));
+	spacingPanel.appendChild(span);
+	
+	container.appendChild(spacingPanel);
 
 	function setSelected(elt, selected)
 	{
@@ -1192,7 +1269,8 @@ StyleFormatPanel.prototype.init = function()
 	// TODO: To draw.io
 	this.container.appendChild((function(div)
 	{
-		div.style.paddingBottom = '12px';
+		div.style.paddingBottom = '20px';
+		div.style.paddingTop = '8px';
 		
 		var btn = mxUtils.button(mxResources.get('copyStyle'), function(evt)
 		{
