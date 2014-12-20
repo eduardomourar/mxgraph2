@@ -818,10 +818,9 @@ mxText.prototype.updateValue = function()
 			// Wrapper DIV for background, zoom needed for inline in quirks
 			// and to measure wrapped font sizes in all browsers
 			// FIXME: Background size in quirks mode for wrapped text
-			val = '<div style="zoom:1;' + css + 'display:inline-block;_display:inline;' +
-				'text-decoration:inherit;padding-bottom:1px;padding-right:1px;line-height:' +
-				this.node.style.lineHeight + '">' + val + '</div>';
-			this.node.style.lineHeight = '';
+			var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(this.size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
+			val = '<div style="zoom:1;' + css + 'display:inline-block;_display:inline;text-decoration:inherit;' +
+				'padding-bottom:1px;padding-right:1px;line-height:' + lh + '">' + val + '</div>';
 		}
 
 		this.node.innerHTML = val;
