@@ -123,14 +123,12 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, bounds)
 		var dx = delta.x;
 		var dy = delta.y;
 		
-		var minY = null;
-		var maxY = null;
-		
-		var minX = null;
-		var maxX = null;
-		
 		var overrideX = false;
+		var stateX = null;
+		var valueX = null;
 		var overrideY = false;
+		var stateY = null;
+		var valueY = null;
 		
 		var tt = this.getGuideTolerance();
 		var ttX = tt;
@@ -174,6 +172,9 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, bounds)
 			
 			if (override)
 			{
+				stateX = state;
+				valueX = Math.round(x - this.graph.panDx);
+				
 				if (this.guideX == null)
 				{
 					this.guideX = this.createGuideShape(true);
@@ -185,25 +186,6 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, bounds)
 						mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
 					this.guideX.pointerEvents = false;
 					this.guideX.init(this.graph.getView().getOverlayPane());
-				}
-				
-
-				if (bounds != null)
-				{
-					minY = Math.min(bounds.y + dy - this.graph.panDy, state.y);
-					maxY = Math.max(bounds.y + bounds.height + dy - this.graph.panDy, state.y + state.height);
-				}
-				
-				var c = this.graph.container;
-				x = Math.round(x - this.graph.panDx);
-				
-				if (minY != null && maxY != null)
-				{
-					this.guideX.points = [new mxPoint(x, minY), new mxPoint(x, maxY + 2)];
-				}
-				else
-				{
-					this.guideX.points = [new mxPoint(x, -this.graph.panDy), new mxPoint(x, c.scrollHeight - 3 - this.graph.panDy)];
 				}
 			}
 			
@@ -237,6 +219,9 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, bounds)
 			
 			if (override)
 			{
+				stateY = state;
+				valueY = Math.round(y - this.graph.panDy);
+				
 				if (this.guideY == null)
 				{
 					this.guideY = this.createGuideShape(false);
@@ -248,24 +233,6 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, bounds)
 						mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
 					this.guideY.pointerEvents = false;
 					this.guideY.init(this.graph.getView().getOverlayPane());
-				}
-
-				if (bounds != null)
-				{
-					minX = Math.min(bounds.x + dx - this.graph.panDx, state.x);
-					maxX = Math.max(bounds.x + bounds.width + dx - this.graph.panDx, state.x + state.width);
-				}
-				
-				var c = this.graph.container;
-				y = Math.round(y - this.graph.panDy);
-				
-				if (minX != null && maxX != null)
-				{
-					this.guideY.points = [new mxPoint(minX, y), new mxPoint(maxX + 2, y)];
-				}
-				else
-				{
-					this.guideY.points = [new mxPoint(-this.graph.panDx, y), new mxPoint(c.scrollWidth - 3 - this.graph.panDx, y)];
 				}
 			}
 			
@@ -296,12 +263,29 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, bounds)
 			}
 		}
 		
+		var c = this.graph.container;
+		
 		if (!overrideX && this.guideX != null)
 		{
 			this.guideX.node.style.visibility = 'hidden';
 		}
 		else if (this.guideX != null)
 		{
+			if (stateX != null && bounds != null)
+			{
+				minY = Math.min(bounds.y + dy - this.graph.panDy, stateX.y);
+				maxY = Math.max(bounds.y + bounds.height + dy - this.graph.panDy, stateX.y + stateX.height);
+			}
+			
+			if (minY != null && maxY != null)
+			{
+				this.guideX.points = [new mxPoint(valueX, minY), new mxPoint(valueX, maxY)];
+			}
+			else
+			{
+				this.guideX.points = [new mxPoint(valueX, -this.graph.panDy), new mxPoint(valueX, c.scrollHeight - 3 - this.graph.panDy)];
+			}
+			
 			this.guideX.node.style.visibility = 'visible';
 			this.guideX.redraw();
 		}
@@ -312,6 +296,21 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, bounds)
 		}
 		else if (this.guideY != null)
 		{
+			if (stateY != null && bounds != null)
+			{
+				minX = Math.min(bounds.x + dx - this.graph.panDx, stateY.x);
+				maxX = Math.max(bounds.x + bounds.width + dx - this.graph.panDx, stateY.x + stateY.width);
+			}
+			
+			if (minX != null && maxX != null)
+			{
+				this.guideY.points = [new mxPoint(minX, valueY), new mxPoint(maxX, valueY)];
+			}
+			else
+			{
+				this.guideY.points = [new mxPoint(-this.graph.panDx, valueY), new mxPoint(c.scrollWidth - 3 - this.graph.panDx, valueY)];
+			}
+			
 			this.guideY.node.style.visibility = 'visible';
 			this.guideY.redraw();
 		}
