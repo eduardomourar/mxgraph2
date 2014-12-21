@@ -114,7 +114,7 @@ mxGuide.prototype.createGuideShape = function(horizontal)
  * 
  * Moves the <bounds> by the given <mxPoint> and returnt the snapped point.
  */
-mxGuide.prototype.move = function(bounds, delta, gridEnabled)
+mxGuide.prototype.move = function(bounds, delta, gridEnabled, bounds)
 {
 	if (this.states != null && (this.horizontal || this.vertical) && bounds != null && delta != null)
 	{
@@ -122,6 +122,12 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled)
 		var scale = this.graph.getView().scale;
 		var dx = delta.x;
 		var dy = delta.y;
+		
+		var minY = null;
+		var maxY = null;
+		
+		var minX = null;
+		var maxX = null;
 		
 		var overrideX = false;
 		var overrideY = false;
@@ -142,7 +148,7 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled)
 		var middle =  b.getCenterY();
 	
 		// Snaps the left, center and right to the given x-coordinate
-		function snapX(x)
+		function snapX(x, state)
 		{
 			x += this.graph.panDx;
 			var override = false;
@@ -180,10 +186,25 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled)
 					this.guideX.pointerEvents = false;
 					this.guideX.init(this.graph.getView().getOverlayPane());
 				}
+				
 
+				if (bounds != null)
+				{
+					minY = Math.min(bounds.y + dy - this.graph.panDy, state.y);
+					maxY = Math.max(bounds.y + bounds.height + dy - this.graph.panDy, state.y + state.height);
+				}
+				
 				var c = this.graph.container;
-				x -= this.graph.panDx;
-				this.guideX.points = [new mxPoint(x, -this.graph.panDy), new mxPoint(x, c.scrollHeight - 3 - this.graph.panDy)];
+				x = Math.round(x - this.graph.panDx);
+				
+				if (minY != null && maxY != null)
+				{
+					this.guideX.points = [new mxPoint(x, minY), new mxPoint(x, maxY + 2)];
+				}
+				else
+				{
+					this.guideX.points = [new mxPoint(x, -this.graph.panDy), new mxPoint(x, c.scrollHeight - 3 - this.graph.panDy)];
+				}
 			}
 			
 			overrideX = overrideX || override;
@@ -229,9 +250,23 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled)
 					this.guideY.init(this.graph.getView().getOverlayPane());
 				}
 
+				if (bounds != null)
+				{
+					minX = Math.min(bounds.x + dx - this.graph.panDx, state.x);
+					maxX = Math.max(bounds.x + bounds.width + dx - this.graph.panDx, state.x + state.width);
+				}
+				
 				var c = this.graph.container;
-				y -= this.graph.panDy;
-				this.guideY.points = [new mxPoint(-this.graph.panDx, y), new mxPoint(c.scrollWidth - 3 - this.graph.panDx, y)];
+				y = Math.round(y - this.graph.panDy);
+				
+				if (minX != null && maxX != null)
+				{
+					this.guideY.points = [new mxPoint(minX, y), new mxPoint(maxX + 2, y)];
+				}
+				else
+				{
+					this.guideY.points = [new mxPoint(-this.graph.panDx, y), new mxPoint(c.scrollWidth - 3 - this.graph.panDx, y)];
+				}
 			}
 			
 			overrideY = overrideY || override;
@@ -246,17 +281,17 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled)
 				// Align x
 				if (this.horizontal)
 				{
-					snapX.call(this, state.getCenterX());
-					snapX.call(this, state.x);
-					snapX.call(this, state.x + state.width);
+					snapX.call(this, state.getCenterX(), state);
+					snapX.call(this, state.x, state);
+					snapX.call(this, state.x + state.width, state);
 				}
 	
 				// Align y
 				if (this.vertical)
 				{
-					snapY.call(this, state.getCenterY());
-					snapY.call(this, state.y);
-					snapY.call(this, state.y + state.height);
+					snapY.call(this, state.getCenterY(), state);
+					snapY.call(this, state.y, state);
+					snapY.call(this, state.y + state.height, state);
 				}
 			}
 		}
