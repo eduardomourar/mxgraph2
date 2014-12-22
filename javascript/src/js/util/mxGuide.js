@@ -262,7 +262,26 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled)
 				}
 			}
 		}
+
+		// Moves cells that are off-grid back to the grid on move
+		if (gridEnabled)
+		{
+			if (!overrideX)
+			{
+				var tx = bounds.x - (this.graph.snap(bounds.x /
+					scale - trx.x) + trx.x) * scale;
+				dx = this.graph.snap(dx / scale) * scale - tx;
+			}
+			
+			if (!overrideY)
+			{
+				var ty = bounds.y - (this.graph.snap(bounds.y /
+					scale - trx.y) + trx.y) * scale;
+				dy = this.graph.snap(dy / scale) * scale - ty;
+			}
+		}
 		
+		// Redraws the guides
 		var c = this.graph.container;
 		
 		if (!overrideX && this.guideX != null)
@@ -313,24 +332,6 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled)
 			
 			this.guideY.node.style.visibility = 'visible';
 			this.guideY.redraw();
-		}
-		
-		// Moves cells that are off-grid back to the grid on move
-		if (gridEnabled)
-		{
-			if (!overrideX)
-			{
-				var tx = bounds.x - (this.graph.snap(bounds.x /
-					scale - trx.x) + trx.x) * scale;
-				dx = this.graph.snap(dx / scale) * scale - tx;
-			}
-			
-			if (!overrideY)
-			{
-				var ty = bounds.y - (this.graph.snap(bounds.y /
-					scale - trx.y) + trx.y) * scale;
-				dy = this.graph.snap(dy / scale) * scale - ty;
-			}
 		}
 		
 		delta = new mxPoint(dx, dy);
