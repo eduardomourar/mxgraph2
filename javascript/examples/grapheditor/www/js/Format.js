@@ -88,29 +88,40 @@ Format.prototype.createSelectionState = function()
 {
 	var graph = this.editorUi.editor.graph;
 	var cells = graph.getSelectionCells();
-	var result = new Object();
+	var result = {vertices: [], edges: [], style: {}};
 
 	// TODO: Compute information about the current selection
 	for (var i = 0; i < cells.length; i++)
 	{
+		if (graph.getModel().isVertex(cells[i]))
+		{
+			result.vertices.push(cells[i]);
+		}
+		else if (graph.getModel().isEdge(cells[i]))
+		{
+			result.edges.push(cells[i]);
+		}
+		
 		var state = graph.view.getState(cells[i]);
 		
 		if (state != null)
 		{
-			var tmp = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
-			
-			if (tmp != null)
+			for (var key in state.style)
 			{
-				if (result.shape == null)
+				var value = state.style[key];
+				
+				if (value != null)
 				{
-					shape = tmp;
-				}
-				else if (result.shape != tmp)
-				{
-					result.shape = null;
+					if (result.style[key] == null)
+					{
+						result.style[key] = value;
+					}
+					else if (result.style[key] != value)
+					{
+						result.style[key] = '';
+					}
 				}
 			}
-			
 		}
 	}
 	
@@ -219,7 +230,7 @@ Format.prototype.refresh = function()
 			}
 		});
 		
-		this.panels.push(new StyleFormatPanel(ui, stylePanel));
+		this.panels.push(new StyleFormatPanel(this, ui, stylePanel));
 		
 		var label2 = label.cloneNode(false);
 		label2.style.backgroundColor = '#d7d7d7';
@@ -915,7 +926,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	colorPanel.style.paddingTop = '16px';
 	
 	stylePanel.style.position = 'relative';
-	stylePanel.style.marginLeft = '-1px';
+	stylePanel.style.marginLeft = '-2px';
 	stylePanel.style.marginTop = '8px';
 	stylePanel.style.paddingBottom = '0px';
 	stylePanel.style.borderWidth = '0px';
@@ -935,7 +946,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	fontMenu.style.margin = '0px';
 	
 	this.addArrow(fontMenu);
-	fontMenu.style.width = '191px';
+	fontMenu.style.width = '192px';
 	fontMenu.style.height = '15px';
 	
 	var stylePanel2 = stylePanel.cloneNode(false);
@@ -988,7 +999,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	container.appendChild(stylePanel3);
 	
 	var stylePanel4 = stylePanel.cloneNode(false);
-	stylePanel4.style.marginLeft = '-3px';
+	stylePanel4.style.marginLeft = '0px';
 	stylePanel4.style.paddingTop = '6px';
 	stylePanel4.style.paddingBottom = '6px';
 	stylePanel4.style.fontWeight = 'bold';
@@ -1002,7 +1013,12 @@ TextFormatPanel.prototype.addFont = function(container)
 	positionSelect.style.width = '97px';
 	positionSelect.style.marginTop = '-2px';
 	
-	var directions = ['top', 'right', 'bottom', 'left', 'center'];
+	var directions = ['center', 'top', 'right', 'bottom', 'left'];
+	var lset = {'center': [mxConstants.ALIGN_CENTER, mxConstants.ALIGN_MIDDLE, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_MIDDLE],
+			'top': [mxConstants.ALIGN_CENTER, mxConstants.ALIGN_TOP, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_BOTTOM],
+			'right': [mxConstants.ALIGN_RIGHT, mxConstants.ALIGN_MIDDLE, mxConstants.ALIGN_LEFT, mxConstants.ALIGN_MIDDLE],
+			'bottom': [mxConstants.ALIGN_CENTER, mxConstants.ALIGN_BOTTOM, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_TOP],
+			'left': [mxConstants.ALIGN_LEFT, mxConstants.ALIGN_MIDDLE, mxConstants.ALIGN_RIGHT, mxConstants.ALIGN_MIDDLE]};
 
 	for (var i = 0; i < directions.length; i++)
 	{
@@ -1017,7 +1033,24 @@ TextFormatPanel.prototype.addFont = function(container)
 	
 	mxEvent.addListener(positionSelect, 'change', function(evt)
 	{
-		// TODO: Set label position
+		graph.getModel().beginUpdate();
+		try
+		{
+			var vals = lset[positionSelect.value];
+			
+			if (vals != null)
+			{
+				graph.setCellStyles(mxConstants.STYLE_LABEL_POSITION, vals[0], graph.getSelectionCells());
+				graph.setCellStyles(mxConstants.STYLE_VERTICAL_LABEL_POSITION, vals[1], graph.getSelectionCells());
+				graph.setCellStyles(mxConstants.STYLE_ALIGN, vals[2], graph.getSelectionCells());
+				graph.setCellStyles(mxConstants.STYLE_VERTICAL_ALIGN, vals[3], graph.getSelectionCells());
+			}
+		}
+		finally
+		{
+			graph.getModel().endUpdate();
+		}
+		
 		mxEvent.consume(evt);
 	});
 	
@@ -1028,10 +1061,10 @@ TextFormatPanel.prototype.addFont = function(container)
 	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
 	input.style.paddingRight = '12px';
-	input.style.marginTop = '2px';
+	input.style.marginTop = '4px';
 	input.style.right = '20px';
-	input.style.width = '41px';
-	input.style.height = '15px';
+	input.style.width = '47px';
+	input.style.height = '17px';
 
 	stylePanel2.appendChild(input);
 	
@@ -1041,7 +1074,6 @@ TextFormatPanel.prototype.addFont = function(container)
 	unit.style.fontSize = '11px';
 	unit.style.fontColor = '#000';
 	unit.style.right = (mxClient.IS_SF) ? '35px': '24px';
-	unit.style.marginTop = '7px';
 	mxUtils.write(unit, 'pt');
 	stylePanel2.appendChild(unit);
 
@@ -1049,11 +1081,11 @@ TextFormatPanel.prototype.addFont = function(container)
 	{
 		mxUtils.setPrefixedStyle(input.style, 'boxSizing', 'padding-box');
 		input.style.width = '52px';
-		unit.style.marginTop = '5px';
+		unit.style.marginTop = '8px';
 	}
 	else
 	{
-		unit.style.marginTop = '7px';		
+		unit.style.marginTop = '10px';		
 	}
 
 	function update(evt)
@@ -1178,6 +1210,30 @@ TextFormatPanel.prototype.addFont = function(container)
 			setSelected(top, valign == mxConstants.ALIGN_TOP);
 			setSelected(middle, valign == mxConstants.ALIGN_MIDDLE);
 			setSelected(bottom, valign == mxConstants.ALIGN_BOTTOM);
+			
+			var pos = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER);
+			var vpos =  mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE);
+			
+			if (vpos == mxConstants.ALIGN_TOP)
+			{
+				positionSelect.value = 'top';
+			}
+			else if (vpos == mxConstants.ALIGN_BOTTOM)
+			{
+				positionSelect.value = 'bottom';
+			}
+			else if (pos == mxConstants.ALIGN_LEFT)
+			{
+				positionSelect.value = 'left';
+			}
+			else if (pos == mxConstants.ALIGN_RIGHT)
+			{
+				positionSelect.value = 'right';
+			}
+			else
+			{
+				positionSelect.value = 'center';
+			}
 		}
 	});
 
@@ -1206,9 +1262,10 @@ TextFormatPanel.prototype.addFont = function(container)
 /**
  * Adds the label menu items to the given menu and parent.
  */
-StyleFormatPanel = function(editorUi, container)
+StyleFormatPanel = function(format, editorUi, container)
 {
 	BaseFormatPanel.call(this, editorUi, container);
+	this.format = format;
 	this.init();
 };
 
@@ -1225,6 +1282,9 @@ StyleFormatPanel.prototype.init = function()
 	var state = graph.view.getState(graph.getSelectionCell());
 	var shape = this.getCurrentShape();
 	
+	// TODO: Update sstate in Format
+	var sstate = this.format.createSelectionState();
+	
 	var clone = this.container.cloneNode(true);
 	clone.style.paddingTop = '4px';
 	clone.style.paddingBottom = '10px';
@@ -1233,12 +1293,13 @@ StyleFormatPanel.prototype.init = function()
 	
 	this.container.style.borderBottom = 'none';
 	
-	if (shape != 'image')
+	if (sstate.vertices.length == graph.getSelectionCount() && sstate.style.shape != 'image')
 	{
 		this.container.appendChild(this.addStyles(clone.cloneNode(true)));
 	}
 	
-	if (shape == 'image' || shape == 'label')
+	// TODO: No access to all shapes in selection via sstate
+	if (sstate.style.shape == 'image' || sstate.style.shape == 'label')
 	{
 		var btn = mxUtils.button(mxResources.get('editImage'), function(evt)
 		{
@@ -2388,7 +2449,7 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 			{
 				paperSizeOption.setAttribute('selected', 'selected');
 				landscapeCheckBox.setAttribute('checked', 'checked');
-				portraitCheckBox.defaultChecked = true;
+				landscapeCheckBox.defaultChecked = true;
 				formatDiv.style.display = '';
 				detected = true;
 			}
@@ -2397,6 +2458,8 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 		else if (!detected)
 		{
 			paperSizeOption.setAttribute('selected', 'selected');
+			portraitCheckBox.setAttribute('checked', 'checked');
+			portraitCheckBox.defaultChecked = true;
 			customDiv.style.display = '';
 		}
 	}
@@ -2407,7 +2470,7 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 	container.appendChild(formatDiv);
 	container.appendChild(customDiv);
 	
-	var updateInputs = function()
+	var update = function()
 	{
 		var f = pf[paperSizeSelect.value];
 		
@@ -2423,10 +2486,43 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 			formatDiv.style.display = 'none';
 			customDiv.style.display = '';
 		}
+		
+		var size = new mxRectangle(0, 0, parseInt(widthInput.value), parseInt(heightInput.value));
+		
+		if (landscapeCheckBox.checked)
+		{
+			size = new mxRectangle(0, 0, size.height, size.width);
+		}
+		
+		ui.setPageFormat(size);
 	};
 	
-	mxEvent.addListener(paperSizeSelect, 'change', updateInputs);
-	updateInputs();
+	mxEvent.addListener(widthInput, 'keydown', function(e)
+	{
+		if (e.keyCode == 13)
+		{
+			update();
+			mxEvent.consume(e);
+		}
+	});
+	
+	mxEvent.addListener(heightInput, 'keydown', function(e)
+	{
+		if (e.keyCode == 13)
+		{
+			update();
+			mxEvent.consume(e);
+		}
+	});
+	
+	mxEvent.addListener(widthInput, 'blur', update);
+	mxEvent.addListener(widthInput, 'click', update);
+	mxEvent.addListener(heightInput, 'blur', update);
+	mxEvent.addListener(heightInput, 'click', update);
+	mxEvent.addListener(landscapeCheckBox, 'change', update);
+	mxEvent.addListener(portraitCheckBox, 'change', update);
+	mxEvent.addListener(paperSizeSelect, 'change', update);
+	update();
 	
 	return container;
 };
