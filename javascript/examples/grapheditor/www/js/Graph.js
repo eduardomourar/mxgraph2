@@ -1121,6 +1121,16 @@ Graph.prototype.initTouch = function()
 		
 		mxCellRendererInitializeLabel.apply(this, arguments);
 	};
+	
+	/**
+	 * No dashed shapes.
+	 */
+	mxGuide.prototype.createGuideShape = function(horizontal)
+	{
+		var guide = new mxPolyline([], mxConstants.GUIDE_COLOR, mxConstants.GUIDE_STROKEWIDTH);
+		
+		return guide;
+	};
 
 	if ('contentEditable' in document.documentElement)
 	{

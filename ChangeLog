@@ -1,3 +1,4 @@
+- Removes dashed line style for guides in grapheditor
 - Fixes length of guides in mxGraphHandler [JavaScript]
 - Fixes missing line-height CSS in inner DIV in mxText [JavaScript]
 - Fixes reset of scrollbars in IE8 standards on window resize [JavaScript]
