@@ -341,6 +341,37 @@ BaseFormatPanel.prototype.getSelectionState = function()
 };
 
 /**
+ * Install input handler.
+ */
+BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValue, min, max)
+{
+	var ui = this.editorUi;
+	var graph = ui.editor.graph;
+	
+	min = (min != null) ? min : 1;
+	max = (max != null) ? max : 999;
+	
+	function update(evt)
+	{
+		var value = parseInt(input.value);
+		value = Math.min(max, Math.max(min, (isNaN(value)) ? defaultValue : value));
+		
+		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, defaultValue))
+		{
+			graph.setCellStyles(key, value, graph.getSelectionCells());
+			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [key],
+					'values', [value], 'cells', graph.getSelectionCells()));
+			input.value = value;
+		}
+		
+		mxEvent.consume(evt);
+	};
+
+	mxEvent.addListener(input, 'blur', update);
+	mxEvent.addListener(input, 'click', update);
+};
+
+/**
  * Adds the given option.
  */
 BaseFormatPanel.prototype.addOption = function addOption(parent, label, isCheckedFn, setCheckedFn, listener)
@@ -705,7 +736,6 @@ BaseFormatPanel.prototype.addUnitInput = function(container, unit, right, width)
 	span.style.fontSize = '11px';
 	span.style.fontColor = '#000';
 	span.style.marginTop = '2px';
-	//span.style.right = (right + 4) + 'px';
 	span.style.right = (right + ((mxClient.IS_SF) ? 11 : 0) + 4) + 'px';
 	mxUtils.write(span, unit);
 	
@@ -737,9 +767,12 @@ BaseFormatPanel.prototype.addRelativeOption = function(container, label, key)
 		input.setAttribute('step', '10');
 	}
 
-	var listener = function()
+	var listener = function(sender, evt, force)
 	{
-		input.value = mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, 100);
+		if (force || input != document.activeElement)
+		{
+			input.value = mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, 100);
+		}
 	};
 	
 	mxEvent.addListener(input, 'keydown', function(e)
@@ -751,7 +784,7 @@ BaseFormatPanel.prototype.addRelativeOption = function(container, label, key)
 		}
 		else if (e.keyCode == 27)
 		{
-			listener();
+			listener(null, null, true);
 			graph.container.focus();
 			mxEvent.consume(e);
 		}
@@ -768,8 +801,14 @@ BaseFormatPanel.prototype.addRelativeOption = function(container, label, key)
 		
 		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, 100))
 		{
+			// Removes entry in style (assumes 100 is default for relative values)
+			if (value == 100)
+			{
+				value = null;
+			}
+			
 			graph.setCellStyles(key, value, graph.getSelectionCells());
-			input.value = value;
+			input.value = (value != null) ? value : '100';
 		}
 		
 		mxEvent.consume(evt);
@@ -1087,35 +1126,31 @@ TextFormatPanel.prototype.addFont = function(container)
 	{
 		unit.style.marginTop = '10px';		
 	}
-
-	function update(evt)
-	{
-		// Maximum stroke width is 999
-		var value = parseInt(input.value);
-		value = Math.min(999, Math.max(1, (isNaN(value)) ? 1 : value));
-		
-		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style,
-			mxConstants.STYLE_FONTSIZE, 1))
-		{
-			graph.setCellStyles(mxConstants.STYLE_FONTSIZE, value, graph.getSelectionCells());
-			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_FONTSIZE],
-					'values', [value], 'cells', graph.getSelectionCells()));
-			input.value = value;
-		}
-		
-		mxEvent.consume(evt);
-	};
-
-	mxEvent.addListener(input, 'blur', update);
-	mxEvent.addListener(input, 'click', update);
 	
+	this.installInputHandler(input, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize, 1, 999);
+
 	var arrow = fontMenu.getElementsByTagName('div')[0];
 	arrow.style.cssFloat = 'right';
 	
 	var panel = document.createElement('div');
 	panel.style.fontWeight = 'bold';
+	
+	var bgPanel = panel.cloneNode(false);
+	var borderPanel = panel.cloneNode(false);
 
-	this.addCellColorOption(panel, mxResources.get('fontColor'), mxConstants.STYLE_FONTCOLOR, '#000000', null, function(color)
+	this.addCellColorOption(panel, mxResources.get('fontColor'), mxConstants.STYLE_FONTCOLOR, '#000000', function(color)
+	{
+		if (color == null || color == mxConstants.NONE)
+		{
+			bgPanel.style.display = 'none';
+		}
+		else
+		{
+			bgPanel.style.display = '';
+		}
+		
+		borderPanel.style.display = bgPanel.style.display;
+	}, function(color)
 	{
 		// TODO: Add another callback to hide the cell and remove hide option
 		if (color == null || color == mxConstants.NONE)
@@ -1129,13 +1164,11 @@ TextFormatPanel.prototype.addFont = function(container)
 	});
 	colorPanel.appendChild(panel);
 	
-	panel = panel.cloneNode(false);
-	this.addCellColorOption(panel, mxResources.get('backgroundColor'), mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#ffffff');
-	colorPanel.appendChild(panel);
+	this.addCellColorOption(bgPanel, mxResources.get('backgroundColor'), mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#ffffff');
+	colorPanel.appendChild(bgPanel);
 	
-	panel = panel.cloneNode(false);
-	this.addCellColorOption(panel, mxResources.get('borderColor'), mxConstants.STYLE_LABEL_BORDERCOLOR, '#000000');
-	colorPanel.appendChild(panel);
+	this.addCellColorOption(borderPanel, mxResources.get('borderColor'), mxConstants.STYLE_LABEL_BORDERCOLOR, '#000000');
+	colorPanel.appendChild(borderPanel);
 	
 	container.appendChild(colorPanel);
 	
@@ -1162,7 +1195,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	container.appendChild(extraPanel);
 	
 	var spacingPanel = clone.cloneNode(false);
-	spacingPanel.style.paddingBottom = '12px';
+	spacingPanel.style.paddingBottom = '36px';
 	spacingPanel.style.fontWeight = 'normal';
 	
 	var span = document.createElement('div');
@@ -1171,6 +1204,58 @@ TextFormatPanel.prototype.addFont = function(container)
 	span.style.fontWeight = 'bold';
 	mxUtils.write(span, mxResources.get('spacing'));
 	spacingPanel.appendChild(span);
+	
+	var globalSpacing = this.addUnitInput(spacingPanel, 'pt', 162, 44);
+	globalSpacing.setAttribute('type', 'number');
+	globalSpacing.setAttribute('min', '0');
+	
+	var topSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44);
+	topSpacing.setAttribute('type', 'number');
+	topSpacing.setAttribute('min', '0');
+	
+	var rightSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44);
+	rightSpacing.setAttribute('type', 'number');
+	rightSpacing.setAttribute('min', '0');
+	
+	function addLabel(title, right)
+	{
+		var label = document.createElement('div');
+		mxUtils.write(label, title);
+		label.style.position = 'absolute';
+		label.style.right = right + 'px';
+		label.style.width = '61px';
+		label.style.marginTop = '6px';
+		label.style.textAlign = 'center';
+		spacingPanel.appendChild(label);
+	};
+
+	mxUtils.br(spacingPanel);
+	addLabel(mxResources.get('global'), 162);
+	addLabel(mxResources.get('top'), 91);
+	addLabel(mxResources.get('right'), 20);
+	mxUtils.br(spacingPanel);
+	
+	var spacer = document.createElement('div');
+	spacer.style.height = '4px';
+	spacingPanel.appendChild(spacer);
+	mxUtils.br(spacingPanel);
+	
+	var perimeterSpacing = this.addUnitInput(spacingPanel, 'pt', 162, 44);
+	perimeterSpacing.setAttribute('type', 'number');
+	perimeterSpacing.setAttribute('min', '0');
+	
+	var bottomSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44);
+	bottomSpacing.setAttribute('type', 'number');
+	bottomSpacing.setAttribute('min', '0');
+	
+	var leftSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44);
+	leftSpacing.setAttribute('type', 'number');
+	leftSpacing.setAttribute('min', '0');
+	
+	mxUtils.br(spacingPanel);
+	addLabel(mxResources.get('perimeter'), 162);
+	addLabel(mxResources.get('bottom'), 91);
+	addLabel(mxResources.get('left'), 20);
 	
 	container.appendChild(spacingPanel);
 
@@ -1187,19 +1272,22 @@ TextFormatPanel.prototype.addFont = function(container)
 		}
 	};
 	
-	var listener = mxUtils.bind(this, function()
+	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
 		state = graph.view.getState(graph.getSelectionCell());
 		
 		if (state != null)
 		{
-			input.value = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, 1);
 			var fontStyle = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0);
 			setSelected(fontStyleItems[0], (fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD);
 			setSelected(fontStyleItems[1], (fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC);
 			setSelected(fontStyleItems[2], (fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE);
 			fontMenu.firstChild.nodeValue = mxUtils.htmlEntities(mxUtils.getValue(state.style, mxConstants.STYLE_FONTFAMILY, Menus.prototype.defaultFont));
-			input.value = parseInt(mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize));
+			
+			if (force || document.activeElement != input)
+			{
+				input.value = parseInt(mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize));
+			}
 			
 			var align = mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER);
 			setSelected(left, align == mxConstants.ALIGN_LEFT);
@@ -1234,10 +1322,40 @@ TextFormatPanel.prototype.addFont = function(container)
 			{
 				positionSelect.value = 'center';
 			}
+			
+			if (force || document.activeElement != globalSpacing)
+			{
+				globalSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_SPACING, '2');
+			}
+			
+			if (force || document.activeElement != perimeterSpacing)
+			{
+				perimeterSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_PERIMETER_SPACING, '0');
+			}
+			
+			if (force || document.activeElement != topSpacing)
+			{
+				topSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_SPACING_TOP, '0');
+			}
+			
+			if (force || document.activeElement != rightSpacing)
+			{
+				rightSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_SPACING_RIGHT, '0');
+			}
+			
+			if (force || document.activeElement != bottomSpacing)
+			{
+				bottomSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_SPACING_BOTTOM, '0');
+			}
+			
+			if (force || document.activeElement != leftSpacing)
+			{
+				leftSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_SPACING_LEFT, '0');
+			}
 		}
 	});
-
-	mxEvent.addListener(input, 'keydown', function(e)
+	
+	function keyHandler(e)
 	{
 		if (e.keyCode == 13)
 		{
@@ -1246,11 +1364,26 @@ TextFormatPanel.prototype.addFont = function(container)
 		}
 		else if (e.keyCode == 27)
 		{
-			listener();
+			listener(null, null, true);
 			graph.container.focus();
 			mxEvent.consume(e);
 		}
-	});
+	};
+	
+	this.installInputHandler(globalSpacing, mxConstants.STYLE_SPACING, 2, 0, 999);
+	this.installInputHandler(perimeterSpacing, mxConstants.STYLE_PERIMETER_SPACING, 0, 0, 999);
+	this.installInputHandler(topSpacing, mxConstants.STYLE_SPACING_TOP, 0, 0, 999);
+	this.installInputHandler(rightSpacing, mxConstants.STYLE_SPACING_RIGHT, 0, 0, 999);
+	this.installInputHandler(bottomSpacing, mxConstants.STYLE_SPACING_BOTTOM, 0, 0, 999);
+	this.installInputHandler(leftSpacing, mxConstants.STYLE_SPACING_LEFT, 0, 0, 999);
+
+	mxEvent.addListener(input, 'keydown', keyHandler);
+	mxEvent.addListener(globalSpacing, 'keydown', keyHandler);
+	mxEvent.addListener(perimeterSpacing, 'keydown', keyHandler);
+	mxEvent.addListener(topSpacing, 'keydown', keyHandler);
+	mxEvent.addListener(rightSpacing, 'keydown', keyHandler);
+	mxEvent.addListener(bottomSpacing, 'keydown', keyHandler);
+	mxEvent.addListener(leftSpacing, 'keydown', keyHandler);
 
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
 	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
@@ -1293,7 +1426,7 @@ StyleFormatPanel.prototype.init = function()
 	
 	this.container.style.borderBottom = 'none';
 	
-	if (sstate.vertices.length == graph.getSelectionCount() && sstate.style.shape != 'image')
+	if (sstate.style.shape != 'image')
 	{
 		this.container.appendChild(this.addStyles(clone.cloneNode(true)));
 	}
@@ -1593,6 +1726,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	var strokeKey = (shape == 'image') ? mxConstants.STYLE_IMAGE_BORDER : mxConstants.STYLE_STROKECOLOR;
 	
 	var styles = ['straight', 'rounded', 'curved'];
+	// TODO: Change straight to sharp/eckig
 
 	for (var i = 0; i < styles.length; i++)
 	{
@@ -1662,7 +1796,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	input.style.textAlign = 'right';
 	input.style.paddingRight = '12px';
 	input.style.marginTop = '2px';
-	input.style.right = '22px';
+	input.style.right = '20px';
 	input.style.width = '41px';
 	input.style.height = '15px';
 
@@ -1742,7 +1876,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, 'noedgestyle'], ['arrow', null, null, null], 'geIcon geSprite geSprite-arrow', null, true).setAttribute('title', mxResources.get('arrow'));
 		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, 'noedgestyle'], ['link', null, null, null], 'geIcon geSprite geSprite-linkedge', null, true).setAttribute('title', mxResources.get('link'));
 	}));
-	var lineStart = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel2, 'geSprite-startclassic', mxResources.get('lineend'), false, mxUtils.bind(this, function(menu)
+	var lineStart = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel2, 'geSprite-startclassic', mxResources.get('linestart'), false, mxUtils.bind(this, function(menu)
 	{
 		if (shape != 'arrow' && shape != 'link')
 		{
@@ -1758,10 +1892,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_STARTARROW, 'startFill'], [mxConstants.ARROW_OVAL, 0], 'geIcon geSprite geSprite-startovaltrans', null, false).setAttribute('title', mxResources.get('oval'));
 			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_STARTARROW, 'startFill'], [mxConstants.ARROW_DIAMOND, 0], 'geIcon geSprite geSprite-startdiamondtrans', null, false).setAttribute('title', mxResources.get('diamond'));
 			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_STARTARROW, 'startFill'], [mxConstants.ARROW_DIAMOND_THIN, 0], 'geIcon geSprite geSprite-startthindiamondtrans', null, false).setAttribute('title', mxResources.get('diamondThin'));
-			this.editorUi.menus.promptChange(menu, '', '(px)', mxConstants.DEFAULT_MARKERSIZE, mxConstants.STYLE_STARTSIZE, null, true, null, 'geIcon geSprite geSprite-dots').setAttribute('title', mxResources.get('size'));
 		}
-
-		this.editorUi.menus.promptChange(menu, '', '(px)', '0', mxConstants.STYLE_SOURCE_PERIMETER_SPACING, null, true, null, 'geIcon geSprite geSprite-top').setAttribute('title', mxResources.get('sourceSpacing'));
 	}));
 	var lineEnd = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel2, 'geSprite-endclassic', mxResources.get('lineend'), false, mxUtils.bind(this, function(menu)
 	{
@@ -1779,10 +1910,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_ENDARROW, 'endFill'], [mxConstants.ARROW_OVAL, 0], 'geIcon geSprite geSprite-endovaltrans', null, false).setAttribute('title', mxResources.get('oval'));
 			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_ENDARROW, 'endFill'], [mxConstants.ARROW_DIAMOND, 0], 'geIcon geSprite geSprite-enddiamondtrans', null, false).setAttribute('title', mxResources.get('diamond'));
 			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_ENDARROW, 'endFill'], [mxConstants.ARROW_DIAMOND_THIN, 0], 'geIcon geSprite geSprite-endthindiamondtrans', null, false).setAttribute('title', mxResources.get('diamondThin'));
-			this.editorUi.menus.promptChange(menu, '', '(px)', mxConstants.DEFAULT_MARKERSIZE, mxConstants.STYLE_ENDSIZE, null, true, null, 'geIcon geSprite geSprite-dots').setAttribute('title', mxResources.get('size'));
 		}
-		
-		this.editorUi.menus.promptChange(menu, '', '(px)', '0', mxConstants.STYLE_TARGET_PERIMETER_SPACING, null, true, null, 'geIcon geSprite geSprite-bottom').setAttribute('title', mxResources.get('targetSpacing'));
 	}));
 
 	this.addArrow(edgeStyle);
@@ -1802,18 +1930,79 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	
 	pattern.style.height = '15px';
 	edgeStyle.style.height = '17px';
+	lineStart.style.marginLeft = '3px';
 	lineStart.style.height = '17px';
+	lineEnd.style.marginLeft = '3px';
 	lineEnd.style.height = '17px';
 
 	container.appendChild(colorPanel);
 	container.appendChild(stylePanel);
 
+	var arrowPanel = stylePanel.cloneNode(false);
+	arrowPanel.style.paddingBottom = '10px';
+	arrowPanel.style.paddingTop = '6px';
+	arrowPanel.style.fontWeight = 'normal';
+	
+	var span = document.createElement('div');
+	span.style.position = 'absolute';
+	span.style.marginLeft = '3px';
+	span.style.marginBottom = '12px';
+	span.style.marginTop = '2px';
+	span.style.fontWeight = 'normal';
+	span.style.width = '76px';
+	mxUtils.write(span, mxResources.get('linestart'));
+	arrowPanel.appendChild(span);
+	
+	var startSpacing = this.addUnitInput(arrowPanel, 'pt', 70, 30);
+	startSpacing.setAttribute('type', 'number');
+	startSpacing.setAttribute('min', '0');
+	
+	var startSize = this.addUnitInput(arrowPanel, 'pt', 20, 30);
+	startSize.setAttribute('type', 'number');
+	startSize.setAttribute('min', '0');
+
+	mxUtils.br(arrowPanel);
+	
+	var spacer = document.createElement('div');
+	spacer.style.height = '8px';
+	arrowPanel.appendChild(spacer);
+	
+	span = span.cloneNode(false);
+	mxUtils.write(span, mxResources.get('lineend'));
+	arrowPanel.appendChild(span);
+	
+	var endSpacing = this.addUnitInput(arrowPanel, 'pt', 70, 30);
+	endSpacing.setAttribute('type', 'number');
+	endSpacing.setAttribute('min', '0');
+	
+	var endSize = this.addUnitInput(arrowPanel, 'pt', 20, 30);
+	endSize.setAttribute('type', 'number');
+	endSize.setAttribute('min', '0');
+	
+	function addLabel(title, right)
+	{
+		var label = document.createElement('div');
+		mxUtils.write(label, title);
+		label.style.position = 'absolute';
+		label.style.right = right + 'px';
+		label.style.width = '47px';
+		label.style.marginTop = '8px';
+		label.style.textAlign = 'center';
+		arrowPanel.appendChild(label);
+	};
+
+	mxUtils.br(arrowPanel);
+	addLabel(mxResources.get('spacing'), 70);
+	addLabel(mxResources.get('size'), 20);
+	mxUtils.br(arrowPanel);
+	
 	if (graph.getModel().isEdge(state.cell))
 	{
 		container.appendChild(stylePanel2);
+		container.appendChild(arrowPanel);
 	}
 	
-	var listener = mxUtils.bind(this, function()
+	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
 		state = graph.view.getState(graph.getSelectionCell());
 		
@@ -1834,7 +2023,11 @@ StyleFormatPanel.prototype.addStroke = function(container)
 			stylePanel2.style.display = stylePanel.style.display;
 			styleSelect.style.display = stylePanel.style.display;
 			
-			input.value = mxUtils.getValue(state.style, mxConstants.STYLE_STROKEWIDTH, 1);
+			if (force || document.activeElement != input)
+			{
+				input.value = mxUtils.getValue(state.style, mxConstants.STYLE_STROKEWIDTH, 1);
+			}
+			
 			styleSelect.style.visibility = (shape == 'connector') ? '' : 'hidden';
 			
 			if (mxUtils.getValue(state.style, mxConstants.STYLE_CURVED, null) == '1')
@@ -1890,10 +2083,99 @@ StyleFormatPanel.prototype.addStroke = function(container)
 			{
 				edgeStyleDiv.className = 'geSprite geSprite-orthogonal';
 			}
+			
+			function updateArrow(marker, fill, elt, prefix)
+			{
+				var markerDiv = elt.getElementsByTagName('div')[0];
+
+				if (marker == mxConstants.ARROW_CLASSIC)
+				{
+					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'classic' : 'geSprite geSprite-' + prefix + 'classictrans';
+				}
+				else if (marker == mxConstants.ARROW_OPEN)
+				{
+					markerDiv.className = 'geSprite geSprite-' + prefix + 'open';
+				}
+				else if (marker == mxConstants.ARROW_BLOCK)
+				{
+					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'block' : 'geSprite geSprite-' + prefix + 'blocktrans';
+				}
+				else if (marker == mxConstants.ARROW_OVAL)
+				{
+					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'oval' : 'geSprite geSprite-' + prefix + 'ovaltrans';
+				}
+				else if (marker == mxConstants.ARROW_DIAMOND)
+				{
+					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'diamond' : 'geSprite geSprite-' + prefix + 'diamondtrans';
+				}
+				else if (marker == mxConstants.ARROW_DIAMOND_THIN)
+				{
+					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'thindiamond' : 'geSprite geSprite-' + prefix + 'thindiamondtrans';
+				}
+				else
+				{
+					markerDiv.className = 'geSprite geSprite-noarrow';
+				}
+				
+				return markerDiv;
+			};
+			
+			var sourceDiv = updateArrow(mxUtils.getValue(state.style, mxConstants.STYLE_STARTARROW, null),
+					mxUtils.getValue(state.style, 'startFill', '0'), lineStart, 'start');
+			var targetDiv = updateArrow(mxUtils.getValue(state.style, mxConstants.STYLE_ENDARROW, null),
+					mxUtils.getValue(state.style, 'endFill', '0'), lineEnd, 'end');
+
+			// Special cases for markers
+			if (shape == 'arrow')
+			{
+				sourceDiv.className = 'geSprite geSprite-noarrow';
+				targetDiv.className = 'geSprite geSprite-endblocktrans';
+			}
+			else if (shape == 'link')
+			{
+				sourceDiv.className = 'geSprite geSprite-noarrow';
+				targetDiv.className = 'geSprite geSprite-noarrow';
+			}
+			
+			if (shape == 'arrow' || shape == 'link')
+			{
+				mxUtils.setOpacity(lineStart, 30);
+				mxUtils.setOpacity(lineEnd, 30);
+			}
+			else
+			{
+				mxUtils.setOpacity(lineStart, 100);
+				mxUtils.setOpacity(lineEnd, 100);
+			}
+
+			if (force || document.activeElement != startSize)
+			{
+				startSize.value = mxUtils.getValue(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_MARKERSIZE);
+			}
+			
+			if (force || document.activeElement != startSpacing)
+			{
+				startSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_SOURCE_PERIMETER_SPACING, '0');
+			}
+
+			if (force || document.activeElement != endSize)
+			{
+				endSize.value = mxUtils.getValue(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.DEFAULT_MARKERSIZE);
+			}
+			
+			if (force || document.activeElement != startSpacing)
+			{
+				endSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_TARGET_PERIMETER_SPACING, '0');
+			}
 		}
 	});
 	
-	mxEvent.addListener(input, 'keydown', function(e)
+	this.installInputHandler(startSize, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_MARKERSIZE, 0, 999);
+	this.installInputHandler(startSpacing, mxConstants.STYLE_SOURCE_PERIMETER_SPACING, 0, 0, 999);
+	this.installInputHandler(endSize, mxConstants.STYLE_ENDSIZE, mxConstants.DEFAULT_MARKERSIZE, 0, 999);
+	this.installInputHandler(endSpacing, mxConstants.STYLE_TARGET_PERIMETER_SPACING, 0, 0, 999);
+	
+	function keyHandler(e)
 	{
 		if (e.keyCode == 13)
 		{
@@ -1902,11 +2184,17 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		}
 		else if (e.keyCode == 27)
 		{
-			listener();
+			listener(null, null, true);
 			graph.container.focus();
 			mxEvent.consume(e);
 		}
-	});
+	};
+	
+	mxEvent.addListener(input, 'keydown', keyHandler);
+	mxEvent.addListener(startSize, 'keydown', keyHandler);
+	mxEvent.addListener(startSpacing, 'keydown', keyHandler);
+	mxEvent.addListener(endSize, 'keydown', keyHandler);
+	mxEvent.addListener(endSpacing, 'keydown', keyHandler);
 
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
 	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
@@ -2303,6 +2591,7 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(container)
 	
 	if (typeof(MathJax) !== 'undefined')
 	{
+		// LATER: Add help link https://plus.google.com/+DrawIo1/posts/fci7sDcNi2x
 		this.addOption(container, mxResources.get('mathematicalTypesetting'), function()
 		{
 			return graph.mathEnabled;
@@ -2421,10 +2710,9 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 	formatDiv.style.display = 'none';
 	customDiv.style.display = 'none';
 	
-	var detected = false;
 	var pf = new Object();
 	var formats = PageSetupDialog.getFormats();
-
+	
 	for (var i = 0; i < formats.length; i++)
 	{
 		var f = formats[i];
@@ -2434,35 +2722,64 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 		paperSizeOption.setAttribute('value', f.key);
 		mxUtils.write(paperSizeOption, f.title);
 		paperSizeSelect.appendChild(paperSizeOption);
-		
-		if (f.format != null)
+	}
+	
+	function listener(sender, evt, force)
+	{
+		if (force || (widthInput != document.activeElement && heightInput != document.activeElement))
 		{
-			if (graph.pageFormat.width == f.format.width && graph.pageFormat.height == f.format.height)
+			var detected = false;
+			
+			for (var i = 0; i < formats.length; i++)
 			{
+				var f = formats[i];
+	
+				if (f.format != null)
+				{
+					if (graph.pageFormat.width == f.format.width && graph.pageFormat.height == f.format.height)
+					{
+						paperSizeSelect.value = f.key;
+						portraitCheckBox.setAttribute('checked', 'checked');
+						portraitCheckBox.defaultChecked = true;
+						portraitCheckBox.checked = true;
+						landscapeCheckBox.removeAttribute('checked');
+						landscapeCheckBox.defaultChecked = false;
+						landscapeCheckBox.checked = false;
+						detected = true;
+					}
+					else if (graph.pageFormat.width == f.format.height && graph.pageFormat.height == f.format.width)
+					{
+						paperSizeSelect.value = f.key;
+						portraitCheckBox.removeAttribute('checked');
+						portraitCheckBox.defaultChecked = false;
+						portraitCheckBox.checked = false;
+						landscapeCheckBox.setAttribute('checked', 'checked');
+						landscapeCheckBox.defaultChecked = true;
+						landscapeCheckBox.checked = true;
+						detected = true;
+					}
+				}
+			}
+			
+			// Selects custom format which is last in list
+			if (!detected)
+			{
+				widthInput.value = graph.pageFormat.width;
+				heightInput.value = graph.pageFormat.height;
 				paperSizeOption.setAttribute('selected', 'selected');
 				portraitCheckBox.setAttribute('checked', 'checked');
 				portraitCheckBox.defaultChecked = true;
-				formatDiv.style.display = '';
-				detected = true;
+				formatDiv.style.display = 'none';
+				customDiv.style.display = '';
 			}
-			else if (graph.pageFormat.width == f.format.height && graph.pageFormat.height == f.format.width)
+			else
 			{
-				paperSizeOption.setAttribute('selected', 'selected');
-				landscapeCheckBox.setAttribute('checked', 'checked');
-				landscapeCheckBox.defaultChecked = true;
 				formatDiv.style.display = '';
-				detected = true;
+				customDiv.style.display = 'none';
 			}
 		}
-		// Selects custom format which is last in list
-		else if (!detected)
-		{
-			paperSizeOption.setAttribute('selected', 'selected');
-			portraitCheckBox.setAttribute('checked', 'checked');
-			portraitCheckBox.defaultChecked = true;
-			customDiv.style.display = '';
-		}
-	}
+	};
+	listener();
 
 	container.appendChild(paperSizeSelect);
 	mxUtils.br(container);
@@ -2489,31 +2806,34 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 		
 		var size = new mxRectangle(0, 0, parseInt(widthInput.value), parseInt(heightInput.value));
 		
-		if (landscapeCheckBox.checked)
+		if (paperSizeSelect.value != 'custom' && landscapeCheckBox.checked)
 		{
 			size = new mxRectangle(0, 0, size.height, size.width);
 		}
 		
-		ui.setPageFormat(size);
+		if (graph.pageFormat == null || graph.pageFormat.width != size.width || graph.pageFormat.height != size.height)
+		{
+			ui.setPageFormat(size);
+		}
 	};
 	
-	mxEvent.addListener(widthInput, 'keydown', function(e)
+	function keyHandler(e)
 	{
 		if (e.keyCode == 13)
 		{
 			update();
 			mxEvent.consume(e);
 		}
-	});
+		else if (e.keyCode == 27)
+		{
+			listener(null, null, true);
+			graph.container.focus();
+			mxEvent.consume(e);
+		}
+	};
 	
-	mxEvent.addListener(heightInput, 'keydown', function(e)
-	{
-		if (e.keyCode == 13)
-		{
-			update();
-			mxEvent.consume(e);
-		}
-	});
+	mxEvent.addListener(widthInput, 'keydown', keyHandler);
+	mxEvent.addListener(heightInput, 'keydown', keyHandler);
 	
 	mxEvent.addListener(widthInput, 'blur', update);
 	mxEvent.addListener(widthInput, 'click', update);
@@ -2522,6 +2842,7 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 	mxEvent.addListener(landscapeCheckBox, 'change', update);
 	mxEvent.addListener(portraitCheckBox, 'change', update);
 	mxEvent.addListener(paperSizeSelect, 'change', update);
+	ui.addListener('pageFormatChanged', listener);
 	update();
 	
 	return container;
