@@ -461,12 +461,13 @@ var PageSetupDialog = function(editorUi)
 				detected = true;
 			}
 		}
-		// Selects custom format which is last in list
-		else if (!detected)
-		{
-			paperSizeOption.setAttribute('selected', 'selected');
-			customRow.style.display = '';
-		}
+	}
+
+	// Selects custom format which is last in list
+	if (!detected)
+	{
+		paperSizeOption.setAttribute('selected', 'selected');
+		customRow.style.display = '';
 	}
 
 	td = document.createElement('td');
