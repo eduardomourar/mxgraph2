@@ -1579,7 +1579,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	stylePanel4.style.marginLeft = '0px';
 	stylePanel4.style.paddingTop = '6px';
 	stylePanel4.style.paddingBottom = '6px';
-	stylePanel4.style.fontWeight = 'bold';
+	stylePanel4.style.fontWeight = 'normal';
 	
 	mxUtils.write(stylePanel4, mxResources.get('position'));
 	
@@ -1993,6 +1993,22 @@ StyleFormatPanel.prototype.init = function()
 		btn.style.width = '100px';
 		
 		div.appendChild(btn);
+		
+		if (graph.getSelectionCount() == 1)
+		{
+			mxUtils.br(div);
+
+			var btn = mxUtils.button('Style bearbeiten'/*TODO*/, function(evt)
+			{
+				ui.actions.get('style').funct();
+			})
+			
+			btn.setAttribute('title', 'Ctrl+E');
+			btn.style.marginTop = '8px';
+			btn.style.width = '202px';
+			div.appendChild(btn);
+		}
+		
 		mxUtils.br(div);
 
 		var btn = mxUtils.button(mxResources.get('setAsDefaultStyle'), function(evt)
@@ -2736,14 +2752,7 @@ StyleFormatPanel.prototype.addEffects = function(container)
 	
 	container.style.paddingBottom = '0px';
 	container.style.marginTop = '2px';
-	
-	var span = document.createElement('div');
-	span.style.marginBottom = '6px';
-	span.style.marginTop = '4px';
-	span.style.fontWeight = 'bold';
-	mxUtils.write(span, 'Effekte'/*TODO*/);
-	container.appendChild(span);
-	
+
 	var table = document.createElement('table');
 
 	if (mxClient.IS_QUIRKS)
@@ -2836,7 +2845,7 @@ DiagramFormatPanel.prototype.init = function()
 	var clone = this.container.cloneNode(true);
 	clone.style.paddingTop = '4px';
 	clone.style.paddingBottom = '10px';
-	clone.style.paddingLeft = '14px';
+	clone.style.paddingLeft = '18px';
 	clone.style.fontWeight = 'normal';
 	this.container.style.borderBottom = 'none';
 	
@@ -2847,7 +2856,7 @@ DiagramFormatPanel.prototype.init = function()
 	// TODO: To draw.io
 	this.container.appendChild((function(div)
 	{
-		div.style.paddingBottom = '12px';
+		div.style.paddingBottom = '14px';
 
 		var btn = mxUtils.button(mxResources.get('clearDefaultStyle'), function(evt)
 		{
@@ -2855,7 +2864,7 @@ DiagramFormatPanel.prototype.init = function()
 		})
 		
 		btn.setAttribute('title', 'Ctrl+Shift+R');
-		btn.style.width = '206px';
+		btn.style.width = '202px';
 		div.appendChild(btn);
 
 		return div;
@@ -3008,6 +3017,9 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 	unit.style.marginTop = (mxClient.IS_MT) ? '1px' : '2px';
 	unit.style.right = (mxClient.IS_SF) ? '35px': '24px';
 	mxUtils.write(unit, 'pt');
+	
+	input.style.display = (graph.isGridEnabled()) ? '' : 'none';
+	unit.style.display = input.style.display;
 
 	function update(evt)
 	{
@@ -3194,7 +3206,7 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 	
 	var paperSizeSelect = document.createElement('select');
 	paperSizeSelect.style.marginBottom = '8px';
-	paperSizeSelect.style.width = '206px';
+	paperSizeSelect.style.width = '202px';
 
 	var formatDiv = document.createElement('div');
 	formatDiv.style.marginLeft = '4px';
