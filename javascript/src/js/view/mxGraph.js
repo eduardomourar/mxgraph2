@@ -542,6 +542,13 @@
  * <code>cell</code> property contains the cell that is being edited and the
  * <code>event</code> property contains the optional event argument that was
  * passed to <startEditingAtCell>.
+ * 
+ * Event: mxEvent.EDITING_STARTED
+ *
+ * Fires after the in-place editor starts in <startEditingAtCell>. The
+ * <code>cell</code> property contains the cell that is being edited and the
+ * <code>event</code> property contains the optional event argument that was
+ * passed to <startEditingAtCell>.
  *
  * Event: mxEvent.LABEL_CHANGED
  *
@@ -2367,6 +2374,8 @@ mxGraph.prototype.startEditingAtCell = function(cell, evt)
 			this.fireEvent(new mxEventObject(mxEvent.START_EDITING,
 					'cell', cell, 'event', evt));
 			this.cellEditor.startEditing(cell, evt);
+			this.fireEvent(new mxEventObject(mxEvent.EDITING_STARTED,
+					'cell', cell, 'event', evt));
 		}
 	}
 };

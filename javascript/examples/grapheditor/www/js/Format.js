@@ -33,6 +33,7 @@ Format.prototype.init = function()
 	});
 	
 	graph.getSelectionModel().addListener(mxEvent.CHANGE, this.update);
+	graph.addListener(mxEvent.EDITING_STARTED, this.update);
 	this.refresh();
 };
 
@@ -153,6 +154,7 @@ Format.prototype.refresh = function()
 		label.style.borderBottomWidth = '1px';
 		label.style.borderRightWidth = '0px';
 		label.style.borderLeftWidth = '0px';
+		label.style.borderTopWidth = '0px';
 		label.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
 		label.style.paddingTop = '8px';
 		label.style.height = (mxClient.IS_QUIRKS) ? '100%' : '26px';
@@ -174,7 +176,10 @@ Format.prototype.refresh = function()
 	}
 	else
 	{
-		// TODO: Show style section only if width/height >= 2
+		// TODO: Editing state is updated after startEditing event
+		var editing = graph.isEditing();
+		
+		// TODO: Show style section only if width/height > 0
 		var label = document.createElement('div');
 		label.style.border = '1px solid #c0c0c0';
 		label.style.borderTopWidth = '0px';
@@ -186,7 +191,11 @@ Format.prototype.refresh = function()
 		label.style.height = (mxClient.IS_QUIRKS) ? '100%' : '26px';
 		label.style.width = '33.3%';
 		mxUtils.write(label, mxResources.get('style'));
-		div.appendChild(label);
+		
+		if (!editing)
+		{
+			div.appendChild(label);
+		}
 		
 		var stylePanel = div.cloneNode(false);
 		stylePanel.style.borderBottom = '1px solid #c0c0c0';
@@ -240,23 +249,45 @@ Format.prototype.refresh = function()
 		div.appendChild(label2);
 		
 		this.panels.push(new TextFormatPanel(ui, textPanel));
-		textPanel.style.display = 'none';
 		
 		var label3 = label2.cloneNode(false);
 		mxUtils.write(label3, mxResources.get('arrange'));
-		div.appendChild(label3);
+		
+		if (!editing)
+		{
+			div.appendChild(label3);
+		}
 		
 		this.panels.push(new ArrangePanel(ui, arrangePanel));
 		arrangePanel.style.display = 'none';
 
-		addClickHandler(label, stylePanel, 0);
-		addClickHandler(label2, textPanel, 1);
-		addClickHandler(label3, arrangePanel, 2);
-		
+		if (!editing)
+		{
+			textPanel.style.display = 'none';
+			addClickHandler(label, stylePanel, 0);
+			addClickHandler(label2, textPanel, 1);
+			addClickHandler(label3, arrangePanel, 2);
+		}
+		else
+		{
+			label2.style.width = '100%';
+			label2.style.backgroundColor = '';
+			label2.style.borderLeftWidth = '0px';
+		}
+			
 		this.container.appendChild(div);
-		this.container.appendChild(stylePanel);
+		
+		if (!editing)
+		{
+			this.container.appendChild(stylePanel);
+		}
+		
 		this.container.appendChild(textPanel);
-		this.container.appendChild(arrangePanel);
+		
+		if (!editing)
+		{
+			this.container.appendChild(arrangePanel);
+		}
 	}
 };
 
@@ -820,6 +851,47 @@ BaseFormatPanel.prototype.addRelativeOption = function(container, label, key)
 	return container;
 };
 
+/**
+ * 
+ */
+BaseFormatPanel.prototype.addLabel = function(div, title, right, width)
+{
+	width = (width != null) ? width : 61;
+	
+	var label = document.createElement('div');
+	mxUtils.write(label, title);
+	label.style.position = 'absolute';
+	label.style.right = right + 'px';
+	label.style.width = width + 'px';
+	label.style.marginTop = '6px';
+	label.style.textAlign = 'center';
+	div.appendChild(label);
+};
+
+/**
+ * 
+ */
+BaseFormatPanel.prototype.addKeyHandler = function(input, listener)
+{
+	mxEvent.addListener(input, 'keydown', mxUtils.bind(this, function(e)
+	{
+		if (e.keyCode == 13)
+		{
+			this.editorUi.editor.graph.container.focus();
+			mxEvent.consume(e);
+		}
+		else if (e.keyCode == 27)
+		{
+			if (listener != null)
+			{
+				listener(null, null, true);				
+			}
+
+			this.editorUi.editor.graph.container.focus();
+			mxEvent.consume(e);
+		}
+	}));
+};
 
 /**
  * Adds the label menu items to the given menu and parent.
@@ -854,56 +926,433 @@ mxUtils.extend(ArrangePanel, BaseFormatPanel);
 ArrangePanel.prototype.init = function()
 {
 	var ui = this.editorUi;
+	var graph = ui.editor.graph;
+	var cell = graph.getSelectionCell();
+	
+	this.container.style.borderBottom = 'none';
+	
+	var div = document.createElement('div');
+	div.style.paddingTop = '8px';
+	div.style.paddingLeft = '18px';
+	div.style.paddingBottom = '16px';
+	div.style.borderBottom = '1px solid #c0c0c0';
+
+	var btn = mxUtils.button(mxResources.get('toFront'), function(evt)
+	{
+		ui.actions.get('toFront').funct();
+	})
+	
+	btn.setAttribute('title', 'Ctrl+Shift+F');
+	btn.style.width = '100px';
+	btn.style.marginRight = '2px';
+	
+	div.appendChild(btn);
+	
+	var btn = mxUtils.button(mxResources.get('toBack'), function(evt)
+	{
+		ui.actions.get('toBack').funct();
+	})
+	
+	btn.setAttribute('title', 'Ctrl+Shift+B');
+	btn.style.width = '100px';
+	
+	div.appendChild(btn);
+	this.container.appendChild(div);
+	
+	this.addGeometry(this.container);
+	this.addRotation(this.container);
+	
+	if (graph.getSelectionCount() > 1)
+	{
+		div = div.cloneNode(false);
+		
+		var btn = mxUtils.button(mxResources.get('group'), function(evt)
+		{
+			ui.actions.get('group').funct();
+		})
+		
+		btn.setAttribute('title', 'Ctrl+G');
+		btn.style.marginTop = '8px';
+		btn.style.width = '202px';
+		div.appendChild(btn);
+		
+		this.container.appendChild(div);
+	}
+	else if (graph.getSelectionCount() == 1 && !graph.getModel().isEdge(cell) && !graph.isSwimlane(cell) &&
+			graph.getModel().getChildCount(cell) > 0)
+	{
+		div = div.cloneNode(false);
+		
+		var btn = mxUtils.button(mxResources.get('ungroup'), function(evt)
+		{
+			ui.actions.get('ungroup').funct();
+		})
+		
+		btn.setAttribute('title', 'Ctrl+G');
+		btn.style.marginTop = '8px';
+		btn.style.width = '202px';
+		div.appendChild(btn);
+		
+		this.container.appendChild(div);
+	}
+};
+
+/**
+ * 
+ */
+ArrangePanel.prototype.addRotation = function(container)
+{
+	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
 	var state = graph.view.getState(graph.getSelectionCell());
-	var shape = this.getCurrentShape();
-	
-	var clone = this.container.cloneNode(true);
-	clone.style.display = 'block';
-	clone.style.paddingTop = '4px';
-	clone.style.paddingBottom = '10px';
-	clone.style.paddingLeft = '18px';
-	clone.style.fontWeight = 'normal';
-	
-	this.container.style.borderBottom = 'none';
 
-	// TODO: Move to arrange
-	this.container.appendChild((function(div)
+	var div = document.createElement('div');
+	div.style.paddingTop = '16px';
+	div.style.paddingLeft = '18px';
+	div.style.paddingBottom = '30px';
+	div.style.borderBottom = '1px solid #c0c0c0';
+	
+	var span = document.createElement('div');
+	span.style.position = 'absolute';
+	span.style.width = '70px';
+	span.style.marginTop = '0px';
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, 'Winkel'/*TODO*/);
+	div.appendChild(span);
+	
+	var input = this.addUnitInput(div, '°', 84, 48);
+	input.style.paddingRight = '8px';
+
+	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
 	{
-		var btn = mxUtils.button(mxResources.get('turn'), function(evt)
-		{
-			ui.actions.get('turn').funct();
-		})
-		
-		btn.setAttribute('title', 'Ctrl+R');
-		btn.style.marginRight = '8px';
-		
-		var valueInput = document.createElement('input');
-		valueInput.setAttribute('type', 'number');
-		valueInput.setAttribute('min', '0');
-		valueInput.setAttribute('max', '360');
-		valueInput.style.textAlign = 'right';
-		valueInput.style.width = '30px';
-		valueInput.style.marginLeft = '8px';
-		valueInput.value = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION, '0');
-		
-		mxEvent.addListener(valueInput, 'change', function(evt)
-		{
-			graph.setCellStyles(mxConstants.STYLE_ROTATION, parseInt(valueInput.value));
-			mxEvent.consume(evt);
-		});
-
-		var span = document.createElement('span');
-		span.style.lineHeight = '30px';
-		span.appendChild(btn);
-		mxUtils.write(span, mxResources.get('rotation'));
-		span.appendChild(valueInput);
-		div.appendChild(span);
-
-		return div;
-	})(clone));
+		input.setAttribute('type', 'number');
+		input.setAttribute('min', '0');
+	}
 	
+	var btn = mxUtils.button(mxResources.get('turn'), function(evt)
+	{
+		ui.actions.get('turn').funct();
+	})
+	
+	btn.setAttribute('title', 'Ctrl+R');
+	btn.style.position = 'absolute';
+	btn.style.marginTop = '-2px';
+	btn.style.right = '20px';
+	btn.style.width = '61px';
+	
+	div.appendChild(btn);
+	mxUtils.br(div);
+	mxUtils.br(div);
+	
+	var btn = mxUtils.button(mxResources.get('flipH'), function(evt)
+	{
+		graph.toggleCellStyles(mxConstants.STYLE_FLIPH, false);
+	})
+	
+	btn.setAttribute('title', 'Ctrl+Shift+F');
+	btn.style.width = '100px';
+	btn.style.marginRight = '2px';
+	
+	div.appendChild(btn);
+	
+	var btn = mxUtils.button(mxResources.get('flipV'), function(evt)
+	{
+		graph.toggleCellStyles(mxConstants.STYLE_FLIPH, false);
+	})
+	
+	btn.setAttribute('title', 'Ctrl+Shift+B');
+	btn.style.width = '100px';
+	
+	div.appendChild(btn);
+	
+	var listener = mxUtils.bind(this, function(sender, evt, force)
+	{
+		state = graph.view.getState(graph.getSelectionCell());
+		
+		if (state != null)
+		{
+			if (force || document.activeElement != input)
+			{
+				input.value = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION, 0);
+			}
+		}
+	});
+
+	this.installInputHandler(input, mxConstants.STYLE_ROTATION, 0, 0, 360);
+	this.addKeyHandler(input, listener);
+
+	graph.getModel().addListener(mxEvent.CHANGE, listener);
+	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
+	listener();
+
+	container.appendChild(div);
+};
+
+
+/**
+ * 
+ */
+ArrangePanel.prototype.getSelectionGeometry = function()
+{
+	var graph = this.editorUi.editor.graph;
+	var cells = graph.getSelectionCells();
+	var w = null;
+	var h = null;
+	var x = null;
+	var y = null;
+	
+	for (var i = 0; i < cells.length; i++)
+	{
+		if (graph.getModel().isVertex(cells[i]))
+		{
+			var geo = graph.getCellGeometry(cells[i]);
+			
+			if (geo != null)
+			{
+				if (geo.width > 0)
+				{
+					if (w == null)
+					{
+						w = geo.width;
+					}
+					else if (w != geo.width)
+					{
+						w = '';
+					}
+				}
+				
+				if (geo.height > 0)
+				{
+					if (h == null)
+					{
+						h = geo.height;
+					}
+					else if (h != geo.height)
+					{
+						h = '';
+					}
+				}
+				
+				if (!geo.relative)
+				{
+					if (x == null)
+					{
+						x = geo.x;
+					}
+					else if (x != geo.x)
+					{
+						x = '';
+					}
+					
+					if (y == null)
+					{
+						y = geo.x;
+					}
+					else if (y != geo.y)
+					{
+						y = '';
+					}
+				}
+			}
+		}
+	}
+	
+	return {x: x, y: y, width: w, height: h};
+};
+
+/**
+ * 
+ */
+ArrangePanel.prototype.addGeometry = function(container)
+{
+	var ui = this.editorUi;
+	var graph = ui.editor.graph;
+	
+	var div = document.createElement('div');
+	div.style.paddingTop = '16px';
+	div.style.paddingLeft = '18px';
+	div.style.paddingBottom = '30px';
+	div.style.borderBottom = '1px solid #c0c0c0';
+	
+	var span = document.createElement('div');
+	span.style.position = 'absolute';
+	span.style.width = '70px';
+	span.style.marginTop = '0px';
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, mxResources.get('size'));
+	div.appendChild(span);
+	
+	var width = this.addUnitInput(div, 'pt', 84, 44);
+	var height = this.addUnitInput(div, 'pt', 20, 44);
+	
+	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	{
+		width.setAttribute('type', 'number');
+		width.setAttribute('min', '0');
+		height.setAttribute('type', 'number');
+		height.setAttribute('min', '0');
+	}
+		
+	mxUtils.br(div);
+	this.addLabel(div, mxResources.get('width'), 84);
+	this.addLabel(div, mxResources.get('height'), 20);
+
+	this.addKeyHandler(width, listener);
+	this.addKeyHandler(height, listener);
+
+	this.addGeometryHandler(width, true, function(geo, value) { geo.width = value; });
+	this.addGeometryHandler(height, true, function(geo, value) { geo.height = value; });
+	
+	container.appendChild(div);
+	
+	var div2 = document.createElement('div');
+	div2.style.paddingTop = '16px';
+	div2.style.paddingLeft = '18px';
+	div2.style.paddingBottom = '30px';
+	div2.style.borderBottom = '1px solid #c0c0c0';
+	
+	var span = document.createElement('div');
+	span.style.position = 'absolute';
+	span.style.width = '70px';
+	span.style.marginTop = '0px';
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, mxResources.get('position'));
+	div2.appendChild(span);
+	
+	var left = this.addUnitInput(div2, 'pt', 84, 44);
+	var top = this.addUnitInput(div2, 'pt', 20, 44);
+	
+	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	{
+		left.setAttribute('type', 'number');
+		left.setAttribute('min', '0');
+		top.setAttribute('type', 'number');
+		top.setAttribute('min', '0');
+	}
+	
+	mxUtils.br(div2);
+	this.addLabel(div2, mxResources.get('left'), 84);
+	this.addLabel(div2, mxResources.get('top'), 20);
+	
+	var listener = mxUtils.bind(this, function(sender, evt, force)
+	{
+		var rect = this.getSelectionGeometry();
+
+		if (rect.width != null && rect.height != null)
+		{
+			div.style.display = '';
+			
+			if (force || document.activeElement != width)
+			{
+				width.value = rect.width;
+			}
+			
+			if (force || document.activeElement != height)
+			{
+				height.value = rect.height;
+			}
+		}
+		else
+		{
+			div.style.display = 'none';
+		}
+		
+		if (rect.x != null && rect.y != null)
+		{
+			div2.style.display = '';
+			
+			if (force || document.activeElement != left)
+			{
+				left.value = rect.x;
+			}
+			
+			if (force || document.activeElement != top)
+			{
+				top.value = rect.y;
+			}
+		}
+		else
+		{
+			div2.style.display = 'none';
+		}
+	});
+
+	this.addKeyHandler(left, listener);
+	this.addKeyHandler(top, listener);
+
+	graph.getModel().addListener(mxEvent.CHANGE, listener);
+	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
+	listener();
+	
+	this.addGeometryHandler(left, false, function(geo, value) { geo.x = value; });
+	this.addGeometryHandler(top, false, function(geo, value) { geo.y = value; });
+
+	container.appendChild(div2);
+};
+
+/**
+ * 
+ */
+ArrangePanel.prototype.addGeometryHandler = function(input, size, fn)
+{
+	var ui = this.editorUi;
+	var graph = ui.editor.graph;
+	var initialValue = null;
+	
+	function update(evt)
+	{
+		if (input.value != '')
+		{
+			var value = parseInt(input.value);
+			
+			if (value != initialValue)
+			{
+				graph.getModel().beginUpdate();
+				try
+				{
+					var cells = graph.getSelectionCells();
+					
+					for (var i = 0; i < cells.length; i++)
+					{
+						if (graph.getModel().isVertex(cells[i]))
+						{
+							var geo = graph.getCellGeometry(cells[i]);
+							
+							if (geo != null && ((size && geo.width > 0 && geo.height > 0) ||
+								(!size && !geo.relative)))
+							{
+								geo = geo.clone();
+								fn(geo, value);
+								
+								graph.getModel().setGeometry(cells[i], geo);
+							}
+						}
+					}
+				}
+				finally
+				{
+					graph.getModel().endUpdate();
+				}
+				
+				initialValue = value;
+				input.value = value;
+			}
+			else if (isNaN(value)) 
+			{
+				input.value = initialValue;
+			}
+		}
+		
+		mxEvent.consume(evt);
+	};
+
+	mxEvent.addListener(input, 'focus', function()
+	{
+		initialValue = input.value;
+	});
+	mxEvent.addListener(input, 'blur', update);
+	mxEvent.addListener(input, 'click', update);
 };
 
 /**
@@ -922,12 +1371,6 @@ mxUtils.extend(TextFormatPanel, BaseFormatPanel);
  */
 TextFormatPanel.prototype.init = function()
 {
-	var ui = this.editorUi;
-	var editor = ui.editor;
-	var graph = editor.graph;
-	var state = graph.view.getState(graph.getSelectionCell());
-	var shape = this.getCurrentShape();
-
 	this.container.style.borderBottom = 'none';
 	this.addFont(this.container);
 };
@@ -962,7 +1405,8 @@ TextFormatPanel.prototype.addFont = function(container)
 	var colorPanel = stylePanel.cloneNode(false);
 	colorPanel.style.borderTop = '1px solid #c0c0c0';
 	colorPanel.style.marginBottom = '0px';
-	colorPanel.style.paddingTop = '16px';
+	colorPanel.style.paddingBottom = '2px';
+	colorPanel.style.paddingTop = '12px';
 	
 	stylePanel.style.position = 'relative';
 	stylePanel.style.marginLeft = '-2px';
@@ -1095,8 +1539,13 @@ TextFormatPanel.prototype.addFont = function(container)
 	
 	// Stroke width
 	var input = document.createElement('input');
-	input.setAttribute('type', 'number');
-	input.setAttribute('min', '1');
+
+	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	{
+		input.setAttribute('type', 'number');
+		input.setAttribute('min', '1');
+	}
+	
 	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
 	input.style.paddingRight = '12px';
@@ -1173,17 +1622,18 @@ TextFormatPanel.prototype.addFont = function(container)
 	container.appendChild(colorPanel);
 	
 	var clone = colorPanel.cloneNode(false);
-	clone.style.paddingTop = '6px';
+	clone.style.paddingTop = '2px';
 	clone.style.borderTop = 'none';
 	container.appendChild(this.addRelativeOption(clone, mxResources.get('opacity'), mxConstants.STYLE_TEXT_OPACITY));
 	
 	var extraPanel = clone.cloneNode(false);
-	extraPanel.style.paddingBottom = '12px';
+	extraPanel.style.marginTop = '6px';
+	extraPanel.style.paddingBottom = '4px';
 	extraPanel.style.fontWeight = 'normal';
 	
 	var span = document.createElement('div');
 	span.style.marginBottom = '12px';
-	span.style.marginTop = '4px';
+	span.style.marginTop = '2px';
 	span.style.fontWeight = 'bold';
 	mxUtils.write(span, mxResources.get('options'));
 	extraPanel.appendChild(span);
@@ -1195,7 +1645,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	container.appendChild(extraPanel);
 	
 	var spacingPanel = clone.cloneNode(false);
-	spacingPanel.style.paddingBottom = '36px';
+	spacingPanel.style.paddingBottom = '32px';
 	spacingPanel.style.fontWeight = 'normal';
 	
 	var span = document.createElement('div');
@@ -1206,56 +1656,40 @@ TextFormatPanel.prototype.addFont = function(container)
 	spacingPanel.appendChild(span);
 	
 	var globalSpacing = this.addUnitInput(spacingPanel, 'pt', 162, 44);
-	globalSpacing.setAttribute('type', 'number');
-	globalSpacing.setAttribute('min', '0');
-	
 	var topSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44);
-	topSpacing.setAttribute('type', 'number');
-	topSpacing.setAttribute('min', '0');
-	
-	var rightSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44);
-	rightSpacing.setAttribute('type', 'number');
-	rightSpacing.setAttribute('min', '0');
-	
-	function addLabel(title, right)
-	{
-		var label = document.createElement('div');
-		mxUtils.write(label, title);
-		label.style.position = 'absolute';
-		label.style.right = right + 'px';
-		label.style.width = '61px';
-		label.style.marginTop = '6px';
-		label.style.textAlign = 'center';
-		spacingPanel.appendChild(label);
-	};
+	var bottomSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44);
 
 	mxUtils.br(spacingPanel);
-	addLabel(mxResources.get('global'), 162);
-	addLabel(mxResources.get('top'), 91);
-	addLabel(mxResources.get('right'), 20);
+	this.addLabel(spacingPanel, mxResources.get('global'), 162);
+	this.addLabel(spacingPanel, mxResources.get('top'), 91);
+	this.addLabel(spacingPanel, mxResources.get('bottom'), 20);
 	mxUtils.br(spacingPanel);
 	
 	var spacer = document.createElement('div');
-	spacer.style.height = '4px';
+	spacer.style.height = '2px';
 	spacingPanel.appendChild(spacer);
 	mxUtils.br(spacingPanel);
 	
-	var perimeterSpacing = this.addUnitInput(spacingPanel, 'pt', 162, 44);
-	perimeterSpacing.setAttribute('type', 'number');
-	perimeterSpacing.setAttribute('min', '0');
+	var leftSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44);
+	var rightSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44);
 	
-	var bottomSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44);
-	bottomSpacing.setAttribute('type', 'number');
-	bottomSpacing.setAttribute('min', '0');
-	
-	var leftSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44);
-	leftSpacing.setAttribute('type', 'number');
-	leftSpacing.setAttribute('min', '0');
+	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	{
+		globalSpacing.setAttribute('type', 'number');
+		globalSpacing.setAttribute('min', '0');
+		topSpacing.setAttribute('type', 'number');
+		topSpacing.setAttribute('min', '0');
+		bottomSpacing.setAttribute('type', 'number');
+		bottomSpacing.setAttribute('min', '0');
+		leftSpacing.setAttribute('type', 'number');
+		leftSpacing.setAttribute('min', '0');
+		rightSpacing.setAttribute('type', 'number');
+		rightSpacing.setAttribute('min', '0');
+	}
 	
 	mxUtils.br(spacingPanel);
-	addLabel(mxResources.get('perimeter'), 162);
-	addLabel(mxResources.get('bottom'), 91);
-	addLabel(mxResources.get('left'), 20);
+	this.addLabel(spacingPanel, mxResources.get('left'), 91);
+	this.addLabel(spacingPanel, mxResources.get('right'), 20);
 	
 	container.appendChild(spacingPanel);
 
@@ -1272,6 +1706,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		}
 	};
 	
+	// TODO: Text selection state
 	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
 		state = graph.view.getState(graph.getSelectionCell());
@@ -1327,12 +1762,7 @@ TextFormatPanel.prototype.addFont = function(container)
 			{
 				globalSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_SPACING, '2');
 			}
-			
-			if (force || document.activeElement != perimeterSpacing)
-			{
-				perimeterSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_PERIMETER_SPACING, '0');
-			}
-			
+
 			if (force || document.activeElement != topSpacing)
 			{
 				topSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_SPACING_TOP, '0');
@@ -1354,43 +1784,26 @@ TextFormatPanel.prototype.addFont = function(container)
 			}
 		}
 	});
-	
-	function keyHandler(e)
-	{
-		if (e.keyCode == 13)
-		{
-			graph.container.focus();
-			mxEvent.consume(e);
-		}
-		else if (e.keyCode == 27)
-		{
-			listener(null, null, true);
-			graph.container.focus();
-			mxEvent.consume(e);
-		}
-	};
-	
+
 	this.installInputHandler(globalSpacing, mxConstants.STYLE_SPACING, 2, 0, 999);
-	this.installInputHandler(perimeterSpacing, mxConstants.STYLE_PERIMETER_SPACING, 0, 0, 999);
 	this.installInputHandler(topSpacing, mxConstants.STYLE_SPACING_TOP, 0, 0, 999);
 	this.installInputHandler(rightSpacing, mxConstants.STYLE_SPACING_RIGHT, 0, 0, 999);
 	this.installInputHandler(bottomSpacing, mxConstants.STYLE_SPACING_BOTTOM, 0, 0, 999);
 	this.installInputHandler(leftSpacing, mxConstants.STYLE_SPACING_LEFT, 0, 0, 999);
 
-	mxEvent.addListener(input, 'keydown', keyHandler);
-	mxEvent.addListener(globalSpacing, 'keydown', keyHandler);
-	mxEvent.addListener(perimeterSpacing, 'keydown', keyHandler);
-	mxEvent.addListener(topSpacing, 'keydown', keyHandler);
-	mxEvent.addListener(rightSpacing, 'keydown', keyHandler);
-	mxEvent.addListener(bottomSpacing, 'keydown', keyHandler);
-	mxEvent.addListener(leftSpacing, 'keydown', keyHandler);
+	this.addKeyHandler(input, listener);
+	this.addKeyHandler(globalSpacing, listener);
+	this.addKeyHandler(topSpacing, listener);
+	this.addKeyHandler(rightSpacing, listener);
+	this.addKeyHandler(bottomSpacing, listener);
+	this.addKeyHandler(leftSpacing, listener);
 
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
 	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
 	listener();
 
 	return container;
-}
+};
 
 /**
  * Adds the label menu items to the given menu and parent.
@@ -1463,8 +1876,8 @@ StyleFormatPanel.prototype.init = function()
 	// TODO: To draw.io
 	this.container.appendChild((function(div)
 	{
-		div.style.paddingBottom = '20px';
-		div.style.paddingTop = '8px';
+		div.style.paddingBottom = '14px';
+		div.style.paddingTop = '4px';
 		
 		var btn = mxUtils.button(mxResources.get('copyStyle'), function(evt)
 		{
@@ -1790,8 +2203,13 @@ StyleFormatPanel.prototype.addStroke = function(container)
 
 	// Stroke width
 	var input = document.createElement('input');
-	input.setAttribute('type', 'number');
-	input.setAttribute('min', '1');
+
+	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	{
+		input.setAttribute('type', 'number');
+		input.setAttribute('min', '1');
+	}
+	
 	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
 	input.style.paddingRight = '12px';
@@ -1939,7 +2357,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	container.appendChild(stylePanel);
 
 	var arrowPanel = stylePanel.cloneNode(false);
-	arrowPanel.style.paddingBottom = '10px';
+	arrowPanel.style.paddingBottom = '8px';
 	arrowPanel.style.paddingTop = '6px';
 	arrowPanel.style.fontWeight = 'normal';
 	
@@ -1953,13 +2371,8 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	mxUtils.write(span, mxResources.get('linestart'));
 	arrowPanel.appendChild(span);
 	
-	var startSpacing = this.addUnitInput(arrowPanel, 'pt', 70, 30);
-	startSpacing.setAttribute('type', 'number');
-	startSpacing.setAttribute('min', '0');
-	
-	var startSize = this.addUnitInput(arrowPanel, 'pt', 20, 30);
-	startSize.setAttribute('type', 'number');
-	startSize.setAttribute('min', '0');
+	var startSpacing = this.addUnitInput(arrowPanel, 'pt', 74, 33);
+	var startSize = this.addUnitInput(arrowPanel, 'pt', 20, 33);
 
 	mxUtils.br(arrowPanel);
 	
@@ -1971,35 +2384,57 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	mxUtils.write(span, mxResources.get('lineend'));
 	arrowPanel.appendChild(span);
 	
-	var endSpacing = this.addUnitInput(arrowPanel, 'pt', 70, 30);
-	endSpacing.setAttribute('type', 'number');
-	endSpacing.setAttribute('min', '0');
-	
-	var endSize = this.addUnitInput(arrowPanel, 'pt', 20, 30);
-	endSize.setAttribute('type', 'number');
-	endSize.setAttribute('min', '0');
-	
-	function addLabel(title, right)
-	{
-		var label = document.createElement('div');
-		mxUtils.write(label, title);
-		label.style.position = 'absolute';
-		label.style.right = right + 'px';
-		label.style.width = '47px';
-		label.style.marginTop = '8px';
-		label.style.textAlign = 'center';
-		arrowPanel.appendChild(label);
-	};
+	var endSpacing = this.addUnitInput(arrowPanel, 'pt', 74, 33);
+	var endSize = this.addUnitInput(arrowPanel, 'pt', 20, 33);
 
 	mxUtils.br(arrowPanel);
-	addLabel(mxResources.get('spacing'), 70);
-	addLabel(mxResources.get('size'), 20);
+	this.addLabel(arrowPanel, mxResources.get('spacing'), 74, 50);
+	this.addLabel(arrowPanel, mxResources.get('size'), 20, 50);
 	mxUtils.br(arrowPanel);
+	
+	var perimeterPanel = colorPanel.cloneNode(false);
+	perimeterPanel.style.fontWeight = 'normal';
+	perimeterPanel.style.position = 'relative';
+	perimeterPanel.style.paddingLeft = '16px'
+	perimeterPanel.style.marginBottom = '2px';
+	perimeterPanel.style.marginTop = '6px';
+	perimeterPanel.style.borderWidth = '0px';
+	perimeterPanel.style.paddingBottom = '18px';
+	
+	var span = document.createElement('div');
+	span.style.position = 'absolute';
+	span.style.marginLeft = '3px';
+	span.style.marginBottom = '12px';
+	span.style.marginTop = '1px';
+	span.style.fontWeight = 'normal';
+	span.style.width = '120px';
+	mxUtils.write(span, mxResources.get('spacing'));
+	perimeterPanel.appendChild(span);
+	
+	var perimeterSpacing = this.addUnitInput(perimeterPanel, 'pt', 20, 41);
+
+	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	{
+		startSpacing.setAttribute('type', 'number');
+		startSpacing.setAttribute('min', '0');
+		startSize.setAttribute('type', 'number');
+		startSize.setAttribute('min', '0');
+		endSpacing.setAttribute('type', 'number');
+		endSpacing.setAttribute('min', '0');
+		endSize.setAttribute('type', 'number');
+		endSize.setAttribute('min', '0');
+		perimeterSpacing.setAttribute('type', 'number');
+		perimeterSpacing.setAttribute('min', '0');
+	}
 	
 	if (graph.getModel().isEdge(state.cell))
 	{
 		container.appendChild(stylePanel2);
 		container.appendChild(arrowPanel);
+	}
+	else
+	{
+		container.appendChild(perimeterPanel);
 	}
 	
 	var listener = mxUtils.bind(this, function(sender, evt, force)
@@ -2167,6 +2602,11 @@ StyleFormatPanel.prototype.addStroke = function(container)
 			{
 				endSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_TARGET_PERIMETER_SPACING, '0');
 			}
+			
+			if (force || document.activeElement != perimeterSpacing)
+			{
+				perimeterSpacing.value = mxUtils.getValue(state.style, mxConstants.STYLE_PERIMETER_SPACING, '0');
+			}
 		}
 	});
 	
@@ -2174,27 +2614,14 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	this.installInputHandler(startSpacing, mxConstants.STYLE_SOURCE_PERIMETER_SPACING, 0, 0, 999);
 	this.installInputHandler(endSize, mxConstants.STYLE_ENDSIZE, mxConstants.DEFAULT_MARKERSIZE, 0, 999);
 	this.installInputHandler(endSpacing, mxConstants.STYLE_TARGET_PERIMETER_SPACING, 0, 0, 999);
-	
-	function keyHandler(e)
-	{
-		if (e.keyCode == 13)
-		{
-			graph.container.focus();
-			mxEvent.consume(e);
-		}
-		else if (e.keyCode == 27)
-		{
-			listener(null, null, true);
-			graph.container.focus();
-			mxEvent.consume(e);
-		}
-	};
-	
-	mxEvent.addListener(input, 'keydown', keyHandler);
-	mxEvent.addListener(startSize, 'keydown', keyHandler);
-	mxEvent.addListener(startSpacing, 'keydown', keyHandler);
-	mxEvent.addListener(endSize, 'keydown', keyHandler);
-	mxEvent.addListener(endSpacing, 'keydown', keyHandler);
+	this.installInputHandler(perimeterSpacing, mxConstants.STYLE_PERIMETER_SPACING, 0, 0, 999);
+
+	this.addKeyHandler(input, listener);
+	this.addKeyHandler(startSize, listener);
+	this.addKeyHandler(startSpacing, listener);
+	this.addKeyHandler(endSize, listener);
+	this.addKeyHandler(endSpacing, listener);
+	this.addKeyHandler(perimeterSpacing, listener);
 
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
 	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
@@ -2213,17 +2640,23 @@ StyleFormatPanel.prototype.addEffects = function(container)
 	var graph = editor.graph;
 	var state = graph.view.getState(graph.getSelectionCell());
 	
-	container.style.paddingBottom = '6px';
+	container.style.paddingBottom = '0px';
 	container.style.marginTop = '2px';
 	
 	var span = document.createElement('div');
-	span.style.marginBottom = '12px';
+	span.style.marginBottom = '6px';
 	span.style.marginTop = '4px';
 	span.style.fontWeight = 'bold';
 	mxUtils.write(span, 'Effekte'/*TODO*/);
 	container.appendChild(span);
 	
 	var table = document.createElement('table');
+
+	if (mxClient.IS_QUIRKS)
+	{
+		table.style.fontSize = '1em';
+	}
+
 	table.style.width = '100%';
 	table.style.paddingRight = '20px';
 	var tbody = document.createElement('tbody');
@@ -2434,9 +2867,6 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 	var graph = ui.editor.graph;
 
 	var input = document.createElement('input');
-	input.setAttribute('type', 'number');
-	input.setAttribute('min', '0');
-	input.setAttribute('step', '5');
 	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
 	input.style.paddingRight = '12px';
@@ -2444,6 +2874,13 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 	input.style.right = '20px';
 	input.style.width = '46px';
 	input.value = graph.getGridSize();
+	
+	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	{
+		input.setAttribute('type', 'number');
+		input.setAttribute('min', '0');
+		input.setAttribute('step', '5');
+	}
 	
 	mxEvent.addListener(input, 'keydown', function(e)
 	{
@@ -2816,24 +3253,9 @@ DiagramFormatPanel.prototype.addPaperSize = function(container)
 			ui.setPageFormat(size);
 		}
 	};
-	
-	function keyHandler(e)
-	{
-		if (e.keyCode == 13)
-		{
-			update();
-			mxEvent.consume(e);
-		}
-		else if (e.keyCode == 27)
-		{
-			listener(null, null, true);
-			graph.container.focus();
-			mxEvent.consume(e);
-		}
-	};
-	
-	mxEvent.addListener(widthInput, 'keydown', keyHandler);
-	mxEvent.addListener(heightInput, 'keydown', keyHandler);
+
+	this.addKeyHandler(widthInput, listener);
+	this.addKeyHandler(heightInput, listener);
 	
 	mxEvent.addListener(widthInput, 'blur', update);
 	mxEvent.addListener(widthInput, 'click', update);

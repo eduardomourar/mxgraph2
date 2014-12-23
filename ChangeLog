@@ -1,3 +1,4 @@
+- Adds mxEvent.EDITING_STARTED in mxGraph.startEditingAtCell [JavaScript]
 - Ignores height for rotation raster in mxVertexHandler [JavaScript]
 - Removes dashed line style for guides in grapheditor
 - Fixes length of guides in mxGraphHandler [JavaScript]
