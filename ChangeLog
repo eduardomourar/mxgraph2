@@ -1,3 +1,4 @@
+- Ignores height for rotation raster in mxVertexHandler [JavaScript]
 - Removes dashed line style for guides in grapheditor
 - Fixes length of guides in mxGraphHandler [JavaScript]
 - Fixes missing line-height CSS in inner DIV in mxText [JavaScript]
