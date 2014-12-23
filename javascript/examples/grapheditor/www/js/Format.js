@@ -1270,7 +1270,7 @@ ArrangePanel.prototype.addGeometry = function(container)
 	var div = document.createElement('div');
 	div.style.paddingTop = '16px';
 	div.style.paddingLeft = '18px';
-	div.style.paddingBottom = '30px';
+	div.style.paddingBottom = '00px';
 	div.style.borderBottom = '1px solid #c0c0c0';
 	
 	var span = document.createElement('div');
@@ -1295,7 +1295,21 @@ ArrangePanel.prototype.addGeometry = function(container)
 	mxUtils.br(div);
 	this.addLabel(div, mxResources.get('width'), 84);
 	this.addLabel(div, mxResources.get('height'), 20);
-
+	
+	if (graph.getModel().isVertex(graph.getSelectionCell()))
+	{
+		mxUtils.br(div);
+		
+		var wrapper = document.createElement('div');
+		wrapper.style.paddingTop = '14px';
+		wrapper.style.paddingRight = '20px';
+		wrapper.style.whiteSpace = 'nowrap';
+		wrapper.style.textAlign = 'right';
+		this.addCellOption(wrapper, 'Proportionen beibehalten'/*TODO*/, mxConstants.STYLE_ASPECT, null, 'fixed', 'null').style.width = '100%';
+		
+		div.appendChild(wrapper);
+	}
+	
 	this.addKeyHandler(width, listener);
 	this.addKeyHandler(height, listener);
 
@@ -2755,6 +2769,7 @@ StyleFormatPanel.prototype.addEffects = function(container)
 
 	var current = left;
 	var shape = this.getCurrentShape();
+	var count = 0;
 	
 	if (shape == 'label' || shape == 'rectangle' || shape == 'internalStorage' || shape == 'corner' ||
 		shape == 'parallelogram' || shape == 'swimlane' || shape == 'step' || shape == 'trapezoid' ||
@@ -2764,29 +2779,35 @@ StyleFormatPanel.prototype.addEffects = function(container)
 	{
 		this.addCellOption(current, mxResources.get('rounded'), mxConstants.STYLE_ROUNDED, 0).style.width = '100%';
 		current = (current == left) ? right : left;
+		count++;
 	}
 
 	if (shape == 'swimlane')
 	{
 		this.addCellOption(current, 'Trennstrich'/*TODO*/, 'swimlaneLine', 1).style.width = '100%';
 		current = (current == left) ? right : left;
+		count++;
 	}
-	
-	if (graph.getModel().isVertex(graph.getSelectionCell()))
-	{
-		this.addCellOption(current, 'Proportional'/*TODO*/, mxConstants.STYLE_ASPECT, null, 'fixed', 'null').style.width = '100%';
-		current = (current == left) ? right : left;
-	}
-	
-	this.addCellOption(current, mxResources.get('shadow'), mxConstants.STYLE_SHADOW, 0).style.width = '100%';
-	current = (current == left) ? right : left;
 
+	if (shape != 'image')
+	{
+		this.addCellOption(current, mxResources.get('shadow'), mxConstants.STYLE_SHADOW, 0).style.width = '100%';
+		current = (current == left) ? right : left;	
+		count++;
+	}
+	
 	// TODO: Add list of glass-compatible shapes
 	if (shape == 'label' || shape == 'rectangle' || shape == 'internalStorage' ||
 		shape == 'ext' || shape == 'swimlane')
 	{
 		this.addCellOption(current, 'Glas'/*TODO*/, mxConstants.STYLE_GLASS, 0).style.width = '100%';
 		current = (current == left) ? right : left;
+		count++;
+	}
+	
+	if (count == 0)
+	{
+		container.style.display = 'none';
 	}
 
 	return container;
