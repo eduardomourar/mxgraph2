@@ -894,6 +894,27 @@ BaseFormatPanel.prototype.addKeyHandler = function(input, listener)
 };
 
 /**
+ * 
+ */
+BaseFormatPanel.prototype.styleButtons = function(elts)
+{
+	for (var i = 0; i < elts.length; i++)
+	{
+		// FIXME: Style changes after container was made visible
+		mxUtils.setPrefixedStyle(elts[i].style, 'borderRadius', '3px');
+		mxUtils.setOpacity(elts[i], 100);
+		elts[i].style.border = '1px solid #a0a0a0';
+		elts[i].style.padding = '4px';
+		elts[i].style.paddingTop = '3px';
+		elts[i].style.paddingRight = '1px';
+		elts[i].style.margin = '1px';
+		elts[i].style.width = '24px';
+		elts[i].style.height = '20px';
+		elts[i].className += ' geColorBtn';
+	}
+};
+
+/**
  * Adds the label menu items to the given menu and parent.
  */
 BaseFormatPanel.prototype.destroy = function()
@@ -960,7 +981,14 @@ ArrangePanel.prototype.init = function()
 	this.container.appendChild(div);
 	
 	this.addGeometry(this.container);
+	
+	if (graph.getSelectionCount() > 1)
+	{
+		this.addAlign(this.container);
+	}
+	
 	this.addRotation(this.container);
+	this.addFlip(this.container);
 	
 	if (graph.getSelectionCount() > 1)
 	{
@@ -1000,6 +1028,100 @@ ArrangePanel.prototype.init = function()
 /**
  * 
  */
+ArrangePanel.prototype.addAlign = function(container)
+{
+	var graph = this.editorUi.editor.graph;
+	
+	var div = document.createElement('div');
+	div.style.paddingTop = '12px';
+	div.style.paddingLeft = '18px';
+	div.style.paddingBottom = '4px';
+	div.style.borderBottom = '1px solid #c0c0c0';
+	
+	var span = document.createElement('div');
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, mxResources.get('align'));
+	div.appendChild(span);
+	
+	var stylePanel = document.createElement('div');
+	stylePanel.style.position = 'relative';
+	stylePanel.style.paddingLeft = '0px';
+	stylePanel.style.paddingTop = '8px';
+	stylePanel.style.paddingBottom = '8px';
+	stylePanel.style.borderWidth = '0px';
+	stylePanel.className = 'geToolbarContainer';
+	
+	var left = this.editorUi.toolbar.addButton('geSprite-alignleft', mxResources.get('left'),
+		function() { graph.alignCells(mxConstants.ALIGN_LEFT); }, stylePanel);
+	var center = this.editorUi.toolbar.addButton('geSprite-aligncenter', mxResources.get('center'),
+		function() { graph.alignCells(mxConstants.ALIGN_CENTER); }, stylePanel);
+	var right = this.editorUi.toolbar.addButton('geSprite-alignright', mxResources.get('right'),
+		function() { graph.alignCells(mxConstants.ALIGN_RIGHT); }, stylePanel);
+
+	var top = this.editorUi.toolbar.addButton('geSprite-aligntop', mxResources.get('top'),
+		function() { graph.alignCells(mxConstants.ALIGN_TOP); }, stylePanel);
+	var middle = this.editorUi.toolbar.addButton('geSprite-alignmiddle', mxResources.get('middle'),
+		function() { graph.alignCells(mxConstants.ALIGN_MIDDLE); }, stylePanel);
+	var bottom = this.editorUi.toolbar.addButton('geSprite-alignbottom', mxResources.get('bottom'),
+		function() { graph.alignCells(mxConstants.ALIGN_BOTTOM); }, stylePanel);
+	
+	this.styleButtons([left, center, right, top, middle, bottom]);
+	right.style.marginRight = '6px';
+	
+	div.appendChild(stylePanel);
+	container.appendChild(div);
+};
+
+/**
+ * 
+ */
+ArrangePanel.prototype.addFlip = function(container)
+{
+	var ui = this.editorUi;
+	var editor = ui.editor;
+	var graph = editor.graph;
+	var state = graph.view.getState(graph.getSelectionCell());
+
+	var div = document.createElement('div');
+	div.style.paddingTop = '12px';
+	div.style.paddingLeft = '18px';
+	div.style.paddingBottom = '14px';
+	div.style.borderBottom = '1px solid #c0c0c0';
+
+	var span = document.createElement('div');
+	span.style.marginTop = '2px';
+	span.style.marginBottom = '8px';
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, 'Spiegeln'/*TODO*/);
+	div.appendChild(span);
+	
+	var btn = mxUtils.button(mxResources.get('horizontal'), function(evt)
+	{
+		graph.toggleCellStyles(mxConstants.STYLE_FLIPH, false);
+	})
+	
+	btn.setAttribute('title', 'Ctrl+Shift+F');
+	btn.style.width = '100px';
+	btn.style.marginRight = '2px';
+	
+	div.appendChild(btn);
+	
+	var btn = mxUtils.button(mxResources.get('vertical'), function(evt)
+	{
+		graph.toggleCellStyles(mxConstants.STYLE_FLIPV, false);
+	})
+	
+	btn.setAttribute('title', 'Ctrl+Shift+B');
+	btn.style.width = '100px';
+	
+	div.appendChild(btn);
+
+	container.appendChild(div);
+};
+
+/**
+ * 
+ */
 ArrangePanel.prototype.addRotation = function(container)
 {
 	var ui = this.editorUi;
@@ -1010,7 +1132,7 @@ ArrangePanel.prototype.addRotation = function(container)
 	var div = document.createElement('div');
 	div.style.paddingTop = '16px';
 	div.style.paddingLeft = '18px';
-	div.style.paddingBottom = '30px';
+	div.style.paddingBottom = '28px';
 	div.style.borderBottom = '1px solid #c0c0c0';
 	
 	var span = document.createElement('div');
@@ -1042,30 +1164,7 @@ ArrangePanel.prototype.addRotation = function(container)
 	btn.style.width = '61px';
 	
 	div.appendChild(btn);
-	mxUtils.br(div);
-	mxUtils.br(div);
-	
-	var btn = mxUtils.button(mxResources.get('flipH'), function(evt)
-	{
-		graph.toggleCellStyles(mxConstants.STYLE_FLIPH, false);
-	})
-	
-	btn.setAttribute('title', 'Ctrl+Shift+F');
-	btn.style.width = '100px';
-	btn.style.marginRight = '2px';
-	
-	div.appendChild(btn);
-	
-	var btn = mxUtils.button(mxResources.get('flipV'), function(evt)
-	{
-		graph.toggleCellStyles(mxConstants.STYLE_FLIPH, false);
-	})
-	
-	btn.setAttribute('title', 'Ctrl+Shift+B');
-	btn.style.width = '100px';
-	
-	div.appendChild(btn);
-	
+
 	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
 		state = graph.view.getState(graph.getSelectionCell());
@@ -1088,7 +1187,6 @@ ArrangePanel.prototype.addRotation = function(container)
 
 	container.appendChild(div);
 };
-
 
 /**
  * 
@@ -1436,26 +1534,8 @@ TextFormatPanel.prototype.addFont = function(container)
 	stylePanel2.style.marginLeft = '-3px';
 	var fontStyleItems = this.editorUi.toolbar.addItems(['bold', 'italic', 'underline'], stylePanel2, true);
 	container.appendChild(stylePanel2);
-	
-	function style(elts)
-	{
-		for (var i = 0; i < elts.length; i++)
-		{
-			// FIXME: Style changes after container was made visible
-			mxUtils.setPrefixedStyle(elts[i].style, 'borderRadius', '3px');
-			mxUtils.setOpacity(elts[i], 100);
-			elts[i].style.border = '1px solid #a0a0a0';
-			elts[i].style.padding = '4px';
-			elts[i].style.paddingTop = '3px';
-			elts[i].style.paddingRight = '1px';
-			elts[i].style.margin = '1px';
-			elts[i].style.width = '24px';
-			elts[i].style.height = '20px';
-			elts[i].className += ' geColorBtn';
-		}
-	};
-	
-	style(fontStyleItems);
+
+	this.styleButtons(fontStyleItems);
 	
 	var stylePanel3 = stylePanel.cloneNode(false);
 	stylePanel3.style.marginLeft = '-3px';
@@ -1468,7 +1548,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	var right = this.editorUi.toolbar.addButton('geSprite-right', mxResources.get('right'),
 		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_RIGHT]), stylePanel3);
 
-	style([left, center, right]);
+	this.styleButtons([left, center, right]);
 	right.style.marginRight = '9px';
 
 	var top = this.editorUi.toolbar.addButton('geSprite-top', mxResources.get('top'),
@@ -1478,7 +1558,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	var bottom = this.editorUi.toolbar.addButton('geSprite-bottom', mxResources.get('bottom'),
 		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_BOTTOM]), stylePanel3);
 	
-	style([top, middle, bottom]);
+	this.styleButtons([top, middle, bottom]);
 	container.appendChild(stylePanel3);
 	
 	var stylePanel4 = stylePanel.cloneNode(false);
