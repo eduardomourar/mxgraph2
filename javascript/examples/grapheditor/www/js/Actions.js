@@ -337,7 +337,7 @@ Actions.prototype.init = function()
 				}
 			});
 		}
-	}).isEnabled = isGraphEnabled;
+	});
 	this.addAction('link...', mxUtils.bind(this, function()
 	{
 		var graph = ui.editor.graph;
@@ -781,7 +781,7 @@ Actions.prototype.init = function()
 		}
 	});
 	this.addAction('collapsible', function() { ui.menus.toggleStyle('container'); });
-	this.put('style', new Action(mxResources.get('edit') + '...', mxUtils.bind(this, function()
+	this.addAction('editStyle...', mxUtils.bind(this, function()
 	{
 		var cells = graph.getSelectionCells();
 		
@@ -800,7 +800,7 @@ Actions.prototype.init = function()
 			this.editorUi.showDialog(dlg.container, 320, 200, true, true);
 			dlg.init();
 		}
-	}), null, null, 'Ctrl+E'));
+	}), null, null, 'Ctrl+E');
 	this.addAction('setAsDefaultStyle', function()
 	{
 		if (graph.isEnabled() && !graph.isSelectionEmpty())

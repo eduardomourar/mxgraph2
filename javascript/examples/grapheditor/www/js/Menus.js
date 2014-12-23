@@ -244,7 +244,7 @@ Menus.prototype.init = function()
 		this.addMenuItems(menu, ['-'], parent);
 		this.addSubmenu('linestart', menu, parent);
 		this.addSubmenu('lineend', menu, parent);
-		this.addMenuItems(menu, ['-', 'setAsDefaultStyle', 'clearDefaultStyle', '-', 'style'], parent);
+		this.addMenuItems(menu, ['-', 'setAsDefaultStyle', 'clearDefaultStyle'], parent);
 	})));
 	this.put('gradient', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -472,7 +472,7 @@ Menus.prototype.init = function()
 	this.put('edit', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['undo', 'redo', '-', 'cut', 'copy', 'paste', 'delete', '-', 'duplicate', '-',
-		                         'editData', 'editLink', 'openLink', 'editTooltip', '-', 'selectVertices',
+		                         'editData', 'editTooltip', 'editStyle', '-', 'editLink', 'openLink', '-', 'selectVertices',
 		                         'selectEdges', 'selectAll', '-', 'lockUnlock']);
 	})));
 	this.put('options', new Menu(mxUtils.bind(this, function(menu, parent)

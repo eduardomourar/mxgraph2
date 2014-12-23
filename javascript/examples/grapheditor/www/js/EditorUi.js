@@ -1421,8 +1421,8 @@ EditorUi.prototype.updateActionStates = function()
 	
 	// Updates action states
 	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'delete', 'duplicate',
-	               'style', 'backgroundColor', 'borderColor', 'toFront', 'toBack',
-	               'lockUnlock', 'editData'];
+	               'editStyle', 'editTooltip', 'editLink', 'backgroundColor', 'borderColor',
+	               'toFront', 'toBack', 'lockUnlock', 'editData'];
 	
 	for (var i = 0; i < actions.length; i++)
 	{
@@ -2298,7 +2298,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
 	keyHandler.bindAction(65, true, 'selectVertices', true); // Ctrl+Shift+A
 	keyHandler.bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
-	keyHandler.bindAction(69, true, 'style'); // Ctrl+E
+	keyHandler.bindAction(69, true, 'editStyle'); // Ctrl+E
 	keyHandler.bindAction(66, true, 'toBack'); // Ctrl+B
 	keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
 	keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D

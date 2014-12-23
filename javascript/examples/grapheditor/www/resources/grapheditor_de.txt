@@ -78,6 +78,7 @@ edit=Bearbeiten
 editData=Daten bearbeiten
 editImage=Bild bearbeiten
 editLink=Link bearbeiten
+editStyle=Style bearbeiten
 editTooltip=Tooltip bearbeiten
 enterGroup=In Gruppe hinein
 enterValue=Wert eingeben

@@ -1994,11 +1994,12 @@ StyleFormatPanel.prototype.init = function()
 		
 		div.appendChild(btn);
 		
-		if (graph.getSelectionCount() == 1)
+		// TODO: Move to edit menu
+		/*if (graph.getSelectionCount() == 1)
 		{
 			mxUtils.br(div);
 
-			var btn = mxUtils.button('Style bearbeiten'/*TODO*/, function(evt)
+			var btn = mxUtils.button('Style bearbeiten', function(evt)
 			{
 				ui.actions.get('style').funct();
 			})
@@ -2007,7 +2008,7 @@ StyleFormatPanel.prototype.init = function()
 			btn.style.marginTop = '8px';
 			btn.style.width = '202px';
 			div.appendChild(btn);
-		}
+		}*/
 		
 		mxUtils.br(div);
 
@@ -2752,7 +2753,14 @@ StyleFormatPanel.prototype.addEffects = function(container)
 	
 	container.style.paddingBottom = '0px';
 	container.style.marginTop = '2px';
-
+	
+	var span = document.createElement('div');
+	span.style.marginBottom = '6px';
+	span.style.marginTop = '4px';
+	span.style.fontWeight = 'bold';
+	mxUtils.write(span, 'Effekte'/*TODO*/);
+	container.appendChild(span);
+	
 	var table = document.createElement('table');
 
 	if (mxClient.IS_QUIRKS)
