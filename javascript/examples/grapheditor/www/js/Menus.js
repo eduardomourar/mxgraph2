@@ -236,7 +236,7 @@ Menus.prototype.init = function()
 		this.addMenuItems(menu, ['fillColor'], parent);
 		this.addSubmenu('gradient', menu, parent);
 		this.addMenuItems(menu, ['image', '-', 'shadow'], parent);
-		this.promptChange(menu, mxResources.get('opacity'), '(%)', '100', mxConstants.STYLE_OPACITY, parent, this.get('format').enabled);
+		this.promptChange(menu, mxResources.get('opacity'), '(%)', '100', mxConstants.STYLE_OPACITY, parent, this.editorUi.actions.get('fillColor').enabled);
 		this.addMenuItems(menu, ['-', 'plain', 'dashed', 'dotted', '-', 'sharp', 'rounded', 'curved', '-', 'strokeColor'], parent);
 		this.addSubmenu('linewidth', menu, parent);
 		this.addMenuItems(menu, ['-'], parent);
@@ -256,7 +256,7 @@ Menus.prototype.init = function()
 	})));
 	this.put('text', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		var enabled = this.get('text').enabled;
+		var enabled = this.editorUi.actions.get('fontColor').enabled;
 		menu.addSeparator(parent);
 		this.addMenuItem(menu, 'fontColor', parent);
 		this.addMenuItems(menu, ['backgroundColor', 'borderColor', '-'], parent);

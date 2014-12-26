@@ -92,6 +92,7 @@ export=Exportieren
 file=Datei
 fileNotFound=Datei nicht gefunden
 filename=Dateiname
+fill=Füllen
 fillColor=Füllfarbe
 fitPage=Ganze Seite
 fitPageWidth=Seitenbreite

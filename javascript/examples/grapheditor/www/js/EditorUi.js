@@ -1422,10 +1422,17 @@ EditorUi.prototype.updateActionStates = function()
 	// Updates action states
 	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'delete', 'duplicate',
 	               'editStyle', 'editTooltip', 'editLink', 'backgroundColor', 'borderColor',
-	               'toFront', 'toBack', 'lockUnlock', 'editData'];
+	               'toFront', 'toBack', 'lockUnlock', 'editData', 'plain', 'dashed',
+	               'dotted', 'fillColor', 'image', 'shadow', 'fontColor', 'formattedText',
+	               'rounded', 'sharp', 'strokeColor'];
 	
 	for (var i = 0; i < actions.length; i++)
 	{
+		if (this.actions.get(actions[i]) == null)
+		{
+			console.log('null', actions[i]);
+		}
+		
 		this.actions.get(actions[i]).setEnabled(selected);
 	}
 	
@@ -1444,7 +1451,7 @@ EditorUi.prototype.updateActionStates = function()
    			graph.getModel().isVertex(graph.getModel().getParent(graph.getSelectionCell())));
 
 	// Updates menu states
-	var menus = ['alignment', 'position', 'spacing'];
+	var menus = ['alignment', 'position', 'spacing', 'gradient', 'layout', 'fontFamily', 'fontSize', 'navigation'];
 
 	for (var i = 0; i < menus.length; i++)
 	{
@@ -1455,6 +1462,10 @@ EditorUi.prototype.updateActionStates = function()
    	
     this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
     this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
+    this.menus.get('line').setEnabled(edgeSelected);
+    this.menus.get('linestart').setEnabled(edgeSelected);
+    this.menus.get('lineend').setEnabled(edgeSelected);
+    this.menus.get('linewidth').setEnabled(edgeSelected);
     this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected && state != null && graph.isLoop(state)));
     this.actions.get('home').setEnabled(graph.view.currentRoot != null);
     this.actions.get('exitGroup').setEnabled(graph.view.currentRoot != null);

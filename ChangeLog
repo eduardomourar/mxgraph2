@@ -1,5 +1,5 @@
-- Fixes padding, renames straight to sharp in grapheditor
-- Moves style action to edit, editStyle in grapheditor
+- Fixes padding, action states, renames straight to sharp in grapheditor
+- Moves style action to edit menu, editStyle in grapheditor
 - Adds mxEvent.EDITING_STARTED in mxGraph.startEditingAtCell [JavaScript]
 - Ignores height for rotation raster in mxVertexHandler [JavaScript]
 - Removes dashed line style for guides in grapheditor

@@ -92,6 +92,7 @@ export=Export
 file=File
 fileNotFound=File not found
 filename=Filename
+fill=fill
 fillColor=Fill color
 fitPage=One page
 fitPageWidth=Page width

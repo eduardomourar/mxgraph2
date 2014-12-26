@@ -1983,11 +1983,6 @@ StyleFormatPanel.prototype.init = function()
 	// TODO: Update sstate in Format
 	var sstate = this.format.createSelectionState();
 
-	if (sstate.style.shape != 'image')
-	{
-		this.container.appendChild(this.addStyles(this.createPanel()));
-	}
-
 	if (graph.getModel().isVertex(graph.getSelectionCell()) || shape == 'arrow')
 	{
 		this.container.appendChild(this.addFill(this.createPanel()));
@@ -2018,109 +2013,6 @@ StyleFormatPanel.prototype.init = function()
 /**
  * Adds the label menu items to the given menu and parent.
  */
-StyleFormatPanel.prototype.addStyles = function(div)
-{
-	var graph = this.editorUi.editor.graph;
-	
-	var stylenames = ['gray', 'blue', 'green', 'turquoise', 'yellow', 'red', 'purple', null];
-	div.style.paddingBottom = '4px';
-	
-	function addButton(stylename)
-	{
-		var tmp = (stylename != null) ? graph.stylesheet.styles[stylename] : null;
-		
-		var btn = mxUtils.button('', function(evt)
-		{
-			graph.getModel().beginUpdate();
-			try
-			{
-				var cells = graph.getSelectionCells();
-				
-				for (var i = 0; i < cells.length; i++)
-				{
-					var style = graph.getModel().getStyle(cells[i]);
-	
-					for (var j = 0; j < stylenames.length; j++)
-					{
-						style = mxUtils.removeStylename(style, stylenames[j]);
-					}
-					
-					if (stylename != null)
-					{
-						// Removes styles that are defined in this style from the current
-						// style so that they are added behind the stylename if changed.
-						// This is required so that the style does not override keys that
-						// appear earlier in the style since they are modified in-place.
-						for (var key in tmp)
-						{
-							style = mxUtils.setStyle(style, key, null);
-						}
-						
-						style = mxUtils.addStylename(style, stylename);
-					}
-					else
-					{
-						style = mxUtils.setStyle(style, mxConstants.STYLE_FILLCOLOR, '#ffffff');
-						style = mxUtils.setStyle(style, mxConstants.STYLE_STROKECOLOR, '#000000');
-						style = mxUtils.setStyle(style, mxConstants.STYLE_GRADIENTCOLOR, null);
-					}
-					
-					graph.getModel().setStyle(cells[i], style);
-				}
-			}
-			finally
-			{
-				graph.getModel().endUpdate();
-			}
-		})
-
-		btn.style.width = '42px';
-		btn.style.height = '30px';
-		btn.style.margin = '1px 10px 10px 0px';
-		
-		mxUtils.setPrefixedStyle(btn.style, 'boxShadow', '2px 2px 2px 0px #bbb');
-
-		if (tmp != null)
-		{
-			if (mxClient.IS_IE && (mxClient.IS_QUIRKS || document.documentMode < 10))
-			{
-		    	btn.style.filter = 'progid:DXImageTransform.Microsoft.Gradient('+
-                	'StartColorStr=\'' + tmp[mxConstants.STYLE_FILLCOLOR] +
-                	'\', EndColorStr=\'' + tmp[mxConstants.STYLE_GRADIENTCOLOR] + '\', GradientType=0)';
-			}
-			else
-			{
-				btn.style.backgroundImage = 'linear-gradient(' + tmp[mxConstants.STYLE_FILLCOLOR] + ' 0px,' +
-					tmp[mxConstants.STYLE_GRADIENTCOLOR] + ' 100%)';
-			}
-
-			btn.style.border = '1px solid ' + tmp[mxConstants.STYLE_STROKECOLOR];
-		}
-		else
-		{
-			btn.style.backgroundColor = 'whiteSmoke';
-			btn.style.border = '1px solid gray';
-		}
-		
-		div.appendChild(btn);
-	};
-	
-	for (var i = 0; i < stylenames.length; i++)
-	{
-		if (i > 0 && mxUtils.mod(i, 4) == 0)
-		{
-			mxUtils.br(div);
-		}
-		
-		addButton(stylenames[i]);
-	}
-	
-	return div;
-};
-
-/**
- * Adds the label menu items to the given menu and parent.
- */
 StyleFormatPanel.prototype.addFill = function(container)
 {
 	var graph = this.editorUi.editor.graph;
@@ -2137,7 +2029,7 @@ StyleFormatPanel.prototype.addFill = function(container)
 	gradientSelect.style.right = (mxClient.IS_QUIRKS) ? '52px' : '72px';
 	gradientSelect.style.width = '70px';
 	
-	var gradientPanel = this.createCellColorOption('Verlauf'/*TODO*/, mxConstants.STYLE_GRADIENTCOLOR, '#ffffff', function(color)
+	var gradientPanel = this.createCellColorOption(mxResources.get('gradient'), mxConstants.STYLE_GRADIENTCOLOR, '#ffffff', function(color)
 	{
 		if (color == null || color == mxConstants.NONE)
 		{
