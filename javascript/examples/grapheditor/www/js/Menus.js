@@ -433,7 +433,6 @@ Menus.prototype.init = function()
 		this.addMenuItems(menu, ['turn', '-'], parent);
 		this.addSubmenu('align', menu, parent);
 		this.addSubmenu('distribute', menu, parent);
-		this.addMenuItems(menu, ['layers'], parent);
 		menu.addSeparator(parent);
 		this.addSubmenu('navigation', menu, parent);
 		this.addSubmenu('insert', menu, parent);
@@ -449,6 +448,7 @@ Menus.prototype.init = function()
 	this.put('view', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['outline'], parent);
+		this.addMenuItems(menu, ['layers'], parent);
 		menu.addSeparator();
 		var scales = [0.25, 0.5, 0.75, 1, 1.5, 2, 4];
 		
