@@ -663,9 +663,9 @@ EditorUi.prototype.splitSize = (mxClient.IS_TOUCH || mxClient.IS_POINTER) ? 12 :
 EditorUi.prototype.menubarHeight = 30;
 
 /**
- * Specifies the width of the format sidebar. Default is 0.
+ * Specifies the width of the format sidebar. Default is 240.
  */
-EditorUi.prototype.formatWidth = 0;
+EditorUi.prototype.formatWidth = 240;
 
 /**
  * Specifies the height of the toolbar. Default is 36.
@@ -1600,9 +1600,10 @@ EditorUi.prototype.createDivs = function()
 	this.hsplit.style.width = this.splitSize + 'px';
 	
 	// Only vertical scrollbars, no background in format sidebar
-	this.formatContainer.style.backgroundColor = 'transparent';
+	this.formatContainer.style.backgroundColor = 'whiteSmoke';
 	this.formatContainer.style.overflowX = 'hidden';
 	this.formatContainer.style.overflowY = 'auto';
+	this.formatContainer.style.fontSize = '12px';
 	
 	this.sidebarFooterContainer = this.createSidebarFooterContainer();
 	
@@ -1669,7 +1670,7 @@ EditorUi.prototype.createUi = function()
 	}
 	
 	// Creates the format sidebar
-	this.format = (this.editor.chromeless || urlParams['format'] != '1') ? null : this.createFormat(this.formatContainer);
+	this.format = (this.editor.chromeless) ? null : this.createFormat(this.formatContainer);
 	
 	if (this.format != null)
 	{

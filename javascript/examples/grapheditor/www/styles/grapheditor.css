@@ -139,11 +139,11 @@
 	background-color:#ffffff;
 }
 .geMenubar {
-	padding:2px;
+	padding:0px 2px 0px 2px;
 	vertical-align:middle;
 }
 .geMenubarContainer .geItem, .geToolbar .geItem {
-	padding:4px 8px 4px 8px;
+	padding:6px 8px 6px 8px;
 	margin-right:20px: 
 	cursor:default;
 }

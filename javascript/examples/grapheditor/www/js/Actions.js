@@ -735,7 +735,7 @@ Actions.prototype.init = function()
 			graph.getModel().endUpdate();
 		}
 	});
-	this.addAction('straight', function()
+	this.addAction('sharp', function()
 	{
 		graph.getModel().beginUpdate();
 		try
