@@ -21,6 +21,7 @@
 --    mxGraph Core     --
 -------------------------
 
+- Check panning in IE8 standards with no scrollbars
 - Fix flip for image tag in stencils
 
 - Migrate changes in mxEdgeStyle to Java
