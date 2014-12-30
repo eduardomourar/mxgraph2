@@ -379,6 +379,10 @@ Format.prototype.refresh = function()
 		label.style.width = (containsLabel) ? '50%' : '33.3%';
 		var label2 = label.cloneNode(false);
 		var label3 = label2.cloneNode(false);
+
+		// Workaround for ignored background in IE
+		label2.style.backgroundColor = '#d7d7d7';
+		label3.style.backgroundColor = '#d7d7d7';
 		
 		// Style
 		if (containsLabel)
@@ -728,7 +732,7 @@ BaseFormatPanel.prototype.createColorOption = function(label, getColorFn, setCol
 
 	var btn = null;
 
-	var apply = function(color)
+	var apply = function(color, disableUpdate)
 	{
 		if (!applying)
 		{
@@ -761,15 +765,18 @@ BaseFormatPanel.prototype.createColorOption = function(label, getColorFn, setCol
 			{
 				callbackFn(color);
 			}
-			
-			if (hideCheckbox || value != color)
+
+			if (!disableUpdate)
 			{
-				value = color;
-				
-				// Checks if the color value needs to be updated in the model
-				if (hideCheckbox || getColorFn() != value)
+				if (hideCheckbox || value != color)
 				{
-					setColorFn(value);
+					value = color;
+					
+					// Checks if the color value needs to be updated in the model
+					if (hideCheckbox || getColorFn() != value)
+					{
+						setColorFn(value);
+					}
 				}
 			}
 			
@@ -810,19 +817,11 @@ BaseFormatPanel.prototype.createColorOption = function(label, getColorFn, setCol
 		apply((cb.checked) ? defaultColor : mxConstants.NONE);
 	});
 	
-	if (!hideCheckbox)
-	{
-		apply(value);
-	}
-	else
-	{
-		btn.innerHTML = '<div style="width:' + ((mxClient.IS_QUIRKS) ? '30' : '36') + 'px;height:12px;margin:3px;border:1px solid black;background-color:' +
-			((value != null && value != mxConstants.NONE) ? value : defaultColor) + ';"></div>';
-	}
+	apply(value, true);
 	
 	if (listener != null)
 	{
-		listener.install(apply);
+		listener.install((hideCheckbox) ? function(color) { apply(color, true) } : apply);
 		this.listeners.push(listener);
 	}
 	
@@ -1978,15 +1977,23 @@ TextFormatPanel.prototype.addFont = function(container)
 	var arrow = fontMenu.getElementsByTagName('div')[0];
 	arrow.style.cssFloat = 'right';
 	
+	var bgColorApply = null;
+	var currentBgColor = '#ffffff';
+	
+	var fontColorApply = null;
+	var currentFontColor = '#000000';
+		
 	var bgPanel = (graph.cellEditor.isContentEditing()) ? this.createColorOption(mxResources.get('backgroundColor'), function()
 	{
-		// TODO: Get current font color
-		return '#ffffff';
+		return currentBgColor;
 	}, function(color)
 	{
-		// TODO: Save selection before showing dialog, restore selection afterwards
 		document.execCommand('backcolor', false, (color != mxConstants.NONE) ? color : 'transparent');
-	}, '#ffffff', null, null, true) : this.createCellColorOption(mxResources.get('backgroundColor'), mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#ffffff');
+	}, '#ffffff',
+	{
+		install: function(apply) { bgColorApply = apply; },
+		destroy: function() { bgColorApply = null; }
+	}, null, true) : this.createCellColorOption(mxResources.get('backgroundColor'), mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, '#ffffff');
 	bgPanel.style.fontWeight = 'bold';
 
 	var borderPanel = this.createCellColorOption(mxResources.get('borderColor'), mxConstants.STYLE_LABEL_BORDERCOLOR, '#000000');
@@ -1994,13 +2001,15 @@ TextFormatPanel.prototype.addFont = function(container)
 	
 	var panel = (graph.cellEditor.isContentEditing()) ? this.createColorOption(mxResources.get('fontColor'), function()
 	{
-		// TODO: Get current font color
-		return '#000000';
+		return currentFontColor
 	}, function(color)
 	{
-		// TODO: Save selection before showing dialog, restore selection afterwards
 		document.execCommand('forecolor', false, (color != mxConstants.NONE) ? color : 'transparent');
-	}, '#000000', null, null, true) : this.createCellColorOption(mxResources.get('fontColor'), mxConstants.STYLE_FONTCOLOR, '#000000', function(color)
+	}, '#000000',
+	{
+		install: function(apply) { fontColorApply = apply; },
+		destroy: function() { fontColorApply = null; }
+	}, null, true) : this.createCellColorOption(mxResources.get('fontColor'), mxConstants.STYLE_FONTCOLOR, '#000000', function(color)
 	{
 		if (color == null || color == mxConstants.NONE)
 		{
@@ -2412,58 +2421,110 @@ TextFormatPanel.prototype.addFont = function(container)
 	
 	if (graph.cellEditor.isContentEditing())
 	{
+		var updating = false;
+		
 		var updateCssHandler = function()
 		{
-			window.setTimeout(function()
+			if (!updating)
 			{
-				var selectedElement = graph.getSelectedElement();
-				var node = selectedElement;
-				
-				while (node != null && node.nodeType != mxConstants.NODETYPE_ELEMENT)
+				updating = true;
+			
+				window.setTimeout(function()
 				{
-					node = node.parentNode;
-				}
-				
-				if (node != null)
-				{
-					var css = mxUtils.getCurrentStyle(node);
+					var selectedElement = graph.getSelectedElement();
+					var node = selectedElement;
 					
-					setSelected(fontStyleItems[0], css.fontWeight == 'bold' || graph.getParentByName(node, 'B', graph.cellEditor.text2) != null);
-					setSelected(fontStyleItems[1], css.fontStyle == 'italic' || graph.getParentByName(node, 'I', graph.cellEditor.text2) != null);
-					setSelected(fontStyleItems[2], graph.getParentByName(node, 'U', graph.cellEditor.text2) != null);
-					setSelected(left, css.textAlign == 'left');
-					setSelected(center, css.textAlign == 'center');
-					setSelected(right, css.textAlign == 'right');
-					setSelected(full, css.textAlign == 'justify');
-					setSelected(sup, graph.getParentByName(node, 'SUP', graph.cellEditor.text2) != null);
-					setSelected(sub, graph.getParentByName(node, 'SUB', graph.cellEditor.text2) != null);
-					
-					currentTable = graph.getParentByName(node, 'TABLE', graph.cellEditor.text2);
-					tableRow = (currentTable == null) ? null : graph.getParentByName(node, 'TR', currentTable);
-					tableCell = (currentTable == null) ? null : graph.getParentByName(node, 'TD', currentTable);
-					tableWrapper.style.display = (currentTable != null) ? '' : 'none';
-					
-					if (document.activeElement != input)
+					while (node != null && node.nodeType != mxConstants.NODETYPE_ELEMENT)
 					{
-						input.value = parseInt(css.fontSize);
+						node = node.parentNode;
 					}
 					
-					// Strips leading and trailing quotes
-					var ff = css.fontFamily;
-					
-					if (ff.charAt(0) == '\'')
+					if (node != null)
 					{
-						ff = ff.substring(1);
+						var css = mxUtils.getCurrentStyle(node);
+						
+						setSelected(fontStyleItems[0], css.fontWeight == 'bold' || graph.getParentByName(node, 'B', graph.cellEditor.text2) != null);
+						setSelected(fontStyleItems[1], css.fontStyle == 'italic' || graph.getParentByName(node, 'I', graph.cellEditor.text2) != null);
+						setSelected(fontStyleItems[2], graph.getParentByName(node, 'U', graph.cellEditor.text2) != null);
+						setSelected(left, css.textAlign == 'left');
+						setSelected(center, css.textAlign == 'center');
+						setSelected(right, css.textAlign == 'right');
+						setSelected(full, css.textAlign == 'justify');
+						setSelected(sup, graph.getParentByName(node, 'SUP', graph.cellEditor.text2) != null);
+						setSelected(sub, graph.getParentByName(node, 'SUB', graph.cellEditor.text2) != null);
+						
+						currentTable = graph.getParentByName(node, 'TABLE', graph.cellEditor.text2);
+						tableRow = (currentTable == null) ? null : graph.getParentByName(node, 'TR', currentTable);
+						tableCell = (currentTable == null) ? null : graph.getParentByName(node, 'TD', currentTable);
+						tableWrapper.style.display = (currentTable != null) ? '' : 'none';
+						
+						if (document.activeElement != input)
+						{
+							input.value = parseInt(css.fontSize);
+						}
+						
+						// Converts rgb(r,g,b) values
+						var color = css.color.replace(
+							    /\brgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/g,
+							    function($0, $1, $2, $3) {
+							        return "#" + ("0"+Number($1).toString(16)).substr(-2) + ("0"+Number($2).toString(16)).substr(-2) + ("0"+Number($3).toString(16)).substr(-2);
+							    });
+						var color2 = css.backgroundColor.replace(
+							    /\brgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/g,
+							    function($0, $1, $2, $3) {
+							        return "#" + ("0"+Number($1).toString(16)).substr(-2) + ("0"+Number($2).toString(16)).substr(-2) + ("0"+Number($3).toString(16)).substr(-2);
+							    });
+						
+						// Updates the color picker for the current font
+						if (fontColorApply != null && color.charAt(0) == '#')
+						{
+							if (color.charAt(0) == '#')
+							{
+								currentFontColor = color;
+							}
+							else
+							{
+								currentFontColor = '#000000';
+							}
+							
+							fontColorApply(currentFontColor);
+						}
+						
+						if (bgColorApply != null)
+						{
+							if (color2.charAt(0) == '#')
+							{
+								currentBgColor = color2;
+							}
+							else
+							{
+								currentBgColor = null;
+							}
+							
+							bgColorApply(currentBgColor);
+						}
+						
+						console.log('colors', color, color2);
+						
+						// Strips leading and trailing quotes
+						var ff = css.fontFamily;
+						
+						if (ff.charAt(0) == '\'')
+						{
+							ff = ff.substring(1);
+						}
+						
+						if (ff.charAt(ff.length - 1) == '\'')
+						{
+							ff = ff.substring(0, ff.length - 1);
+						}
+						
+						fontMenu.firstChild.nodeValue = ff;
 					}
 					
-					if (ff.charAt(ff.length - 1) == '\'')
-					{
-						ff = ff.substring(0, ff.length - 1);
-					}
-					
-					fontMenu.firstChild.nodeValue = ff;
-				}
-			}, 0);
+					updating = false;
+				}, 0);
+			}
 		};
 		
 		mxEvent.addListener(graph.cellEditor.text2, 'input', updateCssHandler)

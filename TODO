@@ -2,6 +2,7 @@
 -- GraphEditor Example --
 -------------------------
 
+- Fix initial state of scrollbar option in format sidebar
 - https://developers.google.com/appengine/docs/java/tools/ant
 - Cleanup App.save/saveFile and file.save/saveAs
 - Fix touch detection in FF (defaultScrollbars)
