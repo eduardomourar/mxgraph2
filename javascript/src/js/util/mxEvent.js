@@ -1297,6 +1297,13 @@ var mxEvent =
 	EDITING_STARTED: 'editingStarted',
 
 	/**
+	 * Variable: EDITING_STOPPED
+	 *
+	 * Specifies the event name for editingStopped.
+	 */
+	EDITING_STOPPED: 'editingStopped',
+
+	/**
 	 * Variable: ADD_OVERLAY
 	 *
 	 * Specifies the event name for addOverlay.

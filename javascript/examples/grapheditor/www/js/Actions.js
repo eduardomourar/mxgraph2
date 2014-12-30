@@ -344,7 +344,55 @@ Actions.prototype.init = function()
 		
 		if (graph.isEnabled())
 		{
-			if (graph.isSelectionEmpty())
+			if (graph.cellEditor.isContentEditing())
+			{
+				var link = graph.getParentByName(graph.getSelectedElement(), 'A', graph.cellEditor.text2);
+				var oldValue = '';
+				
+				if (link != null)
+				{
+					oldValue = link.getAttribute('href');
+				}
+				
+				var selState = graph.cellEditor.saveSelection();
+				
+				ui.showLinkDialog(oldValue, mxResources.get('apply'), mxUtils.bind(this, function(value)
+				{
+		    		graph.cellEditor.restoreSelection(selState);
+					
+					// To find the new link, we create a list of all existing links first
+		    		// LATER: Refactor for reuse with code for finding inserted image below
+					var tmp = graph.cellEditor.text2.getElementsByTagName('a');
+					var oldLinks = [];
+					
+					for (var i = 0; i < tmp.length; i++)
+					{
+						oldLinks.push(tmp[i]);
+					}
+		
+					if (value != null && value.length > 0)
+					{
+						document.execCommand('createlink', false, mxUtils.trim(value));
+						
+						// Adds target="_blank" for the new link
+						var newLinks = graph.cellEditor.text2.getElementsByTagName('a');
+						
+						if (newLinks.length == oldLinks.length + 1)
+						{
+							// Inverse order in favor of appended links
+							for (var i = newLinks.length - 1; i >= 0; i--)
+							{
+								if (i == 0 || newLinks[i] != oldLinks[i - 1])
+								{
+									newLinks[i].setAttribute('target', '_blank');
+									break;
+								}
+							}
+						}
+					}
+				}));
+			}
+			else if (graph.isSelectionEmpty())
 			{
 				this.get('insertLink').funct();
 			}
@@ -612,14 +660,10 @@ Actions.prototype.init = function()
 	action.setSelectedCallback(function() { return graph.pageVisible; });
 	this.put('pageBackgroundColor', new Action(mxResources.get('backgroundColor') + '...', function()
 	{
-		var apply = function(color)
+		ui.pickColor(graph.background || 'none', function(color)
 		{
 			ui.setBackgroundColor(color);
-		};
-
-		var cd = new ColorDialog(ui, graph.background || 'none', apply);
-		ui.showDialog(cd.container, 220, 400, true, false);
-		cd.init();
+		});
 	}));
 	action = this.addAction('connectionPoints', function()
 	{
@@ -982,6 +1026,14 @@ Actions.prototype.init = function()
 							{
 								if (i == 0 || newImages[i] != oldImages[i - 1])
 								{
+									var test = new Image();
+									test.onload = function()
+									{
+										console.log('test', test.width, test.height);
+									};
+									test.src = newValue;
+									console.log('setting image size to', w, h, newValue);
+									
 									// LATER: Add dialog for image size
 									newImages[i].style.width = w + 'px';
 									newImages[i].style.height = h + 'px';
@@ -1056,7 +1108,7 @@ Actions.prototype.init = function()
 			        	}
 					}
 	    		}
-			});
+			}, graph.cellEditor.isContentEditing());
 		}
 	}).isEnabled = isGraphEnabled;
 	action = this.addAction('layers', mxUtils.bind(this, function()
@@ -1074,6 +1126,15 @@ Actions.prototype.init = function()
 	}), null, null, 'Ctrl+Shift+L');
 	action.setToggleAction(true);
 	action.setSelectedCallback(mxUtils.bind(this, function() { return this.layersWindow != null && this.layersWindow.window.isVisible(); }));
+	action = this.addAction('formatPanel', mxUtils.bind(this, function()
+	{
+		ui.formatWidth = (ui.formatWidth > 0) ? 0 : 240;
+		ui.formatContainer.style.display = (ui.formatWidth > 0) ? '' : 'none';
+		ui.refresh();
+		ui.fireEvent(new mxEventObject('formatWidthChanged'));
+	}), null, null, 'Ctrl+Shift+P');
+	action.setToggleAction(true);
+	action.setSelectedCallback(mxUtils.bind(this, function() { return ui.formatWidth > 0; }));
 	action = this.addAction('outline', mxUtils.bind(this, function()
 	{
 		if (this.outlineWindow == null)

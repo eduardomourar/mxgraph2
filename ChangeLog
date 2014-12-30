@@ -1,6 +1,9 @@
+- Adds Graph.pasteHtmlAtCaret, insertRow/-Column, deleteRow/-Colum in grapheditor
+- Adds Graph.getSelectedElement, getParentByName, selectNode in grapheditor
 - Fixes padding, action states, renames straight to sharp in grapheditor
 - Moves style action to edit menu, editStyle, layers to view in grapheditor
-- Adds mxEvent.EDITING_STARTED in mxGraph.startEditingAtCell [JavaScript]
+- Adds mxEvent.EDITING_STOPPED event in mxGraph.stopEditing [JavaScript]
+- Adds mxEvent.EDITING_STARTED event in mxGraph.startEditingAtCell [JavaScript]
 - Ignores height for rotation raster in mxVertexHandler [JavaScript]
 - Removes dashed line style for guides in grapheditor
 - Fixes length of guides in mxGraphHandler [JavaScript]

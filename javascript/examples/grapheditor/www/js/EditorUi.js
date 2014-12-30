@@ -663,7 +663,12 @@ EditorUi.prototype.splitSize = (mxClient.IS_TOUCH || mxClient.IS_POINTER) ? 12 :
 EditorUi.prototype.menubarHeight = 30;
 
 /**
- * Specifies the width of the format sidebar. Default is 240.
+ * Specifies the width of the format panel should be enabled. Default is true.
+ */
+EditorUi.prototype.formatEnabled = true;
+
+/**
+ * Specifies the width of the format panel. Default is 240.
  */
 EditorUi.prototype.formatWidth = 240;
 
@@ -1423,7 +1428,7 @@ EditorUi.prototype.updateActionStates = function()
 	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'delete', 'duplicate',
 	               'editStyle', 'editTooltip', 'editLink', 'backgroundColor', 'borderColor',
 	               'toFront', 'toBack', 'lockUnlock', 'editData', 'plain', 'dashed',
-	               'dotted', 'fillColor', 'image', 'shadow', 'fontColor', 'formattedText',
+	               'dotted', 'fillColor', 'shadow', 'fontColor', 'formattedText',
 	               'rounded', 'sharp', 'strokeColor'];
 	
 	for (var i = 0; i < actions.length; i++)
@@ -1542,13 +1547,16 @@ EditorUi.prototype.refresh = function()
 		this.sidebarFooterContainer.style.bottom = bottom + 'px';
 	}
 	
+	var fw = (this.formatEnabled) ? this.formatWidth : 0;
 	this.sidebarContainer.style.top = tmp + 'px';
 	this.sidebarContainer.style.width = effHsplitPosition + 'px';
 	this.formatContainer.style.top = tmp + 'px';
-	this.formatContainer.style.width = this.formatWidth + 'px';
+	this.formatContainer.style.width = fw + 'px';
+	this.formatContainer.style.display = (this.formatEnabled) ? '' : 'none';
 	
 	this.diagramContainer.style.left = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) + 'px' : '0px';
 	this.diagramContainer.style.top = this.sidebarContainer.style.top;
+	this.diagramContainer.style.right = fw + 'px';
 	this.footerContainer.style.height = this.footerHeight + 'px';
 	this.hsplit.style.top = this.sidebarContainer.style.top;
 	this.hsplit.style.bottom = (this.footerHeight + off) + 'px';
@@ -1561,7 +1569,7 @@ EditorUi.prototype.refresh = function()
 		var sidebarHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
 		this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
 		this.formatContainer.style.height = sidebarHeight + 'px';
-		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize - this.formatWidth) + 'px' : w + 'px';
+		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize - fw) + 'px' : w + 'px';
 		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
 		this.diagramContainer.style.height = diagramHeight + 'px';
 		this.footerContainer.style.width = this.menubarContainer.style.width;
@@ -1603,7 +1611,7 @@ EditorUi.prototype.createDivs = function()
 	this.toolbarContainer.style.right = '0px';
 	this.sidebarContainer.style.left = '0px';
 	this.formatContainer.style.right = '0px';
-	this.diagramContainer.style.right = this.formatWidth + 'px';
+	this.diagramContainer.style.right = ((this.formatEnabled) ? this.formatWidth : 0) + 'px';
 	this.footerContainer.style.left = '0px';
 	this.footerContainer.style.right = '0px';
 	this.footerContainer.style.bottom = '0px';
@@ -1681,7 +1689,7 @@ EditorUi.prototype.createUi = function()
 	}
 	
 	// Creates the format sidebar
-	this.format = (this.editor.chromeless) ? null : this.createFormat(this.formatContainer);
+	this.format = (this.editor.chromeless || !this.formatEnabled) ? null : this.createFormat(this.formatContainer);
 	
 	if (this.format != null)
 	{
@@ -1886,6 +1894,26 @@ EditorUi.prototype.hideDialog = function(cancel)
 		
 		this.editor.fireEvent(new mxEventObject('hideDialog'));
 	}
+};
+
+/**
+ * Display a color dialog.
+ */
+EditorUi.prototype.pickColor = function(color, apply)
+{
+	var graph = this.editor.graph;
+	var selState = graph.cellEditor.saveSelection();
+	
+	var dlg = new ColorDialog(this, color || 'none', function(color)
+	{
+		graph.cellEditor.restoreSelection(selState);
+		apply(color);
+	}, function()
+	{
+		graph.cellEditor.restoreSelection(selState);
+	});
+	this.showDialog(dlg.container, 220, 400, true, false);
+	dlg.init();
 };
 
 /**
@@ -2116,7 +2144,7 @@ EditorUi.prototype.executeLayout = function(exec, animate, post)
 /**
  * Hides the current menu.
  */
-EditorUi.prototype.showImageDialog = function(title, value, fn)
+EditorUi.prototype.showImageDialog = function(title, value, fn, ignoreExisting)
 {
 	var cellEditor = this.editor.graph.cellEditor;
 	var selState = cellEditor.saveSelection();
@@ -2328,6 +2356,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(76, true, 'layers', true); // Ctrl+Shift+L
 	keyHandler.bindAction(79, true, 'outline', true); // Ctrl+Shift+O
 	keyHandler.bindAction(80, true, 'print'); // Ctrl+P
+	keyHandler.bindAction(80, true, 'formatPanel', true); // Ctrl+Shift+P
 	keyHandler.bindAction(85, true, 'ungroup'); // Ctrl+U
 	keyHandler.bindAction(112, false, 'about'); // F1
 	keyHandler.bindKey(113, function() { graph.startEditingAtCell(); }); // F2

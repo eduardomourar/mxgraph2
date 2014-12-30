@@ -549,6 +549,10 @@
  * <code>cell</code> property contains the cell that is being edited and the
  * <code>event</code> property contains the optional event argument that was
  * passed to <startEditingAtCell>.
+ * 
+ * Event: mxEvent.EDITING_STOPPED
+ *
+ * Fires after the in-place editor stops in <stopEditing>.
  *
  * Event: mxEvent.LABEL_CHANGED
  *
@@ -2348,7 +2352,8 @@ mxGraph.prototype.startEditing = function(evt)
  * Function: startEditingAtCell
  * 
  * Fires a <startEditing> event and invokes <mxCellEditor.startEditing>
- * on <editor>.
+ * on <editor>. After editing was started, a <editingStarted> event is
+ * fired.
  * 
  * Parameters:
  * 
@@ -2401,7 +2406,7 @@ mxGraph.prototype.getEditingValue = function(cell, evt)
 /**
  * Function: stopEditing
  * 
- * Stops the current editing.
+ * Stops the current editing  and fires a <editingStopped> event.
  * 
  * Parameters:
  * 
@@ -2411,6 +2416,7 @@ mxGraph.prototype.getEditingValue = function(cell, evt)
 mxGraph.prototype.stopEditing = function(cancel)
 {
 	this.cellEditor.stopEditing(cancel);
+	this.fireEvent(new mxEventObject(mxEvent.EDITING_STOPPED, 'cancel', cancel));
 };
 
 /**

@@ -113,9 +113,12 @@ Menus.prototype.init = function()
 		{
 			this.styleChange(menu, fontsize, [mxConstants.STYLE_FONTSIZE], [fontsize], null, parent, function()
 			{
+				// Creates an element with arbitrary size 3
 				document.execCommand('fontSize', false, '3');
 				
 				// Changes the css font size of the first font element inside the in-place editor with size 3
+				// hopefully the above element that we've just created. LATER: Check for new element using
+				// previous result of getElementsByTagName (see other actions)
 				var elts = graph.cellEditor.text2.getElementsByTagName('font');
 				
 				for (var i = 0; i < elts.length; i++)
@@ -447,8 +450,7 @@ Menus.prototype.init = function()
 
 	this.put('view', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		this.addMenuItems(menu, ['outline'], parent);
-		this.addMenuItems(menu, ['layers'], parent);
+		this.addMenuItems(menu, ['outline', 'layers'].concat((this.editorUi.formatEnabled) ? ['formatPanel'] : []), parent);
 		menu.addSeparator();
 		var scales = [0.25, 0.5, 0.75, 1, 1.5, 2, 4];
 		
