@@ -476,8 +476,9 @@ BaseFormatPanel.prototype.getSelectionState = function()
 /**
  * Install input handler.
  */
-BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValue, min, max, textEditFallback)
+BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValue, min, max, unit, textEditFallback)
 {
+	unit = (unit != null) ? unit : '';
 	var ui = this.editorUi;
 	var graph = ui.editor.graph;
 	
@@ -487,9 +488,16 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 	var selState = null;
 	var updating = false;
 	
-	function update(evt)
+	var update = mxUtils.bind(this, function(evt)
 	{
 		var value = parseInt(input.value);
+		
+		// Special case: angle mod 360
+		if (!isNaN(value) && key == mxConstants.STYLE_ROTATION)
+		{
+			value = mxUtils.mod(value, 360);
+		}
+		
 		value = Math.min(max, Math.max(min, (isNaN(value)) ? defaultValue : value));
 		
 		if (graph.cellEditor.isContentEditing() && textEditFallback)
@@ -505,13 +513,13 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 				}
 				
 				textEditFallback(value);
-				input.value = value;
+				input.value = value + unit;
 	
 				// Restore focus and selection in input
 				updating = false;
 			}
 		}
-		else if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, defaultValue))
+		else if (value != mxUtils.getValue(this.format.getSelectionState().style, key, defaultValue))
 		{
 			if (graph.isEditing())
 			{
@@ -521,11 +529,11 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 			graph.setCellStyles(key, value, graph.getSelectionCells());
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [key],
 					'values', [value], 'cells', graph.getSelectionCells()));
-			input.value = value;
 		}
 		
+		input.value = value + unit;
 		mxEvent.consume(evt);
-	};
+	});
 
 	if (graph.cellEditor.isContentEditing() && textEditFallback)
 	{
@@ -533,18 +541,12 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 		{
 			selState = graph.cellEditor.saveSelection();
 		});
-		
-		mxEvent.addListener(input, 'change', function(evt)
-		{
-			update(evt);
-		});
-	}
-	else
-	{
-		mxEvent.addListener(input, 'click', update);
 	}
 	
+	mxEvent.addListener(input, 'change', update);
 	mxEvent.addListener(input, 'blur', update);
+	
+	return update;
 };
 
 /**
@@ -573,6 +575,65 @@ BaseFormatPanel.prototype.createTitle = function(title)
 	mxUtils.write(div, title);
 	
 	return div;
+};
+
+/**
+ * 
+ */
+BaseFormatPanel.prototype.createStepper = function(input, update, step, height)
+{
+	step = (step != null) ? step : 1;
+	height = (height != null) ? height : 8;
+	
+	if (mxClient.IS_QUIRKS)
+	{
+		height = height - 2;
+	}
+	else if (mxClient.IS_MT || document.documentMode >= 8)
+	{
+		height = height + 1;
+	} 
+	
+	var stepper = document.createElement('div');
+	mxUtils.setPrefixedStyle(stepper.style, 'borderRadius', '3px');
+	stepper.style.border = '1px solid rgb(192, 192, 192)';
+	stepper.style.position = 'absolute';
+	
+	var up = document.createElement('div');
+	up.style.borderBottom = '1px solid rgb(192, 192, 192)';
+	up.style.position = 'relative';
+	up.style.height = height + 'px';
+	up.style.width = '10px';
+	up.className = 'geBtnUp';
+	stepper.appendChild(up);
+	
+	var down = up.cloneNode(false);
+	down.style.border = 'none';
+	down.style.height = height + 'px';
+	down.className = 'geBtnDown';
+	stepper.appendChild(down);
+
+	mxEvent.addListener(down, 'click', function(evt)
+	{
+		input.value = (parseInt(input.value) - step);
+		
+		if (update != null)
+		{
+			update(evt);
+		}
+	});
+	
+	mxEvent.addListener(up, 'click', function(evt)
+	{
+		input.value = (parseInt(input.value) + step);
+		
+		if (update != null)
+		{
+			update(evt);
+		}
+	});
+	
+	return stepper;
 };
 
 /**
@@ -931,29 +992,23 @@ BaseFormatPanel.prototype.addArrow = function(elt, height)
 /**
  * 
  */
-BaseFormatPanel.prototype.addUnitInput = function(container, unit, right, width)
+BaseFormatPanel.prototype.addUnitInput = function(container, unit, right, width, update, step, marginTop)
 {
+	marginTop = (marginTop != null) ? marginTop : 0;
+	
 	var input = document.createElement('input');
 	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
-	input.style.paddingRight = (mxClient.IS_IOS) ? '14px' : '12px';
 	input.style.marginTop = '-2px';
-	input.style.right = right + 'px';
+	input.style.right = (right + 12) + 'px';
 	input.style.width = width + 'px';
-
 	container.appendChild(input);
 	
-	var span = document.createElement('span');
-	span.style.position = 'absolute';
-	span.style.fontWeight = 'normal';
-	span.style.fontSize = '11px';
-	span.style.fontColor = '#000';
-	span.style.marginTop = '2px';
-	span.style.right = (right + ((mxClient.IS_SF && !mxClient.IS_IOS) ? 11 : 0) + 4) + 'px';
-	mxUtils.write(span, unit);
-	
-	container.appendChild(span);
-	
+	var stepper = this.createStepper(input, update, step);
+	stepper.style.marginTop = (marginTop - 2) + 'px';
+	stepper.style.right = right + 'px';
+	container.appendChild(stepper);
+
 	return input;
 };
 
@@ -967,23 +1022,37 @@ BaseFormatPanel.prototype.createRelativeOption = function(label, key)
 	mxUtils.write(div, label);
 	div.style.fontWeight = 'bold';
 	
-	var input = this.addUnitInput(div, '%', 20, 40);
-	
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	function update(evt)
 	{
-		input.setAttribute('type', 'number');
-		input.setAttribute('min', '0');
-		input.setAttribute('max', '100');
-		input.setAttribute('step', '10');
-	}
+		var value = parseInt(input.value);
+		value = Math.min(100, Math.max(0, (isNaN(value)) ? 100 : value));
+		
+		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, 100))
+		{
+			// Removes entry in style (assumes 100 is default for relative values)
+			if (value == 100)
+			{
+				value = null;
+			}
+			
+			graph.setCellStyles(key, value, graph.getSelectionCells());
+		}
 
-	var listener = function(sender, evt, force)
+		input.value = ((value != null) ? value : '100') + ' %';
+		mxEvent.consume(evt);
+	};
+
+	var input = this.addUnitInput(div, '%', 20, 40, update, 10, -15);
+
+	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
 		if (force || input != document.activeElement)
 		{
-			input.value = mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, 100);
+			var ss = this.format.getSelectionState();
+			var tmp = parseInt(mxUtils.getValue(ss.style, key, 100));
+			input.value = (isNaN(tmp)) ? '' : tmp + ' %';
 		}
-	};
+	});
 	
 	mxEvent.addListener(input, 'keydown', function(e)
 	{
@@ -1003,29 +1072,9 @@ BaseFormatPanel.prototype.createRelativeOption = function(label, key)
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
 	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
 	listener();
-	
-	function update(evt)
-	{
-		var value = parseInt(input.value);
-		value = Math.min(100, Math.max(0, (isNaN(value)) ? 100 : value));
-		
-		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, 100))
-		{
-			// Removes entry in style (assumes 100 is default for relative values)
-			if (value == 100)
-			{
-				value = null;
-			}
-			
-			graph.setCellStyles(key, value, graph.getSelectionCells());
-			input.value = (value != null) ? value : '100';
-		}
-		
-		mxEvent.consume(evt);
-	};
 
 	mxEvent.addListener(input, 'blur', update);
-	mxEvent.addListener(input, 'click', update);
+	mxEvent.addListener(input, 'change', update);
 
 	return div;
 };
@@ -1130,7 +1179,7 @@ ArrangePanel.prototype.init = function()
 	this.container.appendChild(this.addLayerOps(this.createPanel()));
 	// Special case that adds two panels
 	this.addGeometry(this.container);
-	this.container.appendChild(this.addRotation(this.createPanel()));
+	this.container.appendChild(this.addAngle(this.createPanel()));
 	
 	if (!ss.containsLabel)
 	{
@@ -1355,13 +1404,12 @@ ArrangePanel.prototype.addDistribute = function(div)
 /**
  * 
  */
-ArrangePanel.prototype.addRotation = function(div)
+ArrangePanel.prototype.addAngle = function(div)
 {
 	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
 	var ss = this.format.getSelectionState();
-	var state = graph.view.getState(graph.getSelectionCell());
 
 	div.style.paddingBottom = '28px';
 	
@@ -1373,15 +1421,12 @@ ArrangePanel.prototype.addRotation = function(div)
 	mxUtils.write(span, mxResources.get('angle'));
 	div.appendChild(span);
 	
-	var input = this.addUnitInput(div, '°', 84, 48);
-	input.style.paddingRight = '8px';
-
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	var update = null;
+	var input = this.addUnitInput(div, '°', 84, 44, function()
 	{
-		input.setAttribute('type', 'number');
-		input.setAttribute('min', '0');
-	}
-	
+		update.apply(this, arguments);
+	});
+
 	if (!ss.containsLabel)
 	{
 		var btn = mxUtils.button(mxResources.get('turn'), function(evt)
@@ -1399,18 +1444,15 @@ ArrangePanel.prototype.addRotation = function(div)
 
 	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
-		state = graph.view.getState(graph.getSelectionCell());
-		
-		if (state != null)
+		if (force || document.activeElement != input)
 		{
-			if (force || document.activeElement != input)
-			{
-				input.value = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION, 0);
-			}
+			ss = this.format.getSelectionState();
+			var tmp = parseFloat(mxUtils.getValue(ss.style, mxConstants.STYLE_ROTATION, 0));
+			input.value = (isNaN(tmp)) ? '' : tmp  + '°';
 		}
 	});
 
-	this.installInputHandler(input, mxConstants.STYLE_ROTATION, 0, 0, 360);
+	update = this.installInputHandler(input, mxConstants.STYLE_ROTATION, 0, 0, 360, '°');
 	this.addKeyHandler(input, listener);
 
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
@@ -1440,17 +1482,16 @@ ArrangePanel.prototype.addGeometry = function(container)
 	mxUtils.write(span, mxResources.get('size'));
 	div.appendChild(span);
 	
-	var width = this.addUnitInput(div, 'pt', 84, 44);
-	var height = this.addUnitInput(div, 'pt', 20, 44);
-	
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	var widthUpdate, heightUpdate, leftUpdate, topUpdate;
+	var width = this.addUnitInput(div, 'pt', 84, 44, function()
 	{
-		width.setAttribute('type', 'number');
-		width.setAttribute('min', '1');
-		height.setAttribute('type', 'number');
-		height.setAttribute('min', '1');
-	}
-		
+		widthUpdate.apply(this, arguments);
+	});
+	var height = this.addUnitInput(div, 'pt', 20, 44, function()
+	{
+		heightUpdate.apply(this, arguments);
+	});
+
 	mxUtils.br(div);
 	this.addLabel(div, mxResources.get('width'), 84);
 	this.addLabel(div, mxResources.get('height'), 20);
@@ -1470,14 +1511,14 @@ ArrangePanel.prototype.addGeometry = function(container)
 	this.addKeyHandler(width, listener);
 	this.addKeyHandler(height, listener);
 
-	this.addGeometryHandler(width, function(geo, value)
+	widthUpdate = this.addGeometryHandler(width, function(geo, value)
 	{
 		if (geo.width > 0)
 		{
 			geo.width = Math.max(1, value);
 		}
 	});
-	this.addGeometryHandler(height, function(geo, value)
+	heightUpdate = this.addGeometryHandler(height, function(geo, value)
 	{
 		if (geo.height > 0)
 		{
@@ -1498,15 +1539,15 @@ ArrangePanel.prototype.addGeometry = function(container)
 	mxUtils.write(span, mxResources.get('position'));
 	div2.appendChild(span);
 	
-	var left = this.addUnitInput(div2, 'pt', 84, 44);
-	var top = this.addUnitInput(div2, 'pt', 20, 44);
-	
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	var left = this.addUnitInput(div2, 'pt', 84, 44, function()
 	{
-		left.setAttribute('type', 'number');
-		top.setAttribute('type', 'number');
-	}
-	
+		leftUpdate.apply(this, arguments);
+	});
+	var top = this.addUnitInput(div2, 'pt', 20, 44, function()
+	{
+		topUpdate.apply(this, arguments);
+	});
+
 	mxUtils.br(div2);
 	this.addLabel(div2, mxResources.get('left'), 84);
 	this.addLabel(div2, mxResources.get('top'), 20);
@@ -1522,12 +1563,12 @@ ArrangePanel.prototype.addGeometry = function(container)
 			
 			if (force || document.activeElement != width)
 			{
-				width.value = rect.width;
+				width.value = rect.width + ((rect.width == '') ? '' : ' pt');
 			}
 			
 			if (force || document.activeElement != height)
 			{
-				height.value = rect.height;
+				height.value = rect.height + ((rect.height == '') ? '' : ' pt');
 			}
 		}
 		else
@@ -1542,12 +1583,12 @@ ArrangePanel.prototype.addGeometry = function(container)
 			
 			if (force || document.activeElement != left)
 			{
-				left.value = rect.x;
+				left.value = rect.x  + ((rect.x == '') ? '' : ' pt');
 			}
 			
 			if (force || document.activeElement != top)
 			{
-				top.value = rect.y;
+				top.value = rect.y + ((rect.y == '') ? '' : ' pt');
 			}
 		}
 		else
@@ -1563,7 +1604,7 @@ ArrangePanel.prototype.addGeometry = function(container)
 	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
 	listener();
 	
-	this.addGeometryHandler(left, function(geo, value)
+	leftUpdate = this.addGeometryHandler(left, function(geo, value)
 	{
 		if (geo.relative)
 		{
@@ -1574,7 +1615,7 @@ ArrangePanel.prototype.addGeometry = function(container)
 			geo.x = value;
 		}
 	});
-	this.addGeometryHandler(top, function(geo, value)
+	topUpdate = this.addGeometryHandler(top, function(geo, value)
 	{
 		if (geo.relative)
 		{
@@ -1633,11 +1674,11 @@ ArrangePanel.prototype.addGeometryHandler = function(input, fn)
 				}
 				
 				initialValue = value;
-				input.value = value;
+				input.value = value + ' pt';
 			}
 			else if (isNaN(value)) 
 			{
-				input.value = initialValue;
+				input.value = initialValue + ' pt';
 			}
 		}
 		
@@ -1649,7 +1690,9 @@ ArrangePanel.prototype.addGeometryHandler = function(input, fn)
 		initialValue = input.value;
 	});
 	mxEvent.addListener(input, 'blur', update);
-	mxEvent.addListener(input, 'click', update);
+	mxEvent.addListener(input, 'change', update);
+	
+	return update;
 };
 
 /**
@@ -1913,46 +1956,18 @@ TextFormatPanel.prototype.addFont = function(container)
 		});
 	}
 
-	// Stroke width
+	// Font size
 	var input = document.createElement('input');
-
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
-	{
-		input.setAttribute('type', 'number');
-		input.setAttribute('min', '1');
-	}
-	
 	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
-	input.style.paddingRight = '12px';
 	input.style.marginTop = '4px';
-	input.style.right = '20px';
+	input.style.right = '32px';
 	input.style.width = '47px';
 	input.style.height = '17px';
-
 	stylePanel2.appendChild(input);
-	
-	var unit = document.createElement('span');
-	unit.style.position = 'absolute';
-	unit.style.fontWeight = 'normal';
-	unit.style.fontSize = '11px';
-	unit.style.fontColor = '#000';
-	unit.style.right = (mxClient.IS_SF && !mxClient.IS_IOS) ? '35px': '24px';
-	mxUtils.write(unit, 'pt');
-	stylePanel2.appendChild(unit);
 
-	if (mxClient.IS_MT)
-	{
-		mxUtils.setPrefixedStyle(input.style, 'boxSizing', 'padding-box');
-		input.style.width = '52px';
-		unit.style.marginTop = '8px';
-	}
-	else
-	{
-		unit.style.marginTop = '10px';		
-	}
-	
-	this.installInputHandler(input, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize, 1, 999, function(fontsize)
+	var inputUpdate = this.installInputHandler(input, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize, 1, 999, ' pt',
+	function(fontsize)
 	{
 		// Creates an element with arbitrary size 3
 		document.execCommand('fontSize', false, '3');
@@ -1973,7 +1988,13 @@ TextFormatPanel.prototype.addFont = function(container)
 			}
 		}
 	});
-
+	
+	var stepper = this.createStepper(input, inputUpdate, 1, 10);
+	stepper.style.display = input.style.display;
+	stepper.style.marginTop = '4px';
+	stepper.style.right = '20px';
+	stylePanel2.appendChild(stepper);
+	
 	var arrow = fontMenu.getElementsByTagName('div')[0];
 	arrow.style.cssFloat = 'right';
 	
@@ -2074,8 +2095,15 @@ TextFormatPanel.prototype.addFont = function(container)
 	mxUtils.write(span, mxResources.get('spacing'));
 	spacingPanel.appendChild(span);
 
-	var topSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44);
-	var globalSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44);
+	var topUpdate, globalUpdate, leftUpdate, bottomUpdate, rightUpdate;
+	var topSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44, function()
+	{
+		topUpdate.apply(this, arguments);
+	});
+	var globalSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44, function()
+	{
+		globalUpdate.apply(this, arguments);
+	});
 
 	mxUtils.br(spacingPanel);
 	this.addLabel(spacingPanel, mxResources.get('top'), 91);
@@ -2083,24 +2111,19 @@ TextFormatPanel.prototype.addFont = function(container)
 	mxUtils.br(spacingPanel);
 	mxUtils.br(spacingPanel);
 
-	var leftSpacing = this.addUnitInput(spacingPanel, 'pt', 162, 44);
-	var bottomSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44);
-	var rightSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44);
-	
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	var leftSpacing = this.addUnitInput(spacingPanel, 'pt', 162, 44, function()
 	{
-		globalSpacing.setAttribute('type', 'number');
-		globalSpacing.setAttribute('min', '0');
-		topSpacing.setAttribute('type', 'number');
-		topSpacing.setAttribute('min', '0');
-		bottomSpacing.setAttribute('type', 'number');
-		bottomSpacing.setAttribute('min', '0');
-		leftSpacing.setAttribute('type', 'number');
-		leftSpacing.setAttribute('min', '0');
-		rightSpacing.setAttribute('type', 'number');
-		rightSpacing.setAttribute('min', '0');
-	}
-	
+		leftUpdate.apply(this, arguments);
+	});
+	var bottomSpacing = this.addUnitInput(spacingPanel, 'pt', 91, 44, function()
+	{
+		bottomUpdate.apply(this, arguments);
+	});
+	var rightSpacing = this.addUnitInput(spacingPanel, 'pt', 20, 44, function()
+	{
+		rightUpdate.apply(this, arguments);
+	});
+
 	mxUtils.br(spacingPanel);
 	this.addLabel(spacingPanel, mxResources.get('left'), 162);
 	this.addLabel(spacingPanel, mxResources.get('bottom'), 91);
@@ -2339,7 +2362,8 @@ TextFormatPanel.prototype.addFont = function(container)
 		
 		if (force || document.activeElement != input)
 		{
-			input.value = parseInt(mxUtils.getValue(ss.style, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize));
+			var tmp = parseFloat(mxUtils.getValue(ss.style, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize));
+			input.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 		
 		var align = mxUtils.getValue(ss.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER);
@@ -2378,35 +2402,40 @@ TextFormatPanel.prototype.addFont = function(container)
 		
 		if (force || document.activeElement != globalSpacing)
 		{
-			globalSpacing.value = mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING, '2');
+			var tmp = parseFloat(mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING, 2));
+			globalSpacing.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 
 		if (force || document.activeElement != topSpacing)
 		{
-			topSpacing.value = mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING_TOP, '0');
+			var tmp = parseFloat(mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING_TOP, 0));
+			topSpacing.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 		
 		if (force || document.activeElement != rightSpacing)
 		{
-			rightSpacing.value = mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING_RIGHT, '0');
+			var tmp = parseFloat(mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING_RIGHT, 0));
+			rightSpacing.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 		
 		if (force || document.activeElement != bottomSpacing)
 		{
-			bottomSpacing.value = mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING_BOTTOM, '0');
+			var tmp = parseFloat(mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING_BOTTOM, 0));
+			bottomSpacing.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 		
 		if (force || document.activeElement != leftSpacing)
 		{
-			leftSpacing.value = mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING_LEFT, '0');
+			var tmp = parseFloat(mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING_LEFT, 0));
+			leftSpacing.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 	});
 
-	this.installInputHandler(globalSpacing, mxConstants.STYLE_SPACING, 2, 0, 999);
-	this.installInputHandler(topSpacing, mxConstants.STYLE_SPACING_TOP, 0, 0, 999);
-	this.installInputHandler(rightSpacing, mxConstants.STYLE_SPACING_RIGHT, 0, 0, 999);
-	this.installInputHandler(bottomSpacing, mxConstants.STYLE_SPACING_BOTTOM, 0, 0, 999);
-	this.installInputHandler(leftSpacing, mxConstants.STYLE_SPACING_LEFT, 0, 0, 999);
+	globalUpdate = this.installInputHandler(globalSpacing, mxConstants.STYLE_SPACING, 2, 0, 999, ' pt');
+	topUpdate = this.installInputHandler(topSpacing, mxConstants.STYLE_SPACING_TOP, 0, 0, 999, ' pt');
+	rightUpdate = this.installInputHandler(rightSpacing, mxConstants.STYLE_SPACING_RIGHT, 0, 0, 999, ' pt');
+	bottomUpdate = this.installInputHandler(bottomSpacing, mxConstants.STYLE_SPACING_BOTTOM, 0, 0, 999, ' pt');
+	leftUpdate = this.installInputHandler(leftSpacing, mxConstants.STYLE_SPACING_LEFT, 0, 0, 999, ' pt');
 
 	this.addKeyHandler(input, listener);
 	this.addKeyHandler(globalSpacing, listener);
@@ -2460,7 +2489,7 @@ TextFormatPanel.prototype.addFont = function(container)
 						
 						if (document.activeElement != input)
 						{
-							input.value = parseInt(css.fontSize);
+							input.value = parseInt(css.fontSize) + ' pt';
 						}
 						
 						// Converts rgb(r,g,b) values
@@ -2503,8 +2532,6 @@ TextFormatPanel.prototype.addFont = function(container)
 							
 							bgColorApply(currentBgColor);
 						}
-						
-						console.log('colors', color, color2);
 						
 						// Strips leading and trailing quotes
 						var ff = css.fontFamily;
@@ -2782,43 +2809,13 @@ StyleFormatPanel.prototype.addStroke = function(container)
 
 	// Stroke width
 	var input = document.createElement('input');
-
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
-	{
-		input.setAttribute('type', 'number');
-		input.setAttribute('min', '1');
-	}
-	
 	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
-	input.style.paddingRight = '12px';
 	input.style.marginTop = '2px';
-	input.style.right = '20px';
+	input.style.right = '32px';
 	input.style.width = '41px';
 	input.style.height = '15px';
-
 	stylePanel.appendChild(input);
-	
-	var unit = document.createElement('span');
-	unit.style.position = 'absolute';
-	unit.style.fontWeight = 'normal';
-	unit.style.fontSize = '11px';
-	unit.style.fontColor = '#000';
-	unit.style.right = (mxClient.IS_SF && !mxClient.IS_IOS) ? '37px': '26px';
-	unit.style.marginTop = '7px';
-	mxUtils.write(unit, 'pt');
-	stylePanel.appendChild(unit);
-	
-	if (mxClient.IS_MT)
-	{
-		mxUtils.setPrefixedStyle(input.style, 'boxSizing', 'padding-box');
-		input.style.width = '52px';
-		unit.style.marginTop = '5px';
-	}
-	else
-	{
-		unit.style.marginTop = '7px';		
-	}
 
 	var strokeKey = (ss.style.shape == 'image') ? mxConstants.STYLE_IMAGE_BORDER : mxConstants.STYLE_STROKECOLOR;
 	
@@ -2832,20 +2829,25 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		var value = parseInt(input.value);
 		value = Math.min(999, Math.max(1, (isNaN(value)) ? 1 : value));
 		
-		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style,
-			mxConstants.STYLE_STROKEWIDTH, 1))
+		if (value != mxUtils.getValue(ss.style, mxConstants.STYLE_STROKEWIDTH, 1))
 		{
 			graph.setCellStyles(mxConstants.STYLE_STROKEWIDTH, value, graph.getSelectionCells());
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_STROKEWIDTH],
 					'values', [value], 'cells', graph.getSelectionCells()));
-			input.value = value;
 		}
-		
+
+		input.value = value + ' pt';
 		mxEvent.consume(evt);
 	};
 
+	var stepper = this.createStepper(input, update, 1, 9);
+	stepper.style.display = input.style.display;
+	stepper.style.marginTop = '2px';
+	stepper.style.right = '20px';
+	stylePanel.appendChild(stepper);
+	
 	mxEvent.addListener(input, 'blur', update);
-	mxEvent.addListener(input, 'click', update);
+	mxEvent.addListener(input, 'change', update);
 	
 	var pattern = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel, 'geSprite-orthogonal', mxResources.get('line'), false, mxUtils.bind(this, function(menu)
 	{
@@ -2954,8 +2956,15 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	mxUtils.write(span, mxResources.get('linestart'));
 	arrowPanel.appendChild(span);
 	
-	var startSpacing = this.addUnitInput(arrowPanel, 'pt', 74, 33);
-	var startSize = this.addUnitInput(arrowPanel, 'pt', 20, 33);
+	var startSpacingUpdate, startSizeUpdate;
+	var startSpacing = this.addUnitInput(arrowPanel, 'pt', 74, 33, function()
+	{
+		startSpacingUpdate.apply(this, arguments);
+	});
+	var startSize = this.addUnitInput(arrowPanel, 'pt', 20, 33, function()
+	{
+		startSizeUpdate.apply(this, arguments);
+	});
 
 	mxUtils.br(arrowPanel);
 	
@@ -2967,8 +2976,15 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	mxUtils.write(span, mxResources.get('lineend'));
 	arrowPanel.appendChild(span);
 	
-	var endSpacing = this.addUnitInput(arrowPanel, 'pt', 74, 33);
-	var endSize = this.addUnitInput(arrowPanel, 'pt', 20, 33);
+	var endSpacingUpdate, endSizeUpdate;
+	var endSpacing = this.addUnitInput(arrowPanel, 'pt', 74, 33, function()
+	{
+		endSpacingUpdate.apply(this, arguments);
+	});
+	var endSize = this.addUnitInput(arrowPanel, 'pt', 20, 33, function()
+	{
+		endSizeUpdate.apply(this, arguments);
+	});
 
 	mxUtils.br(arrowPanel);
 	this.addLabel(arrowPanel, mxResources.get('spacing'), 74, 50);
@@ -2994,22 +3010,12 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	mxUtils.write(span, mxResources.get('perimeter'));
 	perimeterPanel.appendChild(span);
 	
-	var perimeterSpacing = this.addUnitInput(perimeterPanel, 'pt', 20, 41);
-
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
+	var perimeterUpdate;
+	var perimeterSpacing = this.addUnitInput(perimeterPanel, 'pt', 20, 41, function()
 	{
-		startSpacing.setAttribute('type', 'number');
-		startSpacing.setAttribute('min', '0');
-		startSize.setAttribute('type', 'number');
-		startSize.setAttribute('min', '0');
-		endSpacing.setAttribute('type', 'number');
-		endSpacing.setAttribute('min', '0');
-		endSize.setAttribute('type', 'number');
-		endSize.setAttribute('min', '0');
-		perimeterSpacing.setAttribute('type', 'number');
-		perimeterSpacing.setAttribute('min', '0');
-	}
-	
+		perimeterUpdate.apply(this, arguments);
+	});
+
 	if (ss.edges.length == graph.getSelectionCount())
 	{
 		container.appendChild(stylePanel2);
@@ -3039,7 +3045,8 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		
 		if (force || document.activeElement != input)
 		{
-			input.value = mxUtils.getValue(ss.style, mxConstants.STYLE_STROKEWIDTH, 1);
+			var tmp = parseInt(mxUtils.getValue(ss.style, mxConstants.STYLE_STROKEWIDTH, 1));
+			input.value = (isNaN(tmp)) ? '' : tmp + ' pt';
 		}
 		
 		styleSelect.style.visibility = (ss.style.shape == 'connector') ? '' : 'hidden';
@@ -3164,35 +3171,40 @@ StyleFormatPanel.prototype.addStroke = function(container)
 
 		if (force || document.activeElement != startSize)
 		{
-			startSize.value = mxUtils.getValue(ss.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_MARKERSIZE);
+			var tmp = parseInt(mxUtils.getValue(ss.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_MARKERSIZE));
+			startSize.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 		
 		if (force || document.activeElement != startSpacing)
 		{
-			startSpacing.value = mxUtils.getValue(ss.style, mxConstants.STYLE_SOURCE_PERIMETER_SPACING, '0');
+			var tmp = parseInt(mxUtils.getValue(ss.style, mxConstants.STYLE_SOURCE_PERIMETER_SPACING, 0));
+			startSpacing.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 
 		if (force || document.activeElement != endSize)
 		{
-			endSize.value = mxUtils.getValue(ss.style, mxConstants.STYLE_ENDSIZE, mxConstants.DEFAULT_MARKERSIZE);
+			var tmp = parseInt(mxUtils.getValue(ss.style, mxConstants.STYLE_ENDSIZE, mxConstants.DEFAULT_MARKERSIZE));
+			endSize.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 		
 		if (force || document.activeElement != startSpacing)
 		{
-			endSpacing.value = mxUtils.getValue(ss.style, mxConstants.STYLE_TARGET_PERIMETER_SPACING, '0');
+			var tmp = parseInt(mxUtils.getValue(ss.style, mxConstants.STYLE_TARGET_PERIMETER_SPACING, 0));
+			endSpacing.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 		
 		if (force || document.activeElement != perimeterSpacing)
 		{
-			perimeterSpacing.value = mxUtils.getValue(ss.style, mxConstants.STYLE_PERIMETER_SPACING, '0');
+			var tmp = parseInt(mxUtils.getValue(ss.style, mxConstants.STYLE_PERIMETER_SPACING, 0));
+			perimeterSpacing.value = (isNaN(tmp)) ? '' : tmp  + ' pt';
 		}
 	});
 	
-	this.installInputHandler(startSize, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_MARKERSIZE, 0, 999);
-	this.installInputHandler(startSpacing, mxConstants.STYLE_SOURCE_PERIMETER_SPACING, 0, 0, 999);
-	this.installInputHandler(endSize, mxConstants.STYLE_ENDSIZE, mxConstants.DEFAULT_MARKERSIZE, 0, 999);
-	this.installInputHandler(endSpacing, mxConstants.STYLE_TARGET_PERIMETER_SPACING, 0, 0, 999);
-	this.installInputHandler(perimeterSpacing, mxConstants.STYLE_PERIMETER_SPACING, 0, 0, 999);
+	startSizeUpdate = this.installInputHandler(startSize, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_MARKERSIZE, 0, 999, ' pt');
+	startSpacingUpdate = this.installInputHandler(startSpacing, mxConstants.STYLE_SOURCE_PERIMETER_SPACING, 0, 0, 999, ' pt');
+	endSizeUpdate = this.installInputHandler(endSize, mxConstants.STYLE_ENDSIZE, mxConstants.DEFAULT_MARKERSIZE, 0, 999, ' pt');
+	endSpacingUpdate = this.installInputHandler(endSpacing, mxConstants.STYLE_TARGET_PERIMETER_SPACING, 0, 0, 999, ' pt');
+	perimeterUpdate = this.installInputHandler(perimeterSpacing, mxConstants.STYLE_PERIMETER_SPACING, 0, 0, 999, ' pt');
 
 	this.addKeyHandler(input, listener);
 	this.addKeyHandler(startSize, listener);
@@ -3430,19 +3442,11 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 	var input = document.createElement('input');
 	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
-	input.style.paddingRight = '12px';
-	input.style.marginTop = '4px';
-	input.style.right = '20px';
+	input.style.marginTop = '2px';
+	input.style.right = '32px';
 	input.style.width = '46px';
-	input.value = graph.getGridSize();
-	
-	if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 8))
-	{
-		input.setAttribute('type', 'number');
-		input.setAttribute('min', '0');
-		input.setAttribute('step', '5');
-	}
-	
+	input.value = graph.getGridSize() + ' pt';
+
 	mxEvent.addListener(input, 'keydown', function(e)
 	{
 		if (e.keyCode == 13)
@@ -3459,19 +3463,6 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 	});
 	
 	container.appendChild(input);
-	
-	var unit = document.createElement('span');
-	unit.style.position = 'absolute';
-	unit.style.fontWeight = 'normal';
-	unit.style.fontSize = '11px';
-	unit.style.fontColor = '#000';
-	unit.style.marginTop = (mxClient.IS_MT) ? '7px' :
-		(document.documentMode >= 11 || mxClient.IS_IE) ? '9px' : '8px';
-	unit.style.right = (mxClient.IS_SF && !mxClient.IS_IOS) ? '35px': '24px';
-	mxUtils.write(unit, 'pt');
-	
-	input.style.display = (graph.isGridEnabled()) ? '' : 'none';
-	unit.style.display = input.style.display;
 
 	function update(evt)
 	{
@@ -3481,16 +3472,21 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 		if (value != graph.getGridSize())
 		{
 			graph.setGridSize(value)
-			input.value = value;
 		}
-		
+
+		input.value = value + ' pt';
 		mxEvent.consume(evt);
 	};
 
 	mxEvent.addListener(input, 'blur', update);
-	mxEvent.addListener(input, 'click', update);
+	mxEvent.addListener(input, 'change', update);
 	
-	container.appendChild(unit);
+	var stepper = this.createStepper(input, update);
+	input.style.display = (graph.isGridEnabled()) ? '' : 'none';
+	stepper.style.display = input.style.display;
+	stepper.style.marginTop = '2px';
+	stepper.style.right = '20px';
+	container.appendChild(stepper);
 	
 	container.appendChild(this.createOption(mxResources.get('grid'), function()
 	{
@@ -3507,7 +3503,7 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 			this.listener = function()
 			{
 				input.style.display = (graph.isGridEnabled()) ? '' : 'none';
-				unit.style.display = input.style.display;
+				stepper.style.display = input.style.display;
 				
 				apply(graph.isGridEnabled());
 			};
