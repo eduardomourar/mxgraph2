@@ -527,7 +527,8 @@ mxPrintPreview.prototype.open = function(css)
 					// Workaround for ignored clipping in IE 9 standards when
 					// printing with page breaks and HTML labels. IE preview
 					// broken for both, slightly better HTML view with this.
-					if (doc.documentMode == 8 || doc.documentMode == 9 || doc.documentMode == 10)
+					// NOTE: 30/12/14 Removed IE9 to fix poster print offset.
+					if (doc.documentMode == 8 || doc.documentMode == 10)
 					{
 						div = this.renderPage(this.pageFormat.width, this.pageFormat.height, -dx, -dy, mxUtils.bind(this, function(div)
 						{

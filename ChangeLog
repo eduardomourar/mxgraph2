@@ -1,3 +1,4 @@
+- Fixes offset in mxPrintPreview for poster print in IE9 [JavaScript]
 - Adds Graph.pasteHtmlAtCaret, insertRow/-Column, deleteRow/-Colum in grapheditor
 - Adds Graph.getSelectedElement, getParentByName, selectNode in grapheditor
 - Fixes padding, action states, renames straight to sharp in grapheditor
@@ -8,7 +9,6 @@
 - Removes dashed line style for guides in grapheditor
 - Fixes length of guides in mxGraphHandler [JavaScript]
 - Fixes missing line-height CSS in inner DIV in mxText [JavaScript]
-- Fixes reset of scrollbars in IE8 standards on window resize [JavaScript]
 - Fixes ignored text opacity for quirks, NO_FO in mxText [JavaScript]
 - EditorUi.showImageDialog invokes callback with null [JavaScript]
 - Fixes rendering of image border in mxImageShape [JavaScript]
