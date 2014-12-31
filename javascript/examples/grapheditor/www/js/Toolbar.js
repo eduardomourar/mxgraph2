@@ -99,7 +99,7 @@ Toolbar.prototype.init = function()
 	this.addItems(['-', 'image', 'link', '-', 'strokeColor', 'fillColor']);
 	this.addItem('geSprite-gradientcolor', 'gradientColor').setAttribute('title', mxResources.get('gradient'));
 	this.addItems(['shadow']);
-	var items = this.addItems(['-', 'grid', 'guides'].concat((this.editorUi.formatEnabled) ? ['-', 'formatPanel'] : []));
+	var items = this.addItems(['-', 'grid', 'guides'].concat((this.editorUi.format != null) ? ['-', 'formatPanel'] : []));
 	
 	var ucolor = this.unselectedBackground;
 	var scolor = this.selectedBackground;

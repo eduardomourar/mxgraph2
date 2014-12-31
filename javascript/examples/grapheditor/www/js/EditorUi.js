@@ -1547,12 +1547,12 @@ EditorUi.prototype.refresh = function()
 		this.sidebarFooterContainer.style.bottom = bottom + 'px';
 	}
 	
-	var fw = (this.formatEnabled) ? this.formatWidth : 0;
+	var fw = (this.format != null) ? this.formatWidth : 0;
 	this.sidebarContainer.style.top = tmp + 'px';
 	this.sidebarContainer.style.width = effHsplitPosition + 'px';
 	this.formatContainer.style.top = tmp + 'px';
 	this.formatContainer.style.width = fw + 'px';
-	this.formatContainer.style.display = (this.formatEnabled) ? '' : 'none';
+	this.formatContainer.style.display = (this.format != null) ? '' : 'none';
 	
 	this.diagramContainer.style.left = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) + 'px' : '0px';
 	this.diagramContainer.style.top = this.sidebarContainer.style.top;
@@ -1611,7 +1611,7 @@ EditorUi.prototype.createDivs = function()
 	this.toolbarContainer.style.right = '0px';
 	this.sidebarContainer.style.left = '0px';
 	this.formatContainer.style.right = '0px';
-	this.diagramContainer.style.right = ((this.formatEnabled) ? this.formatWidth : 0) + 'px';
+	this.diagramContainer.style.right = ((this.format != null) ? this.formatWidth : 0) + 'px';
 	this.footerContainer.style.left = '0px';
 	this.footerContainer.style.right = '0px';
 	this.footerContainer.style.bottom = '0px';
