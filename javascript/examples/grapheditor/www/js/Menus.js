@@ -582,6 +582,7 @@ Menus.prototype.addInsertTableItem = function(menu)
 			}
 			
 			// Finding the new table will work with insertHTML, but IE does not support that
+			graph.container.focus();
 			graph.pasteHtmlAtCaret(createTable(row2.sectionRowIndex + 1, td.cellIndex + 1));
 			
 			// Moves cursor to first table cell
