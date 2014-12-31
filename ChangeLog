@@ -1,4 +1,4 @@
-- Fixes offset in mxPrintPreview for poster print in IE9 [JavaScript]
+- Fixes offset in mxPrintPreview for poster print in IE8-10 [JavaScript]
 - Adds Graph.pasteHtmlAtCaret, insertRow/-Column, deleteRow/-Colum in grapheditor
 - Adds Graph.getSelectedElement, getParentByName, selectNode in grapheditor
 - Fixes padding, action states, renames straight to sharp in grapheditor
