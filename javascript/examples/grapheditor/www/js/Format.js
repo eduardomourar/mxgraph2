@@ -3623,7 +3623,7 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 
 		// Offline check not needed since math is only available in online mode
 		var link = document.createElement('a');
-		link.setAttribute('href', 'https://support.draw.io/questions/2949135/how-do-i-use-mathematical-typesetting');
+		link.setAttribute('href', 'https://support.draw.io/questions/2949135/how-to-use-mathematical-typesetting');
 		link.setAttribute('title', mxResources.get('help'));
 		link.setAttribute('target', '_blank');
 		link.style.cssText = 'color:blue;text-decoration:underline;position:absolute;right:20px;';
