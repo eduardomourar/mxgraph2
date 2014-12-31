@@ -1671,15 +1671,6 @@ EditorUi.prototype.createUi = function()
 		this.container.appendChild(this.menubarContainer);
 	}
 
-	// Creates toolbar
-	this.toolbar = (this.editor.chromeless) ? null : this.createToolbar(this.createDiv('geToolbar'));
-	
-	if (this.toolbar != null)
-	{
-		this.toolbarContainer.appendChild(this.toolbar.container);
-		this.container.appendChild(this.toolbarContainer);
-	}
-
 	// Creates the sidebar
 	this.sidebar = (this.editor.chromeless) ? null : this.createSidebar(this.sidebarContainer);
 	
@@ -1711,6 +1702,15 @@ EditorUi.prototype.createUi = function()
 	}
 
 	this.container.appendChild(this.diagramContainer);
+
+	// Creates toolbar
+	this.toolbar = (this.editor.chromeless) ? null : this.createToolbar(this.createDiv('geToolbar'));
+	
+	if (this.toolbar != null)
+	{
+		this.toolbarContainer.appendChild(this.toolbar.container);
+		this.container.appendChild(this.toolbarContainer);
+	}
 
 	// HSplit
 	if (this.sidebar != null)
