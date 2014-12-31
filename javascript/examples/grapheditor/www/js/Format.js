@@ -1,16 +1,6 @@
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
-/**
- * ** DO NOT USE IN PRODUCTION! **
- */
-
-// TODO: Test UI with long labels
-mxResources.get2 = function()
-{
-	return '01234567890123456789012345678901234567890123456789';
-};
-
 Format = function(editorUi, container)
 {
 	this.editorUi = editorUi;
@@ -535,9 +525,16 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 		mxEvent.consume(evt);
 	});
 
-	if (graph.cellEditor.isContentEditing() && textEditFallback)
+	if (textEditFallback && graph.cellEditor.isContentEditing())
 	{
-		mxEvent.addListener(graph.cellEditor.text2, 'blur', function()
+		// KNOWN: Arrow up/down clear selection text in quirks/IE 8
+		// Text size via arrow button limites to 16 in IE11. Why?
+		mxEvent.addListener(input, 'mousedown', function()
+		{
+			selState = graph.cellEditor.saveSelection();
+		});
+		
+		mxEvent.addListener(input, 'touchstart', function()
 		{
 			selState = graph.cellEditor.saveSelection();
 		});
@@ -580,7 +577,7 @@ BaseFormatPanel.prototype.createTitle = function(title)
 /**
  * 
  */
-BaseFormatPanel.prototype.createStepper = function(input, update, step, height)
+BaseFormatPanel.prototype.createStepper = function(input, update, step, height, disableFocus)
 {
 	step = (step != null) ? step : 1;
 	height = (height != null) ? height : 8;
@@ -621,6 +618,8 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height)
 		{
 			update(evt);
 		}
+		
+		mxEvent.consume(evt);
 	});
 	
 	mxEvent.addListener(up, 'click', function(evt)
@@ -631,7 +630,25 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height)
 		{
 			update(evt);
 		}
+		
+		mxEvent.consume(evt);
 	});
+	
+	// Disables transfer of focus to DIV but also active state
+	// so it's only used for fontSize where the focus should
+	// stay on the selected text, but not for any other input.
+	if (disableFocus)
+	{
+		mxEvent.addListener(down, 'mousedown', function(evt)
+		{
+			mxEvent.consume(evt);
+		});
+		
+		mxEvent.addListener(up, 'mousedown', function(evt)
+		{
+			mxEvent.consume(evt);
+		});
+	}
 	
 	return stepper;
 };
@@ -1989,7 +2006,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		}
 	});
 	
-	var stepper = this.createStepper(input, inputUpdate, 1, 10);
+	var stepper = this.createStepper(input, inputUpdate, 1, 10, true);
 	stepper.style.display = input.style.display;
 	stepper.style.marginTop = '4px';
 	stepper.style.right = '20px';
@@ -2069,7 +2086,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	extraPanel.style.paddingTop = '10px';
 	extraPanel.style.paddingBottom = '10px';
 	
-	// TODO: Fix toggle using '' instead of 'null'
+	// LATER: Fix toggle using '' instead of 'null'
 	var wwOpt = this.createCellOption(mxResources.get('wordWrap'), mxConstants.STYLE_WHITE_SPACE, null, 'wrap', 'null');
 	wwOpt.style.fontWeight = 'bold';
 	
@@ -2146,14 +2163,11 @@ TextFormatPanel.prototype.addFont = function(container)
 				function()
 				{
 					document.execCommand('inserthorizontalrule');
-				}, insertPanel),
-				this.editorUi.toolbar.addButton('geSprite-table', mxResources.get('increaseIndent'),
-				function()
+				}, insertPanel),				
+				this.editorUi.toolbar.addMenuFunctionInContainer(insertPanel, 'geSprite-table', mxResources.get('table'), false, mxUtils.bind(this, function(menu)
 				{
-					//document.execCommand('indent');
-					// TODO: Table menu
-				}, insertPanel)];
-		// TODO: Fix colors, table menu
+					this.editorUi.menus.addInsertTableItem(menu);
+				}))];
 		this.styleButtons(inserBtns);
 		this.styleButtons(btns);
 		
@@ -2216,7 +2230,6 @@ TextFormatPanel.prototype.addFont = function(container)
 						graph.deleteRow(currentTable, tableRow.sectionRowIndex);
 					}
 				}, tablePanel)];
-		// TODO: Fix colors, table menu
 		this.styleButtons(btns);
 		btns[2].style.marginRight = '9px';
 		
@@ -2328,7 +2341,6 @@ TextFormatPanel.prototype.addFont = function(container)
 						currentTable.setAttribute('align', 'right');
 					}
 				}, tablePanel2)];
-		// TODO: Fix colors, table menu
 		this.styleButtons(btns);
 		btns[2].style.marginRight = '9px';
 		wrapper3.appendChild(tablePanel2);
@@ -2350,7 +2362,6 @@ TextFormatPanel.prototype.addFont = function(container)
 		}
 	};
 	
-	// TODO: Text selection state
 	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
 		ss = this.format.getSelectionState();
@@ -3529,7 +3540,7 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 	div.appendChild(this.createTitle(mxResources.get('documentProperties')));
 
 	// Page view
-	// TODO: Handle pageViewChanged event
+	// LATER: Add pageViewChanged event
 	div.appendChild(this.createOption(mxResources.get('pageView'), function()
 	{
 		return graph.pageVisible;
@@ -3586,8 +3597,7 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 	
 	if (typeof(MathJax) !== 'undefined')
 	{
-		// LATER: Add help link https://plus.google.com/+DrawIo1/posts/fci7sDcNi2x
-		div.appendChild(this.createOption(mxResources.get('mathematicalTypesetting'), function()
+		var opt = this.createOption(mxResources.get('mathematicalTypesetting'), function()
 		{
 			return graph.mathEnabled;
 		}, function(checked)
@@ -3608,7 +3618,17 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 			{
 				ui.removeListener(this.listener);
 			}
-		}));
+		});
+		div.appendChild(opt);
+
+		// Offline check not needed since math is only available in online mode
+		var link = document.createElement('a');
+		link.setAttribute('href', 'https://support.draw.io/questions/2949135/how-do-i-use-mathematical-typesetting');
+		link.setAttribute('title', mxResources.get('help'));
+		link.setAttribute('target', '_blank');
+		link.style.cssText = 'color:blue;text-decoration:underline;position:absolute;right:20px;';
+		mxUtils.write(link, '?');
+		opt.appendChild(link);
 	}
 
 	return div;
