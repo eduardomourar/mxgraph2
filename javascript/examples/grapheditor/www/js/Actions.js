@@ -1026,17 +1026,11 @@ Actions.prototype.init = function()
 							{
 								if (i == 0 || newImages[i] != oldImages[i - 1])
 								{
-									var test = new Image();
-									test.onload = function()
-									{
-										console.log('test', test.width, test.height);
-									};
-									test.src = newValue;
-									console.log('setting image size to', w, h, newValue);
-									
-									// LATER: Add dialog for image size
-									newImages[i].style.width = w + 'px';
-									newImages[i].style.height = h + 'px';
+									ui.loadImage(newValue, function(img)
+						    		{
+										newImages[i].style.width = img.width + 'px';
+										newImages[i].style.height = img.height + 'px';
+						    		});
 									
 									break;
 								}
