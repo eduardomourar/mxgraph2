@@ -2607,7 +2607,7 @@ StyleFormatPanel.prototype.init = function()
 
 	this.container.appendChild(this.addStroke(this.createPanel()));
 
-	if (ss.image)
+	if (ss.image && !ui.isOffline())
 	{
 		this.container.appendChild(this.addImageOps(this.createPanel()));
 	}
@@ -3572,27 +3572,31 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 		}
 	});
 	
-	var btn = mxUtils.button(mxResources.get('image'), function(evt)
+	if (!ui.isOffline())
 	{
-		var dlg = new BackgroundImageDialog(ui, function(image)
+		var btn = mxUtils.button(mxResources.get('image'), function(evt)
 		{
-			ui.setBackgroundImage(image);
-		});
-		ui.showDialog(dlg.container, 360, 200, true, true);
-		dlg.init();
-		
-		mxEvent.consume(evt);
-	})
-
-	btn.style.position = 'absolute';
-	btn.className = 'geColorBtn';
-	btn.style.marginTop = '-4px';
-	btn.style.paddingBottom = (document.documentMode == 11 || mxClient.IS_MT) ? '0px' : '2px';
-	btn.style.height = '22px';
-	btn.style.right = (mxClient.IS_QUIRKS) ? '52px' : '72px';
-	btn.style.width = '56px';
-
-	bg.appendChild(btn);
+			var dlg = new BackgroundImageDialog(ui, function(image)
+			{
+				ui.setBackgroundImage(image);
+			});
+			ui.showDialog(dlg.container, 360, 200, true, true);
+			dlg.init();
+			
+			mxEvent.consume(evt);
+		})
+	
+		btn.style.position = 'absolute';
+		btn.className = 'geColorBtn';
+		btn.style.marginTop = '-4px';
+		btn.style.paddingBottom = (document.documentMode == 11 || mxClient.IS_MT) ? '0px' : '2px';
+		btn.style.height = '22px';
+		btn.style.right = (mxClient.IS_QUIRKS) ? '52px' : '72px';
+		btn.style.width = '56px';
+	
+		bg.appendChild(btn);
+	}
+	
 	div.appendChild(bg);
 	
 	if (typeof(MathJax) !== 'undefined')
