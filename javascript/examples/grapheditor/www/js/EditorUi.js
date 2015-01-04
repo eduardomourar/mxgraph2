@@ -1035,14 +1035,6 @@ EditorUi.prototype.initCanvas = function()
 };
 
 /**
- * For subclassers to support offline mode.
- */
-EditorUi.prototype.isOffline = function()
-{
-	return false;
-};
-
-/**
  * Hook for allowing selection and context menu for certain events.
  */
 EditorUi.prototype.isSelectionAllowed = function(evt)
