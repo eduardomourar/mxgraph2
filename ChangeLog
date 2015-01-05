@@ -1,3 +1,6 @@
+05-JAN-2015: 3.1.2.1
+
+- Fixes flipH/V in mxSvgCanvas2D.image [JavaScript] 
 - Fixes offset in mxPrintPreview for poster print in IE8-10 [JavaScript]
 - Adds Graph.pasteHtmlAtCaret, insertRow/-Column, deleteRow/-Colum in grapheditor
 - Adds Graph.getSelectedElement, getParentByName, selectNode in grapheditor
