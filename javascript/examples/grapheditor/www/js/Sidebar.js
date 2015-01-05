@@ -1432,8 +1432,8 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				geo2 = graph.getCellGeometry(targets[dropCellIndex]);
 				var dx = geo.x - geo2.x;
 				var dy = geo.y - geo2.y;
-				geo.x = geo2.x;
-				geo.y = geo2.y;
+				geo.x = Math.round(geo2.x);
+				geo.y = Math.round(geo2.y);
 				graph.model.setGeometry(targets[dropCellIndex], geo);
 				graph.cellsMoved(targets, dx, dy, null, null, true);
 				tmp = targets.slice();
