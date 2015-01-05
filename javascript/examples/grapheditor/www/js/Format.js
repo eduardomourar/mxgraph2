@@ -634,20 +634,52 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height, 
 		mxEvent.consume(evt);
 	});
 	
-	// Disables transfer of focus to DIV but also active state
+	// Disables transfer of focus to DIV but also :active CSS
 	// so it's only used for fontSize where the focus should
 	// stay on the selected text, but not for any other input.
 	if (disableFocus)
 	{
-		mxEvent.addListener(down, 'mousedown', function(evt)
-		{
-			mxEvent.consume(evt);
-		});
+		var currentSelection = null;
 		
-		mxEvent.addListener(up, 'mousedown', function(evt)
+		mxEvent.addGestureListeners(stepper,
+			function(evt)
+			{
+				// Workaround for lost current selection in page because of focus in IE
+				if (mxClient.IS_QUIRKS || document.documentMode == 8)
+				{
+					currentSelection = document.selection.createRange();
+				}
+				
+				mxEvent.consume(evt);
+			},
+			null,
+			function(evt)
+			{
+				// Workaround for lost current selection in page because of focus in IE
+				if (currentSelection != null)
+				{
+					currentSelection.select();
+					currentSelection = null;
+					mxEvent.consume(evt);
+				}
+			}
+		);
+			
+		/*mxEvent.addListener(stepper, 'mousedown', function(evt)
+		{
+			// Workaround for lost current selection in page because of focus in IE
+			if (mxClient.IS_QUIRKS || document.documentMode == 8)
+			{
+				currentSelection = document.selection.createRange();
+			}
+			
+			mxEvent.consume(evt);
+		});*/
+		
+		/*mxEvent.addListener(up, 'mousedown', function(evt)
 		{
 			mxEvent.consume(evt);
-		});
+		});*/
 	}
 	
 	return stepper;
@@ -1801,6 +1833,12 @@ TextFormatPanel.prototype.addFont = function(container)
 	var stylePanel2 = stylePanel.cloneNode(false);
 	stylePanel2.style.marginLeft = '-3px';
 	var fontStyleItems = this.editorUi.toolbar.addItems(['bold', 'italic', 'underline'], stylePanel2, true);
+	
+	if (mxClient.IS_QUIRKS)
+	{
+		mxUtils.br(container);
+	}
+	
 	container.appendChild(stylePanel2);
 
 	this.styleButtons(fontStyleItems);
@@ -1848,6 +1886,12 @@ TextFormatPanel.prototype.addFont = function(container)
 		this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_VERTICAL_ALIGN], [mxConstants.ALIGN_BOTTOM]), stylePanel3);
 	
 	this.styleButtons([top, middle, bottom]);
+	
+	if (mxClient.IS_QUIRKS)
+	{
+		mxUtils.br(container);
+	}
+	
 	container.appendChild(stylePanel3);
 	
 	// Hack for updating UI state below based on current text selection
@@ -1906,6 +1950,13 @@ TextFormatPanel.prototype.addFont = function(container)
 				}, tmp)];
 		this.styleButtons(btns);
 		btns[btns.length - 1].style.marginLeft = '9px';
+		
+		if (mxClient.IS_QUIRKS)
+		{
+			mxUtils.br(container);
+			tmp.style.height = '40';
+		}
+		
 		container.appendChild(tmp);
 	}
 	else
@@ -1975,19 +2026,24 @@ TextFormatPanel.prototype.addFont = function(container)
 
 	// Font size
 	var input = document.createElement('input');
-	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
 	input.style.marginTop = '4px';
-	input.style.right = '32px';
+	
+	if (!mxClient.IS_QUIRKS)
+	{
+		input.style.position = 'absolute';
+		input.style.right = '32px';
+	}
+	
 	input.style.width = '47px';
-	input.style.height = '17px';
+	input.style.height = (mxClient.IS_QUIRKS) ? '21px' : '17px';
 	stylePanel2.appendChild(input);
 
 	var inputUpdate = this.installInputHandler(input, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize, 1, 999, ' pt',
 	function(fontsize)
 	{
 		// Creates an element with arbitrary size 3
-		document.execCommand('fontSize', false, '3');
+		document.execCommand('fontSize', false, '7');
 		
 		// Changes the css font size of the first font element inside the in-place editor with size 3
 		// hopefully the above element that we've just created. LATER: Check for new element using
@@ -1996,7 +2052,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		
 		for (var i = 0; i < elts.length; i++)
 		{
-			if (elts[i].getAttribute('size') == '3')
+			if (elts[i].getAttribute('size') == '7')
 			{
 				elts[i].removeAttribute('size');
 				elts[i].style.fontSize = fontsize + 'px';
@@ -2009,7 +2065,12 @@ TextFormatPanel.prototype.addFont = function(container)
 	var stepper = this.createStepper(input, inputUpdate, 1, 10, true);
 	stepper.style.display = input.style.display;
 	stepper.style.marginTop = '4px';
-	stepper.style.right = '20px';
+	
+	if (!mxClient.IS_QUIRKS)
+	{
+		stepper.style.right = '20px';
+	}
+	
 	stylePanel2.appendChild(stepper);
 	
 	var arrow = fontMenu.getElementsByTagName('div')[0];
@@ -2178,6 +2239,11 @@ TextFormatPanel.prototype.addFont = function(container)
 		wrapper2.appendChild(insertPanel);
 		container.appendChild(wrapper2);
 		
+		if (mxClient.IS_QUIRKS)
+		{
+			wrapper2.style.height = '70';
+		}
+		
 		var tablePanel = stylePanel.cloneNode(false);
 		tablePanel.style.paddingLeft = '0px';
 		
@@ -2239,6 +2305,12 @@ TextFormatPanel.prototype.addFont = function(container)
 		wrapper3.appendChild(this.createTitle(mxResources.get('table')));
 		wrapper3.appendChild(tablePanel);
 
+		if (mxClient.IS_QUIRKS)
+		{
+			mxUtils.br(container);
+			wrapper3.style.height = '70';
+		}
+		
 		var tablePanel2 = stylePanel.cloneNode(false);
 		tablePanel2.style.paddingLeft = '0px';
 		
@@ -2343,6 +2415,13 @@ TextFormatPanel.prototype.addFont = function(container)
 				}, tablePanel2)];
 		this.styleButtons(btns);
 		btns[2].style.marginRight = '9px';
+		
+		if (mxClient.IS_QUIRKS)
+		{
+			mxUtils.br(wrapper3);
+			mxUtils.br(wrapper3);
+		}
+		
 		wrapper3.appendChild(tablePanel2);
 		container.appendChild(wrapper3);
 		
