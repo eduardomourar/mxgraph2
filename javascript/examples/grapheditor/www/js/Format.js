@@ -2042,7 +2042,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	var inputUpdate = this.installInputHandler(input, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize, 1, 999, ' pt',
 	function(fontsize)
 	{
-		// Creates an element with arbitrary size 3
+		// Creates an element with arbitrary size 7
 		document.execCommand('fontSize', false, '7');
 		
 		// Changes the css font size of the first font element inside the in-place editor with size 3
