@@ -759,6 +759,12 @@ var PrintDialog = function(editorUi)
 				y0 = 10;
 			}
 		}
+
+		// Applies print scale
+		pf = mxRectangle.fromRectangle(pf);
+		pf.width = Math.round(pf.width * printScale);
+		pf.height = Math.round(pf.height * printScale);
+		scale *= printScale;
 		
 		// Starts at first visible page
 		if (graph.pageVisible)
@@ -768,12 +774,6 @@ var PrintDialog = function(editorUi)
 			x0 -= Math.max(layout.x, 0) * pf.width;
 			y0 -= Math.max(layout.y, 0) * pf.height;
 		}
-		
-		// Applies print scale
-		pf = mxRectangle.fromRectangle(pf);
-		pf.width = Math.round(pf.width * printScale);
-		pf.height = Math.round(pf.height * printScale);
-		scale *= printScale;
 		
 		return PrintDialog.showPreview(PrintDialog.createPrintPreview(graph, scale, pf, border, x0, y0, autoOrigin, print), print);
 	};
