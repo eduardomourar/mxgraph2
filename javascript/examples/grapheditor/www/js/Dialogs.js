@@ -879,7 +879,7 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	});
 	genericBtn.className = 'geBtn gePrimaryBtn';
 	
-	mxEvent.addListener(nameInput, 'keyup', function(e)
+	mxEvent.addListener(nameInput, (document.documentMode == 8) ? 'keypress' : 'keyup', function(e)
 	{
 		if (e.keyCode == 13)
 		{
@@ -1856,7 +1856,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn)
 	btns.style.marginTop = '18px';
 	btns.style.textAlign = 'right';
 
-	mxEvent.addListener(linkInput, 'keyup', function(e)
+	mxEvent.addListener(linkInput, (document.documentMode == 8) ? 'keypress' : 'keyup', function(e)
 	{
 		if (e.keyCode == 13)
 		{

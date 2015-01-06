@@ -658,7 +658,15 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height, 
 				// Workaround for lost current selection in page because of focus in IE
 				if (currentSelection != null)
 				{
-					currentSelection.select();
+					try
+					{
+						currentSelection.select();
+					}
+					catch (e)
+					{
+						// ignore
+					}
+					
 					currentSelection = null;
 					mxEvent.consume(evt);
 				}

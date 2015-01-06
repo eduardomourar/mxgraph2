@@ -1,3 +1,4 @@
+- Fixes unspecified error in mxPopupMenu.addItem for IE8 standards [JavaScript]
 - Adds active argument in mxPopupMenu.addItem [JavaScript]
 
 05-JAN-2015: 3.1.2.1

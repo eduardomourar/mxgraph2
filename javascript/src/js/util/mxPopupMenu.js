@@ -320,7 +320,16 @@ mxPopupMenu.prototype.addItem = function(title, image, funct, parent, iconCls, e
 					// Workaround for lost current selection in page because of focus in IE
 					if (currentSelection != null)
 					{
-						currentSelection.select();
+						// Workaround for "unspecified error" in IE8 standards
+						try
+						{
+							currentSelection.select();
+						}
+						catch (e)
+						{
+							// ignore
+						}
+
 						currentSelection = null;
 					}
 					
