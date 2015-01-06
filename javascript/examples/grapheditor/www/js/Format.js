@@ -1105,7 +1105,7 @@ BaseFormatPanel.prototype.createRelativeOption = function(label, key)
 		mxEvent.consume(evt);
 	};
 
-	var input = this.addUnitInput(div, '%', 20, 40, update, 10, -15);
+	var input = this.addUnitInput(div, '%', 20, 44, update, 10, -15);
 
 	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
