@@ -1,3 +1,5 @@
+- Adds active argument in mxPopupMenu.addItem [JavaScript]
+
 05-JAN-2015: 3.1.2.1
 
 - Fixes flipH/V in mxSvgCanvas2D.image [JavaScript] 
