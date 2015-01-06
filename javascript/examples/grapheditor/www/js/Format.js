@@ -277,6 +277,12 @@ Format.prototype.clear = function()
  */
 Format.prototype.refresh = function()
 {
+	// Performance tweak: No refresh needed if not visible
+	if (this.container.style.width == '0px')
+	{
+		return;
+	}
+	
 	this.clear();
 	var ui = this.editorUi;
 	var graph = ui.editor.graph;

@@ -1125,6 +1125,7 @@ Actions.prototype.init = function()
 		ui.formatWidth = (ui.formatWidth > 0) ? 0 : 240;
 		ui.formatContainer.style.display = (ui.formatWidth > 0) ? '' : 'none';
 		ui.refresh();
+		ui.format.refresh();
 		ui.fireEvent(new mxEventObject('formatWidthChanged'));
 	}), null, null, 'Ctrl+Shift+P');
 	action.setToggleAction(true);
