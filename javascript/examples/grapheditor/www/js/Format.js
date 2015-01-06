@@ -2686,36 +2686,72 @@ StyleFormatPanel.prototype.init = function()
 	var editor = ui.editor;
 	var graph = editor.graph;
 	var ss = this.format.getSelectionState();
-
+	
 	if (!ss.containsImage || ss.style.shape == 'image')
 	{
 		this.container.appendChild(this.addFill(this.createPanel()));
 	}
 
 	this.container.appendChild(this.addStroke(this.createPanel()));
-
-	if (ss.image)
+	var opacityPanel = this.createRelativeOption(mxResources.get('opacity'), mxConstants.STYLE_OPACITY);
+	opacityPanel.style.paddingTop = '10px';
+	opacityPanel.style.paddingBottom = '10px';
+	this.container.appendChild(opacityPanel);
+	this.container.appendChild(this.addEffects(this.createPanel()));
+	var opsPanel = this.addEditOps(this.createPanel());
+	
+	if (opsPanel.firstChild != null)
 	{
-		this.container.appendChild(this.addImageOps(this.createPanel()));
+		mxUtils.br(opsPanel);
 	}
 	
-	this.container.appendChild(this.createRelativeOption(mxResources.get('opacity'), mxConstants.STYLE_OPACITY));
-	this.container.appendChild(this.addEffects(this.createPanel()));
-	this.container.appendChild(this.addStyleOps(this.createPanel()));
+	this.container.appendChild(this.addStyleOps(opsPanel));
 };
 
 /**
  * Adds the label menu items to the given menu and parent.
  */
-StyleFormatPanel.prototype.addImageOps = function(div)
+StyleFormatPanel.prototype.addEditOps = function(div)
 {
-	var btn = mxUtils.button(mxResources.get('editImage'), mxUtils.bind(this, function(evt)
-	{
-		this.editorUi.actions.get('image').funct();
-	}));
+	var ss = this.format.getSelectionState();
+	var btn = null;
 	
-	btn.style.width = '202px';
-	div.appendChild(btn);
+	if (this.editorUi.editor.graph.getSelectionCount() == 1)
+	{
+		btn = mxUtils.button(mxResources.get('editStyle'), mxUtils.bind(this, function(evt)
+		{
+			this.editorUi.actions.get('editStyle').funct();
+		}));
+		
+		btn.setAttribute('title', 'Ctrl+E');
+		btn.style.width = '202px';
+		btn.style.marginBottom = '2px';
+		
+		div.appendChild(btn);
+	}
+	
+	if (ss.image)
+	{
+		var btn2 = mxUtils.button(mxResources.get('editImage'), mxUtils.bind(this, function(evt)
+		{
+			this.editorUi.actions.get('image').funct();
+		}));
+		
+		btn2.style.marginBottom = '2px';
+		
+		if (btn == null)
+		{
+			btn2.style.width = '202px';
+		}
+		else
+		{
+			btn.style.width = '100px';
+			btn2.style.width = '100px';
+			btn2.style.marginLeft = '2px';
+		}
+		
+		div.appendChild(btn2);
+	}
 	
 	return div;
 };
@@ -2831,7 +2867,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	var ss = this.format.getSelectionState();
 	
 	container.style.paddingTop = '8px';
-	container.style.paddingBottom = '8px';
+	container.style.paddingBottom = '6px';
 	container.style.whiteSpace = 'normal';
 	
 	var colorPanel = document.createElement('div');
@@ -3356,7 +3392,7 @@ StyleFormatPanel.prototype.addEffects = function(div)
 	var graph = editor.graph;
 	var ss = this.format.getSelectionState();
 	
-	div.style.paddingTop = '4px';
+	div.style.paddingTop = '2px';
 	div.style.paddingBottom = '4px';
 
 	var table = document.createElement('table');
@@ -3371,7 +3407,9 @@ StyleFormatPanel.prototype.addEffects = function(div)
 	table.style.paddingRight = '20px';
 	var tbody = document.createElement('tbody');
 	var row = document.createElement('tr');
+	row.style.padding = '0px';
 	var left = document.createElement('td');
+	left.style.padding = '0px';
 	left.style.width = '50%';
 	left.setAttribute('valign', 'top');
 	
@@ -3428,6 +3466,9 @@ StyleFormatPanel.prototype.addEffects = function(div)
  */
 StyleFormatPanel.prototype.addStyleOps = function(div)
 {
+	div.style.paddingTop = '10px';
+	div.style.paddingBottom = '10px';
+	
 	var btn = mxUtils.button(mxResources.get('setAsDefaultStyle'), mxUtils.bind(this, function(evt)
 	{
 		this.editorUi.actions.get('setAsDefaultStyle').funct();
