@@ -1,3 +1,4 @@
+- mxPrintPreview.autoOrigin no longer overrides x0, y0 in open [JavaScript]
 - Fixes mxDisabled class in explorer.css for IE8 standards [JavaScript]
 - Fixes unspecified error in mxPopupMenu.addItem for quirks/IE8 [JavaScript]
 - Adds active argument in mxPopupMenu.addItem [JavaScript]
