@@ -2903,16 +2903,36 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	stylePanel.style.marginTop = '2px';
 	stylePanel.className = 'geToolbarContainer';
 
+	var pattern = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel, 'geSprite-orthogonal', mxResources.get('line'), false, mxUtils.bind(this, function(menu)
+	{
+		var addItem = mxUtils.bind(this, function(cssName, keys, values)
+		{
+			var item = this.editorUi.menus.styleChange(menu, '', keys, values, 'geIcon', null);
+		
+			var pat = document.createElement('div');
+			pat.style.width = '70px';
+			pat.style.height = '1px';
+			pat.style.borderBottom = '1px ' + cssName + ' black';
+			pat.style.paddingTop = '6px';
+	
+			item.firstChild.firstChild.style.padding = '0px 4px 0px 4px';
+			item.firstChild.firstChild.style.width = '70px';
+			item.firstChild.firstChild.appendChild(pat);
+		});
+
+		addItem('solid', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], [null, null]);
+		addItem('dashed', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], ['1', null]);
+		addItem('dotted', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], ['1', '1 4']);
+	}));
+	
 	var stylePanel2 = stylePanel.cloneNode(false);
 
 	// Stroke width
 	var input = document.createElement('input');
-	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
 	input.style.marginTop = '2px';
-	input.style.right = '32px';
 	input.style.width = '41px';
-	input.style.height = '15px';
+	
 	stylePanel.appendChild(input);
 
 	var strokeKey = (ss.style.shape == 'image') ? mxConstants.STYLE_IMAGE_BORDER : mxConstants.STYLE_STROKECOLOR;
@@ -2941,33 +2961,29 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	var stepper = this.createStepper(input, update, 1, 9);
 	stepper.style.display = input.style.display;
 	stepper.style.marginTop = '2px';
-	stepper.style.right = '20px';
 	stylePanel.appendChild(stepper);
+	
+	if (!mxClient.IS_QUIRKS)
+	{
+		input.style.position = 'absolute';
+		input.style.right = '32px';
+		stepper.style.right = '20px';
+		input.style.height = '15px';
+	}
+	else
+	{
+		input.style.height = '17px';		
+	}
 	
 	mxEvent.addListener(input, 'blur', update);
 	mxEvent.addListener(input, 'change', update);
-	
-	var pattern = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel, 'geSprite-orthogonal', mxResources.get('line'), false, mxUtils.bind(this, function(menu)
-	{
-		var addItem = mxUtils.bind(this, function(cssName, keys, values)
-		{
-			var item = this.editorUi.menus.styleChange(menu, '', keys, values, 'geIcon', null);
-		
-			var pat = document.createElement('div');
-			pat.style.width = '70px';
-			pat.style.height = '1px';
-			pat.style.borderBottom = '1px ' + cssName + ' black';
-			pat.style.paddingTop = '6px';
-	
-			item.firstChild.firstChild.style.padding = '0px 4px 0px 4px';
-			item.firstChild.firstChild.style.width = '70px';
-			item.firstChild.firstChild.appendChild(pat);
-		});
 
-		addItem('solid', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], [null, null]);
-		addItem('dashed', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], ['1', null]);
-		addItem('dotted', [mxConstants.STYLE_DASHED, mxConstants.STYLE_DASH_PATTERN], ['1', '1 4']);
-	}));
+	if (mxClient.IS_QUIRKS)
+	{
+		mxUtils.br(stylePanel2);
+		mxUtils.br(stylePanel2);
+	}
+	
 	var edgeStyle = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel2, 'geSprite-orthogonal', mxResources.get('line'), false, mxUtils.bind(this, function(menu)
 	{
 		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, 'noedgestyle'], [null, null, null, null], 'geIcon geSprite geSprite-straight', null, true).setAttribute('title', mxResources.get('straight'));
@@ -3117,10 +3133,22 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	if (ss.edges.length == graph.getSelectionCount())
 	{
 		container.appendChild(stylePanel2);
+		
+		if (mxClient.IS_QUIRKS)
+		{
+			mxUtils.br(container);
+			mxUtils.br(container);
+		}
+		
 		container.appendChild(arrowPanel);
 	}
 	else if (ss.vertices.length == graph.getSelectionCount())
 	{
+		if (mxClient.IS_QUIRKS)
+		{
+			mxUtils.br(container);
+		}
+		
 		container.appendChild(perimeterPanel);
 	}
 	
