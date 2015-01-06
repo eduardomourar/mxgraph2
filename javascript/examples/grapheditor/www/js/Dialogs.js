@@ -927,6 +927,7 @@ var TextareaDialog = function(editorUi, title, url, fn, cancelFn, cancelTitle)
 	
 	var nameInput = document.createElement('textarea');
 	mxUtils.write(nameInput, url || '');
+	nameInput.style.resize = 'none';
 	nameInput.style.width = '300px';
 	nameInput.style.height = '120px';
 	
@@ -995,6 +996,7 @@ var EditFileDialog = function(editorUi)
 	var div = document.createElement('div');
 	div.style.textAlign = 'right';
 	var textarea = document.createElement('textarea');
+	textarea.style.resize = 'none';
 	textarea.style.width = '600px';
 	textarea.style.height = '370px';
 	textarea.style.marginBottom = '16px';
