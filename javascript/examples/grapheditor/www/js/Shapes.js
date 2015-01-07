@@ -110,7 +110,8 @@
 			rect.y += dy;
 			rect.height -= dy;
 		}
-		else if (this.direction == mxConstants.DIRECTION_SOUTH)
+		else if ((!this.flipV && this.direction == mxConstants.DIRECTION_SOUTH) ||
+				((this.flipV && this.direction == mxConstants.DIRECTION_NORTH)))
 		{
 			rect.width -= dy;
 		}
@@ -119,11 +120,8 @@
 		{
 			rect.height -= dy;
 		}
-		else if (this.flipV && this.direction == mxConstants.DIRECTION_WEST)
-		{
-			rect.height -= dy;
-		}
-		else if (this.direction == mxConstants.DIRECTION_NORTH)
+		else if ((!this.flipV && this.direction == mxConstants.DIRECTION_NORTH) ||
+				(this.flipV && this.direction == mxConstants.DIRECTION_SOUTH))
 		{
 			rect.x += dy;
 			rect.width -= dy;
