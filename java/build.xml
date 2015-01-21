@@ -49,7 +49,7 @@
 <!-- ==================== Compile ==================== -->
 
 	<target name="compile" depends="init" description="Compiles the source tree">
-		<javac target="1.6" srcdir="${source.home}"
+		<javac target="1.6" source="1.6" srcdir="${source.home}"
 			debug="${compile.debug}"
 			deprecation="${compile.deprecation}"
 			optimize="${compile.optimize}"
