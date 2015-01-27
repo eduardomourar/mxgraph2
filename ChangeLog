@@ -1,3 +1,6 @@
+- Fixes mxGraph.extendParent for relative children [JavaScript]
+- Fixes mxGraph.getBoundingBoxFromGeometry for relative children if parent is not in cells argument [JavaScript]
+- Fixes possible NPE in mxGraph.getBoundingBoxFromGeometry [JavaScript]
 - Fixes incorrect header when parsing PNG+XML files [Java]
 - Adds mxUtils.toDegree [JavaScript]
 - Adds pageScale option for print dialog in grapheditor
