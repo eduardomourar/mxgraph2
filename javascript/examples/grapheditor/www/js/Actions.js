@@ -645,6 +645,14 @@ Actions.prototype.init = function()
 		// Removes background page
 		graph.refresh();
 		
+		// Workaround for possible handle offset
+		if (hasScrollbars)
+		{
+			var cells = graph.getSelectionCells();
+			graph.clearSelection();
+			graph.setSelectionCells(cells);
+		}
+		
 		// Calls updatePageBreaks
 		graph.sizeDidChange();
 		
