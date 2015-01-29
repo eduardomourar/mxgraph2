@@ -1,3 +1,4 @@
+- Adds Xml2Svg.java example [Java]
 - Fixes mxGraph.extendParent for relative children [JavaScript]
 - Fixes mxGraph.getBoundingBoxFromGeometry for relative children if parent is not in cells argument [JavaScript]
 - Fixes possible NPE in mxGraph.getBoundingBoxFromGeometry [JavaScript]
