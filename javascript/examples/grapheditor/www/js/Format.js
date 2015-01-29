@@ -2637,20 +2637,25 @@ TextFormatPanel.prototype.addFont = function(container)
 							bgColorApply(currentBgColor);
 						}
 						
-						// Strips leading and trailing quotes
-						var ff = css.fontFamily;
-						
-						if (ff.charAt(0) == '\'')
+						// Workaround for firstChild is null or not an object
+						// in the log which seems to be IE8- only / 29.01.15
+						if (fontMenu.firstChild != null)
 						{
-							ff = ff.substring(1);
+							// Strips leading and trailing quotes
+							var ff = css.fontFamily;
+							
+							if (ff.charAt(0) == '\'')
+							{
+								ff = ff.substring(1);
+							}
+							
+							if (ff.charAt(ff.length - 1) == '\'')
+							{
+								ff = ff.substring(0, ff.length - 1);
+							}
+							
+							fontMenu.firstChild.nodeValue = ff;
 						}
-						
-						if (ff.charAt(ff.length - 1) == '\'')
-						{
-							ff = ff.substring(0, ff.length - 1);
-						}
-						
-						fontMenu.firstChild.nodeValue = ff;
 					}
 					
 					updating = false;
