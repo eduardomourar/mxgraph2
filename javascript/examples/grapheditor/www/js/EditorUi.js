@@ -200,7 +200,6 @@ EditorUi = function(editor, container)
 	};
 	
 	// Stores the current style and assigns it to new cells
-	// LATER: Update after copyStyle (handle defaults) and after menu Format, Style
 	var styles = ['shadow', 'dashed', 'dashPattern'];
 	var connectStyles = ['shape', 'edgeStyle', 'curved', 'rounded', 'elbow'];
 	
