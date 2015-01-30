@@ -60,7 +60,7 @@ Actions.prototype.init = function()
 		}));
 
 		// Removes openFile if dialog is closed
-		ui.showDialog(new OpenDialog(this).container, 300, 180, true, true, function()
+		ui.showDialog(new OpenDialog(this).container, 320, 220, true, true, function()
 		{
 			window.openFile = null;
 		});
