@@ -3763,42 +3763,6 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 
 	bg.appendChild(btn);
 	div.appendChild(bg);
-	
-	if (typeof(MathJax) !== 'undefined')
-	{
-		var opt = this.createOption(mxResources.get('mathematicalTypesetting'), function()
-		{
-			return graph.mathEnabled;
-		}, function(checked)
-		{
-			ui.setMathEnabled(checked);
-		},
-		{
-			install: function(apply)
-			{
-				this.listener = function()
-				{
-					apply(graph.mathEnabled);
-				};
-				
-				ui.addListener('mathEnabledChanged', this.listener);
-			},
-			destroy: function()
-			{
-				ui.removeListener(this.listener);
-			}
-		});
-		div.appendChild(opt);
-
-		// Offline check not needed since math is only available in online mode
-		var link = document.createElement('a');
-		link.setAttribute('href', 'https://support.draw.io/questions/2949135/how-to-use-mathematical-typesetting');
-		link.setAttribute('title', mxResources.get('help'));
-		link.setAttribute('target', '_blank');
-		link.style.cssText = 'color:blue;text-decoration:underline;position:absolute;right:20px;';
-		mxUtils.write(link, '?');
-		opt.appendChild(link);
-	}
 
 	return div;
 };
