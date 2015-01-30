@@ -24,31 +24,38 @@ public class Xml2Svg extends JFrame
 {
 	public static void main(String[] args)
 	{
-		try
+		if (args.length < 2)
 		{
-			mxGraph graph = new mxGraph();
-
-			// Parses XML into graph
-			Document doc = mxXmlUtils.parseXml(mxUtils.readFile(args[0]));
-			mxCodec codec = new mxCodec(doc);
-			codec.decode(doc.getDocumentElement(), graph.getModel());
-
-			// Renders graph to SVG
-			mxSvgCanvas canvas = (mxSvgCanvas) mxCellRenderer.drawCells(graph,
-					null, 1, null, new CanvasFactory()
-					{
-						public mxICanvas createCanvas(int width, int height)
-						{
-							return new mxSvgCanvas(mxDomUtils
-									.createSvgDocument(width, height));
-						}
-					});
-
-			mxUtils.writeFile(mxXmlUtils.getXml(canvas.getDocument()), args[1]);
+			System.out.println("Usage: Xml2Svg infile outfile");
 		}
-		catch (IOException e)
+		else
 		{
-			e.printStackTrace();
+			try
+			{
+				mxGraph graph = new mxGraph();
+	
+				// Parses XML into graph
+				Document doc = mxXmlUtils.parseXml(mxUtils.readFile(args[0]));
+				mxCodec codec = new mxCodec(doc);
+				codec.decode(doc.getDocumentElement(), graph.getModel());
+	
+				// Renders graph to SVG
+				mxSvgCanvas canvas = (mxSvgCanvas) mxCellRenderer.drawCells(graph,
+						null, 1, null, new CanvasFactory()
+						{
+							public mxICanvas createCanvas(int width, int height)
+							{
+								return new mxSvgCanvas(mxDomUtils
+										.createSvgDocument(width, height));
+							}
+						});
+	
+				mxUtils.writeFile(mxXmlUtils.getXml(canvas.getDocument()), args[1]);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 }
