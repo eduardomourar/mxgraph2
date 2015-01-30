@@ -760,7 +760,9 @@ BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setChecked
 	mxEvent.addListener(div, 'click', function(evt)
 	{
 		// Toggles checkbox state for click on label
-		if (mxEvent.getSource(evt) != cb)
+		var source = mxEvent.getSource(evt);
+		
+		if (source == div || source == span)
 		{
 			cb.checked = !cb.checked;
 		}
