@@ -187,8 +187,7 @@
 			var supportedText = document.getElementById('openSupported');
 			supportedText.innerHTML = window.parent.mxResources.get('openSupported');
 			var form = window.openForm || document.getElementById('openForm');
-			
-			// FIXME: Adds .html in IE
+
 			form.setAttribute('action', window.parent.OPEN_URL);
 		}
 	};
