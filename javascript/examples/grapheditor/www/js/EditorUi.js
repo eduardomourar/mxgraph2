@@ -1469,7 +1469,7 @@ EditorUi.prototype.updateActionStates = function()
     this.menus.get('line').setEnabled(edgeSelected);
     this.menus.get('linestart').setEnabled(edgeSelected);
     this.menus.get('lineend').setEnabled(edgeSelected);
-    this.menus.get('linewidth').setEnabled(edgeSelected);
+    this.menus.get('linewidth').setEnabled(!graph.isSelectionEmpty());
     this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected && state != null && graph.isLoop(state)));
     this.actions.get('home').setEnabled(graph.view.currentRoot != null);
     this.actions.get('exitGroup').setEnabled(graph.view.currentRoot != null);
