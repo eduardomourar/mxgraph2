@@ -1,3 +1,5 @@
+- Fixes handling of HTML entities for SVG export in quirks, IE11 [JavaScript]
+- Adds mxSvgCanvas2D.convertHtml for HTML to XHTML conversion [JavaScript]
 - Adds Xml2Svg.java example [Java]
 - Fixes mxGraph.extendParent for relative children [JavaScript]
 - Fixes mxGraph.getBoundingBoxFromGeometry for relative children if parent is not in cells argument [JavaScript]
