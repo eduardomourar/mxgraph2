@@ -824,7 +824,7 @@ PrintDialog.showPreview = function(preview, print)
 {
 	var result = preview.open();
 	
-	if (print)
+	if (print && result != null)
 	{
 		result.print();
 	}
