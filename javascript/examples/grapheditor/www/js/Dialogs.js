@@ -37,7 +37,7 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 		this.bg.style.top = '0px';
 		this.bg.style.bottom = '0px';
 		this.bg.style.right = '0px';
-		this.bg.style.zIndex = this.zIndex;
+		this.bg.style.zIndex = this.zIndex - 2;
 		
 		mxUtils.setOpacity(this.bg, this.bgOpacity);
 		
