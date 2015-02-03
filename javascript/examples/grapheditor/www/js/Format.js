@@ -308,6 +308,28 @@ Format.prototype.refresh = function()
 	if (graph.isSelectionEmpty())
 	{
 		mxUtils.write(label, mxResources.get('diagram'));
+		
+		// Adds button to hide the format panel since
+		// people don't seem to find the toolbar button
+		// and the menu item in the format menu
+		var img = document.createElement('img');
+		img.setAttribute('border', '0');
+		img.setAttribute('src', IMAGE_PATH + '/close.png');
+		img.setAttribute('title', mxResources.get('hide'));
+		img.style.cssFloat = 'right';
+		img.style.cursor = 'pointer';
+		img.style.marginTop = '1px';
+		img.style.marginRight = '16px';
+		img.style.border = '1px solid transparent';
+		img.style.padding = '1px';
+		img.style.opacity = 0.5;
+		label.appendChild(img)
+		
+		mxEvent.addListener(img, 'click', function()
+		{
+			ui.actions.get('formatPanel').funct();
+		});
+		
 		div.appendChild(label);
 		this.panels.push(new DiagramFormatPanel(this, ui, div));
 	}
