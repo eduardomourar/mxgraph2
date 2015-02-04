@@ -523,6 +523,20 @@ Graph.prototype.convertValueToString = function(cell)
 };
 
 /**
+ * Overrides autosize to add a border.
+ */
+Graph.prototype.getPreferredSizeForCell = function(cell)
+{
+	var result = mxGraph.prototype.getPreferredSizeForCell.apply(this, arguments);
+	
+	// Adds buffer
+	result.width += 10;
+	result.height += 10;
+	
+	return result;
+}
+
+/**
  * Removes all illegal control characters with ASCII code <32 except TAB, LF
  * and CR.
  */

@@ -2343,6 +2343,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
 	keyHandler.bindAction(68, true, 'setAsDefaultStyle', true); // Ctrl+Shift+D   
 	keyHandler.bindAction(90, true, 'undo'); // Ctrl+Z
+	keyHandler.bindAction(90, true, 'autosize', true); // Ctrl+Shift+Z
 	keyHandler.bindAction(89, true, 'redo'); // Ctrl+Y
 	keyHandler.bindAction(88, true, 'cut'); // Ctrl+X
 	keyHandler.bindAction(67, true, 'copy'); // Ctrl+C
