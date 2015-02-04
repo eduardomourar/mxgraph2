@@ -536,7 +536,6 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		
 		// Specifies the bounds of the editor box
 		var bounds = this.getEditorBounds(state);
-		console.log('bounds', bounds);
 		this.bounds = bounds;
 
 		this.textarea.style.left = bounds.x + 'px';
