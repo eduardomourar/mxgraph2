@@ -536,6 +536,7 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		
 		// Specifies the bounds of the editor box
 		var bounds = this.getEditorBounds(state);
+		console.log('bounds', bounds);
 		this.bounds = bounds;
 
 		this.textarea.style.left = bounds.x + 'px';
@@ -829,8 +830,8 @@ mxCellEditor.prototype.getEditorBounds = function(state)
 			}
 		}
  	}
-	
-	return result;
+ 	
+ 	return new mxRectangle(Math.round(result.x), Math.round(result.y), Math.round(result.width), Math.round(result.height));
 };
 
 /**
