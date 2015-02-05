@@ -640,11 +640,16 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height, 
 
 	mxEvent.addListener(down, 'click', function(evt)
 	{
-		input.value = (parseInt(input.value) - step);
+		var val = parseInt(input.value);
 		
-		if (update != null)
+		if (!isNaN(val))
 		{
-			update(evt);
+			input.value = val - step;
+			
+			if (update != null)
+			{
+				update(evt);
+			}
 		}
 		
 		mxEvent.consume(evt);
@@ -652,11 +657,16 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height, 
 	
 	mxEvent.addListener(up, 'click', function(evt)
 	{
-		input.value = (parseInt(input.value) + step);
+		var val = parseInt(input.value);
 		
-		if (update != null)
+		if (!isNaN(val))
 		{
-			update(evt);
+			input.value = val + step;
+			
+			if (update != null)
+			{
+				update(evt);
+			}
 		}
 		
 		mxEvent.consume(evt);
@@ -700,22 +710,6 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height, 
 				}
 			}
 		);
-			
-		/*mxEvent.addListener(stepper, 'mousedown', function(evt)
-		{
-			// Workaround for lost current selection in page because of focus in IE
-			if (mxClient.IS_QUIRKS || document.documentMode == 8)
-			{
-				currentSelection = document.selection.createRange();
-			}
-			
-			mxEvent.consume(evt);
-		});*/
-		
-		/*mxEvent.addListener(up, 'mousedown', function(evt)
-		{
-			mxEvent.consume(evt);
-		});*/
 	}
 	
 	return stepper;
