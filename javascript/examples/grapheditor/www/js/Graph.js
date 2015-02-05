@@ -530,8 +530,17 @@ Graph.prototype.getPreferredSizeForCell = function(cell)
 	var result = mxGraph.prototype.getPreferredSizeForCell.apply(this, arguments);
 	
 	// Adds buffer
-	result.width += 10;
-	result.height += 10;
+	if (result != null)
+	{
+		result.width += 10;
+		result.height += 4;
+		
+		if (this.gridEnabled)
+		{
+			result.width = this.snap(result.width);
+			result.height = this.snap(result.height);
+		}
+	}
 	
 	return result;
 }
