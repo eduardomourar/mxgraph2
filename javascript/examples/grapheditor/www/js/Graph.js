@@ -646,33 +646,6 @@ Graph.prototype.getLinkForCell = function(cell)
 };
 
 /**
- * Overrides double click handling to add the tolerance.
- */
-Graph.prototype.dblClick = function(evt, cell)
-{
-	var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-	
-	if (cell == null)
-	{
-		cell = this.getCellAt(pt.x, pt.y);
-	}
-
-	// Automatically adds new child cells to edges on double click
-	if (evt != null && this.model.isEdge(cell))
-	{
-		var state = this.view.getState(cell);
-		
-		if (state != null && (state.text == null || state.text.node == null || (!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
-			!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
-		{
-			cell = this.addEdgeLabelAt(state, pt.x, pt.y);
-		}
-	}
-
-	mxGraph.prototype.dblClick.call(this, evt, cell);
-};
-
-/**
  * Overridden to stop moving edge labels between cells.
  */
 Graph.prototype.getDropTarget = function(cells, evt, cell, clone)
@@ -698,35 +671,76 @@ Graph.prototype.getDropTarget = function(cells, evt, cell, clone)
 };
 
 /**
+ * Overrides double click handling to add the tolerance and inserting text.
+ */
+Graph.prototype.dblClick = function(evt, cell)
+{
+	var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+	
+	if (cell == null)
+	{
+		cell = this.getCellAt(pt.x, pt.y);
+	}
+
+	// Automatically adds new child cells to edges on double click
+	if (evt != null && !this.model.isVertex(cell))
+	{
+		var state = (this.model.isEdge(cell)) ? this.view.getState(cell) : null;
+		
+		if (state == null || (state.text == null || state.text.node == null ||
+			(!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
+			!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
+		{
+			cell = this.addText(pt.x, pt.y, state);
+		}
+	}
+
+	mxGraph.prototype.dblClick.call(this, evt, cell);
+};
+
+/**
  * Adds a new edge label at the given position and returns the new cell.
  */
-Graph.prototype.addEdgeLabelAt = function(state, x, y)
+Graph.prototype.addText = function(x, y, state)
 {
 	// Creates a new edge label with a predefined text
 	var label = new mxCell();
 	label.value = 'Text';
-	label.style = 'text;html=1;resizable=0;align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;'
+	label.style = 'text;html=1;resizable=0;'
 	label.geometry = new mxGeometry(0, 0, 0, 0);
-	label.geometry.relative = true;
 	label.connectable = false;
 	label.vertex = true;
 	
-	// Resets the relative location stored inside the geometry
-	var pt2 = this.view.getRelativePoint(state, x, y);
-	label.geometry.x = Math.round(pt2.x * 10000) / 10000;
-	label.geometry.y = Math.round(pt2.y);
+	if (state != null)
+	{
+		label.style += ';align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;'
+		label.geometry.relative = true;
+		
+		// Resets the relative location stored inside the geometry
+		var pt2 = this.view.getRelativePoint(state, x, y);
+		label.geometry.x = Math.round(pt2.x * 10000) / 10000;
+		label.geometry.y = Math.round(pt2.y);
+		
+		// Resets the offset inside the geometry to find the offset from the resulting point
+		label.geometry.offset = new mxPoint(0, 0);
+		pt2 = this.view.getPoint(state, label.geometry);
 	
-	// Resets the offset inside the geometry to find the offset from the resulting point
-	label.geometry.offset = new mxPoint(0, 0);
-	pt2 = this.view.getPoint(state, label.geometry);
+		var scale = this.view.scale;
+		label.geometry.offset = new mxPoint(Math.round((x - pt2.x) / scale), Math.round((y - pt2.y) / scale));
+	}
+	else
+	{
+		label.style += 'autosize=1;align=left;verticalAlign=top;spacingTop=-4;'
 
-	var scale = this.view.scale;
-	label.geometry.offset = new mxPoint(Math.round((x - pt2.x) / scale), Math.round((y - pt2.y) / scale));
-	
+		var tr = this.view.translate;
+		label.geometry.x = Math.round(x / this.view.scale) - tr.x;
+		label.geometry.y = Math.round(y / this.view.scale) - tr.y;
+	}
+		
 	this.getModel().beginUpdate();
 	try
 	{
-		this.addCells([label], state.cell);
+		this.addCells([label], (state != null) ? state.cell : null);
 		this.fireEvent(new mxEventObject('cellsInserted', 'cells', [label]));
 	}
 	finally
