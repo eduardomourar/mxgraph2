@@ -752,6 +752,21 @@ Graph.prototype.addText = function(x, y, state)
 };
 
 /**
+ * 
+ * @param cell
+ * @returns {Boolean}
+ */
+Graph.prototype.isCellResizable = function(cell)
+{
+	var result = mxGraph.prototype.isCellResizable.apply(this, arguments);
+
+	var state = this.view.getState(cell);
+	var style = (state != null) ? state.style : this.getCellStyle(cell);
+		
+	return result || style['whiteSpace'] == 'wrap';
+};
+
+/**
  * Function: alignCells
  * 
  * Aligns the given cells vertically or horizontally according to the given
