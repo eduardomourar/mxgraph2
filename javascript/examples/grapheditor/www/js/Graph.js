@@ -699,7 +699,9 @@ Graph.prototype.dblClick = function(evt, cell)
 };
 
 /**
- * Adds a new edge label at the given position and returns the new cell.
+ * Adds a new label at the given position and returns the new cell. State is
+ * an optional edge state to be used as the parent for the label. Vertices
+ * are not allowed currently as states.
  */
 Graph.prototype.addText = function(x, y, state)
 {
@@ -749,6 +751,45 @@ Graph.prototype.addText = function(x, y, state)
 	}
 	
 	return label;
+};
+
+/**
+ * Inserts the given image at the cursor in a content editable text box using
+ * the insertimage command on the document instance and updates the size.
+ */
+Graph.prototype.insertImage = function(newValue, w, h)
+{
+	// To find the new image, we create a list of all existing links first
+	if (newValue != null)
+	{
+		var tmp = this.cellEditor.text2.getElementsByTagName('img');
+		var oldImages = [];
+		
+		for (var i = 0; i < tmp.length; i++)
+		{
+			oldImages.push(tmp[i]);
+		}
+
+		document.execCommand('insertimage', false, newValue);
+		
+		// Sets size of new image
+		var newImages = this.cellEditor.text2.getElementsByTagName('img');
+		
+		if (newImages.length == oldImages.length + 1)
+		{
+			// Inverse order in favor of appended images
+			for (var i = newImages.length - 1; i >= 0; i--)
+			{
+				if (i == 0 || newImages[i] != oldImages[i - 1])
+				{
+					newImages[i].style.width = w + 'px';
+					newImages[i].style.height = h + 'px';
+					
+					break;
+				}
+			}
+		}
+	}
 };
 
 /**

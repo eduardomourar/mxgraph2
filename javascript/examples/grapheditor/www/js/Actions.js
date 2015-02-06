@@ -1010,41 +1010,7 @@ Actions.prototype.init = function()
 	    		if (graph.cellEditor.isContentEditing())
 	    		{
 	    			graph.cellEditor.restoreSelection(selectionState);
-	    			
-					// To find the new image, we create a list of all existing links first
-	    			if (newValue != null)
-	    			{
-						var tmp = graph.cellEditor.text2.getElementsByTagName('img');
-						var oldImages = [];
-						
-						for (var i = 0; i < tmp.length; i++)
-						{
-							oldImages.push(tmp[i]);
-						}
-				
-						document.execCommand('insertimage', false, newValue);
-						
-						// Sets size of new image
-						var newImages = graph.cellEditor.text2.getElementsByTagName('img');
-						
-						if (newImages.length == oldImages.length + 1)
-						{
-							// Inverse order in favor of appended images
-							for (var i = newImages.length - 1; i >= 0; i--)
-							{
-								if (i == 0 || newImages[i] != oldImages[i - 1])
-								{
-									ui.loadImage(newValue, function(img)
-						    		{
-										newImages[i].style.width = img.width + 'px';
-										newImages[i].style.height = img.height + 'px';
-						    		});
-									
-									break;
-								}
-							}
-						}
-	    			}
+	    			graph.insertImage(newValue, w, h);
 	    		}
 	    		else
 	    		{
