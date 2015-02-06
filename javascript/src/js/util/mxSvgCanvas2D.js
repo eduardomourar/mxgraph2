@@ -140,6 +140,22 @@ function mxSvgCanvas2D(root, styleEnabled)
 mxUtils.extend(mxSvgCanvas2D, mxAbstractCanvas2D);
 
 /**
+ * Capability check for DOM parser.
+ */
+(function()
+{
+	mxSvgCanvas2D.prototype.useDomParser = !mxClient.IS_IE && typeof DOMParser === 'function' && typeof XMLSerializer === 'function';
+	
+	if (mxSvgCanvas2D.prototype.useDomParser)
+	{
+		// Checks using a generic test text if the parsing actually works. This is a workaround
+		// for older browsers where the capability check returns true but the parsing fails.
+		var doc = new DOMParser().parseFromString('test text', 'text/html');
+		mxSvgCanvas2D.prototype.useDomParser = doc != null;
+	}
+})();
+
+/**
  * Variable: path
  * 
  * Holds the current DOM node.
@@ -1042,21 +1058,24 @@ mxSvgCanvas2D.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
  */
 mxSvgCanvas2D.prototype.convertHtml = function(val)
 {
-	// Produces invalid argument in IE9 and parsing error in IE10, not supported in quirks and IE8 (IE11 ok)
-	if (!mxClient.IS_IE && typeof DOMParser === 'function' && typeof XMLSerializer === 'function')
+	if (this.useDomParser)
 	{
 		var doc = new DOMParser().parseFromString(val, 'text/html');
-		val = new XMLSerializer().serializeToString(doc.body);
-		
-		// Extracts body content from DOM
-		if (val.substring(0, 5) == '<body')
+
+		if (doc != null)
 		{
-			val = val.substring(val.indexOf('>', 5) + 1);
-		}
-		
-		if (val.substring(val.length - 7, val.length) == '</body>')
-		{
-			val = val.substring(0, val.length - 7);
+			val = new XMLSerializer().serializeToString(doc.body);
+			
+			// Extracts body content from DOM
+			if (val.substring(0, 5) == '<body')
+			{
+				val = val.substring(val.indexOf('>', 5) + 1);
+			}
+			
+			if (val.substring(val.length - 7, val.length) == '</body>')
+			{
+				val = val.substring(0, val.length - 7);
+			}
 		}
 	}
 	else

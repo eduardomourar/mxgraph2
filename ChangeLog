@@ -1,3 +1,4 @@
+- Adds additional check for DOMParser functionality [JavaScript]
 - Rounds coordinates in mxCellEditor.getEditorBounds [JavaScript]
 - Fixes handling of HTML entities for SVG export in quirks, IE11 [JavaScript]
 - Adds mxSvgCanvas2D.convertHtml for HTML to XHTML conversion [JavaScript]
