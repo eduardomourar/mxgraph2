@@ -2101,10 +2101,21 @@ Graph.prototype.initTouch = function()
 		var parent = model.getParent(this.state.cell);
 		var geo = this.graph.getCellGeometry(this.state.cell);
 		
-		if (!model.isEdge(parent) || geo == null || !geo.relative || this.state == null || this.state.width >= 2 || this.state.height >= 2)
+		// Lets rotation events through
+		var handle = this.getHandleForEvent(me);
+		
+		if (handle == mxEvent.ROTATION_HANDLE || !model.isEdge(parent) || geo == null || !geo.relative ||
+			this.state == null || this.state.width >= 2 || this.state.height >= 2)
 		{
 			mxVertexHandlerMouseDown.apply(this, arguments);
 		}
+	};
+	
+	// Shows rotation handle for edge labels.
+	mxVertexHandler.prototype.isRotationHandleVisible = function()
+	{
+		return this.graph.isEnabled() && this.rotationEnabled && this.graph.isCellRotatable(this.state.cell) &&
+			(mxGraphHandler.prototype.maxCells <= 0 || this.graph.getSelectionCount() < mxGraphHandler.prototype.maxCells);
 	};
 
 	// Requires callback to editorUi in edit link so override editorUi.init
