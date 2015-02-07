@@ -1,3 +1,4 @@
+- mxText.updateBoundingBox sets unrotatedBoundingBox [JavaScript] 
 - Adds additional check for DOMParser functionality [JavaScript]
 - Rounds coordinates in mxCellEditor.getEditorBounds [JavaScript]
 - Fixes handling of HTML entities for SVG export in quirks, IE11 [JavaScript]
