@@ -1575,7 +1575,7 @@ ArrangePanel.prototype.addGeometry = function(container)
 	
 	var autosizeBtn = document.createElement('div');
 	autosizeBtn.className = 'geSprite geSprite-actualsize';
-	autosizeBtn.setAttribute('title', mxResources.get('autosize'));
+	autosizeBtn.setAttribute('title', mxResources.get('autosize') + ' (Ctrl+Shift+Z)');
 	autosizeBtn.style.position = 'relative';
 	autosizeBtn.style.cursor = 'pointer';
 	autosizeBtn.style.marginTop = '-3px';
