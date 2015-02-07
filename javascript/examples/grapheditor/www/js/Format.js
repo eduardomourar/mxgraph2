@@ -2860,7 +2860,9 @@ StyleFormatPanel.prototype.addFill = function(container)
 	});
 	fillPanel.style.fontWeight = 'bold';
 
-	gradientPanel.style.display = (ss.fill && ss.style.shape != 'image') ? '' : 'none';
+	var tmpColor = mxUtils.getValue(ss.style, fillKey, null);
+	gradientPanel.style.display = (tmpColor != null && tmpColor != mxConstants.NONE &&
+		ss.fill && ss.style.shape != 'image') ? '' : 'none';
 
 	var directions = [mxConstants.DIRECTION_NORTH, mxConstants.DIRECTION_EAST,
 	                  mxConstants.DIRECTION_SOUTH, mxConstants.DIRECTION_WEST];
