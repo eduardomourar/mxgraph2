@@ -832,7 +832,13 @@ BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, 
 		{
 			this.listener = function()
 			{
-				apply(mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, defaultValue) != disabledValue);
+				// Seems to be null sometimes, not sure why...
+				var state = graph.view.getState(graph.getSelectionCell());
+				
+				if (state != null)
+				{
+					apply(mxUtils.getValue(state.style, key, defaultValue) != disabledValue);
+				}
 			};
 			
 			graph.getModel().addListener(mxEvent.CHANGE, this.listener);
