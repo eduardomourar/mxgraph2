@@ -1582,6 +1582,16 @@ ArrangePanel.prototype.addGeometry = function(container)
 	autosizeBtn.style.border = '0px';
 	autosizeBtn.style.left = '52px';
 	mxUtils.setOpacity(autosizeBtn, 50);
+	
+	mxEvent.addListener(autosizeBtn, 'mouseenter', function()
+	{
+		mxUtils.setOpacity(autosizeBtn, 100);
+	});
+	
+	mxEvent.addListener(autosizeBtn, 'mouseleave', function()
+	{
+		mxUtils.setOpacity(autosizeBtn, 50);
+	});
 
 	mxEvent.addListener(autosizeBtn, 'click', function()
 	{
