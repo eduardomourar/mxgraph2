@@ -1557,7 +1557,7 @@ ArrangePanel.prototype.addGeometry = function(container)
 	
 	var span = document.createElement('div');
 	span.style.position = 'absolute';
-	span.style.width = '70px';
+	span.style.width = '50px';
 	span.style.marginTop = '0px';
 	span.style.fontWeight = 'bold';
 	mxUtils.write(span, mxResources.get('size'));
@@ -1572,8 +1572,23 @@ ArrangePanel.prototype.addGeometry = function(container)
 	{
 		heightUpdate.apply(this, arguments);
 	});
+	
+	var autosizeBtn = document.createElement('div');
+	autosizeBtn.className = 'geSprite geSprite-actualsize';
+	autosizeBtn.setAttribute('title', mxResources.get('autosize'));
+	autosizeBtn.style.position = 'relative';
+	autosizeBtn.style.cursor = 'pointer';
+	autosizeBtn.style.marginTop = '-3px';
+	autosizeBtn.style.border = '0px';
+	autosizeBtn.style.left = '52px';
+	mxUtils.setOpacity(autosizeBtn, 50);
 
-	mxUtils.br(div);
+	mxEvent.addListener(autosizeBtn, 'click', function()
+	{
+		ui.actions.get('autosize').funct();
+	});
+	
+	div.appendChild(autosizeBtn);
 	this.addLabel(div, mxResources.get('width'), 84);
 	this.addLabel(div, mxResources.get('height'), 20);
 	mxUtils.br(div);
