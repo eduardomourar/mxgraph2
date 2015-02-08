@@ -832,7 +832,7 @@ BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, 
 		{
 			this.listener = function()
 			{
-				apply(mxUtils.getValue(state.style, key, defaultValue) != disabledValue);
+				apply(mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, defaultValue) != disabledValue);
 			};
 			
 			graph.getModel().addListener(mxEvent.CHANGE, this.listener);
