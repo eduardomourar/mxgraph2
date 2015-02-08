@@ -832,13 +832,7 @@ BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, 
 		{
 			this.listener = function()
 			{
-				// Seems to be null sometimes, not sure why...
-				var state = graph.view.getState(graph.getSelectionCell());
-				
-				if (state != null)
-				{
-					apply(mxUtils.getValue(state.style, key, defaultValue) != disabledValue);
-				}
+				apply(mxUtils.getValue(state.style, key, defaultValue) != disabledValue);
 			};
 			
 			graph.getModel().addListener(mxEvent.CHANGE, this.listener);
@@ -1012,7 +1006,13 @@ BaseFormatPanel.prototype.createCellColorOption = function(label, colorKey, defa
 		{
 			this.listener = function()
 			{
-				apply(mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, colorKey, null));
+				// Seems to be null sometimes, not sure why...
+				var state = graph.view.getState(graph.getSelectionCell());
+				
+				if (state != null)
+				{
+					apply(mxUtils.getValue(state.style, colorKey, null));
+				}
 			};
 			
 			graph.getModel().addListener(mxEvent.CHANGE, this.listener);
