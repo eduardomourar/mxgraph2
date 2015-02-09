@@ -990,7 +990,15 @@ BaseFormatPanel.prototype.createCellColorOption = function(label, colorKey, defa
 	
 	return this.createColorOption(label, function()
 	{
-		return mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, colorKey, null);
+		// Seems to be null sometimes, not sure why...
+		var state = graph.view.getState(graph.getSelectionCell());
+		
+		if (state != null)
+		{
+			return mxUtils.getValue(state.style, colorKey, null);
+		}
+		
+		return null;
 	}, function(color)
 	{
 		graph.getModel().beginUpdate();
