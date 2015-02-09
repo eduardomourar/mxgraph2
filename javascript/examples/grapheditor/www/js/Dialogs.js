@@ -879,7 +879,7 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 		}
 		else
 		{
-			document.execCommand('selectAll');
+			document.execCommand('selectAll', false, null);
 		}
 	};
 
@@ -1889,7 +1889,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn)
 		}
 		else
 		{
-			document.execCommand('selectAll');
+			document.execCommand('selectAll', false, null);
 		}
 	};
 	

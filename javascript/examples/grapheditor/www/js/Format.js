@@ -1917,19 +1917,19 @@ TextFormatPanel.prototype.addFont = function(container)
 			(graph.cellEditor.isContentEditing()) ?
 			function()
 			{
-				document.execCommand('justifyleft');
+				document.execCommand('justifyleft', false, null);
 			} : this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_LEFT]), stylePanel3);
 	var center = this.editorUi.toolbar.addButton('geSprite-center', mxResources.get('center'),
 			(graph.cellEditor.isContentEditing()) ?
 			function()
 			{
-				document.execCommand('justifycenter');
+				document.execCommand('justifycenter', false, null);
 			} : this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_CENTER]), stylePanel3);
 	var right = this.editorUi.toolbar.addButton('geSprite-right', mxResources.get('right'),
 			(graph.cellEditor.isContentEditing()) ?
 			function()
 			{
-				document.execCommand('justifyright');
+				document.execCommand('justifyright', false, null);
 			} : this.editorUi.menus.createStyleChangeFunction([mxConstants.STYLE_ALIGN], [mxConstants.ALIGN_RIGHT]), stylePanel3);
 
 	this.styleButtons([left, center, right]);
@@ -1939,7 +1939,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		var clear = this.editorUi.toolbar.addButton('geSprite-removeformat', mxResources.get('removeFormat'),
 			function()
 			{
-				document.execCommand('removeformat');
+				document.execCommand('removeformat', false, null);
 			}, stylePanel2);
 		this.styleButtons([clear]);
 	}
@@ -1973,17 +1973,17 @@ TextFormatPanel.prototype.addFont = function(container)
 		full = this.editorUi.toolbar.addButton('geSprite-justifyfull', null,
 			function()
 			{
-				document.execCommand('justifyfull');
+				document.execCommand('justifyfull', false, null);
 			}, stylePanel3);
 		this.styleButtons([full,
        		sup = this.editorUi.toolbar.addButton('geSprite-superscript', mxResources.get('superscript'),
 			function()
 			{
-				document.execCommand('superscript');
+				document.execCommand('superscript', false, null);
 			}, stylePanel3), sub = this.editorUi.toolbar.addButton('geSprite-subscript', mxResources.get('subscript'),
 			function()
 			{
-				document.execCommand('subscript');
+				document.execCommand('subscript', false, null);
 			}, stylePanel3)]);
 		full.style.marginRight = '9px';
 		
@@ -1992,22 +1992,22 @@ TextFormatPanel.prototype.addFont = function(container)
 		var btns = [this.editorUi.toolbar.addButton('geSprite-orderedlist', mxResources.get('numberelist'),
 				function()
 				{
-					document.execCommand('insertorderedlist');
+					document.execCommand('insertorderedlist', false, null);
 				}, tmp),
 			this.editorUi.toolbar.addButton('geSprite-unorderedlist', mxResources.get('bulletedlist'),
 				function()
 				{
-					document.execCommand('insertunorderedlist');
+					document.execCommand('insertunorderedlist', false, null);
 				}, tmp),
 			this.editorUi.toolbar.addButton('geSprite-outdent', mxResources.get('decreaseIndent'),
 					function()
 					{
-						document.execCommand('outdent');
+						document.execCommand('outdent', false, null);
 					}, tmp),
 			this.editorUi.toolbar.addButton('geSprite-indent', mxResources.get('increaseIndent'),
 				function()
 				{
-					document.execCommand('indent');
+					document.execCommand('indent', false, null);
 				}, tmp),
 			this.editorUi.toolbar.addButton('geSprite-code', mxResources.get('html'),
 				function()
@@ -2289,7 +2289,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		        this.editorUi.toolbar.addButton('geSprite-horizontalrule', mxResources.get('insertHorizontalRule'),
 				function()
 				{
-					document.execCommand('inserthorizontalrule');
+					document.execCommand('inserthorizontalrule', false, null);
 				}, insertPanel),				
 				this.editorUi.toolbar.addMenuFunctionInContainer(insertPanel, 'geSprite-table', mxResources.get('table'), false, mxUtils.bind(this, function(menu)
 				{

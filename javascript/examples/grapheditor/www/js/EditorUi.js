@@ -733,7 +733,7 @@ EditorUi.prototype.initClipboard = function()
 	{
 		if (graph.cellEditor.isContentEditing())
 		{
-			document.execCommand('cut');
+			document.execCommand('cut', false, null);
 		}
 		else
 		{
@@ -748,7 +748,7 @@ EditorUi.prototype.initClipboard = function()
 	{
 		if (graph.cellEditor.isContentEditing())
 		{
-			document.execCommand('copy');
+			document.execCommand('copy', false, null);
 		}
 		else
 		{
@@ -763,7 +763,7 @@ EditorUi.prototype.initClipboard = function()
 	{
 		if (graph.cellEditor.isContentEditing())
 		{
-			document.execCommand('paste');
+			document.execCommand('paste', false, null);
 		}
 		else
 		{
@@ -1138,7 +1138,7 @@ EditorUi.prototype.redo = function()
 {
 	if (this.editor.graph.cellEditor.isContentEditing())
 	{
-		document.execCommand('redo');
+		document.execCommand('redo', false, null);
 	}
 	else
 	{
@@ -1156,7 +1156,7 @@ EditorUi.prototype.undo = function()
 	{
 		// Stops editing if undo doesn't change anything in the editing value
 		var value = this.editor.graph.cellEditor.getCurrentValue();
-		document.execCommand('undo');
+		document.execCommand('undo', false, null);
 		
 		if (value == this.editor.graph.cellEditor.getCurrentValue())
 		{

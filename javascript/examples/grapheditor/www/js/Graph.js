@@ -1607,7 +1607,7 @@ Graph.prototype.initTouch = function()
 
 				if (this.isSelectText() && this.text2.innerHTML.length > 0)
 				{
-					document.execCommand('selectAll');
+					document.execCommand('selectAll', false, null);
 				}
 				
 				// Hides handles on selected cell
