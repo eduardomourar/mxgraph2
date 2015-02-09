@@ -1985,19 +1985,32 @@ EditorUi.prototype.extractGraphModelFromEvent = function(evt)
 		
 		if (provider != null)
 		{
-			if (mxUtils.indexOf(provider.types, 'text/html') >= 0)
-		    {
-				data = this.extractGraphModelFromHtml(this.editor.graph.zapGremlins(
-					mxUtils.trim(provider.getData('text/html'))));
-		    }
-		    else if (mxUtils.indexOf(provider.types, 'text/plain') >= 0)
-		    {
-		    	data = this.editor.graph.zapGremlins(mxUtils.trim(provider.getData('text/plain')));
-		    }
-		    else if (document.documentMode == 11)
-		    {
-		    	data = this.editor.graph.zapGremlins(mxUtils.trim(provider.getData('Text')));
-		    }
+			if (document.documentMode == 11)
+			{
+				data = provider.getData('Text');
+			}
+			else
+			{
+				data = (mxUtils.indexOf(provider.types, 'text/html') >= 0) ? provider.getData('text/html') : null;
+			
+				if (mxUtils.indexOf(provider.types, 'text/plain' && (data == null || data.length == 0)))
+				{
+					data = provider.getData('text/plain');
+				}
+			}
+
+			if (data != null)
+			{
+				data = this.editor.graph.zapGremlins(mxUtils.trim(data));
+				
+				// Tries parsing as HTML document with embedded XML
+				var xml =  this.extractGraphModelFromHtml(data);
+				
+				if (xml != null)
+				{
+					data = xml;
+				}
+			}		
 		}
 	}
 	
