@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 
 import javax.swing.BorderFactory;
@@ -42,9 +41,6 @@ import com.mxgraph.analysis.mxICostFunction;
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxOrganicLayout;
-import com.mxgraph.layout.hierarchical.model.mxGraphHierarchyEdge;
-import com.mxgraph.layout.hierarchical.model.mxGraphHierarchyNode;
-import com.mxgraph.layout.hierarchical.model.mxGraphHierarchyModel.CellVisitor;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxIGraphModel;

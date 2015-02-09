@@ -57,14 +57,17 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	var spacing =  mxConstants.ARROW_SPACING;
 	var width = mxConstants.ARROW_WIDTH;
 	var arrow = mxConstants.ARROW_SIZE;
+	var arrowStart = true;
+	var arrowEnd = true;
+	var curved = true;
 
 	// Base vector (between end points)
 	var p0 = pts[0];
 	var pe = pts[pts.length - 1];
-	var dx = pe.x - p0.x;
-	var dy = pe.y - p0.y;
-	var dist = Math.sqrt(dx * dx + dy * dy);
-	var length = dist - 2 * spacing - arrow;
+	//var dx = pe.x - p0.x;
+	//var dy = pe.y - p0.y;
+	//var dist = Math.sqrt(dx * dx + dy * dy);
+	//var length = dist - 2 * spacing - arrow;
 	
 	// Computes the norm and the inverse norm
 	var nx = dx / dist;

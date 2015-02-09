@@ -7,7 +7,6 @@ import javax.swing.UIManager;
 import com.mxgraph.examples.swing.GraphEditor;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.util.mxSwingConstants;
-import com.mxgraph.view.mxGraph;
 
 public class GraphEditorCreator extends GraphEditor
 {
