@@ -1431,7 +1431,7 @@ mxVertexHandler.prototype.redrawHandles = function()
 	this.verticalOffset = 0;
 	var s = this.bounds;
 
-	if (this.sizers != null)
+	if (this.sizers != null && this.sizers.length > 0)
 	{
 		if (this.index == null && this.manageSizers && this.sizers.length >= 8)
 		{
@@ -1452,20 +1452,23 @@ mxVertexHandler.prototype.redrawHandles = function()
 				s.height += this.verticalOffset;
 			}
 			
-			if ((s.width < 2 * this.sizers[0].bounds.width + 2 * tol) ||
-				(s.height < 2 * this.sizers[0].bounds.height + 2 * tol))
+			if (sizers.length >= 8)
 			{
-				this.sizers[0].node.style.display = 'none';
-				this.sizers[2].node.style.display = 'none';
-				this.sizers[5].node.style.display = 'none';
-				this.sizers[7].node.style.display = 'none';
-			}
-			else
-			{
-				this.sizers[0].node.style.display = '';
-				this.sizers[2].node.style.display = '';
-				this.sizers[5].node.style.display = '';
-				this.sizers[7].node.style.display = '';
+				if ((s.width < 2 * this.sizers[0].bounds.width + 2 * tol) ||
+					(s.height < 2 * this.sizers[0].bounds.height + 2 * tol))
+				{
+					this.sizers[0].node.style.display = 'none';
+					this.sizers[2].node.style.display = 'none';
+					this.sizers[5].node.style.display = 'none';
+					this.sizers[7].node.style.display = 'none';
+				}
+				else
+				{
+					this.sizers[0].node.style.display = '';
+					this.sizers[2].node.style.display = '';
+					this.sizers[5].node.style.display = '';
+					this.sizers[7].node.style.display = '';
+				}
 			}
 		}
 

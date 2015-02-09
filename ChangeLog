@@ -1,3 +1,5 @@
+- Fixes possible NPE in mxVertexHandler.redrawHandles [JavaScript]
+
 09-FEB-2015: 3.1.2.2
 
 - mxText.updateBoundingBox sets unrotatedBoundingBox [JavaScript] 
