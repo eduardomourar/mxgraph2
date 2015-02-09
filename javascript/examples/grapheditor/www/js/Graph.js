@@ -1129,14 +1129,17 @@ Graph.prototype.insertColumn = function(table, index)
  */
 Graph.prototype.deleteColumn = function(table, index)
 {
-	var bd = table.tBodies[0];
-	var rows = bd.rows;
-	
-	for (var i = 0; i < rows.length; i++)
+	if (index >= 0)
 	{
-		if (rows[i].cells.length > index)
+		var bd = table.tBodies[0];
+		var rows = bd.rows;
+		
+		for (var i = 0; i < rows.length; i++)
 		{
-			rows[i].deleteCell(index);
+			if (rows[i].cells.length > index)
+			{
+				rows[i].deleteCell(index);
+			}
 		}
 	}
 };
