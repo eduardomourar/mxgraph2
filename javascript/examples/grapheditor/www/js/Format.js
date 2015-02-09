@@ -347,7 +347,7 @@ Format.prototype.refresh = function()
 		
 		var addClickHandler = mxUtils.bind(this, function(elt, panel, index)
 		{
-			mxEvent.addListener(elt, 'click', mxUtils.bind(this, function(evt)
+			var clickHandler = mxUtils.bind(this, function(evt)
 			{
 				if (currentLabel != elt)
 				{
@@ -381,11 +381,14 @@ Format.prototype.refresh = function()
 						currentPanel.style.display = '';
 					}
 				}
-			}));
+			});
+			
+			mxEvent.addListener(elt, 'click', clickHandler);
 			
 			if (index == ((containsLabel) ? this.labelIndex : this.currentIndex))
 			{
-				elt.click();
+				// Invokes handler directly as a workaround for no click on DIV in KHTML.
+				clickHandler();
 			}
 		});
 		
