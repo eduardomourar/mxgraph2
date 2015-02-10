@@ -451,7 +451,7 @@ mxGraphHandler.prototype.getPreviewBounds = function(cells)
  * Function: getBoundingBox
  * 
  * Returns the <mxRectangle> that represents the bounding box for the given
- * cells. If bbox is true then the paint bounding box is returned.
+ * cells.
  */
 mxGraphHandler.prototype.getBoundingBox = function(cells)
 {
