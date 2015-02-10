@@ -732,7 +732,7 @@ mxVertexHandler.prototype.removeHint = function() { };
  */
 mxVertexHandler.prototype.roundAngle = function(angle)
 {
-	return Math.round(angle);
+	return Math.round(angle * 10) / 10;
 };
 
 /**
