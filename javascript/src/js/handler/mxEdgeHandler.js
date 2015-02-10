@@ -148,6 +148,14 @@ mxEdgeHandler.prototype.mergeRemoveEnabled = false;
 mxEdgeHandler.prototype.virtualBendsEnabled = false;
 
 /**
+ * Variable: virtualBendOpacity
+ * 
+ * Opacity to be used for virtual bends (see <virtualBendsEnabled>).
+ * Default is 20.
+ */
+mxEdgeHandler.prototype.virtualBendOpacity = 20;
+
+/**
  * Variable: parentHighlightEnabled
  * 
  * Specifies if the parent should be highlighted if a child cell is selected.
@@ -1860,7 +1868,7 @@ mxEdgeHandler.prototype.redrawHandles = function()
 				b.bounds = new mxRectangle(Math.round(x - b.bounds.width / 2),
 						Math.round(y - b.bounds.height / 2), b.bounds.width, b.bounds.height);
 				b.redraw();
-				mxUtils.setOpacity(b.node, 20);
+				mxUtils.setOpacity(b.node, this.virtualBendOpacity);
 				last = pt;
 				
 				if (this.manageLabelHandle)
