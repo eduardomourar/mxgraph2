@@ -516,9 +516,11 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 		var value = (isFloat) ? parseFloat(input.value) : parseInt(input.value);
 
 		// Special case: angle mod 360
-		if (!isNaN(value) && key == mxConstants.STYLE_ROTATION && (value > 360 || value < 0))
+		if (!isNaN(value) && key == mxConstants.STYLE_ROTATION)
 		{
-			value = mxUtils.mod(value, 360);
+			// Workaround for decimal rounding errors in floats is to
+			// use integer and round all numbers to two decimal point
+			value = mxUtils.mod(Math.round(value * 100), 3600) / 100;
 		}
 		
 		value = Math.min(max, Math.max(min, (isNaN(value)) ? defaultValue : value));
