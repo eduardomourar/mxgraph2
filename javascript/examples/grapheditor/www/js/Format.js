@@ -497,9 +497,11 @@ BaseFormatPanel.prototype.getSelectionState = function()
 /**
  * Install input handler.
  */
-BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValue, min, max, unit, textEditFallback)
+BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValue, min, max, unit, textEditFallback, isFloat)
 {
 	unit = (unit != null) ? unit : '';
+	isFloat = (isFloat != null) ? isFloat : false;
+	
 	var ui = this.editorUi;
 	var graph = ui.editor.graph;
 	
@@ -511,10 +513,10 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 	
 	var update = mxUtils.bind(this, function(evt)
 	{
-		var value = parseInt(input.value);
-		
+		var value = (isFloat) ? parseFloat(input.value) : parseInt(input.value);
+
 		// Special case: angle mod 360
-		if (!isNaN(value) && key == mxConstants.STYLE_ROTATION)
+		if (!isNaN(value) && key == mxConstants.STYLE_ROTATION && (value > 360 || value < 0))
 		{
 			value = mxUtils.mod(value, 360);
 		}
@@ -546,6 +548,8 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 			{
 				graph.stopEditing(true);
 			}
+			
+			console.log('value3', value);
 			
 			graph.setCellStyles(key, value, graph.getSelectionCells());
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [key],
@@ -1556,7 +1560,7 @@ ArrangePanel.prototype.addAngle = function(div)
 		}
 	});
 
-	update = this.installInputHandler(input, mxConstants.STYLE_ROTATION, 0, 0, 360, '°');
+	update = this.installInputHandler(input, mxConstants.STYLE_ROTATION, 0, 0, 360, '°', null, true);
 	this.addKeyHandler(input, listener);
 
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
