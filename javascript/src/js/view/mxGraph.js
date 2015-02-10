@@ -11110,7 +11110,7 @@ mxGraph.prototype.getEdgesBetween = function(source, target, directed)
  * 
  * Returns the child vertices and edges of the given parent that are contained
  * in the given rectangle. The result is added to the optional result array,
- * which is returned. If no result arrayis specified then a new array is
+ * which is returned. If no result array is specified then a new array is
  * created and returned.
  * 
  * Parameters:
