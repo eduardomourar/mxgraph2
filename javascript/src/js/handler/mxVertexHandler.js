@@ -1452,7 +1452,7 @@ mxVertexHandler.prototype.redrawHandles = function()
 				s.height += this.verticalOffset;
 			}
 			
-			if (sizers.length >= 8)
+			if (this.sizers.length >= 8)
 			{
 				if ((s.width < 2 * this.sizers[0].bounds.width + 2 * tol) ||
 					(s.height < 2 * this.sizers[0].bounds.height + 2 * tol))
