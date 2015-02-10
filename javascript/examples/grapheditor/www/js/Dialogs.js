@@ -21,6 +21,12 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 	var left = Math.max(0, Math.round((document.body.scrollWidth - w) / 2));
 	var top = Math.max(0, Math.round((Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - h) / 3));
 	
+	// Increments zIndex to put subdialogs and background over existing dialogs and background
+	if (editorUi.dialogs.length > 0)
+	{
+		this.zIndex += editorUi.dialogs.length * 3;
+	}
+	
 	var div = editorUi.createDiv('geDialog');
 	div.style.width = w + 'px';
 	div.style.height = h + 'px';
