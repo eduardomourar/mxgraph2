@@ -549,8 +549,6 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 				graph.stopEditing(true);
 			}
 			
-			console.log('value3', value);
-			
 			graph.setCellStyles(key, value, graph.getSelectionCells());
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [key],
 					'values', [value], 'cells', graph.getSelectionCells()));
