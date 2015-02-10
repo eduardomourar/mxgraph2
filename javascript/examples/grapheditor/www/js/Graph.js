@@ -196,6 +196,8 @@ Graph = function(container, model, renderHint, stylesheet)
 		}
 	};
 	
+	// Shows pointer cursor for clickable cells with links
+	// ie. if the graph is disabled and cells cannot be selected
 	var getCursorForCell = this.getCursorForCell;
 	this.getCursorForCell = function(cell)
 	{
@@ -214,10 +216,69 @@ Graph = function(container, model, renderHint, stylesheet)
 		}
 	};
 	
-	// Allows all events through
-	this.isEventSourceIgnored2 = function(evtName, me)
+	// Changes rubberband selection to be recursive
+	this.selectRegion = function(rect, evt)
 	{
-		return false;
+		var cells = this.getAllCells(rect.x, rect.y, rect.width, rect.height);
+		this.selectCellsForEvent(cells, evt);
+		
+		return cells;
+	};
+	
+	// Recursive implementation for rubberband selection
+	this.getAllCells = function(x, y, width, height, parent, result)
+	{
+		result = (result != null) ? result : [];
+		
+		if (width > 0 || height > 0)
+		{
+			var model = this.getModel();
+			var right = x + width;
+			var bottom = y + height;
+
+			if (parent == null)
+			{
+				parent = this.getCurrentRoot();
+				
+				if (parent == null)
+				{
+					parent = model.getRoot();
+				}
+			}
+			
+			if (parent != null)
+			{
+				var childCount = model.getChildCount(parent);
+				
+				for (var i = 0; i < childCount; i++)
+				{
+					var cell = model.getChildAt(parent, i);
+					var state = this.view.getState(cell);
+					
+					if (state != null && this.isCellVisible(cell))
+					{
+						var deg = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION) || 0;
+						var box = state;
+						
+						if (deg != 0)
+						{
+							box = mxUtils.getBoundingBox(box, deg);
+						}
+						
+						if ((model.isEdge(cell) || model.isVertex(cell)) &&
+							box.x >= x && box.y + box.height <= bottom &&
+							box.y >= y && box.x + box.width <= right)
+						{
+							result.push(cell);
+						}
+
+						this.getAllCells(x, y, width, height, cell, result);
+					}
+				}
+			}
+		}
+		
+		return result;
 	};
 	
 	// Unlocks all cells
