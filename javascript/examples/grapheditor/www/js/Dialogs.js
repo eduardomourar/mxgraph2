@@ -24,7 +24,7 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 	// Increments zIndex to put subdialogs and background over existing dialogs and background
 	if (editorUi.dialogs.length > 0)
 	{
-		this.zIndex += editorUi.dialogs.length * 3;
+		this.zIndex += editorUi.dialogs.length * 2;
 	}
 	
 	var div = editorUi.createDiv('geDialog');
