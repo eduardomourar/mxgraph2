@@ -1,3 +1,4 @@
+- Fixes mxClient.IS_OP for newer versions of Opera [JavaScript]
 - Ignores children of selected parents in mxClipboard.copy [JavaScript] 
 - Adds recursive rubberband selection in grapheditor
 - Adds decimal values in mxVertexHandler.roundAngle [JavaScript]
