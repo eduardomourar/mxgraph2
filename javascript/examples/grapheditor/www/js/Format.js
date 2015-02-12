@@ -434,7 +434,6 @@ Format.prototype.refresh = function()
 		this.container.appendChild(textPanel);
 		
 		// Arrange
-		
 		mxUtils.write(label3, mxResources.get('arrange'));
 		div.appendChild(label3);
 
