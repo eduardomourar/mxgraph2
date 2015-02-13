@@ -54,8 +54,7 @@ mxUtils.extend(mxArrow, mxShape);
 mxArrow.prototype.paintEdgeShape = function(c, pts)
 {
 	// Geometry of arrow
-	var width = mxConstants.ARROW_WIDTH;
-
+	var width = this.getArrowWidth();
 	var edgeWidth = this.getEdgeWidth();
 	var openEnded = this.isOpenEnded();
 	var markerStart = this.isMarkerStart();
@@ -279,6 +278,17 @@ mxArrow.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, initialMove)
 	c.lineTo(ptX + orthx / 2 / this.widthArrowRatio + spaceX, ptY + orthy / 2 / this.widthArrowRatio + spaceY);
 	c.lineTo(ptX + orthx / 2 + spaceX, ptY + orthy / 2 + spaceY);
 }
+
+/**
+ * Function: getArrowWidth
+ * 
+ * Returns the width of the arrow
+ */
+mxArrow.prototype.getArrowWidth = function()
+{
+	return mxConstants.ARROW_WIDTH;
+};
+
 
 /**
  * Function: getEdgeWidth
