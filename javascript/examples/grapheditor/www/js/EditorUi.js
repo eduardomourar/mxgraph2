@@ -1432,11 +1432,6 @@ EditorUi.prototype.updateActionStates = function()
 	
 	for (var i = 0; i < actions.length; i++)
 	{
-		if (this.actions.get(actions[i]) == null)
-		{
-			console.log('null', actions[i]);
-		}
-		
 		this.actions.get(actions[i]).setEnabled(selected);
 	}
 	
@@ -1455,7 +1450,7 @@ EditorUi.prototype.updateActionStates = function()
    			graph.getModel().isVertex(graph.getModel().getParent(graph.getSelectionCell())));
 
 	// Updates menu states
-	var menus = ['alignment', 'position', 'spacing', 'gradient', 'layout', 'fontFamily', 'fontSize', 'navigation'];
+	var menus = ['alignment', 'position', 'spacing', 'writingDirection', 'gradient', 'layout', 'fontFamily', 'fontSize', 'navigation'];
 
 	for (var i = 0; i < menus.length; i++)
 	{
