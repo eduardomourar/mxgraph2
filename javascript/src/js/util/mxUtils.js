@@ -116,7 +116,7 @@ var mxUtils =
 	{
 		var prefix = null;
 		
-		if (mxClient.IS_OP && mxClient.IS_OT)
+		if (mxClient.IS_OT)
 		{
 			prefix = 'O';
 		}
