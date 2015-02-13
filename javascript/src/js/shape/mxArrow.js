@@ -110,8 +110,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	var dx1 = 0;
 	var dy1 = 0;
 	var dist1 = 0;
-	var outX = 0;
-	var outY = 0;
+
 	for (var i = 0; i < pts.length - 2; i++)
 	{
 		// Work out in which direction the line is bending
@@ -134,8 +133,8 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 		nx2 = nx2 / dist2;
 		ny2 = ny2 / dist2;
 		
-		outX = pts[i+1].x + ny2 * edgeWidth / 2 / tmp;
-		outY = pts[i+1].y - nx2 * edgeWidth / 2 / tmp
+		var outX = pts[i+1].x + ny2 * edgeWidth / 2 / tmp;
+		var outY = pts[i+1].y - nx2 * edgeWidth / 2 / tmp
 		var inX = pts[i+1].x - ny2 * edgeWidth / 2 / tmp
 		var inY = pts[i+1].y + nx2 * edgeWidth / 2 / tmp
 		
