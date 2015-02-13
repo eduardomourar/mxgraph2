@@ -899,7 +899,7 @@
 	
 	mxCellRenderer.prototype.defaultShapes['startState'] = StartStateShape;
 
-	// Defines custom edge shape
+	// Link shape
 	function LinkShape()
 	{
 		mxArrow.call(this);
@@ -919,6 +919,36 @@
 	// Registers the link shape
 	mxCellRenderer.prototype.defaultShapes['link'] = LinkShape;
 
+	// Generic arrow
+	function FlexArrowShape()
+	{
+		mxArrow.call(this);
+	};
+	mxUtils.extend(FlexArrowShape, mxArrow);
+	
+	FlexArrowShape.prototype.getArrowWidth = function()
+	{
+		return this.getEdgeWidth() * 3;
+	};
+
+	FlexArrowShape.prototype.getEdgeWidth = function()
+	{
+		return 10 + Math.max(0, this.strokewidth - 1) * 2;
+	};
+	
+	FlexArrowShape.prototype.isMarkerStart = function()
+	{
+		return (mxUtils.getValue(this.style, mxConstants.STYLE_STARTARROW, mxConstants.NONE) != mxConstants.NONE);
+	};
+
+	FlexArrowShape.prototype.isMarkerEnd = function()
+	{
+		return (mxUtils.getValue(this.style, mxConstants.STYLE_ENDARROW, mxConstants.NONE) != mxConstants.NONE);
+	};
+
+	// Registers the link shape
+	mxCellRenderer.prototype.defaultShapes['flexArrow'] = FlexArrowShape;
+	
 	// Manual Input shape
 	function ManualInputShape()
 	{

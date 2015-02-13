@@ -458,7 +458,7 @@ Sidebar.prototype.addConnectionShapes = function(dir, content)
 	content.appendChild(this.createEdgeTemplateFromCells(cells, 100, 100, 'Automatic Line', true));
     
     content.appendChild(this.createEdgeTemplate('shape=link;html=1;', 100, 100, '', 'Link', true));
-    content.appendChild(this.createEdgeTemplate('arrow;html=1;', 100, 100, '', 'Arrow', true));
+    content.appendChild(this.createEdgeTemplate('shape=flexArrow;endArrow=classic;html=1;', 100, 100, '', 'Arrow', true));
 };
 
 /**
