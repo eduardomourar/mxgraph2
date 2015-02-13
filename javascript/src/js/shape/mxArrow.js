@@ -54,14 +54,13 @@ mxUtils.extend(mxArrow, mxShape);
 mxArrow.prototype.paintEdgeShape = function(c, pts)
 {
 	// Geometry of arrow
-	var spacing =  mxConstants.ARROW_SPACING;
 	var width = mxConstants.ARROW_WIDTH;
-	var arrow = mxConstants.ARROW_SIZE;
 
 	var edgeWidth = this.getEdgeWidth();
 	var openEnded = this.isOpenEnded();
 	var markerStart = this.isMarkerStart();
 	var markerEnd = this.isMarkerEnd();
+	this.widthArrowRatio = edgeWidth / width;
 
 	// Base vector (between first points)
 	var pe = pts[pts.length - 1];
@@ -79,23 +78,22 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	
 	// Stores the inbound points in reverse order in a 
 	var inPts = '';
-
+	c.setMiterLimit(1.42);
 	c.begin();
+
+	var startNx = nx;
+	var startNy = ny;
 
 	if (markerStart && !openEnded)
 	{
-		c.moveTo(pts[0].x - orthx / 2 + (spacing + arrow) * nx, pts[0].y - orthy / 2 + (spacing + arrow) * ny);
-		c.lineTo(pts[0].x - orthx / 2 / WidthArrowRatio + (spacing + arrow) * nx, pts[0].y - orthy / 2 / WidthArrowRatio + (spacing + arrow) * ny);
-		c.lineTo(pts[0].x + spacing * nx, pts[0].y + spacing * ny);
-		c.lineTo(pts[0].x + orthx / 2 / WidthArrowRatio + (spacing + arrow) * nx, pts[0].y + orthy / 2 / WidthArrowRatio + (spacing + arrow) * ny);
-		c.lineTo(pts[0].x + orthx / 2 + (spacing + arrow) * nx, pts[0].y + orthy / 2 + (spacing + arrow) * ny);
+		this.paintMarker(c, pts[0].x, pts[0].y, nx, ny, this.startSize, true);
 	}
 	else
 	{
-		var outStartX = pts[0].x + orthx / 2 + spacing * nx;
-		var outStartY = pts[0].y + orthy / 2 + spacing * ny;
-		var inEndX = pts[0].x - orthx / 2 + spacing * nx;
-		var inEndY = pts[0].y - orthy / 2 + spacing * ny;
+		var outStartX = pts[0].x + orthx / 2 + this.spacing * nx;
+		var outStartY = pts[0].y + orthy / 2 + this.spacing * ny;
+		var inEndX = pts[0].x - orthx / 2 + this.spacing * nx;
+		var inEndY = pts[0].y - orthy / 2 + this.spacing * ny;
 		
 		if (openEnded)
 		{
@@ -112,8 +110,8 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	var dx1 = 0;
 	var dy1 = 0;
 	var dist1 = 0;
-
-
+	var outX = 0;
+	var outY = 0;
 	for (var i = 0; i < pts.length - 2; i++)
 	{
 		// Work out in which direction the line is bending
@@ -136,15 +134,15 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 		nx2 = nx2 / dist2;
 		ny2 = ny2 / dist2;
 		
-		var outX = pts[i+1].x + ny2 * edgeWidth / 2 / tmp;
-		var outY = pts[i+1].y - nx2 * edgeWidth / 2 / tmp
+		outX = pts[i+1].x + ny2 * edgeWidth / 2 / tmp;
+		outY = pts[i+1].y - nx2 * edgeWidth / 2 / tmp
 		var inX = pts[i+1].x - ny2 * edgeWidth / 2 / tmp
 		var inY = pts[i+1].y + nx2 * edgeWidth / 2 / tmp
 		
 		// Round every bend > 90 degrees
 		var rounded = tmp1 < 0 ? true : this.isRounded;
 		
-		if (pos == 0 || !rounded)
+		if (pos == 0 || !this.isRounded)
 		{
 			// If the two segments are aligned, or if we're not drawing curved sections between segments
 			// just draw straight to the intersection point
@@ -181,22 +179,14 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 
 	if (markerEnd && !openEnded)
 	{
-		var spaceX = (spacing + arrow) * nx1;
-		var spaceY = (spacing + arrow) * ny1;
-		var widthArrowRatio = edgeWidth / width;
-
-		c.lineTo(pe.x + orthx / 2 - spaceX, pe.y + orthy / 2 - spaceY);
-		c.lineTo(pe.x + orthx / 2 / widthArrowRatio - spaceX, pe.y + orthy / 2 / widthArrowRatio - spaceY);
-		c.lineTo(pe.x - spacing * nx1, pe.y - spacing * ny1);
-		c.lineTo(pe.x - orthx / 2 / widthArrowRatio - spaceX, pe.y - orthy / 2 / widthArrowRatio - spaceY);
-		c.lineTo(pe.x - orthx / 2 - spaceX, pe.y - orthy / 2 - spaceY);
+		this.paintMarker(c, pe.x, pe.y, -nx, -ny, this.endSize, false);
 	}
 	else
 	{
-		c.lineTo(pe.x - spacing * nx1 + orthx / 2, pe.y - spacing * ny1 + orthy / 2);
+		c.lineTo(pe.x - this.spacing * nx1 + orthx / 2, pe.y - this.spacing * ny1 + orthy / 2);
 		
-		var inStartX = pe.x - spacing * nx1 - orthx / 2;
-		var inStartY = pe.y - spacing * ny1 - orthy / 2;
+		var inStartX = pe.x - this.spacing * nx1 - orthx / 2;
+		var inStartY = pe.y - this.spacing * ny1 - orthy / 2;
 
 		if (!openEnded)
 		{
@@ -240,7 +230,56 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 		c.close();
 		c.fillAndStroke();
 	}
+	
+	// Need to redraw the markers without the low miter limit
+	c.setMiterLimit(4);
+
+	if (markerStart && !openEnded)
+	{
+		c.begin();
+		this.paintMarker(c, pts[0].x, pts[0].y, startNx, startNy, this.startSize, true);
+		c.stroke();
+		c.end();
+	}
+	
+	if (markerEnd && !openEnded)
+	{
+		c.begin();
+		this.paintMarker(c, pe.x, pe.y, -nx, -ny, this.endSize, true);
+		c.stroke();
+		c.end();
+	}
 };
+
+/**
+ * Function: paintEdgeShape
+ * 
+ * Paints the line shape.
+ */
+mxArrow.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, initialMove)
+{
+	
+	var edgeWidth = this.getEdgeWidth();
+	var orthx = edgeWidth * ny;
+	var orthy = -edgeWidth * nx;
+
+	var spaceX = (this.spacing + this.endSize) * nx;
+	var spaceY = (this.spacing + this.endSize) * ny;
+
+	if (initialMove)
+	{
+		c.moveTo(ptX - orthx / 2 + spaceX, ptY - orthy / 2 + spaceY);
+	}
+	else
+	{
+		c.lineTo(ptX - orthx / 2 + spaceX, ptY - orthy / 2 + spaceY);
+	}
+
+	c.lineTo(ptX - orthx / 2 / this.widthArrowRatio + spaceX, ptY - orthy / 2 / this.widthArrowRatio + spaceY);
+	c.lineTo(ptX + this.spacing * nx, ptY + this.spacing * ny);
+	c.lineTo(ptX + orthx / 2 / this.widthArrowRatio + spaceX, ptY + orthy / 2 / this.widthArrowRatio + spaceY);
+	c.lineTo(ptX + orthx / 2 + spaceX, ptY + orthy / 2 + spaceY);
+}
 
 /**
  * Function: getEdgeWidth
@@ -269,7 +308,7 @@ mxArrow.prototype.isOpenEnded = function()
  */
 mxArrow.prototype.isMarkerStart = function()
 {
-	return false;
+	return true;
 };
 
 /**
