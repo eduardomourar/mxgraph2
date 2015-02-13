@@ -1,3 +1,4 @@
+- Adds waypoint support to mxArrow [JavaScript]
 - Ignores children of selected parents in mxClipboard.copy [JavaScript] 
 - Adds recursive rubberband selection in grapheditor
 - Adds decimal values in mxVertexHandler.roundAngle [JavaScript]

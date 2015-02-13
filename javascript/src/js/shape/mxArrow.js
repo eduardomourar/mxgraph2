@@ -58,44 +58,226 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	var width = mxConstants.ARROW_WIDTH;
 	var arrow = mxConstants.ARROW_SIZE;
 
-	// Base vector (between end points)
-	var p0 = pts[0];
+	var edgeWidth = this.getEdgeWidth();
+	var openEnded = this.isOpenEnded();
+	var markerStart = this.isMarkerStart();
+	var markerEnd = this.isMarkerEnd();
+
+	// Base vector (between first points)
 	var pe = pts[pts.length - 1];
-	var dx = pe.x - p0.x;
-	var dy = pe.y - p0.y;
+	var dx = pts[1].x - pts[0].x;
+	var dy = pts[1].y - pts[0].y;
 	var dist = Math.sqrt(dx * dx + dy * dy);
-	var length = dist - 2 * spacing - arrow;
 	
 	// Computes the norm and the inverse norm
 	var nx = dx / dist;
+	var nx2, nx1 = nx;
 	var ny = dy / dist;
-	var basex = length * nx;
-	var basey = length * ny;
-	var floorx = width * ny/3;
-	var floory = -width * nx/3;
+	var ny2, ny1 = ny;
+	var orthx = edgeWidth * ny;
+	var orthy = -edgeWidth * nx;
 	
-	// Computes points
-	var p0x = p0.x - floorx / 2 + spacing * nx;
-	var p0y = p0.y - floory / 2 + spacing * ny;
-	var p1x = p0x + floorx;
-	var p1y = p0y + floory;
-	var p2x = p1x + basex;
-	var p2y = p1y + basey;
-	var p3x = p2x + floorx;
-	var p3y = p2y + floory;
-	// p4 not necessary
-	var p5x = p3x - 3 * floorx;
-	var p5y = p3y - 3 * floory;
-	
-	c.begin();
-	c.moveTo(p0x, p0y);
-	c.lineTo(p1x, p1y);
-	c.lineTo(p2x, p2y);
-	c.lineTo(p3x, p3y);
-	c.lineTo(pe.x - spacing * nx, pe.y - spacing * ny);
-	c.lineTo(p5x, p5y);
-	c.lineTo(p5x + floorx, p5y + floory);
-	c.close();
+	// Stores the inbound points in reverse order in a 
+	var inPts = '';
 
-	c.fillAndStroke();
+	c.begin();
+
+	if (markerStart && !openEnded)
+	{
+		c.moveTo(pts[0].x - orthx / 2 + (spacing + arrow) * nx, pts[0].y - orthy / 2 + (spacing + arrow) * ny);
+		c.lineTo(pts[0].x - orthx / 2 / WidthArrowRatio + (spacing + arrow) * nx, pts[0].y - orthy / 2 / WidthArrowRatio + (spacing + arrow) * ny);
+		c.lineTo(pts[0].x + spacing * nx, pts[0].y + spacing * ny);
+		c.lineTo(pts[0].x + orthx / 2 / WidthArrowRatio + (spacing + arrow) * nx, pts[0].y + orthy / 2 / WidthArrowRatio + (spacing + arrow) * ny);
+		c.lineTo(pts[0].x + orthx / 2 + (spacing + arrow) * nx, pts[0].y + orthy / 2 + (spacing + arrow) * ny);
+	}
+	else
+	{
+		var outStartX = pts[0].x + orthx / 2 + spacing * nx;
+		var outStartY = pts[0].y + orthy / 2 + spacing * ny;
+		var inEndX = pts[0].x - orthx / 2 + spacing * nx;
+		var inEndY = pts[0].y - orthy / 2 + spacing * ny;
+		
+		if (openEnded)
+		{
+			c.moveTo(outStartX, outStartY);
+			inPts += inEndY + ',' + inEndX + ',' + 'L,' + ',';
+		}
+		else
+		{
+			c.moveTo(inEndX, inEndY);
+			c.lineTo(outStartX, outStartY);
+		}
+	}
+	
+	var dx1 = 0;
+	var dy1 = 0;
+	var dist1 = 0;
+
+
+	for (var i = 0; i < pts.length - 2; i++)
+	{
+		// Work out in which direction the line is bending
+		var pos = mxUtils.relativeCcw(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y, pts[i+2].x, pts[i+2].y);
+
+		dx1 = pts[i+2].x - pts[i+1].x;
+		dy1 = pts[i+2].y - pts[i+1].y;
+		
+		dist1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+		nx1 = dx1 / dist1;
+		ny1 = dy1 / dist1;
+		
+		var tmp1 = nx * nx1 + ny * ny1;
+		tmp = Math.sqrt((tmp1 + 1) / 2);
+		
+		// Work out the normal orthogonal to the line through the control point and the edge sides intersection
+		nx2 = (nx + nx1) / 2;
+		ny2 = (ny + ny1) / 2;
+		var dist2 = Math.sqrt(nx2 * nx2 + ny2 * ny2);
+		nx2 = nx2 / dist2;
+		ny2 = ny2 / dist2;
+		
+		var outX = pts[i+1].x + ny2 * edgeWidth / 2 / tmp;
+		var outY = pts[i+1].y - nx2 * edgeWidth / 2 / tmp
+		var inX = pts[i+1].x - ny2 * edgeWidth / 2 / tmp
+		var inY = pts[i+1].y + nx2 * edgeWidth / 2 / tmp
+		
+		// Round every bend > 90 degrees
+		var rounded = tmp1 < 0 ? true : this.isRounded;
+		
+		if (pos == 0 || !rounded)
+		{
+			// If the two segments are aligned, or if we're not drawing curved sections between segments
+			// just draw straight to the intersection point
+			c.lineTo(outX, outY);
+			inPts += inY + ',' + inX + ',' + 'L,' + ',';
+		}
+		else if (pos == -1)
+		{
+			var c1x = inX + ny * edgeWidth;
+			var c1y = inY - nx * edgeWidth;
+			var c2x = inX + ny1 * edgeWidth;
+			var c2y = inY - nx1 * edgeWidth;
+			c.lineTo(c1x, c1y);
+			c.quadTo(outX, outY, c2x, c2y);
+			inPts += inY + ',' + inX + ',' + 'L,' + ',';
+		}
+		else
+		{
+			c.lineTo(outX, outY);
+			var c1x = outX - ny * edgeWidth;
+			var c1y = outY + nx * edgeWidth;
+			var c2x = outX - ny1 * edgeWidth;
+			var c2y = outY + nx1 * edgeWidth;
+			inPts += c1y + ',' + c1x + ',' + inY + ',' + inX + ',' + 'Q,' + ',';
+			inPts += c2y + ',' + c2x + ',' + 'L,' + ',';
+		}
+		
+		nx = nx1;
+		ny = ny1;
+	}
+	
+	orthx = edgeWidth * ny1;
+	orthy = - edgeWidth * nx1;
+
+	if (markerEnd && !openEnded)
+	{
+		var spaceX = (spacing + arrow) * nx1;
+		var spaceY = (spacing + arrow) * ny1;
+		var widthArrowRatio = edgeWidth / width;
+
+		c.lineTo(pe.x + orthx / 2 - spaceX, pe.y + orthy / 2 - spaceY);
+		c.lineTo(pe.x + orthx / 2 / widthArrowRatio - spaceX, pe.y + orthy / 2 / widthArrowRatio - spaceY);
+		c.lineTo(pe.x - spacing * nx1, pe.y - spacing * ny1);
+		c.lineTo(pe.x - orthx / 2 / widthArrowRatio - spaceX, pe.y - orthy / 2 / widthArrowRatio - spaceY);
+		c.lineTo(pe.x - orthx / 2 - spaceX, pe.y - orthy / 2 - spaceY);
+	}
+	else
+	{
+		c.lineTo(pe.x - spacing * nx1 + orthx / 2, pe.y - spacing * ny1 + orthy / 2);
+		
+		var inStartX = pe.x - spacing * nx1 - orthx / 2;
+		var inStartY = pe.y - spacing * ny1 - orthy / 2;
+
+		if (!openEnded)
+		{
+			c.lineTo(inStartX, inStartY);
+		}
+		else
+		{
+			c.moveTo(inStartX, inStartY);
+			inPts = inStartY + ',' + inStartX + ',' + 'M,' + ',' + inPts;
+		}
+	}
+	
+	var path = inPts.split(',');
+
+	for (var i = path.length - 2; i >= 0; i--)
+	{
+		if (path[i] == 'L')
+		{
+			c.lineTo(parseFloat(path[i-1]), parseFloat(path[i-2]));
+			i -= 3;
+		}
+		else if (path[i] == 'M')
+		{
+			c.moveTo(parseFloat(path[i-1]), parseFloat(path[i-2]));
+			i -= 3;
+		}
+		else if (path[i] == 'Q')
+		{
+			c.quadTo(parseFloat(path[i-1]), parseFloat(path[i-2]), parseFloat(path[i-3]), parseFloat(path[i-4]));
+			i -= 5;
+		}
+	}
+
+	if (openEnded)
+	{
+		c.end();
+		c.stroke();
+	}
+	else
+	{
+		c.close();
+		c.fillAndStroke();
+	}
+};
+
+/**
+ * Function: getEdgeWidth
+ * 
+ * Returns the width of the body of the edge
+ */
+mxArrow.prototype.getEdgeWidth = function()
+{
+	return mxConstants.ARROW_WIDTH * 1/3;
+};
+
+/**
+ * Function: isOpenEnded
+ * 
+ * Returns whether the ends of the shape are drawn
+ */
+mxArrow.prototype.isOpenEnded = function()
+{
+	return false;
+};
+
+/**
+ * Function: isMarkerStart
+ * 
+ * Returns whether the start marker is drawn
+ */
+mxArrow.prototype.isMarkerStart = function()
+{
+	return false;
+};
+
+/**
+ * Function: isMarkerEnd
+ * 
+ * Returns whether the end marker is drawn
+ */
+mxArrow.prototype.isMarkerEnd = function()
+{
+	return true;
 };
