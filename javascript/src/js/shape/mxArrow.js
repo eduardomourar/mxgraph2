@@ -308,7 +308,7 @@ mxArrow.prototype.isOpenEnded = function()
  */
 mxArrow.prototype.isMarkerStart = function()
 {
-	return true;
+	return false;
 };
 
 /**
