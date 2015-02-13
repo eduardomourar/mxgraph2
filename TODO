@@ -21,7 +21,8 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix scrollbars.html example
+- Fix scrolling, maintain scrollbar position in scrollbars.html
+- Add support for text-direction in Java and .NET image export
 
 - Migrate changes in mxEdgeStyle to Java
 - Add preview box for edge label moving

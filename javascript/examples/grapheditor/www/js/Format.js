@@ -1906,10 +1906,10 @@ TextFormatPanel.prototype.addFont = function(container)
 	container.appendChild(stylePanel);
 	
 	var colorPanel = this.createPanel();
-	colorPanel.style.marginTop = '10px';
+	colorPanel.style.marginTop = '8px';
 	colorPanel.style.borderTop = '1px solid #c0c0c0';
-	colorPanel.style.paddingTop = '10px';
-	colorPanel.style.paddingBottom = '10px';
+	colorPanel.style.paddingTop = '6px';
+	colorPanel.style.paddingBottom = '6px';
 
 	var fontMenu = this.editorUi.toolbar.addMenu('Helvetica', mxResources.get('fontFamily'), true, 'fontFamily', stylePanel);
 	fontMenu.style.color = 'rgb(112, 112, 112)';
@@ -2055,6 +2055,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		right.style.marginRight = '9px';
 	}
 	
+	// Label position
 	var stylePanel4 = stylePanel.cloneNode(false);
 	stylePanel4.style.marginLeft = '0px';
 	stylePanel4.style.paddingTop = '8px';
@@ -2063,7 +2064,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	
 	mxUtils.write(stylePanel4, mxResources.get('position'));
 	
-	// Adds gradient direction option
+	// Adds label position options
 	var positionSelect = document.createElement('select');
 	positionSelect.style.position = 'absolute';
 	positionSelect.style.right = '20px';
@@ -2087,7 +2088,43 @@ TextFormatPanel.prototype.addFont = function(container)
 
 	stylePanel4.appendChild(positionSelect);
 	
-	if (!graph.cellEditor.isContentEditing())
+	// Writing direction
+	var stylePanel5 = stylePanel.cloneNode(false);
+	stylePanel5.style.marginLeft = '0px';
+	stylePanel5.style.paddingTop = '4px';
+	stylePanel5.style.paddingBottom = '4px';
+	stylePanel5.style.fontWeight = 'normal';
+
+	mxUtils.write(stylePanel5, mxResources.get('writingDirection'));
+	
+	// Adds writing direction options
+	// LATER: Handle reselect of same option in all selects (change event
+	// is not fired for same option so have opened state on click) and
+	// handle multiple different styles for current selection
+	var dirSelect = document.createElement('select');
+	dirSelect.style.position = 'absolute';
+	dirSelect.style.right = '20px';
+	dirSelect.style.width = '97px';
+	dirSelect.style.marginTop = '-2px';
+
+	// NOTE: For automatic we use the value null since automatic
+	// requires the text to be non formatted and non-wrappedto
+	var dirs = ['automatic', 'leftToRight', 'rightToLeft'];
+	var dirSet = {'automatic': null,
+			'leftToRight': mxConstants.TEXT_DIRECTION_LTR,
+			'rightToLeft': mxConstants.TEXT_DIRECTION_RTL};
+
+	for (var i = 0; i < dirs.length; i++)
+	{
+		var dirOption = document.createElement('option');
+		dirOption.setAttribute('value', dirs[i]);
+		mxUtils.write(dirOption, mxResources.get(dirs[i]));
+		dirSelect.appendChild(dirOption);
+	}
+
+	stylePanel5.appendChild(dirSelect);
+	
+	if (!graph.isEditing())
 	{
 		container.appendChild(stylePanel4);
 		
@@ -2111,6 +2148,16 @@ TextFormatPanel.prototype.addFont = function(container)
 				graph.getModel().endUpdate();
 			}
 			
+			mxEvent.consume(evt);
+		});
+
+		// LATER: Update dir in text editor while editing and update style with label
+		// NOTE: The tricky part is handling and passing on the auto value
+		container.appendChild(stylePanel5);
+		
+		mxEvent.addListener(dirSelect, 'change', function(evt)
+		{
+			graph.setCellStyles(mxConstants.STYLE_TEXT_DIRECTION, dirSet[dirSelect.value], graph.getSelectionCells());
 			mxEvent.consume(evt);
 		});
 	}
@@ -2235,8 +2282,8 @@ TextFormatPanel.prototype.addFont = function(container)
 	container.appendChild(colorPanel);
 
 	var extraPanel = this.createPanel();
-	extraPanel.style.paddingTop = '10px';
-	extraPanel.style.paddingBottom = '10px';
+	extraPanel.style.paddingTop = '6px';
+	extraPanel.style.paddingBottom = '6px';
 	
 	// LATER: Fix toggle using '' instead of 'null'
 	var wwOpt = this.createCellOption(mxResources.get('wordWrap'), mxConstants.STYLE_WHITE_SPACE, null, 'wrap', 'null');
@@ -2253,7 +2300,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	extraPanel.appendChild(htmlOpt);
 	
 	var spacingPanel = this.createPanel();
-	spacingPanel.style.paddingBottom = '32px';
+	spacingPanel.style.paddingBottom = '30px';
 	spacingPanel.style.fontWeight = 'normal';
 	
 	var span = document.createElement('div');
@@ -2581,6 +2628,21 @@ TextFormatPanel.prototype.addFont = function(container)
 			positionSelect.value = 'center';
 		}
 		
+		var dir = mxUtils.getValue(ss.style, mxConstants.STYLE_TEXT_DIRECTION, mxConstants.DEFAULT_TEXT_DIRECTION);
+		
+		if (dir == mxConstants.TEXT_DIRECTION_RTL)
+		{
+			dirSelect.value = 'rightToLeft';
+		}
+		else if (dir == mxConstants.TEXT_DIRECTION_LTR)
+		{
+			dirSelect.value = 'leftToRight';
+		}
+		else if (dir == mxConstants.TEXT_DIRECTION_AUTO)
+		{
+			dirSelect.value = 'automatic';
+		}
+		
 		if (force || document.activeElement != globalSpacing)
 		{
 			var tmp = parseFloat(mxUtils.getValue(ss.style, mxConstants.STYLE_SPACING, 2));
@@ -2612,11 +2674,11 @@ TextFormatPanel.prototype.addFont = function(container)
 		}
 	});
 
-	globalUpdate = this.installInputHandler(globalSpacing, mxConstants.STYLE_SPACING, 2, 0, 999, ' pt');
-	topUpdate = this.installInputHandler(topSpacing, mxConstants.STYLE_SPACING_TOP, 0, 0, 999, ' pt');
-	rightUpdate = this.installInputHandler(rightSpacing, mxConstants.STYLE_SPACING_RIGHT, 0, 0, 999, ' pt');
-	bottomUpdate = this.installInputHandler(bottomSpacing, mxConstants.STYLE_SPACING_BOTTOM, 0, 0, 999, ' pt');
-	leftUpdate = this.installInputHandler(leftSpacing, mxConstants.STYLE_SPACING_LEFT, 0, 0, 999, ' pt');
+	globalUpdate = this.installInputHandler(globalSpacing, mxConstants.STYLE_SPACING, 2, -999, 999, ' pt');
+	topUpdate = this.installInputHandler(topSpacing, mxConstants.STYLE_SPACING_TOP, 0, -999, 999, ' pt');
+	rightUpdate = this.installInputHandler(rightSpacing, mxConstants.STYLE_SPACING_RIGHT, 0, -999, 999, ' pt');
+	bottomUpdate = this.installInputHandler(bottomSpacing, mxConstants.STYLE_SPACING_BOTTOM, 0, -999, 999, ' pt');
+	leftUpdate = this.installInputHandler(leftSpacing, mxConstants.STYLE_SPACING_LEFT, 0, -999, 999, ' pt');
 
 	this.addKeyHandler(input, listener);
 	this.addKeyHandler(globalSpacing, listener);
@@ -2746,7 +2808,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		mxEvent.addListener(graph.cellEditor.text2, 'keyup', updateCssHandler);
 		this.listeners.push({destroy: function()
 		{
-			// text2 is destroyed
+			// No need to remove listener since text2 is destroyed after edit
 		}});
 		updateCssHandler();
 	}
@@ -2851,8 +2913,8 @@ StyleFormatPanel.prototype.addFill = function(container)
 {
 	var graph = this.editorUi.editor.graph;
 	var ss = this.format.getSelectionState();
-	container.style.paddingTop = '8px';
-	container.style.paddingBottom = '8px';
+	container.style.paddingTop = '6px';
+	container.style.paddingBottom = '6px';
 
 	// Adds gradient direction option
 	var gradientSelect = document.createElement('select');
@@ -2956,7 +3018,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	var graph = ui.editor.graph;
 	var ss = this.format.getSelectionState();
 	
-	container.style.paddingTop = '8px';
+	container.style.paddingTop = '6px';
 	container.style.paddingBottom = '6px';
 	container.style.whiteSpace = 'normal';
 	
@@ -3453,9 +3515,9 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	});
 	
 	startSizeUpdate = this.installInputHandler(startSize, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_MARKERSIZE, 0, 999, ' pt');
-	startSpacingUpdate = this.installInputHandler(startSpacing, mxConstants.STYLE_SOURCE_PERIMETER_SPACING, 0, 0, 999, ' pt');
+	startSpacingUpdate = this.installInputHandler(startSpacing, mxConstants.STYLE_SOURCE_PERIMETER_SPACING, 0, -999, 999, ' pt');
 	endSizeUpdate = this.installInputHandler(endSize, mxConstants.STYLE_ENDSIZE, mxConstants.DEFAULT_MARKERSIZE, 0, 999, ' pt');
-	endSpacingUpdate = this.installInputHandler(endSpacing, mxConstants.STYLE_TARGET_PERIMETER_SPACING, 0, 0, 999, ' pt');
+	endSpacingUpdate = this.installInputHandler(endSpacing, mxConstants.STYLE_TARGET_PERIMETER_SPACING, 0, -999, 999, ' pt');
 	perimeterUpdate = this.installInputHandler(perimeterSpacing, mxConstants.STYLE_PERIMETER_SPACING, 0, 0, 999, ' pt');
 
 	this.addKeyHandler(input, listener);

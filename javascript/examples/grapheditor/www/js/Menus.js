@@ -269,9 +269,11 @@ Menus.prototype.init = function()
 	    this.addSubmenu('alignment', menu, parent);
 	    this.addSubmenu('position', menu, parent);
 		this.addSubmenu('spacing', menu, parent);
-	    menu.addSeparator(parent);
+		menu.addSeparator(parent);
+		this.addSubmenu('writingDirection', menu, parent);
 		this.addMenuItem(menu, 'formattedText', parent);
 		this.addMenuItem(menu, 'wordWrap', parent);
+		menu.addSeparator(parent);
 		this.promptChange(menu, mxResources.get('textOpacity'), '(%)', '100', mxConstants.STYLE_TEXT_OPACITY, parent, enabled);
 		menu.addItem(mxResources.get('hide'), null, function() { graph.toggleCellStyles(mxConstants.STYLE_NOLABEL, false); }, parent, null, enabled);
 	})));
@@ -304,6 +306,12 @@ Menus.prototype.init = function()
 		menu.addSeparator(parent);
 		this.styleChange(menu, mxResources.get('center'), [mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.STYLE_LABEL_POSITION, mxConstants.STYLE_ALIGN, mxConstants.STYLE_VERTICAL_ALIGN],
 			[mxConstants.ALIGN_MIDDLE, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_CENTER, mxConstants.ALIGN_MIDDLE], null, parent);
+	})));
+	this.put('writingDirection', new Menu(mxUtils.bind(this, function(menu, parent)
+	{
+		this.styleChange(menu, mxResources.get('automatic'), [mxConstants.STYLE_TEXT_DIRECTION], [null], null, parent);
+		this.styleChange(menu, mxResources.get('leftToRight'), [mxConstants.STYLE_TEXT_DIRECTION], [mxConstants.TEXT_DIRECTION_LTR], null, parent);
+		this.styleChange(menu, mxResources.get('rightToLeft'), [mxConstants.STYLE_TEXT_DIRECTION], [mxConstants.TEXT_DIRECTION_RTL], null, parent);
 	})));
 	this.put('direction', new Menu(mxUtils.bind(this, function(menu, parent)
 	{

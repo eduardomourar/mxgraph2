@@ -362,7 +362,8 @@ mxCellRenderer.prototype.createLabel = function(state, value)
 				graph.isWrapping(state.cell) && graph.isHtmlLabel(state.cell),
 				graph.isLabelClipped(state.cell),
 				state.style[mxConstants.STYLE_OVERFLOW],
-				state.style[mxConstants.STYLE_LABEL_PADDING]);
+				state.style[mxConstants.STYLE_LABEL_PADDING],
+				mxUtils.getValue(state.style, mxConstants.STYLE_TEXT_DIRECTION, mxConstants.DEFAULT_TEXT_DIRECTION));
 		state.text.opacity = mxUtils.getValue(state.style, mxConstants.STYLE_TEXT_OPACITY, 100);
 		state.text.dialect = (isForceHtml) ? mxConstants.DIALECT_STRICTHTML : state.view.graph.dialect;
 		state.text.style = state.style;

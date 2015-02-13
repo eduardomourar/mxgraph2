@@ -93,10 +93,11 @@ var mxClient =
 	/**
 	 * Variable: IS_OT
 	 *
-	 * True if -o-transform is available as a CSS style. This is the case
-	 * for Opera browsers that use Presto/2.5 and later.
+	 * True if -o-transform is available as a CSS style, ie for Opera browsers
+	 * based on a Presto engine with version 2.5 or later.
 	 */
-  	IS_OT: navigator.userAgent.indexOf('Presto/2.4.') < 0 &&
+  	IS_OT: navigator.userAgent.indexOf('Presto/') >= 0 &&
+  		navigator.userAgent.indexOf('Presto/2.4.') < 0 &&
   		navigator.userAgent.indexOf('Presto/2.3.') < 0 &&
   		navigator.userAgent.indexOf('Presto/2.2.') < 0 &&
   		navigator.userAgent.indexOf('Presto/2.1.') < 0 &&

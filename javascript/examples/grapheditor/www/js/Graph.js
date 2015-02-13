@@ -1642,6 +1642,13 @@ Graph.prototype.initTouch = function()
 				style.textDecoration = this.textarea.style.textDecoration;
 				style.color = this.textarea.style.color;
 				
+				var dir = this.textarea.getAttribute('dir');
+				
+				if (dir != null && dir.length > 0)
+				{
+					this.text2.setAttribute('dir', dir);
+				}
+				
 				// Matches line height correctionFactor in embedded HTML output
 				if (state.text != null && state.text.node != null && state.text.node.ownerSVGElement != null)
 				{
