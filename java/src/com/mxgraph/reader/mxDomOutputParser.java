@@ -378,7 +378,8 @@ public class mxDomOutputParser
 						elt.getAttribute("format"),
 						elt.getAttribute("overflow"),
 						getValue(elt, "clip", "").equals("1"),
-						Double.parseDouble(getValue(elt, "rotation", "0")));
+						Double.parseDouble(getValue(elt, "rotation", "0")),
+						elt.getAttribute("dir"));
 			}
 		});
 

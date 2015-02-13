@@ -1,3 +1,5 @@
+- Adds text direction in all canvas implementations [Java,JavaScript,Dotnet]
+- Adds mxConstants.STYLE_TEXT_DIRECTION for explicit text direction [JavaScript]
 - Fixes mxClient.IS_OP for newer versions of Opera [JavaScript]
 - Adds waypoint support to mxArrow [JavaScript]
 - Ignores children of selected parents in mxClipboard.copy [JavaScript] 
