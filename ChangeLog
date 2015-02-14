@@ -1,3 +1,4 @@
+- Enables arrow shapes in mxEdgeHandler.isVirtualBendsEnabled [JavaScript]
 - Adds mxEdgeHandler.straightRemoveEnabled switch [JavaScript]
 - Adds mxMouseEvent argument in mxEdgeHandler.getPreviewPoints [JavaScript]
 - Adds text direction in all canvas implementations [Java,JavaScript,Dotnet]
