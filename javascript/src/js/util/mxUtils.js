@@ -2547,7 +2547,7 @@ var mxUtils =
 	},
 	
 	/**
-	 * Function: ptSeqDistSq
+	 * Function: ptSegDistSq
 	 * 
 	 * Returns the square distance between a segment and a point.
 	 * 
