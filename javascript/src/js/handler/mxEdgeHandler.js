@@ -139,6 +139,15 @@ mxEdgeHandler.prototype.dblClickRemoveEnabled = false;
 mxEdgeHandler.prototype.mergeRemoveEnabled = false;
 
 /**
+ * Variable: straightRemoveEnabled
+ * 
+ * Specifies if removing bends by creating straight segments should be enabled.
+ * If enabled, this can be overridden by holding down the alt key while moving.
+ * Default is false.
+ */
+mxEdgeHandler.prototype.straightRemoveEnabled = false;
+
+/**
  * Variable: virtualBendsEnabled
  * 
  * Specifies if virtual bends should be added in the center of each
@@ -326,8 +335,7 @@ mxEdgeHandler.prototype.init = function()
 mxEdgeHandler.prototype.isVirtualBendsEnabled = function(evt)
 {
 	return this.virtualBendsEnabled && (this.state.style[mxConstants.STYLE_EDGE] == null ||
-			this.state.style[mxConstants.STYLE_NOEDGESTYLE] == 1) &&
-			mxUtils.getValue(this.state.style, mxConstants.STYLE_SHAPE, null) != 'arrow';
+			this.state.style[mxConstants.STYLE_NOEDGESTYLE] == 1);
 };
 
 /**
@@ -1047,8 +1055,13 @@ mxEdgeHandler.prototype.getPreviewTerminalState = function(me)
  * Function: getPreviewPoints
  * 
  * Updates the given preview state taking into account the state of the constraint handler.
+ * 
+ * Parameters:
+ * 
+ * pt - <mxPoint> that contains the current pointer position.
+ * me - Optional <mxMouseEvent> that contains the current event.
  */
-mxEdgeHandler.prototype.getPreviewPoints = function(pt)
+mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 {
 	var geometry = this.graph.getCellGeometry(this.state.cell);
 	var points = (geometry.points != null) ? geometry.points.slice() : null;
@@ -1092,6 +1105,22 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt)
 							
 							return points;
 						}
+					}
+				}
+				
+				// Removes point if user tries to straighten a segment
+				if (this.straightRemoveEnabled && (me == null || !mxEvent.isAltDown(me.getEvent())))
+				{
+					var abs = this.state.absolutePoints;
+	
+					if (this.index > 0 && this.index < abs.length - 1 &&
+						mxUtils.ptSegDistSq(abs[this.index - 1].x, abs[this.index - 1].y,
+							abs[this.index + 1].x, abs[this.index + 1].y, pt.x, pt.y) <
+							this.graph.tolerance * this.graph.tolerance)
+					{
+						points.splice(this.index - 1, 1);
+						
+						return points;
 					}
 				}
 			}
@@ -1241,7 +1270,7 @@ mxEdgeHandler.prototype.mouseMove = function(sender, me)
 		}
 		else
 		{
-			this.points = this.getPreviewPoints(point);
+			this.points = this.getPreviewPoints(point, me);
 			var terminalState = (this.isSource || this.isTarget) ? this.getPreviewTerminalState(me) : null;
 			var clone = this.clonePreviewState(point, (terminalState != null) ? terminalState.cell : null);
 			this.updatePreviewState(clone, point, terminalState, me);
