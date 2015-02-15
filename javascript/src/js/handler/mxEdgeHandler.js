@@ -1111,8 +1111,24 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 				// Removes point if user tries to straighten a segment
 				if (this.straightRemoveEnabled && (me == null || !mxEvent.isAltDown(me.getEvent())))
 				{
-					var abs = this.state.absolutePoints;
-	
+					var abs = this.state.absolutePoints.slice();
+					
+					// Handes special case where removing waypoint affects tolerance (flickering)
+					if (abs.length == 3 && this.index == 1)
+					{
+						if (this.state.visibleSourceState != null)
+						{
+							var tmp = this.state.visibleSourceState;
+							abs[0] = new mxPoint(tmp.view.getRoutingCenterX(tmp), tmp.view.getRoutingCenterY(tmp));
+						}
+						
+						if (this.state.visibleTargetState != null)
+						{
+							var tmp = this.state.visibleTargetState;
+							abs[abs.length - 1] = new mxPoint(tmp.view.getRoutingCenterX(tmp), tmp.view.getRoutingCenterY(tmp));
+						}
+					}
+
 					if (this.index > 0 && this.index < abs.length - 1 &&
 						mxUtils.ptSegDistSq(abs[this.index - 1].x, abs[this.index - 1].y,
 							abs[this.index + 1].x, abs[this.index + 1].y, pt.x, pt.y) <
