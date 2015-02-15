@@ -1114,44 +1114,41 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 					var abs = this.state.absolutePoints.slice();
 					
 					// Handes special case where removing waypoint affects tolerance (flickering)
-					if (abs.length == 3 && this.index == 1)
+					var src = this.state.getVisibleTerminalState(true);
+					
+					if (src != null)
 					{
-						var src = this.state.getVisibleTerminalState(true);
+						var c = this.graph.getConnectionConstraint(this.state, src, true);
 						
-						if (src != null)
+						// Checks if point is not fixed
+						if (c == null || this.graph.getConnectionPoint(src, c) == null)
 						{
-							var c = this.graph.getConnectionConstraint(this.state, src, true);
-							
-							// Checks if point is not fixed
-							if (c == null || this.graph.getConnectionPoint(src, c) == null)
-							{
-								abs[0] = new mxPoint(src.view.getRoutingCenterX(src), src.view.getRoutingCenterY(src));
-							}
-						}
-						
-						var trg = this.state.getVisibleTerminalState(false);
-						
-						if (trg != null)
-						{
-							var c = this.graph.getConnectionConstraint(this.state, trg, false);
-							
-							// Checks if point is not fixed
-							if (c == null || this.graph.getConnectionPoint(trg, c) == null)
-							{
-								abs[abs.length - 1] = new mxPoint(trg.view.getRoutingCenterX(trg), trg.view.getRoutingCenterY(trg));
-							}
+							abs[0] = new mxPoint(src.view.getRoutingCenterX(src), src.view.getRoutingCenterY(src));
 						}
 					}
+					
+					var trg = this.state.getVisibleTerminalState(false);
+					
+					if (trg != null)
+					{
+						var c = this.graph.getConnectionConstraint(this.state, trg, false);
+						
+						// Checks if point is not fixed
+						if (c == null || this.graph.getConnectionPoint(trg, c) == null)
+						{
+							abs[abs.length - 1] = new mxPoint(trg.view.getRoutingCenterX(trg), trg.view.getRoutingCenterY(trg));
+						}
+					}
+				}
 
-					if (this.index > 0 && this.index < abs.length - 1 &&
-						mxUtils.ptSegDistSq(abs[this.index - 1].x, abs[this.index - 1].y,
-							abs[this.index + 1].x, abs[this.index + 1].y, pt.x, pt.y) <
-							this.graph.tolerance * this.graph.tolerance)
-					{
-						points.splice(this.index - 1, 1);
-						
-						return points;
-					}
+				if (this.index > 0 && this.index < abs.length - 1 &&
+					mxUtils.ptSegDistSq(abs[this.index - 1].x, abs[this.index - 1].y,
+						abs[this.index + 1].x, abs[this.index + 1].y, pt.x, pt.y) <
+						this.graph.tolerance * this.graph.tolerance)
+				{
+					points.splice(this.index - 1, 1);
+					
+					return points;
 				}
 			}
 			
