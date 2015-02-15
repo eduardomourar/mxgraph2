@@ -453,7 +453,7 @@ mxGraphHandler.prototype.getPreviewBounds = function(cells)
  * Returns the union of the <mxCellStates> for the given array of <mxCells>.
  * For vertices, this method uses the bounding box of the corresponding shape
  * if one exists. The bounding box of the corresponding text label and all
- * controls and overlays is ignored.
+ * controls and overlays are ignored. See also: <mxGraphView.getBounds>.
  *
  * Parameters:
  *
