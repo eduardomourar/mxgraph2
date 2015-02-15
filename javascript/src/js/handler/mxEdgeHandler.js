@@ -1116,16 +1116,30 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 					// Handes special case where removing waypoint affects tolerance (flickering)
 					if (abs.length == 3 && this.index == 1)
 					{
-						if (this.state.visibleSourceState != null)
+						var src = this.state.getVisibleTerminalState(true);
+						
+						if (src != null)
 						{
-							var tmp = this.state.visibleSourceState;
-							abs[0] = new mxPoint(tmp.view.getRoutingCenterX(tmp), tmp.view.getRoutingCenterY(tmp));
+							var c = this.graph.getConnectionConstraint(this.state, src, true);
+							
+							// Checks if point is not fixed
+							if (c == null || this.graph.getConnectionPoint(src, c) == null)
+							{
+								abs[0] = new mxPoint(src.view.getRoutingCenterX(src), src.view.getRoutingCenterY(src));
+							}
 						}
 						
-						if (this.state.visibleTargetState != null)
+						var trg = this.state.getVisibleTerminalState(false);
+						
+						if (trg != null)
 						{
-							var tmp = this.state.visibleTargetState;
-							abs[abs.length - 1] = new mxPoint(tmp.view.getRoutingCenterX(tmp), tmp.view.getRoutingCenterY(tmp));
+							var c = this.graph.getConnectionConstraint(this.state, trg, false);
+							
+							// Checks if point is not fixed
+							if (c == null || this.graph.getConnectionPoint(trg, c) == null)
+							{
+								abs[abs.length - 1] = new mxPoint(trg.view.getRoutingCenterX(trg), trg.view.getRoutingCenterY(trg));
+							}
 						}
 					}
 
