@@ -1140,16 +1140,16 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 							abs[abs.length - 1] = new mxPoint(trg.view.getRoutingCenterX(trg), trg.view.getRoutingCenterY(trg));
 						}
 					}
-				}
 
-				if (this.index > 0 && this.index < abs.length - 1 &&
-					mxUtils.ptSegDistSq(abs[this.index - 1].x, abs[this.index - 1].y,
-						abs[this.index + 1].x, abs[this.index + 1].y, pt.x, pt.y) <
-						this.graph.tolerance * this.graph.tolerance)
-				{
-					points.splice(this.index - 1, 1);
-					
-					return points;
+					if (this.index > 0 && this.index < abs.length - 1 &&
+						mxUtils.ptSegDistSq(abs[this.index - 1].x, abs[this.index - 1].y,
+							abs[this.index + 1].x, abs[this.index + 1].y, pt.x, pt.y) <
+							this.graph.tolerance * this.graph.tolerance)
+					{
+						points.splice(this.index - 1, 1);
+						
+						return points;
+					}
 				}
 			}
 			
