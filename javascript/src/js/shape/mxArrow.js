@@ -38,13 +38,28 @@ function mxArrow(points, fill, stroke, strokewidth, arrowWidth, spacing, endSize
 	this.strokewidth = (strokewidth != null) ? strokewidth : 1;
 	this.arrowWidth = (arrowWidth != null) ? arrowWidth : mxConstants.ARROW_WIDTH;
 	this.spacing = (spacing != null) ? spacing : mxConstants.ARROW_SPACING;
-	this.endSize = (endSize != null) ? endSize : mxConstants.ARROW_SIZE;
+	this.startSize = mxConstants.ARROW_SIZE / 5;
+	this.endSize = mxConstants.ARROW_SIZE / 5;
 };
 
 /**
  * Extends mxShape.
  */
 mxUtils.extend(mxArrow, mxShape);
+
+/**
+ * Overrides apply to get smooth transition from default start- and endsize.
+ */
+mxArrow.prototype.apply = function(state)
+{
+	mxShape.prototype.apply.apply(this, arguments);
+
+	if (this.style != null)
+	{
+		this.startSize = mxUtils.getNumber(this.style, mxConstants.STYLE_STARTSIZE, this.startSize) * 3;
+		this.endSize = mxUtils.getNumber(this.style, mxConstants.STYLE_ENDSIZE, this.endSize) * 3;
+	}
+};
 
 /**
  * Function: paintEdgeShape
@@ -284,8 +299,8 @@ mxArrow.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, initialMove)
 	var orthx = edgeWidth * ny;
 	var orthy = -edgeWidth * nx;
 
-	var spaceX = (this.spacing + this.endSize) * nx;
-	var spaceY = (this.spacing + this.endSize) * ny;
+	var spaceX = (this.spacing + size) * nx;
+	var spaceY = (this.spacing + size) * ny;
 
 	if (initialMove)
 	{
@@ -312,7 +327,6 @@ mxArrow.prototype.getArrowWidth = function()
 	return mxConstants.ARROW_WIDTH;
 };
 
-
 /**
  * Function: getEdgeWidth
  * 
@@ -320,7 +334,7 @@ mxArrow.prototype.getArrowWidth = function()
  */
 mxArrow.prototype.getEdgeWidth = function()
 {
-	return mxConstants.ARROW_WIDTH * 1/3;
+	return mxConstants.ARROW_WIDTH / 3;
 };
 
 /**
