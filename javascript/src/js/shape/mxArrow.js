@@ -75,7 +75,10 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	var markerStart = this.isMarkerStart();
 	var markerEnd = this.isMarkerEnd();
 	this.widthArrowRatio = edgeWidth / width;
-
+	var spacing = this.spacing + this.strokewidth / 2;
+	var startSize = this.startSize + this.strokewidth * 3;
+	var endSize = this.endSize + this.strokewidth * 3;
+	
 	// Base vector (between first points)
 	var pe = pts[pts.length - 1];
 	var dx = pts[1].x - pts[0].x;
@@ -100,14 +103,14 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 
 	if (markerStart && !openEnded)
 	{
-		this.paintMarker(c, pts[0].x, pts[0].y, nx, ny, this.startSize, true);
+		this.paintMarker(c, pts[0].x, pts[0].y, nx, ny, startSize, spacing, true);
 	}
 	else
 	{
-		var outStartX = pts[0].x + orthx / 2 + this.spacing * nx;
-		var outStartY = pts[0].y + orthy / 2 + this.spacing * ny;
-		var inEndX = pts[0].x - orthx / 2 + this.spacing * nx;
-		var inEndY = pts[0].y - orthy / 2 + this.spacing * ny;
+		var outStartX = pts[0].x + orthx / 2 + spacing * nx;
+		var outStartY = pts[0].y + orthy / 2 + spacing * ny;
+		var inEndX = pts[0].x - orthx / 2 + spacing * nx;
+		var inEndY = pts[0].y - orthy / 2 + spacing * ny;
 		
 		if (openEnded)
 		{
@@ -221,14 +224,14 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 
 	if (markerEnd && !openEnded)
 	{
-		this.paintMarker(c, pe.x, pe.y, -nx, -ny, this.endSize, false);
+		this.paintMarker(c, pe.x, pe.y, -nx, -ny, endSize, spacing, false);
 	}
 	else
 	{
-		c.lineTo(pe.x - this.spacing * nx1 + orthx / 2, pe.y - this.spacing * ny1 + orthy / 2);
+		c.lineTo(pe.x - spacing * nx1 + orthx / 2, pe.y - spacing * ny1 + orthy / 2);
 		
-		var inStartX = pe.x - this.spacing * nx1 - orthx / 2;
-		var inStartY = pe.y - this.spacing * ny1 - orthy / 2;
+		var inStartX = pe.x - spacing * nx1 - orthx / 2;
+		var inStartY = pe.y - spacing * ny1 - orthy / 2;
 
 		if (!openEnded)
 		{
@@ -270,7 +273,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	if (markerStart && !openEnded)
 	{
 		c.begin();
-		this.paintMarker(c, pts[0].x, pts[0].y, startNx, startNy, this.startSize, true);
+		this.paintMarker(c, pts[0].x, pts[0].y, startNx, startNy, startSize, spacing, true);
 		c.stroke();
 		c.end();
 	}
@@ -278,7 +281,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	if (markerEnd && !openEnded)
 	{
 		c.begin();
-		this.paintMarker(c, pe.x, pe.y, -nx, -ny, this.endSize, true);
+		this.paintMarker(c, pe.x, pe.y, -nx, -ny, endSize, spacing, true);
 		c.stroke();
 		c.end();
 	}
@@ -289,14 +292,14 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
  * 
  * Paints the line shape.
  */
-mxArrow.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, initialMove)
+mxArrow.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, spacing, initialMove)
 {
 	var edgeWidth = this.getEdgeWidth();
 	var orthx = edgeWidth * ny;
 	var orthy = -edgeWidth * nx;
 
-	var spaceX = (this.spacing + size) * nx;
-	var spaceY = (this.spacing + size) * ny;
+	var spaceX = (spacing + size) * nx;
+	var spaceY = (spacing + size) * ny;
 
 	if (initialMove)
 	{
@@ -308,7 +311,7 @@ mxArrow.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, initialMove)
 	}
 
 	c.lineTo(ptX - orthx / 2 / this.widthArrowRatio + spaceX, ptY - orthy / 2 / this.widthArrowRatio + spaceY);
-	c.lineTo(ptX + this.spacing * nx, ptY + this.spacing * ny);
+	c.lineTo(ptX + spacing * nx, ptY + spacing * ny);
 	c.lineTo(ptX + orthx / 2 / this.widthArrowRatio + spaceX, ptY + orthy / 2 / this.widthArrowRatio + spaceY);
 	c.lineTo(ptX + orthx / 2 + spaceX, ptY + orthy / 2 + spaceY);
 }
