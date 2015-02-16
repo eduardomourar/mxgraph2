@@ -142,78 +142,74 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 		ny1 = dy1 / dist1;
 		
 		var tmp1 = nx * nx1 + ny * ny1;
-		tmp = Math.sqrt((tmp1 + 1) / 2);
+		tmp = Math.max(Math.sqrt((tmp1 + 1) / 2), 0.04);
 		
-		// FIXME: Rendering issues for special waypoints
-		if (tmp != 0)
+		// Work out the normal orthogonal to the line through the control point and the edge sides intersection
+		nx2 = (nx + nx1) / 2;
+		ny2 = (ny + ny1) / 2;
+		var dist2 = Math.sqrt(nx2 * nx2 + ny2 * ny2);
+		nx2 = nx2 / dist2;
+		ny2 = ny2 / dist2;
+		
+		var outX = pts[i+1].x + ny2 * edgeWidth / 2 / tmp;
+		var outY = pts[i+1].y - nx2 * edgeWidth / 2 / tmp
+		var inX = pts[i+1].x - ny2 * edgeWidth / 2 / tmp
+		var inY = pts[i+1].y + nx2 * edgeWidth / 2 / tmp
+		
+		// Round every bend > 90 degrees
+		var rounded = tmp1 < 0 ? true : this.isRounded;
+		
+		if (pos == 0 || !this.isRounded)
 		{
-			// Work out the normal orthogonal to the line through the control point and the edge sides intersection
-			nx2 = (nx + nx1) / 2;
-			ny2 = (ny + ny1) / 2;
-			var dist2 = Math.sqrt(nx2 * nx2 + ny2 * ny2);
-			nx2 = nx2 / dist2;
-			ny2 = ny2 / dist2;
+			// If the two segments are aligned, or if we're not drawing curved sections between segments
+			// just draw straight to the intersection point
+			c.lineTo(outX, outY);
 			
-			var outX = pts[i+1].x + ny2 * edgeWidth / 2 / tmp;
-			var outY = pts[i+1].y - nx2 * edgeWidth / 2 / tmp
-			var inX = pts[i+1].x - ny2 * edgeWidth / 2 / tmp
-			var inY = pts[i+1].y + nx2 * edgeWidth / 2 / tmp
+			(function(x, y)
+			{
+				fns.push(function()
+				{
+					c.lineTo(x, y);
+				});
+			})(inX, inY);
+		}
+		else if (pos == -1)
+		{
+			var c1x = inX + ny * edgeWidth;
+			var c1y = inY - nx * edgeWidth;
+			var c2x = inX + ny1 * edgeWidth;
+			var c2y = inY - nx1 * edgeWidth;
+			c.lineTo(c1x, c1y);
+			c.quadTo(outX, outY, c2x, c2y);
 			
-			// Round every bend > 90 degrees
-			var rounded = tmp1 < 0 ? true : this.isRounded;
+			(function(x, y)
+			{
+				fns.push(function()
+				{
+					c.lineTo(x, y);
+				});
+			})(inX, inY);
+		}
+		else
+		{
+			c.lineTo(outX, outY);
 			
-			if (pos == 0 || !this.isRounded)
+			(function(x, y)
 			{
-				// If the two segments are aligned, or if we're not drawing curved sections between segments
-				// just draw straight to the intersection point
-				c.lineTo(outX, outY);
+				var c1x = outX - ny * edgeWidth;
+				var c1y = outY + nx * edgeWidth;
+				var c2x = outX - ny1 * edgeWidth;
+				var c2y = outY + nx1 * edgeWidth;
 				
-				(function(x, y)
+				fns.push(function()
 				{
-					fns.push(function()
-					{
-						c.lineTo(x, y);
-					});
-				})(inX, inY);
-			}
-			else if (pos == -1)
-			{
-				var c1x = inX + ny * edgeWidth;
-				var c1y = inY - nx * edgeWidth;
-				var c2x = inX + ny1 * edgeWidth;
-				var c2y = inY - nx1 * edgeWidth;
-				c.lineTo(c1x, c1y);
-				c.quadTo(outX, outY, c2x, c2y);
-				
-				(function(x, y)
+					c.quadTo(x, y, c1x, c1y);
+				});
+				fns.push(function()
 				{
-					fns.push(function()
-					{
-						c.lineTo(x, y);
-					});
-				})(inX, inY);
-			}
-			else
-			{
-				c.lineTo(outX, outY);
-				
-				(function(x, y)
-				{
-					var c1x = outX - ny * edgeWidth;
-					var c1y = outY + nx * edgeWidth;
-					var c2x = outX - ny1 * edgeWidth;
-					var c2y = outY + nx1 * edgeWidth;
-					
-					fns.push(function()
-					{
-						c.quadTo(x, y, c1x, c1y);
-					});
-					fns.push(function()
-					{
-						c.lineTo(c2x, c2y);
-					});
-				})(inX, inY);
-			}
+					c.lineTo(c2x, c2y);
+				});
+			})(inX, inY);
 		}
 		
 		nx = nx1;
