@@ -283,7 +283,7 @@ mxVertexHandler.prototype.isConstrainedEvent = function(me)
 /**
  * Function: createCustomHandles
  * 
- * Returns true if the aspect ratio if the cell should be maintained.
+ * Returns an array of custom handles. This implementation returns null.
  */
 mxVertexHandler.prototype.createCustomHandles = function()
 {
