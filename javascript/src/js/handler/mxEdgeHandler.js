@@ -335,6 +335,7 @@ mxEdgeHandler.prototype.init = function()
 mxEdgeHandler.prototype.isVirtualBendsEnabled = function(evt)
 {
 	return this.virtualBendsEnabled && (this.state.style[mxConstants.STYLE_EDGE] == null ||
+			this.state.style[mxConstants.STYLE_EDGE] == mxConstants.NONE ||
 			this.state.style[mxConstants.STYLE_NOEDGESTYLE] == 1);
 };
 
