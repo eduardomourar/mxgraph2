@@ -101,7 +101,7 @@
 				        	state.style = mxUtils.clone(state.style);
 				        	updateStyle(state, true);
 				        	state.shape.apply(state);
-				        	state.shape.reconfigure();
+				        	state.shape.redraw();
 				        }
 				    },
 				    dragLeave: function(evt, state)
@@ -111,7 +111,7 @@
 				        	state.style = this.previousStyle;
 				        	updateStyle(state, false);
 				        	state.shape.apply(state);
-				        	state.shape.reconfigure();
+				        	state.shape.redraw();
 				        }
 				    }
 				});
