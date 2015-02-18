@@ -56,8 +56,8 @@ mxArrow.prototype.apply = function(state)
 
 	if (this.style != null)
 	{
-		this.startSize = mxUtils.getNumber(this.style, mxConstants.STYLE_STARTSIZE, this.startSize) * 3;
-		this.endSize = mxUtils.getNumber(this.style, mxConstants.STYLE_ENDSIZE, this.endSize) * 3;
+		this.startSize = mxUtils.getNumber(this.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3;
+		this.endSize = mxUtils.getNumber(this.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3;
 	}
 };
 
@@ -69,15 +69,22 @@ mxArrow.prototype.apply = function(state)
 mxArrow.prototype.paintEdgeShape = function(c, pts)
 {
 	// Geometry of arrow
-	var width = this.getArrowWidth();
-	var edgeWidth = this.getEdgeWidth();
+	var strokeWidth = this.strokewidth;
+	
+	if (this.outline)
+	{
+		strokeWidth = Math.max(1, mxUtils.getNumber(this.style, mxConstants.STYLE_STROKEWIDTH, this.strokewidth));
+	}
+
+	var startWidth = this.getStartArrowWidth() + strokeWidth;
+	var endWidth = this.getEndArrowWidth() + strokeWidth;
+	var edgeWidth = this.outline ? this.getEdgeWidth() + strokeWidth : this.getEdgeWidth();
 	var openEnded = this.isOpenEnded();
 	var markerStart = this.isMarkerStart();
 	var markerEnd = this.isMarkerEnd();
-	this.widthArrowRatio = edgeWidth / width;
-	var spacing = this.spacing + this.strokewidth / 2;
-	var startSize = this.startSize + this.strokewidth * 3;
-	var endSize = this.endSize + this.strokewidth * 3;
+	var spacing = this.spacing + strokeWidth / 2;
+	var startSize = this.startSize + strokeWidth;
+	var endSize = this.endSize + strokeWidth;
 	
 	// Base vector (between first points)
 	var pe = pts[pts.length - 1];
@@ -95,7 +102,16 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	
 	// Stores the inbound function calls in reverse order in fns
 	var fns = [];
-	c.setMiterLimit(1.42);
+	
+	if (this.isRounded)
+	{
+		c.setLineJoin('round');
+	}
+	else
+	{
+		c.setMiterLimit(1.42);
+	}
+
 	c.begin();
 
 	var startNx = nx;
@@ -103,7 +119,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 
 	if (markerStart && !openEnded)
 	{
-		this.paintMarker(c, pts[0].x, pts[0].y, nx, ny, startSize, spacing, true);
+		this.paintMarker(c, pts[0].x, pts[0].y, nx, ny, startSize, startWidth, edgeWidth, spacing, true);
 	}
 	else
 	{
@@ -148,19 +164,20 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 		tmp = Math.max(Math.sqrt((tmp1 + 1) / 2), 0.04);
 		
 		// Work out the normal orthogonal to the line through the control point and the edge sides intersection
-		nx2 = (nx + nx1) / 2;
-		ny2 = (ny + ny1) / 2;
+		nx2 = (nx + nx1);
+		ny2 = (ny + ny1);
 		var dist2 = Math.sqrt(nx2 * nx2 + ny2 * ny2);
 		nx2 = nx2 / dist2;
 		ny2 = ny2 / dist2;
 		
-		var outX = pts[i+1].x + ny2 * edgeWidth / 2 / tmp;
-		var outY = pts[i+1].y - nx2 * edgeWidth / 2 / tmp
-		var inX = pts[i+1].x - ny2 * edgeWidth / 2 / tmp
-		var inY = pts[i+1].y + nx2 * edgeWidth / 2 / tmp
-		
-		// Round every bend > 90 degrees
-		var rounded = tmp1 < 0 ? true : this.isRounded;
+		// Higher strokewidths require a larger minimum bend, 0.35 covers all but the most extreme cases
+		var strokeWidthFactor = Math.max(tmp, Math.min(this.strokewidth / 200 + 0.04, 0.35));
+		var angleFactor = (pos != 0 && this.isRounded) ? Math.max(0.1, strokeWidthFactor) : 0.04;
+
+		var outX = pts[i+1].x + ny2 * edgeWidth / 2 / angleFactor;
+		var outY = pts[i+1].y - nx2 * edgeWidth / 2 / angleFactor;
+		var inX = pts[i+1].x - ny2 * edgeWidth / 2 / angleFactor;
+		var inY = pts[i+1].y + nx2 * edgeWidth / 2 / angleFactor;
 		
 		if (pos == 0 || !this.isRounded)
 		{
@@ -224,7 +241,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 
 	if (markerEnd && !openEnded)
 	{
-		this.paintMarker(c, pe.x, pe.y, -nx, -ny, endSize, spacing, false);
+		this.paintMarker(c, pe.x, pe.y, -nx, -ny, endSize, endWidth, edgeWidth, spacing, false);
 	}
 	else
 	{
@@ -269,11 +286,16 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	
 	// Need to redraw the markers without the low miter limit
 	c.setMiterLimit(4);
+	
+	if (this.isRounded)
+	{
+		c.setLineJoin('flat');
+	}
 
 	if (markerStart && !openEnded)
 	{
 		c.begin();
-		this.paintMarker(c, pts[0].x, pts[0].y, startNx, startNy, startSize, spacing, true);
+		this.paintMarker(c, pts[0].x, pts[0].y, startNx, startNy, startSize, startWidth, edgeWidth, spacing, true);
 		c.stroke();
 		c.end();
 	}
@@ -281,7 +303,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	if (markerEnd && !openEnded)
 	{
 		c.begin();
-		this.paintMarker(c, pe.x, pe.y, -nx, -ny, endSize, spacing, true);
+		this.paintMarker(c, pe.x, pe.y, -nx, -ny, endSize, endWidth, edgeWidth, spacing, true);
 		c.stroke();
 		c.end();
 	}
@@ -292,36 +314,46 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
  * 
  * Paints the line shape.
  */
-mxArrow.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, spacing, initialMove)
+mxArrow.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, arrowWidth, edgeWidth, spacing, initialMove)
 {
-	var edgeWidth = this.getEdgeWidth();
-	var orthx = edgeWidth * ny;
-	var orthy = -edgeWidth * nx;
+	var widthArrowRatio = edgeWidth / arrowWidth;
+	var orthx = edgeWidth * ny / 2;
+	var orthy = -edgeWidth * nx / 2;
 
 	var spaceX = (spacing + size) * nx;
 	var spaceY = (spacing + size) * ny;
 
 	if (initialMove)
 	{
-		c.moveTo(ptX - orthx / 2 + spaceX, ptY - orthy / 2 + spaceY);
+		c.moveTo(ptX - orthx + spaceX, ptY - orthy + spaceY);
 	}
 	else
 	{
-		c.lineTo(ptX - orthx / 2 + spaceX, ptY - orthy / 2 + spaceY);
+		c.lineTo(ptX - orthx + spaceX, ptY - orthy + spaceY);
 	}
 
-	c.lineTo(ptX - orthx / 2 / this.widthArrowRatio + spaceX, ptY - orthy / 2 / this.widthArrowRatio + spaceY);
+	c.lineTo(ptX - orthx / widthArrowRatio + spaceX, ptY - orthy / widthArrowRatio + spaceY);
 	c.lineTo(ptX + spacing * nx, ptY + spacing * ny);
-	c.lineTo(ptX + orthx / 2 / this.widthArrowRatio + spaceX, ptY + orthy / 2 / this.widthArrowRatio + spaceY);
-	c.lineTo(ptX + orthx / 2 + spaceX, ptY + orthy / 2 + spaceY);
+	c.lineTo(ptX + orthx / widthArrowRatio + spaceX, ptY + orthy / widthArrowRatio + spaceY);
+	c.lineTo(ptX + orthx + spaceX, ptY + orthy + spaceY);
 }
 
 /**
- * Function: getArrowWidth
+ * Function: getStartArrowWidth
  * 
- * Returns the width of the arrow
+ * Returns the width of the start arrow
  */
-mxArrow.prototype.getArrowWidth = function()
+mxArrow.prototype.getStartArrowWidth = function()
+{
+	return mxConstants.ARROW_WIDTH;
+};
+
+/**
+ * Function: getEndArrowWidth
+ * 
+ * Returns the width of the end arrow
+ */
+mxArrow.prototype.getEndArrowWidth = function()
 {
 	return mxConstants.ARROW_WIDTH;
 };
