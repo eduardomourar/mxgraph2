@@ -322,7 +322,19 @@ mxEdgeHandler.prototype.init = function()
 	this.initBend(this.labelShape);
 	this.labelShape.setCursor(mxConstants.CURSOR_LABEL_HANDLE);
 	
+	this.customHandles = this.createCustomHandles();
+	
 	this.redraw();
+};
+
+/**
+ * Function: createCustomHandles
+ * 
+ * Returns an array of custom handles. This implementation returns null.
+ */
+mxEdgeHandler.prototype.createCustomHandles = function()
+{
+	return null;
 };
 
 /**
@@ -766,6 +778,18 @@ mxEdgeHandler.prototype.getHandleForEvent = function(me)
 		
 		return false;
 	}
+	
+	if (this.customHandles != null)
+	{
+		for (var i = 0; i < this.customHandles.length; i++)
+		{
+			if (checkShape(this.customHandles[i].shape))
+			{
+				// LATER: Return reference to active shape
+				return mxEvent.CUSTOM_HANDLE - i;
+			}
+		}
+	}
 
 	if (me.isSource(this.state.text) || checkShape(this.labelShape))
 	{
@@ -789,7 +813,7 @@ mxEdgeHandler.prototype.getHandleForEvent = function(me)
 		{
 			if (checkShape(this.virtualBends[i]))
 			{
-				result = mxEvent.CUSTOM_HANDLE - i;
+				result = mxEvent.VIRTUAL_HANDLE - i;
 			}
 		}
 	}
@@ -828,9 +852,9 @@ mxEdgeHandler.prototype.mouseDown = function(sender, me)
 		}
 		else if (handle != mxEvent.LABEL_HANDLE || this.graph.isLabelMovable(me.getCell()))
 		{
-			if (handle <= mxEvent.CUSTOM_HANDLE)
+			if (handle <= mxEvent.VIRTUAL_HANDLE)
 			{
-				mxUtils.setOpacity(this.virtualBends[mxEvent.CUSTOM_HANDLE - handle].node, 100);
+				mxUtils.setOpacity(this.virtualBends[mxEvent.VIRTUAL_HANDLE - handle].node, 100);
 			}
 			
 			this.start(me.getX(), me.getY(), handle);
@@ -1067,7 +1091,8 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 	var geometry = this.graph.getCellGeometry(this.state.cell);
 	var points = (geometry.points != null) ? geometry.points.slice() : null;
 	var point = new mxPoint(pt.x, pt.y);
-
+	var result = null;
+	
 	if (!this.isSource && !this.isTarget)
 	{
 		this.convertPoint(point, false);
@@ -1079,9 +1104,9 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 		else
 		{
 			// Adds point from virtual bend
-			if (this.index <= mxEvent.CUSTOM_HANDLE)
+			if (this.index <= mxEvent.VIRTUAL_HANDLE)
 			{
-				points.splice(mxEvent.CUSTOM_HANDLE - this.index, 0, point);
+				points.splice(mxEvent.VIRTUAL_HANDLE - this.index, 0, point);
 			}
 
 			// Removes point if dragged on terminal point
@@ -1095,24 +1120,26 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 						
 						if (bend != null && mxUtils.contains(bend.bounds, pt.x, pt.y))
 						{
-							if (this.index <= mxEvent.CUSTOM_HANDLE)
+							if (this.index <= mxEvent.VIRTUAL_HANDLE)
 							{
-								points.splice(mxEvent.CUSTOM_HANDLE - this.index, 1);
+								points.splice(mxEvent.VIRTUAL_HANDLE - this.index, 1);
 							}
 							else
 							{
 								points.splice(this.index - 1, 1);
 							}
 							
-							return points;
+							result = points;
 						}
 					}
 				}
 				
 				// Removes point if user tries to straighten a segment
-				if (this.straightRemoveEnabled && (me == null || !mxEvent.isAltDown(me.getEvent())))
+				if (result == null && this.straightRemoveEnabled && (me == null || !mxEvent.isAltDown(me.getEvent())))
 				{
+					var tol = this.graph.tolerance * this.graph.tolerance;
 					var abs = this.state.absolutePoints.slice();
+					abs[this.index] = pt;
 					
 					// Handes special case where removing waypoint affects tolerance (flickering)
 					var src = this.state.getVisibleTerminalState(true);
@@ -1141,20 +1168,24 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 						}
 					}
 
-					if (this.index > 0 && this.index < abs.length - 1 &&
-						mxUtils.ptSegDistSq(abs[this.index - 1].x, abs[this.index - 1].y,
-							abs[this.index + 1].x, abs[this.index + 1].y, pt.x, pt.y) <
-							this.graph.tolerance * this.graph.tolerance)
+					function checkRemove(idx, tmp)
 					{
-						points.splice(this.index - 1, 1);
-						
-						return points;
-					}
+						if (idx > 0 && idx < abs.length - 1 &&
+							mxUtils.ptSegDistSq(abs[idx - 1].x, abs[idx - 1].y,
+								abs[idx + 1].x, abs[idx + 1].y, tmp.x, tmp.y) < tol)
+						{
+							points.splice(idx - 1, 1);
+							result = points;
+						}
+					};
+					
+					// LATER: Check if other points can be removed if a segment is made straight
+					checkRemove(this.index, pt);
 				}
 			}
 			
 			// Updates existing point
-			if (this.index > mxEvent.CUSTOM_HANDLE)
+			if (result == null && this.index > mxEvent.VIRTUAL_HANDLE)
 			{
 				points[this.index - 1] = point;
 			}
@@ -1165,7 +1196,7 @@ mxEdgeHandler.prototype.getPreviewPoints = function(pt, me)
 		points = null;
 	}
 	
-	return points;
+	return (result != null) ? result : points;
 };
 
 /**
@@ -1291,7 +1322,14 @@ mxEdgeHandler.prototype.mouseMove = function(sender, me)
 			}
 		}
 		
-		if (this.isLabel)
+		if (this.index <= mxEvent.CUSTOM_HANDLE && this.index > mxEvent.VIRTUAL_HANDLE)
+		{
+			if (this.customHandles != null)
+			{
+				this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].processEvent(me);
+			}
+		}
+		else if (this.isLabel)
 		{
 			this.label.x = point.x;
 			this.label.y = point.y;
@@ -1349,6 +1387,13 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 				if (this.error.length > 0)
 				{
 					this.graph.validationAlert(this.error);
+				}
+			}
+			else if (this.index <= mxEvent.CUSTOM_HANDLE && this.index > mxEvent.VIRTUAL_HANDLE)
+			{
+				if (this.customHandles != null)
+				{
+					this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].execute();
 				}
 			}
 			else if (this.isLabel)
@@ -1468,6 +1513,14 @@ mxEdgeHandler.prototype.reset = function()
 	if (this.constraintHandler != null)
 	{
 		this.constraintHandler.reset();
+	}
+	
+	if (this.customHandles != null)
+	{
+		for (var i = 0; i < this.customHandles.length; i++)
+		{
+			this.customHandles[i].reset();
+		}
 	}
 
 	this.setPreviewColor(mxConstants.EDGE_SELECTION_COLOR);
@@ -1940,6 +1993,14 @@ mxEdgeHandler.prototype.redrawHandles = function()
 	{
 		this.labelShape.redraw();
 	}
+	
+	if (this.customHandles != null)
+	{
+		for (var i = 0; i < this.customHandles.length; i++)
+		{
+			this.customHandles[i].redraw();
+		}
+	}
 };
 
 /**
@@ -1968,6 +2029,14 @@ mxEdgeHandler.prototype.setHandlesVisible = function(visible)
 	if (this.labelShape != null)
 	{
 		this.labelShape.node.style.display = (visible) ? '' : 'none';
+	}
+	
+	if (this.customHandles != null)
+	{
+		for (var i = 0; i < this.customHandles.length; i++)
+		{
+			this.customHandles[i].setVisible(visible);
+		}
 	}
 };
 
@@ -2062,10 +2131,14 @@ mxEdgeHandler.prototype.drawPreview = function()
 	}
 	else if (this.shape != null)
 	{
+		this.shape.apply(this.state);
 		this.shape.points = this.abspoints;
 		this.shape.scale = this.state.view.scale;
+		this.shape.isDashed = this.isSelectionDashed();
+		this.shape.stroke = this.getSelectionColor();
 		this.shape.strokewidth = this.getSelectionStrokeWidth() / this.shape.scale / this.shape.scale;
 		this.shape.arrowStrokewidth = this.getSelectionStrokeWidth();
+		this.shape.isShadow = false;
 		this.shape.redraw();
 	}
 	
@@ -2175,6 +2248,9 @@ mxEdgeHandler.prototype.destroy = function()
 	
 	this.destroyBends(this.virtualBends);
 	this.virtualBends = null;
+	
+	this.destroyBends(this.customHandles);
+	this.customHandles = null;
 
 	this.destroyBends(this.bends);
 	this.bends = null;
