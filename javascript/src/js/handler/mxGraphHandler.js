@@ -435,12 +435,22 @@ mxGraphHandler.prototype.getPreviewBounds = function(cells)
 			bounds.x -= dx / 2;
 			bounds.width = this.minimumSize;
 		}
+		else
+		{
+			bounds.x = Math.floor(bounds.x);
+			bounds.width = Math.ceil(bounds.width);
+		}
 		
 		if (bounds.height < this.minimumSize)
 		{
 			var dy = this.minimumSize - bounds.height;
 			bounds.y -= dy / 2;
 			bounds.height = this.minimumSize;
+		}
+		else
+		{
+			bounds.y = Math.floor(bounds.y);
+			bounds.height = Math.ceil(bounds.height);
 		}
 	}
 	

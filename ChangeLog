@@ -1,3 +1,4 @@
+- Adds rounding in mxGraphHandler.getPreviewBounds [JavaScript]
 - Enables arrow shapes in mxEdgeHandler.isVirtualBendsEnabled [JavaScript]
 - Adds mxEdgeHandler.straightRemoveEnabled switch [JavaScript]
 - Adds mxMouseEvent argument in mxEdgeHandler.getPreviewPoints [JavaScript]
