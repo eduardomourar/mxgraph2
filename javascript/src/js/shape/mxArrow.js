@@ -172,7 +172,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 		
 		// Higher strokewidths require a larger minimum bend, 0.35 covers all but the most extreme cases
 		var strokeWidthFactor = Math.max(tmp, Math.min(this.strokewidth / 200 + 0.04, 0.35));
-		var angleFactor = (pos != 0 && this.isRounded) ? Math.max(0.1, strokeWidthFactor) : 0.04;
+		var angleFactor = (pos != 0 && this.isRounded) ? Math.max(0.1, strokeWidthFactor) : Math.max(tmp, 0.04);
 
 		var outX = pts[i+1].x + ny2 * edgeWidth / 2 / angleFactor;
 		var outY = pts[i+1].y - nx2 * edgeWidth / 2 / angleFactor;
