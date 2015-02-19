@@ -1451,7 +1451,7 @@
 			}, function(dist, nx, ny, p0, p1, pt)
 			{
 				var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));					
-				state.style['width'] = Math.round(w * 2) - spacing;
+				state.style['width'] = Math.round(w * 2) / state.view.scale - spacing;
 			});
 		};
 		
@@ -1476,32 +1476,34 @@
 				{
 					handles.push(createEdgeHandle(state, ['width', mxConstants.STYLE_STARTSIZE], true, function(dist, nx, ny, p0, p1)
 					{
-						var w = state.shape.getEdgeWidth() * state.view.scale;
-						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3;
+						var w = (state.shape.getEdgeWidth() - state.shape.strokewidth) * state.view.scale;
+						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
 						
-						return new mxPoint(p0.x + nx * l + ny * w / 2, p0.y + ny * l - nx * w / 2);
+						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
+							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
 					}, function(dist, nx, ny, p0, p1, pt)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
 						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 						
-						state.style[mxConstants.STYLE_STARTSIZE] = Math.round(l / 3);
-						state.style['width'] = Math.round(w * 2);
+						state.style[mxConstants.STYLE_STARTSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
+						state.style['width'] = Math.round(w * 2) / state.view.scale;
 					}));
 					
 					handles.push(createEdgeHandle(state, ['startWidth', mxConstants.STYLE_STARTSIZE], true, function(dist, nx, ny, p0, p1)
 					{
-						var w = state.shape.getStartArrowWidth();// * state.view.scale;
-						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3;
+						var w = (state.shape.getStartArrowWidth() - state.shape.strokewidth) * state.view.scale;
+						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
 						
-						return new mxPoint(p0.x + nx * l + ny * w / 2, p0.y + ny * l - nx * w / 2);
+						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
+							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
 					}, function(dist, nx, ny, p0, p1, pt)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
 						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 						
-						state.style['startWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth());
-						state.style[mxConstants.STYLE_STARTSIZE] = Math.round(l / 3);
+						state.style[mxConstants.STYLE_STARTSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
+						state.style['startWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
 					}));
 				}
 				
@@ -1509,32 +1511,34 @@
 				{
 					handles.push(createEdgeHandle(state, ['width', mxConstants.STYLE_ENDSIZE], false, function(dist, nx, ny, p0, p1)
 					{
-						var w = state.shape.getEdgeWidth() * state.view.scale;
-						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3;
+						var w = (state.shape.getEdgeWidth() - state.shape.strokewidth) * state.view.scale;
+						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
 						
-						return new mxPoint(p0.x + nx * l + ny * w / 2, p0.y + ny * l - nx * w / 2);
+						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
+							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
 					}, function(dist, nx, ny, p0, p1, pt)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
 						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 						
-						state.style[mxConstants.STYLE_ENDSIZE] = Math.round(l / 3);
-						state.style['width'] = Math.round(w * 2);
+						state.style[mxConstants.STYLE_ENDSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
+						state.style['width'] = Math.round(w * 2) / state.view.scale;
 					}));
 					
 					handles.push(createEdgeHandle(state, ['endWidth', mxConstants.STYLE_ENDSIZE], false, function(dist, nx, ny, p0, p1)
 					{
-						var w = state.shape.getEndArrowWidth() * state.view.scale;
-						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3;
+						var w = (state.shape.getEndArrowWidth() - state.shape.strokewidth) * state.view.scale;
+						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
 						
-						return new mxPoint(p0.x + nx * l + ny * w / 2, p0.y + ny * l - nx * w / 2);
+						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
+							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
 					}, function(dist, nx, ny, p0, p1, pt)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
 						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 						
-						state.style['endWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth());
-						state.style[mxConstants.STYLE_ENDSIZE] = Math.round(l / 3);
+						state.style[mxConstants.STYLE_ENDSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
+						state.style['endWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
 					}));
 				}
 				
