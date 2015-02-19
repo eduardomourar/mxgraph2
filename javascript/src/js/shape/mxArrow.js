@@ -75,21 +75,30 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	{
 		strokeWidth = Math.max(1, mxUtils.getNumber(this.style, mxConstants.STYLE_STROKEWIDTH, this.strokewidth));
 	}
-
+	
 	var startWidth = this.getStartArrowWidth() + strokeWidth;
 	var endWidth = this.getEndArrowWidth() + strokeWidth;
 	var edgeWidth = this.outline ? this.getEdgeWidth() + strokeWidth : this.getEdgeWidth();
 	var openEnded = this.isOpenEnded();
 	var markerStart = this.isMarkerStart();
 	var markerEnd = this.isMarkerEnd();
-	var spacing = this.spacing + strokeWidth / 2;
+	var spacing = (openEnded) ? 0 : this.spacing + strokeWidth / 2;
 	var startSize = this.startSize + strokeWidth;
 	var endSize = this.endSize + strokeWidth;
 	
 	// Base vector (between first points)
 	var pe = pts[pts.length - 1];
-	var dx = pts[1].x - pts[0].x;
-	var dy = pts[1].y - pts[0].y;
+
+	// Finds first non-overlapping point
+	var i0 = 1;
+	
+	while (pts[i0].x == pts[0].x && pts[i0].y == pts[0].y)
+	{
+		i0++;
+	}
+	
+	var dx = pts[i0].x - pts[0].x;
+	var dy = pts[i0].y - pts[0].y;
 	var dist = Math.sqrt(dx * dx + dy * dy);
 	
 	// Computes the norm and the inverse norm
@@ -155,8 +164,9 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 
 		dx1 = pts[i+2].x - pts[i+1].x;
 		dy1 = pts[i+2].y - pts[i+1].y;
-		
+
 		dist1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+		
 		nx1 = dx1 / dist1;
 		ny1 = dy1 / dist1;
 		
@@ -166,14 +176,15 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 		// Work out the normal orthogonal to the line through the control point and the edge sides intersection
 		nx2 = (nx + nx1);
 		ny2 = (ny + ny1);
+
 		var dist2 = Math.sqrt(nx2 * nx2 + ny2 * ny2);
 		nx2 = nx2 / dist2;
 		ny2 = ny2 / dist2;
 		
 		// Higher strokewidths require a larger minimum bend, 0.35 covers all but the most extreme cases
 		var strokeWidthFactor = Math.max(tmp, Math.min(this.strokewidth / 200 + 0.04, 0.35));
-		var angleFactor = (pos != 0 && this.isRounded) ? Math.max(0.1, strokeWidthFactor) : Math.max(tmp, 0.04);
-
+		var angleFactor = (pos != 0 && this.isRounded) ? Math.max(0.1, strokeWidthFactor) : Math.max(tmp, 0.06);
+		
 		var outX = pts[i+1].x + ny2 * edgeWidth / 2 / angleFactor;
 		var outY = pts[i+1].y - nx2 * edgeWidth / 2 / angleFactor;
 		var inX = pts[i+1].x - ny2 * edgeWidth / 2 / angleFactor;
