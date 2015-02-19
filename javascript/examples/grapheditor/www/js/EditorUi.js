@@ -1953,7 +1953,7 @@ EditorUi.prototype.extractGraphModelFromEvent = function(evt)
 		
 		if (provider != null)
 		{
-			if (document.documentMode == 11)
+			if (document.documentMode == 10 || document.documentMode == 11)
 			{
 				data = provider.getData('Text');
 			}
