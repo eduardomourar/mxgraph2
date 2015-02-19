@@ -92,7 +92,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	// Finds first non-overlapping point
 	var i0 = 1;
 	
-	while (i0 < pts.length && pts[i0].x == pts[0].x && pts[i0].y == pts[0].y)
+	while (i0 < pts.length-1 && pts[i0].x == pts[0].x && pts[i0].y == pts[0].y)
 	{
 		i0++;
 	}
