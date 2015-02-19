@@ -281,6 +281,51 @@ Graph = function(container, model, renderHint, stylesheet)
 		return result;
 	};
 	
+	// Disabled splitting edges when edges are moved
+	var isSplitTarget = this.isSplitTarget;
+	
+	this.isSplitTarget = function(target, cells, evt)
+	{
+		for (var i = 0; i < cells.length; i++)
+		{
+			if (this.model.isEdge(cells[i]))
+			{
+				return false;
+			}
+		}
+		
+		return isSplitTarget.apply(this, arguments);
+	};
+
+	/**
+	 * Function: isSplitTarget
+	 *
+	 * Returns true if the given edge may be splitted into two edges with the
+	 * given cell as a new terminal between the two.
+	 * 
+	 * Parameters:
+	 * 
+	 * target - <mxCell> that represents the edge to be splitted.
+	 * cells - <mxCells> that should split the edge.
+	 * evt - Mouseevent that triggered the invocation.
+	 */
+	mxGraph.prototype.isSplitTarget = function(target, cells, evt)
+	{
+		if (this.model.isEdge(target) && cells != null && cells.length == 1 &&
+			this.isCellConnectable(cells[0]) && this.getEdgeValidationError(target,
+				this.model.getTerminal(target, true), cells[0]) == null)
+		{
+			var src = this.model.getTerminal(target, true);
+			var trg = this.model.getTerminal(target, false);
+
+			return (!this.model.isAncestor(cells[0], src) &&
+					!this.model.isAncestor(cells[0], trg));
+		}
+
+		return false;
+	};
+
+	
 	// Unlocks all cells
 	this.isCellLocked = function(cell)
 	{
@@ -2069,18 +2114,12 @@ Graph.prototype.initTouch = function()
 	
 	mxEdgeHandler.prototype.parentHighlightEnabled = true;
 	mxEdgeHandler.prototype.dblClickRemoveEnabled = true;
+	mxEdgeHandler.prototype.straightRemoveEnabled = true;
 	mxEdgeHandler.prototype.virtualBendsEnabled = true;
 	mxEdgeHandler.prototype.mergeRemoveEnabled = true;
 	mxEdgeHandler.prototype.manageLabelHandle = true;
 	mxEdgeHandler.prototype.outlineConnect = true;
-	
-	mxEdgeHandlerIsVirtualBendsEnabled = mxEdgeHandler.prototype.isVirtualBendsEnabled;
-	mxEdgeHandler.prototype.isVirtualBendsEnabled = function()
-	{
-		return mxEdgeHandlerIsVirtualBendsEnabled.apply(this, arguments) &&
-			mxUtils.getValue(this.state.style, mxConstants.STYLE_SHAPE, null) != 'link';
-	};
-	
+
 	// Shows secondary handle for fixed connection points
 	mxEdgeHandler.prototype.createHandleShape = function(index)
 	{

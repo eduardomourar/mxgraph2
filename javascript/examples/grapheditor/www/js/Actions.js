@@ -742,7 +742,7 @@ Actions.prototype.init = function()
 	
 	// Format actions
 	this.addAction('shadow', function() { ui.menus.toggleStyle(mxConstants.STYLE_SHADOW); });
-	this.addAction('plain', function()
+	this.addAction('solid', function()
 	{
 		graph.getModel().beginUpdate();
 		try

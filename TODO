@@ -21,8 +21,10 @@
 --    mxGraph Core     --
 -------------------------
 
+- Fix channels when scaled in segment edge style
 - Fix scrolling, maintain scrollbar position in scrollbars.html
 - Add support for text-direction in Java and .NET image export
+- Add live preview for edge handlers
 
 - Migrate changes in mxEdgeStyle to Java
 - Add preview box for edge label moving

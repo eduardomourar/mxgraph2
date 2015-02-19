@@ -340,7 +340,7 @@ Editor.prototype.updateGraphComponents = function()
 		if (graph.view.backgroundPageShape != null)
 		{
 			graph.view.backgroundPageShape.fill = bg;
-			graph.view.backgroundPageShape.reconfigure();
+			graph.view.backgroundPageShape.redraw();
 		}
 
 		// Transparent.gif is a workaround for focus repaint problems in IE and clipping issues in webkit

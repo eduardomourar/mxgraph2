@@ -903,8 +903,10 @@
 	function LinkShape()
 	{
 		mxArrow.call(this);
+		this.spacing = 0;
 	};
 	mxUtils.extend(LinkShape, mxArrow);
+	LinkShape.prototype.defaultWidth = 4;
 	
 	LinkShape.prototype.isOpenEnded = function()
 	{
@@ -913,7 +915,7 @@
 
 	LinkShape.prototype.getEdgeWidth = function()
 	{
-		return 4 + Math.max(0, this.strokewidth - 1) * 2;
+		return mxUtils.getNumber(this.style, 'width', this.defaultWidth) + Math.max(0, this.strokewidth - 1);
 	};
 
 	// Registers the link shape
@@ -923,17 +925,25 @@
 	function FlexArrowShape()
 	{
 		mxArrow.call(this);
+		this.spacing = 0;
 	};
 	mxUtils.extend(FlexArrowShape, mxArrow);
-	
-	FlexArrowShape.prototype.getArrowWidth = function()
+	FlexArrowShape.prototype.defaultWidth = 10;
+	FlexArrowShape.prototype.defaultArrowWidth = 20;
+
+	FlexArrowShape.prototype.getStartArrowWidth = function()
 	{
-		return this.getEdgeWidth() * 3;
+		return this.getEdgeWidth() + mxUtils.getNumber(this.style, 'startWidth', this.defaultArrowWidth);
+	};
+
+	FlexArrowShape.prototype.getEndArrowWidth = function()
+	{
+		return this.getEdgeWidth() + mxUtils.getNumber(this.style, 'endWidth', this.defaultArrowWidth);;
 	};
 
 	FlexArrowShape.prototype.getEdgeWidth = function()
 	{
-		return 10 + Math.max(0, this.strokewidth - 1) * 2;
+		return mxUtils.getNumber(this.style, 'width', this.defaultWidth) + Math.max(0, this.strokewidth - 1);
 	};
 	
 	FlexArrowShape.prototype.isMarkerStart = function()
@@ -1074,14 +1084,10 @@
 		var at = (h - aw) / 2;
 		var ab = at + aw;
 		
-		c.moveTo(0, at);
-		c.lineTo(w - as, at);
-		c.lineTo(w - as, 0);
-		c.lineTo(w, h / 2);
-		c.lineTo(w - as, h);
-		c.lineTo(w - as, ab);
-		c.lineTo(0, ab);
-		c.close();
+		var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+		this.addPoints(c, [new mxPoint(0, at), new mxPoint(w - as, at), new mxPoint(w - as, 0), new mxPoint(w, h / 2),
+		                   new mxPoint(w - as, h), new mxPoint(w - as, ab), new mxPoint(0, ab)],
+		                   this.isRounded, arcSize, true);
 		c.end();
 	};
 
@@ -1100,17 +1106,11 @@
 		var at = (h - aw) / 2;
 		var ab = at + aw;
 		
-		c.moveTo(0, h / 2);
-		c.lineTo(as, 0);
-		c.lineTo(as, at);
-		c.lineTo(w - as, at);
-		c.lineTo(w - as, 0);
-		c.lineTo(w, h / 2);
-		c.lineTo(w - as, h);
-		c.lineTo(w - as, ab);
-		c.lineTo(as, ab);
-		c.lineTo(as, h);
-		c.close();
+		var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+		this.addPoints(c, [new mxPoint(0, h / 2), new mxPoint(as, 0), new mxPoint(as, at), new mxPoint(w - as, at),
+		                   new mxPoint(w - as, 0), new mxPoint(w, h / 2), new mxPoint(w - as, h),
+		                   new mxPoint(w - as, ab), new mxPoint(as, ab), new mxPoint(as, h)],
+		                   this.isRounded, arcSize, true);
 		c.end();
 	};
 
@@ -1410,8 +1410,136 @@
 				})];
 			};
 		};
+		
+		function createEdgeHandle(state, keys, start, getPosition, setPosition)
+		{
+			var pts = state.absolutePoints;
+			var n = pts.length - 1;
+			
+			var tr = state.view.translate;
+			var s = state.view.scale;
+			
+			var p0 = (start) ? pts[0] : pts[n];
+			var p1 = (start) ? pts[1] : pts[n - 1];
+			var dx = (start) ? p1.x - p0.x : p1.x - p0.x;
+			var dy = (start) ? p1.y - p0.y : p1.y - p0.y;
+
+			var dist = Math.sqrt(dx * dx + dy * dy);
+			
+			return createHandle(state, keys, function(bounds)
+			{
+				var pt = getPosition(dist, dx / dist, dy / dist, p0, p1);
+				
+				return new mxPoint(pt.x / s - tr.x, pt.y / s - tr.y);
+			}, function(bounds, pt)
+			{
+				var dist = Math.sqrt(dx * dx + dy * dy);
+				pt.x = (pt.x + tr.x) * s;
+				pt.y = (pt.y + tr.y) * s;
+
+				setPosition(dist, dx / dist, dy / dist, p0, p1, pt);
+			});
+		};
+		
+		function createEdgeWidthHandle(state, start, spacing)
+		{
+			return createEdgeHandle(state, ['width'], start, function(dist, nx, ny, p0, p1)
+			{
+				var w = state.shape.getEdgeWidth() * state.view.scale + spacing;
+
+				return new mxPoint(p0.x + nx * dist / 4 + ny * w / 2, p0.y + ny * dist / 4 - nx * w / 2);
+			}, function(dist, nx, ny, p0, p1, pt)
+			{
+				var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));					
+				state.style['width'] = Math.round(w * 2) - spacing;
+			});
+		};
+		
+		function ptLineDistance(x1, y1, x2, y2, x0, y0)
+		{
+			return Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) / Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
+		}
 
 		var handleFactory = {
+			'link': function(state)
+			{
+				var spacing = 10;
+
+				return [createEdgeWidthHandle(state, true, spacing), createEdgeWidthHandle(state, false, spacing)];
+			},
+			'flexArrow': function(state)
+			{
+				// Do not use state.shape.startSize/endSize since it is cached
+				var handles = [];
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_STARTARROW, mxConstants.NONE) != mxConstants.NONE)
+				{
+					handles.push(createEdgeHandle(state, ['width', mxConstants.STYLE_STARTSIZE], true, function(dist, nx, ny, p0, p1)
+					{
+						var w = state.shape.getEdgeWidth() * state.view.scale;
+						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3;
+						
+						return new mxPoint(p0.x + nx * l + ny * w / 2, p0.y + ny * l - nx * w / 2);
+					}, function(dist, nx, ny, p0, p1, pt)
+					{
+						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
+						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
+						
+						state.style[mxConstants.STYLE_STARTSIZE] = Math.round(l / 3);
+						state.style['width'] = Math.round(w * 2);
+					}));
+					
+					handles.push(createEdgeHandle(state, ['startWidth', mxConstants.STYLE_STARTSIZE], true, function(dist, nx, ny, p0, p1)
+					{
+						var w = state.shape.getStartArrowWidth();// * state.view.scale;
+						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3;
+						
+						return new mxPoint(p0.x + nx * l + ny * w / 2, p0.y + ny * l - nx * w / 2);
+					}, function(dist, nx, ny, p0, p1, pt)
+					{
+						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
+						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
+						
+						state.style['startWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth());
+						state.style[mxConstants.STYLE_STARTSIZE] = Math.round(l / 3);
+					}));
+				}
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_ENDARROW, mxConstants.NONE) != mxConstants.NONE)
+				{
+					handles.push(createEdgeHandle(state, ['width', mxConstants.STYLE_ENDSIZE], false, function(dist, nx, ny, p0, p1)
+					{
+						var w = state.shape.getEdgeWidth() * state.view.scale;
+						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3;
+						
+						return new mxPoint(p0.x + nx * l + ny * w / 2, p0.y + ny * l - nx * w / 2);
+					}, function(dist, nx, ny, p0, p1, pt)
+					{
+						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
+						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
+						
+						state.style[mxConstants.STYLE_ENDSIZE] = Math.round(l / 3);
+						state.style['width'] = Math.round(w * 2);
+					}));
+					
+					handles.push(createEdgeHandle(state, ['endWidth', mxConstants.STYLE_ENDSIZE], false, function(dist, nx, ny, p0, p1)
+					{
+						var w = state.shape.getEndArrowWidth() * state.view.scale;
+						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3;
+						
+						return new mxPoint(p0.x + nx * l + ny * w / 2, p0.y + ny * l - nx * w / 2);
+					}, function(dist, nx, ny, p0, p1, pt)
+					{
+						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
+						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
+						
+						state.style['endWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth());
+						state.style[mxConstants.STYLE_ENDSIZE] = Math.round(l / 3);
+					}));
+				}
+				
+				return handles;
+			},
 			'swimlane': function(state)
 			{
 				return [createHandle(state, [mxConstants.STYLE_STARTSIZE], function(bounds)
@@ -1642,6 +1770,16 @@
 			
 			return null;
 		};
+		
+		mxEdgeHandler.prototype.createCustomHandles = function()
+		{
+			var fn = handleFactory[this.state.style['shape']];
+			
+			if (fn != null)
+			{
+				return fn(this.state);
+			}
+		}
 	}
 
 	mxRectangleShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
@@ -1797,6 +1935,8 @@
 	        	            		 new mxConnectionConstraint(new mxPoint(1, 0.5), true),
 	        	            		 new mxConnectionConstraint(new mxPoint(1, 0.75), true)];
 	mxArrow.prototype.constraints = null;
+	TeeShape.prototype.constraints = null;
+	CornerShape.prototype.constraints = null;
 	SingleArrowShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.5), false),
 	                                    new mxConnectionConstraint(new mxPoint(1, 0.5), false)];
 	DoubleArrowShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.5), false),

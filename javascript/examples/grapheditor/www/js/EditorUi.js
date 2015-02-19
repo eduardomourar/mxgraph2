@@ -200,13 +200,14 @@ EditorUi = function(editor, container)
 	};
 	
 	// Stores the current style and assigns it to new cells
-	var styles = ['shadow', 'dashed', 'dashPattern'];
+	var styles = ['shadow', 'glass', 'dashed', 'dashPattern'];
 	var connectStyles = ['shape', 'edgeStyle', 'curved', 'rounded', 'elbow'];
 	
 	// Sets the default edge style
 	var currentEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1'};
 	var currentStyle = {};
 	
+	// Note: Everything that is not in styles is ignored (styles is augmented below)
 	this.setDefaultStyle = function(cell)
 	{
 		var state = graph.view.getState(cell);
@@ -522,35 +523,6 @@ EditorUi = function(editor, container)
 			
 			var fs = String(currentStyle['fontSize'] || Menus.prototype.defaultFontSize);
 			this.toolbar.sizeMenu.innerHTML = mxUtils.htmlEntities(fs);
-	
-			// Updates toolbar icon for edge style
-			var edgeStyleDiv = this.toolbar.edgeStyleMenu.getElementsByTagName('div')[0];
-
-			if (currentEdgeStyle['shape'] == 'arrow')
-			{
-				edgeStyleDiv.className = 'geSprite geSprite-arrow';
-			}
-			else if (currentEdgeStyle['shape'] == 'link')
-			{
-				edgeStyleDiv.className = 'geSprite geSprite-linkedge';
-			}
-			else if (currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle' && currentEdgeStyle['curved'] == '1')
-			{
-				edgeStyleDiv.className = 'geSprite geSprite-curved';
-			}
-			else if (currentEdgeStyle['edgeStyle'] == 'straight' || currentEdgeStyle['edgeStyle'] == 'none' ||
-					currentEdgeStyle['edgeStyle'] == null)
-			{
-				edgeStyleDiv.className = 'geSprite geSprite-straight';
-			}
-			else if (currentEdgeStyle['edgeStyle'] == 'entityRelationEdgeStyle')
-			{
-				edgeStyleDiv.className = 'geSprite geSprite-entity';
-			}
-			else
-			{
-				edgeStyleDiv.className = 'geSprite geSprite-orthogonal';
-			}
 		}
 	}));
 	
@@ -1426,9 +1398,9 @@ EditorUi.prototype.updateActionStates = function()
 	// Updates action states
 	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'delete', 'duplicate',
 	               'editStyle', 'editTooltip', 'editLink', 'backgroundColor', 'borderColor',
-	               'toFront', 'toBack', 'lockUnlock', 'editData', 'plain', 'dashed',
-	               'dotted', 'fillColor', 'shadow', 'fontColor', 'formattedText',
-	               'rounded', 'sharp', 'strokeColor'];
+	               'toFront', 'toBack', 'lockUnlock', 'editData', 'solid', 'dashed',
+	               'dotted', 'fillColor', 'gradientColor', 'shadow', 'fontColor',
+	               'formattedText', 'rounded', 'sharp', 'strokeColor'];
 	
 	for (var i = 0; i < actions.length; i++)
 	{
@@ -1461,7 +1433,8 @@ EditorUi.prototype.updateActionStates = function()
    	
     this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
     this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
-    this.menus.get('line').setEnabled(edgeSelected);
+    this.menus.get('connection').setEnabled(edgeSelected);
+    this.menus.get('waypoints').setEnabled(edgeSelected);
     this.menus.get('linestart').setEnabled(edgeSelected);
     this.menus.get('lineend').setEnabled(edgeSelected);
     this.menus.get('linewidth').setEnabled(!graph.isSelectionEmpty());
