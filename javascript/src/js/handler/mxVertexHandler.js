@@ -509,7 +509,8 @@ mxVertexHandler.prototype.getHandleForEvent = function(me)
 
 	if (this.customHandles != null)
 	{
-		for (var i = 0; i < this.customHandles.length; i++)
+		// Inverse loop order to match display order
+		for (var i = this.customHandles.length - 1; i >= 0; i--)
 		{
 			if (checkShape(this.customHandles[i].shape))
 			{

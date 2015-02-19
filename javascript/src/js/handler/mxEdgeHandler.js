@@ -781,7 +781,8 @@ mxEdgeHandler.prototype.getHandleForEvent = function(me)
 	
 	if (this.customHandles != null)
 	{
-		for (var i = 0; i < this.customHandles.length; i++)
+		// Inverse loop order to match display order
+		for (var i = this.customHandles.length - 1; i >= 0; i--)
 		{
 			if (checkShape(this.customHandles[i].shape))
 			{
@@ -1393,7 +1394,17 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 			{
 				if (this.customHandles != null)
 				{
-					this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].execute();
+					var model = this.graph.getModel();
+					
+					model.beginUpdate();
+					try
+					{
+						this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].execute();
+					}
+					finally
+					{
+						model.endUpdate();
+					}
 				}
 			}
 			else if (this.isLabel)
@@ -2173,6 +2184,12 @@ mxEdgeHandler.prototype.refresh = function()
 	{
 		this.destroyBends(this.virtualBends);
 		this.virtualBends = this.createVirtualBends();
+	}
+	
+	if (this.customHandles != null)
+	{
+		this.destroyBends(this.customHandles);
+		this.customHandles = this.createCustomHandles();
 	}
 	
 	// Puts label node on top of bends
