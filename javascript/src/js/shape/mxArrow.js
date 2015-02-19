@@ -92,7 +92,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	// Finds first non-overlapping point
 	var i0 = 1;
 	
-	while (pts[i0].x == pts[0].x && pts[i0].y == pts[0].y)
+	while (i0 < pts.length && pts[i0].x == pts[0].x && pts[i0].y == pts[0].y)
 	{
 		i0++;
 	}
@@ -100,6 +100,11 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	var dx = pts[i0].x - pts[0].x;
 	var dy = pts[i0].y - pts[0].y;
 	var dist = Math.sqrt(dx * dx + dy * dy);
+	
+	if (dist == 0)
+	{
+		return;
+	}
 	
 	// Computes the norm and the inverse norm
 	var nx = dx / dist;
