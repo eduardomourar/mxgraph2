@@ -1,3 +1,15 @@
+- Adds mxUtils.ptLineDist [JavaScript]
+- Adds glass effect to current style in grapheditor
+- Fixes gradient color action state in grapheditor
+- Adds arrows to advanced sidebar in grapheditor
+- Adds connections to general sidebar in grapheditor
+- Removes edge styles from toolbar in grapheditor
+- Separates waypoints and connection in style panel and menu in grapheditor
+- Adds edge width option in arrange panel in grapheditor
+- Fixes connection points for tee and corner shape in grapheditor
+- Adds rounded support for single- and doubleArrow vertices in grapheditor
+- Disables splitting edges with edges in grapheditor
+- Inverts order of lineend/-start options for format panel in grapheditor
 - Adds support for custom handles in mxEdgeHandler [JavaScript]
 - Adds rounding in mxGraphHandler.getPreviewBounds [JavaScript]
 - Enables arrow shapes in mxEdgeHandler.isVirtualBendsEnabled [JavaScript]
