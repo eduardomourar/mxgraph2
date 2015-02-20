@@ -1,3 +1,4 @@
+- Disables zoom with mousewheel if dialogs are open in grapheditor
 - Adds zoom controls for chromeless mode in grapheditor
 - Fixes mxGraph.center for certain scales [JavaScript]
 - Fixes bounding box in mxArrow [JavaScript]

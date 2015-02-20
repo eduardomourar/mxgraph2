@@ -1023,9 +1023,10 @@ EditorUi.prototype.initCanvas = function()
 		};
 	}
 	
-	mxEvent.addMouseWheelListener(function(evt, up)
+	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up)
 	{
-		if (mxEvent.isAltDown(evt) || graph.panningHandler.isActive())
+		if ((this.dialogs == null || this.dialogs.length == 0) &&
+			(mxEvent.isAltDown(evt) || graph.panningHandler.isActive()))
 		{
 			if (up)
 			{
@@ -1043,7 +1044,7 @@ EditorUi.prototype.initCanvas = function()
 
 			mxEvent.consume(evt);
 		}
-	});
+	}));
 };
 
 /**
