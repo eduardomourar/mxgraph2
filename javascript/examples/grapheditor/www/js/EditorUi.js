@@ -1025,21 +1025,23 @@ EditorUi.prototype.initCanvas = function()
 	
 	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up)
 	{
-		if ((this.dialogs == null || this.dialogs.length == 0) &&
-			(mxEvent.isAltDown(evt) || graph.panningHandler.isActive()))
+		if (mxEvent.isAltDown(evt) || graph.panningHandler.isActive())
 		{
-			if (up)
+			if (this.dialogs == null || this.dialogs.length == 0)
 			{
-				graph.zoomIn();
-			}
-			else
-			{
-				graph.zoomOut();
-			}
-			
-			if (resize != null)
-			{
-				resize(false);
+				if (up)
+				{
+					graph.zoomIn();
+				}
+				else
+				{
+					graph.zoomOut();
+				}
+				
+				if (resize != null)
+				{
+					resize(false);
+				}
 			}
 
 			mxEvent.consume(evt);
