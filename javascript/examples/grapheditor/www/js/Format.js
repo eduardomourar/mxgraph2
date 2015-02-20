@@ -1150,6 +1150,8 @@ BaseFormatPanel.prototype.createRelativeOption = function(label, key)
 {
 	var graph = this.editorUi.editor.graph;
 	var div = this.createPanel();
+	div.style.paddingTop = '10px';
+	div.style.paddingBottom = '10px';
 	mxUtils.write(div, label);
 	div.style.fontWeight = 'bold';
 	
@@ -2375,8 +2377,8 @@ TextFormatPanel.prototype.addFont = function(container)
 	container.appendChild(colorPanel);
 
 	var extraPanel = this.createPanel();
-	extraPanel.style.paddingTop = '6px';
-	extraPanel.style.paddingBottom = '6px';
+	extraPanel.style.paddingTop = '2px';
+	extraPanel.style.paddingBottom = '4px';
 	
 	// LATER: Fix toggle using '' instead of 'null'
 	var wwOpt = this.createCellOption(mxResources.get('wordWrap'), mxConstants.STYLE_WHITE_SPACE, null, 'wrap', 'null');
@@ -2393,7 +2395,8 @@ TextFormatPanel.prototype.addFont = function(container)
 	extraPanel.appendChild(htmlOpt);
 	
 	var spacingPanel = this.createPanel();
-	spacingPanel.style.paddingBottom = '30px';
+	spacingPanel.style.paddingTop = '10px';
+	spacingPanel.style.paddingBottom = '28px';
 	spacingPanel.style.fontWeight = 'normal';
 	
 	var span = document.createElement('div');
@@ -2937,8 +2940,8 @@ StyleFormatPanel.prototype.init = function()
 
 	this.container.appendChild(this.addStroke(this.createPanel()));
 	var opacityPanel = this.createRelativeOption(mxResources.get('opacity'), mxConstants.STYLE_OPACITY);
-	opacityPanel.style.paddingTop = '10px';
-	opacityPanel.style.paddingBottom = '10px';
+	opacityPanel.style.paddingTop = '8px';
+	opacityPanel.style.paddingBottom = '8px';
 	this.container.appendChild(opacityPanel);
 	this.container.appendChild(this.addEffects(this.createPanel()));
 	var opsPanel = this.addEditOps(this.createPanel());
@@ -3113,8 +3116,8 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	var graph = ui.editor.graph;
 	var ss = this.format.getSelectionState();
 	
-	container.style.paddingTop = '6px';
-	container.style.paddingBottom = '6px';
+	container.style.paddingTop = '4px';
+	container.style.paddingBottom = '4px';
 	container.style.whiteSpace = 'normal';
 	
 	var colorPanel = document.createElement('div');
@@ -3428,8 +3431,8 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	container.appendChild(stylePanel);
 
 	var arrowPanel = stylePanel.cloneNode(false);
-	arrowPanel.style.paddingBottom = '8px';
-	arrowPanel.style.paddingTop = '6px';
+	arrowPanel.style.paddingBottom = '6px';
+	arrowPanel.style.paddingTop = '4px';
 	arrowPanel.style.fontWeight = 'normal';
 	
 	var span = document.createElement('div');
@@ -3757,8 +3760,8 @@ StyleFormatPanel.prototype.addEffects = function(div)
 	var graph = editor.graph;
 	var ss = this.format.getSelectionState();
 	
-	div.style.paddingTop = '2px';
-	div.style.paddingBottom = '4px';
+	div.style.paddingTop = '0px';
+	div.style.paddingBottom = '2px';
 
 	var table = document.createElement('table');
 
