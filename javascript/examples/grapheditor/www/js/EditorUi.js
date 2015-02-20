@@ -2003,7 +2003,7 @@ EditorUi.prototype.saveFile = function(forceDialog)
 	{
 		var dlg = new FilenameDialog(this, this.editor.getOrCreateFilename(), mxResources.get('save'), mxUtils.bind(this, function(name)
 		{
-			this.save(name, true);
+			this.save(name);
 		}), null, mxUtils.bind(this, function(name)
 		{
 			if (name != null && name.length > 0)
