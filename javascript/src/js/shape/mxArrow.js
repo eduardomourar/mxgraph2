@@ -62,6 +62,30 @@ mxArrow.prototype.apply = function(state)
 };
 
 /**
+ * Function: augmentBoundingBox
+ *
+ * Augments the bounding box with the edge width and markers.
+ */
+mxArrow.prototype.augmentBoundingBox = function(bbox)
+{
+	mxShape.prototype.augmentBoundingBox.apply(this, arguments);
+	
+	var w = this.getEdgeWidth();
+	
+	if (this.isMarkerStart())
+	{
+		w = Math.max(w, this.getStartArrowWidth());
+	}
+	
+	if (this.isMarkerEnd())
+	{
+		w = Math.max(w, this.getEndArrowWidth());
+	}
+	
+	bbox.grow((w / 2 + this.strokewidth) * this.scale);
+};
+
+/**
  * Function: paintEdgeShape
  * 
  * Paints the line shape.
@@ -92,7 +116,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	// Finds first non-overlapping point
 	var i0 = 1;
 	
-	while (i0 < pts.length-1 && pts[i0].x == pts[0].x && pts[i0].y == pts[0].y)
+	while (i0 < pts.length - 1 && pts[i0].x == pts[0].x && pts[i0].y == pts[0].y)
 	{
 		i0++;
 	}

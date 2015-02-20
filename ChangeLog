@@ -1,3 +1,4 @@
+- Fixes bounding box in mxArrow [JavaScript]
 - Adds mxUtils.ptLineDist [JavaScript]
 - Adds glass effect to current style in grapheditor
 - Fixes gradient color action state in grapheditor
