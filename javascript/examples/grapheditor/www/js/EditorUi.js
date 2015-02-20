@@ -896,6 +896,47 @@ EditorUi.prototype.initCanvas = function()
 			
 			return new mxRectangle(0, 0, pages.width * size.width * s, pages.height * size.height * s);
 		};
+		
+		// Adds zoom toolbar
+		var zoomInBtn = mxUtils.button('', function()
+		{
+			graph.zoomIn();
+		});
+		zoomInBtn.className = 'geSprite geSprite-zoomin';
+		zoomInBtn.setAttribute('title', mxResources.get('zoomIn'));
+		zoomInBtn.style.border = 'none';
+		zoomInBtn.style.margin = '2px';
+		
+		var zoomOutBtn = mxUtils.button('', function()
+		{
+			graph.zoomOut();
+		});
+		zoomOutBtn.className = 'geSprite geSprite-zoomout';
+		zoomOutBtn.setAttribute('title', mxResources.get('zoomOut'));
+		zoomOutBtn.style.border = 'none';
+		zoomOutBtn.style.margin = '2px';
+
+		var zoomActualBtn = mxUtils.button('', function()
+		{
+			resize(true);
+		});
+		zoomActualBtn.className = 'geSprite geSprite-actualsize';
+		zoomActualBtn.setAttribute('title', mxResources.get('actualSize'));
+		zoomActualBtn.style.border = 'none';
+		zoomActualBtn.style.margin = '2px';
+		
+		var tb = document.createElement('div');
+		tb.className = 'geToolbarContainer';
+		tb.style.borderRight = '1px solid #e0e0e0';
+		tb.style.padding = '2px';
+		tb.style.left = '0px';
+		tb.style.top = '0px';
+		
+		tb.appendChild(zoomInBtn);
+		tb.appendChild(zoomOutBtn);
+		tb.appendChild(zoomActualBtn);
+		
+		document.body.appendChild(tb);
 	}
 	else if (this.editor.extendCanvas)
 	{
