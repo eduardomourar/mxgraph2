@@ -917,6 +917,11 @@
 	{
 		return mxUtils.getNumber(this.style, 'width', this.defaultWidth) + Math.max(0, this.strokewidth - 1);
 	};
+	
+	LinkShape.prototype.isArrowRounded = function()
+	{
+		return this.isRounded;
+	};
 
 	// Registers the link shape
 	mxCellRenderer.prototype.defaultShapes['link'] = LinkShape;
@@ -954,6 +959,11 @@
 	FlexArrowShape.prototype.isMarkerEnd = function()
 	{
 		return (mxUtils.getValue(this.style, mxConstants.STYLE_ENDARROW, mxConstants.NONE) != mxConstants.NONE);
+	};
+
+	FlexArrowShape.prototype.isArrowRounded = function()
+	{
+		return this.isRounded;
 	};
 
 	// Registers the link shape

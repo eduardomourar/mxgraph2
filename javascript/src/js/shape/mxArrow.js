@@ -109,6 +109,7 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	var spacing = (openEnded) ? 0 : this.spacing + strokeWidth / 2;
 	var startSize = this.startSize + strokeWidth;
 	var endSize = this.endSize + strokeWidth;
+	var isRounded = this.isArrowRounded();
 	
 	// Base vector (between first points)
 	var pe = pts[pts.length - 1];
@@ -141,12 +142,13 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	// Stores the inbound function calls in reverse order in fns
 	var fns = [];
 	
-	if (this.isRounded)
+	if (isRounded)
 	{
 		c.setLineJoin('round');
 	}
-	else
+	else if (pts.length > 2)
 	{
+		// Only mitre if there are waypoints
 		c.setMiterLimit(1.42);
 	}
 
@@ -212,14 +214,14 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 		
 		// Higher strokewidths require a larger minimum bend, 0.35 covers all but the most extreme cases
 		var strokeWidthFactor = Math.max(tmp, Math.min(this.strokewidth / 200 + 0.04, 0.35));
-		var angleFactor = (pos != 0 && this.isRounded) ? Math.max(0.1, strokeWidthFactor) : Math.max(tmp, 0.06);
+		var angleFactor = (pos != 0 && isRounded) ? Math.max(0.1, strokeWidthFactor) : Math.max(tmp, 0.06);
 		
 		var outX = pts[i+1].x + ny2 * edgeWidth / 2 / angleFactor;
 		var outY = pts[i+1].y - nx2 * edgeWidth / 2 / angleFactor;
 		var inX = pts[i+1].x - ny2 * edgeWidth / 2 / angleFactor;
 		var inY = pts[i+1].y + nx2 * edgeWidth / 2 / angleFactor;
 		
-		if (pos == 0 || !this.isRounded)
+		if (pos == 0 || !isRounded)
 		{
 			// If the two segments are aligned, or if we're not drawing curved sections between segments
 			// just draw straight to the intersection point
@@ -327,25 +329,31 @@ mxArrow.prototype.paintEdgeShape = function(c, pts)
 	// Need to redraw the markers without the low miter limit
 	c.setMiterLimit(4);
 	
-	if (this.isRounded)
+	if (isRounded)
 	{
 		c.setLineJoin('flat');
 	}
 
-	if (markerStart && !openEnded)
+	if (pts.length > 2)
 	{
-		c.begin();
-		this.paintMarker(c, pts[0].x, pts[0].y, startNx, startNy, startSize, startWidth, edgeWidth, spacing, true);
-		c.stroke();
-		c.end();
-	}
-	
-	if (markerEnd && !openEnded)
-	{
-		c.begin();
-		this.paintMarker(c, pe.x, pe.y, -nx, -ny, endSize, endWidth, edgeWidth, spacing, true);
-		c.stroke();
-		c.end();
+		// Only to repaint markers if no waypoints
+		// Need to redraw the markers without the low miter limit
+		c.setMiterLimit(4);
+		if (markerStart && !openEnded)
+		{
+			c.begin();
+			this.paintMarker(c, pts[0].x, pts[0].y, startNx, startNy, startSize, startWidth, edgeWidth, spacing, true);
+			c.stroke();
+			c.end();
+		}
+		
+		if (markerEnd && !openEnded)
+		{
+			c.begin();
+			this.paintMarker(c, pe.x, pe.y, -nx, -ny, endSize, endWidth, edgeWidth, spacing, true);
+			c.stroke();
+			c.end();
+		}
 	}
 };
 
@@ -377,6 +385,16 @@ mxArrow.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, arrowWidth, 
 	c.lineTo(ptX + orthx / widthArrowRatio + spaceX, ptY + orthy / widthArrowRatio + spaceY);
 	c.lineTo(ptX + orthx + spaceX, ptY + orthy + spaceY);
 }
+
+/**
+ * Function: isArrowRounded
+ * 
+ * Returns wether the arrow is rounded
+ */
+mxArrow.prototype.isArrowRounded = function()
+{
+	return false;
+};
 
 /**
  * Function: getStartArrowWidth
