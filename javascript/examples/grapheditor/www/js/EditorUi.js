@@ -564,6 +564,26 @@ EditorUi = function(editor, container)
 			{
 				edgeShapeDiv.className = 'geSprite geSprite-connection';
 			}
+			
+			// Updates icon for optinal line start shape
+			if (this.toolbar.lineStartMenu != null)
+			{
+				var lineStartDiv = this.toolbar.lineStartMenu.getElementsByTagName('div')[0];
+				
+				lineStartDiv.className = this.getCssClassForMarker('start',
+						currentEdgeStyle['shape'], currentEdgeStyle[mxConstants.STYLE_STARTARROW],
+						mxUtils.getValue(currentEdgeStyle, 'startFill', '0'));
+			}
+
+			// Updates icon for optinal line end shape
+			if (this.toolbar.lineEndMenu != null)
+			{
+				var lineEndDiv = this.toolbar.lineEndMenu.getElementsByTagName('div')[0];
+				
+				lineEndDiv.className = this.getCssClassForMarker('end',
+						currentEdgeStyle['shape'], currentEdgeStyle[mxConstants.STYLE_ENDARROW],
+						mxUtils.getValue(currentEdgeStyle, 'endFill', '0'));
+			}
 		}
 	}));
 	
@@ -726,6 +746,53 @@ EditorUi.prototype.init = function()
 	this.updateActionStates();
 	this.initClipboard();
 	this.initCanvas();
+};
+
+/**
+ * Private helper method.
+ */
+EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
+{
+	var result = '';
+
+	if (shape == 'flexArrow')
+	{
+		result = (marker != null && marker != mxConstants.NONE) ?
+			'geSprite geSprite-' + prefix + 'blocktrans' : 'geSprite geSprite-noarrow';
+	}
+	else
+	{
+		if (marker == mxConstants.ARROW_CLASSIC)
+		{
+			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'classic' : 'geSprite geSprite-' + prefix + 'classictrans';
+		}
+		else if (marker == mxConstants.ARROW_OPEN)
+		{
+			result = 'geSprite geSprite-' + prefix + 'open';
+		}
+		else if (marker == mxConstants.ARROW_BLOCK)
+		{
+			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'block' : 'geSprite geSprite-' + prefix + 'blocktrans';
+		}
+		else if (marker == mxConstants.ARROW_OVAL)
+		{
+			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'oval' : 'geSprite geSprite-' + prefix + 'ovaltrans';
+		}
+		else if (marker == mxConstants.ARROW_DIAMOND)
+		{
+			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'diamond' : 'geSprite geSprite-' + prefix + 'diamondtrans';
+		}
+		else if (marker == mxConstants.ARROW_DIAMOND_THIN)
+		{
+			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'thindiamond' : 'geSprite geSprite-' + prefix + 'thindiamondtrans';
+		}
+		else
+		{
+			result = 'geSprite geSprite-noarrow';
+		}
+	}
+
+	return result;
 };
 
 /**

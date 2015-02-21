@@ -3646,42 +3646,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		{
 			var markerDiv = elt.getElementsByTagName('div')[0];
 			
-			if (ss.style.shape == 'flexArrow')
-			{
-				markerDiv.className = (marker != null && marker != mxConstants.NONE) ?
-					'geSprite geSprite-' + prefix + 'blocktrans' : 'geSprite geSprite-noarrow';
-			}
-			else
-			{
-				if (marker == mxConstants.ARROW_CLASSIC)
-				{
-					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'classic' : 'geSprite geSprite-' + prefix + 'classictrans';
-				}
-				else if (marker == mxConstants.ARROW_OPEN)
-				{
-					markerDiv.className = 'geSprite geSprite-' + prefix + 'open';
-				}
-				else if (marker == mxConstants.ARROW_BLOCK)
-				{
-					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'block' : 'geSprite geSprite-' + prefix + 'blocktrans';
-				}
-				else if (marker == mxConstants.ARROW_OVAL)
-				{
-					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'oval' : 'geSprite geSprite-' + prefix + 'ovaltrans';
-				}
-				else if (marker == mxConstants.ARROW_DIAMOND)
-				{
-					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'diamond' : 'geSprite geSprite-' + prefix + 'diamondtrans';
-				}
-				else if (marker == mxConstants.ARROW_DIAMOND_THIN)
-				{
-					markerDiv.className = (fill == '1') ? 'geSprite geSprite-' + prefix + 'thindiamond' : 'geSprite geSprite-' + prefix + 'thindiamondtrans';
-				}
-				else
-				{
-					markerDiv.className = 'geSprite geSprite-noarrow';
-				}
-			}
+			markerDiv.className = ui.getCssClassForMarker(prefix, ss.style.shape, marker, fill);
 			
 			return markerDiv;
 		};
