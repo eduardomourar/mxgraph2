@@ -231,6 +231,7 @@ setAsDefaultStyle=Set as default style
 shadow=Shadow
 shape=Shape
 sharp=Sharp
+simpleArrow=Simple arrow
 size=Size
 solid=Solid
 sourceSpacing=Source spacing

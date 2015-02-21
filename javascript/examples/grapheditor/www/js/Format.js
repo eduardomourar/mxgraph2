@@ -2020,6 +2020,8 @@ TextFormatPanel.prototype.addFont = function(container)
 	stylePanel2.style.marginLeft = '-3px';
 	var fontStyleItems = this.editorUi.toolbar.addItems(['bold', 'italic', 'underline'], stylePanel2, true);
 	
+	var verticalItem = this.editorUi.toolbar.addItems(['vertical'], stylePanel2, true)[0];
+	
 	if (mxClient.IS_QUIRKS)
 	{
 		mxUtils.br(container);
@@ -2028,6 +2030,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	container.appendChild(stylePanel2);
 
 	this.styleButtons(fontStyleItems);
+	this.styleButtons([verticalItem]);
 	
 	var stylePanel3 = stylePanel.cloneNode(false);
 	stylePanel3.style.marginLeft = '-3px';
@@ -2089,6 +2092,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		top.style.display = 'none';
 		middle.style.display = 'none';
 		bottom.style.display = 'none';
+		verticalItem.style.display = 'none';
 		
 		full = this.editorUi.toolbar.addButton('geSprite-justifyfull', null,
 			function()
@@ -2147,6 +2151,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	}
 	else
 	{
+		fontStyleItems[2].style.marginRight = '9px';
 		right.style.marginRight = '9px';
 	}
 	
@@ -2268,7 +2273,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		input.style.right = '32px';
 	}
 	
-	input.style.width = '47px';
+	input.style.width = '46px';
 	input.style.height = (mxClient.IS_QUIRKS) ? '21px' : '17px';
 	stylePanel2.appendChild(input);
 
@@ -2683,6 +2688,8 @@ TextFormatPanel.prototype.addFont = function(container)
 		setSelected(fontStyleItems[1], (fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC);
 		setSelected(fontStyleItems[2], (fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE);
 		fontMenu.firstChild.nodeValue = mxUtils.htmlEntities(mxUtils.getValue(ss.style, mxConstants.STYLE_FONTFAMILY, Menus.prototype.defaultFont));
+
+		setSelected(verticalItem, mxUtils.getValue(ss.style, mxConstants.STYLE_HORIZONTAL, '1') == '0');
 		
 		if (force || document.activeElement != input)
 		{
@@ -3226,6 +3233,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_SHAPE, mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE, 'width'], [null, null, null, null], 'geIcon geSprite geSprite-connection', null, true).setAttribute('title', mxResources.get('line'));
 		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_SHAPE, mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE, 'width'], ['link', null, null, null], 'geIcon geSprite geSprite-linkedge', null, true).setAttribute('title', mxResources.get('link'));
 		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_SHAPE, mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE, 'width'], ['flexArrow', null, null, null], 'geIcon geSprite geSprite-arrow', null, true).setAttribute('title', mxResources.get('arrow'));
+		this.editorUi.menus.styleChange(menu, '', [mxConstants.STYLE_SHAPE, mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE, 'width'], ['arrow', null, null, null], 'geIcon geSprite geSprite-simplearrow', null, true).setAttribute('title', mxResources.get('simpleArrow')); 
 	}));
 
 	var altPattern = this.editorUi.toolbar.addMenuFunctionInContainer(altStylePanel, 'geSprite-orthogonal', mxResources.get('pattern'), false, mxUtils.bind(this, function(menu)
@@ -3325,15 +3333,18 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	
 	var edgeStyle = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel2, 'geSprite-orthogonal', mxResources.get('waypoints'), false, mxUtils.bind(this, function(menu)
 	{
-		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [null, null, null], 'geIcon geSprite geSprite-straight', null, true).setAttribute('title', mxResources.get('straight'));
-		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['orthogonalEdgeStyle', null, null], 'geIcon geSprite geSprite-orthogonal', null, true).setAttribute('title', mxResources.get('orthogonal'));
-
-		if (ss.style.shape == 'connector')
+		if (ss.style.shape != 'arrow')
 		{
-			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['orthogonalEdgeStyle', '1', null], 'geIcon geSprite geSprite-curved', null, true).setAttribute('title', mxResources.get('curved'));
+			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [null, null, null], 'geIcon geSprite geSprite-straight', null, true).setAttribute('title', mxResources.get('straight'));
+			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['orthogonalEdgeStyle', null, null], 'geIcon geSprite geSprite-orthogonal', null, true).setAttribute('title', mxResources.get('orthogonal'));
+	
+			if (ss.style.shape == 'connector')
+			{
+				this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['orthogonalEdgeStyle', '1', null], 'geIcon geSprite geSprite-curved', null, true).setAttribute('title', mxResources.get('curved'));
+			}
+			
+			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['entityRelationEdgeStyle', null, null], 'geIcon geSprite geSprite-entity', null, true).setAttribute('title', mxResources.get('entityRelation'));
 		}
-		
-		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['entityRelationEdgeStyle', null, null], 'geIcon geSprite geSprite-entity', null, true).setAttribute('title', mxResources.get('entityRelation'));
 	}));
 
 	var lineStart = this.editorUi.toolbar.addMenuFunctionInContainer(stylePanel2, 'geSprite-startclassic', mxResources.get('linestart'), false, mxUtils.bind(this, function(menu)
@@ -3611,6 +3622,10 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		{
 			edgeShapeDiv.className = 'geSprite geSprite-arrow';
 		}
+		else if (ss.style.shape == 'arrow')
+		{
+			edgeShapeDiv.className = 'geSprite geSprite-simplearrow';
+		}
 		else
 		{
 			edgeShapeDiv.className = 'geSprite geSprite-connection';
@@ -3687,6 +3702,8 @@ StyleFormatPanel.prototype.addStroke = function(container)
 			sourceDiv.className = 'geSprite geSprite-noarrow';
 			targetDiv.className = 'geSprite geSprite-noarrow';
 		}
+
+		mxUtils.setOpacity(edgeStyle, (ss.style.shape == 'arrow') ? 30 : 100);			
 		
 		if (ss.style.shape != 'connector' && ss.style.shape != 'flexArrow')
 		{

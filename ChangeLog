@@ -1,3 +1,4 @@
+- Adds simple arrow shape, vertical text option in grapheditor
 - Adds mxArrowConnector shape, mxConstants.SHAPE_ARROW_CONNECTOR [JavaScript]
 - Fixes bounding box in mxArrow [JavaScript]
 - Disables zoom with mousewheel if dialogs are open in grapheditor

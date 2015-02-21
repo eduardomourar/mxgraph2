@@ -231,6 +231,7 @@ setAsDefaultStyle=Als Standardstyle festlegen
 shadow=Schatten
 shape=Shape
 sharp=Eckig
+simpleArrow=Einfacher Pfeil
 size=Grösse
 solid=Durchgehend
 sourceSpacing=Anfangsabstand

@@ -902,10 +902,10 @@
 	// Link shape
 	function LinkShape()
 	{
-		mxArrow.call(this);
+		mxArrowConnector.call(this);
 		this.spacing = 0;
 	};
-	mxUtils.extend(LinkShape, mxArrow);
+	mxUtils.extend(LinkShape, mxArrowConnector);
 	LinkShape.prototype.defaultWidth = 4;
 	
 	LinkShape.prototype.isOpenEnded = function()
@@ -929,10 +929,10 @@
 	// Generic arrow
 	function FlexArrowShape()
 	{
-		mxArrow.call(this);
+		mxArrowConnector.call(this);
 		this.spacing = 0;
 	};
-	mxUtils.extend(FlexArrowShape, mxArrow);
+	mxUtils.extend(FlexArrowShape, mxArrowConnector);
 	FlexArrowShape.prototype.defaultWidth = 10;
 	FlexArrowShape.prototype.defaultArrowWidth = 20;
 
