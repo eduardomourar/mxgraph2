@@ -411,6 +411,18 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	    content.appendChild(this.createEdgeTemplate('endArrow=none;html=1;', 50, 50, '', 'Line', true));
 	    content.appendChild(this.createEdgeTemplate('endArrow=classic;html=1;', 50, 50, '', 'Connection', true));
 	    
+	    content.appendChild(this.createEdgeTemplate('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;', 50, 50, '', 'Manual Line', true));
+	    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;html=1;', 50, 50, '', 'Horizontal Elbow', true));
+	    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;html=1;', 50, 50, '', 'Vertical Elbow', true));
+	    
+		var cells = [new mxCell('', new mxGeometry(0, 0, 50, 50), 'curved=1;endArrow=classic;html=1;')];
+		cells[0].geometry.setTerminalPoint(new mxPoint(0, 50), true);
+		cells[0].geometry.setTerminalPoint(new mxPoint(50, 0), false);
+		cells[0].geometry.points = [new mxPoint(50, 50), new mxPoint(0, 0)];
+		cells[0].geometry.relative = true;
+		cells[0].edge = true;
+	    content.appendChild(this.createEdgeTemplateFromCells(cells, 50, 50, 'Curve', true));
+	    	    
 	    content.appendChild(this.createEdgeTemplate('endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Connection', true));
 	    content.appendChild(this.createEdgeTemplate('shape=link;html=1;', 50, 50, '', 'Link', true));
 	    content.appendChild(this.createEdgeTemplate('shape=flexArrow;endArrow=classic;html=1;', 50, 50, '', 'Arrow', true));
