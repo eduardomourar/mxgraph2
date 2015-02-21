@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006-2012, JGraph Ltd
+ * Copyright (c) 2006-2015, JGraph Ltd
  */
 
 /**
@@ -951,21 +951,6 @@
 		return mxUtils.getNumber(this.style, 'width', this.defaultWidth) + Math.max(0, this.strokewidth - 1);
 	};
 	
-	FlexArrowShape.prototype.isMarkerStart = function()
-	{
-		return (mxUtils.getValue(this.style, mxConstants.STYLE_STARTARROW, mxConstants.NONE) != mxConstants.NONE);
-	};
-
-	FlexArrowShape.prototype.isMarkerEnd = function()
-	{
-		return (mxUtils.getValue(this.style, mxConstants.STYLE_ENDARROW, mxConstants.NONE) != mxConstants.NONE);
-	};
-
-	FlexArrowShape.prototype.isArrowRounded = function()
-	{
-		return this.isRounded;
-	};
-
 	// Registers the link shape
 	mxCellRenderer.prototype.defaultShapes['flexArrow'] = FlexArrowShape;
 	

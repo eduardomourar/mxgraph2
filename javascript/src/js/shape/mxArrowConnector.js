@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006-2013, JGraph Ltd
+ * Copyright (c) 2006-2015, JGraph Ltd
  */
 /**
  * Class: mxArrowConnector
@@ -393,7 +393,7 @@ mxArrowConnector.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, arr
  */
 mxArrowConnector.prototype.isArrowRounded = function()
 {
-	return false;
+	return this.isRounded;
 };
 
 /**
@@ -443,7 +443,7 @@ mxArrowConnector.prototype.isOpenEnded = function()
  */
 mxArrowConnector.prototype.isMarkerStart = function()
 {
-	return false;
+	return (mxUtils.getValue(this.style, mxConstants.STYLE_STARTARROW, mxConstants.NONE) != mxConstants.NONE);
 };
 
 /**
@@ -453,5 +453,5 @@ mxArrowConnector.prototype.isMarkerStart = function()
  */
 mxArrowConnector.prototype.isMarkerEnd = function()
 {
-	return true;
+	return (mxUtils.getValue(this.style, mxConstants.STYLE_ENDARROW, mxConstants.NONE) != mxConstants.NONE);
 };
