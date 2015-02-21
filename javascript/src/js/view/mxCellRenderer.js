@@ -120,6 +120,7 @@ mxCellRenderer.registerShape(mxConstants.SHAPE_HEXAGON, mxHexagon);
 mxCellRenderer.registerShape(mxConstants.SHAPE_CLOUD, mxCloud);
 mxCellRenderer.registerShape(mxConstants.SHAPE_LINE, mxLine);
 mxCellRenderer.registerShape(mxConstants.SHAPE_ARROW, mxArrow);
+mxCellRenderer.registerShape(mxConstants.SHAPE_ARROW_CONNECTOR, mxArrowConnector);
 mxCellRenderer.registerShape(mxConstants.SHAPE_DOUBLE_ELLIPSE, mxDoubleEllipse);
 mxCellRenderer.registerShape(mxConstants.SHAPE_SWIMLANE, mxSwimlane);
 mxCellRenderer.registerShape(mxConstants.SHAPE_IMAGE, mxImageShape);

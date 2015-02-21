@@ -1,7 +1,8 @@
+- Adds mxArrowConnector shape, mxConstants.SHAPE_ARROW_CONNECTOR [JavaScript]
+- Fixes bounding box in mxArrow [JavaScript]
 - Disables zoom with mousewheel if dialogs are open in grapheditor
 - Adds zoom controls for chromeless mode in grapheditor
 - Fixes mxGraph.center for certain scales [JavaScript]
-- Fixes bounding box in mxArrow [JavaScript]
 - Adds mxUtils.ptLineDist [JavaScript]
 - Adds glass effect to current style in grapheditor
 - Fixes gradient color action state in grapheditor
@@ -16,13 +17,11 @@
 - Inverts order of lineend/-start options for format panel in grapheditor
 - Adds support for custom handles in mxEdgeHandler [JavaScript]
 - Adds rounding in mxGraphHandler.getPreviewBounds [JavaScript]
-- Enables arrow shapes in mxEdgeHandler.isVirtualBendsEnabled [JavaScript]
 - Adds mxEdgeHandler.straightRemoveEnabled switch [JavaScript]
 - Adds mxMouseEvent argument in mxEdgeHandler.getPreviewPoints [JavaScript]
 - Adds text direction in all canvas implementations [Java,JavaScript,Dotnet]
 - Adds mxConstants.STYLE_TEXT_DIRECTION for explicit text direction [JavaScript]
 - Fixes mxClient.IS_OP for newer versions of Opera [JavaScript]
-- Adds waypoint support to mxArrow [JavaScript]
 - Ignores children of selected parents in mxClipboard.copy [JavaScript] 
 - Adds recursive rubberband selection in grapheditor
 - Adds decimal values in mxVertexHandler.roundAngle [JavaScript]
