@@ -1743,6 +1743,14 @@
 	SHAPE_ARROW: 'arrow',
 	
 	/**
+	 * Variable: SHAPE_ARROW_CONNECTOR
+	 * 
+	 * Name under which <mxArrowConnector> is registered in <mxCellRenderer>.
+	 * Default is arrowConnector.
+	 */
+	SHAPE_ARROW_CONNECTOR: 'arrowConnector',
+	
+	/**
 	 * Variable: SHAPE_LABEL
 	 * 
 	 * Name under which <mxLabel> is registered in <mxCellRenderer>.
