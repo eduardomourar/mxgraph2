@@ -1,3 +1,4 @@
+- Simplified connection entries for general sidebar in grapheditor
 - Adds simple arrow, vertical text option, edge shape/style toolbar in grapheditor
 - Adds mxArrowConnector shape, mxConstants.SHAPE_ARROW_CONNECTOR [JavaScript]
 - Fixes bounding box in mxArrow [JavaScript]
