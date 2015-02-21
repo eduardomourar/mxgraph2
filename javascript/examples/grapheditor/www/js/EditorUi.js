@@ -523,6 +523,47 @@ EditorUi = function(editor, container)
 			
 			var fs = String(currentStyle['fontSize'] || Menus.prototype.defaultFontSize);
 			this.toolbar.sizeMenu.innerHTML = mxUtils.htmlEntities(fs);
+	
+			// Updates toolbar icon for edge style
+			var edgeStyleDiv = this.toolbar.edgeStyleMenu.getElementsByTagName('div')[0];
+			
+			if (currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle' && currentEdgeStyle['curved'] == '1')
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-curved';
+			}
+			else if (currentEdgeStyle['edgeStyle'] == 'straight' || currentEdgeStyle['edgeStyle'] == 'none' ||
+					currentEdgeStyle['edgeStyle'] == null)
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-straight';
+			}
+			else if (currentEdgeStyle['edgeStyle'] == 'entityRelationEdgeStyle')
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-entity';
+			}
+			else
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-orthogonal';
+			}
+
+			// Updates icon for edge shape
+			var edgeShapeDiv = this.toolbar.edgeShapeMenu.getElementsByTagName('div')[0];
+			
+			if (currentEdgeStyle['shape'] == 'link')
+			{
+				edgeShapeDiv.className = 'geSprite geSprite-linkedge';
+			}
+			else if (currentEdgeStyle['shape'] == 'flexArrow')
+			{
+				edgeShapeDiv.className = 'geSprite geSprite-arrow';
+			}
+			else if (currentEdgeStyle['shape'] == 'arrow')
+			{
+				edgeShapeDiv.className = 'geSprite geSprite-simplearrow';
+			}
+			else
+			{
+				edgeShapeDiv.className = 'geSprite geSprite-connection';
+			}
 		}
 	}));
 	
