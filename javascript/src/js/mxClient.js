@@ -630,6 +630,7 @@ mxClient.include(mxClient.basePath+'/js/shape/mxDoubleEllipse.js');
 mxClient.include(mxClient.basePath+'/js/shape/mxRhombus.js');
 mxClient.include(mxClient.basePath+'/js/shape/mxPolyline.js');
 mxClient.include(mxClient.basePath+'/js/shape/mxArrow.js');
+mxClient.include(mxClient.basePath+'/js/shape/mxArrowConnector.js');
 mxClient.include(mxClient.basePath+'/js/shape/mxText.js');
 mxClient.include(mxClient.basePath+'/js/shape/mxTriangle.js');
 mxClient.include(mxClient.basePath+'/js/shape/mxHexagon.js');
