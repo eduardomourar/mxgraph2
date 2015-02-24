@@ -818,7 +818,7 @@ BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setChecked
 /**
  * The string 'null' means use null in values.
  */
-BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, enabledValue, disabledValue)
+BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, enabledValue, disabledValue, fn)
 {
 	enabledValue = (enabledValue != null) ? ((enabledValue == 'null') ? null : enabledValue) : '1';
 	disabledValue = (disabledValue != null) ? ((disabledValue == 'null') ? null : disabledValue) : '0';
@@ -845,6 +845,12 @@ BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, 
 		{
 			var value = (checked) ? enabledValue : disabledValue;
 			graph.setCellStyles(key, value, graph.getSelectionCells());
+			
+			if (fn != null)
+			{
+				fn(graph.getSelectionCells(), value);
+			}
+			
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [key],
 				'values', [value], 'cells', graph.getSelectionCells()));
 		}
