@@ -1076,6 +1076,31 @@ mxConnectionHandler.prototype.convertWaypoint = function(point)
  * Handles the event by updating the preview edge or by highlighting
  * a possible source or target terminal.
  */
+mxConnectionHandler.prototype.snapToPreview = function(me, point)
+{
+	if (this.shape != null && this.shape.points != null && this.shape.points.length > 0)
+	{
+		var tol = this.graph.gridSize * this.graph.view.scale / 2;	
+		var tmp = this.shape.points[0];
+		
+		if (Math.abs(tmp.x - point.x) < tol)
+		{
+			point.x = tmp.x;
+		}
+		
+		if (Math.abs(tmp.y - point.y) < tol)
+		{
+			point.y = tmp.y;
+		}
+	}	
+};
+
+/**
+ * Function: mouseMove
+ * 
+ * Handles the event by updating the preview edge or by highlighting
+ * a possible source or target terminal.
+ */
 mxConnectionHandler.prototype.mouseMove = function(sender, me)
 {
 	if (!me.isConsumed() && (this.ignoreMouseDown || this.first != null || !this.graph.isMouseDown))
@@ -1093,6 +1118,8 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 		var point = new mxPoint(me.getGraphX(), me.getGraphY());
 		this.error = null;
 		
+		this.snapToPreview(me, point);
+
 		if (this.graph.isGridEnabledEvent(me.getEvent()))
 		{
 			point = new mxPoint((this.graph.snap(point.x / scale - tr.x) + tr.x) * scale,
