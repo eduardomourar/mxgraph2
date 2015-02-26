@@ -1084,12 +1084,12 @@ mxConnectionHandler.prototype.snapToPreview = function(me, point)
 		var tol = this.graph.gridSize * this.graph.view.scale / 2;	
 		var tmp = this.shape.points[0];
 		
-		if (Math.abs(tmp.x - point.x) < tol)
+		if (Math.abs(tmp.x - me.getGraphX()) < tol)
 		{
 			point.x = tmp.x;
 		}
 		
-		if (Math.abs(tmp.y - point.y) < tol)
+		if (Math.abs(tmp.y - me.getGraphY()) < tol)
 		{
 			point.y = tmp.y;
 		}
@@ -1118,8 +1118,6 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 		var tr = view.translate;
 		var point = new mxPoint(me.getGraphX(), me.getGraphY());
 		this.error = null;
-		
-		this.snapToPreview(me, point);
 
 		if (this.graph.isGridEnabledEvent(me.getEvent()))
 		{
@@ -1127,6 +1125,7 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 				(this.graph.snap(point.y / scale - tr.y) + tr.y) * scale);
 		}
 		
+		this.snapToPreview(me, point);
 		this.currentPoint = point;
 		
 		if (this.first != null || (this.isEnabled() && this.graph.isEnabled()))
