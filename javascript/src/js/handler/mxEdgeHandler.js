@@ -780,7 +780,7 @@ mxEdgeHandler.prototype.getHandleForEvent = function(me)
 		return false;
 	}
 	
-	if (this.customHandles != null)
+	if (this.customHandles != null && this.isCustomHandleEvent(me))
 	{
 		// Inverse loop order to match display order
 		for (var i = this.customHandles.length - 1; i >= 0; i--)
@@ -809,7 +809,7 @@ mxEdgeHandler.prototype.getHandleForEvent = function(me)
 		}
 	}
 	
-	if (this.virtualBends != null)
+	if (this.virtualBends != null && this.isAddVirtualBendEvent(me))
 	{
 		for (var i = 0; i < this.virtualBends.length; i++)
 		{
@@ -821,6 +821,28 @@ mxEdgeHandler.prototype.getHandleForEvent = function(me)
 	}
 
 	return result;
+};
+
+/**
+ * Function: isAddVirtualBendEvent
+ * 
+ * Returns true if the given event allows virtual bends to be added. This
+ * implementation returns true.
+ */
+mxEdgeHandler.prototype.isAddVirtualBendEvent = function(me)
+{
+	return true;
+};
+
+/**
+ * Function: isCustomHandleEvent
+ * 
+ * Returns true if the given event allows custom handles to be changed. This
+ * implementation returns true.
+ */
+mxEdgeHandler.prototype.isCustomHandleEvent = function(me)
+{
+	return true;
 };
 
 /**

@@ -2119,6 +2119,24 @@ Graph.prototype.initTouch = function()
 	mxEdgeHandler.prototype.mergeRemoveEnabled = true;
 	mxEdgeHandler.prototype.manageLabelHandle = true;
 	mxEdgeHandler.prototype.outlineConnect = true;
+	
+	// Disables adding waypoints if shift is pressed
+	mxEdgeHandler.prototype.isAddVirtualBendEvent = function(me)
+	{
+		return !mxEvent.isShiftDown(me.getEvent());
+	};
+
+	// Disables custom handles if shift is pressed
+	mxEdgeHandler.prototype.isCustomHandleEvent = function(me)
+	{
+		return !mxEvent.isShiftDown(me.getEvent());
+	};
+
+	// Disables custom handles if shift is pressed
+	mxVertexHandler.prototype.isCustomHandleEvent = function(me)
+	{
+		return !mxEvent.isShiftDown(me.getEvent());
+	};
 
 	// Shows secondary handle for fixed connection points
 	mxEdgeHandler.prototype.createHandleShape = function(index)

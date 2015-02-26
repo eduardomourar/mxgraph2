@@ -507,7 +507,7 @@ mxVertexHandler.prototype.getHandleForEvent = function(me)
 			shape.node.style.display != 'none' && shape.node.style.visibility != 'hidden'));
 	}
 
-	if (this.customHandles != null)
+	if (this.customHandles != null && this.isCustomHandleEvent(me))
 	{
 		// Inverse loop order to match display order
 		for (var i = this.customHandles.length - 1; i >= 0; i--)
@@ -541,6 +541,17 @@ mxVertexHandler.prototype.getHandleForEvent = function(me)
 	}
 
 	return null;
+};
+
+/**
+ * Function: isCustomHandleEvent
+ * 
+ * Returns true if the given event allows custom handles to be changed. This
+ * implementation returns true.
+ */
+mxVertexHandler.prototype.isCustomHandleEvent = function(me)
+{
+	return true;
 };
 
 /**

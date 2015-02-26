@@ -1,3 +1,4 @@
+- Adds mxEdgeHandler.isAddVirtualBendEvent, mxEdge/VertexHandler.isCustomHandleEvent [JavaScript]
 - Simplified edge entries for general sidebar in grapheditor
 - Adds simple arrow, vertical text option, edge shape/style toolbar in grapheditor
 - Adds mxArrowConnector shape, mxConstants.SHAPE_ARROW_CONNECTOR [JavaScript]
