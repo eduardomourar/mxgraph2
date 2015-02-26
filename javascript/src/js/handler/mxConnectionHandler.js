@@ -1071,14 +1071,15 @@ mxConnectionHandler.prototype.convertWaypoint = function(point)
 };
 
 /**
- * Function: mouseMove
+ * Function: snapToPreview
  * 
- * Handles the event by updating the preview edge or by highlighting
- * a possible source or target terminal.
+ * Called to snap the given point to the current preview. This snaps to the
+ * first point of the preview if alt is not pressed.
  */
 mxConnectionHandler.prototype.snapToPreview = function(me, point)
 {
-	if (this.shape != null && this.shape.points != null && this.shape.points.length > 0)
+	if (!mxEvent.isAltDown(me.getEvent()) && this.shape != null &&
+		this.shape.points != null && this.shape.points.length > 0)
 	{
 		var tol = this.graph.gridSize * this.graph.view.scale / 2;	
 		var tmp = this.shape.points[0];
