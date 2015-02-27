@@ -1487,9 +1487,9 @@
 						// Snaps to end geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
-							var tol = state.view.graph.gridSize * state.view.scale;
+							var tol = state.view.graph.gridSize / state.view.scale;
 
-							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 3)
+							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 6)
 							{
 								state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
 							}
@@ -1514,9 +1514,9 @@
 						// Snaps to endWidth
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
-							var tol = state.view.graph.gridSize * state.view.scale;
+							var tol = state.view.graph.gridSize / state.view.scale;
 
-							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 3)
+							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 6)
 							{
 								state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
 							}
@@ -1549,9 +1549,9 @@
 						// Snaps to start geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
-							var tol = state.view.graph.gridSize * state.view.scale;
+							var tol = state.view.graph.gridSize / state.view.scale;
 
-							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 3)
+							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 6)
 							{
 								state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
 							}
@@ -1576,9 +1576,9 @@
 						// Snaps to start geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
-							var tol = state.view.graph.gridSize * state.view.scale;
+							var tol = state.view.graph.gridSize / state.view.scale;
 
-							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 3)
+							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 6)
 							{
 								state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
 							}
