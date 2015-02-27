@@ -1476,13 +1476,24 @@
 						
 						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
 							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
-					}, function(dist, nx, ny, p0, p1, pt)
+					}, function(dist, nx, ny, p0, p1, pt, me)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
 						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 						
 						state.style[mxConstants.STYLE_STARTSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
 						state.style['width'] = Math.round(w * 2) / state.view.scale;
+						
+						// Snaps to end geometry
+						if (!mxEvent.isAltDown(me.getEvent()))
+						{
+							var tol = state.view.graph.gridSize * state.view.scale;
+
+							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 3)
+							{
+								state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
+							}
+						}
 					}));
 					
 					handles.push(createEdgeHandle(state, ['startWidth', mxConstants.STYLE_STARTSIZE], true, function(dist, nx, ny, p0, p1)
@@ -1504,6 +1515,11 @@
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
 							var tol = state.view.graph.gridSize * state.view.scale;
+
+							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 3)
+							{
+								state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
+							}
 							
 							if (Math.abs(parseFloat(state.style['startWidth']) - parseFloat(state.style['endWidth'])) < tol)
 							{
@@ -1522,13 +1538,24 @@
 						
 						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
 							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
-					}, function(dist, nx, ny, p0, p1, pt)
+					}, function(dist, nx, ny, p0, p1, pt, me)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
 						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 						
 						state.style[mxConstants.STYLE_ENDSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
 						state.style['width'] = Math.round(w * 2) / state.view.scale;
+						
+						// Snaps to start geometry
+						if (!mxEvent.isAltDown(me.getEvent()))
+						{
+							var tol = state.view.graph.gridSize * state.view.scale;
+
+							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 3)
+							{
+								state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
+							}
+						}
 					}));
 					
 					handles.push(createEdgeHandle(state, ['endWidth', mxConstants.STYLE_ENDSIZE], false, function(dist, nx, ny, p0, p1)
@@ -1546,10 +1573,15 @@
 						state.style[mxConstants.STYLE_ENDSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
 						state.style['endWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
 					
-						// Snaps to startWidth
+						// Snaps to start geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
 							var tol = state.view.graph.gridSize * state.view.scale;
+
+							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 3)
+							{
+								state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
+							}
 							
 							if (Math.abs(parseFloat(state.style['endWidth']) - parseFloat(state.style['startWidth'])) < tol)
 							{
