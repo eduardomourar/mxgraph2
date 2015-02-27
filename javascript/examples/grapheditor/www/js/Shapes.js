@@ -1426,13 +1426,13 @@
 				var pt = getPosition(dist, dx / dist, dy / dist, p0, p1);
 				
 				return new mxPoint(pt.x / s - tr.x, pt.y / s - tr.y);
-			}, function(bounds, pt)
+			}, function(bounds, pt, me)
 			{
 				var dist = Math.sqrt(dx * dx + dy * dy);
 				pt.x = (pt.x + tr.x) * s;
 				pt.y = (pt.y + tr.y) * s;
 
-				setPosition(dist, dx / dist, dy / dist, p0, p1, pt);
+				setPosition(dist, dx / dist, dy / dist, p0, p1, pt, me);
 			});
 		};
 		
@@ -1492,13 +1492,24 @@
 						
 						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
 							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
-					}, function(dist, nx, ny, p0, p1, pt)
+					}, function(dist, nx, ny, p0, p1, pt, me)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
 						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 						
 						state.style[mxConstants.STYLE_STARTSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
 						state.style['startWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
+						
+						// Snaps to endWidth
+						if (!mxEvent.isAltDown(me.getEvent()))
+						{
+							var tol = state.view.graph.gridSize * state.view.scale;
+							
+							if (Math.abs(parseFloat(state.style['startWidth']) - parseFloat(state.style['endWidth'])) < tol)
+							{
+								state.style['startWidth'] = state.style['endWidth'];
+							}
+						}
 					}));
 				}
 				
@@ -1527,13 +1538,24 @@
 						
 						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
 							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
-					}, function(dist, nx, ny, p0, p1, pt)
+					}, function(dist, nx, ny, p0, p1, pt, me)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
 						var l = mxUtils.ptLineDist(p0.x, p0.y, p0.x + ny, p0.y - nx, pt.x, pt.y);
 						
 						state.style[mxConstants.STYLE_ENDSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
 						state.style['endWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
+					
+						// Snaps to startWidth
+						if (!mxEvent.isAltDown(me.getEvent()))
+						{
+							var tol = state.view.graph.gridSize * state.view.scale;
+							
+							if (Math.abs(parseFloat(state.style['endWidth']) - parseFloat(state.style['startWidth'])) < tol)
+							{
+								state.style['endWidth'] = state.style['startWidth'];
+							}
+						}
 					}));
 				}
 				
