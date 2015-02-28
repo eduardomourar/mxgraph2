@@ -2056,6 +2056,7 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 	this.window.addListener(mxEvent.SHOW, mxUtils.bind(this, function()
 	{
 		outline.suspended = false;
+		outline.outline.refresh();
 		outline.update();
 	}));
 	
