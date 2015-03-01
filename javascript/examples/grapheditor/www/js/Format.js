@@ -1633,7 +1633,7 @@ ArrangePanel.prototype.addGeometry = function(container)
 	});
 	
 	var autosizeBtn = document.createElement('div');
-	autosizeBtn.className = 'geSprite geSprite-actualsize';
+	autosizeBtn.className = 'geSprite geSprite-fit';
 	autosizeBtn.setAttribute('title', mxResources.get('autosize') + ' (Ctrl+Shift+Z)');
 	autosizeBtn.style.position = 'relative';
 	autosizeBtn.style.cursor = 'pointer';
