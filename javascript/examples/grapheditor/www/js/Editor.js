@@ -287,6 +287,7 @@ Editor.prototype.setGraphXml = function(node)
 	{
 		throw { 
 		    message: mxResources.get('cannotOpenFile'), 
+		    node: node,
 		    toString: function() { return this.message; }
 		};
 	}
