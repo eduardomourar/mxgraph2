@@ -750,7 +750,8 @@
 	 * <code>TEXT_DIRECTION_DEFAULT, TEXT_DIRECTION_AUTO, TEXT_DIRECTION_LTR</code>
 	 * and <code>TEXT_DIRECTION_RTL</code>. Value is <code>textDirection</code>.
 	 * The default value for the style is defined in <DEFAULT_TEXT_DIRECTION>.
-	 * It is used is no value is defined for this key in a given style.
+	 * It is used is no value is defined for this key in a given style. This is
+	 * an experimental style that is currently ignored in the backends.
 	 */
 	STYLE_TEXT_DIRECTION: 'textDirection',
 
