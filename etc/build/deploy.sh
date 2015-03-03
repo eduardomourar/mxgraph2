@@ -24,7 +24,7 @@ cp -v $BUILD/ChangeLog $WEBROOT/
 
 # Update mxgraph on github
 echo
-echo "Updating mxgraph on github..."
+echo "Updating mxgraph and mxgraph-js on github..."
 cd ~
 date=`date +"%H%M%S%d%m%y"`
 mkdir tmp-$date
@@ -50,6 +50,24 @@ git push origin master
 git tag -a v$DOTVERSION -m "v$DOTVERSION"
 git push origin --tags
 cd ..
+
+# Copy selected resources to mxgraph-js and generate package.json
+echo
+echo "Updating mxgraph-js on github..."
+git clone git@github.com:jgraph/mxgraph-js.git
+sed "s/@VERSION@/$DOTVERSION/" $BUILD/../etc/build/package.json > mxgraph-js/package.json
+cp tmp/mxgraph/ChangeLog mxgraph-js
+cp tmp/mxgraph/license.txt mxgraph-js
+cp -rf tmp/mxgraph/javascript mxgraph-js
+cd mxgraph-js
+git add .
+git commit -am "$DOTVERSION release"
+git push origin master
+git tag -a v$DOTVERSION -m "v$DOTVERSION"
+git push origin --tags
+cd ..
+
+# Clean up
 rm -rf tmp
 
 # Update mxgraph pages on github

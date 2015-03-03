@@ -1,3 +1,4 @@
+- Adds mxgraph-js with package.json for automated builds [JavaScript]
 - Adds mxConnectionHandler.snapToPreview [JavaScript]
 - Adds mxEdgeHandler.isAddVirtualBendEvent, mxEdge/VertexHandler.isCustomHandleEvent [JavaScript]
 - Simplified edge entries for general sidebar in grapheditor
