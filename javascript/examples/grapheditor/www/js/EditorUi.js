@@ -964,23 +964,29 @@ EditorUi.prototype.initCanvas = function()
 	   	{
 			if (graph.container != null)
 			{
+				var b = (graph.pageVisible) ? graph.view.getBackgroundPageBounds() : graph.getGraphBounds();
 				var tr = graph.view.translate;
 				var s = graph.view.scale;
-				var bounds = (graph.pageVisible) ? graph.view.getBackgroundPageBounds() : graph.getGraphBounds();
-				var pw = bounds.width;
-				var ph = bounds.height;
+				
+				// Normalizes the bounds
+				b.x = b.x / s - tr.x;
+				b.y = b.y / s - tr.y;
+				b.width /= s;
+				b.height /= s;
 				
 				var st = graph.container.scrollTop;
 				var sl = graph.container.scrollLeft;
-				var cw = graph.container.clientWidth - 10;
-				var ch = graph.container.clientHeight - 10;
+				var cw = graph.container.offsetWidth - 14;
+				var ch = graph.container.offsetHeight - 14;
 				
-				var scale = (autoscale) ? Math.max(0.3, Math.min(1, cw / pw * s)) : s;
-				graph.view.scaleAndTranslate(scale, Math.max(0, (cw - pw / ((autoscale) ? s : 1)) / 2 / s) - bounds.x / s + tr.x,
-						Math.max(0, (ch - ph / ((autoscale) ? s : 1)) / 4 / s) - bounds.y / s + tr.y);
+				var ns = (autoscale) ? Math.max(0.3, Math.min(1, cw / b.width)) : s;
+				var dx = Math.max((cw - ns * b.width) / 2, 0) / ns;
+				var dy = Math.max((ch - ns * b.height) / 4, 0) / ns;
 				
-				graph.container.scrollTop = st;
-				graph.container.scrollLeft = sl;
+				graph.view.scaleAndTranslate(ns, dx - b.x, dy - b.y);
+
+				graph.container.scrollTop = st * ns / s;
+				graph.container.scrollLeft = sl * ns/ s;
 			}
 	   	});
 		
@@ -994,8 +1000,7 @@ EditorUi.prototype.initCanvas = function()
 			resize(true);
 		}));
 	   	
-	   	// TODO: Chromeless mode should work with getPreferredPageSize
-	   	// below but there is a clipping issue
+		// Workaround for clipping problem
 		graph.getPreferredPageSize = function(bounds, width, height)
 		{
 			var pages = this.getPageLayout();
@@ -1006,27 +1011,32 @@ EditorUi.prototype.initCanvas = function()
 		};
 		
 		// Adds zoom toolbar
-		var zoomInBtn = mxUtils.button('', function()
+		var zoomInBtn = mxUtils.button('', function(evt)
 		{
 			graph.zoomIn();
+			resize(false);
+			mxEvent.consume(evt);
 		});
 		zoomInBtn.className = 'geSprite geSprite-zoomin';
 		zoomInBtn.setAttribute('title', mxResources.get('zoomIn'));
 		zoomInBtn.style.border = 'none';
 		zoomInBtn.style.margin = '2px';
 		
-		var zoomOutBtn = mxUtils.button('', function()
+		var zoomOutBtn = mxUtils.button('', function(evt)
 		{
 			graph.zoomOut();
+			resize(false);
+			mxEvent.consume(evt);
 		});
 		zoomOutBtn.className = 'geSprite geSprite-zoomout';
 		zoomOutBtn.setAttribute('title', mxResources.get('zoomOut'));
 		zoomOutBtn.style.border = 'none';
 		zoomOutBtn.style.margin = '2px';
 
-		var zoomActualBtn = mxUtils.button('', function()
+		var zoomActualBtn = mxUtils.button('', function(evt)
 		{
 			resize(true);
+			mxEvent.consume(evt);
 		});
 		zoomActualBtn.className = 'geSprite geSprite-actualsize';
 		zoomActualBtn.setAttribute('title', mxResources.get('actualSize'));
@@ -1055,7 +1065,7 @@ EditorUi.prototype.initCanvas = function()
 			
 			return new mxRectangle(0, 0, pages.width * size.width, pages.height * size.height);
 		};
-
+		
 		/**
 		 * Guesses autoTranslate to avoid another repaint (see below).
 		 * Works if only the scale of the graph changes or if pages
@@ -1130,7 +1140,7 @@ EditorUi.prototype.initCanvas = function()
 			}
 		};
 	}
-	
+
 	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up)
 	{
 		if (mxEvent.isAltDown(evt) || graph.panningHandler.isActive())
