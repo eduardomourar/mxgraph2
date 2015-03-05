@@ -674,6 +674,119 @@ Graph.prototype.zapGremlins = function(text)
 };
 
 /**
+ * Turns the given cells and returns the changed cells.
+ */
+Graph.prototype.turnShapes = function(cells)
+{
+	var model = this.getModel();
+	var select = [];
+	
+	model.beginUpdate();
+	try
+	{
+		for (var i = 0; i < cells.length; i++)
+		{
+			var cell = cells[i];
+			
+			if (model.isEdge(cell))
+			{
+				var src = model.getTerminal(cell, true);
+				var trg = model.getTerminal(cell, false);
+				
+				model.setTerminal(cell, trg, true);
+				model.setTerminal(cell, src, false);
+				
+				var geo = model.getGeometry(cell);
+				
+				if (geo != null)
+				{
+					geo = geo.clone();
+					
+					if (geo.points != null)
+					{
+						geo.points.reverse();
+					}
+					
+					var sp = geo.getTerminalPoint(true);
+					var tp = geo.getTerminalPoint(false)
+					
+					geo.setTerminalPoint(sp, false);
+					geo.setTerminalPoint(tp, true);
+					model.setGeometry(cell, geo);
+					
+					// Inverts constraints
+					var edgeState = this.view.getState(cell);
+					var sourceState = this.view.getState(src);
+					var targetState = this.view.getState(trg);
+					
+					if (edgeState != null)
+					{
+						var sc = (sourceState != null) ? this.getConnectionConstraint(edgeState, sourceState, true) : null;
+						var tc = (targetState != null) ? this.getConnectionConstraint(edgeState, targetState, false) : null;
+						
+						this.setConnectionConstraint(cell, src, true, tc);
+						this.setConnectionConstraint(cell, trg, false, sc);
+					}
+
+					select.push(cell);
+				}
+			}
+			else if (model.isVertex(cell))
+			{
+				var geo = this.getCellGeometry(cell);
+	
+				if (geo != null)
+				{
+					// Rotates the size and position in the geometry
+					geo = geo.clone();
+					geo.x += geo.width / 2 - geo.height / 2;
+					geo.y += geo.height / 2 - geo.width / 2;
+					var tmp = geo.width;
+					geo.width = geo.height;
+					geo.height = tmp;
+					model.setGeometry(cell, geo);
+					
+					// Reads the current direction and advances by 90 degrees
+					var state = this.view.getState(cell);
+					
+					if (state != null)
+					{
+						var dir = state.style[mxConstants.STYLE_DIRECTION] || 'east'/*default*/;
+						
+						if (dir == 'east')
+						{
+							dir = 'south';
+						}
+						else if (dir == 'south')
+						{
+							dir = 'west';
+						}
+						else if (dir == 'west')
+						{
+							dir = 'north';
+						}
+						else if (dir == 'north')
+						{
+							dir = 'east';
+						}
+						
+						this.setCellStyles(mxConstants.STYLE_DIRECTION, dir, [cell]);
+					}
+
+					select.push(cell);
+				}
+			}
+		}
+	}
+	finally
+	{
+		model.endUpdate();
+	}
+	
+	return select;
+};
+
+/**
  * Handles label changes for XML user objects.
  */
 Graph.prototype.cellLabelChanged = function(cell, value, autoSize)
@@ -2246,6 +2359,13 @@ Graph.prototype.initTouch = function()
 			(mxGraphHandler.prototype.maxCells <= 0 || this.graph.getSelectionCount() < mxGraphHandler.prototype.maxCells);
 	};
 
+	// Invokes turn on single click on rotation handle
+	mxVertexHandler.prototype.rotateClick = function()
+	{
+		this.state.view.graph.turnShapes([this.state.cell]);
+	};
+
+	
 	// Requires callback to editorUi in edit link so override editorUi.init
 	var editorUiInit3 = EditorUi.prototype.init;
 	EditorUi.prototype.init = function()

@@ -1,3 +1,5 @@
+- Invokes turn for click on rotate handle in grapheditor [JavaScript]
+- Adds mxVertexHandler.rotateClick hook for clicks on rotate handle [JavaScript]
 - Changes sizer cursor in mxOutline to nwse-resize [JavaScript]
 - Changes mxCellRenderer.createShape to return shape instead of updating state [JavaScript]
 - Fixes zoom buttons for chromeless mode in grapheditor

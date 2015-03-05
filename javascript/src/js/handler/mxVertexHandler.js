@@ -1004,6 +1004,10 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 						this.rotateCell(this.state.cell, delta);
 					}
 				}
+				else
+				{
+					this.rotateClick();
+				}
 			}
 			else
 			{
@@ -1047,6 +1051,15 @@ mxVertexHandler.prototype.isRecursiveResize = function(state, me)
 {
 	return this.graph.isRecursiveResize(this.state);
 };
+
+/**
+ * Function: rotateClick
+ * 
+ * Hook for subclassers to implement a single click on the rotation handle.
+ * This code is executed as part of the model transaction. This implementation
+ * is empty.
+ */
+mxVertexHandler.prototype.rotateClick = function() { };
 
 /**
  * Function: rotateCell
