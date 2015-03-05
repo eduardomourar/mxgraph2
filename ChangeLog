@@ -1,3 +1,4 @@
+- Changes default of mxStencil.allowEval to false [JavaScript]
 - Adds control key to apply arrow handle to opposite side in grapheditor
 - Fixes arrow handles to appear on same side in grapheditor
 - Removes shadow action in mxEditor [JavaScript]

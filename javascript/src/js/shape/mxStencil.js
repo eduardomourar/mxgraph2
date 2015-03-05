@@ -90,10 +90,10 @@ mxStencil.defaultLocalized = false;
  * Function: allowEval
  * 
  * Static global switch that specifies if the use of eval is allowed for
- * evaluating text content. Default is true. Set this to false if stencils may
- * contain user input (see the section on security in the manual).
+ * evaluating text content and images. Default is false. Set this to true
+ * if stencils can not contain user input.
  */
-mxStencil.allowEval = true;
+mxStencil.allowEval = false;
 
 /**
  * Variable: desc
