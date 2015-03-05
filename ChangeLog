@@ -1,3 +1,5 @@
+- Removes mxConstants.FONT_SHADOW [JavaScript]
+
 05-MAR-2015: 3.1.3.0
 
 - Invokes turn for click on rotate handle in grapheditor [JavaScript]

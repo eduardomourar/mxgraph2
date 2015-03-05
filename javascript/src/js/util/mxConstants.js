@@ -1681,13 +1681,6 @@
 	FONT_UNDERLINE: 4,
 
 	/**
-	 * Variable: FONT_SHADOW
-	 * 
-	 * Constant for fonts with a shadow. Default is 8.
-	 */
-	FONT_SHADOW: 8,
-
-	/**
 	 * Variable: SHAPE_RECTANGLE
 	 * 
 	 * Name under which <mxRectangleShape> is registered in <mxCellRenderer>.
