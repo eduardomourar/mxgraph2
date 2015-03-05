@@ -1519,7 +1519,7 @@
 	 * Variable: STYLE_FONTSTYLE
 	 * 
 	 * Defines the key for the fontStyle style. Values may be any logical AND
-	 * (sum) of <FONT_BOLD>, <FONT_ITALIC>, <FONT_UNDERLINE> and <FONT_SHADOW>.
+	 * (sum) of <FONT_BOLD>, <FONT_ITALIC> and <FONT_UNDERLINE>.
 	 * The type of the value is int. Value is <code>fontStyle</code>.
 	 */
 	STYLE_FONTSTYLE: 'fontStyle',
