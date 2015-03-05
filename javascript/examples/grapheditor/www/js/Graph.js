@@ -149,7 +149,7 @@ Graph = function(container, model, renderHint, stylesheet)
 		var state = this.view.getState(cell);
 		var style = (state != null) ? state.style : this.getCellStyle(cell);
 		
-		return style['html'] == '1' || style['whiteSpace'] == 'wrap';
+		return style['html'] == '1' || style[mxConstants.STYLE_WHITE_SPACE] == 'wrap';
 	};
 	
 	// HTML entities are displayed as plain text in wrapped plain text labels
@@ -1025,7 +1025,7 @@ Graph.prototype.isCellResizable = function(cell)
 	var state = this.view.getState(cell);
 	var style = (state != null) ? state.style : this.getCellStyle(cell);
 		
-	return result || style['whiteSpace'] == 'wrap';
+	return result || style[mxConstants.STYLE_WHITE_SPACE] == 'wrap';
 };
 
 /**
