@@ -736,7 +736,7 @@ Actions.prototype.init = function()
 		{
 			var model = graph.getModel();
 			
-	    	var dlg = new TextareaDialog(this.editorUi, mxResources.get('enterValue')+ ' (' + mxResources.get('style') + ')' + ':',
+	    	var dlg = new TextareaDialog(this.editorUi, mxResources.get('enterValue') + ' (' + mxResources.get('style') + ')' + ':',
 	    			model.getStyle(cells[0]) || '', function(newValue)
 			{
 	    		if (newValue != null)
