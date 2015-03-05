@@ -2365,7 +2365,6 @@ Graph.prototype.initTouch = function()
 		this.state.view.graph.turnShapes([this.state.cell]);
 	};
 
-	
 	// Requires callback to editorUi in edit link so override editorUi.init
 	var editorUiInit3 = EditorUi.prototype.init;
 	EditorUi.prototype.init = function()
