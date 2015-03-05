@@ -750,7 +750,12 @@
 	
 	mxPerimeter.LifelinePerimeter = function (bounds, vertex, next, orthogonal)
 	{
-		var size = mxUtils.getValue(vertex.style, 'size', UmlLifeline.prototype.size) * vertex.view.scale;
+		var size = UmlLifeline.prototype.size;
+		
+		if (vertex != null)
+		{
+			size = mxUtils.getValue(vertex.style, 'size', size) * vertex.view.scale;
+		}
 		
 		return new mxPoint(bounds.getCenterX(), Math.min(bounds.y + bounds.height,
 				Math.max(bounds.y + size, next.y)));
