@@ -1474,7 +1474,7 @@
 				
 				if (mxUtils.getValue(state.style, mxConstants.STYLE_STARTARROW, mxConstants.NONE) != mxConstants.NONE)
 				{
-					handles.push(createEdgeHandle(state, ['width', mxConstants.STYLE_STARTSIZE], true, function(dist, nx, ny, p0, p1)
+					handles.push(createEdgeHandle(state, ['width', mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE], true, function(dist, nx, ny, p0, p1)
 					{
 						var w = (state.shape.getEdgeWidth() - state.shape.strokewidth) * state.view.scale;
 						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
@@ -1489,6 +1489,12 @@
 						state.style[mxConstants.STYLE_STARTSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
 						state.style['width'] = Math.round(w * 2) / state.view.scale;
 						
+						// Applies to opposite side
+						if (mxEvent.isControlDown(me.getEvent()))
+						{
+							state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
+						}
+						
 						// Snaps to end geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
@@ -1501,7 +1507,7 @@
 						}
 					}));
 					
-					handles.push(createEdgeHandle(state, ['startWidth', mxConstants.STYLE_STARTSIZE], true, function(dist, nx, ny, p0, p1)
+					handles.push(createEdgeHandle(state, ['startWidth', 'endWidth', mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE], true, function(dist, nx, ny, p0, p1)
 					{
 						var w = (state.shape.getStartArrowWidth() - state.shape.strokewidth) * state.view.scale;
 						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
@@ -1515,6 +1521,13 @@
 						
 						state.style[mxConstants.STYLE_STARTSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
 						state.style['startWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
+						
+						// Applies to opposite side
+						if (mxEvent.isControlDown(me.getEvent()))
+						{
+							state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
+							state.style['endWidth'] = state.style['startWidth'];
+						}
 						
 						// Snaps to endWidth
 						if (!mxEvent.isAltDown(me.getEvent()))
@@ -1536,13 +1549,13 @@
 				
 				if (mxUtils.getValue(state.style, mxConstants.STYLE_ENDARROW, mxConstants.NONE) != mxConstants.NONE)
 				{
-					handles.push(createEdgeHandle(state, ['width', mxConstants.STYLE_ENDSIZE], false, function(dist, nx, ny, p0, p1)
+					handles.push(createEdgeHandle(state, ['width', mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE], false, function(dist, nx, ny, p0, p1)
 					{
 						var w = (state.shape.getEdgeWidth() - state.shape.strokewidth) * state.view.scale;
 						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
 						
-						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
-							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
+						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) - ny * w / 2,
+							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) + nx * w / 2);
 					}, function(dist, nx, ny, p0, p1, pt, me)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
@@ -1551,6 +1564,12 @@
 						state.style[mxConstants.STYLE_ENDSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
 						state.style['width'] = Math.round(w * 2) / state.view.scale;
 						
+						// Applies to opposite side
+						if (mxEvent.isControlDown(me.getEvent()))
+						{
+							state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
+						}
+					
 						// Snaps to start geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
@@ -1563,13 +1582,13 @@
 						}
 					}));
 					
-					handles.push(createEdgeHandle(state, ['endWidth', mxConstants.STYLE_ENDSIZE], false, function(dist, nx, ny, p0, p1)
+					handles.push(createEdgeHandle(state, ['startWidth', 'endWidth', mxConstants.STYLE_STARTSIZE, mxConstants.STYLE_ENDSIZE], false, function(dist, nx, ny, p0, p1)
 					{
 						var w = (state.shape.getEndArrowWidth() - state.shape.strokewidth) * state.view.scale;
 						var l = mxUtils.getNumber(state.style, mxConstants.STYLE_ENDSIZE, mxConstants.ARROW_SIZE / 5) * 3 * state.view.scale;
 						
-						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) + ny * w / 2,
-							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) - nx * w / 2);
+						return new mxPoint(p0.x + nx * (l + state.shape.strokewidth * state.view.scale) - ny * w / 2,
+							p0.y + ny * (l + state.shape.strokewidth * state.view.scale) + nx * w / 2);
 					}, function(dist, nx, ny, p0, p1, pt, me)
 					{
 						var w = Math.sqrt(mxUtils.ptSegDistSq(p0.x, p0.y, p1.x, p1.y, pt.x, pt.y));
@@ -1577,6 +1596,13 @@
 						
 						state.style[mxConstants.STYLE_ENDSIZE] = Math.round((l - state.shape.strokewidth) / 3) / state.view.scale;
 						state.style['endWidth'] = Math.max(0, Math.round(w * 2) - state.shape.getEdgeWidth()) / state.view.scale;
+						
+						// Applies to opposite side
+						if (mxEvent.isControlDown(me.getEvent()))
+						{
+							state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
+							state.style['startWidth'] = state.style['endWidth'];
+						}
 					
 						// Snaps to start geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
