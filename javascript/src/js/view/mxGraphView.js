@@ -2260,7 +2260,8 @@ mxGraphView.prototype.createState = function(cell)
 	if (state.view.graph.container != null && state.cell != state.view.currentRoot &&
 		(model.isVertex(state.cell) || model.isEdge(state.cell)))
 	{
-		this.graph.cellRenderer.createShape(state);
+		state.shape = this.graph.cellRenderer.createShape(state);
+		state.shape.antiAlias = this.graph.cellRenderer.antiAlias;
 	}
 	
 	return state;

@@ -146,7 +146,7 @@ mxCellRenderer.prototype.initializeShape = function(state)
 /**
  * Function: createShape
  * 
- * Creates the shape for the given cell state.
+ * Creates and returns the shape for the given cell state.
  * 
  * Parameters:
  * 
@@ -154,6 +154,8 @@ mxCellRenderer.prototype.initializeShape = function(state)
  */
 mxCellRenderer.prototype.createShape = function(state)
 {
+	var shape = null;
+	
 	if (state.style != null)
 	{
 		// Checks if there is a stencil for the name and creates
@@ -162,16 +164,16 @@ mxCellRenderer.prototype.createShape = function(state)
 		
 		if (stencil != null)
 		{
-			state.shape = new mxShape(stencil);
+			shape = new mxShape(stencil);
 		}
 		else
 		{
 			var ctor = this.getShapeConstructor(state);
-			state.shape = new ctor();
+			shape = new ctor();
 		}
-		
-		state.shape.antiAlias = this.antiAlias;
 	}
+	
+	return shape;
 };
 
 /**
