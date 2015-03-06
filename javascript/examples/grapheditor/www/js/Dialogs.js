@@ -1022,7 +1022,8 @@ var TextareaDialog = function(editorUi, title, url, fn, cancelFn, cancelTitle, w
 	tbody.appendChild(row);
 
 	row = document.createElement('tr');
-	
+	td = document.createElement('td');
+
 	var nameInput = document.createElement('textarea');
 	mxUtils.write(nameInput, url || '');
 	nameInput.style.resize = 'none';
@@ -1037,7 +1038,6 @@ var TextareaDialog = function(editorUi, title, url, fn, cancelFn, cancelTitle, w
 		nameInput.scrollTop = 0;
 	};
 
-	td = document.createElement('td');
 	td.appendChild(nameInput);
 	row.appendChild(td);
 	
