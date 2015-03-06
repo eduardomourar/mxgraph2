@@ -1022,7 +1022,6 @@ var TextareaDialog = function(editorUi, title, url, fn, cancelFn, cancelTitle, w
 	tbody.appendChild(row);
 
 	row = document.createElement('tr');
-	td = document.createElement('td');
 	
 	var nameInput = document.createElement('textarea');
 	mxUtils.write(nameInput, url || '');
