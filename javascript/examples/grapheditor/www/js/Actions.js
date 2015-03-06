@@ -736,15 +736,15 @@ Actions.prototype.init = function()
 		{
 			var model = graph.getModel();
 			
-	    	var dlg = new TextareaDialog(this.editorUi, mxResources.get('enterValue') + ' (' + mxResources.get('style') + ')' + ':',
+	    	var dlg = new TextareaDialog(this.editorUi, mxResources.get('editStyle') + ':',
 	    			model.getStyle(cells[0]) || '', function(newValue)
 			{
 	    		if (newValue != null)
 				{
 					graph.setCellStyle(mxUtils.trim(newValue), cells);
 				}
-			});
-			this.editorUi.showDialog(dlg.container, 320, 200, true, true);
+			}, null, null, 400, 220);
+			this.editorUi.showDialog(dlg.container, 420, 300, true, true);
 			dlg.init();
 		}
 	}), null, null, 'Ctrl+E');
