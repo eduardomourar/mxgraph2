@@ -1,3 +1,4 @@
+- Adds mxStackLayout.resizeParentMax switch [JavaScript]
 - Adds UML shapes and elements in grapheditor UML sidebar 
 - Changes UML lifeline container state in grapheditor
 - Adds support for childLayout style in grapheditor
