@@ -1,3 +1,4 @@
+- Fixes mxStackLayout.moveCell for scaled graphs [JavaScript]
 - Changes title and size of edit style dialog in grapheditor
 - Changes default of mxStencil.allowEval to false [JavaScript]
 - Adds control key to apply arrow handle to opposite side in grapheditor

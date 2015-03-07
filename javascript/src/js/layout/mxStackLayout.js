@@ -179,6 +179,8 @@ mxStackLayout.prototype.moveCell = function(cell, x, y)
 			value -= (horizontal) ? pstate.x : pstate.y;
 		}
 		
+		value /= this.graph.view.scale;
+		
 		for (i = 0; i < childCount; i++)
 		{
 			var child = model.getChildAt(parent, i);
