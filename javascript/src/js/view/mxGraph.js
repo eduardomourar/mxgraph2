@@ -9763,8 +9763,9 @@ mxGraph.prototype.isCellResizable = function(cell)
 {
 	var state = this.view.getState(cell);
 	var style = (state != null) ? state.style : this.getCellStyle(cell);
-	
-	return this.isCellsResizable() && !this.isCellLocked(cell) && style[mxConstants.STYLE_RESIZABLE] != 0;
+
+	return this.isCellsResizable() && !this.isCellLocked(cell) &&
+		mxUtils.getValue(style, mxConstants.STYLE_RESIZABLE, '1') != '0';
 };
 
 /**
