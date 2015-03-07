@@ -1293,6 +1293,8 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 			
 			if (cells.length > 0)
 			{
+				graph.stopEditing();
+				
 				var validDropTarget = (target != null) ? graph.isValidDropTarget(target, cells, evt) : false;
 				var select = null;
 
@@ -1316,6 +1318,26 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, dx, dy)
 					else if (cells.length > 0)
 					{
 						select = graph.importCells(cells, x, y, target);
+					}
+					
+					// Runs parnet layout hooks
+					if (graph.layoutManager != null)
+					{
+						var layout = graph.layoutManager.getLayout(target);
+						
+						if (layout != null)
+						{
+							var targetState = graph.view.getState(target);
+							var s = graph.view.scale;
+							var tr = graph.view.translate;
+							var tx = (x + tr.x) * s;
+							var ty = (y + tr.y) * s;
+							
+							for (var i = 0; i < select.length; i++)
+							{
+								layout.moveCell(select[i], tx, ty);
+							}
+						}
 					}
 
 					graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
@@ -1973,14 +1995,14 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		}
 		
 		// Handles drop target
-		var target = (!activeTarget && !mxEvent.isAltDown(evt) && !(currentStyleTarget != null && activeArrow == styleTarget)) ?
+		var target = ((!mxEvent.isAltDown(evt) || mxEvent.isShiftDown(evt)) && !(currentStyleTarget != null && activeArrow == styleTarget)) ?
 				mxDragSource.prototype.getDropTarget.apply(this, arguments) : null;
 
 		if (target != null)
 		{
 			// Selects parent group as drop target
 			var model = graph.getModel();
-			
+
 			if (!graph.isValidRoot(target) && model.isVertex(model.getParent(target)))
 			{
 				target = model.getParent(target);
