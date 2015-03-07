@@ -1510,8 +1510,24 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 		{
 			var sourceGeo = graph.getCellGeometry(source);
 			var geo2 = graph.getCellGeometry(targets[dropCellIndex]);
-			targets = graph.importCells(targets, geo.x - geo2.x, geo.y - geo2.y, (graph.model.isEdge(source) ||
-					(sourceGeo != null && !sourceGeo.relative)) ? graph.model.getParent(source) : null);
+
+			// Handles special case where target should be ignored for stack layouts
+			var targetParent = graph.model.getParent(source);
+			var validLayout = true;
+			
+			// TODO: Do not resize imported cells in this case
+			if (graph.layoutManager != null)
+			{
+				var layout = graph.layoutManager.getLayout(targetParent);
+			
+				if (layout != null && layout.constructor == mxStackLayout)
+				{
+					validLayout = false;
+				}
+			}
+			
+			targets = graph.importCells(targets, geo.x - (validLayout ? geo2.x : 0), geo.y - (validLayout ? geo2.y : 0), (graph.model.isEdge(source) ||
+					(sourceGeo != null && !sourceGeo.relative && validLayout)) ? targetParent : null);
 			tmp = targets;
 			
 			if (graph.model.isEdge(source))
