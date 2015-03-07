@@ -1239,9 +1239,9 @@ Sidebar.prototype.updateShapes = function(source, targets)
 		var cellStyle = graph.getModel().getStyle(source);
 
 		// Lists the styles to carry over from the existing shape
-		var styles = ['shadow', 'dashed', 'dashPattern', 'fontFamily', 'fontSize', 'fontColor', 'align', 'startArrow',
-		              'startFill', 'startSize', 'endArrow', 'endFill', 'endSize', 'strokeColor', 'strokeWidth',
-		              'fillColor', 'gradientColor', 'html', 'part', 'noEdgeStyle', 'edgeStyle', 'elbow', 'childLayout'];
+		var styles = ['shadow', 'dashed', 'dashPattern', 'fontFamily', 'fontSize', 'fontColor', 'align', 'startFill',
+		              'startSize', 'endFill', 'endSize', 'strokeColor', 'strokeWidth', 'fillColor', 'gradientColor',
+		              'html', 'part', 'noEdgeStyle', 'edgeStyle', 'elbow', 'childLayout'];
 
 		for (var i = 0; i < targets.length; i++)
 		{
@@ -1260,6 +1260,7 @@ Sidebar.prototype.updateShapes = function(source, targets)
 					for (var j = 0; j < styles.length; j++)
 					{
 						var value = style[styles[j]];
+						console.log('styles[j]', styles[j], value);
 						
 						if (value != null)
 						{
