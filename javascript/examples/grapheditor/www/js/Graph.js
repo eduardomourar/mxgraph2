@@ -522,7 +522,8 @@ Graph.prototype.isCellFoldable = function(cell)
 	var state = this.view.getState(cell);
 	var style = (state != null) ? state.style : this.getCellStyle(cell);
 	
-	return this.foldingEnabled && this.isContainer(cell) && style['collapsible'] != '0';
+	return this.foldingEnabled && ((this.isContainer(cell) && style['collapsible'] != '0') ||
+		(!this.isContainer(cell) && style['collapsible'] == '1'));
 };
 
 /**
@@ -538,7 +539,11 @@ Graph.prototype.isValidRoot = function(cell)
  */
 Graph.prototype.isValidDropTarget = function(cell)
 {
-	return this.isContainer(cell) || mxGraph.prototype.isValidDropTarget.apply(this, arguments);
+	var state = this.view.getState(cell);
+	var style = (state != null) ? state.style : this.getCellStyle(cell);
+
+	return mxUtils.getValue(style, 'part', '0') != '1' &&
+		(this.isContainer(cell) || mxGraph.prototype.isValidDropTarget.apply(this, arguments));
 };
 
 /**
@@ -568,6 +573,127 @@ Graph.prototype.createGroupCell = function()
 	group.setStyle('group');
 	
 	return group;
+};
+
+/**
+ * Installs child layout styles.
+ */
+Graph.prototype.init = function()
+{
+	mxGraph.prototype.init.apply(this, arguments);
+	var graph = this;
+	
+	// Changes swimlane orientation while collapsed
+	// LATER: Check for performance hit of this function
+	var graphModelGetStyle = this.model.getStyle;
+	this.model.getStyle = function(cell)
+	{
+		var style = graphModelGetStyle.apply(this, arguments);
+
+		if (cell != null)
+		{
+			var parent = this.getParent(cell);
+			
+			if (this.isVertex(parent))
+			{
+				var pstyle = graph.getCellStyle(parent);
+				
+				if (graph.isCellCollapsed(cell) && pstyle['childLayout'] == 'stackLayout' && !mxUtils.getValue(pstyle, 'horizontalStack', true))
+				{
+					if (style != null)
+					{
+						style += ';';
+					}
+					else
+					{
+						style = '';
+					}
+					
+					style += 'horizontal=1;';
+				}
+			}
+		}
+		
+		return style;
+	};
+
+	this.layoutManager = new mxLayoutManager(this);
+
+	this.layoutManager.getLayout = function(cell)
+	{
+		var state = this.graph.view.getState(cell);
+		var style = (state != null) ? state.style : this.graph.getCellStyle(cell);
+		
+		// mxRackContainer may be undefined as it is dynamically loaded at render time
+		if (typeof(mxRackContainer) != 'undefined' && style['childLayout'] == 'rack')
+		{
+			var rackLayout = new mxStackLayout(this.graph, false);
+			
+			rackLayout.setChildGeometry = function(child, geo)
+			{
+				var unitSize = 20;
+				geo.height = Math.max(geo.height, unitSize);
+				
+				if (geo.height / unitSize > 1)
+				{
+					var mod = geo.height % unitSize;
+					geo.height += mod > unitSize / 2 ? (unitSize - mod) : -mod;
+				}
+		
+				this.graph.getModel().setGeometry(child, geo);
+			};
+		
+			rackLayout.fill = true;
+			rackLayout.unitSize = mxRackContainer.unitSize | 20;
+			rackLayout.marginLeft = style['marginLeft'] || 0;
+			rackLayout.marginRight = style['marginRight'] || 0;
+			rackLayout.marginTop = style['marginTop'] || 0;
+			rackLayout.marginBottom = style['marginBottom'] || 0;
+			rackLayout.resizeParent = false;
+			
+			return rackLayout;
+		}
+		else if (style['childLayout'] == 'stackLayout')
+		{
+			var stackLayout = new mxStackLayout(this.graph, true);
+			stackLayout.resizeParentMax = true;
+			stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', true);
+			stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', true);
+			stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', false);
+			stackLayout.marginLeft = style['marginLeft'] || 0;
+			stackLayout.marginRight = style['marginRight'] || 0;
+			stackLayout.marginTop = style['marginTop'] || 0;
+			stackLayout.marginBottom = style['marginBottom'] || 0;
+			stackLayout.fill = true;
+			
+			return stackLayout;
+		}
+		else if (style['childLayout'] == 'treeLayout')
+		{
+			var treeLayout = new mxCompactTreeLayout(this.graph);
+			treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', true);
+			treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', true);
+			treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
+			treeLayout.levelDistance = mxUtils.getValue(style, 'treeLevelDistance', 30);
+			treeLayout.maintainParentLocation = true;
+			treeLayout.edgeRouting = false;
+			treeLayout.resetEdges = false;
+			
+			return treeLayout;
+		}
+		else if (style['childLayout'] == 'flowLayout')
+		{
+			var flowLayout = new mxHierarchicalLayout(this.graph, mxUtils.getValue(style,
+					'flowOrientation', mxConstants.DIRECTION_EAST));
+			flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', true);
+			flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
+			flowLayout.maintainParentLocation = true;
+			
+			return flowLayout;
+		}
+		
+		return null;
+	};
 };
 
 /**
@@ -1025,7 +1151,8 @@ Graph.prototype.isCellResizable = function(cell)
 	var state = this.view.getState(cell);
 	var style = (state != null) ? state.style : this.getCellStyle(cell);
 		
-	return result || style[mxConstants.STYLE_WHITE_SPACE] == 'wrap';
+	return result || (mxUtils.getValue(style, mxConstants.STYLE_RESIZABLE, '1') != '0' &&
+		style[mxConstants.STYLE_WHITE_SPACE] == 'wrap');
 };
 
 /**

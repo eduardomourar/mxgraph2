@@ -1,3 +1,6 @@
+- Adds support for childLayout style in grapheditor
+- Fixes size handles for locked shape in grapheditor
+- Adds capture phase, fixes duplicates in mxLayoutManager [JavaScript]
 - Fixes mxStackLayout.moveCell for scaled graphs [JavaScript]
 - Changes title and size of edit style dialog in grapheditor
 - Changes default of mxStencil.allowEval to false [JavaScript]
