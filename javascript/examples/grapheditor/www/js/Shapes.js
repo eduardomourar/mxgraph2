@@ -1843,6 +1843,8 @@
 		{
 			// Not rotatable means locked
 			if (this.graph.isCellRotatable(this.state.cell))
+			// LATER: Make locked state independent of rotatable flag, fix toggle if default is false
+			//if (this.graph.isCellResizable(this.state.cell) || this.graph.isCellMovable(this.state.cell))
 			{
 				var fn = handleFactory[this.state.style['shape']];
 			
