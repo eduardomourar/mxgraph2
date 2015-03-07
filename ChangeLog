@@ -1,3 +1,5 @@
+- Adds UML shapes and elements in grapheditor UML sidebar 
+- Changes UML lifeline container state in grapheditor
 - Adds support for childLayout style in grapheditor
 - Fixes size handles for locked shape in grapheditor
 - Adds capture phase, fixes duplicates in mxLayoutManager [JavaScript]
