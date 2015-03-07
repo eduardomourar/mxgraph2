@@ -1260,7 +1260,6 @@ Sidebar.prototype.updateShapes = function(source, targets)
 					for (var j = 0; j < styles.length; j++)
 					{
 						var value = style[styles[j]];
-						console.log('styles[j]', styles[j], value);
 						
 						if (value != null)
 						{
