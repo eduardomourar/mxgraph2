@@ -361,7 +361,7 @@ mxSpaceManager.prototype.cellResized = function(cell)
  * cell - Array of <mxCells> that have been moved.
  * evt - Mouse event that represents the mousedown.
  */
-mxSpaceManager.prototype.shiftCell = function(cell, dx, dy, Ox0, y0, right,
+mxSpaceManager.prototype.shiftCell = function(cell, dx, dy, x0, y0, right,
 		bottom, fx, fy, extendParent)
 {
 	var graph = this.getGraph();
