@@ -11226,10 +11226,8 @@ mxGraph.prototype.getCellsBeyond = function(x0, y0, parent, rightHalfpane, botto
 				
 				if (this.isCellVisible(child) && state != null)
 				{
-					if ((!rightHalfpane ||
-						state.x >= x0) &&
-						(!bottomHalfpane ||
-						state.y >= y0))
+					if ((!rightHalfpane || state.x >= x0) &&
+						(!bottomHalfpane || state.y >= y0))
 					{
 						result.push(child);
 					}
