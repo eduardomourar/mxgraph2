@@ -1,3 +1,4 @@
+- Adds mxMouseEvnet argument in mxGraphHandler.isDelayedSelection [JavaScript]
 - Maintains cell order for duplicates in grapheditor
 - Selects parents after deleting cells in grapheditor
 - Adds optional event argument in mxGraph.foldCells [JavaScript]
