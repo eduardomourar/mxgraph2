@@ -4488,7 +4488,7 @@ mxGraph.prototype.cellsAdded = function(cells, parent, index, source, target, ab
 					}
 
 					// Extends the parent or constrains the child
-					if (this.isExtendParentsOnAdd() && this.isExtendParent(cells[i]))
+					if (this.isExtendParentsOnAdd(cells[i]) && this.isExtendParent(cells[i]))
 					{
 						this.extendParent(cells[i]);
 					}
@@ -4827,8 +4827,9 @@ mxGraph.prototype.cellsToggled = function(cells, show)
  * null is specified then the foldable selection cells are used.
  * checkFoldable - Optional boolean indicating of isCellFoldable should be
  * checked. Default is false.
+ * evt - Optional native event that triggered the invocation.
  */
-mxGraph.prototype.foldCells = function(collapse, recurse, cells, checkFoldable)
+mxGraph.prototype.foldCells = function(collapse, recurse, cells, checkFoldable, evt)
 {
 	recurse = (recurse != null) ? recurse : false;
 	
@@ -10165,7 +10166,7 @@ mxGraph.prototype.setExtendParents = function(value)
  * 
  * Returns <extendParentsOnAdd>.
  */
-mxGraph.prototype.isExtendParentsOnAdd = function()
+mxGraph.prototype.isExtendParentsOnAdd = function(cell)
 {
 	return this.extendParentsOnAdd;
 };
@@ -10185,7 +10186,7 @@ mxGraph.prototype.setExtendParentsOnAdd = function(value)
 };
 
 /**
- * Function: isExtendParentsOnAdd
+ * Function: isExtendParentsOnMove
  * 
  * Returns <extendParentsOnAdd>.
  */
@@ -10195,7 +10196,7 @@ mxGraph.prototype.isExtendParentsOnMove = function()
 };
 
 /**
- * Function: setExtendParentsOnAdd
+ * Function: setExtendParentsOnMove
  * 
  * Sets <extendParentsOnAdd>.
  * 

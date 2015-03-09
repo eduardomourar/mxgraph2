@@ -608,7 +608,7 @@ mxCellRenderer.prototype.createControl = function(state)
 				if (graph.isEnabled())
 				{
 					var collapse = !graph.isCellCollapsed(state.cell);
-					graph.foldCells(collapse, false, [state.cell]);
+					graph.foldCells(collapse, false, [state.cell], null, evt);
 					mxEvent.consume(evt);
 				}
 			});
