@@ -114,30 +114,8 @@ Actions.prototype.init = function()
 	}, null, null, 'Delete');
 	this.addAction('duplicate', function()
 	{
-		var cells = graph.getSelectionCells();
-		var s = graph.gridSize;
-		var select = [];
-		
-		graph.getModel().beginUpdate();
-		try
-		{
-			for (var i = 0; i < cells.length; i++)
-			{
-				var parent = graph.getModel().getParent(cells[i]);
-				var index = parent.getIndex(cells[i]);
-				var newChild = graph.moveCells([cells[i]], s, s, true, graph.getModel().getParent(cells[i]))[0]; 
-				select.push(newChild);
-				// Maintains child index by inserting after cloned in parent
-				graph.getModel().add(parent, newChild, index + 1);
-			}
-		}
-		finally
-		{
-			graph.getModel().endUpdate();
-		}
-
-		graph.setSelectionCells(select);
-	}, null, null, 'Ctrl+D');
+		graph.setSelectionCells(graph.duplicateCells());
+	}, null, null, 'Ctrl+Enter');
 	this.addAction('turn', function()
 	{
 		graph.setSelectionCells(graph.turnShapes(graph.getSelectionCells()));
@@ -162,10 +140,10 @@ Actions.prototype.init = function()
 
 	// Navigation actions
 	this.addAction('home', function() { graph.home(); }, null, null, 'Home');
-	this.addAction('exitGroup', function() { graph.exitGroup(); }, null, null, 'Page Up');
-	this.addAction('enterGroup', function() { graph.enterGroup(); }, null, null, 'Page Down');
-	this.addAction('expand', function() { graph.foldCells(false); }, null, null, 'Ctrl+Enter');
-	this.addAction('collapse', function() { graph.foldCells(true); }, null, null, 'Ctrl+Backspace');
+	this.addAction('exitGroup', function() { graph.exitGroup(); }, null, null, 'Ctrl+Shift+Page Up');
+	this.addAction('enterGroup', function() { graph.enterGroup(); }, null, null, 'Ctrl+Shift+Page Down');
+	this.addAction('expand', function() { graph.foldCells(false); }, null, null, 'Ctrl+Page Down');
+	this.addAction('collapse', function() { graph.foldCells(true); }, null, null, 'Ctrl+Page Up');
 
 	// Arrange actions
 	this.addAction('toFront', function() { graph.orderCells(false); }, null, null, 'Ctrl+Shift+F');

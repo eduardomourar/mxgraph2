@@ -436,93 +436,93 @@ Graph = function(container, model, renderHint, stylesheet)
 	var graphFoldCells = this.foldCells;
 	this.foldCells = function(collapse, recurse, cells, checkFoldable, evt)
 	{
-		this.model.beginUpdate();
-		try
+		recurse = (recurse != null) ? recurse : false;
+		
+		if (cells == null)
 		{
-			// Stores previous geometries
-			var geos = [];
+			cells = this.getFoldableCells(this.getSelectionCells(), collapse);
+		}
+		
+		if (cells != null)
+		{
+			this.model.beginUpdate();
 			
-			for (var i = 0; i < cells.length; i++)
+			try
 			{
-				geos[i] = this.getCellGeometry(cells[i]);
-			}
-			
-			graphFoldCells.apply(this, arguments);
-			
-			// Resizes all parent stacks if alt is not pressed
-			if (this.layoutManager != null)
-			{
-				for (var i = 0; i < cells.length; i++)
+				graphFoldCells.apply(this, arguments);
+				
+				// Resizes all parent stacks if alt is not pressed
+				if (this.layoutManager != null)
 				{
-					var state = this.view.getState(cells[i]);
-					var geo = this.getCellGeometry(cells[i]);
-					
-					if (state != null && geo != null)
+					for (var i = 0; i < cells.length; i++)
 					{
-						var dx = Math.round(geo.width - state.width / this.view.scale);
-						var dy = Math.round(geo.height - state.height / this.view.scale);
+						var state = this.view.getState(cells[i]);
+						var geo = this.getCellGeometry(cells[i]);
 						
-						if (dy != 0 || dx != 0)
+						if (state != null && geo != null)
 						{
-							var parent = this.model.getParent(cells[i]);
-							var layout = this.layoutManager.getLayout(parent);
+							var dx = Math.round(geo.width - state.width / this.view.scale);
+							var dy = Math.round(geo.height - state.height / this.view.scale);
 							
-							if (layout == null)
+							if (dy != 0 || dx != 0)
 							{
-								// Moves cells to the right and down after collapse/expand
-								if (evt == null || mxEvent.isShiftDown(evt))
-								{
-									var rightCells = this.getCellsBeyond(state.x + state.width, 0, parent, true, false);
-									this.cellsMoved(rightCells, dx, 0);
-									var bottomCells = this.getCellsBeyond(0, state.y + state.height, parent, false, true);
-									this.cellsMoved(bottomCells, 0, dy);
-								} 
-							}
-							else if ((evt == null || !mxEvent.isAltDown(evt)) && layout.constructor == mxStackLayout && !layout.resizeLast)
-							{
-								var dir = layout.horizontal;
+								var parent = this.model.getParent(cells[i]);
+								var layout = this.layoutManager.getLayout(parent);
 								
-								// Bubble resize up for all parent stack layouts with same orientation
-								while (parent != null && layout != null && layout.constructor == mxStackLayout &&
-									layout.horizontal == dir && !layout.resizeLast)
+								if (layout == null)
 								{
-									var pgeo = this.getCellGeometry(parent);
-									var pstate = this.view.getState(parent);
-									
-									if (pstate != null && pgeo != null)
+									// Moves cells to the right and down after collapse/expand
+									if (evt != null && mxEvent.isShiftDown(evt))
 									{
-										pgeo = pgeo.clone();
-										
-										if (layout.horizontal)
-										{
-											pgeo.width += dx + Math.min(0, pstate.width / this.view.scale - pgeo.width);									
-										}
-										else
-										{
-											pgeo.height += dy + Math.min(0, pstate.height / this.view.scale - pgeo.height);
-										}
-	
-										this.model.setGeometry(parent, pgeo);
-									}
+										var rightCells = this.getCellsBeyond(state.x + state.width, 0, parent, true, false);
+										this.cellsMoved(rightCells, dx, 0);
+										var bottomCells = this.getCellsBeyond(0, state.y + state.height, parent, false, true);
+										this.cellsMoved(bottomCells, 0, dy);
+									} 
+								}
+								else if ((evt == null || !mxEvent.isAltDown(evt)) && layout.constructor == mxStackLayout && !layout.resizeLast)
+								{
+									var dir = layout.horizontal;
 									
-									parent = this.model.getParent(parent);
-									layout = this.layoutManager.getLayout(parent);
+									// Bubble resize up for all parent stack layouts with same orientation
+									while (parent != null && layout != null && layout.constructor == mxStackLayout &&
+										layout.horizontal == dir && !layout.resizeLast)
+									{
+										var pgeo = this.getCellGeometry(parent);
+										var pstate = this.view.getState(parent);
+										
+										if (pstate != null && pgeo != null)
+										{
+											pgeo = pgeo.clone();
+											
+											if (layout.horizontal)
+											{
+												pgeo.width += dx + Math.min(0, pstate.width / this.view.scale - pgeo.width);									
+											}
+											else
+											{
+												pgeo.height += dy + Math.min(0, pstate.height / this.view.scale - pgeo.height);
+											}
+		
+											this.model.setGeometry(parent, pgeo);
+										}
+										
+										parent = this.model.getParent(parent);
+										layout = this.layoutManager.getLayout(parent);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-		finally
-		{
-			this.model.endUpdate();
-		}
-		
-		// Selects cell after folding
-		if (!this.isCellSelected(cells[0]))
-		{
-			this.setSelectionCell(cells[0]);
+			finally
+			{
+				this.model.endUpdate();
+			}
+			
+			// Selects cells after folding
+			this.setSelectionCells(cells);
 		}
 	};
 	
@@ -1242,6 +1242,38 @@ Graph.prototype.addText = function(x, y, state)
 	}
 	
 	return label;
+};
+
+/**
+ * Duplicates the given cells and returns the duplicates.
+ */
+Graph.prototype.duplicateCells = function(cells)
+{
+	cells = (cells != null) ? cells : this.getSelectionCells();
+	var model = this.getModel();
+	var s = this.gridSize;
+	var select = [];
+	
+	model.beginUpdate();
+	try
+	{
+		for (var i = 0; i < cells.length; i++)
+		{
+			var parent = model.getParent(cells[i]);
+			var index = parent.getIndex(cells[i]);
+			var newChild = this.moveCells([cells[i]], s, s, true, model.getParent(cells[i]))[0]; 
+			select.push(newChild);
+			
+			// Maintains child index by inserting after cloned in parent
+			model.add(parent, newChild, index + 1);
+		}
+	}
+	finally
+	{
+		model.endUpdate();
+	}
+	
+	return select;
 };
 
 /**
@@ -2249,6 +2281,8 @@ Graph.prototype.initTouch = function()
 			{
 				this.graph.getModel().endUpdate();
 			}
+			
+			this.graph.container.focus();
 		};
 		
 		// Allows resizing for current HTML value

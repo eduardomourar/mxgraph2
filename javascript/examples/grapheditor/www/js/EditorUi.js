@@ -1603,10 +1603,10 @@ EditorUi.prototype.updateActionStates = function()
     this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected && state != null && graph.isLoop(state)));
     this.actions.get('home').setEnabled(graph.view.currentRoot != null);
     this.actions.get('exitGroup').setEnabled(graph.view.currentRoot != null);
-    var groupEnabled = graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell());
-    this.actions.get('enterGroup').setEnabled(groupEnabled);
-    this.actions.get('expand').setEnabled(groupEnabled);
-    this.actions.get('collapse').setEnabled(groupEnabled);
+    this.actions.get('enterGroup').setEnabled(graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell()));
+    var foldable = graph.getSelectionCount() == 1 && graph.isCellFoldable(graph.getSelectionCell())
+    this.actions.get('expand').setEnabled(foldable);
+    this.actions.get('collapse').setEnabled(foldable);
     this.actions.get('editLink').setEnabled(graph.getSelectionCount() == 1);
     this.actions.get('openLink').setEnabled(graph.getSelectionCount() == 1 &&
     		graph.getLinkForCell(graph.getSelectionCell()) != null);
@@ -2455,10 +2455,10 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	// Ignores enter keystroke. Remove this line if you want the
 	// enter keystroke to stop editing.
 	keyHandler.enter = function() {};
-	keyHandler.bindControlKey(13, function() { graph.foldCells(false); }); // Ctrl+Enter
-	keyHandler.bindControlKey(8, function() { graph.foldCells(true); }); // Ctrl+Backspace
-	keyHandler.bindKey(33, function() { graph.exitGroup(); }); // Page Up
-	keyHandler.bindKey(34, function() { graph.enterGroup(); }); // Page Down
+	keyHandler.bindControlKey(36, function() { graph.foldCells(true); }); // Ctrl+Home
+	keyHandler.bindControlKey(35, function() { graph.foldCells(false); }); // Ctrl+End
+	keyHandler.bindControlShiftKey(36, function() { graph.exitGroup(); }); // Ctrl+Shift+Home
+	keyHandler.bindControlShiftKey(35, function() { graph.enterGroup(); }); // Ctrl+Shift+End
 	keyHandler.bindKey(36, function() { graph.home(); }); // Home
 	keyHandler.bindKey(35, function() { graph.refresh(); }); // End
 	keyHandler.bindKey(37, function() { nudge(37); }); // Left arrow
@@ -2471,6 +2471,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
 	keyHandler.bindAction(8, false, 'delete'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
+	keyHandler.bindAction(13, true, 'duplicate'); // Ctrl+Enter
 	keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
 	keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
 	keyHandler.bindAction(83, true, 'save'); // Ctrl+S
@@ -2483,7 +2484,6 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(69, true, 'editStyle'); // Ctrl+E
 	keyHandler.bindAction(66, true, 'toBack'); // Ctrl+B
 	keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
-	keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
 	keyHandler.bindAction(68, true, 'setAsDefaultStyle', true); // Ctrl+Shift+D   
 	keyHandler.bindAction(90, true, 'undo'); // Ctrl+Z
 	keyHandler.bindAction(90, true, 'autosize', true); // Ctrl+Shift+Z
