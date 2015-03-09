@@ -318,7 +318,10 @@ Format.prototype.refresh = function()
 		img.setAttribute('border', '0');
 		img.setAttribute('src', IMAGE_PATH + '/close.png');
 		img.setAttribute('title', mxResources.get('hide'));
-		img.style.cssFloat = 'right';
+		img.style.position = 'absolute';
+		img.style.display = 'block';
+		img.style.right = '0px';
+		img.style.top = '8px';
 		img.style.cursor = 'pointer';
 		img.style.marginTop = '1px';
 		img.style.marginRight = '16px';
