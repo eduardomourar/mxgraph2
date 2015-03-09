@@ -681,7 +681,6 @@ mxClient.include(mxClient.basePath+'/js/view/mxCellOverlay.js');
 mxClient.include(mxClient.basePath+'/js/view/mxOutline.js');
 mxClient.include(mxClient.basePath+'/js/view/mxMultiplicity.js');
 mxClient.include(mxClient.basePath+'/js/view/mxLayoutManager.js');
-mxClient.include(mxClient.basePath+'/js/view/mxSpaceManager.js');
 mxClient.include(mxClient.basePath+'/js/view/mxSwimlaneManager.js');
 mxClient.include(mxClient.basePath+'/js/view/mxTemporaryCellStates.js');
 mxClient.include(mxClient.basePath+'/js/view/mxCellStatePreview.js');

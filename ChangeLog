@@ -1,3 +1,10 @@
+- Removes mxSpaceManager class [Java,JavaScript]
+- Shift+expand/collapse moves neighbour cells in grapheditor (experimental)
+- Sets collapsed swimlane in vertical/horizontal stack to horizontal/vertical in grapheditor
+- Ignores previous width/height for stack child folding in grapheditor
+- Disables extending parents with stack layouts on add in grapheditor
+- Fixes format panel close icon position in grapheditor
+- Fixes delayed selection after folding in grapheditor
 - Adds mxMouseEvnet argument in mxGraphHandler.isDelayedSelection [JavaScript]
 - Maintains cell order for duplicates in grapheditor
 - Selects parents after deleting cells in grapheditor

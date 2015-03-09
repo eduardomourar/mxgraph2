@@ -450,7 +450,7 @@ Graph = function(container, model, renderHint, stylesheet)
 			graphFoldCells.apply(this, arguments);
 			
 			// Resizes all parent stacks if alt is not pressed
-			if ((evt == null || !mxEvent.isAltDown(evt)) && this.layoutManager != null)
+			if (this.layoutManager != null)
 			{
 				for (var i = 0; i < cells.length; i++)
 				{
@@ -464,33 +464,50 @@ Graph = function(container, model, renderHint, stylesheet)
 						
 						if (dy != 0 || dx != 0)
 						{
-							// Bubble resize up for all parent stack layouts with same orientation
 							var parent = this.model.getParent(cells[i]);
 							var layout = this.layoutManager.getLayout(parent);
 							
-							while (parent != null && layout != null && layout.constructor == mxStackLayout && !layout.resizeLast)
+							if (layout == null)
 							{
-								var pgeo = this.getCellGeometry(parent);
-								var pstate = this.view.getState(parent);
-								
-								if (pstate != null && pgeo != null)
+								// Moves cells to the right and down after collapse/expand
+								if (evt == null || mxEvent.isShiftDown(evt))
 								{
-									pgeo = pgeo.clone();
-									
-									if (layout.horizontal)
-									{
-										pgeo.width += dx + Math.min(0, pstate.width / this.view.scale - pgeo.width);									
-									}
-									else
-									{
-										pgeo.height += dy + Math.min(0, pstate.height / this.view.scale - pgeo.height);
-									}
-
-									this.model.setGeometry(parent, pgeo);
-								}
+									var rightCells = this.getCellsBeyond(state.x + state.width, 0, parent, true, false);
+									this.cellsMoved(rightCells, dx, 0);
+									var bottomCells = this.getCellsBeyond(0, state.y + state.height, parent, false, true);
+									this.cellsMoved(bottomCells, 0, dy);
+								} 
+							}
+							else if ((evt == null || !mxEvent.isAltDown(evt)) && layout.constructor == mxStackLayout && !layout.resizeLast)
+							{
+								var dir = layout.horizontal;
 								
-								parent = this.model.getParent(parent);
-								layout = this.layoutManager.getLayout(parent);
+								// Bubble resize up for all parent stack layouts with same orientation
+								while (parent != null && layout != null && layout.constructor == mxStackLayout &&
+									layout.horizontal == dir && !layout.resizeLast)
+								{
+									var pgeo = this.getCellGeometry(parent);
+									var pstate = this.view.getState(parent);
+									
+									if (pstate != null && pgeo != null)
+									{
+										pgeo = pgeo.clone();
+										
+										if (layout.horizontal)
+										{
+											pgeo.width += dx + Math.min(0, pstate.width / this.view.scale - pgeo.width);									
+										}
+										else
+										{
+											pgeo.height += dy + Math.min(0, pstate.height / this.view.scale - pgeo.height);
+										}
+	
+										this.model.setGeometry(parent, pgeo);
+									}
+									
+									parent = this.model.getParent(parent);
+									layout = this.layoutManager.getLayout(parent);
+								}
 							}
 						}
 					}
