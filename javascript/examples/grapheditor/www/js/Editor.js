@@ -823,19 +823,18 @@ Editor.prototype.init = function()
 	
 	// Selection is delayed to mouseup if child selected
 	var graphHandlerIsDelayedSelection = mxGraphHandler.prototype.isDelayedSelection;
-	mxGraphHandler.prototype.isDelayedSelection = function(cell)
+	mxGraphHandler.prototype.isDelayedSelection = function(cell, me)
 	{
 		var result = graphHandlerIsDelayedSelection.apply(this, arguments);
 		var model = this.graph.getModel();
 		var psel = model.getParent(this.graph.getSelectionCell());
 		var parent = model.getParent(cell);
 		
-		if (psel == null || (psel != cell && psel != parent))
+		if ((psel == null || (psel != cell && psel != parent)) &&
+			!this.graph.isCellSelected(cell) && model.isVertex(parent) &&
+			!this.graph.isValidRoot(parent))
 		{
-			if (!this.graph.isCellSelected(cell) && model.isVertex(parent) && !this.graph.isValidRoot(parent))
-			{
-				result = true;
-			}
+			result = true;
 		}
 		
 		return result;
@@ -852,17 +851,27 @@ Editor.prototype.init = function()
 			{
 				cell = this.cell;
 			}
+
+			// Selects folded cell for hit on folding icon
+			var state = this.graph.view.getState(cell)
 			
-			var model = this.graph.getModel();
-			var parent = model.getParent(cell);
-			
-			while (this.graph.isCellSelected(cell) && model.isVertex(parent) && !this.graph.isValidRoot(parent))
+			if (state != null && me.isSource(state.control))
 			{
-				cell = parent;
-				parent = model.getParent(cell);
+				this.graph.selectCellForEvent(cell, me.getEvent());
 			}
-			
-			this.graph.selectCellForEvent(cell, me.getEvent());
+			else
+			{
+				var model = this.graph.getModel();
+				var parent = model.getParent(cell);
+				
+				while (this.graph.isCellSelected(cell) && model.isVertex(parent) && !this.graph.isValidRoot(parent))
+				{
+					cell = parent;
+					parent = model.getParent(cell);
+				}
+				
+				this.graph.selectCellForEvent(cell, me.getEvent());
+			}
 		}
 	};
 

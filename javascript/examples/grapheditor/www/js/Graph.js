@@ -383,7 +383,133 @@ Graph = function(container, model, renderHint, stylesheet)
 		
 		ch.destroyFocusHighlight();
 	}));
+	
+	// Disables extending parents with stack layouts on add
+	var graphIsExtendParentsOnAdd = this.isExtendParentsOnAdd;
+	this.isExtendParentsOnAdd = function(cell)
+	{
+		var result = graphIsExtendParentsOnAdd.apply(this, arguments);
+		
+		if (result && cell != null && this.layoutManager != null)
+		{
+			var parent = this.model.getParent(cell);
+			
+			if (parent != null)
+			{
+				var layout = this.layoutManager.getLayout(parent);
+				
+				if (layout != null && layout.constructor == mxStackLayout)
+				{
+					result = false;
+				}
+			}
+		}
+		
+		return result;
+	};
+	
+	// Disables alternate width persistence for stack layout parents
+	var graphUpdateAlternateBounds = this.updateAlternateBounds;
+	mxGraph.prototype.updateAlternateBounds = function(cell, geo, willCollapse)
+	{
+		if (cell != null && geo != null && this.layoutManager != null && geo.alternateBounds != null)
+		{
+			var layout = this.layoutManager.getLayout(this.model.getParent(cell));
+			
+			if (layout != null && layout.constructor == mxStackLayout)
+			{
+				if (layout.horizontal)
+				{
+					geo.alternateBounds.height = 0;
+				}
+				else
+				{
+					geo.alternateBounds.width = 0;
+				}
+			}
+		}
+		
+		graphUpdateAlternateBounds.apply(this, arguments);
+	};
 
+	// Adds Shift+collapse/expand and size management for folding inside stack
+	var graphFoldCells = this.foldCells;
+	this.foldCells = function(collapse, recurse, cells, checkFoldable, evt)
+	{
+		this.model.beginUpdate();
+		try
+		{
+			// Stores previous geometries
+			var geos = [];
+			
+			for (var i = 0; i < cells.length; i++)
+			{
+				geos[i] = this.getCellGeometry(cells[i]);
+			}
+			
+			graphFoldCells.apply(this, arguments);
+			
+			// Resizes all parent stacks if alt is not pressed
+			if ((evt == null || !mxEvent.isAltDown(evt)) && this.layoutManager != null)
+			{
+				for (var i = 0; i < cells.length; i++)
+				{
+					var state = this.view.getState(cells[i]);
+					var geo = this.getCellGeometry(cells[i]);
+					
+					if (state != null && geo != null)
+					{
+						var dx = Math.round(geo.width - state.width / this.view.scale);
+						var dy = Math.round(geo.height - state.height / this.view.scale);
+						
+						if (dy != 0 || dx != 0)
+						{
+							// Bubble resize up for all parent stack layouts with same orientation
+							var parent = this.model.getParent(cells[i]);
+							var layout = this.layoutManager.getLayout(parent);
+							
+							while (parent != null && layout != null && layout.constructor == mxStackLayout && !layout.resizeLast)
+							{
+								var pgeo = this.getCellGeometry(parent);
+								var pstate = this.view.getState(parent);
+								
+								if (pstate != null && pgeo != null)
+								{
+									pgeo = pgeo.clone();
+									
+									if (layout.horizontal)
+									{
+										pgeo.width += dx + Math.min(0, pstate.width / this.view.scale - pgeo.width);									
+									}
+									else
+									{
+										pgeo.height += dy + Math.min(0, pstate.height / this.view.scale - pgeo.height);
+									}
+
+									this.model.setGeometry(parent, pgeo);
+								}
+								
+								parent = this.model.getParent(parent);
+								layout = this.layoutManager.getLayout(parent);
+							}
+						}
+					}
+				}
+			}
+		}
+		finally
+		{
+			this.model.endUpdate();
+		}
+		
+		// Selects cell after folding
+		if (!this.isCellSelected(cells[0]))
+		{
+			this.setSelectionCell(cells[0]);
+		}
+	};
+	
+	// Initializes touch interface
 	if (touchStyle)
 	{
 		this.initTouch();
@@ -583,22 +709,21 @@ Graph.prototype.init = function()
 	mxGraph.prototype.init.apply(this, arguments);
 	var graph = this;
 	
-	// Changes swimlane orientation while collapsed
-	// LATER: Check for performance hit of this function
+	// Aligns swimlane title with parent stack while collapsed
 	var graphModelGetStyle = this.model.getStyle;
 	this.model.getStyle = function(cell)
 	{
 		var style = graphModelGetStyle.apply(this, arguments);
 
-		if (cell != null)
+		if (cell != null && graph.layoutManager != null)
 		{
 			var parent = this.getParent(cell);
 			
-			if (this.isVertex(parent))
+			if (this.isVertex(parent) && graph.isCellCollapsed(cell))
 			{
-				var pstyle = graph.getCellStyle(parent);
+				var layout = graph.layoutManager.getLayout(parent);
 				
-				if (graph.isCellCollapsed(cell) && pstyle['childLayout'] == 'stackLayout' && !mxUtils.getValue(pstyle, 'horizontalStack', true))
+				if (layout != null && layout.constructor == mxStackLayout)
 				{
 					if (style != null)
 					{
@@ -609,7 +734,8 @@ Graph.prototype.init = function()
 						style = '';
 					}
 					
-					style += 'horizontal=1;';
+					// Horizontal title for vertical stack and vice-versa
+					style += 'horizontal=' + (layout.horizontal ? '0' : '1') + ';';
 				}
 			}
 		}
@@ -643,6 +769,7 @@ Graph.prototype.init = function()
 				this.graph.getModel().setGeometry(child, geo);
 			};
 		
+			// LATER: Depends on rack stencil which is defined in draw.io
 			rackLayout.fill = true;
 			rackLayout.unitSize = mxRackContainer.unitSize | 20;
 			rackLayout.marginLeft = style['marginLeft'] || 0;
