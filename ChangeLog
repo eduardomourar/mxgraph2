@@ -1,3 +1,7 @@
+- Maintains cell order for duplicates in grapheditor
+- Selects parents after deleting cells in grapheditor
+- Adds optional event argument in mxGraph.foldCells [JavaScript]
+- Adds optional cell argument in mxGraph.isExtendParentsOnAdd [JavaScript]
 - Adds capture/bubble phase in mxLayoutManager [JavaScript]
 - Adds mxStackLayout.resizeParentMax switch [JavaScript]
 - Adds UML shapes and elements in grapheditor UML sidebar 

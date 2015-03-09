@@ -91,7 +91,25 @@ Actions.prototype.init = function()
 		}
 		else
 		{
-			graph.removeCells();
+			var cells = graph.getSelectionCells();
+			var parents = graph.model.getParents(cells);
+			graph.removeCells(cells);
+			
+			// Selects parents for easier editing of groups
+			if (parents != null)
+			{
+				var select = [];
+				
+				for (var i = 0; i < parents.length; i++)
+				{
+					if (graph.model.isVertex(parents[i]) || graph.model.isEdge(parents[i]))
+					{
+						select.push(parents[i]);
+					}
+				}
+				
+				graph.setSelectionCells(select);
+			}
 		}
 	}, null, null, 'Delete');
 	this.addAction('duplicate', function()
@@ -105,7 +123,12 @@ Actions.prototype.init = function()
 		{
 			for (var i = 0; i < cells.length; i++)
 			{
-				select.push(graph.moveCells([cells[i]], s, s, true, graph.getModel().getParent(cells[i]))[0]);
+				var parent = graph.getModel().getParent(cells[i]);
+				var index = parent.getIndex(cells[i]);
+				var newChild = graph.moveCells([cells[i]], s, s, true, graph.getModel().getParent(cells[i]))[0]; 
+				select.push(newChild);
+				// Maintains child index by inserting after cloned in parent
+				graph.getModel().add(parent, newChild, index + 1);
 			}
 		}
 		finally
