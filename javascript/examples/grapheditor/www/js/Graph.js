@@ -675,8 +675,8 @@ Graph.prototype.moveSiblings = function(state, parent, dx, dy)
 				if (tmp != null && geo != null)
 				{
 					geo = geo.clone();
-					geo.translate(dx * Math.max(0, Math.min(1, (tmp.x - state.x) / state.width)),
-						dy * Math.max(0, Math.min(1, (tmp.y - state.y) / state.height)));
+					geo.translate(Math.round(dx * Math.max(0, Math.min(1, (tmp.x - state.x) / state.width))),
+						Math.round(dy * Math.max(0, Math.min(1, (tmp.y - state.y) / state.height))));
 					this.model.setGeometry(cells[i], geo);
 				}
 			}
