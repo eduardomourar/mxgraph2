@@ -2470,6 +2470,10 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindShiftKey(39, function() { nudge(39, graph.gridSize); }); // Shift+Right arrow
 	keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
 	keyHandler.bindControlKey(13, function() { graph.setSelectionCells(graph.duplicateCells(graph.getSelectionCells(), false)); }); // Ctrl+Enter
+	keyHandler.bindKey(9, function() { graph.selectNextCell(); }); // Tab
+	keyHandler.bindShiftKey(9, function() { graph.selectPreviousCell(); }); // Shift+Tab
+	keyHandler.bindControlKey(9, function() { graph.selectParentCell(); }); // Ctrl++Tab
+	keyHandler.bindControlShiftKey(9, function() { graph.selectChildCell(); }); // Ctrl+Shift+Tab
 	keyHandler.bindAction(8, false, 'delete'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
 	keyHandler.bindAction(82, true, 'turn'); // Ctrl+R

@@ -529,9 +529,8 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		//
 		// Class
 		//
-		var entityCell = new mxCell('<p style="margin:0px;;">' +
-			'<i>&lt;&lt;Type&gt;&gt;</i><br/><b>Classname</b></p>', new mxGeometry(0, 0, 200, 106),
-	    	'swimlane;html=1;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=44;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
+		var entityCell = new mxCell('Classname', new mxGeometry(0, 0, 200, 90),
+	    	'swimlane;html=1;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
 		entityCell.vertex = true;
 		var row1 = new mxCell('+ field: Type', new mxGeometry(0, 0, 200, 26), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
 		row1.vertex = true;
@@ -545,7 +544,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		row3.value = '+ method2(Type): Type';
 		entityCell.insert(row3);
 		
-		content.appendChild(this.createVertexTemplateFromCells([entityCell], 200, 106, 'Class', true));
+		content.appendChild(this.createVertexTemplateFromCells([entityCell], 200, 90, 'Class', true));
 	
 		//
 		// Item

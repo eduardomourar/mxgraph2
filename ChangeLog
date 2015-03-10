@@ -1,3 +1,4 @@
+- Adds key shortcuts for select next/previous/parent/child (Ctrl+Tab/Ctrl+Shift+Tab) in grapheditor
 - mxGraph.getCellsBeyond returns cells in one or both half panes [Java,JavaScript]
 - Changes key shortcuts for edit and enter group (Ctrl+Shift+Home/End) in grapheditor
 - Changes key shortcuts for expand and collapse (Ctrl+Home/End) in grapheditor
