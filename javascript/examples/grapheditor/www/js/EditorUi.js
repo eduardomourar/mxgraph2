@@ -27,6 +27,19 @@ EditorUi = function(editor, container)
 		this.footerHeight = 0;
 		graph.isEnabled = function() { return false; };
 		graph.panningHandler.isForcePanningEvent = function() { return true; };
+
+		// Overrides click handler to ignore graph enabled state
+		graph.cellRenderer.createControlClickHandler = function(state)
+		{
+			var graph = state.view.graph;
+			
+			return function (evt)
+			{
+				var collapse = !graph.isCellCollapsed(state.cell);
+				graph.foldCells(collapse, false, [state.cell], null, evt);
+				mxEvent.consume(evt);
+			};
+		};
 	}
 	
     // Creates the user interface
@@ -1019,6 +1032,7 @@ EditorUi.prototype.initCanvas = function()
 		});
 		zoomInBtn.className = 'geSprite geSprite-zoomin';
 		zoomInBtn.setAttribute('title', mxResources.get('zoomIn'));
+		zoomInBtn.style.outline = 'none';
 		zoomInBtn.style.border = 'none';
 		zoomInBtn.style.margin = '2px';
 		
@@ -1030,6 +1044,7 @@ EditorUi.prototype.initCanvas = function()
 		});
 		zoomOutBtn.className = 'geSprite geSprite-zoomout';
 		zoomOutBtn.setAttribute('title', mxResources.get('zoomOut'));
+		zoomOutBtn.style.outline = 'none';
 		zoomOutBtn.style.border = 'none';
 		zoomOutBtn.style.margin = '2px';
 
@@ -1040,6 +1055,7 @@ EditorUi.prototype.initCanvas = function()
 		});
 		zoomActualBtn.className = 'geSprite geSprite-actualsize';
 		zoomActualBtn.setAttribute('title', mxResources.get('actualSize'));
+		zoomActualBtn.style.outline = 'none';
 		zoomActualBtn.style.border = 'none';
 		zoomActualBtn.style.margin = '2px';
 		

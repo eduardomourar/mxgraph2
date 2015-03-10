@@ -7261,7 +7261,7 @@ public class mxGraph extends mxEventSource
 					if (isCellVisible(child) && state != null)
 					{
 						if ((!rightHalfpane || state.getX() >= x0)
-								|| (!bottomHalfpane || state.getY() >= y0))
+								&& (!bottomHalfpane || state.getY() >= y0))
 						{
 							result.add(child);
 						}

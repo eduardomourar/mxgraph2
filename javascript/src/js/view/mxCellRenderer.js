@@ -603,15 +603,7 @@ mxCellRenderer.prototype.createControl = function(state)
 			state.control.preserveImageAspect = false;
 			state.control.dialect = graph.dialect;
 
-			this.initControl(state, state.control, true, function (evt)
-			{
-				if (graph.isEnabled())
-				{
-					var collapse = !graph.isCellCollapsed(state.cell);
-					graph.foldCells(collapse, false, [state.cell], null, evt);
-					mxEvent.consume(evt);
-				}
-			});
+			this.initControl(state, state.control, true, this.createControlClickHandler(state));
 		}
 	}
 	else if (state.control != null)
@@ -619,6 +611,30 @@ mxCellRenderer.prototype.createControl = function(state)
 		state.control.destroy();
 		state.control = null;
 	}
+};
+
+/**
+ * Function: createControlClickHandler
+ * 
+ * Hook for creating the click handler for the folding icon.
+ * 
+ * Parameters:
+ * 
+ * state - <mxCellState> whose control click handler should be returned.
+ */
+mxCellRenderer.prototype.createControlClickHandler = function(state)
+{
+	var graph = state.view.graph;
+	
+	return function (evt)
+	{
+		if (graph.isEnabled())
+		{
+			var collapse = !graph.isCellCollapsed(state.cell);
+			graph.foldCells(collapse, false, [state.cell], null, evt);
+			mxEvent.consume(evt);
+		}
+	};
 };
 
 /**

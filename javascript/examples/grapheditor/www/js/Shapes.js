@@ -1322,7 +1322,7 @@
 	});
 
 	// Handlers are only added if mxVertexHandler is defined (ie. not in embedded graph)
-	if (typeof(mxVertexHandler) != 'undefined')
+	if (typeof mxVertexHandler !== 'undefined')
 	{
 		function createHandle(state, keys, getPositionFn, setPositionFn, ignoreGrid)
 		{
