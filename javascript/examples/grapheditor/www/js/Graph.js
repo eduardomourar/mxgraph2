@@ -1304,6 +1304,8 @@ if (typeof mxVertexHandler != 'undefined')
 		cells = (cells != null) ? cells : this.getSelectionCells();
 		append = (append != null) ? append : true;
 		
+		cells = this.model.getTopmostCells(cells);
+		
 		var model = this.getModel();
 		var s = this.gridSize;
 		var select = [];
