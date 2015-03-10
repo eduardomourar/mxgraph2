@@ -384,148 +384,6 @@ Graph = function(container, model, renderHint, stylesheet)
 		ch.destroyFocusHighlight();
 	}));
 	
-	// Disables extending parents with stack layouts on add
-	var graphIsExtendParentsOnAdd = this.isExtendParentsOnAdd;
-	this.isExtendParentsOnAdd = function(cell)
-	{
-		var result = graphIsExtendParentsOnAdd.apply(this, arguments);
-		
-		if (result && cell != null && this.layoutManager != null)
-		{
-			var parent = this.model.getParent(cell);
-			
-			if (parent != null)
-			{
-				var layout = this.layoutManager.getLayout(parent);
-				
-				if (layout != null && layout.constructor == mxStackLayout)
-				{
-					result = false;
-				}
-			}
-		}
-		
-		return result;
-	};
-	
-	// Disables alternate width persistence for stack layout parents
-	var graphUpdateAlternateBounds = this.updateAlternateBounds;
-	mxGraph.prototype.updateAlternateBounds = function(cell, geo, willCollapse)
-	{
-		if (cell != null && geo != null && this.layoutManager != null && geo.alternateBounds != null)
-		{
-			var layout = this.layoutManager.getLayout(this.model.getParent(cell));
-			
-			if (layout != null && layout.constructor == mxStackLayout)
-			{
-				if (layout.horizontal)
-				{
-					geo.alternateBounds.height = 0;
-				}
-				else
-				{
-					geo.alternateBounds.width = 0;
-				}
-			}
-		}
-		
-		graphUpdateAlternateBounds.apply(this, arguments);
-	};
-
-	// Adds Shift+collapse/expand and size management for folding inside stack
-	var graphFoldCells = this.foldCells;
-	this.foldCells = function(collapse, recurse, cells, checkFoldable, evt)
-	{
-		recurse = (recurse != null) ? recurse : false;
-		
-		if (cells == null)
-		{
-			cells = this.getFoldableCells(this.getSelectionCells(), collapse);
-		}
-		
-		if (cells != null)
-		{
-			this.model.beginUpdate();
-			
-			try
-			{
-				graphFoldCells.apply(this, arguments);
-				
-				// Resizes all parent stacks if alt is not pressed
-				if (this.layoutManager != null)
-				{
-					for (var i = 0; i < cells.length; i++)
-					{
-						var state = this.view.getState(cells[i]);
-						var geo = this.getCellGeometry(cells[i]);
-						
-						if (state != null && geo != null)
-						{
-							var dx = Math.round(geo.width - state.width / this.view.scale);
-							var dy = Math.round(geo.height - state.height / this.view.scale);
-							
-							if (dy != 0 || dx != 0)
-							{
-								var parent = this.model.getParent(cells[i]);
-								var layout = this.layoutManager.getLayout(parent);
-								
-								if (layout == null)
-								{
-									// Moves cells to the right and down after collapse/expand
-									if (evt != null && mxEvent.isShiftDown(evt))
-									{
-										var rightCells = this.getCellsBeyond(state.x + state.width, 0, parent, true, false);
-										this.cellsMoved(rightCells, dx, 0);
-										var bottomCells = this.getCellsBeyond(0, state.y + state.height, parent, false, true);
-										this.cellsMoved(bottomCells, 0, dy);
-									} 
-								}
-								else if ((evt == null || !mxEvent.isAltDown(evt)) && layout.constructor == mxStackLayout && !layout.resizeLast)
-								{
-									var dir = layout.horizontal;
-									
-									// Bubble resize up for all parent stack layouts with same orientation
-									while (parent != null && layout != null && layout.constructor == mxStackLayout &&
-										layout.horizontal == dir && !layout.resizeLast)
-									{
-										var pgeo = this.getCellGeometry(parent);
-										var pstate = this.view.getState(parent);
-										
-										if (pstate != null && pgeo != null)
-										{
-											pgeo = pgeo.clone();
-											
-											if (layout.horizontal)
-											{
-												pgeo.width += dx + Math.min(0, pstate.width / this.view.scale - pgeo.width);									
-											}
-											else
-											{
-												pgeo.height += dy + Math.min(0, pstate.height / this.view.scale - pgeo.height);
-											}
-		
-											this.model.setGeometry(parent, pgeo);
-										}
-										
-										parent = this.model.getParent(parent);
-										layout = this.layoutManager.getLayout(parent);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			finally
-			{
-				this.model.endUpdate();
-			}
-			
-			// Selects cells after folding
-			this.setSelectionCells(cells);
-		}
-	};
-	
 	// Initializes touch interface
 	if (touchStyle)
 	{
@@ -719,46 +577,231 @@ Graph.prototype.createGroupCell = function()
 };
 
 /**
+ * Disables extending parents with stack layouts on add
+ */
+Graph.prototype.isExtendParentsOnAdd = function(cell)
+{
+	var result = mxGraph.prototype.isExtendParentsOnAdd.apply(this, arguments);
+	
+	if (result && cell != null && this.layoutManager != null)
+	{
+		var parent = this.model.getParent(cell);
+		
+		if (parent != null)
+		{
+			var layout = this.layoutManager.getLayout(parent);
+			
+			if (layout != null && layout.constructor == mxStackLayout)
+			{
+				result = false;
+			}
+		}
+	}
+	
+	return result;
+};
+
+/**
+ * Disables alternate width persistence for stack layout parents
+ */
+Graph.prototype.updateAlternateBounds = function(cell, geo, willCollapse)
+{
+	if (cell != null && geo != null && this.layoutManager != null && geo.alternateBounds != null)
+	{
+		var layout = this.layoutManager.getLayout(this.model.getParent(cell));
+		
+		if (layout != null && layout.constructor == mxStackLayout)
+		{
+			if (layout.horizontal)
+			{
+				geo.alternateBounds.height = 0;
+			}
+			else
+			{
+				geo.alternateBounds.width = 0;
+			}
+		}
+	}
+	
+	mxGraph.prototype.updateAlternateBounds.apply(this, arguments);
+};
+
+/**
+ * Adds Shift+collapse/expand and size management for folding inside stack
+ */
+Graph.prototype.foldCells = function(collapse, recurse, cells, checkFoldable, evt)
+{
+	recurse = (recurse != null) ? recurse : false;
+	
+	if (cells == null)
+	{
+		cells = this.getFoldableCells(this.getSelectionCells(), collapse);
+	}
+	
+	if (cells != null)
+	{
+		this.model.beginUpdate();
+		
+		try
+		{
+			mxGraph.prototype.foldCells.apply(this, arguments);
+			
+			// Resizes all parent stacks if alt is not pressed
+			if (this.layoutManager != null)
+			{
+				for (var i = 0; i < cells.length; i++)
+				{
+					var state = this.view.getState(cells[i]);
+					var geo = this.getCellGeometry(cells[i]);
+					
+					if (state != null && geo != null)
+					{
+						var dx = Math.round(geo.width - state.width / this.view.scale);
+						var dy = Math.round(geo.height - state.height / this.view.scale);
+						
+						if (dy != 0 || dx != 0)
+						{
+							var parent = this.model.getParent(cells[i]);
+							var layout = this.layoutManager.getLayout(parent);
+							
+							if (layout == null)
+							{
+								// Moves cells to the right and down after collapse/expand
+								if (evt != null && mxEvent.isShiftDown(evt))
+								{
+									this.moveSiblings(state, parent, dx, dy);
+								} 
+							}
+							else if ((evt == null || !mxEvent.isAltDown(evt)) && layout.constructor == mxStackLayout && !layout.resizeLast)
+							{
+								this.resizeParentStacks(parent, layout, dx, dy);
+							}
+						}
+					}
+				}
+			}
+		}
+		finally
+		{
+			this.model.endUpdate();
+		}
+		
+		// Selects cells after folding
+		this.setSelectionCells(cells);
+	}
+};
+
+/**
+ * Overrides label orientation for collapsed swimlanes inside stack.
+ */
+Graph.prototype.moveSiblings = function(state, parent, dx, dy)
+{
+	this.model.beginUpdate();
+	try
+	{
+		var cells = this.getCellsBeyond(state.x, state.y, parent, true, true);
+		
+		for (var i = 0; i < cells.length; i++)
+		{
+			if (cells[i] != state.cell)
+			{
+				var tmp = this.view.getState(cells[i]);
+				var geo = this.getCellGeometry(cells[i]);
+				
+				if (tmp != null && geo != null)
+				{
+					geo = geo.clone();
+					geo.translate(dx * Math.max(0, Math.min(1, (tmp.x - state.x) / state.width)),
+						dy * Math.max(0, Math.min(1, (tmp.y - state.y) / state.height)));
+					this.model.setGeometry(cells[i], geo);
+				}
+			}
+		}
+	}
+	finally
+	{
+		this.model.endUpdate();
+	}
+};
+
+/**
+ * Overrides label orientation for collapsed swimlanes inside stack.
+ */
+Graph.prototype.resizeParentStacks = function(parent, layout, dx, dy)
+{
+	if (this.layoutManager != null && layout != null && layout.constructor == mxStackLayout && !layout.resizeLast)
+	{
+		this.model.beginUpdate();
+		try
+		{
+			var dir = layout.horizontal;
+			
+			// Bubble resize up for all parent stack layouts with same orientation
+			while (parent != null && layout != null && layout.constructor == mxStackLayout &&
+				layout.horizontal == dir && !layout.resizeLast)
+			{
+				var pgeo = this.getCellGeometry(parent);
+				var pstate = this.view.getState(parent);
+				
+				if (pstate != null && pgeo != null)
+				{
+					pgeo = pgeo.clone();
+					
+					if (layout.horizontal)
+					{
+						pgeo.width += dx + Math.min(0, pstate.width / this.view.scale - pgeo.width);									
+					}
+					else
+					{
+						pgeo.height += dy + Math.min(0, pstate.height / this.view.scale - pgeo.height);
+					}
+		
+					this.model.setGeometry(parent, pgeo);
+				}
+				
+				parent = this.model.getParent(parent);
+				layout = this.layoutManager.getLayout(parent);
+			}
+		}
+		finally
+		{
+			this.model.endUpdate();
+		}
+	}
+};
+
+/**
+ * Overrides label orientation for collapsed swimlanes inside stack.
+ */
+Graph.prototype.getCellStyle = function(cell)
+{
+	var style = mxGraph.prototype.getCellStyle.apply(this, arguments);
+	
+	if (cell != null && this.layoutManager != null)
+	{
+		var parent = this.model.getParent(cell);
+		
+		if (this.model.isVertex(parent) && this.isCellCollapsed(cell))
+		{
+			var layout = this.layoutManager.getLayout(parent);
+			
+			if (layout != null && layout.constructor == mxStackLayout)
+			{
+				style[mxConstants.STYLE_HORIZONTAL] = !layout.horizontal;
+			}
+		}
+	}
+	
+	return style;
+};
+
+/**
  * Installs child layout styles.
  */
 Graph.prototype.init = function()
 {
 	mxGraph.prototype.init.apply(this, arguments);
 	var graph = this;
-	
-	// Aligns swimlane title with parent stack while collapsed
-	var graphModelGetStyle = this.model.getStyle;
-	this.model.getStyle = function(cell)
-	{
-		var style = graphModelGetStyle.apply(this, arguments);
-
-		if (cell != null && graph.layoutManager != null)
-		{
-			var parent = this.getParent(cell);
-			
-			if (this.isVertex(parent) && graph.isCellCollapsed(cell))
-			{
-				var layout = graph.layoutManager.getLayout(parent);
-				
-				if (layout != null && layout.constructor == mxStackLayout)
-				{
-					if (style != null)
-					{
-						style += ';';
-					}
-					else
-					{
-						style = '';
-					}
-					
-					// Horizontal title for vertical stack and vice-versa
-					style += 'horizontal=' + (layout.horizontal ? '0' : '1') + ';';
-				}
-			}
-		}
-		
-		return style;
-	};
 
 	this.layoutManager = new mxLayoutManager(this);
 
@@ -1247,9 +1290,11 @@ Graph.prototype.addText = function(x, y, state)
 /**
  * Duplicates the given cells and returns the duplicates.
  */
-Graph.prototype.duplicateCells = function(cells)
+Graph.prototype.duplicateCells = function(cells, append)
 {
 	cells = (cells != null) ? cells : this.getSelectionCells();
+	append = (append != null) ? append : true;
+	
 	var model = this.getModel();
 	var s = this.gridSize;
 	var select = [];
@@ -1260,12 +1305,15 @@ Graph.prototype.duplicateCells = function(cells)
 		for (var i = 0; i < cells.length; i++)
 		{
 			var parent = model.getParent(cells[i]);
-			var index = parent.getIndex(cells[i]);
-			var newChild = this.moveCells([cells[i]], s, s, true, model.getParent(cells[i]))[0]; 
-			select.push(newChild);
+			var child = this.moveCells([cells[i]], s, s, true, parent)[0]; 
+			select.push(child);
 			
 			// Maintains child index by inserting after cloned in parent
-			model.add(parent, newChild, index + 1);
+			if (!append)
+			{
+				var index = parent.getIndex(cells[i]);
+				model.add(parent, child, index + 1);
+			}
 		}
 	}
 	finally

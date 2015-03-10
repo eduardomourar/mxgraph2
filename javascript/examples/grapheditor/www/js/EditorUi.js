@@ -2469,9 +2469,9 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindShiftKey(38, function() { nudge(38, graph.gridSize); }); // Shift+Up arrow
 	keyHandler.bindShiftKey(39, function() { nudge(39, graph.gridSize); }); // Shift+Right arrow
 	keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
+	keyHandler.bindControlKey(13, function() { graph.setSelectionCells(graph.duplicateCells(graph.getSelectionCells(), false)); }); // Ctrl+Enter
 	keyHandler.bindAction(8, false, 'delete'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
-	keyHandler.bindAction(13, true, 'duplicate'); // Ctrl+Enter
 	keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
 	keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
 	keyHandler.bindAction(83, true, 'save'); // Ctrl+S
@@ -2484,6 +2484,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(69, true, 'editStyle'); // Ctrl+E
 	keyHandler.bindAction(66, true, 'toBack'); // Ctrl+B
 	keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
+	keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
 	keyHandler.bindAction(68, true, 'setAsDefaultStyle', true); // Ctrl+Shift+D   
 	keyHandler.bindAction(90, true, 'undo'); // Ctrl+Z
 	keyHandler.bindAction(90, true, 'autosize', true); // Ctrl+Shift+Z

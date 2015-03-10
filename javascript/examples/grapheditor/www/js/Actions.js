@@ -115,7 +115,7 @@ Actions.prototype.init = function()
 	this.addAction('duplicate', function()
 	{
 		graph.setSelectionCells(graph.duplicateCells());
-	}, null, null, 'Ctrl+Enter');
+	}, null, null, 'Ctrl+D');
 	this.addAction('turn', function()
 	{
 		graph.setSelectionCells(graph.turnShapes(graph.getSelectionCells()));
