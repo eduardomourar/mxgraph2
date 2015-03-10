@@ -3939,8 +3939,22 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 		return graph.foldingEnabled;
 	}, function(checked)
 	{
-		graph.foldingEnabled = checked;
-		graph.view.revalidate();
+		ui.setFoldingEnabled(checked);
+	},
+	{
+		install: function(apply)
+		{
+			this.listener = function()
+			{
+				apply(graph.foldingEnabled);
+			};
+			
+			ui.addListener('foldingEnabledChanged', this.listener);
+		},
+		destroy: function()
+		{
+			ui.removeListener(this.listener);
+		}
 	}));
 	
 	// Scrollbars

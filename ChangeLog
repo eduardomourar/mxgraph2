@@ -1,3 +1,4 @@
+- Adds EditorUi.setFoldingEnabled, foldingEnabledChanged event in grapheditor
 - Adds mxCellRenderer.createControlClickHandler hook [JavaScript]
 - Adds key shortcuts for select next/previous/parent/child (Ctrl+Tab/Ctrl+Shift+Tab) in grapheditor
 - Changes key shortcuts for edit and enter group (Ctrl+Shift+Home/End) in grapheditor

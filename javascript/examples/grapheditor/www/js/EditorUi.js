@@ -1477,6 +1477,17 @@ EditorUi.prototype.setBackgroundColor = function(value)
 /**
  * Loads the stylesheet for this graph.
  */
+EditorUi.prototype.setFoldingEnabled = function(value)
+{
+	this.editor.graph.foldingEnabled = value;
+	this.editor.graph.view.revalidate();
+	
+	this.fireEvent(new mxEventObject('foldingEnabledChanged'));
+};
+
+/**
+ * Loads the stylesheet for this graph.
+ */
 EditorUi.prototype.setPageFormat = function(value)
 {
 	this.editor.graph.pageFormat = value;

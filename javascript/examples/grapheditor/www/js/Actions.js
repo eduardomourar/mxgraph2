@@ -509,8 +509,7 @@ Actions.prototype.init = function()
 	
 	action = this.addAction('navigation', function()
 	{
-		graph.foldingEnabled = !graph.foldingEnabled;
-    	graph.view.revalidate();
+		ui.setFoldingEnabled(!graph.foldingEnabled);
 	});
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.foldingEnabled; });
