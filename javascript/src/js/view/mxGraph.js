@@ -11190,7 +11190,7 @@ mxGraph.prototype.getCells = function(x, y, width, height, parent, result)
  * Function: getCellsBeyond
  * 
  * Returns the children of the given parent that are contained in the
- * halfpane from the given point (x0, y0) rightwards and/or downwards
+ * halfpane from the given point (x0, y0) rightwards or downwards
  * depending on rightHalfpane and bottomHalfpane.
  * 
  * Parameters:
@@ -11226,7 +11226,7 @@ mxGraph.prototype.getCellsBeyond = function(x0, y0, parent, rightHalfpane, botto
 				
 				if (this.isCellVisible(child) && state != null)
 				{
-					if ((!rightHalfpane || state.x >= x0) &&
+					if ((!rightHalfpane || state.x >= x0) ||
 						(!bottomHalfpane || state.y >= y0))
 					{
 						result.push(child);

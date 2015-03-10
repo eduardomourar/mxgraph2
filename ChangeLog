@@ -1,7 +1,8 @@
+- mxGraph.getCellsBeyond returns cells in one or both half panes [Java,JavaScript]
 - Changes key shortcuts for edit and enter group (Ctrl+Shift+Home/End) in grapheditor
-- Changes  key shortcuts for expand and collapse (Ctrl+Home/End) in grapheditor
+- Changes key shortcuts for expand and collapse (Ctrl+Home/End) in grapheditor
 - Fixes focus after stop editing with Ctrl+Enter in grapheditor
-- Replaces Ctrl+D with Ctrl+Enter for cloning cells in grapheditor
+- Adds Ctrl+Enter for cloning cells "in-place" in grapheditor
 - Shift+expand/collapse moves neighbour cells (experimental) in grapheditor
 - Removes mxSpaceManager class [Java,JavaScript]
 - Shift+expand/collapse moves neighbour cells in grapheditor (experimental)
