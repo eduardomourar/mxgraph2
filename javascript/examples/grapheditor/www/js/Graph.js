@@ -810,37 +810,7 @@ Graph.prototype.init = function()
 		var state = this.graph.view.getState(cell);
 		var style = (state != null) ? state.style : this.graph.getCellStyle(cell);
 		
-		// mxRackContainer may be undefined as it is dynamically loaded at render time
-		if (typeof(mxRackContainer) != 'undefined' && style['childLayout'] == 'rack')
-		{
-			var rackLayout = new mxStackLayout(this.graph, false);
-			
-			rackLayout.setChildGeometry = function(child, geo)
-			{
-				var unitSize = 20;
-				geo.height = Math.max(geo.height, unitSize);
-				
-				if (geo.height / unitSize > 1)
-				{
-					var mod = geo.height % unitSize;
-					geo.height += mod > unitSize / 2 ? (unitSize - mod) : -mod;
-				}
-		
-				this.graph.getModel().setGeometry(child, geo);
-			};
-		
-			// LATER: Depends on rack stencil which is defined in draw.io
-			rackLayout.fill = true;
-			rackLayout.unitSize = mxRackContainer.unitSize | 20;
-			rackLayout.marginLeft = style['marginLeft'] || 0;
-			rackLayout.marginRight = style['marginRight'] || 0;
-			rackLayout.marginTop = style['marginTop'] || 0;
-			rackLayout.marginBottom = style['marginBottom'] || 0;
-			rackLayout.resizeParent = false;
-			
-			return rackLayout;
-		}
-		else if (style['childLayout'] == 'stackLayout')
+		if (style['childLayout'] == 'stackLayout')
 		{
 			var stackLayout = new mxStackLayout(this.graph, true);
 			stackLayout.resizeParentMax = true;
