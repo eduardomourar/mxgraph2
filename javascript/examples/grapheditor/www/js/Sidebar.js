@@ -1514,7 +1514,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			var targetParent = graph.model.getParent(source);
 			var validLayout = true;
 			
-			// TODO: Do not resize imported cells in this case
+			// Ignores parent if it has a stack layout
 			if (graph.layoutManager != null)
 			{
 				var layout = graph.layoutManager.getLayout(targetParent);
@@ -1522,10 +1522,20 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				if (layout != null && layout.constructor == mxStackLayout)
 				{
 					validLayout = false;
+					
+					var tmp = graph.view.getState(targetParent);
+					
+					// Offsets by parent position
+					if (tmp != null)
+					{
+						geo.x += (tmp.x/ graph.view.scale - graph.view.translate.x);
+						geo.y += (tmp.y / graph.view.scale - graph.view.translate.y);
+					}
 				}
 			}
 			
-			targets = graph.importCells(targets, geo.x - (validLayout ? geo2.x : 0), geo.y - (validLayout ? geo2.y : 0), (graph.model.isEdge(source) ||
+			targets = graph.importCells(targets, (geo.x - (validLayout ? geo2.x : 0)),
+					(geo.y - (validLayout ? geo2.y : 0)), (graph.model.isEdge(source) ||
 					(sourceGeo != null && !sourceGeo.relative && validLayout)) ? targetParent : null);
 			tmp = targets;
 			
@@ -1546,8 +1556,8 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			else
 			{
 				geo2 = graph.getCellGeometry(targets[dropCellIndex]);
-				var dx = geo.x - geo2.x;
-				var dy = geo.y - geo2.y;
+				var dx = geo.x - Math.round(geo2.x);
+				var dy = geo.y - Math.round(geo2.y);
 				geo.x = Math.round(geo2.x);
 				geo.y = Math.round(geo2.y);
 				graph.model.setGeometry(targets[dropCellIndex], geo);
