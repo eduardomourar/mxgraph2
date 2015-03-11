@@ -1,3 +1,6 @@
+- Adds live preview for custom edge handles, fixes mxHandle.reset [JavaScript]
+- Shows/hides link hint if link changes in grapheditor
+- Fixes text format change for edit link action in grapheditor
 - Fixes conversion of newlines for formattedText action in grapheditor
 - Adds rounding in mxConnectionHandler.createTargetVertex [JavaScript]
 - Adds EditorUi.setFoldingEnabled, foldingEnabledChanged event in grapheditor
