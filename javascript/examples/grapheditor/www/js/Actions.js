@@ -337,11 +337,26 @@ Actions.prototype.init = function()
 	    	if (state != null && state.style['html'] == '1')
 	    	{
 	    		value = null;
+	    		
+				// Removes newlines from HTML and converts breaks to newlines
+				// to match the HTML output in plain text
+				if (mxUtils.getValue(state.style, 'nl2Br', '1') != '0')
+				{
+					graph.cellLabelChanged(state.cell, graph.convertValueToString(state.cell).
+						replace(/\n/g, '').replace(/<br\s*.?>/g, '\n'));
+				}
 	    	}
 	    	else
 	    	{
 	    		// FIXME: HTML entities are converted in plain text labels if word wrap is on
 	    		// TODO: Convert HTML entities? (Check for userobject!)
+				// Converts newlines in plain text to breaks in HTML
+				// to match the plain text output
+	    		if (mxUtils.getValue(state.style, 'nl2Br', '1') != '0')
+				{
+					graph.cellLabelChanged(state.cell, graph.convertValueToString(state.cell).
+						replace(/\n/g, '<br/>'));
+				}
 	    	}
 	
 	       	graph.setCellStyles('html', value);

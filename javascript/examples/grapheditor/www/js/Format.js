@@ -821,7 +821,7 @@ BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setChecked
 /**
  * The string 'null' means use null in values.
  */
-BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, enabledValue, disabledValue, fn)
+BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, enabledValue, disabledValue, fn, action)
 {
 	enabledValue = (enabledValue != null) ? ((enabledValue == 'null') ? null : enabledValue) : '1';
 	disabledValue = (disabledValue != null) ? ((disabledValue == 'null') ? null : disabledValue) : '0';
@@ -843,23 +843,30 @@ BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, 
 		return null;
 	}, function(checked)
 	{
-		graph.getModel().beginUpdate();
-		try
+		if (action != null)
 		{
-			var value = (checked) ? enabledValue : disabledValue;
-			graph.setCellStyles(key, value, graph.getSelectionCells());
-			
-			if (fn != null)
-			{
-				fn(graph.getSelectionCells(), value);
-			}
-			
-			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [key],
-				'values', [value], 'cells', graph.getSelectionCells()));
+			action.funct();
 		}
-		finally
+		else
 		{
-			graph.getModel().endUpdate();
+			graph.getModel().beginUpdate();
+			try
+			{
+				var value = (checked) ? enabledValue : disabledValue;
+				graph.setCellStyles(key, value, graph.getSelectionCells());
+				
+				if (fn != null)
+				{
+					fn(graph.getSelectionCells(), value);
+				}
+				
+				ui.fireEvent(new mxEventObject('styleChanged', 'keys', [key],
+					'values', [value], 'cells', graph.getSelectionCells()));
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
 		}
 	},
 	{
@@ -2404,7 +2411,9 @@ TextFormatPanel.prototype.addFont = function(container)
 		extraPanel.appendChild(wwOpt);
 	}
 	
-	var htmlOpt = this.createCellOption(mxResources.get('formattedText'), 'html', '0');
+	// Delegates switch of style to formattedText action as it also convertes newlines
+	var htmlOpt = this.createCellOption(mxResources.get('formattedText'), 'html', '0',
+		null, null, null, ui.actions.get('formattedText'));
 	htmlOpt.style.fontWeight = 'bold';
 	extraPanel.appendChild(htmlOpt);
 	

@@ -1940,7 +1940,10 @@ if (typeof mxVertexHandler != 'undefined')
 				
 				if (this.textarea.style.display == 'none')
 				{
-					var content = this.graph.sanitizeHtml((nl2Br) ? this.text2.innerHTML.replace(/\n/g, '') : this.text2.innerHTML);
+					// Removes newlines from HTML and converts breaks to newlines
+					// to match the HTML output in plain text
+					var content = this.graph.sanitizeHtml((nl2Br) ? this.text2.innerHTML.replace(/\n/g, '').
+						replace(/<br\s*.?>/g, '\n') : this.text2.innerHTML);
 					
 					if (this.textarea.value != content)
 					{
@@ -1954,7 +1957,10 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 				else
 				{
-					var content = this.graph.sanitizeHtml((nl2Br) ? this.textarea.value.replace(/\n/g, '<br/>') : this.textarea.value);
+					// Converts newlines in plain text to breaks in HTML
+					// to match the plain text output
+					var content = this.graph.sanitizeHtml((nl2Br) ? this.textarea.value.
+						replace(/\n/g, '<br/>') : this.textarea.value);
 					
 					if (this.text2.innerHTML != content)
 					{
