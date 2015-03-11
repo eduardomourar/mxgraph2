@@ -2990,29 +2990,12 @@ if (typeof mxVertexHandler != 'undefined')
 						redraw = true;
 					}
 				}
-	
+				
 				var link = this.graph.getLinkForCell(this.state.cell);
-										
+				this.updateLinkHint(link);
+				
 				if (link != null)
 				{
-					var label = link;
-					var max = 60;
-					var head = 36;
-					var tail = 20;
-					
-					if (label.length > max)
-					{
-						label = label.substring(0, head) + '...' + label.substring(label.length - tail);
-					}
-	
-					this.linkHint = createHint();
-					this.linkHint.style.padding = '4px 10px 6px 10px';
-					this.linkHint.style.fontSize = '90%';
-					this.linkHint.style.opacity = '1';
-					this.linkHint.style.filter = '';
-					this.updateLinkHint(link);
-					
-					this.graph.container.appendChild(this.linkHint);
 					redraw = true;
 				}
 				
@@ -3024,8 +3007,28 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			mxVertexHandler.prototype.updateLinkHint = function(link)
 			{
-				if (this.linkHint != null)
+				if (link == null)
 				{
+					if (this.linkHint != null)
+					{
+						this.linkHint.parentNode.removeChild(this.linkHint);
+						this.linkHint = null;
+					}
+				}
+				else if (link != null)
+				{
+					if (this.linkHint == null)
+					{
+						this.linkHint = createHint();
+						this.linkHint.style.padding = '4px 10px 6px 10px';
+						this.linkHint.style.fontSize = '90%';
+						this.linkHint.style.opacity = '1';
+						this.linkHint.style.filter = '';
+						this.updateLinkHint(link);
+						
+						this.graph.container.appendChild(this.linkHint);
+					}
+					
 					var label = link;
 					var max = 60;
 					var head = 36;
@@ -3118,14 +3121,7 @@ if (typeof mxVertexHandler != 'undefined')
 										
 				if (link != null)
 				{
-					this.linkHint = createHint();
-					this.linkHint.style.padding = '4px 10px 6px 10px';
-					this.linkHint.style.fontSize = '90%';
-					this.linkHint.style.opacity = '1';
-					this.linkHint.style.filter = '';
 					this.updateLinkHint(link);
-					
-					this.graph.container.appendChild(this.linkHint);
 					this.redrawHandles();
 				}
 			};

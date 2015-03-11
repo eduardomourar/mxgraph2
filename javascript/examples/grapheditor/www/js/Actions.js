@@ -209,27 +209,7 @@ Actions.prototype.init = function()
 			ui.showLinkDialog(value, mxResources.get('apply'), function(link)
 			{
 				link = mxUtils.trim(link);
-				graph.getModel().beginUpdate();
-				
-				try
-				{
-			    	if (link.length > 0)
-					{
-		    			graph.setLinkForCell(cell, link);
-		    			graph.setCellStyles('fontColor', '#0000EE', [cell]);
-		    			graph.setCellStyles('fontStyle', '4', [cell]);
-					}
-			    	else
-			    	{
-			    		graph.setLinkForCell(cell, null);
-			    		graph.setCellStyles('fontColor', null, [cell]);
-		    			graph.setCellStyles('fontStyle', null, [cell]);
-			    	}
-				}
-				finally
-				{
-					graph.getModel().endUpdate();
-				}
+    			graph.setLinkForCell(cell, (link.length > 0) ? link : null);
 			});
 		}
 	});
