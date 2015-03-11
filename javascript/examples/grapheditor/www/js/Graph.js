@@ -491,6 +491,12 @@ Graph.prototype.init = function()
 			flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
 			flowLayout.maintainParentLocation = true;
 			
+			// Special undocumented styles for changing the hierarchical
+			flowLayout.intraCellSpacing = mxUtils.getValue(style, 'intraCellSpacing', mxHierarchicalLayout.prototype.intraCellSpacing);
+			flowLayout.interRankCellSpacing = mxUtils.getValue(style, 'interRankCellSpacing', mxHierarchicalLayout.prototype.interRankCellSpacing);
+			flowLayout.interHierarchySpacing = mxUtils.getValue(style, 'interHierarchySpacing', mxHierarchicalLayout.prototype.interHierarchySpacing);
+			flowLayout.parallelEdgeSpacing = mxUtils.getValue(style, 'parallelEdgeSpacing', mxHierarchicalLayout.prototype.parallelEdgeSpacing);
+			
 			return flowLayout;
 		}
 		
