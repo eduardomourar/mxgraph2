@@ -1228,6 +1228,79 @@
 
 	mxCellRenderer.prototype.defaultShapes['tapeData'] = TapeDataShape;
 
+	// OrEllipseShape
+	function OrEllipseShape()
+	{
+		mxEllipse.call(this);
+	};
+	mxUtils.extend(OrEllipseShape, mxEllipse);
+	OrEllipseShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		mxEllipse.prototype.paintVertexShape.apply(this, arguments);
+		
+		c.setShadow(false);
+		c.begin();
+		c.moveTo(x, y + h / 2);
+		c.lineTo(x + w, y + h / 2);
+		c.end();
+		c.stroke();
+		
+		c.begin();
+		c.moveTo(x + w / 2, y);
+		c.lineTo(x + w / 2, y + h);
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['orEllipse'] = OrEllipseShape;
+
+	// SumEllipseShape
+	function SumEllipseShape()
+	{
+		mxEllipse.call(this);
+	};
+	mxUtils.extend(SumEllipseShape, mxEllipse);
+	SumEllipseShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		mxEllipse.prototype.paintVertexShape.apply(this, arguments);
+		var s2 = 0.145;
+		
+		c.setShadow(false);
+		c.begin();
+		c.moveTo(x + w * s2, y + h * s2);
+		c.lineTo(x + w * (1 - s2), y + h * (1 - s2));
+		c.end();
+		c.stroke();
+		
+		c.begin();
+		c.moveTo(x + w * (1 - s2), y + h * s2);
+		c.lineTo(x + w * s2, y + h * (1 - s2));
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['sumEllipse'] = SumEllipseShape;
+
+	// LineEllipseShape
+	function LineEllipseShape()
+	{
+		mxEllipse.call(this);
+	};
+	mxUtils.extend(LineEllipseShape, mxEllipse);
+	LineEllipseShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		mxEllipse.prototype.paintVertexShape.apply(this, arguments);
+		
+		c.setShadow(false);
+		c.begin();
+		c.moveTo(x, y + h / 2);
+		c.lineTo(x + w, y + h / 2);
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['lineEllipse'] = LineEllipseShape;
+
 	// Delay
 	function DelayShape()
 	{
@@ -1895,6 +1968,9 @@
 	InternalStorageShape.prototype.constraints = mxRectangleShape.prototype.constraints;
 	DataStorageShape.prototype.constraints = mxRectangleShape.prototype.constraints;
 	TapeDataShape.prototype.constraints = mxEllipse.prototype.constraints;
+	OrEllipseShape.prototype.constraints = mxEllipse.prototype.constraints;
+	SumEllipseShape.prototype.constraints = mxEllipse.prototype.constraints;
+	LineEllipseShape.prototype.constraints = mxEllipse.prototype.constraints;
 	ManualInputShape.prototype.constraints = mxRectangleShape.prototype.constraints;
 	DelayShape.prototype.constraints = mxRectangleShape.prototype.constraints;
 	DisplayShape.prototype.constraints = mxRectangleShape.prototype.constraints;

@@ -2503,6 +2503,12 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindControlShiftKey(9, function() { graph.selectChildCell(); }); // Ctrl+Shift+Tab
 	keyHandler.bindAction(8, false, 'delete'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
+	keyHandler.bindAction(48, true, 'actualSize'); // Ctrl+0
+	keyHandler.bindAction(49, true, 'fitWindow'); // Ctrl+1
+	keyHandler.bindAction(50, true, 'fitPageWidth'); // Ctrl+2
+	keyHandler.bindAction(51, true, 'fitPage'); // Ctrl+3
+	keyHandler.bindAction(52, true, 'fitTwoPages'); // Ctrl+4
+	keyHandler.bindAction(53, true, 'customZoom'); // Ctrl+5
 	keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
 	keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
 	keyHandler.bindAction(83, true, 'save'); // Ctrl+S

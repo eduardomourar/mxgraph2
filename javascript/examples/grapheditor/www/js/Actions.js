@@ -387,7 +387,7 @@ Actions.prototype.init = function()
 	{
 		graph.zoomTo(1);
 		ui.resetScrollbars();
-	});
+	}, null, null, 'Ctrl+0');
 	this.addAction('zoomIn', function()
 	{
 		graph.zoomIn();
@@ -396,7 +396,7 @@ Actions.prototype.init = function()
 	{
 		graph.zoomOut();
 	}, null, null, 'Ctrl -');
-	this.addAction('fitWindow', function() { graph.fit(); });
+	this.addAction('fitWindow', function() { graph.fit(); }, null, null, 'Ctrl+1');
 	this.addAction('fitPage', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
@@ -417,7 +417,7 @@ Actions.prototype.init = function()
 			graph.container.scrollTop = pad.y;
 			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}));
+	}), null, null, 'Ctrl+3');
 	this.addAction('fitTwoPages', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
@@ -439,7 +439,7 @@ Actions.prototype.init = function()
 			graph.container.scrollTop = Math.min(pad.y, (graph.container.scrollHeight - graph.container.clientHeight) / 2);
 			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}));
+	}), null, null, 'Ctrl+4');
 	this.addAction('fitPageWidth', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
@@ -460,7 +460,7 @@ Actions.prototype.init = function()
 			graph.container.scrollTop = pad.y;
 			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}));
+	}), null, null, 'Ctrl+2');
 	this.put('customZoom', new Action(mxResources.get('custom') + '...', mxUtils.bind(this, function()
 	{
 		var dlg = new FilenameDialog(this.editorUi, parseInt(graph.getView().getScale() * 100), mxResources.get('apply'), mxUtils.bind(this, function(newValue)
@@ -472,7 +472,7 @@ Actions.prototype.init = function()
 		}), mxResources.get('enterValue') + ' (%)');
 		this.editorUi.showDialog(dlg.container, 300, 80, true, true);
 		dlg.init();
-	})));
+	}), null, null, 'Ctrl+5'));
 	
 	// Option actions
 	var action = null;

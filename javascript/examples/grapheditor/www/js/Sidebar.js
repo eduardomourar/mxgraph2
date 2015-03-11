@@ -512,6 +512,11 @@ Sidebar.prototype.addAdvancedShapes = function(dir, content)
     content.appendChild(this.createVertexTemplate('shape=tee;whiteSpace=wrap;html=1;', 80, 80, '', 'Tee', true));
     content.appendChild(this.createVertexTemplate('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', true));
     content.appendChild(this.createVertexTemplate('shape=switch;whiteSpace=wrap;html=1;', 60, 60, '', 'Switch', true));
+
+    content.appendChild(this.createVertexTemplate('shape=orEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Or', true));
+    content.appendChild(this.createVertexTemplate('shape=sumEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Sum', true));
+    content.appendChild(this.createVertexTemplate('shape=lineEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Ellipse with horizontal divider', true));
+    content.appendChild(this.createVertexTemplate('shape=lineEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;direction=north;', 80, 80, '', 'Ellipse with vertical divider', true));
     
     content.appendChild(this.createVertexTemplate('swimlane;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container', true));
 	content.appendChild(this.createVertexTemplate('swimlane;swimlaneLine=0;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container w/o Divider', true));

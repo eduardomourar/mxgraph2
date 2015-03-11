@@ -1,3 +1,5 @@
+- Adds keyboard shortcuts for zoom actions in grapheditor
+- Adds Or-, Sum- and LineEllipse shape in Advanced sidebar
 - Adds live preview for custom edge handles, fixes mxHandle.reset [JavaScript]
 - Shows/hides link hint if link changes in grapheditor
 - Fixes text format change for edit link action in grapheditor
