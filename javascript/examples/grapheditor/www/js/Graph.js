@@ -2062,6 +2062,7 @@ if (typeof mxVertexHandler != 'undefined')
 			var mxCellEditorStartEditing = mxCellEditor.prototype.startEditing;
 			mxCellEditor.prototype.startEditing = function(cell, trigger)
 			{
+				this.graph.tooltipHandler.hideTooltip();
 				this.switchSelectionState = null;
 				
 				// Selects editing cell
