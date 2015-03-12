@@ -989,8 +989,15 @@ EditorUi.prototype.initCanvas = function()
 				
 				var st = graph.container.scrollTop;
 				var sl = graph.container.scrollLeft;
-				var cw = graph.container.offsetWidth - 14;
-				var ch = graph.container.offsetHeight - 14;
+				var sb = (mxClient.IS_QUIRKS || document.documentMode >= 8) ? 20 : 14;
+				
+				if (document.documentMode == 8 || document.documentMode == 9)
+				{
+					sb += 3;
+				}
+				
+				var cw = graph.container.offsetWidth - sb;
+				var ch = graph.container.offsetHeight - sb;
 				
 				var ns = (autoscale) ? Math.max(0.3, Math.min(1, cw / b.width)) : s;
 				var dx = Math.max((cw - ns * b.width) / 2, 0) / ns;
