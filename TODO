@@ -21,7 +21,7 @@
 --    mxGraph Core     --
 -------------------------
 
-- Fix scrolling, maintain scrollbar position in scrollbars.html
+- Fix DOM reorder after move in scrollbars.html (folding icon)
 - Fix channels when scaled in segment edge style
 - Fix middle/center in secondlabel.html example for wrap with no FO
 - Add live preview for edge handlers
