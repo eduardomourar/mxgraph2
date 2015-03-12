@@ -1,3 +1,4 @@
+- Fixes scrolling in scrollbars.html example [JavaScript]
 - Adds padding in mxGraph.fit for IE 9 and later [JavaScript] 
 - Adds shape argument in mxCellRenderer.initializeLabel [JavaScript]
 - Fixes secondlabel.html example, adds wrapping [JavaScript]
