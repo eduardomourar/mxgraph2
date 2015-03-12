@@ -371,7 +371,7 @@ mxCellRenderer.prototype.createLabel = function(state, value)
 		state.text.dialect = (isForceHtml) ? mxConstants.DIALECT_STRICTHTML : state.view.graph.dialect;
 		state.text.style = state.style;
 		state.text.state = state;
-		this.initializeLabel(state);
+		this.initializeLabel(state, state.text);
 		
 		// Workaround for touch devices routing all events for a mouse gesture
 		// (down, move, up) via the initial DOM node. IE additionally redirects
@@ -452,15 +452,15 @@ mxCellRenderer.prototype.createLabel = function(state, value)
  * 
  * state - <mxCellState> whose label should be initialized.
  */
-mxCellRenderer.prototype.initializeLabel = function(state)
+mxCellRenderer.prototype.initializeLabel = function(state, shape)
 {
-	if (mxClient.IS_SVG && mxClient.NO_FO && state.text.dialect != mxConstants.DIALECT_SVG)
+	if (mxClient.IS_SVG && mxClient.NO_FO && shape.dialect != mxConstants.DIALECT_SVG)
 	{
-		state.text.init(state.view.graph.container);
+		shape.init(state.view.graph.container);
 	}
 	else
 	{
-		state.text.init(state.view.getDrawPane());
+		shape.init(state.view.getDrawPane());
 	}
 };
 

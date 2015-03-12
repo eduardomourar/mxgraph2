@@ -1,3 +1,4 @@
+- Adds shape argument in mxCellRenderer.initializeLabel [JavaScript]
 - Fixes secondlabel.html example [JavaScript]
 - Adds keyboard shortcuts for zoom actions in grapheditor
 - Adds Or-, Sum- and LineEllipse shape in Advanced sidebar
