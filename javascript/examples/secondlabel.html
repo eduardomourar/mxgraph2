@@ -71,7 +71,7 @@
 					if (!this.model.isEdge(cell))
 					{
 						// Possible to return any string here
-						return "ID="+cell.id;
+						return 'ID=' + cell.id;
 					}
 
 					return null;
@@ -88,11 +88,11 @@
 				};
 
 				// Creates the shape for the shape number and puts it into the draw pane
-				var createShape = graph.cellRenderer.createShape;
-				graph.cellRenderer.createShape = function(state)
+				var createState = mxGraphView.prototype.createState;
+				mxGraphView.prototype.createState = function(cell)
 				{
-					createShape.apply(this, arguments);
-
+					var state = createState.apply(this, arguments);
+					
 					if (secondLabelVisible && !state.cell.geometry.relative)
 					{
 						var secondLabel = graph.getSecondLabel(state.cell);
@@ -114,6 +114,8 @@
 							state.secondLabel.init(state.view.getDrawPane());
 						}
 					}
+					
+					return state;
 				};
 
 				// Redraws the shape number after the cell has been moved/resized
