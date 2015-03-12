@@ -2961,8 +2961,13 @@ mxGraph.prototype.sizeDidChange = function()
  */
 mxGraph.prototype.doResizeContainer = function(width, height)
 {
-	// Fixes container size for different box models
-	if (mxClient.IS_IE)
+	// Sets container size for different box models
+	if (document.documentMode >= 9)
+	{
+		width += 3;
+		height += 5;
+	}
+	else if (mxClient.IS_IE)
 	{
 		if (mxClient.IS_QUIRKS)
 		{
@@ -2971,12 +2976,7 @@ mxGraph.prototype.doResizeContainer = function(width, height)
 			// max(2, ...) required for native IE8 in quirks mode
 			width += Math.max(2, borders.x + borders.width + 1);
 			height += Math.max(2, borders.y + borders.height + 1);
-		}
-		else if (document.documentMode >= 9)
-		{
-			width += 3;
-			height += 5;
-		}
+		} 
 		else
 		{
 			width += 1;
@@ -7577,8 +7577,9 @@ mxGraph.prototype.fit = function(border, keepOrigin)
 		border = (border != null) ? border : 0;
 		keepOrigin = (keepOrigin != null) ? keepOrigin : false;
 		
-		var w1 = this.container.clientWidth;
-		var h1 = this.container.clientHeight;
+		var sb = (document.documentMode >= 9) ? 4 : 0;
+		var w1 = this.container.clientWidth - sb;
+		var h1 = this.container.clientHeight - sb;
 
 		var bounds = this.view.getGraphBounds();
 
