@@ -1,97 +1,77 @@
--------------------------
--- GraphEditor Example --
--------------------------
-
-- Fix initial state of scrollbar option in format sidebar
-- https://developers.google.com/appengine/docs/java/tools/ant
-- Cleanup App.save/saveFile and file.save/saveAs
-- Fix touch detection in FF (defaultScrollbars)
-
-- Add arcSize handle in Shapes.js
-- No table if selection empty, selectNode not working in quirks for rich text editing
-- Build WAR, grapheditor.min.js for grapheditor in build step
-- Fix duplicate encoding in simulate requests (optional decode in save/export)
-
-- Add find dialog, find again function
-- Add gradient in page background
-- Fix wrapping for toolbar, menubar in quirks
-- Make UI more generic (add borderlayout, splitlayout)
-
--------------------------
---    mxGraph Core     --
--------------------------
-
+- Move old forum to VM and host on macmini1.draw.io
 - Fix DOM reorder after move in scrollbars.html (folding icon)
-- Fix channels when scaled in segment edge style
-- Fix middle/center in secondlabel.html example for wrap with no FO
-- Add live preview for edge handlers
 
+- Fix middle/center in secondlabel.html example for wrap with no FO
+- Fix channels when scaled in segment edge style
+- Add live preview for edge handlers
+- Add borderlayout, splitlayout in grapheditor
+
+- Build WAR, grapheditor.min.js for grapheditor in build step
 - Add preview box for edge label moving
 - Add parent highlight for childs in mxEdgeHandler
 - Fix vertical container in-place editor position
-- Migrate changes in mxEdgeStyle to Java
 
+- Migrate changes in mxEdgeStyle to Java
 - Rotation on edges should only rotate label
 - Add single handle for multiple selected cells
 - Fix live preview for resize of rotated container with children (child offset)
-- Fix moving of relative children between parents (offset)
 
+- Fix moving of relative children between parents (offset)
 - Move mxLayoutManager into validation process (resizeParent cycle)
 - Add image lookup in XML image export
 - Fix resize of rotated groups with layouts
-- Research alternative namespace solutions
 
+- Research alternative namespace solutions
 - Add support for touchCancel event, use requestAnimationFrame
 - Add live preview while moving, reconnect, rotate
 - Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)
-- Check overflow=fill in quirks vs standards with no HTML labels (inconsistent rendering)
 
+- Check overflow=fill in quirks vs standards with no HTML labels (inconsistent rendering)
 - Fix missing labels for zoom > 4.3 in print preview for IE8 standards
 - Fix loops for fixed connection points
 - Fix arcToCurves for special cases (eg. mxgraph.flowchart.data)
-- Add bridges for edge crossings
 
+- Add bridges for edge crossings
 - Invert loop order in mxGraph.removeCells
 - Add circular connector style https://github.com/jgraph/mxgraph/issues/15
 - Fix autoScroll when adding vertex via DnD from sidebar on Win8 with touch (scroll ignored?) (not new)
-- Fix scaling of background page in editor for pinch
 
+- Fix scaling of background page in editor for pinch
 - Fix IE10 on Win8 fires double click after double tap editing and click on background
 - Fix FF on Win8 fires two (should be one) click events and a double click for double tap on background
 - Fix constrainChild/expandParent for rotation
-- Fix ignored ancestors if maximumGraphBounds in constrainChild (see constrain.html)
 
+- Fix ignored ancestors if maximumGraphBounds in constrainChild (see constrain.html)
 - Add workaround for touch support, guides stay visible on move in FF/Win8
 - Fix pinch (zoom) on Chromebook, Android and msPointerEvents (not new)
 - Fix hit detection on arrow shape in mxGraph.getCellAt
-- Fix edge styles for rotated edges, terminals
 
+- Fix edge styles for rotated edges, terminals
 - Cascaded rotation for edges (points)
 - Remove duplicates in mxGraph.removeCells
 - Add names (refs) for constraints/ports
-- Fix selectVertices to ignore relative children
 
-- Print preview in IE 9 standards causes GraphEditor to 'corrupt'
+- Fix selectVertices to ignore relative children
+- Print preview in IE 9 standards causes GraphEditor to crash
 - Fix cloning of port IDs in edge styles
 - Fix del/cut/copy/paste for cell overlays
-- Fix text background size in Chrome 24 on Win 8 (see bbox.html)
 
+- Fix text background size in Chrome 24 on Win 8 (see bbox.html)
 - Move panning, context menu trigger for touch devices to core/example
 - Fix edge to edge connections, edge routing, handling and validation
 - Add autoExtend for timerAutoScroll, scrollBuffer with zoom support
-- Add (v)Align=auto style for edge labels
 
+- Add (v)Align=auto style for edge labels
 - Separate validation and repaint, move translate/scale to view
 - Fix toggle selection for FF on Mac
 - Fix scrollbars.html example for IE8 standards
-- Allow extend via outline with scrollbars, fix extendCanvas in Java
 
+- Allow extend via outline with scrollbars, fix extendCanvas in Java
 - Fix arrow and link shapes ignores waypoints
 - mxUtils.makeDraggable should check graph.isEnabled, add invalid drop target cursor
 - Fix custom dashpattern for VML / add extra style for dashstyle in VML
-- Add mxGraph.zoom method with optional center point, compute optimal zoom values
 
-- Add swimlane fill color support in core (see schema.html)
+- Add mxGraph.zoom method with optional center point, compute optimal zoom values
 - Fix dash pattern bug in VML (see etc/html/test/dash.html), add constant 
 - Add mxGraph.createMouseEvent hook
 - Add include-shape for backgrounds in stencils
