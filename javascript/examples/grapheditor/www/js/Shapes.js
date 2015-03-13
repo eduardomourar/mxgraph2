@@ -1416,11 +1416,44 @@
 			return handle;
 		};
 		
+		function createArcHandle(state, yOffset)
+		{
+			return createHandle(state, [mxConstants.STYLE_ARCSIZE], function(bounds)
+			{
+				var arcSize = Math.max(0, parseFloat(mxUtils.getValue(state.style,
+					mxConstants.STYLE_ARCSIZE, mxConstants.RECTANGLE_ROUNDING_FACTOR * 100))) / 100;
+				var tmp = (yOffset != null) ? yOffset : bounds.height / 8;
+				
+				return new mxPoint(bounds.x + bounds.width - Math.min(Math.max(bounds.width / 2, bounds.height / 2),
+					Math.min(bounds.width, bounds.height) * arcSize), bounds.y + tmp);
+			}, function(bounds, pt, me)
+			{
+				var f = Math.min(50, Math.max(0, (bounds.width - pt.x + bounds.x) * 100 /
+					Math.min(bounds.width, bounds.height)));
+				this.state.style[mxConstants.STYLE_ARCSIZE] = Math.round(f);
+			});
+		}
+
+		function createArcHandleFunction()
+		{
+			return function(state)
+			{
+				var handles = [];
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
+				{
+					handles.push(createArcHandle(state));
+				}
+				
+				return handles;
+			};
+		};
+		
 		function createTrapezoidHandleFunction(max)
 		{
 			return function(state)
 			{
-				return [createHandle(state, ['size'], function(bounds)
+				var handles = [createHandle(state, ['size'], function(bounds)
 				{
 					var size = Math.max(0, Math.min(max, parseFloat(mxUtils.getValue(this.state.style, 'size', TrapezoidShape.prototype.size))));
 				
@@ -1429,14 +1462,21 @@
 				{
 					this.state.style['size'] = Math.max(0, Math.min(max, (pt.x - bounds.x) / (bounds.width * 0.75)));
 				})];
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
+				{
+					handles.push(createArcHandle(state));
+				}
+				
+				return handles;
 			};
 		};
 		
-		function createDisplayHandleFunction(defaultValue)
+		function createDisplayHandleFunction(defaultValue, allowArcHandle)
 		{
 			return function(state)
 			{
-				return [createHandle(state, ['size'], function(bounds)
+				var handles = [createHandle(state, ['size'], function(bounds)
 				{
 					var size = parseFloat(mxUtils.getValue(this.state.style, 'size', defaultValue));
 	
@@ -1445,14 +1485,21 @@
 				{
 					this.state.style['size'] = Math.max(0, Math.min(1, (pt.x - bounds.x) / bounds.width));
 				})];
+				
+				if (allowArcHandle && mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
+				{
+					handles.push(createArcHandle(state));
+				}
+				
+				return handles;
 			};
 		};
 		
-		function createCubeHandleFunction(factor, defaultValue)
+		function createCubeHandleFunction(factor, defaultValue, allowArcHandle)
 		{
 			return function(state)
 			{
-				return [createHandle(state, ['size'], function(bounds)
+				var handles = [createHandle(state, ['size'], function(bounds)
 				{
 					var size = Math.max(0, Math.min(bounds.width, Math.min(bounds.height, parseFloat(
 						mxUtils.getValue(this.state.style, 'size', defaultValue))))) * factor;
@@ -1463,6 +1510,13 @@
 					this.state.style['size'] = Math.round(Math.max(0, Math.min(Math.min(bounds.width, pt.x - bounds.x),
 							Math.min(bounds.height, pt.y - bounds.y))) / factor);
 				})];
+				
+				if (allowArcHandle && mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
+				{
+					handles.push(createArcHandle(state));
+				}
+				
+				return handles;
 			};
 		};
 		
@@ -1543,6 +1597,7 @@
 			'flexArrow': function(state)
 			{
 				// Do not use state.shape.startSize/endSize since it is cached
+				var tol = state.view.graph.gridSize / state.view.scale;
 				var handles = [];
 				
 				if (mxUtils.getValue(state.style, mxConstants.STYLE_STARTARROW, mxConstants.NONE) != mxConstants.NONE)
@@ -1571,8 +1626,6 @@
 						// Snaps to end geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
-							var tol = state.view.graph.gridSize / state.view.scale;
-
 							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 6)
 							{
 								state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
@@ -1605,8 +1658,6 @@
 						// Snaps to endWidth
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
-							var tol = state.view.graph.gridSize / state.view.scale;
-
 							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_STARTSIZE]) - parseFloat(state.style[mxConstants.STYLE_ENDSIZE])) < tol / 6)
 							{
 								state.style[mxConstants.STYLE_STARTSIZE] = state.style[mxConstants.STYLE_ENDSIZE];
@@ -1646,8 +1697,6 @@
 						// Snaps to start geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
-							var tol = state.view.graph.gridSize / state.view.scale;
-
 							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 6)
 							{
 								state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
@@ -1680,8 +1729,6 @@
 						// Snaps to start geometry
 						if (!mxEvent.isAltDown(me.getEvent()))
 						{
-							var tol = state.view.graph.gridSize / state.view.scale;
-
 							if (Math.abs(parseFloat(state.style[mxConstants.STYLE_ENDSIZE]) - parseFloat(state.style[mxConstants.STYLE_STARTSIZE])) < tol / 6)
 							{
 								state.style[mxConstants.STYLE_ENDSIZE] = state.style[mxConstants.STYLE_STARTSIZE];
@@ -1699,11 +1746,11 @@
 			},
 			'swimlane': function(state)
 			{
-				return [createHandle(state, [mxConstants.STYLE_STARTSIZE], function(bounds)
+				var handles = [createHandle(state, [mxConstants.STYLE_STARTSIZE], function(bounds)
 				{
-					var size = parseFloat(mxUtils.getValue(this.state.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
+					var size = parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
 					
-					if (mxUtils.getValue(this.state.style, mxConstants.STYLE_HORIZONTAL, 1) == 1)
+					if (mxUtils.getValue(state.style, mxConstants.STYLE_HORIZONTAL, 1) == 1)
 					{
 						return new mxPoint(bounds.getCenterX(), bounds.y + Math.max(0, Math.min(bounds.height, size)));
 					}
@@ -1713,12 +1760,25 @@
 					}
 				}, function(bounds, pt)
 				{	
-					this.state.style[mxConstants.STYLE_STARTSIZE] =
+					state.style[mxConstants.STYLE_STARTSIZE] =
 						(mxUtils.getValue(this.state.style, mxConstants.STYLE_HORIZONTAL, 1) == 1) ?
 							Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y))) :
 							Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x)));
 				})];
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED))
+				{
+					var size = parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
+					handles.push(createArcHandle(state, size / 2));
+				}
+				
+				return handles;
 			},
+			'label': createArcHandleFunction(),
+			'ext': createArcHandleFunction(),
+			'rectangle': createArcHandleFunction(),
+			'triangle': createArcHandleFunction(),
+			'rhombus': createArcHandleFunction(),
 			'umlLifeline': function(state)
 			{
 				return [createHandle(state, ['size'], function(bounds)
@@ -1733,7 +1793,7 @@
 			},
 			'process': function(state)
 			{
-				return [createHandle(state, ['size'], function(bounds)
+				var handles = [createHandle(state, ['size'], function(bounds)
 				{
 					var size = Math.max(0, Math.min(0.5, parseFloat(mxUtils.getValue(this.state.style, 'size', ProcessShape.prototype.size))));
 
@@ -1742,6 +1802,13 @@
 				{
 					this.state.style['size'] = Math.max(0, Math.min(0.5, (pt.x - bounds.x) / bounds.width));
 				})];
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
+				{
+					handles.push(createArcHandle(state));
+				}
+				
+				return handles;
 			},
 			'cross': function(state)
 			{
@@ -1774,7 +1841,7 @@
 			},
 			'manualInput': function(state)
 			{
-				return [createHandle(state, ['size'], function(bounds)
+				var handles = [createHandle(state, ['size'], function(bounds)
 				{
 					var size = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'size', ManualInputShape.prototype.size)));
 					
@@ -1783,6 +1850,13 @@
 				{
 					this.state.style['size'] = Math.round(Math.max(0, Math.min(bounds.height, (pt.y - bounds.y) * 4 / 3)));
 				})];
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
+				{
+					handles.push(createArcHandle(state));
+				}
+				
+				return handles;
 			},
 			'dataStorage': function(state)
 			{
@@ -1798,7 +1872,7 @@
 			},
 			'internalStorage': function(state)
 			{
-				return [createHandle(state, ['dx', 'dy'], function(bounds)
+				var handles = [createHandle(state, ['dx', 'dy'], function(bounds)
 				{
 					var dx = Math.max(0, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'dx', InternalStorageShape.prototype.dx)));
 					var dy = Math.max(0, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'dy', InternalStorageShape.prototype.dy)));
@@ -1809,6 +1883,13 @@
 					this.state.style['dx'] = Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x)));
 					this.state.style['dy'] = Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)));
 				})];
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
+				{
+					handles.push(createArcHandle(state));
+				}
+				
+				return handles;
 			},
 			'corner': function(state)
 			{
@@ -1902,12 +1983,12 @@
 					this.state.style['size'] = Math.max(0, Math.min(1, (bounds.y + bounds.height - pt.y) / bounds.height));
 				})];
 			},
-			'step': createDisplayHandleFunction(StepShape.prototype.size),
-			'curlyBracket': createDisplayHandleFunction(CurlyBracketShape.prototype.size),
-			'display': createDisplayHandleFunction(DisplayShape.prototype.size),
-			'cube': createCubeHandleFunction(1, CubeShape.prototype.size),
-			'card': createCubeHandleFunction(0.5, CardShape.prototype.size),
-			'loopLimit': createCubeHandleFunction(0.5, LoopLimitShape.prototype.size),
+			'step': createDisplayHandleFunction(StepShape.prototype.size, true),
+			'curlyBracket': createDisplayHandleFunction(CurlyBracketShape.prototype.size, false),
+			'display': createDisplayHandleFunction(DisplayShape.prototype.size, false),
+			'cube': createCubeHandleFunction(1, CubeShape.prototype.size, false),
+			'card': createCubeHandleFunction(0.5, CardShape.prototype.size, true),
+			'loopLimit': createCubeHandleFunction(0.5, LoopLimitShape.prototype.size, true),
 			'trapezoid': createTrapezoidHandleFunction(0.5),
 			'parallelogram': createTrapezoidHandleFunction(1)
 		};
