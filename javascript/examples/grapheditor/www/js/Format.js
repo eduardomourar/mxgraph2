@@ -232,7 +232,7 @@ Format.prototype.isRoundedState = function(state)
 			shape == 'ext' || shape == 'step' || shape == 'tee' || shape == 'process' || shape == 'link' ||
 			shape == 'rhombus' || shape == 'offPageConnector' || shape == 'loopLimit' || shape == 'hexagon' ||
 			shape == 'manualInput' || shape == 'curlyBracket' || shape == 'singleArrow' ||
-			shape == 'doubleArrow' || shape == 'flexArrow');
+			shape == 'doubleArrow' || shape == 'flexArrow' || shape == 'card');
 };
 
 /**
