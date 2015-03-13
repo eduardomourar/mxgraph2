@@ -2870,6 +2870,11 @@ if (typeof mxVertexHandler != 'undefined')
 				vertexHandlerInit.apply(this, arguments);
 				var redraw = false;
 				
+				if (this.rotationShape != null)
+				{
+					this.rotationShape.node.setAttribute('title', mxResources.get('rotateTooltip'));
+				}
+				
 				var update = mxUtils.bind(this, function()
 				{
 					if (this.connectorImg != null)
@@ -2956,7 +2961,7 @@ if (typeof mxVertexHandler != 'undefined')
 						
 						this.connectorImg.style.cursor = 'crosshair';
 						this.connectorImg.style.position = 'absolute';
-						this.connectorImg.setAttribute('title', mxResources.get('connect'));
+						this.connectorImg.setAttribute('title', mxResources.get('plusTooltip'));
 						
 						if (!(mxClient.IS_TOUCH || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0))
 						{
