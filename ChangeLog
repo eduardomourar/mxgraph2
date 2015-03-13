@@ -1,3 +1,6 @@
+13-MAR-2015: 3.2.0.0
+
+- Adds arcSize handle in grapheditor [JavaScript]
 - Fixes scrolling in scrollbars.html example [JavaScript]
 - Adds padding in mxGraph.fit for IE 9 and later [JavaScript] 
 - Adds shape argument in mxCellRenderer.initializeLabel [JavaScript]
