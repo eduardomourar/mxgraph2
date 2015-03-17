@@ -1,0 +1,84 @@
+<html>
+<head>
+	<title>Stencil test</title>
+
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript">
+		mxBasePath = '../../../javascript/src';
+	</script>
+
+	<!-- Loads and initializes the library -->
+	<script type="text/javascript" src="../../../javascript/src/js/mxClient.js"></script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body>
+<!-- Example code -->
+<script type="text/javascript">
+	function checkShape(node, stateCounter)
+	{
+		node = node.firstChild;
+		
+		while (node != null)
+		{
+			if (node.tagName == 'save')
+			{
+				stateCounter++;
+			}
+			else if (node.tagName == 'restore')
+			{
+				stateCounter--;
+			}
+			
+			stateCounter = checkShape(node, stateCounter);
+			node = node.nextSibling;
+		}
+		
+		return stateCounter;
+	};
+
+	mxEvent.addListener(document.body, 'dragover', function(evt)
+	{
+		evt.stopPropagation();
+		evt.preventDefault();
+	});
+	
+	mxEvent.addListener(document.body, 'drop', function(evt)
+	{
+		for (var i = 0; i < evt.dataTransfer.files.length; i++)
+		{
+			var file = evt.dataTransfer.files[i];
+			var reader = new FileReader();
+			
+			reader.onload = mxUtils.bind(this, function(e)
+			{
+				var doc = mxUtils.parseXml(e.target.result);
+				var shapes = doc.getElementsByTagName('shape');
+				var invalidCount = 0;
+				
+				for (var j = 0; j < shapes.length; j++)
+				{
+					var result = checkShape(shapes[j], 0);
+					
+					if (result != 0)
+					{
+						invalidCount++;
+						mxUtils.write(document.body, 'Shape=' + shapes[j].getAttribute('name') + ' Diff=' + result);
+						mxUtils.br(document.body);
+					}
+				}
+				
+				mxUtils.write(document.body, 'Total ' + invalidCount);
+				mxUtils.br(document.body);
+			});
+		
+			reader.readAsText(file);
+		}
+		
+		evt.stopPropagation();
+		evt.preventDefault();
+	});
+</script>
+Drop XML file here for checking.<br>
+</body>
+</html>
