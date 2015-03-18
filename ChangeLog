@@ -1,3 +1,4 @@
+- Fixes possible NPE in mxAbstractCanvas2D.restore [JavaScript]
 - Hides inactive custom handles for edges if custom handle is active [JavaScript]
 
 13-MAR-2015: 3.2.0.0
