@@ -1,3 +1,4 @@
+- Saveguard mxAbstractCanvas2D.save/restore
 - Move old forum to VM and host on macmini1.draw.io
 - Fix DOM reorder after move in scrollbars.html (folding icon)
 
