@@ -37,6 +37,40 @@
 		return stateCounter;
 	};
 
+	function checkSave(node, stateCounter)
+	{
+		node = node.firstChild;
+		
+		while (node != null)
+		{
+			if (node.tagName == 'save')
+			{
+				stateCounter++;
+			}
+			stateCounter = checkSave(node, stateCounter);
+			node = node.nextSibling;
+		}
+		
+		return stateCounter;
+	};
+
+	function checkRestore(node, stateCounter)
+	{
+		node = node.firstChild;
+		
+		while (node != null)
+		{
+			if (node.tagName == 'restore')
+			{
+				stateCounter++;
+			}
+			stateCounter = checkRestore(node, stateCounter);
+			node = node.nextSibling;
+		}
+		
+		return stateCounter;
+	};
+
 	mxEvent.addListener(document.body, 'dragover', function(evt)
 	{
 		evt.stopPropagation();
@@ -58,12 +92,16 @@
 				
 				for (var j = 0; j < shapes.length; j++)
 				{
-					var result = checkShape(shapes[j], 0);
+// 					var result = checkShape(shapes[j], 0);
+ 					var saveCount = checkSave(shapes[j], 0);
+ 					var restoreCount = checkRestore(shapes[j], 0);
+ 					var result = saveCount - restoreCount;
 					
 					if (result != 0)
 					{
 						invalidCount++;
-						mxUtils.write(document.body, 'Shape=' + shapes[j].getAttribute('name') + ' Diff=' + result);
+						mxUtils.write(document.body, 'Shape=' + shapes[j].getAttribute('name') + ' *** S=' + saveCount + ' R=' + restoreCount + ' Diff=' + result);
+// 						mxUtils.write(document.body, 'Shape=' + shapes[j].getAttribute('name') + ' Diff=' + result);
 						mxUtils.br(document.body);
 					}
 				}
