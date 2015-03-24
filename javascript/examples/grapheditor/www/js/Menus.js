@@ -494,7 +494,7 @@ Menus.prototype.init = function()
 	this.put('options', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['pageView', '-', 'grid', 'guides', '-', 'scrollbars', 'tooltips', '-',
- 		                         'connectionPoints', 'copyConnect', 'navigation', '-', 'pageBackgroundColor', 'autosave']);
+ 		                         'connectionPoints', 'copyConnect', 'collapse-expand', '-', 'pageBackgroundColor', 'autosave']);
 	})));
 	this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
 	{

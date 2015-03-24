@@ -3941,31 +3941,7 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 	{
 		graph.connectionHandler.setCreateTarget(checked);
 	}));
-	
-	// Navigation
-	div.appendChild(this.createOption(mxResources.get('navigation'), function()
-	{
-		return graph.foldingEnabled;
-	}, function(checked)
-	{
-		ui.setFoldingEnabled(checked);
-	},
-	{
-		install: function(apply)
-		{
-			this.listener = function()
-			{
-				apply(graph.foldingEnabled);
-			};
-			
-			ui.addListener('foldingEnabledChanged', this.listener);
-		},
-		destroy: function()
-		{
-			ui.removeListener(this.listener);
-		}
-	}));
-	
+
 	// Scrollbars
 	div.appendChild(this.createOption(mxResources.get('scrollbars'), function()
 	{
