@@ -1,3 +1,4 @@
+- Fixes possible NPE in mxResources.add [JavaScript]
 - Fixes possible NPE in mxAbstractCanvas2D.restore [JavaScript]
 - Hides inactive custom handles for edges if custom handle is active [JavaScript]
 
