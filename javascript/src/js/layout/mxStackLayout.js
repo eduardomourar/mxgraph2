@@ -452,7 +452,13 @@ mxStackLayout.prototype.execute = function(parent)
  */
 mxStackLayout.prototype.setChildGeometry = function(child, geo)
 {
-	this.graph.getModel().setGeometry(child, geo);
+	var geo2 = this.graph.getCellGeometry(child);
+	
+	if (geo2 == null || geo.x != geo2.x || geo.y != geo2.y ||
+		geo.width != geo2.width || geo.height != geo2.height)
+	{
+		this.graph.getModel().setGeometry(child, geo);
+	}
 };
 
 /**
@@ -468,7 +474,7 @@ mxStackLayout.prototype.updateParentGeometry = function(parent, pgeo, last)
 	var horizontal = this.isHorizontal();
 	var model = this.graph.getModel();	
 
-	pgeo = pgeo.clone();
+	var pgeo2 = pgeo.clone();
 	
 	if (horizontal)
 	{
@@ -476,11 +482,11 @@ mxStackLayout.prototype.updateParentGeometry = function(parent, pgeo, last)
 		
 		if (this.resizeParentMax)
 		{
-			pgeo.width = Math.max(pgeo.width, tmp);
+			pgeo2.width = Math.max(pgeo2.width, tmp);
 		}
 		else
 		{
-			pgeo.width = tmp;
+			pgeo2.width = tmp;
 		}
 	}
 	else
@@ -489,13 +495,17 @@ mxStackLayout.prototype.updateParentGeometry = function(parent, pgeo, last)
 		
 		if (this.resizeParentMax)
 		{
-			pgeo.height = Math.max(pgeo.height, tmp);
+			pgeo2.height = Math.max(pgeo2.height, tmp);
 		}
 		else
 		{
-			pgeo.height = tmp;
+			pgeo2.height = tmp;
 		}
 	}
 	
-	model.setGeometry(parent, pgeo);
+	if (pgeo.x != pgeo2.x || pgeo.y != pgeo2.y ||
+		pgeo.width != pgeo2.width || pgeo.height != pgeo2.height)
+	{
+		model.setGeometry(parent, pgeo2);
+	}
 };
