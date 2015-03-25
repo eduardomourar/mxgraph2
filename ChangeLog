@@ -1,3 +1,4 @@
+- Fires UP/DOWN events after validation in mxCurrentRootChange.execute [JavaScript]
 - Fixes update of unchanged geometries in mxStackLayout [JavaScript]  
 - Fixes enabled state of navigation menu, renames navigation switch/removes from sidebar in grapheditor
 - Fixes possible NPE in mxResources.add [JavaScript]

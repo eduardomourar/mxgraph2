@@ -2835,11 +2835,7 @@ mxCurrentRootChange.prototype.execute = function()
 	{
 		this.view.translate = new mxPoint(-translate.x, -translate.y);
 	}
-			
-	var name = (this.isUp) ? mxEvent.UP : mxEvent.DOWN;
-	this.view.fireEvent(new mxEventObject(name,
-		'root', this.view.currentRoot, 'previous', this.previous));
-	
+
 	if (this.isUp)
 	{
 		this.view.clear(this.view.currentRoot, true);
@@ -2850,5 +2846,8 @@ mxCurrentRootChange.prototype.execute = function()
 		this.view.refresh();
 	}
 	
+	var name = (this.isUp) ? mxEvent.UP : mxEvent.DOWN;
+	this.view.fireEvent(new mxEventObject(name,
+		'root', this.view.currentRoot, 'previous', this.previous));
 	this.isUp = !this.isUp;
 };
