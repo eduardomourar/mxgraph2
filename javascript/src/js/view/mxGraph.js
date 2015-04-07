@@ -10672,7 +10672,8 @@ mxGraph.prototype.getCellAt = function(x, y, parent, vertices, edges, ignoreFn)
 			{
 				var state = this.view.getState(cell);
 
-				if ((ignoreFn == null || !ignoreFn(state, x, y)) && this.intersects(state, x, y))
+				if (state != null && (ignoreFn == null || !ignoreFn(state, x, y)) &&
+					this.intersects(state, x, y))
 				{
 					return cell;
 				}
