@@ -1,3 +1,4 @@
+- Fixes return type in mxCell.isVertex/-Edge/-Connectable/-Visible/-Collapsed [JavaScript]
 - Fixes transition to unconnectable parent in mxConstraintHandler.update [JavaScript]
 - Removes checks for shape.content in mxCellRenderer.installListeners [JavaScript]
 - Fires UP/DOWN events after validation in mxCurrentRootChange.execute [JavaScript]
