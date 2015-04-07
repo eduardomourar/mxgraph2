@@ -10636,8 +10636,10 @@ mxGraph.prototype.getSwimlaneAt = function (x, y, parent)
  * Default is true.
  * edges - Optional boolean indicating if edges should be returned. Default
  * is true.
+ * ignoreFn - Optional function that returns true if cell should be ignored.
+ * The function is passed the cell state and the x and y parameter.
  */
-mxGraph.prototype.getCellAt = function(x, y, parent, vertices, edges)
+mxGraph.prototype.getCellAt = function(x, y, parent, vertices, edges, ignoreFn)
 {
 	vertices = (vertices != null) ? vertices : true;
 	edges = (edges != null) ? edges : true;
@@ -10659,7 +10661,7 @@ mxGraph.prototype.getCellAt = function(x, y, parent, vertices, edges)
 		for (var i = childCount - 1; i >= 0; i--)
 		{
 			var cell = this.model.getChildAt(parent, i);
-			var result = this.getCellAt(x, y, cell, vertices, edges);
+			var result = this.getCellAt(x, y, cell, vertices, edges, ignoreFn);
 			
 			if (result != null)
 			{
@@ -10669,8 +10671,8 @@ mxGraph.prototype.getCellAt = function(x, y, parent, vertices, edges)
 				vertices && this.model.isVertex(cell)))
 			{
 				var state = this.view.getState(cell);
-				
-				if (this.intersects(state, x, y))
+
+				if ((ignoreFn == null || !ignoreFn(state, x, y)) && this.intersects(state, x, y))
 				{
 					return cell;
 				}
@@ -11961,8 +11963,13 @@ mxGraph.prototype.removeMouseListener = function(listener)
  * 
  * Sets the graphX and graphY properties if the given <mxMouseEvent> if
  * required and returned the event.
+ * 
+ * Parameters:
+ * 
+ * me - <mxMouseEvent> to be updated.
+ * evtName - Name of the mouse event.
  */
-mxGraph.prototype.updateMouseEvent = function(me)
+mxGraph.prototype.updateMouseEvent = function(me, evtName)
 {
 	if (me.graphX == null || me.graphY == null)
 	{
@@ -11970,6 +11977,19 @@ mxGraph.prototype.updateMouseEvent = function(me)
 		
 		me.graphX = pt.x - this.panDx;
 		me.graphY = pt.y - this.panDy;
+		
+		// Searches for group under the mouse using method if no hit detection can be used
+		// on groups and no other cell was found under the mouse. Ignores all non-rectangles
+		// as those would have been found using native hit detection and non-drag operations.
+		if (me.getCell() == null && this.isMouseDown && evtName == mxEvent.MOUSE_MOVE &&
+			!mxRectangleShape.prototype.noFillPointerEvents)
+		{
+			me.state = this.view.getState(this.getCellAt(pt.x, pt.y, null, null, null, function(state)
+			{
+				return state.shape == null || state.shape.paintBackground != mxRectangleShape.prototype.paintBackground ||
+					(state.shape.fill != null && state.shape.fill != mxConstants.NONE);
+			}));
+		}
 	}
 	
 	return me;
@@ -12164,7 +12184,7 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 	}
 
 	// Updates the graph coordinates in the event
-	me = this.updateMouseEvent(me);
+	me = this.updateMouseEvent(me, evtName);
 
 	// Stops editing for all events other than from cellEditor
 	if (evtName == mxEvent.MOUSE_DOWN && this.isEditing() && !this.cellEditor.isEventSource(me.getEvent()))

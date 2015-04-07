@@ -36,13 +36,22 @@ function mxRectangleShape(bounds, fill, stroke, strokewidth)
 mxUtils.extend(mxRectangleShape, mxShape);
 
 /**
+ * Variable: noFillPointerEvents
+ * 
+ * Specifies if pointer events should be fired on transparent backgrounds.
+ * Default is true for backwards compatibility.
+ */
+mxRectangleShape.prototype.noFillPointerEvents = true;
+
+/**
  * Function: isHtmlAllowed
  *
  * Returns true for non-rounded, non-rotated shapes with no glass gradient.
  */
 mxRectangleShape.prototype.isHtmlAllowed = function()
 {
-	return !this.isRounded && !this.glass && this.rotation == 0;
+	return !this.isRounded && !this.glass && this.rotation == 0 && (this.noFillPointerEvents ||
+		(this.fill != null && this.fill != mxConstants.NONE));
 };
 
 /**
@@ -52,19 +61,28 @@ mxRectangleShape.prototype.isHtmlAllowed = function()
  */
 mxRectangleShape.prototype.paintBackground = function(c, x, y, w, h)
 {
-	if (this.isRounded)
+	if (this.noFillPointerEvents || (this.fill != null && this.fill != mxConstants.NONE) ||
+		(this.stroke != null && this.stroke != mxConstants.NONE))
 	{
-		var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE,
-			mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
-		var r = Math.min(w * f, h * f);
-		c.roundrect(x, y, w, h, r, r);
-	}
-	else
-	{
-		c.rect(x, y, w, h);
-	}
+		if (!this.noFillPointerEvents && (this.fill == null || this.fill == mxConstants.NONE))
+		{
+			c.pointerEvents = false;
+		}
 		
-	c.fillAndStroke();
+		if (this.isRounded)
+		{
+			var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE,
+				mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
+			var r = Math.min(w * f, h * f);
+			c.roundrect(x, y, w, h, r, r);
+		}
+		else
+		{
+			c.rect(x, y, w, h);
+		}
+			
+		c.fillAndStroke();
+	}
 };
 
 /**
@@ -74,7 +92,7 @@ mxRectangleShape.prototype.paintBackground = function(c, x, y, w, h)
  */
 mxRectangleShape.prototype.paintForeground = function(c, x, y, w, h)
 {
-	if (this.glass && !this.outline)
+	if (this.glass && !this.outline && this.fill != null && this.fill != mxConstants.NONE)
 	{
 		this.paintGlassEffect(c, x, y, w, h, this.getArcSize(w + this.strokewidth, h + this.strokewidth));
 	}

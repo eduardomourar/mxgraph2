@@ -26,6 +26,9 @@ mxConstants.GUIDE_COLOR = '#0088cf';
 mxGraph.prototype.pageBreakColor = '#c0c0c0';
 mxGraph.prototype.pageScale = 1;
 
+// Makes group transparent
+mxRectangleShape.prototype.noFillPointerEvents = false;
+
 // Matches label positions of mxGraph 1.x
 mxText.prototype.baseSpacingTop = 5;
 mxText.prototype.baseSpacingBottom = 1;
@@ -338,6 +341,18 @@ Graph = function(container, model, renderHint, stylesheet)
 			}
 			
 			return result;
+		};
+		
+		// Never removes cells from parents that are being moved
+		var graphHandlerShouldRemoveCellsFromParent = this.graphHandler.shouldRemoveCellsFromParent;
+		this.graphHandler.shouldRemoveCellsFromParent = function(parent, cells, evt)
+		{
+			if (this.graph.isCellSelected(parent))
+			{
+				return false;
+			}
+			
+			return graphHandlerShouldRemoveCellsFromParent.apply(this, arguments);
 		};
 		
 		// Disabled splitting edges when edges are moved
