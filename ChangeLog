@@ -1,3 +1,4 @@
+- Fixes transition to unconnectable parent in mxConstraintHandler.update [JavaScript]
 - Removes checks for shape.content in mxCellRenderer.installListeners [JavaScript]
 - Fires UP/DOWN events after validation in mxCurrentRootChange.execute [JavaScript]
 - Fixes update of unchanged geometries in mxStackLayout [JavaScript]  
