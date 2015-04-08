@@ -1859,7 +1859,7 @@
 				}, function(bounds, pt)
 				{	
 					this.state.style['size'] = Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)));
-				})];
+				}, false)];
 			},
 			'umlFrame': function(state)
 			{
@@ -1873,7 +1873,7 @@
 				{
 					this.state.style['width'] = Math.round(Math.max(UmlFrame.prototype.corner, Math.min(bounds.width, pt.x - bounds.x)));
 					this.state.style['height'] = Math.round(Math.max(UmlFrame.prototype.corner * 1.5, Math.min(bounds.height, pt.y - bounds.y)));
-				})];
+				}, false)];
 				
 				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
 				{
