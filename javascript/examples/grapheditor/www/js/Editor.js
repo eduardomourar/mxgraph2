@@ -1006,16 +1006,20 @@ Editor.prototype.initStencilRegistry = function() { };
 	// loaded to render the given stencil.
 	mxStencilRegistry.getBasenameForStencil = function(name)
 	{
-		var parts = name.split('.');
 		var tmp = null;
 		
-		if (parts.length > 0 && parts[0] == 'mxgraph')
+		if (name != null)
 		{
-			tmp = parts[1];
+			var parts = name.split('.');
 			
-			for (var i = 2; i < parts.length - 1; i++)
+			if (parts.length > 0 && parts[0] == 'mxgraph')
 			{
-				tmp += '/' + parts[i];
+				tmp = parts[1];
+				
+				for (var i = 2; i < parts.length - 1; i++)
+				{
+					tmp += '/' + parts[i];
+				}
 			}
 		}
 
