@@ -2995,9 +2995,7 @@ var mxUtils =
 				{
 					if (cells[i] != null)
 					{
-						var style = mxUtils.setStyle(
-							model.getStyle(cells[i]),
-							key, value);
+						var style = mxUtils.setStyle(model.getStyle(cells[i]), key, value);
 						model.setStyle(cells[i], style);
 					}
 				}
@@ -3030,33 +3028,49 @@ var mxUtils =
 		{
 			if (isValue)
 			{
-				style = key+'='+value;
+				style = key + '=' + value + ';';
 			}
 		}
 		else
 		{
-			var index = style.indexOf(key+'=');
-			
-			if (index < 0)
+			if (style.substring(0, key.length + 1) == key + '=')
 			{
+				var next = style.indexOf(';');
+				
 				if (isValue)
 				{
-					var sep = (style.charAt(style.length-1) == ';') ? '' : ';';
-					style = style + sep + key+'='+value;
+					style = key + '=' + value + ((next < 0) ? ';' : style.substring(next));
+				}
+				else
+				{
+					style = (next < 0 || next == style.length - 1) ? '' : style.substring(next);
 				}
 			}
 			else
 			{
-				var tmp = (isValue) ? (key + '=' + value) : '';
-				var cont = style.indexOf(';', index);
+				var index = style.indexOf(';' + key + '=');
 				
-				if (!isValue)
+				if (index < 0)
 				{
-					cont++;
+					if (isValue)
+					{
+						var sep = (style.charAt(style.length - 1) == ';') ? '' : ';';
+						style = style + sep + key + '=' + value + ';';
+					}
 				}
-				
-				style = style.substring(0, index) + tmp +
-					((cont > index) ? style.substring(cont) : '');
+				else
+				{
+					var next = style.indexOf(';', index + 1);
+					
+					if (isValue)
+					{
+						style = style.substring(0, index + 1) + key + '=' + value + ((next < 0) ? ';' : style.substring(next));
+					}
+					else
+					{
+						style = style.substring(0, index) + ((next < 0) ? ';' : style.substring(next));
+					}
+				}
 			}
 		}
 		
