@@ -3043,7 +3043,7 @@ var mxUtils =
 				}
 				else
 				{
-					style = (next < 0 || next == style.length - 1) ? '' : style.substring(next);
+					style = (next < 0 || next == style.length - 1) ? '' : style.substring(next + 1);
 				}
 			}
 			else
