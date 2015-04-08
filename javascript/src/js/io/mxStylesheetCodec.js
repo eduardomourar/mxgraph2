@@ -171,7 +171,7 @@ var mxStylesheetCodec = mxCodecRegistry.register(function()
 							 	{
 							 		value = entry.getAttribute('value');
 							 		
-							 		if (mxUtils.isNumeric(value))
+							 		if (mxUtils.isNumber(value))
 							 		{
 										value = parseFloat(value);
 									}

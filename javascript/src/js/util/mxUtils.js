@@ -2486,6 +2486,8 @@ var mxUtils =
 	 * 
 	 * Returns true if the specified value is numeric, that is, if it is not
 	 * null, not an empty string, not a HEX number and isNaN returns false.
+	 * Note: As opposed to <isInteger> and <isNumber> below, this returns true
+	 * for values like 01.
 	 * 
 	 * Parameters:
 	 * 
@@ -2495,7 +2497,35 @@ var mxUtils =
 	{
 		return !isNaN(parseFloat(n)) && isFinite(n) && (typeof(n) != 'string' || n.toLowerCase().indexOf('0x') < 0);
 	},
-	
+
+	/**
+	 * Function: isInteger
+	 * 
+	 * Returns true if the given value is a machine-generated integer number.
+	 * 
+	 * Parameters:
+	 * 
+	 * n - String representing the possibly numeric value.
+	 */
+	isInteger: function(n)
+	{
+		return String(parseInt(n)) === String(n);
+	},
+
+	/**
+	 * Function: isNumber
+	 * 
+	 * Returns true if the given value is a machine-generated number.
+	 * 
+	 * Parameters:
+	 * 
+	 * n - String representing the possibly numeric value.
+	 */
+	isNumber: function(n)
+	{
+		return String(parseFloat(n)) === String(n);
+	},
+
 	/**
 	 * Function: mod
 	 * 

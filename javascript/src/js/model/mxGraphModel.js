@@ -688,7 +688,7 @@ mxGraphModel.prototype.cellAdded = function(cell)
 		}
 		
 		// Makes sure IDs of deleted cells are not reused
-		if (mxUtils.isNumeric(cell.getId()))
+		if (mxUtils.isNumber(cell.getId()))
 		{
 			this.nextId = Math.max(this.nextId, cell.getId());
 		}

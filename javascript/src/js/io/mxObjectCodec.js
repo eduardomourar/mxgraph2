@@ -444,7 +444,7 @@ mxObjectCodec.prototype.encodeObject = function(enc, obj, node)
 		
     	if (value != null && !this.isExcluded(obj, name, value, true))
     	{
-    		if (mxUtils.isNumeric(name))
+    		if (mxUtils.isInteger(name))
     		{
     			name = null;
     		}
@@ -651,7 +651,7 @@ mxObjectCodec.prototype.convertAttributeFromXml = function(dec, attr, obj)
  */
 mxObjectCodec.prototype.isNumericAttribute = function(dec, attr, obj)
 {
-	return mxUtils.isNumeric(attr.value);
+	return mxUtils.isNumber(attr.value);
 };
 
 /**
