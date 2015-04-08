@@ -722,7 +722,7 @@ Actions.prototype.init = function()
 			graph.getModel().endUpdate();
 		}
 	});
-	this.addAction('collapsible', function() { ui.menus.toggleStyle('container'); });
+	this.addAction('collapsible', function() { ui.menus.toggleStyle('collapsible', '1'); });
 	this.addAction('editStyle...', mxUtils.bind(this, function()
 	{
 		var cells = graph.getSelectionCells();

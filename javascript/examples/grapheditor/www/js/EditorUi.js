@@ -1636,6 +1636,8 @@ EditorUi.prototype.updateActionStates = function()
     this.menus.get('linewidth').setEnabled(!graph.isSelectionEmpty());
     this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected && state != null && graph.isLoop(state)));
     this.menus.get('navigation').setEnabled(selected || graph.view.currentRoot != null);
+    this.actions.get('collapsible').setEnabled(vertexSelected && graph.getSelectionCount() == 1 &&
+    	(graph.isContainer(graph.getSelectionCell()) || graph.model.getChildCount(graph.getSelectionCell()) > 0));
     this.actions.get('home').setEnabled(graph.view.currentRoot != null);
     this.actions.get('exitGroup').setEnabled(graph.view.currentRoot != null);
     this.actions.get('enterGroup').setEnabled(graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell()));
