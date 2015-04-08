@@ -11979,15 +11979,13 @@ mxGraph.prototype.updateMouseEvent = function(me, evtName)
 		me.graphX = pt.x - this.panDx;
 		me.graphY = pt.y - this.panDy;
 		
-		// Searches for group under the mouse using method if no hit detection can be used
-		// on groups and no other cell was found under the mouse. Ignores all non-rectangles
-		// as those would have been found using native hit detection and non-drag operations.
-		if (me.getCell() == null && this.isMouseDown && evtName == mxEvent.MOUSE_MOVE &&
-			!mxRectangleShape.prototype.noFillPointerEvents)
+		// Searches for rectangles using method if native hit detection is disabled on shape
+		if (me.getCell() == null && this.isMouseDown && evtName == mxEvent.MOUSE_MOVE)
 		{
 			me.state = this.view.getState(this.getCellAt(pt.x, pt.y, null, null, null, function(state)
 			{
 				return state.shape == null || state.shape.paintBackground != mxRectangleShape.prototype.paintBackground ||
+					mxUtils.getValue(state.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1' ||
 					(state.shape.fill != null && state.shape.fill != mxConstants.NONE);
 			}));
 		}

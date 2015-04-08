@@ -1,6 +1,6 @@
 - Fixes handling of keys for substrings in mxUtils.setStyle [JavaScript]
 - Fixes removing cells from selected parents in grapheditor
-- Adds mxRectangleShape.noFillPointerEvents to disable events in transparent rectangles [JavaScript]
+- Adds mxConstants.STYLE_POINTER_EVENTS and support in mxRectangleShape.paintBackground [JavaScript]
 - Adds evtName argument in mxGraph.updateMouseEvent [JavaScript]
 - Adds optional ignoreFn argument in mxGraph.getCellAt [JavaScript]
 - Fixes return type in mxCell.isVertex/-Edge/-Connectable/-Visible/-Collapsed [JavaScript]
