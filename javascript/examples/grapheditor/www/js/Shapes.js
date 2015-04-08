@@ -728,7 +728,25 @@
 	UmlLifeline.prototype.paintBackground = function(c, x, y, w, h)
 	{
 		var size = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
-		mxRectangleShape.prototype.paintBackground.call(this, c, x, y, w, size);
+		var participant = mxUtils.getValue(this.style, 'participant');
+		
+		if (participant == null || this.state == null)
+		{
+			mxRectangleShape.prototype.paintBackground.call(this, c, x, y, w, size);
+		}
+		else
+		{
+			var ctor = this.state.view.graph.cellRenderer.getShape(participant);
+			
+			if (ctor != null)
+			{
+				var shape = new ctor();
+				shape.apply(this.state);
+				c.save();
+				shape.paintVertexShape(c, x, y, w, size);
+				c.restore();
+			}
+		}
 		
 		if (size < h)
 		{
@@ -747,6 +765,47 @@
 	};
 
 	mxCellRenderer.prototype.defaultShapes['umlLifeline'] = UmlLifeline;
+	
+	// UML Frame Shape
+	function UmlFrame()
+	{
+		mxShape.call(this);
+	};
+	mxUtils.extend(UmlFrame, mxShape);
+	UmlFrame.prototype.width = 60;
+	UmlFrame.prototype.height = 30;
+	UmlFrame.prototype.corner = 10;
+	UmlFrame.prototype.getLabelBounds = function(rect)
+	{
+		var w = Math.max(0, Math.min(rect.width, parseFloat(mxUtils.getValue(this.style, 'width', this.width)) * this.scale));
+		var h = Math.max(0, Math.min(rect.height, parseFloat(mxUtils.getValue(this.style, 'height', this.height)) * this.scale));
+		
+		return new mxRectangle(rect.x, rect.y, w, h);
+	};
+	UmlFrame.prototype.paintBackground = function(c, x, y, w, h)
+	{
+		var w0 = Math.min(w, Math.max(this.corner, parseFloat(mxUtils.getValue(this.style, 'width', this.width)) * this.scale));
+		var h0 = Math.min(h, Math.max(this.corner * 1.5, parseFloat(mxUtils.getValue(this.style, 'height', this.height)) * this.scale));
+
+		c.begin();
+		c.moveTo(x, y);
+		c.lineTo(x + w0, y);
+		c.lineTo(x + w0, y + Math.max(0, h0 - this.corner * 1.5));
+		c.lineTo(x + Math.max(0, w0 - this.corner), y + h0);
+		c.lineTo(x, y + h0);
+		c.close();
+		c.fillAndStroke();
+		
+		c.begin();
+		c.moveTo(x + w0, y);
+		c.lineTo(x + w, y);
+		c.lineTo(x + w, y + h);
+		c.lineTo(x, y + h);
+		c.lineTo(x, y + h0);
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['umlFrame'] = UmlFrame;
 	
 	mxPerimeter.LifelinePerimeter = function (bounds, vertex, next, orthogonal)
 	{
@@ -1293,9 +1352,19 @@
 		
 		c.setShadow(false);
 		c.begin();
-		c.moveTo(x, y + h / 2);
-		c.lineTo(x + w, y + h / 2);
-		c.end();
+		
+		if (mxUtils.getValue(this.style, 'line') == 'vertical')
+		{
+			c.moveTo(x + w / 2, y);
+			c.lineTo(x + w / 2, y + h);
+		}
+		else
+		{
+			c.moveTo(x, y + h / 2);
+			c.lineTo(x + w, y + h / 2);
+		}
+
+		c.end();			
 		c.stroke();
 	};
 
@@ -1791,6 +1860,27 @@
 				{	
 					this.state.style['size'] = Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y)));
 				})];
+			},
+			'umlFrame': function(state)
+			{
+				var handles = [createHandle(state, ['width', 'height'], function(bounds)
+				{
+					var w0 = Math.max(UmlFrame.prototype.corner, Math.min(bounds.width, mxUtils.getValue(this.state.style, 'width', UmlFrame.prototype.width)));
+					var h0 = Math.max(UmlFrame.prototype.corner * 1.5, Math.min(bounds.height, mxUtils.getValue(this.state.style, 'height', UmlFrame.prototype.height)));
+
+					return new mxPoint(bounds.x + w0, bounds.y + h0);
+				}, function(bounds, pt)
+				{
+					this.state.style['width'] = Math.round(Math.max(UmlFrame.prototype.corner, Math.min(bounds.width, pt.x - bounds.x)));
+					this.state.style['height'] = Math.round(Math.max(UmlFrame.prototype.corner * 1.5, Math.min(bounds.height, pt.y - bounds.y)));
+				})];
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
+				{
+					handles.push(createArcHandle(state));
+				}
+				
+				return handles;
 			},
 			'process': function(state)
 			{
