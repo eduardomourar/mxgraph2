@@ -314,6 +314,7 @@ mxStackLayout.prototype.execute = function(parent)
 			var tmp = 0;
 			var last = null;
 			var lastValue = 0;
+			var lastChild = null;
 			var childCount = model.getChildCount(parent);
 			
 			for (var i = 0; i < childCount; i++)
@@ -404,6 +405,7 @@ mxStackLayout.prototype.execute = function(parent)
 						}
 						
 						this.setChildGeometry(child, geo);
+						lastChild = child;
 						last = geo;
 						
 						if (horizontal)
@@ -417,13 +419,12 @@ mxStackLayout.prototype.execute = function(parent)
 					}
 				}
 			}
-			
-			if (this.resizeParent && pgeo != null && last != null &&
-				!this.graph.isCellCollapsed(parent))
+
+			if (this.resizeParent && pgeo != null && last != null && !this.graph.isCellCollapsed(parent))
 			{
 				this.updateParentGeometry(parent, pgeo, last);
 			}
-			else if (this.resizeLast && pgeo != null && last != null)
+			else if (this.resizeLast && pgeo != null && last != null && lastChild != null)
 			{
 				if (horizontal)
 				{
@@ -433,6 +434,8 @@ mxStackLayout.prototype.execute = function(parent)
 				{
 					last.height = pgeo.height - last.y - this.spacing - this.marginBottom;
 				}
+				
+				this.setChildGeometry(lastChild, last);
 			}
 		}
 		finally
