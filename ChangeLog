@@ -1,3 +1,5 @@
+- Adds support for recursiveResize style in grapheditor
+- Ignores pointer events for transparent groups in grapheditor
 - Fixes handling of keys for substrings in mxUtils.setStyle [JavaScript]
 - Fixes removing cells from selected parents in grapheditor
 - Adds mxConstants.STYLE_POINTER_EVENTS and support in mxRectangleShape.paintBackground [JavaScript]

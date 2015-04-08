@@ -26,9 +26,6 @@ mxConstants.GUIDE_COLOR = '#0088cf';
 mxGraph.prototype.pageBreakColor = '#c0c0c0';
 mxGraph.prototype.pageScale = 1;
 
-// Makes group transparent
-mxRectangleShape.prototype.noFillPointerEvents = false;
-
 // Matches label positions of mxGraph 1.x
 mxText.prototype.baseSpacingTop = 5;
 mxText.prototype.baseSpacingBottom = 1;
@@ -474,9 +471,9 @@ Graph.prototype.init = function()
 		{
 			var stackLayout = new mxStackLayout(this.graph, true);
 			stackLayout.resizeParentMax = true;
-			stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', true);
-			stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', true);
-			stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', false);
+			stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
+			stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+			stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', '0') == '1';
 			stackLayout.marginLeft = style['marginLeft'] || 0;
 			stackLayout.marginRight = style['marginRight'] || 0;
 			stackLayout.marginTop = style['marginTop'] || 0;
@@ -488,8 +485,8 @@ Graph.prototype.init = function()
 		else if (style['childLayout'] == 'treeLayout')
 		{
 			var treeLayout = new mxCompactTreeLayout(this.graph);
-			treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', true);
-			treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', true);
+			treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', '1') == '1';
+			treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
 			treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
 			treeLayout.levelDistance = mxUtils.getValue(style, 'treeLevelDistance', 30);
 			treeLayout.maintainParentLocation = true;
@@ -502,7 +499,7 @@ Graph.prototype.init = function()
 		{
 			var flowLayout = new mxHierarchicalLayout(this.graph, mxUtils.getValue(style,
 					'flowOrientation', mxConstants.DIRECTION_EAST));
-			flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', true);
+			flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
 			flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
 			flowLayout.maintainParentLocation = true;
 			
@@ -2471,6 +2468,7 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			return !this.graph.isSwimlane(state.cell) && this.graph.model.getChildCount(state.cell) > 0 &&
 				!mxEvent.isControlDown(me.getEvent()) && !this.graph.isCellCollapsed(state.cell) &&
+				mxUtils.getValue(state.style, 'recursiveResize', '1') == '1' &&
 				mxUtils.getValue(state.style, 'childLayout', null) == null;
 		};
 	
