@@ -742,7 +742,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
     		'ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;');
     	cardCell.vertex = true;
     	
-		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(15, 90), false);
 		assoc2.geometry.relative = true;
 		assoc2.edge = true;
@@ -758,7 +758,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
     		'rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#ffffc0;strokeColor=#ff0000;');
     	cardCell.vertex = true;
     	
-		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(60, 100), false);
 		assoc2.geometry.relative = true;
 		assoc2.edge = true;
@@ -777,7 +777,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		subtitle.vertex = true;
 		compositeState.insert(subtitle);
 		
-		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(80, 120), false);
 		assoc2.geometry.relative = true;
 		assoc2.edge = true;
@@ -793,7 +793,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
     		'rhombus;whiteSpace=wrap;html=1;fillColor=#ffffc0;strokeColor=#ff0000;');
     	cardCell.vertex = true;
     	
-		var assoc1 = new mxCell('no', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+		var assoc1 = new mxCell('no', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc1.geometry.setTerminalPoint(new mxPoint(180, 20), false);
 		assoc1.geometry.relative = true;
 		assoc1.geometry.x = -1;
@@ -801,7 +801,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		
 		cardCell.insertEdge(assoc1, true);
     	
-		var assoc2 = new mxCell('yes', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;');
+		var assoc2 = new mxCell('yes', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(40, 100), false);
 		assoc2.geometry.relative = true;
 		assoc2.geometry.x = -1;
@@ -818,7 +818,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			'shape=line;html=1;strokeWidth=6;strokeColor=#ff0000;');
 		cardCell.vertex = true;
 		
-		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=horizontal;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 		assoc2.geometry.setTerminalPoint(new mxPoint(100, 80), false);
 		assoc2.geometry.relative = true;
 		assoc2.edge = true;
@@ -842,10 +842,10 @@ Sidebar.prototype.addUmlPalette = function(expand)
     	content.appendChild(this.createVertexTemplateFromCells([umlFrame], 300, 200, 'Frame', true));
 		content.appendChild(this.createVertexTemplate('html=1;points=[];', 10, 80, '', 'Activation', true));
 		
-		content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message', true));
-		content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical;html=1;verticalAlign=bottom;endArrow=block;', 100, 0, 'dispatch', 'Message', true));
+		content.appendChild(this.createEdgeTemplate('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message', true));
+		content.appendChild(this.createEdgeTemplate('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=block;', 100, 0, 'dispatch', 'Message', true));
 		
-		var retMessage = new mxCell('return', new mxGeometry(0, 0, 0, 0), 'edgeStyle=elbowEdgeStyle;elbow=vertical;html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;');
+		var retMessage = new mxCell('return', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;');
 		retMessage.geometry.setTerminalPoint(new mxPoint(100, 0), true);
 		retMessage.geometry.setTerminalPoint(new mxPoint(0, 0), false);
 		retMessage.geometry.relative = true;
