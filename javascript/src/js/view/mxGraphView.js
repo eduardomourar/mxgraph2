@@ -1327,6 +1327,31 @@ mxGraphView.prototype.updateFixedTerminalPoint = function(edge, terminal, source
 };
 
 /**
+ * Function: updateBoundsFromStencil
+ * 
+ * Updates the bounds of the given cell state to reflect the bounds of the stencil
+ * if it has a fixed aspect and returns the previous bounds as an <mxRectangle> if
+ * the bounds have been modified or null otherwise.
+ * 
+ * Parameters:
+ * 
+ * edge - <mxCellState> whose bounds should be updated.
+ */
+mxGraphView.prototype.updateBoundsFromStencil = function(state)
+{
+	var previous = null;
+	
+	if (state != null && state.shape != null && state.shape.stencil != null && state.shape.stencil.aspect == 'fixed')
+	{
+		previous = mxRectangle.fromRectangle(state);
+		var asp = state.shape.stencil.computeAspect(state.style, state.x, state.y, state.width, state.height);
+		state.setRect(asp.x, asp.y, state.shape.stencil.w0 * asp.width, state.shape.stencil.h0 * asp.height);
+	}
+	
+	return previous;
+};
+
+/**
  * Function: updatePoints
  *
  * Updates the absolute points in the given state using the specified array
@@ -1352,7 +1377,22 @@ mxGraphView.prototype.updatePoints = function(edge, points, source, target)
 			var src = this.getTerminalPort(edge, source, true);
 			var trg = this.getTerminalPort(edge, target, false);
 			
+			// Uses the stencil bounds for routing and restores after routing
+			var srcBounds = this.updateBoundsFromStencil(src);
+			var trgBounds = this.updateBoundsFromStencil(trg);
+
 			edgeStyle(edge, src, trg, points, pts);
+			
+			// Restores previous bounds
+			if (srcBounds != null)
+			{
+				src.setRect(srcBounds.x, srcBounds.y, srcBounds.width, srcBounds.height);
+			}
+			
+			if (trgBounds != null)
+			{
+				trg.setRect(trgBounds.x, trgBounds.y, trgBounds.width, trgBounds.height);
+			}
 		}
 		else if (points != null)
 		{

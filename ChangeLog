@@ -1,3 +1,4 @@
+- Fixes ignored aspect for routing stencil connections [JavaScript]
 - Adds UML frame shape and handle, participant style for lifeline in grapheditor
 - Adds support for recursiveResize style in grapheditor
 - Ignores pointer events for transparent groups in grapheditor
