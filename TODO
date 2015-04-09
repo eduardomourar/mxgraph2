@@ -1,4 +1,4 @@
-- Move old forum to VM and host on macmini1.draw.io
+- Add isNumber, isInteger to 1.x
 - Fix DOM reorder after move in scrollbars.html (folding icon)
 
 - Fix middle/center in secondlabel.html example for wrap with no FO

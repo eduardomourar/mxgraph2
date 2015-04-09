@@ -1,3 +1,6 @@
+- Fixes undo for text editing and insert labels in grapheditor
+- Uses Ctrl+Shift+Z for redo on Mac in grapheditor
+- Changes keyboard shortcut for autosize to Ctrl+Shift+Y in grapheditor
 - Adds mxKeyHandler.isEventIgnored hook [JavaScript]
 - Fixes undo behaviour for text editing with no changes in grapheditor
 - No longer calls getCellAt for Graph.dblClick in grapheditor
