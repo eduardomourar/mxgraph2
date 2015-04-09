@@ -832,16 +832,13 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		//
 		content.appendChild(this.createVertexTemplate('ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000', 30, 30, '', 'End', true));
 
+		//
+		// Sequence diagram elements
+		//
 		content.appendChild(this.createVertexTemplate('shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;', 100, 300, ':Object', 'Lifeline', true));
 		content.appendChild(this.createVertexTemplate('shape=umlLifeline;participant=umlActor;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;', 20, 300, '', 'Lifeline', true));
-		
-		var umlFrame = new mxCell('frame', new mxGeometry(0, 0, 300, 200), 'shape=umlFrame;whiteSpace=wrap;html=1;');
-		umlFrame.setConnectable(false);
-		umlFrame.vertex = true;
-     	
-    	content.appendChild(this.createVertexTemplateFromCells([umlFrame], 300, 200, 'Frame', true));
+    	content.appendChild(this.createVertexTemplate('shape=umlFrame;whiteSpace=wrap;html=1;', 300, 200, 'frame', 'Frame', true));
 		content.appendChild(this.createVertexTemplate('html=1;points=[];', 10, 80, '', 'Activation', true));
-		
 		content.appendChild(this.createEdgeTemplate('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message', true));
 		content.appendChild(this.createEdgeTemplate('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=block;', 100, 0, 'dispatch', 'Message', true));
 		
