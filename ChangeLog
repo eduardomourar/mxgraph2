@@ -1,3 +1,4 @@
+- Adds mxGraphView.getFixedTerminalPoint/getFloatingTerminalPoint hooks [JavaScript]
 - Uses new mxUtils.isNumber, isInteger for all numeric checks [JavaScript]
 - Fixes ignored aspect for routing stencil connections [JavaScript]
 - Adds UML frame shape and handle, participant style for lifeline in grapheditor

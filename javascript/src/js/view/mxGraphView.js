@@ -1301,6 +1301,23 @@ mxGraphView.prototype.updateFixedTerminalPoints = function(edge, source, target)
  */
 mxGraphView.prototype.updateFixedTerminalPoint = function(edge, terminal, source, constraint)
 {
+	edge.setAbsoluteTerminalPoint(this.getFixedTerminalPoint(edge, terminal, source, constraint), source);
+};
+
+/**
+ * Function: getFixedTerminalPoint
+ *
+ * Returns the fixed source or target terminal point for the given edge.
+ * 
+ * Parameters:
+ * 
+ * edge - <mxCellState> whose terminal point should be returned.
+ * terminal - <mxCellState> which represents the actual terminal.
+ * source - Boolean that specifies if the terminal is the source.
+ * constraint - <mxConnectionConstraint> that specifies the connection.
+ */
+mxGraphView.prototype.getFixedTerminalPoint = function(edge, terminal, source, constraint)
+{
 	var pt = null;
 	
 	if (constraint != null)
@@ -1322,8 +1339,8 @@ mxGraphView.prototype.updateFixedTerminalPoint = function(edge, terminal, source
 							 s * (tr.y + pt.y + orig.y));
 		}
 	}
-
-	edge.setAbsoluteTerminalPoint(pt, source);
+	
+	return pt;
 };
 
 /**
@@ -1507,6 +1524,24 @@ mxGraphView.prototype.updateFloatingTerminalPoints = function(state, source, tar
  */
 mxGraphView.prototype.updateFloatingTerminalPoint = function(edge, start, end, source)
 {
+	edge.setAbsoluteTerminalPoint(this.getFloatingTerminalPoint(edge, start, end, source), source);
+};
+
+/**
+ * Function: getFloatingTerminalPoint
+ * 
+ * Returns the floating terminal point for the given edge, start and end
+ * state, where start is the source if source is true.
+ * 
+ * Parameters:
+ * 
+ * edge - <mxCellState> whose terminal point should be returned.
+ * start - <mxCellState> for the terminal on "this" side of the edge.
+ * end - <mxCellState> for the terminal on the other side of the edge.
+ * source - Boolean indicating if start is the source terminal state.
+ */
+mxGraphView.prototype.getFloatingTerminalPoint = function(edge, start, end, source)
+{
 	start = this.getTerminalPort(edge, start, source);
 	var next = this.getNextPoint(edge, end, source);
 	
@@ -1534,7 +1569,7 @@ mxGraphView.prototype.updateFloatingTerminalPoint = function(edge, start, end, s
 		pt = mxUtils.getRotatedPoint(pt, cos, sin, center);
 	}
 	
-	edge.setAbsoluteTerminalPoint(pt, source);
+	return pt;
 };
 
 /**
