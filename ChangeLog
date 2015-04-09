@@ -1,3 +1,4 @@
+- Bypasses mxShape.getLabelBounds for non centered labels [JavaScript]
 - Adds mxGraphView.getFixedTerminalPoint/getFloatingTerminalPoint hooks [JavaScript]
 - Uses new mxUtils.isNumber, isInteger for all numeric checks [JavaScript]
 - Fixes ignored aspect for routing stencil connections [JavaScript]

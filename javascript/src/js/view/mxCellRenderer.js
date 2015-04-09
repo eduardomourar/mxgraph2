@@ -944,7 +944,13 @@ mxCellRenderer.prototype.getLabelBounds = function(state)
 	// Shape can modify its label bounds
 	if (state.shape != null)
 	{
-		bounds = state.shape.getLabelBounds(bounds);
+		var hpos = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_POSITION, mxConstants.ALIGN_CENTER);
+		var vpos = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_MIDDLE);
+		
+		if (hpos == mxConstants.ALIGN_CENTER && vpos == mxConstants.ALIGN_MIDDLE)
+		{
+			bounds = state.shape.getLabelBounds(bounds);
+		}
 	}
 	
 	// Label width style overrides actual label width
