@@ -80,8 +80,9 @@ Sidebar.prototype.init = function()
 {
 	var dir = STENCIL_PATH;
 	
-	this.addGeneralPalette(true);
-	this.addAdvancedPalette(true);
+	this.addSearchPalette(true);
+	this.addGeneralPalette(false);
+	this.addAdvancedPalette(false);
 	this.addStencilPalette('basic', mxResources.get('basic'), dir + '/basic.xml',
 		';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2');
 	this.addStencilPalette('arrows', mxResources.get('arrows'), dir + '/arrows.xml',
@@ -361,21 +362,352 @@ Sidebar.prototype.hideTooltip = function()
 };
 
 /**
+ * Hides the current tooltip.
+ */
+Sidebar.prototype.addEntry = function(tags, fn)
+{
+	if (tags != null && tags.length > 0)
+	{
+		if (this.taglist == null)
+		{
+			this.taglist = new Object();
+		}
+		
+		var tmp = tags.split(' ');
+		
+		for (var i = 0; i < tmp.length; i++)
+		{
+			if (this.taglist[tmp[i]] == null)
+			{
+				this.taglist[tmp[i]] = [];
+			}
+			
+			this.taglist[tmp[i]].push(function(content)
+			{
+				content.appendChild(fn());
+			});
+		}
+	}
+	
+	return fn;
+};
+
+/**
+ * Adds shape search UI.
+ */
+Sidebar.prototype.searchEntries = function(searchTerm, count, page, success, error)
+{
+	if (this.taglist != null)
+	{
+		success(this.taglist[searchTerm]);
+	}
+	else
+	{
+		success([]);
+	}
+};
+
+/**
+ * Adds shape search UI.
+ */
+Sidebar.prototype.addSearchPalette = function(expand)
+{
+	// TODO: Merge common code with iconfinder palette
+	var elt = this.createTitle(mxResources.get('search'));
+	this.container.appendChild(elt);
+	
+	var div = document.createElement('div');
+	div.className = 'geSidebar';
+	div.style.overflow = 'hidden';
+	div.style.width = '100%';
+	div.style.padding = '0px';
+
+	if (!expand)
+	{
+		div.style.display = 'none';
+	}
+	
+	var inner = document.createElement('div');
+	inner.className = 'geTitle';
+	inner.style.backgroundColor = 'transparent';
+	inner.style.borderColor = 'transparent';
+	inner.style.padding = '4px';
+	inner.style.textOverflow = 'clip';
+	inner.style.cursor = 'default';
+	
+	if (!mxClient.IS_VML)
+	{
+		inner.style.paddingRight = '20px';
+	}
+
+	var searchResource = mxResources.get('search');
+	
+	var input = document.createElement('input');
+	input.setAttribute('type', 'text');
+	input.value = searchResource;
+	input.style.border = 'solid 1px #d5d5d5';
+	input.style.width = '100%';
+	input.style.backgroundImage = 'url(' + IMAGE_PATH + '/clear.gif)';
+	input.style.backgroundRepeat = 'no-repeat';
+	input.style.backgroundPosition = '100% 50%';
+	input.style.paddingRight = '14px';
+	inner.appendChild(input);
+
+	var cross = document.createElement('div');
+	cross.setAttribute('title', mxResources.get('reset'));
+	cross.style.position = 'relative';
+	cross.style.left = '-16px';
+	cross.style.width = '12px';
+	cross.style.height = '14px';
+	cross.style.cursor = 'pointer';
+
+	// Workaround for inline-block not supported in IE
+	cross.style.display = (mxClient.IS_VML) ? 'inline' : 'inline-block';
+	cross.style.top = ((mxClient.IS_VML) ? 0 : 3) + 'px';
+	
+	// Needed to block event transparency in IE
+	cross.style.background = 'url(' + IMAGE_PATH + '/transparent.gif)';
+	
+	var find;
+
+	mxEvent.addListener(cross, 'click', function()
+	{
+		input.value = '';
+		find();
+		input.focus();
+	});
+	
+	inner.appendChild(cross);
+	div.appendChild(inner);
+
+	var center = document.createElement('center');
+	var button = mxUtils.button(searchResource, function()
+	{
+		find();
+	});
+	button.setAttribute('disabled', 'true');
+	// Workaround for inherited line-height in quirks mode
+	button.style.lineHeight = 'normal';
+	center.style.paddingTop = '4px';
+	center.style.marginBottom = '12px';
+
+	center.appendChild(button);
+	div.appendChild(center);
+	
+	var searchTerm = '';
+	var modified = false;
+	var active = false;
+	var complete = false;
+	var page = 0;
+	var count = 25;
+
+	function clearDiv()
+	{
+		var child = div.firstChild;
+		
+		while (child != null)
+		{
+			var next = child.nextSibling;
+			
+			if (child != inner && child != center)
+			{
+				child.parentNode.removeChild(child);
+			}
+			
+			child = next;
+		}
+	};
+	
+	find = mxUtils.bind(this, function()
+	{
+		if (input.value != '' || (!modified && input.value == searchResource))
+		{
+			if (button.getAttribute('disabled') != 'true')
+			{
+				if (center.parentNode != null)
+				{
+					if (searchTerm != input.value)
+					{
+						clearDiv();
+						searchTerm = input.value;
+						complete = false;
+						page = 0;
+					}
+					
+					if (!active)
+					{
+						button.style.cursor = 'wait';
+						button.innerHTML = mxResources.get('loading') + '...';
+						active = true;
+						
+						this.searchEntries(searchTerm, count, page, mxUtils.bind(this, function(results)
+						{
+							results = (results != null) ? results : [];
+							active = false;
+							page++;
+							center.parentNode.removeChild(center);
+							
+							for (var i = 0; i < results.length; i++)
+							{
+								results[i](div);
+							}
+							
+							if (results.length < count)
+							{
+								button.setAttribute('disabled', 'true');
+								button.innerHTML = mxResources.get('noMoreResults');
+								complete = true;
+							}
+							else
+							{
+								button.innerHTML = mxResources.get('moreResults');
+							}
+							
+							button.style.cursor = '';
+							
+							if (results.length == 0 && page == 1)
+							{
+								var err = document.createElement('div');
+								err.className = 'geTitle';
+								err.style.backgroundColor = 'transparent';
+								err.style.borderColor = 'transparent';
+								err.style.padding = '4px';
+								err.style.textAlign = 'center';
+								err.style.cursor = 'default';
+								
+								mxUtils.write(err, mxResources.get('noResultsFor', [searchTerm]));
+								div.appendChild(err);
+							}
+							
+							div.appendChild(center);
+						}), mxUtils.bind(this, function()
+						{
+							// TODO: Error handling
+							button.style.cursor = '';
+						}));
+					}
+				}
+			}
+		}
+		else
+		{
+			clearDiv();
+			searchTerm = '';
+			button.innerHTML = searchResource;
+			button.setAttribute('disabled', 'true');
+		}
+	});
+	
+	mxEvent.addListener(input, 'keydown', mxUtils.bind(this, function(evt)
+	{
+		if (evt.keyCode == 13 /* Enter */)
+		{
+			find();
+		}
+	}));
+	
+	mxEvent.addListener(input, 'keyup', mxUtils.bind(this, function(evt)
+	{
+		modified = true;
+		
+		if (input.value == '' || (!modified && input.value == searchResource))
+		{
+			button.setAttribute('disabled', 'true');
+		}
+		else if (input.value != searchTerm)
+		{
+			button.removeAttribute('disabled');
+			button.innerHTML = searchResource;
+		}
+		else if (!active)
+		{
+			if (complete)
+			{
+				button.setAttribute('disabled', 'true');
+				button.innerHTML = mxResources.get('noMoreResults');
+			}
+			else
+			{
+				button.removeAttribute('disabled');
+				button.innerHTML = mxResources.get('moreResults');
+			}
+		}
+	}));
+	
+	mxEvent.addListener(input, 'focus', mxUtils.bind(this, function(evt)
+	{
+		if (input.value == searchResource && !modified)
+		{
+			input.value = '';
+		}
+	}));
+	
+	mxEvent.addListener(input, 'blur', mxUtils.bind(this, function(evt)
+	{
+		if (input.value == '')
+		{
+			input.value = searchResource;
+			modified = false;
+		}
+	}));
+    
+    // Workaround for blocked text selection in Editor
+    mxEvent.addListener(input, 'mousedown', function(evt)
+    {
+    	if (evt.stopPropagation)
+    	{
+    		evt.stopPropagation();
+    	}
+    	
+    	evt.cancelBubble = true;
+    });
+    
+    // Workaround for blocked text selection in Editor
+    mxEvent.addListener(input, 'selectstart', function(evt)
+    {
+    	if (evt.stopPropagation)
+    	{
+    		evt.stopPropagation();
+    	}
+    	
+    	evt.cancelBubble = true;
+    });
+    
+	this.addFoldingHandler(elt, div, function()
+	{
+		// not lazy
+	}, false);
+    
+	var outer = document.createElement('div');
+    outer.appendChild(div);
+    this.container.appendChild(outer);
+	
+    // Keeps references to the DOM nodes
+	this.palettes['search'] = [elt, outer];
+};
+
+/**
  * Adds the general palette to the sidebar.
  */
 Sidebar.prototype.addGeneralPalette = function(expand)
 {
-	// Rearranged based on usage data from
-	// https://s3-eu-west-1.amazonaws.com/uploads-eu.hipchat.com/38308/267398/LpNxVqkMjKH61jP/shapefreq12hours.txt
+	// Uses to avoid bind call to create functions below
+	var sb = this;
+	
+	var fns = [this.addEntry('rect rectangle', function() { return sb.createVertexTemplate('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', true); }),
+	           this.addEntry('rounded rect rectangle', function() { return sb.createVertexTemplate('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', true); }),
+	           this.addEntry('circle oval ellipse', function() { return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', true); }),
+	           // Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
+	           this.addEntry('text', function() { return sb.createVertexTemplate('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
+	   	    		40, 20, 'Text', 'Text', true); })];
+
 	this.addPalette('general', mxResources.get('general'), (expand != null) ? expand : true, mxUtils.bind(this, function(content)
 	{
-		content.appendChild(this.createVertexTemplate('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', true));
-	    content.appendChild(this.createVertexTemplate('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', true));
-	    content.appendChild(this.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', true));
-	    // Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
-	    content.appendChild(this.createVertexTemplate('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
-	    		40, 20, 'Text', 'Text', true));
-	    
+		for (var i = 0; i < fns.length; i++)
+		{
+			content.appendChild(fns[i](content));
+		}
+
 	    content.appendChild(this.createVertexTemplate('shape=ext;double=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rectangle', true));
 	    content.appendChild(this.createVertexTemplate('shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rounded Rectangle', true));
 	    content.appendChild(this.createVertexTemplate('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Double Ellipse', true));
