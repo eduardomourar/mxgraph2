@@ -1,3 +1,4 @@
+- Fixes undo behaviour for text editing with no changes in grapheditor
 - No longer calls getCellAt for Graph.dblClick in grapheditor
 - Bypasses mxShape.getLabelBounds for non centered labels [JavaScript]
 - Adds mxGraphView.getFixedTerminalPoint/getFloatingTerminalPoint hooks [JavaScript]

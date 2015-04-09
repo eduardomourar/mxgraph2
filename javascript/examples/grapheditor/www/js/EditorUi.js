@@ -1311,13 +1311,14 @@ EditorUi.prototype.undo = function()
 {
 	if (this.editor.graph.cellEditor.isContentEditing())
 	{
-		// Stops editing if undo doesn't change anything in the editing value
+		// Stops editing and executes undo on graph if undo doesn't change the editing value
 		var value = this.editor.graph.cellEditor.getCurrentValue();
 		document.execCommand('undo', false, null);
 		
 		if (value == this.editor.graph.cellEditor.getCurrentValue())
 		{
 			this.editor.graph.stopEditing(false);
+			this.editor.undoManager.undo();
 		}
 	}
 	else
