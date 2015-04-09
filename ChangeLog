@@ -1,3 +1,4 @@
+- No longer calls getCellAt for Graph.dblClick in grapheditor
 - Bypasses mxShape.getLabelBounds for non centered labels [JavaScript]
 - Adds mxGraphView.getFixedTerminalPoint/getFloatingTerminalPoint hooks [JavaScript]
 - Uses new mxUtils.isNumber, isInteger for all numeric checks [JavaScript]

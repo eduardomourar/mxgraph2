@@ -1235,12 +1235,7 @@ if (typeof mxVertexHandler != 'undefined')
 	Graph.prototype.dblClick = function(evt, cell)
 	{
 		var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-		
-		if (cell == null)
-		{
-			cell = this.getCellAt(pt.x, pt.y);
-		}
-	
+
 		// Automatically adds new child cells to edges on double click
 		if (evt != null && !this.model.isVertex(cell))
 		{
