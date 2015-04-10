@@ -373,7 +373,7 @@ Sidebar.prototype.addEntry = function(tags, fn)
 			this.taglist = new Object();
 		}
 		
-		var tmp = tags.split(' ');
+		var tmp = tags.toLowerCase().split(' ');
 		
 		for (var i = 0; i < tmp.length; i++)
 		{
@@ -397,9 +397,9 @@ Sidebar.prototype.addEntry = function(tags, fn)
  */
 Sidebar.prototype.searchEntries = function(searchTerm, count, page, success, error)
 {
-	if (this.taglist != null)
+	if (this.taglist != null && searchTerm != null)
 	{
-		success(this.taglist[searchTerm]);
+		success(this.taglist[searchTerm.toLowerCase()]);
 	}
 	else
 	{
@@ -694,12 +694,15 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	// Uses to avoid bind call to create functions below
 	var sb = this;
 	
-	var fns = [this.addEntry('rect rectangle', function() { return sb.createVertexTemplate('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', true); }),
-	           this.addEntry('rounded rect rectangle', function() { return sb.createVertexTemplate('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', true); }),
-	           this.addEntry('circle oval ellipse', function() { return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', true); }),
-	           // Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
-	           this.addEntry('text', function() { return sb.createVertexTemplate('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
-	   	    		40, 20, 'Text', 'Text', true); })];
+	var fns =
+	[
+	 	this.addEntry('rect rectangle box task process', function() { return sb.createVertexTemplate('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', true); }),
+	 	this.addEntry('rounded rect rectangle box task process', function() { return sb.createVertexTemplate('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', true); }),
+	 	this.addEntry('circle oval ellipse start end state', function() { return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', true); }),
+	 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
+	 	this.addEntry('text textbox textarea label paragraph title subtitle', function() { return sb.createVertexTemplate('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
+	 			40, 20, 'Text', 'Text', true); })
+	 ];
 
 	this.addPalette('general', mxResources.get('general'), (expand != null) ? expand : true, mxUtils.bind(this, function(content)
 	{
@@ -708,6 +711,7 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 			content.appendChild(fns[i](content));
 		}
 
+		// TODO: Add to above functions
 	    content.appendChild(this.createVertexTemplate('shape=ext;double=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rectangle', true));
 	    content.appendChild(this.createVertexTemplate('shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rounded Rectangle', true));
 	    content.appendChild(this.createVertexTemplate('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Double Ellipse', true));
@@ -861,63 +865,66 @@ Sidebar.prototype.addAdvancedShapes = function(dir, content)
  */
 Sidebar.prototype.addUmlPalette = function(expand)
 {
+	// Uses to avoid bind call to create functions below
+	var sb = this;
+
+	// Reusable elements
+	var field = new mxCell('+ field: Type', new mxGeometry(0, 0, 200, 26), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
+	field.vertex = true;
+	
+	var spacer = new mxCell('', new mxGeometry(0, 0, 20, 14), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=4;spacingRight=4;rotatable=0;labelPosition=right;');
+	spacer.vertex = true;
+	
+	var divider = new mxCell('', new mxGeometry(0, 0, 200, 8), 'line;html=1;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;');
+	divider.vertex = true;
+	
+	var fns =
+	[
+	 	this.addEntry('uml class object instance', function()
+		{
+			var entityCell = new mxCell('Classname', new mxGeometry(0, 0, 200, 90),
+		    	'swimlane;html=1;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
+			entityCell.vertex = true;
+			entityCell.insert(field.clone());
+
+			entityCell.insert(divider.clone());
+		
+			var row3 = field.clone();
+			row3.value = '+ method2(Type): Type';
+			entityCell.insert(row3);
+			
+			// FIXME: Why was spacer not added in previous code?
+			
+			return sb.createVertexTemplateFromCells([entityCell], 200, 90, 'Class', true); 
+		}),
+		this.addEntry('uml class item member method function variable field attribute', function()
+		{
+			var row = field.clone();
+			row.value = '+ item: attribute';
+			row.geometry.width = 100;
+			row.geometry.height = 26;
+			row.vertex = true;
+			
+			return sb.createVertexTemplateFromCells([row], 100, 26, 'Item', true);
+		}),
+		this.addEntry('uml class spacer space gap separator', function() { return sb.createVertexTemplateFromCells([spacer.clone()], 20, 14, 'Spacer', true); }),
+		this.addEntry('uml class divider hline line separator', function()
+		{
+			divider = divider.clone();
+			divider.geometry.width = 40;
+			divider.geometry.height = 8;
+			
+			return sb.createVertexTemplateFromCells([divider], 40, 14, 'Divider', true);
+		})
+	];
+
 	this.addPalette('uml', 'UML', expand || false, mxUtils.bind(this, function(content)
 	{
-		//
-		// Class
-		//
-		var entityCell = new mxCell('Classname', new mxGeometry(0, 0, 200, 90),
-	    	'swimlane;html=1;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
-		entityCell.vertex = true;
-		var row1 = new mxCell('+ field: Type', new mxGeometry(0, 0, 200, 26), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
-		row1.vertex = true;
-		entityCell.insert(row1);
-		
-		var divider = new mxCell('', new mxGeometry(0, 0, 200, 8), 'line;html=1;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;');
-		divider.vertex = true;
-		entityCell.insert(divider);
+		for (var i = 0; i < fns.length; i++)
+		{
+			content.appendChild(fns[i](content));
+		}
 
-		var row3 = row1.clone();
-		row3.value = '+ method2(Type): Type';
-		entityCell.insert(row3);
-		
-		content.appendChild(this.createVertexTemplateFromCells([entityCell], 200, 90, 'Class', true));
-	
-		//
-		// Item
-		//
-		// LATER: Extend parent switch will use x-coordinate of drop location
-		// plus width and increase parent width before parent layout is applied
-		var row = row1.clone();
-		row.value = '+ item: attribute';
-		row.geometry.x = 0;
-		row.geometry.y = 0;
-		row.geometry.width = 100;
-		row.geometry.height = 26;
-		row.vertex = true;
-		
-		content.appendChild(this.createVertexTemplateFromCells([row.clone()], 100, 26, 'Item', true));
-
-		//
-		// Spacer
-		//
-		var spacer = new mxCell('', new mxGeometry(0, 0, 20, 14), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=4;spacingRight=4;rotatable=0;labelPosition=right;');
-		spacer.vertex = true;
-		entityCell.insert(spacer);
-
-		content.appendChild(this.createVertexTemplateFromCells([spacer], 20, 14, 'Spacer', true));
-
-		//
-		// Divider
-		//
-		divider = divider.clone();
-		divider.geometry.x = 0;
-		divider.geometry.y = 0;
-		divider.geometry.width = 40;
-		divider.geometry.height = 8;
-		
-		content.appendChild(this.createVertexTemplateFromCells([divider], 40, 14, 'Divider', true));
-		
 		//
 		// Title
 		//
@@ -929,7 +936,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		entityCell = new mxCell('Section', new mxGeometry(0, 0, 140, 90),
 	    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
 		entityCell.vertex = true;
-		row1 = row1.clone();
+		var row1 = field.clone();
 		row1.geometry.width = 140;
 		row1.vertex = true;
 		entityCell.insert(row1);
