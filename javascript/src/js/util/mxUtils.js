@@ -2487,7 +2487,7 @@ var mxUtils =
 	 * Returns true if the specified value is numeric, that is, if it is not
 	 * null, not an empty string, not a HEX number and isNaN returns false.
 	 * Note: As opposed to <isInteger> and <isNumber> below, this returns true
-	 * for values like 01.
+	 * for values like 01 or 10.0.
 	 * 
 	 * Parameters:
 	 * 
@@ -2515,7 +2515,10 @@ var mxUtils =
 	/**
 	 * Function: isNumber
 	 * 
-	 * Returns true if the given value is a machine-generated number.
+	 * Returns true if the given value is a number, that is, if the string
+	 * representation of the parsed float is the same as the input value.
+	 * For example, this will return true for 10.1 but false for 10.0, as
+	 * 10.0 should be written as 10. Use <isNumeric> for a different approach.
 	 * 
 	 * Parameters:
 	 * 
