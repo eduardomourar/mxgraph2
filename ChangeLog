@@ -1,4 +1,5 @@
 - Adds support for functions in mxObjectIdentity [JavaScript]
+- Adds handle for hexagon shape in grapheditor
 - Fixes undo for text editing and insert labels in grapheditor
 - Uses Ctrl+Shift+Z for redo on Mac in grapheditor
 - Changes keyboard shortcut for autosize to Ctrl+Shift+Y in grapheditor
