@@ -466,6 +466,23 @@
 
 	mxCellRenderer.prototype.defaultShapes['step'] = StepShape;
 
+	// Hexagon shape
+	function HexagonShape()
+	{
+		mxActor.call(this);
+	};
+	mxUtils.extend(HexagonShape, mxHexagon);
+	HexagonShape.prototype.size = 0.25;
+	HexagonShape.prototype.redrawPath = function(c, x, y, w, h)
+	{
+		var s =  w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+		var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+		this.addPoints(c, [new mxPoint(s, 0), new mxPoint(w - s, 0), new mxPoint(w, 0.5 * h), new mxPoint(w - s, h),
+		                   new mxPoint(s, h), new mxPoint(0, 0.5 * h)], this.isRounded, arcSize, true);
+	};
+
+	mxCellRenderer.prototype.defaultShapes['hexagon'] = HexagonShape;
+
 	// Plus Shape
 	function PlusShape()
 	{
@@ -1541,8 +1558,10 @@
 			};
 		};
 		
-		function createDisplayHandleFunction(defaultValue, allowArcHandle)
+		function createDisplayHandleFunction(defaultValue, allowArcHandle, max)
 		{
+			max = (max != null) ? max : 1;
+			
 			return function(state)
 			{
 				var handles = [createHandle(state, ['size'], function(bounds)
@@ -1552,7 +1571,7 @@
 					return new mxPoint(bounds.x + size * bounds.width, bounds.getCenterY());
 				}, function(bounds, pt)
 				{
-					this.state.style['size'] = Math.max(0, Math.min(1, (pt.x - bounds.x) / bounds.width));
+					this.state.style['size'] = Math.max(0, Math.min(max, (pt.x - bounds.x) / bounds.width));
 				})];
 				
 				if (allowArcHandle && mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
@@ -2075,6 +2094,7 @@
 				})];
 			},
 			'step': createDisplayHandleFunction(StepShape.prototype.size, true),
+			'hexagon': createDisplayHandleFunction(HexagonShape.prototype.size, true, 0.5),
 			'curlyBracket': createDisplayHandleFunction(CurlyBracketShape.prototype.size, false),
 			'display': createDisplayHandleFunction(DisplayShape.prototype.size, false),
 			'cube': createCubeHandleFunction(1, CubeShape.prototype.size, false),
