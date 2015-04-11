@@ -374,7 +374,7 @@ Sidebar.prototype.addEntry = function(tags, fn)
 		}
 		
 		var tmp = tags.toLowerCase().split(' ');
-		
+
 		for (var i = 0; i < tmp.length; i++)
 		{
 			if (this.taglist[tmp[i]] == null)
@@ -382,10 +382,7 @@ Sidebar.prototype.addEntry = function(tags, fn)
 				this.taglist[tmp[i]] = [];
 			}
 			
-			this.taglist[tmp[i]].push(function(content)
-			{
-				content.appendChild(fn());
-			});
+			this.taglist[tmp[i]].push(fn);
 		}
 	}
 	
@@ -395,11 +392,40 @@ Sidebar.prototype.addEntry = function(tags, fn)
 /**
  * Adds shape search UI.
  */
-Sidebar.prototype.searchEntries = function(searchTerm, count, page, success, error)
+Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, error)
 {
-	if (this.taglist != null && searchTerm != null)
+	if (this.taglist != null && searchTerms != null)
 	{
-		success(this.taglist[searchTerm.toLowerCase()]);
+		var tmp = searchTerms.toLowerCase().split(' ');
+		var dict = new mxDictionary();
+		var results = null;
+
+		// TODO: Add paging
+		for (var i = 0; i < tmp.length; i++)
+		{
+			var arr = this.taglist[tmp[i]];
+			var tmpDict = new mxDictionary();
+			results = [];
+			
+			if (arr != null)
+			{
+				for (var j = 0; j < arr.length; j++)
+				{
+					var entry = arr[j];
+
+					if ((i == 0) == (dict.get(entry) == null) &&
+						tmpDict.get(entry) == null)
+					{
+						tmpDict.put(entry, entry);
+						results.push(entry);
+					}
+				}
+			}
+			
+			dict = tmpDict;
+		}
+		
+		success(results);
 	}
 	else
 	{
@@ -500,6 +526,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	var complete = false;
 	var page = 0;
 	var count = 25;
+	var hash = new Object();
 
 	function clearDiv()
 	{
@@ -530,6 +557,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 					{
 						clearDiv();
 						searchTerm = input.value;
+						hash = new Object();
 						complete = false;
 						page = 0;
 					}
@@ -549,7 +577,15 @@ Sidebar.prototype.addSearchPalette = function(expand)
 							
 							for (var i = 0; i < results.length; i++)
 							{
-								results[i](div);
+								var elt = results[i]();
+								
+								// Avoids duplicates in results
+								// TODO: Check if fast enough
+								if (hash[elt.innerHTML] == null)
+								{
+									hash[elt.innerHTML] == '1';
+									div.appendChild(results[i]());
+								}
 							}
 							
 							if (results.length < count)
@@ -691,17 +727,29 @@ Sidebar.prototype.addSearchPalette = function(expand)
  */
 Sidebar.prototype.addGeneralPalette = function(expand)
 {
-	// Uses to avoid bind call to create functions below
+	// Avoids having to bind all functions to "this"
 	var sb = this;
 	
 	var fns =
 	[
-	 	this.addEntry('rect rectangle box task process', function() { return sb.createVertexTemplate('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', true); }),
-	 	this.addEntry('rounded rect rectangle box task process', function() { return sb.createVertexTemplate('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', true); }),
-	 	this.addEntry('circle oval ellipse start end state', function() { return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', true); }),
-	 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
-	 	this.addEntry('text textbox textarea label paragraph title subtitle', function() { return sb.createVertexTemplate('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
-	 			40, 20, 'Text', 'Text', true); })
+	 	this.addEntry('rect rectangle box task process', function()
+	 	{
+	 		return sb.createVertexTemplate('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', true);
+	 	}),
+	 	this.addEntry('rounded rect rectangle box task process', function()
+	 	{
+	 		return sb.createVertexTemplate('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', true);
+	 	}),
+	 	this.addEntry('circle oval ellipse start end state', function()
+	 	{
+	 		return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', true);
+	 	}),
+	 	this.addEntry('text textbox textarea label paragraph title subtitle', function()
+	 	{
+		 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
+	 		return sb.createVertexTemplate('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
+	 			40, 20, 'Text', 'Text', true);
+	 	})
 	 ];
 
 	this.addPalette('general', mxResources.get('general'), (expand != null) ? expand : true, mxUtils.bind(this, function(content)
@@ -863,149 +911,126 @@ Sidebar.prototype.addAdvancedShapes = function(dir, content)
 /**
  * Adds the general palette to the sidebar.
  */
+Sidebar.prototype.cloneCell = function(cell, value)
+{
+	var clone = cell.clone();
+	
+	if (value != null)
+	{
+		clone.value = value;
+	}
+	
+	return clone;
+};
+
+/**
+ * Adds the general palette to the sidebar.
+ */
 Sidebar.prototype.addUmlPalette = function(expand)
 {
-	// Uses to avoid bind call to create functions below
+	// Avoids having to bind all functions to "this"
 	var sb = this;
 
-	// Reusable elements
-	var field = new mxCell('+ field: Type', new mxGeometry(0, 0, 200, 26), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
+	// Reusable cells
+	var field = new mxCell('+ field: type', new mxGeometry(0, 0, 100, 26), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
 	field.vertex = true;
-	
-	var spacer = new mxCell('', new mxGeometry(0, 0, 20, 14), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=4;spacingRight=4;rotatable=0;labelPosition=right;');
-	spacer.vertex = true;
-	
-	var divider = new mxCell('', new mxGeometry(0, 0, 200, 8), 'line;html=1;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;');
+
+	var divider = new mxCell('', new mxGeometry(0, 0, 40, 8), 'line;html=1;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;');
 	divider.vertex = true;
-	
+
 	var fns =
 	[
-	 	this.addEntry('uml class object instance', function()
+	 	this.addEntry('uml static class object instance', function()
 		{
-			var entityCell = new mxCell('Classname', new mxGeometry(0, 0, 200, 90),
+			var cell = new mxCell('Classname', new mxGeometry(0, 0, 160, 90),
 		    	'swimlane;html=1;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
-			entityCell.vertex = true;
-			entityCell.insert(field.clone());
-
-			entityCell.insert(divider.clone());
-		
-			var row3 = field.clone();
-			row3.value = '+ method2(Type): Type';
-			entityCell.insert(row3);
+			cell.vertex = true;
+			cell.insert(field.clone());
+			cell.insert(divider.clone());
+			cell.insert(sb.cloneCell(field, '+ method(type): type'));
 			
-			// FIXME: Why was spacer not added in previous code?
-			
-			return sb.createVertexTemplateFromCells([entityCell], 200, 90, 'Class', true); 
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class', true); 
 		}),
-		this.addEntry('uml class item member method function variable field attribute', function()
+		this.addEntry('uml static class item member method function variable field attribute label', function()
 		{
-			var row = field.clone();
-			row.value = '+ item: attribute';
-			row.geometry.width = 100;
-			row.geometry.height = 26;
-			row.vertex = true;
-			
-			return sb.createVertexTemplateFromCells([row], 100, 26, 'Item', true);
+			return sb.createVertexTemplateFromCells([sb.cloneCell(field, '+ item: attribute')], field.geometry.width, field.geometry.height, 'Item', true);
 		}),
-		this.addEntry('uml class spacer space gap separator', function() { return sb.createVertexTemplateFromCells([spacer.clone()], 20, 14, 'Spacer', true); }),
-		this.addEntry('uml class divider hline line separator', function()
+		this.addEntry('uml static class spacer space gap separator', function()
 		{
-			divider = divider.clone();
-			divider.geometry.width = 40;
-			divider.geometry.height = 8;
+			var cell = new mxCell('', new mxGeometry(0, 0, 20, 14), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=4;spacingRight=4;rotatable=0;labelPosition=right;');
+			cell.vertex = true;
 			
-			return sb.createVertexTemplateFromCells([divider], 40, 14, 'Divider', true);
-		})
-	];
-
-	this.addPalette('uml', 'UML', expand || false, mxUtils.bind(this, function(content)
-	{
-		for (var i = 0; i < fns.length; i++)
+			return sb.createVertexTemplateFromCells([cell.clone()], cell.geometry.width, cell.geometry.height, 'Spacer', true);
+		}),
+		this.addEntry('uml static class divider hline line separator', function()
 		{
-			content.appendChild(fns[i](content));
-		}
-
-		//
-		// Title
-		//
-	    content.appendChild(this.createVertexTemplate('text;html=1;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;', 80, 26, 'Title', 'Title', true));
-	    
-	    //
-	    // Section
-	    //
-		entityCell = new mxCell('Section', new mxGeometry(0, 0, 140, 90),
-	    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
-		entityCell.vertex = true;
-		var row1 = field.clone();
-		row1.geometry.width = 140;
-		row1.vertex = true;
-		entityCell.insert(row1);
-		divider = divider.clone();
-		entityCell.insert(divider);
-		row3 = row1.clone();
-		row3.value = '+ method2(Type): Type';
-		entityCell.insert(row3);
-		
-		content.appendChild(this.createVertexTemplateFromCells([entityCell], 140, 90, 'Section', true));
-		
-		//
-		// ER Table
-		//
-		var entityCell = new mxCell('Table', new mxGeometry(0, 0, 160, 106),
-	    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#e0e0e0;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
-		entityCell.vertex = true;
-		var row1 = new mxCell('Row 1', new mxGeometry(0, 0, 160, 26), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
-		row1.vertex = true;
-		entityCell.insert(row1);
-		var row2 = row1.clone();
-		row2.value = 'Row 2';
-		entityCell.insert(row2);
-		var row3 = row1.clone();
-		row3.value = 'Row 3';
-		entityCell.insert(row3);
-
-		content.appendChild(this.createVertexTemplateFromCells([entityCell], 160, 106, 'Table', true));
-		
-		//
-		// ER Section
-		//
-		entityCell = new mxCell('Section', new mxGeometry(0, 0, 80, 102),
-	    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=22;fillColor=none;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
-		entityCell.vertex = true;
-		row1 = row1.clone();
-		row1.geometry.width = 80;
-		row1.vertex = true;
-		entityCell.insert(row1);
-		row2 = row1.clone();
-		row2.value = 'Row 2';
-		entityCell.insert(row2);
-		row3 = row1.clone();
-		row3.value = 'Row 3';
-		entityCell.insert(row3);
-		
-		content.appendChild(this.createVertexTemplateFromCells([entityCell], 80, 102, 'Section', true));
-
-		//
-		// Basic UML
-		//
-	    content.appendChild(this.createVertexTemplate('html=1;', 110, 50, 'Object', 'Object', true));
-    	
-	    var classCell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
+			return sb.createVertexTemplateFromCells([divider.clone()], divider.geometry.width, divider.geometry.height, 'Divider', true);
+		}),
+		this.addEntry('uml static class title label', function()
+		{
+			return sb.createVertexTemplate('text;html=1;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;', 80, 26, 'Title', 'Title', true)
+		}),
+		this.addEntry('uml static class section subsection', function()
+		{
+			var cell = new mxCell('Section', new mxGeometry(0, 0, 140, 90),
+		    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
+			cell.vertex = true;
+			cell.insert(field.clone());
+			cell.insert(divider.clone());
+			cell.insert(sb.cloneCell(field, '+ method(type): type'));
+			
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Section', true);
+		}),
+		this.addEntry('er entity table', function()
+		{
+			var cell = new mxCell('Table', new mxGeometry(0, 0, 160, 106),
+		    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#e0e0e0;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
+			cell.vertex = true;
+			cell.insert(sb.cloneCell(field, 'Row 1'));
+			cell.insert(sb.cloneCell(field, 'Row 2'));
+			cell.insert(sb.cloneCell(field, 'Row 3'));
+	
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Table', true);
+		}),
+		this.addEntry('er entity table section subsection', function()
+		{
+			var cell = new mxCell('Section', new mxGeometry(0, 0, 140, 102),
+		    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=22;fillColor=none;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
+			cell.vertex = true;
+			cell.insert(sb.cloneCell(field, 'Row 1'));
+			cell.insert(sb.cloneCell(field, 'Row 2'));
+			cell.insert(sb.cloneCell(field, 'Row 3'));
+			
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Section', true);
+		}),
+		this.addEntry('uml static class object instance', function()
+		{
+			return sb.createVertexTemplate('html=1;', 110, 50, 'Object', 'Object', true);
+		}),
+		this.addEntry('uml static class object instance', function()
+		{
+		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
     			'<b>Class</b></p>' +
 				'<hr/><div style="height:2px;"></div><hr/>', new mxGeometry(0, 0, 140, 60),
 				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
-    	classCell.vertex = true;
-    	content.appendChild(this.createVertexTemplateFromCells([classCell], 140, 60, 'Class 1', true));
-    	
-	    var classCell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
+		    cell.vertex = true;
+		    
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class 1', true);
+		}),
+		this.addEntry('uml static class object instance', function()
+		{
+		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
     			'<b>Class</b></p>' +
 				'<hr/><p style="margin:0px;margin-left:4px;">+ field: Type</p><hr/>' +
 				'<p style="margin:0px;margin-left:4px;">+ method(): Type</p>', new mxGeometry(0, 0, 160, 90),
 				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
-    	classCell.vertex = true;
-    	content.appendChild(this.createVertexTemplateFromCells([classCell], 160, 90, 'Class 2', true));
-    	
-	    var classCell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
+		    cell.vertex = true;
+	    	
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class 2', true);
+		}),
+		this.addEntry('uml static class interface', function()
+		{
+		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
     			'<i>&lt;&lt;Interface&gt;&gt;</i><br/><b>Interface</b></p>' +
 				'<hr/><p style="margin:0px;margin-left:4px;">+ field1: Type<br/>' +
 				'+ field2: Type</p>' +
@@ -1013,99 +1038,120 @@ Sidebar.prototype.addUmlPalette = function(expand)
 				'+ method1(Type): Type<br/>' +
 				'+ method2(Type, Type): Type</p>', new mxGeometry(0, 0, 190, 140),
 				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
-    	classCell.vertex = true;
-    	content.appendChild(this.createVertexTemplateFromCells([classCell], 190, 140, 'Interface', true));
-
-		var classCell = new mxCell('Module', new mxGeometry(0, 0, 120, 60),
-	    	'shape=component;align=left;spacingLeft=36');
-    	classCell.vertex = true;
-
-    	content.appendChild(this.createVertexTemplateFromCells([classCell], 120, 60, 'Module', true));
-
-		var classCell = new mxCell('&lt;&lt;component&gt;&gt;<br/><b>Component</b>', new mxGeometry(0, 0, 180, 90), 'overflow=fill;html=1;');
-		classCell.vertex = true;
-		var classCell1 = new mxCell('', new mxGeometry(1, 0, 20, 20), 'shape=component;jettyWidth=8;jettyHeight=4;');
-		classCell1.vertex = true;
-		classCell1.geometry.relative = true;
-		classCell1.geometry.offset = new mxPoint(-27, 7);
-		classCell.insert(classCell1);
-		
-		content.appendChild(this.createVertexTemplateFromCells([classCell], 180, 90, 'Component', true));
-
-		var classCell = new mxCell('<p style="margin:0px;margin-top:6px;text-align:center;"><b>Component</b></p>' +
+		    cell.vertex = true;
+	    	
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Interface', true);
+		}),
+		this.addEntry('uml static class module', function()
+		{
+			return sb.createVertexTemplate('shape=component;align=left;spacingLeft=36;', 120, 60, 'Module', 'Module', true);
+		}),
+		this.addEntry('uml static class component', function()
+		{
+		    var cell = new mxCell('&lt;&lt;component&gt;&gt;<br/><b>Component</b>', new mxGeometry(0, 0, 180, 90), 'overflow=fill;html=1;');
+		    cell.vertex = true;
+		    
+			var symbol = new mxCell('', new mxGeometry(1, 0, 20, 20), 'shape=component;jettyWidth=8;jettyHeight=4;');
+			symbol.vertex = true;
+			symbol.geometry.relative = true;
+			symbol.geometry.offset = new mxPoint(-27, 7);
+			cell.insert(symbol);
+	    	
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Component', true);
+		}),
+		this.addEntry('uml static class component', function()
+		{
+		    var cell = new mxCell('<p style="margin:0px;margin-top:6px;text-align:center;"><b>Component</b></p>' +
 				'<hr/><p style="margin:0px;margin-left:8px;">+ Attribute1: Type<br/>+ Attribute2: Type</p>', new mxGeometry(0, 0, 180, 90),
 				'align=left;overflow=fill;html=1;');
-		classCell.vertex = true;
-		var classCell1 = new mxCell('', new mxGeometry(1, 0, 20, 20), 'shape=component;jettyWidth=8;jettyHeight=4;html=1;');
-		classCell1.vertex = true;
-		classCell1.geometry.relative = true;
-		classCell1.geometry.offset = new mxPoint(-23, 3);
-		classCell.insert(classCell1);
-		
-		content.appendChild(this.createVertexTemplateFromCells([classCell], 180, 90, 'Component with Attributes', true));
+		    cell.vertex = true;
+		    
+			var symbol = new mxCell('', new mxGeometry(1, 0, 20, 20), 'shape=component;jettyWidth=8;jettyHeight=4;');
+			symbol.vertex = true;
+			symbol.geometry.relative = true;
+			symbol.geometry.offset = new mxPoint(-24, 4);
+			cell.insert(symbol);
+	    	
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Component with Attributes', true);
+		}),
+		this.addEntry('uml static class block', function()
+		{
+			return sb.createVertexTemplate('verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;',
+				180, 120, 'Block', 'Block', true);
+		}),
+		this.addEntry('uml static class package', function()
+		{
+			return sb.createVertexTemplate('shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;', 70, 50,
+			    	'package', 'Package', true);
+		}),
+		this.addEntry('uml static class object instance', function()
+		{
+			return sb.createVertexTemplate('verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;',
+				160, 90, '<p style="margin:0px;margin-top:4px;text-align:center;text-decoration:underline;"><b>Object:Type</b></p><hr/>' +
+				'<p style="margin:0px;margin-left:8px;">field1 = value1<br/>field2 = value2<br>field3 = value3</p>', 'Object', true);
+		}),
+		this.addEntry('uml static class provided interface', function()
+		{
+			return sb.createVertexTemplate('shape=lollipop;direction=south;html=1;', 30, 10, '', 'Provided Interface', true);
+		}),
+		this.addEntry('uml static class required interface', function()
+		{
+			return sb.createVertexTemplate('shape=requires;direction=north;html=1;', 30, 20, '', 'Required Interface', true);
+		}),
+		this.addEntry('er entity table', function()
+		{
+			return sb.createVertexTemplate('verticalAlign=top;align=left;overflow=fill;html=1;',180, 90,
+				'<div style="box-sizing:border-box;width:100%;background:#e4e4e4;margin:1px;padding:2px;">Tablename</div><table style="width:100%;">' +
+				'<tr><td>PK</td><td style="padding:2px;">uniqueId</td></tr><tr><td>FK1</td><td style="padding:2px;">foreignKey</td></tr>' +
+				'<tr><td></td><td style="padding:2px;">fieldname</td></tr></table>', 'Entity', true);
+		}),
+		this.addEntry('uml actor', function()
+		{
+			return sb.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 40, 80, 'Actor', 'Actor', false);
+		}),
+		this.addEntry('uml use case usecase', function()
+		{
+			return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 140, 70, 'Use Case', 'Use Case', true);
+		}),
+		this.addEntry('uml activity state start', function()
+		{
+	    	var cell = new mxCell('', new mxGeometry(0, 0, 30, 30),
+	    		'ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;');
+	    	cell.vertex = true;
+	    	
+			var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+			edge.geometry.setTerminalPoint(new mxPoint(15, 90), false);
+			edge.geometry.relative = true;
+			edge.edge = true;
+			
+			cell.insertEdge(edge, true);
+	    	
+			return sb.createVertexTemplateFromCells([cell, edge], 30, 90, 'Start', true);
+		}),
+		this.addEntry('uml activity state', function()
+		{
+			var cell = new mxCell('Activity', new mxGeometry(0, 0, 120, 40),
+				'rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#ffffc0;strokeColor=#ff0000;');
+			cell.vertex = true;
+			
+			var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+			edge.geometry.setTerminalPoint(new mxPoint(60, 100), false);
+			edge.geometry.relative = true;
+			edge.edge = true;
+			
+			cell.insertEdge(edge, true);
+			
+			return sb.createVertexTemplateFromCells([cell, edge], 120, 100, 'Activity', true);
+		})
+	];
+	
+	this.addPalette('uml', 'UML', expand || false, mxUtils.bind(this, function(content)
+	{
+		for (var i = 0; i < fns.length; i++)
+		{
+			content.appendChild(fns[i](content));
+		}
 
-    	var cardCell = new mxCell('Block', new mxGeometry(0, 0, 180, 120),
-    			'verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;');
-    	cardCell.vertex = true;
-    	content.appendChild(this.createVertexTemplateFromCells([cardCell], 180, 120, 'Block', true));
-
-	    content.appendChild(this.createVertexTemplate('shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;', 70, 50,
-	    	'package', 'Package', true));
-
-	    var classCell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;text-decoration:underline;">' +
-    			'<b>Object:Type</b></p><hr/>' +
-				'<p style="margin:0px;margin-left:8px;">field1 = value1<br/>field2 = value2<br>field3 = value3</p>',
-				new mxGeometry(0, 0, 160, 90),
-				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
-    	classCell.vertex = true;
-    	content.appendChild(this.createVertexTemplateFromCells([classCell], 160, 90, 'Object', true));
-    	
-		content.appendChild(this.createVertexTemplate('shape=lollipop;direction=south;html=1;', 30, 10, '', 'Provided Interface', true));
-		content.appendChild(this.createVertexTemplate('shape=requires;direction=north;html=1;', 30, 20, '', 'Required Interface', true));
-
-    	var tableCell = new mxCell('<div style="box-sizing:border-box;width:100%;background:#e4e4e4;margin:1px;padding:2px;">Tablename</div><table style="width:100%;">' +
-				'<tr><td>PK</td><td style="padding:2px;">uniqueId</td></tr>' +
-				'<tr><td>FK1</td><td style="padding:2px;">foreignKey</td></tr>' +
-				'<tr><td></td><td style="padding:2px;">fieldname</td></tr>' +
-				'</table>', new mxGeometry(0, 0, 180, 90), 'verticalAlign=top;align=left;overflow=fill;html=1;');
-    	tableCell.vertex = true;
-    	content.appendChild(this.createVertexTemplateFromCells([tableCell], 180, 90, 'Entity', true));
-
-    	content.appendChild(this.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 40, 80, 'Actor', 'Actor', false));
-	    content.appendChild(this.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 140, 70, 'Use Case', 'Use Case', true));
-
-	    //
-	    // Start
-	    //
-    	var cardCell = new mxCell('', new mxGeometry(0, 0, 30, 30),
-    		'ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;');
-    	cardCell.vertex = true;
-    	
-		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
-		assoc2.geometry.setTerminalPoint(new mxPoint(15, 90), false);
-		assoc2.geometry.relative = true;
-		assoc2.edge = true;
-		
-		cardCell.insertEdge(assoc2, true);
-    	
-		content.appendChild(this.createVertexTemplateFromCells([cardCell, assoc2], 30, 90, 'Start', true));
-	    
-		//
-		// Activity
-		//
-    	var cardCell = new mxCell('Activity', new mxGeometry(0, 0, 120, 40),
-    		'rounded=1;whiteSpace=wrap;html=1;arcSize=40;fillColor=#ffffc0;strokeColor=#ff0000;');
-    	cardCell.vertex = true;
-    	
-		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
-		assoc2.geometry.setTerminalPoint(new mxPoint(60, 100), false);
-		assoc2.geometry.relative = true;
-		assoc2.edge = true;
-		
-		cardCell.insertEdge(assoc2, true);
-    	
-		content.appendChild(this.createVertexTemplateFromCells([cardCell, assoc2], 120, 100, 'Activity', true));
-    	
 		//
 		// Composite State
 		//
@@ -2743,14 +2789,48 @@ Sidebar.prototype.removePalette = function(id)
  */
 Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, titles)
 {
+	var showTitles = titles != null;
+	
+	// Avoids having to bind all functions to "this"
+	var sb = this;
+	var fns = [];
+	
+	for (var i = 0; i < items.length; i++)
+	{
+		(function(icon, title)
+		{
+			var slash = icon.lastIndexOf('/');
+			var dot = icon.lastIndexOf('.');
+			var tmp = icon.substring((slash >= 0) ? slash + 1 : 0, (dot >= 0) ? dot : icon.length - 1).replace(/[-_]/g, ' ');
+			var arr = tmp.split(' ');
+			var tags = '';
+			
+			// Ignores tags with leading numbers, strips trailing numbers
+			for (var i = 0; i < arr.length; i++)
+			{
+				// Ignores short words and words that start with a number
+				if (!mxUtils.isInteger(arr[i].charAt(0)) && arr[i].length > 2)
+				{
+					// Strips trailing numbers
+					tags += arr[i].replace(/\.*\d*$/,'') + ' ';
+				}
+			}
+			
+			// TODO: Add optional tags argument in function
+			tags = (tags.length > 0) ? tags.substring(0, tags.length - 1) : tags;
+			
+			fns.push(sb.addEntry(tags, function()
+		 	{
+		 		return sb.createVertexTemplate('image;html=1;image=' + icon, 80, 80, '', title, title != null)
+		 	}));
+		})(	prefix + items[i] + postfix, (titles != null) ? titles[i] : null);
+	}
+
 	this.addPalette(id, title, false, mxUtils.bind(this, function(content)
     {
-		var showTitles = titles != null;
-		
-    	for (var i = 0; i < items.length; i++)
+		for (var i = 0; i < fns.length; i++)
 		{
-			var icon = prefix + items[i] + postfix;
-			content.appendChild(this.createVertexTemplate('image;html=1;image=' + icon, 80, 80, '', (showTitles) ? titles[i] : null, showTitles));
+			content.appendChild(fns[i](content));
 		}
     }));
 };
