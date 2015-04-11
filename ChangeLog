@@ -1,3 +1,6 @@
+- Fixes shadow for transparent ellipses in Firefox [JavaScript]
+- Adds composite style, no longer selects editing cell in grapheditor
+- Adds mxGraph.getEventState hook [JavaScript]
 - Adds handle for hexagon shape in grapheditor
 - Fixes undo for text editing and insert labels in grapheditor
 - Uses Ctrl+Shift+Z for redo on Mac in grapheditor
