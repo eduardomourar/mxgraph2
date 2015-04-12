@@ -1,3 +1,4 @@
+- Adds support for composite style in grapheditor [JavaScript]
 - Disables numeric conversion for value in mxCellCodec [JavaScript]
 - Fixes shadow for transparent ellipses in Firefox [JavaScript]
 - Adds composite style, no longer selects editing cell in grapheditor

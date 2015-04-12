@@ -142,8 +142,7 @@ Graph = function(container, model, renderHint, stylesheet)
 			return mxGraphHandler.prototype.createPreviewShape.apply(this, arguments);
 		};
 		
-		// Handles parts of cells by checking if part=1 is in the style and returning the parent
-		// LATER: Handle recursive parts
+		// Handles parts of cells by checking if part=1 is in the style and returning and moving the parent
 		this.graphHandler.getCells = function(initialCell)
 		{
 		    var cells = mxGraphHandler.prototype.getCells.apply(this, arguments);
@@ -167,7 +166,7 @@ Graph = function(container, model, renderHint, stylesheet)
 		    return cells;
 		};
 		
-		// Handles parts of cells when cloning the source for new connections
+		// Handles parts of cells when cloning the source for new connections in which case the parent is cloned
 		this.connectionHandler.createTargetVertex = function(evt, source)
 		{
 			var state = this.graph.view.getState(source);
@@ -331,7 +330,11 @@ Graph = function(container, model, renderHint, stylesheet)
 								result.push(cell);
 							}
 	
-							this.getAllCells(x, y, width, height, cell, result);
+							// Disables recursive rubberband on composite cell
+							if (mxUtils.getValue(state.style, 'composite', '0') != '1')
+							{
+								this.getAllCells(x, y, width, height, cell, result);
+							}
 						}
 					}
 				}
@@ -553,6 +556,41 @@ Graph.prototype.getLinkForCell = function(cell)
 	}
 	
 	return null;
+};
+
+/**
+ * Redirects child to composite parent.
+ */
+Graph.prototype.getCellAt = function(x, y, parent, vertices, edges, ignoreFn)
+{
+	var result = mxGraph.prototype.getCellAt.apply(this, arguments);
+	var pstate = this.view.getState(this.model.getParent(result));
+
+	if (pstate != null && mxUtils.getValue(pstate.style, 'composite', '0') == '1')
+	{
+		result = pstate.cell;
+	}
+	
+	return result;
+};
+
+/**
+ * Redirects events to composite parent.
+ */
+Graph.prototype.getEventState = function(state)
+{
+	if (state != null)
+	{
+		var pstate = this.view.getState(this.model.getParent(state.cell));
+		var eventState = state;
+		
+		if (pstate != null && mxUtils.getValue(pstate.style, 'composite', '0') == '1')
+		{
+			state = pstate;
+		}
+	}
+	
+	return state;
 };
 
 /**
@@ -2071,9 +2109,10 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				this.graph.tooltipHandler.hideTooltip();
 				this.switchSelectionState = null;
+				var state = this.graph.view.getState(cell);
 				
-				// Selects editing cell
-				this.graph.setSelectionCell(cell);
+				// Selects editing event source state
+				this.graph.setSelectionCell(this.graph.getEventState(state).cell);
 	
 				// First run cannot set display before supercall because textarea is lazy created
 				// Lazy instantiates textarea to save memory in IE
@@ -2081,8 +2120,6 @@ if (typeof mxVertexHandler != 'undefined')
 				{
 					this.init();
 				}
-				
-				var state = this.graph.view.getState(cell);
 		
 				if (state != null && state.style['html'] == 1)
 				{
