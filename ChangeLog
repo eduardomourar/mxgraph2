@@ -1,6 +1,7 @@
+- Disables numeric conversion for value in mxCellCodec [JavaScript]
 - Fixes shadow for transparent ellipses in Firefox [JavaScript]
 - Adds composite style, no longer selects editing cell in grapheditor
-- Adds mxGraph.getEventState hook [JavaScript]
+- Adds mxGraph.getEventState, mxMouseEvent.sourceState [JavaScript]
 - Adds handle for hexagon shape in grapheditor
 - Fixes undo for text editing and insert labels in grapheditor
 - Uses Ctrl+Shift+Z for redo on Mac in grapheditor
@@ -10,7 +11,6 @@
 - No longer calls getCellAt for Graph.dblClick in grapheditor
 - Bypasses mxShape.getLabelBounds for non centered labels [JavaScript]
 - Adds mxGraphView.getFixedTerminalPoint/getFloatingTerminalPoint hooks [JavaScript]
-- Uses new mxUtils.isNumber, isInteger for all numeric checks [JavaScript]
 - Fixes ignored aspect for routing stencil connections [JavaScript]
 - Adds UML frame shape and handle, participant style for lifeline in grapheditor
 - Adds support for recursiveResize style in grapheditor

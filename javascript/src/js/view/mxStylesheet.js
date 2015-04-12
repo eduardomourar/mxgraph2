@@ -236,7 +236,7 @@ mxStylesheet.prototype.getCellStyle = function(name, defaultStyle)
 		 		{
 		 			delete style[key];
 		 		}
-		 		else if (mxUtils.isNumber(value))
+		 		else if (mxUtils.isNumeric(value))
 		 		{
 		 			style[key] = parseFloat(value);
 		 		}

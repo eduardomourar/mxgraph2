@@ -836,7 +836,7 @@ mxGraph.prototype.portsEnabled = true;
 /**
  * Variable: nativeDoubleClickEnabled
  * 
- * Specifies if native double click events should be deteced. Default is false.
+ * Specifies if native double click events should be deteced. Default is true.
  */
 mxGraph.prototype.nativeDblClickEnabled = true;
 
@@ -12152,6 +12152,21 @@ mxGraph.prototype.isEventSourceIgnored = function(evtName, me)
 };
 
 /**
+ * Function: getEventState
+ * 
+ * Returns the <mxCellState> to be used when firing the mouse event for the
+ * given state. This implementation returns the given state.
+ * 
+ * Parameters:
+ * 
+ * <mxCellState> - State whose event source should be returned.
+ */
+mxGraph.prototype.getEventState = function(state)
+{
+	return state;
+};
+
+/**
  * Function: fireMouseEvent
  * 
  * Dispatches the given event in the graph event dispatch loop. Possible
@@ -12284,6 +12299,8 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 
 	if (!this.isEventIgnored(evtName, me, sender))
 	{
+		// Updates the event state via getEventState
+		me.state = this.getEventState(me.getState());
 		this.fireEvent(new mxEventObject(mxEvent.FIRE_MOUSE_EVENT, 'eventName', evtName, 'event', me));
 		
 		if ((mxClient.IS_OP || mxClient.IS_SF || mxClient.IS_GC ||
