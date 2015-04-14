@@ -1,3 +1,4 @@
+- Adds plus click handling for child cells in grapheditor
 - Adds support for composite style in grapheditor [JavaScript]
 - Disables numeric conversion for value in mxCellCodec [JavaScript]
 - Fixes shadow for transparent ellipses in Firefox [JavaScript]
