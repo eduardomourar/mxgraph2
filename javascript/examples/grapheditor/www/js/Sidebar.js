@@ -9,6 +9,7 @@ function Sidebar(editorUi, container)
 	this.editorUi = editorUi;
 	this.container = container;
 	this.palettes = new Object();
+	this.taglist = new Object();
 	this.showTooltips = true;
 	this.graph = new Graph(document.createElement('div'), null, null, this.editorUi.editor.graph.getStylesheet());
 	this.graph.cellRenderer.antiAlias = false;
@@ -82,7 +83,7 @@ Sidebar.prototype.init = function()
 	
 	this.addSearchPalette(true);
 	this.addGeneralPalette(false);
-	this.addAdvancedPalette(false);
+	this.addAdvancedPalette(true);
 	this.addStencilPalette('basic', mxResources.get('basic'), dir + '/basic.xml',
 		';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2');
 	this.addStencilPalette('arrows', mxResources.get('arrows'), dir + '/arrows.xml',
@@ -163,6 +164,13 @@ Sidebar.prototype.maxTooltipWidth = 400;
  * Specifies if titles in the tooltips should be enabled.
  */
 Sidebar.prototype.maxTooltipHeight = 400;
+
+/**
+ * Specifies if stencil files should be loaded and added to the search index
+ * when stencil palettes are added. If this is false then the stencil files
+ * are lazy-loaded when the palette is shown.
+ */
+Sidebar.prototype.addStencilsToIndex = true;
 
 /**
  * Adds all palettes to the sidebar.
@@ -366,13 +374,8 @@ Sidebar.prototype.hideTooltip = function()
  */
 Sidebar.prototype.addEntry = function(tags, fn)
 {
-	if (tags != null && tags.length > 0)
+	if (this.taglist != null && tags != null && tags.length > 0)
 	{
-		if (this.taglist == null)
-		{
-			this.taglist = new Object();
-		}
-		
 		var tmp = tags.toLowerCase().split(' ');
 
 		for (var i = 0; i < tmp.length; i++)
@@ -400,7 +403,6 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 		var dict = new mxDictionary();
 		var results = null;
 
-		// TODO: Add paging
 		for (var i = 0; i < tmp.length; i++)
 		{
 			var arr = this.taglist[tmp[i]];
@@ -418,6 +420,13 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 					{
 						tmpDict.put(entry, entry);
 						results.push(entry);
+						
+						if (i == tmp.length - 1 && results.length == (page + 1) * count)
+						{
+							success(results.slice(page * count, (page + 1) * count));
+							
+							return;
+						}
 					}
 				}
 			}
@@ -425,12 +434,34 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 			dict = tmpDict;
 		}
 		
-		success(results);
+		success(results.slice(page * count, (page + 1) * count));
 	}
 	else
 	{
 		success([]);
 	}
+};
+
+/**
+ * Adds shape search UI.
+ */
+Sidebar.prototype.filterTags = function(tags)
+{
+	var arr = tags.split(' ');
+	var result = '';
+	
+	// Ignores tags with leading numbers, strips trailing numbers
+	for (var i = 0; i < arr.length; i++)
+	{
+		// Ignores single chars and words that start with a number
+		if (!mxUtils.isInteger(arr[i].charAt(0)) && arr[i].length > 1)
+		{
+			// Strips trailing numbers
+			result += arr[i].replace(/\.*\d*$/, '') + ' ';
+		}
+	}
+	
+	return (result.length > 0) ? result.substring(0, result.length - 1) : result;
 };
 
 /**
@@ -458,6 +489,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	inner.style.backgroundColor = 'transparent';
 	inner.style.borderColor = 'transparent';
 	inner.style.padding = '4px';
+	inner.style.marginRight = '4px';
 	inner.style.textOverflow = 'clip';
 	inner.style.cursor = 'default';
 	
@@ -469,10 +501,11 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	var searchResource = mxResources.get('search');
 	
 	var input = document.createElement('input');
+	input.setAttribute('placeholder', searchResource);
 	input.setAttribute('type', 'text');
-	input.value = searchResource;
 	input.style.border = 'solid 1px #d5d5d5';
 	input.style.width = '100%';
+	input.style.padding = '4px';
 	input.style.backgroundImage = 'url(' + IMAGE_PATH + '/clear.gif)';
 	input.style.backgroundRepeat = 'no-repeat';
 	input.style.backgroundPosition = '100% 50%';
@@ -482,14 +515,14 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	var cross = document.createElement('div');
 	cross.setAttribute('title', mxResources.get('reset'));
 	cross.style.position = 'relative';
-	cross.style.left = '-16px';
-	cross.style.width = '12px';
-	cross.style.height = '14px';
+	cross.style.left = '-14px';
+	cross.style.width = '14px';
+	cross.style.height = '18px';
 	cross.style.cursor = 'pointer';
 
 	// Workaround for inline-block not supported in IE
 	cross.style.display = (mxClient.IS_VML) ? 'inline' : 'inline-block';
-	cross.style.top = ((mxClient.IS_VML) ? 0 : 3) + 'px';
+	cross.style.top = ((mxClient.IS_VML) ? 0 : 4) + 'px';
 	
 	// Needed to block event transparency in IE
 	cross.style.background = 'url(' + IMAGE_PATH + '/transparent.gif)';
@@ -502,7 +535,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 		find();
 		input.focus();
 	});
-	
+
 	inner.appendChild(cross);
 	div.appendChild(inner);
 
@@ -521,11 +554,10 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	div.appendChild(center);
 	
 	var searchTerm = '';
-	var modified = false;
 	var active = false;
 	var complete = false;
 	var page = 0;
-	var count = 25;
+	var count = 12;
 	var hash = new Object();
 
 	function clearDiv()
@@ -547,9 +579,11 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	
 	find = mxUtils.bind(this, function()
 	{
-		if (input.value != '' || (!modified && input.value == searchResource))
+		this.hideTooltip();
+		
+		if (button.getAttribute('disabled') != 'true')
 		{
-			if (button.getAttribute('disabled') != 'true')
+			if (input.value != '' && !complete)
 			{
 				if (center.parentNode != null)
 				{
@@ -580,18 +614,16 @@ Sidebar.prototype.addSearchPalette = function(expand)
 								var elt = results[i]();
 								
 								// Avoids duplicates in results
-								// TODO: Check if fast enough
 								if (hash[elt.innerHTML] == null)
 								{
-									hash[elt.innerHTML] == '1';
+									hash[elt.innerHTML] = '1';
 									div.appendChild(results[i]());
 								}
 							}
 							
 							if (results.length < count)
 							{
-								button.setAttribute('disabled', 'true');
-								button.innerHTML = mxResources.get('noMoreResults');
+								button.innerHTML = mxResources.get('reset');
 								complete = true;
 							}
 							else
@@ -607,7 +639,10 @@ Sidebar.prototype.addSearchPalette = function(expand)
 								err.className = 'geTitle';
 								err.style.backgroundColor = 'transparent';
 								err.style.borderColor = 'transparent';
-								err.style.padding = '4px';
+								err.style.color = 'gray';
+								err.style.padding = '0px';
+								err.style.margin = '0px 8px 0px 8px';
+								err.style.paddingTop = '6px';
 								err.style.textAlign = 'center';
 								err.style.cursor = 'default';
 								
@@ -624,13 +659,17 @@ Sidebar.prototype.addSearchPalette = function(expand)
 					}
 				}
 			}
-		}
-		else
-		{
-			clearDiv();
-			searchTerm = '';
-			button.innerHTML = searchResource;
-			button.setAttribute('disabled', 'true');
+			else
+			{
+				clearDiv();
+				input.value = '';
+				searchTerm = '';
+				hash = new Object();
+				button.innerHTML = searchResource;
+				button.setAttribute('disabled', 'true');
+				complete = false;
+				input.focus();
+			}
 		}
 	});
 	
@@ -644,23 +683,25 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	
 	mxEvent.addListener(input, 'keyup', mxUtils.bind(this, function(evt)
 	{
-		modified = true;
-		
-		if (input.value == '' || (!modified && input.value == searchResource))
+		if (input.value == '')
 		{
+			complete = true;
+			find();
+			complete = false;
 			button.setAttribute('disabled', 'true');
 		}
 		else if (input.value != searchTerm)
 		{
 			button.removeAttribute('disabled');
 			button.innerHTML = searchResource;
+			complete = false;
 		}
 		else if (!active)
 		{
 			if (complete)
 			{
-				button.setAttribute('disabled', 'true');
-				button.innerHTML = mxResources.get('noMoreResults');
+				button.removeAttribute('disabled');
+				button.innerHTML = mxResources.get('reset');
 			}
 			else
 			{
@@ -669,24 +710,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 			}
 		}
 	}));
-	
-	mxEvent.addListener(input, 'focus', mxUtils.bind(this, function(evt)
-	{
-		if (input.value == searchResource && !modified)
-		{
-			input.value = '';
-		}
-	}));
-	
-	mxEvent.addListener(input, 'blur', mxUtils.bind(this, function(evt)
-	{
-		if (input.value == '')
-		{
-			input.value = searchResource;
-			modified = false;
-		}
-	}));
-    
+
     // Workaround for blocked text selection in Editor
     mxEvent.addListener(input, 'mousedown', function(evt)
     {
@@ -732,15 +756,15 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	
 	var fns =
 	[
-	 	this.addEntry('rect rectangle box task process', function()
+	 	this.addEntry('rect rectangle box', function()
 	 	{
 	 		return sb.createVertexTemplate('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', true);
 	 	}),
-	 	this.addEntry('rounded rect rectangle box task process', function()
+	 	this.addEntry('rounded rect rectangle box', function()
 	 	{
 	 		return sb.createVertexTemplate('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', true);
 	 	}),
-	 	this.addEntry('circle oval ellipse start end state', function()
+	 	this.addEntry('circle oval ellipse state', function()
 	 	{
 	 		return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', true);
 	 	}),
@@ -749,8 +773,159 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 		 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
 	 		return sb.createVertexTemplate('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
 	 			40, 20, 'Text', 'Text', true);
+	 	}),
+	 	this.addEntry('rect rectangle box double', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=ext;double=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rectangle', true);
+	 	}),
+	 	this.addEntry('rounded rect rectangle box double', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rounded Rectangle', true);
+	 	}),
+	 	this.addEntry('circle oval ellipse start end state double', function()
+	 	{
+	 		return sb.createVertexTemplate('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Double Ellipse', true);
+	 	}),
+	 	this.addEntry('rhombus', function()
+	 	{
+	 		return sb.createVertexTemplate('rhombus;whiteSpace=wrap;html=1;', 80, 80, '', 'Rhombus', true);
+	 	}),
+	 	this.addEntry('actor', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false);
+	 	}),
+	 	this.addEntry('curly bracket', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;', 20, 120, '', 'Curly Bracket', true);
+	 	}),
+	 	this.addEntry('horizontal line', function()
+	 	{
+	 		return sb.createVertexTemplate('line;html=1;', 160, 10, '', 'Horizontal Line', true);
+	 	}),
+	 	this.addEntry('vertical line', function()
+	 	{
+	 		return sb.createVertexTemplate('line;direction=south;html=1;', 10, 160, '', 'Vertical Line', true);
+	 	}),
+	 	this.addEntry('parallelogram', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=parallelogram;whiteSpace=wrap;html=1;', 120, 60, '', 'Parallelogram', true);
+	 	}),
+	 	this.addEntry('triangle', function()
+	 	{
+	 		return sb.createVertexTemplate('triangle;whiteSpace=wrap;html=1;', 60, 80, '', 'Triangle', true);
+	 	}),
+	 	this.addEntry('cylinder', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=cylinder;whiteSpace=wrap;html=1;', 60, 80, '', 'Cylinder', true);
+	 	}),
+	 	this.addEntry('hexagon', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=hexagon;perimeter=hexagonPerimeter;whiteSpace=wrap;html=1;', 120, 80, '', 'Hexagon', true);
+	 	}),
+	 	this.addEntry('process task', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=process;whiteSpace=wrap;html=1;', 120, 60, '', 'Process', true);
+	 	}),
+	 	this.addEntry('cloud network', function()
+	 	{
+	 		return sb.createVertexTemplate('ellipse;shape=cloud;whiteSpace=wrap;html=1;', 120, 80, '', 'Cloud', true);
+	 	}),
+	 	this.addEntry('document', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=document;whiteSpace=wrap;html=1;', 120, 80, '', 'Document', true);
+	 	}),
+	 	this.addEntry('internal storage', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=internalStorage;whiteSpace=wrap;html=1;', 80, 80, '', 'Internal Storage', true);
+	 	}),
+	 	this.addEntry('cube', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=cube;whiteSpace=wrap;html=1;', 120, 80, '', 'Cube', true);
+	 	}),
+	 	this.addEntry('step', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=step;whiteSpace=wrap;html=1;', 120, 80, '', 'Step', true);
+	 	}),
+	 	this.addEntry('trapezoid', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=trapezoid;whiteSpace=wrap;html=1;', 120, 60, '', 'Trapezoid', true);
+	 	}),
+	 	this.addEntry('tape', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=tape;whiteSpace=wrap;html=1;', 120, 100, '', 'Tape', true);
+	 	}),
+	 	this.addEntry('note', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=note;whiteSpace=wrap;html=1;', 80, 100, '', 'Note', true);
+	 	}),
+	 	this.addEntry('folder', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=folder;whiteSpace=wrap;html=1;', 120, 120, '', 'Folder', true);
+	 	}),
+	 	this.addEntry('message', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=message;whiteSpace=wrap;html=1;', 60, 40, '', 'Message', true);
+	 	}),
+	 	this.addEntry('card', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=card;whiteSpace=wrap;html=1;', 80, 100, '', 'Card', true);
+	 	}),
+	 	this.addEntry('dotted line', function()
+	 	{
+	 		return sb.createEdgeTemplate('endArrow=none;html=1;dashed=1;dashPattern=1 4', 50, 50, '', 'Dotted Line', true);
+	 	}),
+	 	this.addEntry('dashed line', function()
+	 	{
+	 		return sb.createEdgeTemplate('endArrow=none;dashed=1;html=1;', 50, 50, '', 'Dashed Line', true);
+	 	}),
+	 	this.addEntry('line', function()
+	 	{
+	 		return sb.createEdgeTemplate('endArrow=none;html=1;', 50, 50, '', 'Line', true);
+	 	}),
+	 	this.addEntry('connection', function()
+	 	{
+	 		return sb.createEdgeTemplate('endArrow=classic;html=1;', 50, 50, '', 'Connection', true);
+	 	}),
+	 	this.addEntry('manual line', function()
+	 	{
+	 		return sb.createEdgeTemplate('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;', 50, 50, '', 'Manual Line', true);
+	 	}),
+	 	this.addEntry('horizontal elbow', function()
+	 	{
+	 		return sb.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;html=1;', 50, 50, '', 'Horizontal Elbow', true);
+	 	}),
+	 	this.addEntry('vertical elbow', function()
+	 	{
+	 		return sb.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;html=1;', 50, 50, '', 'Vertical Elbow', true);
+	 	}),
+	 	this.addEntry('curve', function()
+	 	{
+			var cell = new mxCell('', new mxGeometry(0, 0, 50, 50), 'curved=1;endArrow=classic;html=1;');
+			cell.geometry.setTerminalPoint(new mxPoint(0, 50), true);
+			cell.geometry.setTerminalPoint(new mxPoint(50, 0), false);
+			cell.geometry.points = [new mxPoint(50, 50), new mxPoint(0, 0)];
+			cell.geometry.relative = true;
+			cell.edge = true;
+			
+		    return sb.createEdgeTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Curve', true);
+	 	}),
+	 	this.addEntry('connection', function()
+	 	{
+	 		return sb.createEdgeTemplate('endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Connection', true);
+	 	}),
+	 	this.addEntry('link', function()
+	 	{
+	 		return sb.createEdgeTemplate('shape=link;html=1;', 50, 50, '', 'Link', true);
+	 	}),
+	 	this.addEntry('arrow', function()
+	 	{
+	 		return sb.createEdgeTemplate('shape=flexArrow;endArrow=classic;html=1;', 50, 50, '', 'Arrow', true);
+	 	}),
+	 	this.addEntry('arrow', function()
+	 	{
+	 		return sb.createEdgeTemplate('shape=flexArrow;endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Arrow', true);
 	 	})
-	 ];
+	];
 
 	this.addPalette('general', mxResources.get('general'), (expand != null) ? expand : true, mxUtils.bind(this, function(content)
 	{
@@ -758,59 +933,6 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 		{
 			content.appendChild(fns[i](content));
 		}
-
-		// TODO: Add to above functions
-	    content.appendChild(this.createVertexTemplate('shape=ext;double=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rectangle', true));
-	    content.appendChild(this.createVertexTemplate('shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rounded Rectangle', true));
-	    content.appendChild(this.createVertexTemplate('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Double Ellipse', true));
-	    content.appendChild(this.createVertexTemplate('rhombus;whiteSpace=wrap;html=1;', 80, 80, '', 'Rhombus', true));
-
-	    content.appendChild(this.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, '', 'Actor', true));
-	    content.appendChild(this.createVertexTemplate('shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;', 20, 120, '', 'Curly Bracket', true));
-	    content.appendChild(this.createVertexTemplate('line;html=1;', 160, 10, '', 'Horizontal Line', true));
-	    content.appendChild(this.createVertexTemplate('line;direction=south;html=1;', 10, 160, '', 'Vertical Line', true));
-
-	    content.appendChild(this.createVertexTemplate('shape=parallelogram;whiteSpace=wrap;html=1;', 120, 60, '', 'Parallelogram', true));
-	    content.appendChild(this.createVertexTemplate('triangle;whiteSpace=wrap;html=1;', 60, 80, '', 'Triangle', true));
-	    content.appendChild(this.createVertexTemplate('shape=cylinder;whiteSpace=wrap;html=1;', 60, 80, '', 'Cylinder', true));
-	    content.appendChild(this.createVertexTemplate('shape=hexagon;perimeter=hexagonPerimeter;whiteSpace=wrap;html=1;', 120, 80, '', 'Hexagon', true));
-
-	    content.appendChild(this.createVertexTemplate('shape=process;whiteSpace=wrap;html=1;', 120, 60, '', 'Process', true));
-	    content.appendChild(this.createVertexTemplate('ellipse;shape=cloud;whiteSpace=wrap;html=1;', 120, 80, '', 'Cloud', true));
-	    content.appendChild(this.createVertexTemplate('shape=document;whiteSpace=wrap;html=1;', 120, 80, '', 'Document', true));
-	    content.appendChild(this.createVertexTemplate('shape=internalStorage;whiteSpace=wrap;html=1;', 80, 80, '', 'Internal Storage', true));
-
-	    content.appendChild(this.createVertexTemplate('shape=cube;whiteSpace=wrap;html=1;', 120, 80, '', 'Cube', true));
-	    content.appendChild(this.createVertexTemplate('shape=step;whiteSpace=wrap;html=1;', 120, 80, '', 'Step', true));
-	    content.appendChild(this.createVertexTemplate('shape=trapezoid;whiteSpace=wrap;html=1;', 120, 60, '', 'Trapezoid', true));
-	    content.appendChild(this.createVertexTemplate('shape=tape;whiteSpace=wrap;html=1;', 120, 100, '', 'Tape', true));
-
-	    content.appendChild(this.createVertexTemplate('shape=note;whiteSpace=wrap;html=1;', 80, 100, '', 'Note', true));
-	    content.appendChild(this.createVertexTemplate('shape=folder;whiteSpace=wrap;html=1;', 120, 120, '', 'Folder', true));
-	    content.appendChild(this.createVertexTemplate('shape=message;whiteSpace=wrap;html=1;', 60, 40, '', 'Message', true));
-	    content.appendChild(this.createVertexTemplate('shape=card;whiteSpace=wrap;html=1;', 80, 100, '', 'Card', true));
-
-	    content.appendChild(this.createEdgeTemplate('endArrow=none;html=1;dashed=1;dashPattern=1 4', 50, 50, '', 'Dotted Line', true));
-	    content.appendChild(this.createEdgeTemplate('endArrow=none;dashed=1;html=1;', 50, 50, '', 'Dashed Line', true));
-	    content.appendChild(this.createEdgeTemplate('endArrow=none;html=1;', 50, 50, '', 'Line', true));
-	    content.appendChild(this.createEdgeTemplate('endArrow=classic;html=1;', 50, 50, '', 'Connection', true));
-	    
-	    content.appendChild(this.createEdgeTemplate('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;', 50, 50, '', 'Manual Line', true));
-	    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;html=1;', 50, 50, '', 'Horizontal Elbow', true));
-	    content.appendChild(this.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;html=1;', 50, 50, '', 'Vertical Elbow', true));
-	    
-		var cells = [new mxCell('', new mxGeometry(0, 0, 50, 50), 'curved=1;endArrow=classic;html=1;')];
-		cells[0].geometry.setTerminalPoint(new mxPoint(0, 50), true);
-		cells[0].geometry.setTerminalPoint(new mxPoint(50, 0), false);
-		cells[0].geometry.points = [new mxPoint(50, 50), new mxPoint(0, 0)];
-		cells[0].geometry.relative = true;
-		cells[0].edge = true;
-	    content.appendChild(this.createEdgeTemplateFromCells(cells, 50, 50, 'Curve', true));
-	    	    
-	    content.appendChild(this.createEdgeTemplate('endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Connection', true));
-	    content.appendChild(this.createEdgeTemplate('shape=link;html=1;', 50, 50, '', 'Link', true));
-	    content.appendChild(this.createEdgeTemplate('shape=flexArrow;endArrow=classic;html=1;', 50, 50, '', 'Arrow', true));
-	    content.appendChild(this.createEdgeTemplate('shape=flexArrow;endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Arrow', true));
 	}));
 };
 
@@ -852,15 +974,7 @@ Sidebar.prototype.addAdvancedShapes = function(dir, content)
         	'<tr><th align="center"><b>Title</b></th></tr>' +
         	'<tr><td align="center">Section 1.1\nSection 1.2\nSection 1.3</td></tr>' +
         	'<tr><td align="center">Section 2.1\nSection 2.2\nSection 2.3</td></tr></table>', 'Table 3', true));
-    
-    // For fun: Bootstrap template, Problem: Text flow in jumbotron paragraph
-    /*content.appendChild(this.createVertexTemplate('text;html=1;overflow=fill;', 100, 100,
-        	'<html><head><link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"><link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">' +
-        	'</head><body><div class="jumbotron"><div class="container"><h1>Bootstrap starter template</h1>' +
-        	'<p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>' +
-        	'<p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p></div></div>' +
-        	'<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script><script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script></body></html>', 'IFrame', true));*/
-    
+
     var linkCell = new mxCell('Link', new mxGeometry(0, 0, 60, 40), 'text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontColor=#0000EE;fontStyle=4;');
     linkCell.vertex = true;
     this.graph.setLinkForCell(linkCell, 'https://www.draw.io');
@@ -1105,10 +1219,10 @@ Sidebar.prototype.addUmlPalette = function(expand)
 				'<tr><td>PK</td><td style="padding:2px;">uniqueId</td></tr><tr><td>FK1</td><td style="padding:2px;">foreignKey</td></tr>' +
 				'<tr><td></td><td style="padding:2px;">fieldname</td></tr></table>', 'Entity', true);
 		}),
-		this.addEntry('uml actor', function()
-		{
-			return sb.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 40, 80, 'Actor', 'Actor', false);
-		}),
+	 	this.addEntry('uml actor', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false);
+	 	}),
 		this.addEntry('uml use case usecase', function()
 		{
 			return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 140, 70, 'Use Case', 'Use Case', true);
@@ -1142,6 +1256,65 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			cell.insertEdge(edge, true);
 			
 			return sb.createVertexTemplateFromCells([cell, edge], 120, 100, 'Activity', true);
+		}),
+		this.addEntry('uml activity composite state', function()
+		{
+			var cell = new mxCell('Composite State', new mxGeometry(0, 0, 160, 60),
+					'swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#FFFFC0;');
+			cell.vertex = true;
+			var cell2 = new mxCell('Subtitle', new mxGeometry(0, 0, 200, 26), 'text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
+			cell2.vertex = true;
+			cell.insert(cell2);
+			
+			var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+			edge.geometry.setTerminalPoint(new mxPoint(80, 120), false);
+			edge.geometry.relative = true;
+			edge.edge = true;
+			
+			cell.insertEdge(edge, true);
+			
+			return sb.createVertexTemplateFromCells([cell, edge], 160, 120, 'Composite State', true);
+		}),
+		this.addEntry('uml activity condition', function()
+		{
+	    	var cell = new mxCell('Condition', new mxGeometry(0, 0, 80, 40), 'rhombus;whiteSpace=wrap;html=1;fillColor=#ffffc0;strokeColor=#ff0000;');
+	    	cell.vertex = true;
+	    	
+			var edge1 = new mxCell('no', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+			edge1.geometry.setTerminalPoint(new mxPoint(180, 20), false);
+			edge1.geometry.relative = true;
+			edge1.geometry.x = -1;
+			edge1.edge = true;
+			
+			cell.insertEdge(edge1, true);
+	    	
+			var edge2 = new mxCell('yes', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;');
+			edge2.geometry.setTerminalPoint(new mxPoint(40, 100), false);
+			edge2.geometry.relative = true;
+			edge2.geometry.x = -1;
+			edge2.edge = true;
+			
+			cell.insertEdge(edge2, true);
+			
+			return sb.createVertexTemplateFromCells([cell, edge1, edge2], 180, 100, 'Condition', true);
+		}),
+		this.addEntry('uml activity fork join', function()
+		{
+	    	var cell = new mxCell('', new mxGeometry(0, 0, 200, 10), 'shape=line;html=1;strokeWidth=6;strokeColor=#ff0000;');
+	    	cell.vertex = true;
+			
+			var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
+			edge.geometry.setTerminalPoint(new mxPoint(100, 80), false);
+			edge.geometry.relative = true;
+			edge.edge = true;
+			
+			cell.insertEdge(edge, true);
+		
+			return sb.createVertexTemplateFromCells([cell, edge], 200, 80, 'Fork/Join', true);
+		}),
+		this.addEntry('uml activity state end', function()
+		{
+			return sb.createVertexTemplate('ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000', 30, 30, '', 'End', true);
 		})
 	];
 	
@@ -1153,73 +1326,9 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		}
 
 		//
-		// Composite State
-		//
-		var compositeState = new mxCell('Composite State', new mxGeometry(0, 0, 160, 60),
-				'swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#FFFFC0;');
-		compositeState.vertex = true;
-		var subtitle = new mxCell('Subtitle', new mxGeometry(0, 0, 200, 26), 'text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
-		subtitle.vertex = true;
-		compositeState.insert(subtitle);
-		
-		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
-		assoc2.geometry.setTerminalPoint(new mxPoint(80, 120), false);
-		assoc2.geometry.relative = true;
-		assoc2.edge = true;
-		
-		compositeState.insertEdge(assoc2, true);
-		
-		content.appendChild(this.createVertexTemplateFromCells([compositeState, assoc2], 160, 120, 'Composite State', true));
-
-		//
-		// Condition
-		//
-    	var cardCell = new mxCell('Condition', new mxGeometry(0, 0, 80, 40),
-    		'rhombus;whiteSpace=wrap;html=1;fillColor=#ffffc0;strokeColor=#ff0000;');
-    	cardCell.vertex = true;
-    	
-		var assoc1 = new mxCell('no', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
-		assoc1.geometry.setTerminalPoint(new mxPoint(180, 20), false);
-		assoc1.geometry.relative = true;
-		assoc1.geometry.x = -1;
-		assoc1.edge = true;
-		
-		cardCell.insertEdge(assoc1, true);
-    	
-		var assoc2 = new mxCell('yes', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;');
-		assoc2.geometry.setTerminalPoint(new mxPoint(40, 100), false);
-		assoc2.geometry.relative = true;
-		assoc2.geometry.x = -1;
-		assoc2.edge = true;
-		
-		cardCell.insertEdge(assoc2, true);
-		
-		content.appendChild(this.createVertexTemplateFromCells([cardCell, assoc1, assoc2], 180, 100, 'Condition', true));
-	    
-		//
-		// Fork/Join
-		//
-    	var cardCell = new mxCell('', new mxGeometry(0, 0, 200, 10),
-			'shape=line;html=1;strokeWidth=6;strokeColor=#ff0000;');
-		cardCell.vertex = true;
-		
-		var assoc2 = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
-		assoc2.geometry.setTerminalPoint(new mxPoint(100, 80), false);
-		assoc2.geometry.relative = true;
-		assoc2.edge = true;
-		
-		cardCell.insertEdge(assoc2, true);
-	
-		content.appendChild(this.createVertexTemplateFromCells([cardCell, assoc2], 200, 80, 'Fork/Join', true));
-
-		//
-		// End
-		//
-		content.appendChild(this.createVertexTemplate('ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000', 30, 30, '', 'End', true));
-
-		//
 		// Sequence diagram elements
 		//
+		// TODO: Add new lifeline shapes
 		content.appendChild(this.createVertexTemplate('shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;', 100, 300, ':Object', 'Lifeline', true));
 		content.appendChild(this.createVertexTemplate('shape=umlLifeline;participant=umlActor;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;', 20, 300, '', 'Lifeline', true));
     	content.appendChild(this.createVertexTemplate('shape=umlFrame;whiteSpace=wrap;html=1;', 300, 200, 'frame', 'Frame', true));
@@ -2787,7 +2896,7 @@ Sidebar.prototype.removePalette = function(id)
 /**
  * Adds the given image palette.
  */
-Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, titles)
+Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, titles, tags)
 {
 	var showTitles = titles != null;
 	
@@ -2797,33 +2906,21 @@ Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, 
 	
 	for (var i = 0; i < items.length; i++)
 	{
-		(function(icon, title)
+		(function(icon, title, tmpTags)
 		{
-			var slash = icon.lastIndexOf('/');
-			var dot = icon.lastIndexOf('.');
-			var tmp = icon.substring((slash >= 0) ? slash + 1 : 0, (dot >= 0) ? dot : icon.length - 1).replace(/[-_]/g, ' ');
-			var arr = tmp.split(' ');
-			var tags = '';
-			
-			// Ignores tags with leading numbers, strips trailing numbers
-			for (var i = 0; i < arr.length; i++)
+			if (tmpTags == null)
 			{
-				// Ignores short words and words that start with a number
-				if (!mxUtils.isInteger(arr[i].charAt(0)) && arr[i].length > 2)
-				{
-					// Strips trailing numbers
-					tags += arr[i].replace(/\.*\d*$/,'') + ' ';
-				}
+				var slash = icon.lastIndexOf('/');
+				var dot = icon.lastIndexOf('.');
+				var tmp = icon.substring((slash >= 0) ? slash + 1 : 0, (dot >= 0) ? dot : icon.length - 1).replace(/[-_]/g, ' ');
+				tmpTags = sb.filterTags(tmp);
 			}
 			
-			// TODO: Add optional tags argument in function
-			tags = (tags.length > 0) ? tags.substring(0, tags.length - 1) : tags;
-			
-			fns.push(sb.addEntry(tags, function()
+			fns.push(sb.addEntry(tmpTags, function()
 		 	{
 		 		return sb.createVertexTemplate('image;html=1;image=' + icon, 80, 80, '', title, title != null)
 		 	}));
-		})(	prefix + items[i] + postfix, (titles != null) ? titles[i] : null);
+		})(	prefix + items[i] + postfix, (titles != null) ? titles[i] : null, (tags != null) ? tags[items[i]] : null);
 	}
 
 	this.addPalette(id, title, false, mxUtils.bind(this, function(content)
@@ -2838,29 +2935,70 @@ Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, 
 /**
  * Adds the given stencil palette.
  */
-Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ignore, onInit, scale)
+Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ignore, onInit, scale, tags)
 {
 	scale = (scale != null) ? scale : 1;
 	
-	this.addPalette(id, title, false, mxUtils.bind(this, function(content)
-    {
-		if (style == null)
-		{
-			style = '';
-		}
+	if (this.addStencilsToIndex)
+	{
+		// TODO: Fix asynchronous loading dependency
+		var loading = true;
 		
-		if (onInit != null)
-		{
-			onInit.call(this, content);
-		}
-
+		// Avoids having to bind all functions to "this"
+		var sb = this;
+		var fns = [];
+		
 		mxStencilRegistry.loadStencilSet(stencilFile, mxUtils.bind(this, function(packageName, stencilName, displayName, w, h)
 		{
+			loading = false;
+			
 			if (ignore == null || mxUtils.indexOf(ignore, stencilName) < 0)
 			{
-				content.appendChild(this.createVertexTemplate('shape=' + packageName + stencilName.toLowerCase() + style,
-					Math.round(w * scale), Math.round(h * scale), '', stencilName.replace(/_/g, ' '), true));
+				var tmpTags = (tags != null) ? tags[stencilName] : null;
+				
+				if (tmpTags == null)
+				{
+					tmpTags = this.filterTags(title + ' ' + stencilName.replace(/_/g, ' '));
+				}
+				
+				fns.push(sb.addEntry(tmpTags, function()
+				{
+					return sb.createVertexTemplate('shape=' + packageName + stencilName.toLowerCase() + style,
+						Math.round(w * scale), Math.round(h * scale), '', stencilName.replace(/_/g, ' '), true);
+				}));
 			}
 		}), true);
-    }));
+
+		this.addPalette(id, title, false, mxUtils.bind(this, function(content)
+	    {
+			for (var i = 0; i < fns.length; i++)
+			{
+				content.appendChild(fns[i](content));
+			}
+	    }));
+	}
+	else
+	{
+		this.addPalette(id, title, false, mxUtils.bind(this, function(content)
+	    {
+			if (style == null)
+			{
+				style = '';
+			}
+			
+			if (onInit != null)
+			{
+				onInit.call(this, content);
+			}
+	
+			mxStencilRegistry.loadStencilSet(stencilFile, mxUtils.bind(this, function(packageName, stencilName, displayName, w, h)
+			{
+				if (ignore == null || mxUtils.indexOf(ignore, stencilName) < 0)
+				{
+					content.appendChild(this.createVertexTemplate('shape=' + packageName + stencilName.toLowerCase() + style,
+						Math.round(w * scale), Math.round(h * scale), '', stencilName.replace(/_/g, ' '), true));
+				}
+			}), true);
+	    }));
+	}
 };
