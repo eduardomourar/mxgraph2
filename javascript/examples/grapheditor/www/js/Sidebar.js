@@ -2000,8 +2000,18 @@ Sidebar.prototype.updateShapes = function(source, targets)
 			{
 				var state = graph.view.getState(targetCell);
 				var style = (state != null) ? state.style : graph.getCellStyle(targets[i]);
-				
 				graph.getModel().setStyle(targetCell, cellStyle);
+				
+				// Removes all children of composite cells
+				if (state != null && mxUtils.getValue(state.style, 'composite', '0') == '1')
+				{
+					var childCount = graph.model.getChildCount(targetCell);
+					
+					for (var j = childCount; j >= 0; j--)
+					{
+						graph.model.remove(graph.model.getChildAt(targetCell, j));
+					}
+				}
 
 				if (style != null)
 				{

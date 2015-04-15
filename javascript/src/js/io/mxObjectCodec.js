@@ -651,7 +651,7 @@ mxObjectCodec.prototype.convertAttributeFromXml = function(dec, attr, obj)
  */
 mxObjectCodec.prototype.isNumericAttribute = function(dec, attr, obj)
 {
-	return mxUtils.isNumber(attr.value);
+	return mxUtils.isNumeric(attr.value);
 };
 
 /**

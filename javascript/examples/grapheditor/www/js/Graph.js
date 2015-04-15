@@ -2976,6 +2976,8 @@ if (typeof mxVertexHandler != 'undefined')
 							mxEvent.redirectMouseEvents(this.connectorImg, this.graph, this.state);
 						}
 						
+						var mousePoint = null;
+						
 						// Starts connecting on touch/mouse down
 						mxEvent.addGestureListeners(this.connectorImg,
 							mxUtils.bind(this, function(evt)
@@ -2986,26 +2988,35 @@ if (typeof mxVertexHandler != 'undefined')
 									this.graph.popupMenuHandler.hideMenu();
 									this.graph.stopEditing(false);
 									
-									var pt = mxUtils.convertPoint(this.graph.container,
+									mousePoint = mxUtils.convertPoint(this.graph.container,
 											mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-									this.graph.connectionHandler.start(this.state, pt.x, pt.y);
+									this.graph.connectionHandler.start(this.state, mousePoint.x, mousePoint.y);
 									this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
 									this.graph.isMouseDown = true;
 									
 									mxEvent.consume(evt);
 								}
+							}),
+							null,
+							mxUtils.bind(this, function(evt)
+							{
+								if (mousePoint != null)
+								{
+									var pt = mxUtils.convertPoint(this.graph.container,
+											mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+									var tol = this.graph.tolerance;
+									
+									if (Math.abs(pt.x - mousePoint.x) < tol && Math.abs(pt.y - mousePoint.y) < tol)
+									{
+										this.graph.setSelectionCells(this.graph.duplicateCells([this.state.cell], false));
+										mxEvent.consume(evt);
+									}
+									
+									mousePoint = null;
+								}
 							})
 						);
-						
-						mxEvent.addListener(this.connectorImg, 'click', function(evt)
-						{
-							if (mxClient.IS_IE || evt.detail < 2)
-							{
-								ui.actions.get('duplicate').funct();
-								mxEvent.consume(evt);
-							}
-						});
-		
+
 						this.graph.container.appendChild(this.connectorImg);
 						redraw = true;
 					}

@@ -1317,13 +1317,13 @@ EditorUi.prototype.undo = function()
 
 		if (value == this.editor.graph.cellEditor.getCurrentValue())
 		{
-			this.editor.graph.stopEditing(false);
+			this.editor.graph.stopEditing(true);
 			this.editor.undoManager.undo();
 		}
 	}
 	else
 	{
-		this.editor.graph.stopEditing(false);
+		this.editor.graph.stopEditing(true);
 		this.editor.undoManager.undo();
 	}
 };
