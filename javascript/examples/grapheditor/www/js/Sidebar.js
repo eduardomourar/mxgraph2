@@ -580,9 +580,11 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	var active = false;
 	var complete = false;
 	var page = 0;
-	var count = 12;
 	var hash = new Object();
 
+	// Count is dynamically updated below
+	var count = 12;
+	
 	function clearDiv()
 	{
 		var child = div.firstChild;
@@ -602,6 +604,8 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	
 	find = mxUtils.bind(this, function()
 	{
+		// Shows 4 rows
+		count = 4 * Math.round(this.container.clientWidth / (this.thumbWidth + 10));
 		this.hideTooltip();
 		
 		if (button.getAttribute('disabled') != 'true')
@@ -774,154 +778,45 @@ Sidebar.prototype.addSearchPalette = function(expand)
  */
 Sidebar.prototype.addGeneralPalette = function(expand)
 {
-	// Avoids having to bind all functions to "this"
-	var sb = this;
-	
-	var fns =
-	[
-	 	this.addEntry('rect rectangle box', function()
-	 	{
-	 		return sb.createVertexTemplate('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', true);
-	 	}),
-	 	this.addEntry('rounded rect rectangle box', function()
-	 	{
-	 		return sb.createVertexTemplate('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', true);
-	 	}),
-	 	this.addEntry('circle oval ellipse state', function()
-	 	{
-	 		return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', true);
-	 	}),
-	 	this.addEntry('text textbox textarea label paragraph title subtitle', function()
-	 	{
-		 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
-	 		return sb.createVertexTemplate('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
-	 			40, 20, 'Text', 'Text', true);
-	 	}),
-	 	this.addEntry('rect rectangle box double', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=ext;double=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rectangle', true);
-	 	}),
-	 	this.addEntry('rounded rect rectangle box double', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rounded Rectangle', true);
-	 	}),
-	 	this.addEntry('circle oval ellipse start end state double', function()
-	 	{
-	 		return sb.createVertexTemplate('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Double Ellipse', true);
-	 	}),
-	 	this.addEntry('rhombus', function()
-	 	{
-	 		return sb.createVertexTemplate('rhombus;whiteSpace=wrap;html=1;', 80, 80, '', 'Rhombus', true);
-	 	}),
-	 	this.addEntry('actor', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false);
-	 	}),
-	 	this.addEntry('curly bracket', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;', 20, 120, '', 'Curly Bracket', true);
-	 	}),
-	 	this.addEntry('horizontal line', function()
-	 	{
-	 		return sb.createVertexTemplate('line;html=1;', 160, 10, '', 'Horizontal Line', true);
-	 	}),
-	 	this.addEntry('vertical line', function()
-	 	{
-	 		return sb.createVertexTemplate('line;direction=south;html=1;', 10, 160, '', 'Vertical Line', true);
-	 	}),
-	 	this.addEntry('parallelogram', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=parallelogram;whiteSpace=wrap;html=1;', 120, 60, '', 'Parallelogram', true);
-	 	}),
-	 	this.addEntry('triangle logic inverter buffer', function()
-	 	{
-	 		return sb.createVertexTemplate('triangle;whiteSpace=wrap;html=1;', 60, 80, '', 'Triangle', true);
-	 	}),
-	 	this.addEntry('cylinder data database', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=cylinder;whiteSpace=wrap;html=1;', 60, 80, '', 'Cylinder', true);
-	 	}),
-	 	this.addEntry('hexagon', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=hexagon;perimeter=hexagonPerimeter;whiteSpace=wrap;html=1;', 120, 80, '', 'Hexagon', true);
-	 	}),
-	 	this.addEntry('process task', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=process;whiteSpace=wrap;html=1;', 120, 60, '', 'Process', true);
-	 	}),
-	 	this.addEntry('cloud network', function()
-	 	{
-	 		return sb.createVertexTemplate('ellipse;shape=cloud;whiteSpace=wrap;html=1;', 120, 80, '', 'Cloud', true);
-	 	}),
-	 	this.addEntry('document', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=document;whiteSpace=wrap;html=1;', 120, 80, '', 'Document', true);
-	 	}),
-	 	this.addEntry('internal storage', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=internalStorage;whiteSpace=wrap;html=1;', 80, 80, '', 'Internal Storage', true);
-	 	}),
-	 	this.addEntry('cube', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=cube;whiteSpace=wrap;html=1;', 120, 80, '', 'Cube', true);
-	 	}),
-	 	this.addEntry('step', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=step;whiteSpace=wrap;html=1;', 120, 80, '', 'Step', true);
-	 	}),
-	 	this.addEntry('trapezoid', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=trapezoid;whiteSpace=wrap;html=1;', 120, 60, '', 'Trapezoid', true);
-	 	}),
-	 	this.addEntry('tape', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=tape;whiteSpace=wrap;html=1;', 120, 100, '', 'Tape', true);
-	 	}),
-	 	this.addEntry('note', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=note;whiteSpace=wrap;html=1;', 80, 100, '', 'Note', true);
-	 	}),
-	 	this.addEntry('folder', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=folder;whiteSpace=wrap;html=1;', 120, 120, '', 'Folder', true);
-	 	}),
-	 	this.addEntry('message', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=message;whiteSpace=wrap;html=1;', 60, 40, '', 'Message', true);
-	 	}),
-	 	this.addEntry('card', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=card;whiteSpace=wrap;html=1;', 80, 100, '', 'Card', true);
-	 	}),
-	 	this.addEntry('dotted line', function()
-	 	{
-	 		return sb.createEdgeTemplate('endArrow=none;html=1;dashed=1;dashPattern=1 4;', 50, 50, '', 'Dotted Line', true);
-	 	}),
-	 	this.addEntry('dashed line', function()
-	 	{
-	 		return sb.createEdgeTemplate('endArrow=none;dashed=1;html=1;', 50, 50, '', 'Dashed Line', true);
-	 	}),
-	 	this.addEntry('line', function()
-	 	{
-	 		return sb.createEdgeTemplate('endArrow=none;html=1;', 50, 50, '', 'Line', true);
-	 	}),
-	 	this.addEntry('connection', function()
-	 	{
-	 		return sb.createEdgeTemplate('endArrow=classic;html=1;', 50, 50, '', 'Connection', true);
-	 	}),
-	 	this.addEntry('manual line', function()
-	 	{
-	 		return sb.createEdgeTemplate('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;', 50, 50, '', 'Manual Line', true);
-	 	}),
-	 	this.addEntry('horizontal elbow', function()
-	 	{
-	 		return sb.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;html=1;', 50, 50, '', 'Horizontal Elbow', true);
-	 	}),
-	 	this.addEntry('vertical elbow', function()
-	 	{
-	 		return sb.createEdgeTemplate('edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;html=1;', 50, 50, '', 'Vertical Elbow', true);
-	 	}),
-	 	this.addEntry('curve', function()
+	var fns = [
+	 	this.createVertexTemplateEntry('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', null, null, 'rect rectangle box'),
+	 	this.createVertexTemplateEntry('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', null, null, 'rounded rect rectangle box'),
+ 		this.createVertexTemplateEntry('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', null, null, 'circle oval ellipse state'),
+	 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
+ 		this.createVertexTemplateEntry('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
+ 			40, 20, 'Text', 'Text', null, null, 'text textbox textarea label'),
+ 		this.createVertexTemplateEntry('shape=ext;double=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rectangle', null, null, 'rect rectangle box double'),
+	 	this.createVertexTemplateEntry('shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rounded Rectangle', null, null, 'rounded rect rectangle box double'),
+	 	this.createVertexTemplateEntry('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Double Ellipse', null, null, 'circle oval ellipse start end state double'),
+	 	this.createVertexTemplateEntry('rhombus;whiteSpace=wrap;html=1;', 80, 80, '', 'Rhombus'),
+	 	this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false),
+	 	this.createVertexTemplateEntry('shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;', 20, 120, '', 'Curly Bracket'),
+	 	this.createVertexTemplateEntry('line;html=1;', 160, 10, '', 'Horizontal Line'),
+	 	this.createVertexTemplateEntry('line;direction=south;html=1;', 10, 160, '', 'Vertical Line'),
+	 	this.createVertexTemplateEntry('shape=parallelogram;whiteSpace=wrap;html=1;', 120, 60, '', 'Parallelogram'),
+	 	this.createVertexTemplateEntry('triangle;whiteSpace=wrap;html=1;', 60, 80, '', 'Triangle', null, null, 'triangle logic inverter buffer'),
+	 	this.createVertexTemplateEntry('shape=cylinder;whiteSpace=wrap;html=1;', 60, 80, '', 'Cylinder', null, null, 'cylinder data database'),
+	 	this.createVertexTemplateEntry('shape=hexagon;perimeter=hexagonPerimeter;whiteSpace=wrap;html=1;', 120, 80, '', 'Hexagon'),
+	 	this.createVertexTemplateEntry('shape=process;whiteSpace=wrap;html=1;', 120, 60, '', 'Process', null, null, 'process task'),
+	 	this.createVertexTemplateEntry('ellipse;shape=cloud;whiteSpace=wrap;html=1;', 120, 80, '', 'Cloud', null, null, 'cloud network'),
+	 	this.createVertexTemplateEntry('shape=document;whiteSpace=wrap;html=1;', 120, 80, '', 'Document'),
+	 	this.createVertexTemplateEntry('shape=internalStorage;whiteSpace=wrap;html=1;', 80, 80, '', 'Internal Storage'),
+	 	this.createVertexTemplateEntry('shape=cube;whiteSpace=wrap;html=1;', 120, 80, '', 'Cube'),
+	 	this.createVertexTemplateEntry('shape=step;whiteSpace=wrap;html=1;', 120, 80, '', 'Step'),
+	 	this.createVertexTemplateEntry('shape=trapezoid;whiteSpace=wrap;html=1;', 120, 60, '', 'Trapezoid'),
+	 	this.createVertexTemplateEntry('shape=tape;whiteSpace=wrap;html=1;', 120, 100, '', 'Tape'),
+	 	this.createVertexTemplateEntry('shape=note;whiteSpace=wrap;html=1;', 80, 100, '', 'Note'),
+	 	this.createVertexTemplateEntry('shape=folder;whiteSpace=wrap;html=1;', 120, 120, '', 'Folder'),
+	 	this.createVertexTemplateEntry('shape=message;whiteSpace=wrap;html=1;', 60, 40, '', 'Message'),
+	 	this.createVertexTemplateEntry('shape=card;whiteSpace=wrap;html=1;', 80, 100, '', 'Card'),
+	 	this.createEdgeTemplateEntry('endArrow=none;html=1;dashed=1;dashPattern=1 4;', 50, 50, '', 'Dotted Line'),
+	 	this.createEdgeTemplateEntry('endArrow=none;dashed=1;html=1;', 50, 50, '', 'Dashed Line'),
+	 	this.createEdgeTemplateEntry('endArrow=none;html=1;', 50, 50, '', 'Line'),
+	 	this.createEdgeTemplateEntry('endArrow=classic;html=1;', 50, 50, '', 'Connection'),
+	 	this.createEdgeTemplateEntry('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;', 50, 50, '', 'Manual Line'),
+	 	this.createEdgeTemplateEntry('edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;html=1;', 50, 50, '', 'Horizontal Elbow'),
+	 	this.createEdgeTemplateEntry('edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;html=1;', 50, 50, '', 'Vertical Elbow'),
+	 	this.addEntry('curve', mxUtils.bind(this, function()
 	 	{
 			var cell = new mxCell('', new mxGeometry(0, 0, 50, 50), 'curved=1;endArrow=classic;html=1;');
 			cell.geometry.setTerminalPoint(new mxPoint(0, 50), true);
@@ -930,24 +825,12 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 			cell.geometry.relative = true;
 			cell.edge = true;
 			
-		    return sb.createEdgeTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Curve', true);
-	 	}),
-	 	this.addEntry('connection', function()
-	 	{
-	 		return sb.createEdgeTemplate('endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Connection', true);
-	 	}),
-	 	this.addEntry('link', function()
-	 	{
-	 		return sb.createEdgeTemplate('shape=link;html=1;', 50, 50, '', 'Link', true);
-	 	}),
-	 	this.addEntry('arrow', function()
-	 	{
-	 		return sb.createEdgeTemplate('shape=flexArrow;endArrow=classic;html=1;', 50, 50, '', 'Arrow', true);
-	 	}),
-	 	this.addEntry('arrow', function()
-	 	{
-	 		return sb.createEdgeTemplate('shape=flexArrow;endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Arrow', true);
-	 	})
+		    return this.createEdgeTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Curve');
+	 	})),
+	 	this.createEdgeTemplateEntry('endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Connection'),
+	 	this.createEdgeTemplateEntry('shape=link;html=1;', 50, 50, '', 'Link'),
+	 	this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;html=1;', 50, 50, '', 'Arrow'),
+	 	this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Arrow')
 	];
 
 	this.addPaletteFunctions('general', mxResources.get('general'), (expand != null) ? expand : true, fns);
@@ -966,189 +849,70 @@ Sidebar.prototype.addAdvancedPalette = function(expand)
  */
 Sidebar.prototype.createAdvancedShapes = function()
 {
-	// Avoids having to bind all functions to "this"
-	var sb = this;
-	
 	return [
-	 	this.addEntry('text textbox textarea', function()
-	 	{
-	 		return sb.createVertexTemplate('text;html=1;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;', 190, 120,
-	 			'<h1>Heading</h1><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>', 'Textbox', true);
-	 	}),
-	 	this.addEntry('unordered list', function()
-	 	{
-	 		return sb.createVertexTemplate('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
-	 			'<ul><li>Value 1</li><li>Value 2</li><li>Value 3</li></ul>', 'Unordered List', true);
-	 	}),
-	 	this.addEntry('ordered list', function()
-	 	{
-	 		return sb.createVertexTemplate('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
-	 			'<ol><li>Value 1</li><li>Value 2</li><li>Value 3</li></ol>', 'Ordered List', true);
-	 	}),
-	 	this.addEntry('table', function()
-	 	{
-	 		return sb.createVertexTemplate('text;html=1;strokeColor=#c0c0c0;overflow=fill;', 180, 180,
+	 	this.createVertexTemplateEntry('text;html=1;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;', 190, 120,
+	 			'<h1>Heading</h1><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>',
+	 			'Textbox', null, null, 'text textbox textarea'),
+	 	this.createVertexTemplateEntry('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
+	 			'<ul><li>Value 1</li><li>Value 2</li><li>Value 3</li></ul>', 'Unordered List'),
+	 	this.createVertexTemplateEntry('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
+	 			'<ol><li>Value 1</li><li>Value 2</li><li>Value 3</li></ol>', 'Ordered List'),
+	 	this.createVertexTemplateEntry('text;html=1;strokeColor=#c0c0c0;overflow=fill;', 180, 180,
 	 			'<table border="0" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
 	 			'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
 	 			'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
-	 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 1', true);
-	 	}),
-	 	this.addEntry('table', function()
-	 	{
-	 		return sb.createVertexTemplate('text;html=1;overflow=fill;', 180, 180,
+	 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 1'),
+	 	this.createVertexTemplateEntry('text;html=1;overflow=fill;', 180, 180,
 	 			'<table border="1" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
 	 			'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
 	 			'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
-	 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 2', true);
-	 	}),
-	 	this.addEntry('table', function()
-	 	{
-	 		return sb.createVertexTemplate('text;html=1;overflow=fill;', 160, 180,
+	 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 2'),
+	 	this.createVertexTemplateEntry('text;html=1;overflow=fill;', 160, 180,
 	 			'<table border="1" width="100%" height="100%" cellpadding="4" style="width:100%;height:100%;border-collapse:collapse;">' +
 	 			'<tr><th align="center"><b>Title</b></th></tr>' +
 	 			'<tr><td align="center">Section 1.1\nSection 1.2\nSection 1.3</td></tr>' +
-	 			'<tr><td align="center">Section 2.1\nSection 2.2\nSection 2.3</td></tr></table>', 'Table 3', true);
-	 	}),
-	 	this.addEntry('link hyperlink', function()
+	 			'<tr><td align="center">Section 2.1\nSection 2.2\nSection 2.3</td></tr></table>', 'Table 3'),
+	 	this.addEntry('link hyperlink', mxUtils.bind(this, function()
 	 	{
 	 		var cell = new mxCell('Link', new mxGeometry(0, 0, 60, 40), 'text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontColor=#0000EE;fontStyle=4;');
 	 		cell.vertex = true;
-	 		sb.graph.setLinkForCell(cell, 'https://www.draw.io');
+	 		this.graph.setLinkForCell(cell, 'https://www.draw.io');
 
-	 		return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Link', true);
-	 	}),
-	 	this.addEntry('fixed image icon symbol', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=1;aspect=fixed;image=' + sb.gearImage, 52, 61, '', 'Fixed Image', false);
-	 	}),
-	 	this.addEntry('strechted image icon symbol', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;image=' + sb.gearImage, 50, 60, '', 'Stretched Image', false);
-	 	}),
-	 	this.addEntry('icon image symbol', function()
-	 	{
-	 		return sb.createVertexTemplate('icon;html=1;image=' + sb.gearImage, 60, 60, 'Icon', 'Icon', false);
-	 	}),
-	 	this.addEntry('label image icon symbol', function()
-	 	{
-	 		return sb.createVertexTemplate('whiteSpace=wrap;html=1;label;image=' + sb.gearImage, 140, 60, 'Label', 'Label', true);
-	 	}),
-	 	this.addEntry('logic or', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=xor;whiteSpace=wrap;html=1;', 60, 80, '', 'Or', true);
-	 	}),
-	 	this.addEntry('logic and', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=or;whiteSpace=wrap;html=1;', 60, 80, '', 'And', true);
-	 	}),
-	 	this.addEntry('data storage', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=dataStorage;whiteSpace=wrap;html=1;', 100, 80, '', 'Data Storage', true);    
-	 	}),
-	 	this.addEntry('tape data', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=tapeData;whiteSpace=wrap;html=1;perimeter=ellipsePerimeter;', 80, 80, '', 'Tape Data', true);
-	 	}),
-	 	this.addEntry('manual input', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=manualInput;whiteSpace=wrap;html=1;', 80, 80, '', 'Manual Input', true);
-	 	}),
-	 	this.addEntry('loop limit', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=loopLimit;whiteSpace=wrap;html=1;', 100, 80, '', 'Loop Limit', true);
-	 	}),
-	 	this.addEntry('off page connector', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=offPageConnector;whiteSpace=wrap;html=1;', 80, 80, '', 'Off Page Connector', true);
-	 	}),
-	 	this.addEntry('delay', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=delay;whiteSpace=wrap;html=1;', 80, 40, '', 'Delay', true);
-	 	}),
-	 	this.addEntry('display', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=display;whiteSpace=wrap;html=1;', 80, 40, '', 'Display', true);
-	 	}),
-	 	this.addEntry('arrow left', function()
-	 	{	   
-	 		return sb.createVertexTemplate('shape=singleArrow;direction=west;whiteSpace=wrap;html=1;', 100, 60, '', 'Arrow Left', true);
-	 	}),
-	 	this.addEntry('arrow right', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=singleArrow;whiteSpace=wrap;html=1;', 100, 60, '', 'Arrow Right', true);
-	 	}),
-	 	this.addEntry('arrow up', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=singleArrow;direction=north;whiteSpace=wrap;html=1;', 60, 100, '', 'Arrow Up', true);
-	 	}),
-	 	this.addEntry('arrow down', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=singleArrow;direction=south;whiteSpace=wrap;html=1;', 60, 100, '', 'Arrow Down', true);
-	 	}),
-	 	this.addEntry('double arrow', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=doubleArrow;whiteSpace=wrap;html=1;', 100, 60, '', 'Double Arrow', true);
-	 	}),
-	 	this.addEntry('double arrow', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=doubleArrow;direction=south;whiteSpace=wrap;html=1;', 60, 100, '', 'Double Arrow Vertical', true);
-	 	}),
-	 	this.addEntry('user', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=actor;whiteSpace=wrap;html=1;', 40, 60, '', 'User', true);
-	 	}),
-	 	this.addEntry('cross', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=cross;whiteSpace=wrap;html=1;', 80, 80, '', 'Cross', true);
-	 	}),
-	 	this.addEntry('corner', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=corner;whiteSpace=wrap;html=1;', 80, 80, '', 'Corner', true);
-	 	}),
-	 	this.addEntry('tee', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=tee;whiteSpace=wrap;html=1;', 80, 80, '', 'Tee', true);
-	 	}),
-	 	this.addEntry('data store cylinder database', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', true);
-	 	}),
-	 	this.addEntry('switch router', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=switch;whiteSpace=wrap;html=1;', 60, 60, '', 'Switch', true);
-	 	}),
-	 	this.addEntry('or circle oval ellipse', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=orEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Or', true);
-	 	}),
-	 	this.addEntry('sum circle oval ellipse', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=sumEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Sum', true);
-	 	}),
-	 	this.addEntry('circle oval ellipse', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=lineEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Ellipse with horizontal divider', true);
-	 	}),
-	 	this.addEntry('circle oval ellipse', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=lineEllipse;line=vertical;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Ellipse with vertical divider', true);
-	 	}),
-	 	this.addEntry('container swimlane lane', function()
-	 	{
-	 		return sb.createVertexTemplate('swimlane;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container', true);
-	 	}),
-	 	this.addEntry('container swimlane lane', function()
-	 	{
-	 		return sb.createVertexTemplate('swimlane;swimlaneLine=0;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container w/o Divider', true);
-	 	}),
-	 	this.addEntry('container swimlane lane', function()
-	 	{
-	 		return sb.createVertexTemplate('swimlane;swimlaneFillColor=#ffffff;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Filled Container', true);
-	 	}),
-	 	this.addEntry('container swimlane lane', function()
-	 	{
-	 		return sb.createVertexTemplate('swimlane;swimlaneLine=0;swimlaneFillColor=#ffffff;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Filled Container w/o Divider', true);
-	 	})
+	 		return this.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Link');
+	 	})),
+	 	this.createVertexTemplateEntry('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=1;aspect=fixed;image=' + this.gearImage, 52, 61, '', 'Fixed Image', false, null, 'fixed image icon symbol'),
+	 	this.createVertexTemplateEntry('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;image=' + this.gearImage, 50, 60, '', 'Stretched Image', false, null, 'strechted image icon symbol'),
+	 	this.createVertexTemplateEntry('icon;html=1;image=' + this.gearImage, 60, 60, 'Icon', 'Icon', false, null, 'icon image symbol'),
+	 	this.createVertexTemplateEntry('whiteSpace=wrap;html=1;label;image=' + this.gearImage, 140, 60, 'Label', 'Label', null, null, 'label image icon symbol'),
+	 	this.createVertexTemplateEntry('shape=xor;whiteSpace=wrap;html=1;', 60, 80, '', 'Or', null, null, 'logic or'),
+	 	this.createVertexTemplateEntry('shape=or;whiteSpace=wrap;html=1;', 60, 80, '', 'And', null, null, 'logic and'),
+	 	this.createVertexTemplateEntry('shape=dataStorage;whiteSpace=wrap;html=1;', 100, 80, '', 'Data Storage'),    
+	 	this.createVertexTemplateEntry('shape=tapeData;whiteSpace=wrap;html=1;perimeter=ellipsePerimeter;', 80, 80, '', 'Tape Data'),
+	 	this.createVertexTemplateEntry('shape=manualInput;whiteSpace=wrap;html=1;', 80, 80, '', 'Manual Input'),
+	 	this.createVertexTemplateEntry('shape=loopLimit;whiteSpace=wrap;html=1;', 100, 80, '', 'Loop Limit'),
+	 	this.createVertexTemplateEntry('shape=offPageConnector;whiteSpace=wrap;html=1;', 80, 80, '', 'Off Page Connector'),
+	 	this.createVertexTemplateEntry('shape=delay;whiteSpace=wrap;html=1;', 80, 40, '', 'Delay'),
+	 	this.createVertexTemplateEntry('shape=display;whiteSpace=wrap;html=1;', 80, 40, '', 'Display'),
+	 	this.createVertexTemplateEntry('shape=singleArrow;direction=west;whiteSpace=wrap;html=1;', 100, 60, '', 'Arrow Left'),
+	 	this.createVertexTemplateEntry('shape=singleArrow;whiteSpace=wrap;html=1;', 100, 60, '', 'Arrow Right'),
+	 	this.createVertexTemplateEntry('shape=singleArrow;direction=north;whiteSpace=wrap;html=1;', 60, 100, '', 'Arrow Up'),
+	 	this.createVertexTemplateEntry('shape=singleArrow;direction=south;whiteSpace=wrap;html=1;', 60, 100, '', 'Arrow Down'),
+	 	this.createVertexTemplateEntry('shape=doubleArrow;whiteSpace=wrap;html=1;', 100, 60, '', 'Double Arrow'),
+	 	this.createVertexTemplateEntry('shape=doubleArrow;direction=south;whiteSpace=wrap;html=1;', 60, 100, '', 'Double Arrow Vertical', null, null, 'double arrow'),
+	 	this.createVertexTemplateEntry('shape=actor;whiteSpace=wrap;html=1;', 40, 60, '', 'User'),
+	 	this.createVertexTemplateEntry('shape=cross;whiteSpace=wrap;html=1;', 80, 80, '', 'Cross'),
+	 	this.createVertexTemplateEntry('shape=corner;whiteSpace=wrap;html=1;', 80, 80, '', 'Corner'),
+	 	this.createVertexTemplateEntry('shape=tee;whiteSpace=wrap;html=1;', 80, 80, '', 'Tee'),
+	 	this.createVertexTemplateEntry('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', null, null, 'data store cylinder database'),
+	 	this.createVertexTemplateEntry('shape=switch;whiteSpace=wrap;html=1;', 60, 60, '', 'Switch', null, null, 'switch router'),
+	 	this.createVertexTemplateEntry('shape=orEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Or', null, null, 'or circle oval ellipse'),
+	 	this.createVertexTemplateEntry('shape=sumEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Sum', null, null, 'sum circle oval ellipse'),
+	 	this.createVertexTemplateEntry('shape=lineEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Ellipse with horizontal divider', null, null, 'circle oval ellipse'),
+	 	this.createVertexTemplateEntry('shape=lineEllipse;line=vertical;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Ellipse with vertical divider', null, null, 'circle oval ellipse'),
+	 	this.createVertexTemplateEntry('swimlane;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container', null, null, 'container swimlane lane'),
+	 	this.createVertexTemplateEntry('swimlane;swimlaneLine=0;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container w/o Divider', null, null, 'container swimlane lane'),
+	 	this.createVertexTemplateEntry('swimlane;swimlaneFillColor=#ffffff;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Filled Container', null, null, 'container swimlane lane'),
+	 	this.createVertexTemplateEntry('swimlane;swimlaneLine=0;swimlaneFillColor=#ffffff;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Filled Container w/o Divider', null, null, 'container swimlane lane')
 	];
 };
 
@@ -1167,8 +931,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	var divider = new mxCell('', new mxGeometry(0, 0, 40, 8), 'line;html=1;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];');
 	divider.vertex = true;
 
-	var fns =
-	[
+	var fns = [
 	 	this.addEntry('uml static class object instance', function()
 		{
 			var cell = new mxCell('Classname', new mxGeometry(0, 0, 160, 90),
@@ -1178,27 +941,24 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			cell.insert(divider.clone());
 			cell.insert(sb.cloneCell(field, '+ method(type): type'));
 			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class', true); 
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class'); 
 		}),
 		this.addEntry('uml static class item member method function variable field attribute label', function()
 		{
-			return sb.createVertexTemplateFromCells([sb.cloneCell(field, '+ item: attribute')], field.geometry.width, field.geometry.height, 'Item', true);
+			return sb.createVertexTemplateFromCells([sb.cloneCell(field, '+ item: attribute')], field.geometry.width, field.geometry.height, 'Item');
 		}),
 		this.addEntry('uml static class spacer space gap separator', function()
 		{
 			var cell = new mxCell('', new mxGeometry(0, 0, 20, 14), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=4;spacingRight=4;rotatable=0;labelPosition=right;points=[];');
 			cell.vertex = true;
 			
-			return sb.createVertexTemplateFromCells([cell.clone()], cell.geometry.width, cell.geometry.height, 'Spacer', true);
+			return sb.createVertexTemplateFromCells([cell.clone()], cell.geometry.width, cell.geometry.height, 'Spacer');
 		}),
 		this.addEntry('uml static class divider hline line separator', function()
 		{
-			return sb.createVertexTemplateFromCells([divider.clone()], divider.geometry.width, divider.geometry.height, 'Divider', true);
+			return sb.createVertexTemplateFromCells([divider.clone()], divider.geometry.width, divider.geometry.height, 'Divider');
 		}),
-		this.addEntry('uml static class title label', function()
-		{
-			return sb.createVertexTemplate('text;html=1;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];', 80, 26, 'Title', 'Title', true)
-		}),
+		this.createVertexTemplateEntry('text;html=1;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];', 80, 26, 'Title', 'Title', null, null, 'uml static class title label'),
 		this.addEntry('uml static class section subsection', function()
 		{
 			var cell = new mxCell('Section', new mxGeometry(0, 0, 140, 90),
@@ -1208,7 +968,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			cell.insert(divider.clone());
 			cell.insert(sb.cloneCell(field, '+ method(type): type'));
 			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Section', true);
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Section');
 		}),
 		this.addEntry('er entity table', function()
 		{
@@ -1219,7 +979,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			cell.insert(sb.cloneCell(field, 'Row 2'));
 			cell.insert(sb.cloneCell(field, 'Row 3'));
 	
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Table', true);
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Table');
 		}),
 		this.addEntry('er entity table section subsection', function()
 		{
@@ -1230,12 +990,9 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			cell.insert(sb.cloneCell(field, 'Row 2'));
 			cell.insert(sb.cloneCell(field, 'Row 3'));
 			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Section', true);
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Section');
 		}),
-		this.addEntry('uml static class object instance', function()
-		{
-			return sb.createVertexTemplate('html=1;', 110, 50, 'Object', 'Object', true);
-		}),
+		this.createVertexTemplateEntry('html=1;', 110, 50, 'Object', 'Object', null, null, 'uml static class object instance'),
 		this.addEntry('uml static class object instance', function()
 		{
 		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
@@ -1244,7 +1001,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
 		    cell.vertex = true;
 		    
-	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class 1', true);
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class 1');
 		}),
 		this.addEntry('uml static class object instance', function()
 		{
@@ -1255,7 +1012,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
 		    cell.vertex = true;
 	    	
-	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class 2', true);
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class 2');
 		}),
 		this.addEntry('uml static class interface', function()
 		{
@@ -1269,12 +1026,9 @@ Sidebar.prototype.addUmlPalette = function(expand)
 				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
 		    cell.vertex = true;
 	    	
-	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Interface', true);
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Interface');
 		}),
-		this.addEntry('uml static class module', function()
-		{
-			return sb.createVertexTemplate('shape=component;align=left;spacingLeft=36;', 120, 60, 'Module', 'Module', true);
-		}),
+		this.createVertexTemplateEntry('shape=component;align=left;spacingLeft=36;', 120, 60, 'Module', 'Module', null, null, 'uml static class module'),
 		this.addEntry('uml static class component', function()
 		{
 		    var cell = new mxCell('&lt;&lt;component&gt;&gt;<br/><b>Component</b>', new mxGeometry(0, 0, 180, 90), 'overflow=fill;html=1;');
@@ -1286,7 +1040,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			symbol.geometry.offset = new mxPoint(-27, 7);
 			cell.insert(symbol);
 	    	
-	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Component', true);
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Component');
 		}),
 		this.addEntry('uml static class component', function()
 		{
@@ -1301,47 +1055,24 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			symbol.geometry.offset = new mxPoint(-24, 4);
 			cell.insert(symbol);
 	    	
-	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Component with Attributes', true);
+	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Component with Attributes');
 		}),
-		this.addEntry('uml static class block', function()
-		{
-			return sb.createVertexTemplate('verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;',
-				180, 120, 'Block', 'Block', true);
-		}),
-		this.addEntry('uml static class package', function()
-		{
-			return sb.createVertexTemplate('shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;', 70, 50,
-			    	'package', 'Package', true);
-		}),
-		this.addEntry('uml static class object instance', function()
-		{
-			return sb.createVertexTemplate('verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;',
-				160, 90, '<p style="margin:0px;margin-top:4px;text-align:center;text-decoration:underline;"><b>Object:Type</b></p><hr/>' +
-				'<p style="margin:0px;margin-left:8px;">field1 = value1<br/>field2 = value2<br>field3 = value3</p>', 'Object', true);
-		}),
-		this.addEntry('uml static class provided interface', function()
-		{
-			return sb.createVertexTemplate('shape=lollipop;direction=south;html=1;', 30, 10, '', 'Provided Interface', true);
-		}),
-		this.addEntry('uml static class required interface', function()
-		{
-			return sb.createVertexTemplate('shape=requires;direction=north;html=1;', 30, 20, '', 'Required Interface', true);
-		}),
-		this.addEntry('er entity table', function()
-		{
-			return sb.createVertexTemplate('verticalAlign=top;align=left;overflow=fill;html=1;',180, 90,
-				'<div style="box-sizing:border-box;width:100%;background:#e4e4e4;margin:1px;padding:2px;">Tablename</div><table style="width:100%;">' +
-				'<tr><td>PK</td><td style="padding:2px;">uniqueId</td></tr><tr><td>FK1</td><td style="padding:2px;">foreignKey</td></tr>' +
-				'<tr><td></td><td style="padding:2px;">fieldname</td></tr></table>', 'Entity', true);
-		}),
-	 	this.addEntry('uml actor', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false);
-	 	}),
-		this.addEntry('uml use case usecase', function()
-		{
-			return sb.createVertexTemplate('ellipse;whiteSpace=wrap;html=1;', 140, 70, 'Use Case', 'Use Case', true);
-		}),
+		this.createVertexTemplateEntry('verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;',
+			180, 120, 'Block', 'Block', null, null, 'uml static class block'),
+		this.createVertexTemplateEntry('shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;', 70, 50,
+		   	'package', 'Package', null, null, 'uml static class package'),
+		this.createVertexTemplateEntry('verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;',
+			160, 90, '<p style="margin:0px;margin-top:4px;text-align:center;text-decoration:underline;"><b>Object:Type</b></p><hr/>' +
+			'<p style="margin:0px;margin-left:8px;">field1 = value1<br/>field2 = value2<br>field3 = value3</p>', 'Object',
+			null, null, 'uml static class object instance'),
+		this.createVertexTemplateEntry('shape=lollipop;direction=south;html=1;', 30, 10, '', 'Provided Interface', null, null, 'uml static class provided interface'),
+		this.createVertexTemplateEntry('shape=requires;direction=north;html=1;', 30, 20, '', 'Required Interface', null, null, 'uml static class required interface'),
+		this.createVertexTemplateEntry('verticalAlign=top;align=left;overflow=fill;html=1;',180, 90,
+			'<div style="box-sizing:border-box;width:100%;background:#e4e4e4;margin:1px;padding:2px;">Tablename</div><table style="width:100%;">' +
+			'<tr><td>PK</td><td style="padding:2px;">uniqueId</td></tr><tr><td>FK1</td><td style="padding:2px;">foreignKey</td></tr>' +
+			'<tr><td></td><td style="padding:2px;">fieldname</td></tr></table>', 'Entity', null, null, 'er entity table'),
+		this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false, null, 'uml actor'),
+		this.createVertexTemplateEntry('ellipse;whiteSpace=wrap;html=1;', 140, 70, 'Use Case', 'Use Case', null, null, 'uml use case usecase'),
 		this.addEntry('uml activity state start', function()
 		{
 	    	var cell = new mxCell('', new mxGeometry(0, 0, 30, 30),
@@ -1355,7 +1086,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			
 			cell.insertEdge(edge, true);
 	    	
-			return sb.createVertexTemplateFromCells([cell, edge], 30, 90, 'Start', true);
+			return sb.createVertexTemplateFromCells([cell, edge], 30, 90, 'Start');
 		}),
 		this.addEntry('uml activity state', function()
 		{
@@ -1370,7 +1101,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			
 			cell.insertEdge(edge, true);
 			
-			return sb.createVertexTemplateFromCells([cell, edge], 120, 100, 'Activity', true);
+			return sb.createVertexTemplateFromCells([cell, edge], 120, 100, 'Activity');
 		}),
 		this.addEntry('uml activity composite state', function()
 		{
@@ -1388,7 +1119,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			
 			cell.insertEdge(edge, true);
 			
-			return sb.createVertexTemplateFromCells([cell, edge], 160, 120, 'Composite State', true);
+			return sb.createVertexTemplateFromCells([cell, edge], 160, 120, 'Composite State');
 		}),
 		this.addEntry('uml activity condition', function()
 		{
@@ -1411,7 +1142,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			
 			cell.insertEdge(edge2, true);
 			
-			return sb.createVertexTemplateFromCells([cell, edge1, edge2], 180, 100, 'Condition', true);
+			return sb.createVertexTemplateFromCells([cell, edge1, edge2], 180, 100, 'Condition');
 		}),
 		this.addEntry('uml activity fork join', function()
 		{
@@ -1425,36 +1156,16 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			
 			cell.insertEdge(edge, true);
 		
-			return sb.createVertexTemplateFromCells([cell, edge], 200, 80, 'Fork/Join', true);
+			return sb.createVertexTemplateFromCells([cell, edge], 200, 80, 'Fork/Join');
 		}),
-		this.addEntry('uml activity state end', function()
-		{
-			return sb.createVertexTemplate('ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;', 30, 30, '', 'End', true);
-		}),
-		this.addEntry('uml sequence participant lifeline', function()
-		{
-			return sb.createVertexTemplate('shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;', 100, 300, ':Object', 'Lifeline', true);
-		}),
-		this.addEntry('uml sequence participant lifeline actor', function()
-		{
-			return sb.createVertexTemplate('shape=umlLifeline;participant=umlActor;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;', 20, 300, '', 'Lifeline', true);
-		}),
-		this.addEntry('uml sequence frame', function()
-		{
-			return sb.createVertexTemplate('shape=umlFrame;whiteSpace=wrap;html=1;', 300, 200, 'frame', 'Frame', true);
-		}),
-		this.addEntry('uml sequence activation', function()
-		{
-			return sb.createVertexTemplate('html=1;points=[];', 10, 80, '', 'Activation', true);
-		}),
-		this.addEntry('uml sequence found message call invoke dispatch', function()
-		{
-			return sb.createEdgeTemplate('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message', true);
-		}),
-		this.addEntry('uml sequence message call invoke dispatch', function()
-		{
-			return sb.createEdgeTemplate('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=block;', 100, 0, 'dispatch', 'Message', true);
-		}),
+		this.createVertexTemplateEntry('ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;', 30, 30, '', 'End', null, null, 'uml activity state end'),
+		this.createVertexTemplateEntry('shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;', 100, 300, ':Object', 'Lifeline', null, null, 'uml sequence participant lifeline'),
+		this.createVertexTemplateEntry('shape=umlLifeline;participant=umlActor;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;',
+				20, 300, '', 'Lifeline', null, null, 'uml sequence participant lifeline actor'),
+	 	this.createVertexTemplateEntry('shape=umlFrame;whiteSpace=wrap;html=1;', 300, 200, 'frame', 'Frame', null, null, 'uml sequence frame'),
+	 	this.createVertexTemplateEntry('html=1;points=[];', 10, 80, '', 'Activation', null, null, 'uml sequence activation'),
+	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message'),
+	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=block;', 100, 0, 'dispatch', 'Message', null, 'uml sequence message call invoke dispatch'),
 		this.addEntry('uml sequence return message', function()
 		{
 			var edge = new mxCell('return', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;');
@@ -1463,7 +1174,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			edge.geometry.relative = true;
 			edge.edge = true;
 			
-			return sb.createEdgeTemplateFromCells([edge], 100, 0, 'Return', true);
+			return sb.createEdgeTemplateFromCells([edge], 100, 0, 'Return');
 		}),
 		this.addEntry('uml relation', function()
 		{
@@ -1480,7 +1191,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	    	cell.vertex = true;
 	    	edge.insert(cell);
 	    	
-			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Relation 1', true);
+			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Relation 1');
 		}),
 		this.addEntry('uml association', function()
 		{
@@ -1502,7 +1213,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	    	cell2.vertex = true;
 	    	edge.insert(cell2);
 	    	
-			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Association 1', true);
+			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Association 1');
 		}),
 		this.addEntry('uml aggregation', function()
 		{
@@ -1514,7 +1225,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			edge.geometry.y = 3;
 			edge.edge = true;
 		
-			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Aggregation', true);
+			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Aggregation');
 		}),
 		this.addEntry('uml composition', function()
 		{
@@ -1526,7 +1237,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			edge.geometry.y = 3;
 			edge.edge = true;
 			
-			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Composition', true);
+			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Composition');
 		}),
 		this.addEntry('uml relation', function()
 		{
@@ -1548,20 +1259,11 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	    	cell2.vertex = true;
 	    	edge.insert(cell2);
 	    	
-			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Relation 2', true);
+			return sb.createEdgeTemplateFromCells([edge], 160, 0, 'Relation 2');
 		}),
-		this.addEntry('uml dependency use', function()
-		{
-			return sb.createEdgeTemplate('endArrow=open;endSize=12;dashed=1;html=1;', 160, 0, 'Use', 'Dependency', true);
-		}),
-		this.addEntry('uml generalization extend', function()
-		{
-			return sb.createEdgeTemplate('endArrow=block;endSize=16;endFill=0;html=1;', 160, 0, 'Extends', 'Generalization', true);
-		}),
-		this.addEntry('uml association', function()
-		{
-			return sb.createEdgeTemplate('endArrow=block;startArrow=block;endFill=1;startFill=1;html=1;', 160, 0, '', 'Association 2', true);
-		}),
+		this.createEdgeTemplateEntry('endArrow=open;endSize=12;dashed=1;html=1;', 160, 0, 'Use', 'Dependency', null, 'uml dependency use'),
+		this.createEdgeTemplateEntry('endArrow=block;endSize=16;endFill=0;html=1;', 160, 0, 'Extends', 'Generalization', null, 'uml generalization extend'),
+	 	this.createEdgeTemplateEntry('endArrow=block;startArrow=block;endFill=1;startFill=1;html=1;', 160, 0, '', 'Association 2', null, 'uml association')
 	];
 	
 	this.addPaletteFunctions('uml', 'UML', expand || false, fns);
@@ -1577,22 +1279,10 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 
 	var fns =
 	[
-	 	this.addEntry('bpmn task process', function()
-		{
-			return sb.createVertexTemplate('shape=ext;rounded=1;html=1;whiteSpace=wrap;', 120, 80, 'Task', 'Process', true);
-		}),
-		this.addEntry('bpmn transaction', function()
-		{
-			return sb.createVertexTemplate('shape=ext;rounded=1;html=1;whiteSpace=wrap;double=1;', 120, 80, 'Transaction', 'Transaction', true);
-		}),
-		this.addEntry('bpmn event subprocess sub process sub-process', function()
-		{
-			return sb.createVertexTemplate('shape=ext;rounded=1;html=1;whiteSpace=wrap;dashed=1;dashPattern=1 4;', 120, 80, 'Event\nSub-Process', 'Event Sub-Process', true);
-		}),
-		this.addEntry('bpmn call activity', function()
-		{
-			return sb.createVertexTemplate('shape=ext;rounded=1;html=1;whiteSpace=wrap;strokeWidth=3;', 120, 80, 'Call Activity', 'Call Activity', true);
-		}),
+	 	this.createVertexTemplateEntry('shape=ext;rounded=1;html=1;whiteSpace=wrap;', 120, 80, 'Task', 'Process', null, null, 'bpmn task process'),
+	 	this.createVertexTemplateEntry('shape=ext;rounded=1;html=1;whiteSpace=wrap;double=1;', 120, 80, 'Transaction', 'Transaction', null, null, 'bpmn transaction'),
+	 	this.createVertexTemplateEntry('shape=ext;rounded=1;html=1;whiteSpace=wrap;dashed=1;dashPattern=1 4;', 120, 80, 'Event\nSub-Process', 'Event Sub-Process', null, null, 'bpmn event subprocess sub process sub-process'),
+	 	this.createVertexTemplateEntry('shape=ext;rounded=1;html=1;whiteSpace=wrap;strokeWidth=3;', 120, 80, 'Call Activity', 'Call Activity', null, null, 'bpmn call activity'),
 		this.addEntry('bpmn subprocess sub process sub-process', function()
 		{
 			var cell = new mxCell('Sub-Process', new mxGeometry(0, 0, 120, 80), 'html=1;whiteSpace=wrap;rounded=1;');
@@ -1604,7 +1294,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			cell1.geometry.offset = new mxPoint(-7, -14);
 			cell.insert(cell1);
 			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Sub-Process', true);
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Sub-Process');
 		}),
 		this.addEntry('bpmn subprocess sub process sub-process looped', function()
 		{
@@ -1623,7 +1313,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			cell2.geometry.offset = new mxPoint(1, -14);
 			cell.insert(cell2);
 			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Looped Sub-Process', true);
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Looped Sub-Process');
 		}),
 		this.addEntry('bpmn receive task', function()
 		{
@@ -1636,7 +1326,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			cell1.geometry.offset = new mxPoint(7, 7);
 			cell.insert(cell1);
 			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Receive Task', true);
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Receive Task');
 		}),
 		this.addEntry('bpmn user task', function()
 		{
@@ -1655,7 +1345,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			cell2.geometry.offset = new mxPoint(-7, -14);
 			cell.insert(cell2);
 			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'User Task', true);
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'User Task');
 		}),
 		this.addEntry('bpmn process attached timer event', function()
 		{
@@ -1668,7 +1358,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			cell1.geometry.offset = new mxPoint(-40, -15);
 			cell.insert(cell1);
 
-			return sb.createVertexTemplateFromCells([cell], 120, 95, 'Attached Timer Event 1', true);
+			return sb.createVertexTemplateFromCells([cell], 120, 95, 'Attached Timer Event 1');
 		}),
 		this.addEntry('bpmn process attached timer event', function()
 		{
@@ -1681,24 +1371,12 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			cell1.geometry.offset = new mxPoint(-15, 10);
 			cell.insert(cell1);
 
-			return sb.createVertexTemplateFromCells([cell], 135, 80, 'Attached Timer Event 2', true);
+			return sb.createVertexTemplateFromCells([cell], 135, 80, 'Attached Timer Event 2');
 		}),
-		this.addEntry('bpmn pool', function()
-		{
-			return sb.createVertexTemplate('swimlane;html=1;horizontal=0;startSize=20;', 320, 240, 'Pool', 'Pool', true);
-		}),
-		this.addEntry('bpmn lane', function()
-		{
-			return sb.createVertexTemplate('swimlane;html=1;horizontal=0;swimlaneFillColor=white;swimlaneLine=0;', 300, 120, 'Lane', 'Lane', true);
-		}),
-		this.addEntry('bpmn conversation', function()
-		{
-			return sb.createVertexTemplate('shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;', 60, 50, '', 'Conversation', true);
-		}),
-		this.addEntry('bpmn call conversation', function()
-		{
-			return sb.createVertexTemplate('shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;strokeWidth=4', 60, 50, '', 'Call Conversation', true);
-		}),
+		this.createVertexTemplateEntry('swimlane;html=1;horizontal=0;startSize=20;', 320, 240, 'Pool', 'Pool', null, null, 'bpmn pool'),
+		this.createVertexTemplateEntry('swimlane;html=1;horizontal=0;swimlaneFillColor=white;swimlaneLine=0;', 300, 120, 'Lane', 'Lane', null, null, 'bpmn lane'),
+	 	this.createVertexTemplateEntry('shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;', 60, 50, '', 'Conversation', null, null, 'bpmn conversation'),
+	 	this.createVertexTemplateEntry('shape=hexagon;html=1;whiteSpace=wrap;perimeter=hexagonPerimeter;strokeWidth=4', 60, 50, '', 'Call Conversation', null, null, 'bpmn call conversation'),
 		this.addEntry('bpmn subconversation sub conversation sub-conversation', function()
 		{
 			var cell = new mxCell('', new mxGeometry(0, 0, 60, 50), 'shape=hexagon;whiteSpace=wrap;html=1;perimeter=hexagonPerimeter;');
@@ -1710,7 +1388,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			cell1.geometry.offset = new mxPoint(-7, -14);
 			cell.insert(cell1);
 			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Sub-Conversation', true);
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Sub-Conversation');
 		}),
 		this.addEntry('bpmn data object', function()
 		{
@@ -1729,80 +1407,26 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			cell2.geometry.offset = new mxPoint(-7, -14);
 			cell.insert(cell2);
 			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Data Object', true);
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Data Object');
 		}),
-		this.addEntry('bpmn data store', function()
-		{
-			return sb.createVertexTemplate('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', true);
-		}),
-		this.addEntry('bpmn subprocess sub process sub-process marker', function()
-		{
-			return sb.createVertexTemplate('shape=plus;html=1;', 14, 14, '', 'Sub-Process Marker', true);
-		}),
-		this.addEntry('bpmn loop marker', function()
-		{
-			return sb.createVertexTemplate('shape=mxgraph.bpmn.loop;html=1;', 14, 14, '', 'Loop Marker', true);
-		}),
-		this.addEntry('bpmn parallel mi marker', function()
-		{
-			return sb.createVertexTemplate('shape=parallelMarker;html=1;', 14, 14, '', 'Parallel MI Marker', true);
-		}),
-		this.addEntry('bpmn sequential mi marker', function()
-		{
-			return sb.createVertexTemplate('shape=parallelMarker;direction=south;html=1;', 14, 14, '', 'Sequential MI Marker', true);
-		}),
-		this.addEntry('bpmn ad hoc marker', function()
-		{
-			return sb.createVertexTemplate('shape=mxgraph.bpmn.ad_hoc;fillColor=#000000;html=1;', 14, 14, '', 'Ad Hoc Marker', true);
-		}),
-		this.addEntry('bpmn compensation marker', function()
-		{
-			return sb.createVertexTemplate('shape=mxgraph.bpmn.compensation;html=1;', 14, 14, '', 'Compensation Marker', true);
-		}),
-		this.addEntry('bpmn send task', function()
-		{
-			return sb.createVertexTemplate('shape=message;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#ffffff;strokeWidth=2;', 40, 30, '', 'Send Task', true);
-		}),
-		this.addEntry('bpmn receive task', function()
-		{
-			return sb.createVertexTemplate('shape=message;whiteSpace=wrap;html=1;', 40, 30, '', 'Receive Task', true);
-		}),
-		this.addEntry('bpmn user task', function()
-		{
-			return sb.createVertexTemplate('shape=mxgraph.bpmn.user_task;html=1;', 14, 14, '', 'User Task', true);
-		}),
-		this.addEntry('bpmn manual task', function()
-		{
-			return sb.createVertexTemplate('shape=mxgraph.bpmn.manual_task;html=1;', 14, 14, '', 'Manual Task', true);
-		}),
-		this.addEntry('bpmn business rule task', function()
-		{
-			return sb.createVertexTemplate('shape=mxgraph.bpmn.business_rule_task;html=1;', 14, 14, '', 'Business Rule Task', true);
-		}),
-		this.addEntry('bpmn service task', function()
-		{
-			return sb.createVertexTemplate('shape=mxgraph.bpmn.service_task;html=1;', 14, 14, '', 'Service Task', true);
-		}),
-		this.addEntry('bpmn script task', function()
-		{
-			return sb.createVertexTemplate('shape=mxgraph.bpmn.script_task;html=1;', 14, 14, '', 'Script Task', true);
-		}),
-		this.addEntry('bpmn sequence flow', function()
-		{
-			return sb.createEdgeTemplate('endArrow=block;endFill=1;endSize=6;html=1;', 100, 0, '', 'Sequence Flow', true);
-		}),
-		this.addEntry('bpmn default flow', function()
-		{
-			return sb.createEdgeTemplate('startArrow=dash;startSize=8;endArrow=block;endFill=1;endSize=6;html=1;', 100, 0, '', 'Default Flow', true);
-		}),
-		this.addEntry('bpmn conditional flow', function()
-		{
-			return sb.createEdgeTemplate('startArrow=diamondThin;startFill=0;startSize=14;endArrow=block;endFill=1;endSize=6;html=1;', 100, 0, '', 'Conditional Flow', true);
-		}),
-		this.addEntry('bpmn message flow', function()
-		{
-			return sb.createEdgeTemplate('startArrow=oval;startFill=0;startSize=7;endArrow=block;endFill=0;endSize=10;dashed=1;html=1;', 100, 0, '', 'Message Flow 1', true);
-		}),
+		this.createVertexTemplateEntry('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', null, null, 'bpmn data store'),
+	 	this.createVertexTemplateEntry('shape=plus;html=1;', 14, 14, '', 'Sub-Process Marker', null, null, 'bpmn subprocess sub process sub-process marker'),
+	 	this.createVertexTemplateEntry('shape=mxgraph.bpmn.loop;html=1;', 14, 14, '', 'Loop Marker', null, null, 'bpmn loop marker'),
+	 	this.createVertexTemplateEntry('shape=parallelMarker;html=1;', 14, 14, '', 'Parallel MI Marker', null, null, 'bpmn parallel mi marker'),
+	 	this.createVertexTemplateEntry('shape=parallelMarker;direction=south;html=1;', 14, 14, '', 'Sequential MI Marker', null, null, 'bpmn sequential mi marker'),
+	 	this.createVertexTemplateEntry('shape=mxgraph.bpmn.ad_hoc;fillColor=#000000;html=1;', 14, 14, '', 'Ad Hoc Marker', null, null, 'bpmn ad hoc marker'),
+	 	this.createVertexTemplateEntry('shape=mxgraph.bpmn.compensation;html=1;', 14, 14, '', 'Compensation Marker', null, null, 'bpmn compensation marker'),
+	 	this.createVertexTemplateEntry('shape=message;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#ffffff;strokeWidth=2;', 40, 30, '', 'Send Task', null, null, 'bpmn send task'),
+	 	this.createVertexTemplateEntry('shape=message;whiteSpace=wrap;html=1;', 40, 30, '', 'Receive Task', null, null, 'bpmn receive task'),
+	 	this.createVertexTemplateEntry('shape=mxgraph.bpmn.user_task;html=1;', 14, 14, '', 'User Task', null, null, 'bpmn user task'),
+	 	this.createVertexTemplateEntry('shape=mxgraph.bpmn.manual_task;html=1;', 14, 14, '', 'Manual Task', null, null, 'bpmn manual task'),
+	 	this.createVertexTemplateEntry('shape=mxgraph.bpmn.business_rule_task;html=1;', 14, 14, '', 'Business Rule Task', null, null, 'bpmn business rule task'),
+	 	this.createVertexTemplateEntry('shape=mxgraph.bpmn.service_task;html=1;', 14, 14, '', 'Service Task', null, null, 'bpmn service task'),
+	 	this.createVertexTemplateEntry('shape=mxgraph.bpmn.script_task;html=1;', 14, 14, '', 'Script Task', null, null, 'bpmn script task'),
+	 	this.createVertexTemplateEntry('endArrow=block;endFill=1;endSize=6;html=1;', 100, 0, '', 'Sequence Flow', null, null, 'bpmn sequence flow'),
+	 	this.createVertexTemplateEntry('startArrow=dash;startSize=8;endArrow=block;endFill=1;endSize=6;html=1;', 100, 0, '', 'Default Flow', null, null, 'bpmn default flow'),
+	 	this.createVertexTemplateEntry('startArrow=diamondThin;startFill=0;startSize=14;endArrow=block;endFill=1;endSize=6;html=1;', 100, 0, '', 'Conditional Flow', null, null, 'bpmn conditional flow'),
+	 	this.createVertexTemplateEntry('startArrow=oval;startFill=0;startSize=7;endArrow=block;endFill=0;endSize=10;dashed=1;html=1;', 100, 0, '', 'Message Flow 1', null, null, 'bpmn message flow'),
 		this.addEntry('bpmn message flow', function()
 		{
 			var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'startArrow=oval;startFill=0;startSize=7;endArrow=block;endFill=0;endSize=10;dashed=1;html=1;');
@@ -1818,12 +1442,9 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 	    	cell.geometry.offset = new mxPoint(-10, -7);
 	    	edge.insert(cell);
 
-			return sb.createEdgeTemplateFromCells([edge], 100, 0, 'Message Flow 2', true);
+			return sb.createEdgeTemplateFromCells([edge], 100, 0, 'Message Flow 2');
 		}),
-		this.addEntry('bpmn link', function()
-		{
-			return sb.createEdgeTemplate('shape=link;html=1;', 100, 0, '', 'Link', true);
-		}),
+		this.createEdgeTemplateEntry('shape=link;html=1;', 100, 0, '', 'Link', null, 'bpmn link')
 	];
 	
 	this.addPaletteFunctions('bpmn', 'BPMN ' + mxResources.get('general'), false, fns);
@@ -2892,6 +2513,19 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells)
 /**
  * Creates a drop handler for inserting the given cells.
  */
+Sidebar.prototype.createVertexTemplateEntry = function(style, width, height, value, title, showLabel, showTitle, tags)
+{
+	tags = (tags != null) ? tags : title.toLowerCase();
+	
+	return this.addEntry(tags, mxUtils.bind(this, function()
+ 	{
+ 		return this.createVertexTemplate(style, width, height, value, title, showLabel, showTitle);
+ 	}));
+}
+
+/**
+ * Creates a drop handler for inserting the given cells.
+ */
 Sidebar.prototype.createVertexTemplate = function(style, width, height, value, title, showLabel, showTitle)
 {
 	var cells = [new mxCell((value != null) ? value : '', new mxGeometry(0, 0, width, height), style)];
@@ -2906,6 +2540,19 @@ Sidebar.prototype.createVertexTemplate = function(style, width, height, value, t
 Sidebar.prototype.createVertexTemplateFromCells = function(cells, width, height, title, showLabel, showTitle)
 {
 	return this.createItem(cells, title, showLabel, showTitle, width, height);
+};
+
+/**
+ * 
+ */
+Sidebar.prototype.createEdgeTemplateEntry = function(style, width, height, value, title, showLabel, tags)
+{
+	tags = (tags != null) ? tags : title.toLowerCase();
+	
+ 	return this.addEntry(tags, mxUtils.bind(this, function()
+ 	{
+ 		return this.createEdgeTemplate(style, width, height, value, title, showLabel);
+ 	}));
 };
 
 /**
@@ -3062,28 +2709,22 @@ Sidebar.prototype.removePalette = function(id)
 Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, titles, tags)
 {
 	var showTitles = titles != null;
-	
-	// Avoids having to bind all functions to "this"
-	var sb = this;
 	var fns = [];
 	
 	for (var i = 0; i < items.length; i++)
 	{
-		(function(item, title, tmpTags)
+		(mxUtils.bind(this, function(item, title, tmpTags)
 		{
 			if (tmpTags == null)
 			{
 				var slash = item.lastIndexOf('/');
 				var dot = item.lastIndexOf('.');
 				var tmp = item.substring((slash >= 0) ? slash + 1 : 0, (dot >= 0) ? dot : item.length).replace(/[-_]/g, ' ');
-				tmpTags = sb.filterTags(tmp);
+				tmpTags = this.filterTags(tmp);
 			}
 			
-			fns.push(sb.addEntry(tmpTags, function()
-		 	{
-		 		return sb.createVertexTemplate('image;html=1;image=' + prefix + item + postfix, 80, 80, '', title, title != null)
-		 	}));
-		})(items[i], (titles != null) ? titles[i] : null, (tags != null) ? tags[items[i]] : null);
+			fns.push(this.createVertexTemplateEntry('image;html=1;image=' + prefix + item + postfix, 80, 80, '', title, title != null, null, tmpTags));
+		}))(items[i], (titles != null) ? titles[i] : null, (tags != null) ? tags[items[i]] : null);
 	}
 
 	this.addPaletteFunctions(id, title, false, fns);
@@ -3098,11 +2739,8 @@ Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ig
 	
 	if (this.addStencilsToIndex)
 	{
-		// TODO: Fix asynchronous loading dependency
+		// LATER: Handle asynchronous loading dependency
 		var loading = true;
-		
-		// Avoids having to bind all functions to "this"
-		var sb = this;
 		var fns = [];
 		
 		mxStencilRegistry.loadStencilSet(stencilFile, mxUtils.bind(this, function(packageName, stencilName, displayName, w, h)
@@ -3118,11 +2756,8 @@ Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ig
 					tmpTags = this.filterTags(title + ' ' + stencilName.replace(/_/g, ' '));
 				}
 				
-				fns.push(sb.addEntry(tmpTags, function()
-				{
-					return sb.createVertexTemplate('shape=' + packageName + stencilName.toLowerCase() + style,
-						Math.round(w * scale), Math.round(h * scale), '', stencilName.replace(/_/g, ' '), true);
-				}));
+				fns.push(this.createVertexTemplateEntry('shape=' + packageName + stencilName.toLowerCase() + style,
+					Math.round(w * scale), Math.round(h * scale), '', stencilName.replace(/_/g, ' '), null, null, tmpTags));
 			}
 		}), true);
 
