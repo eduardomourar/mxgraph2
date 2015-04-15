@@ -833,11 +833,11 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	 	{
 	 		return sb.createVertexTemplate('shape=parallelogram;whiteSpace=wrap;html=1;', 120, 60, '', 'Parallelogram', true);
 	 	}),
-	 	this.addEntry('triangle', function()
+	 	this.addEntry('triangle logic inverter buffer', function()
 	 	{
 	 		return sb.createVertexTemplate('triangle;whiteSpace=wrap;html=1;', 60, 80, '', 'Triangle', true);
 	 	}),
-	 	this.addEntry('cylinder', function()
+	 	this.addEntry('cylinder data database', function()
 	 	{
 	 		return sb.createVertexTemplate('shape=cylinder;whiteSpace=wrap;html=1;', 60, 80, '', 'Cylinder', true);
 	 	}),
@@ -1033,13 +1033,13 @@ Sidebar.prototype.createAdvancedShapes = function()
 	 	{
 	 		return sb.createVertexTemplate('whiteSpace=wrap;html=1;label;image=' + sb.gearImage, 140, 60, 'Label', 'Label', true);
 	 	}),
-	 	this.addEntry('logic exclusive or', function()
-	 	{
-	 		return sb.createVertexTemplate('shape=xor;whiteSpace=wrap;html=1;', 60, 80, '', 'Exclusive Or', true);
-	 	}),
 	 	this.addEntry('logic or', function()
 	 	{
-	 		return sb.createVertexTemplate('shape=or;whiteSpace=wrap;html=1;', 60, 80, '', 'Or', true);
+	 		return sb.createVertexTemplate('shape=xor;whiteSpace=wrap;html=1;', 60, 80, '', 'Or', true);
+	 	}),
+	 	this.addEntry('logic and', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=or;whiteSpace=wrap;html=1;', 60, 80, '', 'And', true);
 	 	}),
 	 	this.addEntry('data storage', function()
 	 	{
@@ -1109,15 +1109,15 @@ Sidebar.prototype.createAdvancedShapes = function()
 	 	{
 	 		return sb.createVertexTemplate('shape=tee;whiteSpace=wrap;html=1;', 80, 80, '', 'Tee', true);
 	 	}),
-	 	this.addEntry('data store', function()
+	 	this.addEntry('data store cylinder database', function()
 	 	{
 	 		return sb.createVertexTemplate('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', true);
 	 	}),
-	 	this.addEntry('switch', function()
+	 	this.addEntry('switch router', function()
 	 	{
 	 		return sb.createVertexTemplate('shape=switch;whiteSpace=wrap;html=1;', 60, 60, '', 'Switch', true);
 	 	}),
-	 	this.addEntry('logic or circle oval ellipse', function()
+	 	this.addEntry('or circle oval ellipse', function()
 	 	{
 	 		return sb.createVertexTemplate('shape=orEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Or', true);
 	 	}),
