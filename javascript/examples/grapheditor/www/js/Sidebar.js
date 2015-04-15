@@ -83,7 +83,7 @@ Sidebar.prototype.init = function()
 	
 	this.addSearchPalette(true);
 	this.addGeneralPalette(false);
-	this.addAdvancedPalette(true);
+	this.addAdvancedPalette(false);
 	this.addStencilPalette('basic', mxResources.get('basic'), dir + '/basic.xml',
 		';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2');
 	this.addStencilPalette('arrows', mxResources.get('arrows'), dir + '/arrows.xml',
@@ -956,87 +956,200 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 /**
  * Adds the container palette to the sidebar.
  */
-Sidebar.prototype.addAdvancedPalette = function(dir, expand)
+Sidebar.prototype.addAdvancedPalette = function(expand)
 {
-	this.addPalette('advanced', mxResources.get('advanced'), (expand != null) ? expand : false, mxUtils.bind(this, function(content)
-	{
-		this.addAdvancedShapes(dir, content);
-	}));
+	this.addPaletteFunctions('advanced', mxResources.get('advanced'), (expand != null) ? expand : false, this.createAdvancedShapes());
 };
 
 /**
  * Adds the container palette to the sidebar.
  */
-Sidebar.prototype.addAdvancedShapes = function(dir, content)
+Sidebar.prototype.createAdvancedShapes = function()
 {
-    content.appendChild(this.createVertexTemplate('text;html=1;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;', 190, 120,
-    	'<h1>Heading</h1><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>', 'Textbox', true));
-    content.appendChild(this.createVertexTemplate('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
-	    	'<ul><li>Value 1</li><li>Value 2</li><li>Value 3</li></ul>', 'Unordered list', true));
-    content.appendChild(this.createVertexTemplate('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
-        	'<ol><li>Value 1</li><li>Value 2</li><li>Value 3</li></ol>', 'Ordered list', true));
-	content.appendChild(this.createVertexTemplate('text;html=1;strokeColor=#c0c0c0;overflow=fill;', 180, 180,
-        	'<table border="0" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
-        	'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
-        	'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
-        	'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 1', true));
-    
-    content.appendChild(this.createVertexTemplate('text;html=1;overflow=fill;', 180, 180,
-        	'<table border="1" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
-        	'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
-        	'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
-        	'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 2', true));
-    content.appendChild(this.createVertexTemplate('text;html=1;overflow=fill;', 160, 180,
-        	'<table border="1" width="100%" height="100%" cellpadding="4" style="width:100%;height:100%;border-collapse:collapse;">' +
-        	'<tr><th align="center"><b>Title</b></th></tr>' +
-        	'<tr><td align="center">Section 1.1\nSection 1.2\nSection 1.3</td></tr>' +
-        	'<tr><td align="center">Section 2.1\nSection 2.2\nSection 2.3</td></tr></table>', 'Table 3', true));
+	// Avoids having to bind all functions to "this"
+	var sb = this;
+	
+	return [
+	 	this.addEntry('text textbox textarea', function()
+	 	{
+	 		return sb.createVertexTemplate('text;html=1;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;', 190, 120,
+	 			'<h1>Heading</h1><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>', 'Textbox', true);
+	 	}),
+	 	this.addEntry('unordered list', function()
+	 	{
+	 		return sb.createVertexTemplate('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
+	 			'<ul><li>Value 1</li><li>Value 2</li><li>Value 3</li></ul>', 'Unordered List', true);
+	 	}),
+	 	this.addEntry('ordered list', function()
+	 	{
+	 		return sb.createVertexTemplate('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
+	 			'<ol><li>Value 1</li><li>Value 2</li><li>Value 3</li></ol>', 'Ordered List', true);
+	 	}),
+	 	this.addEntry('table', function()
+	 	{
+	 		return sb.createVertexTemplate('text;html=1;strokeColor=#c0c0c0;overflow=fill;', 180, 180,
+	 			'<table border="0" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
+	 			'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
+	 			'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
+	 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 1', true);
+	 	}),
+	 	this.addEntry('table', function()
+	 	{
+	 		return sb.createVertexTemplate('text;html=1;overflow=fill;', 180, 180,
+	 			'<table border="1" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
+	 			'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
+	 			'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
+	 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 2', true);
+	 	}),
+	 	this.addEntry('table', function()
+	 	{
+	 		return sb.createVertexTemplate('text;html=1;overflow=fill;', 160, 180,
+	 			'<table border="1" width="100%" height="100%" cellpadding="4" style="width:100%;height:100%;border-collapse:collapse;">' +
+	 			'<tr><th align="center"><b>Title</b></th></tr>' +
+	 			'<tr><td align="center">Section 1.1\nSection 1.2\nSection 1.3</td></tr>' +
+	 			'<tr><td align="center">Section 2.1\nSection 2.2\nSection 2.3</td></tr></table>', 'Table 3', true);
+	 	}),
+	 	this.addEntry('link hyperlink', function()
+	 	{
+	 		var cell = new mxCell('Link', new mxGeometry(0, 0, 60, 40), 'text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontColor=#0000EE;fontStyle=4;');
+	 		cell.vertex = true;
+	 		sb.graph.setLinkForCell(cell, 'https://www.draw.io');
 
-    var linkCell = new mxCell('Link', new mxGeometry(0, 0, 60, 40), 'text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontColor=#0000EE;fontStyle=4;');
-    linkCell.vertex = true;
-    this.graph.setLinkForCell(linkCell, 'https://www.draw.io');
-	content.appendChild(this.createVertexTemplateFromCells([linkCell], 60, 40, 'Link', true));
-    content.appendChild(this.createVertexTemplate('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=1;aspect=fixed;image=' + this.gearImage, 52, 61, '', 'Fixed Image', false));
-
-    content.appendChild(this.createVertexTemplate('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;image=' + this.gearImage, 50, 60, '', 'Stretched Image', false));
-	content.appendChild(this.createVertexTemplate('icon;html=1;image=' + this.gearImage, 60, 60, 'Icon', 'Icon', false));
-	content.appendChild(this.createVertexTemplate('whiteSpace=wrap;html=1;label;image=' + this.gearImage, 140, 60, 'Label', 'Label', true));
-    content.appendChild(this.createVertexTemplate('shape=xor;whiteSpace=wrap;html=1;', 60, 80, '', 'Exclusive Or', true));
-
-    content.appendChild(this.createVertexTemplate('shape=or;whiteSpace=wrap;html=1;', 60, 80, '', 'Or', true));
-    content.appendChild(this.createVertexTemplate('shape=dataStorage;whiteSpace=wrap;html=1;', 100, 80, '', 'Data Storage', true));    
-    content.appendChild(this.createVertexTemplate('shape=tapeData;whiteSpace=wrap;html=1;perimeter=ellipsePerimeter;', 80, 80, '', 'Tape Data', true));
-    content.appendChild(this.createVertexTemplate('shape=manualInput;whiteSpace=wrap;html=1;', 80, 80, '', 'Manual Input', true));
-
-    content.appendChild(this.createVertexTemplate('shape=loopLimit;whiteSpace=wrap;html=1;', 100, 80, '', 'Loop Limit', true));
-    content.appendChild(this.createVertexTemplate('shape=offPageConnector;whiteSpace=wrap;html=1;', 80, 80, '', 'Off Page Connector', true));
-    content.appendChild(this.createVertexTemplate('shape=delay;whiteSpace=wrap;html=1;', 80, 40, '', 'Delay', true));
-    content.appendChild(this.createVertexTemplate('shape=display;whiteSpace=wrap;html=1;', 80, 40, '', 'Display', true));
-   
-    content.appendChild(this.createVertexTemplate('shape=singleArrow;direction=west;whiteSpace=wrap;html=1;', 100, 60, '', 'Arrow Left', true));
-    content.appendChild(this.createVertexTemplate('shape=singleArrow;whiteSpace=wrap;html=1;', 100, 60, '', 'Arrow Right', true));
-    content.appendChild(this.createVertexTemplate('shape=singleArrow;direction=north;whiteSpace=wrap;html=1;', 60, 100, '', 'Arrow Up', true));
-    content.appendChild(this.createVertexTemplate('shape=singleArrow;direction=south;whiteSpace=wrap;html=1;', 60, 100, '', 'Arrow Down', true));
-    
-    content.appendChild(this.createVertexTemplate('shape=doubleArrow;whiteSpace=wrap;html=1;', 100, 60, '', 'Double Arrow', true));
-    content.appendChild(this.createVertexTemplate('shape=doubleArrow;direction=south;whiteSpace=wrap;html=1;', 60, 100, '', 'Double Arrow Vertical', true));
-    content.appendChild(this.createVertexTemplate('shape=actor;whiteSpace=wrap;html=1;', 40, 60, '', 'User', true));
-    content.appendChild(this.createVertexTemplate('shape=cross;whiteSpace=wrap;html=1;', 80, 80, '', 'Cross', true));
-
-    content.appendChild(this.createVertexTemplate('shape=corner;whiteSpace=wrap;html=1;', 80, 80, '', 'Corner', true));
-    content.appendChild(this.createVertexTemplate('shape=tee;whiteSpace=wrap;html=1;', 80, 80, '', 'Tee', true));
-    content.appendChild(this.createVertexTemplate('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', true));
-    content.appendChild(this.createVertexTemplate('shape=switch;whiteSpace=wrap;html=1;', 60, 60, '', 'Switch', true));
-
-    content.appendChild(this.createVertexTemplate('shape=orEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Or', true));
-    content.appendChild(this.createVertexTemplate('shape=sumEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Sum', true));
-    content.appendChild(this.createVertexTemplate('shape=lineEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Ellipse with horizontal divider', true));
-    content.appendChild(this.createVertexTemplate('shape=lineEllipse;line=vertical;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Ellipse with vertical divider', true));
-    
-    content.appendChild(this.createVertexTemplate('swimlane;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container', true));
-	content.appendChild(this.createVertexTemplate('swimlane;swimlaneLine=0;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container w/o Divider', true));
-	content.appendChild(this.createVertexTemplate('swimlane;swimlaneFillColor=#ffffff;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Filled Container', true));
-	content.appendChild(this.createVertexTemplate('swimlane;swimlaneLine=0;swimlaneFillColor=#ffffff;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Filled Container w/o Divider', true));
+	 		return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Link', true);
+	 	}),
+	 	this.addEntry('fixed image icon symbol', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=1;aspect=fixed;image=' + sb.gearImage, 52, 61, '', 'Fixed Image', false);
+	 	}),
+	 	this.addEntry('strechted image icon symbol', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;image=' + sb.gearImage, 50, 60, '', 'Stretched Image', false);
+	 	}),
+	 	this.addEntry('icon image symbol', function()
+	 	{
+	 		return sb.createVertexTemplate('icon;html=1;image=' + sb.gearImage, 60, 60, 'Icon', 'Icon', false);
+	 	}),
+	 	this.addEntry('label image icon symbol', function()
+	 	{
+	 		return sb.createVertexTemplate('whiteSpace=wrap;html=1;label;image=' + sb.gearImage, 140, 60, 'Label', 'Label', true);
+	 	}),
+	 	this.addEntry('logic exclusive or', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=xor;whiteSpace=wrap;html=1;', 60, 80, '', 'Exclusive Or', true);
+	 	}),
+	 	this.addEntry('logic or', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=or;whiteSpace=wrap;html=1;', 60, 80, '', 'Or', true);
+	 	}),
+	 	this.addEntry('data storage', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=dataStorage;whiteSpace=wrap;html=1;', 100, 80, '', 'Data Storage', true);    
+	 	}),
+	 	this.addEntry('tape data', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=tapeData;whiteSpace=wrap;html=1;perimeter=ellipsePerimeter;', 80, 80, '', 'Tape Data', true);
+	 	}),
+	 	this.addEntry('manual input', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=manualInput;whiteSpace=wrap;html=1;', 80, 80, '', 'Manual Input', true);
+	 	}),
+	 	this.addEntry('loop limit', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=loopLimit;whiteSpace=wrap;html=1;', 100, 80, '', 'Loop Limit', true);
+	 	}),
+	 	this.addEntry('off page connector', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=offPageConnector;whiteSpace=wrap;html=1;', 80, 80, '', 'Off Page Connector', true);
+	 	}),
+	 	this.addEntry('delay', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=delay;whiteSpace=wrap;html=1;', 80, 40, '', 'Delay', true);
+	 	}),
+	 	this.addEntry('display', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=display;whiteSpace=wrap;html=1;', 80, 40, '', 'Display', true);
+	 	}),
+	 	this.addEntry('arrow left', function()
+	 	{	   
+	 		return sb.createVertexTemplate('shape=singleArrow;direction=west;whiteSpace=wrap;html=1;', 100, 60, '', 'Arrow Left', true);
+	 	}),
+	 	this.addEntry('arrow right', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=singleArrow;whiteSpace=wrap;html=1;', 100, 60, '', 'Arrow Right', true);
+	 	}),
+	 	this.addEntry('arrow up', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=singleArrow;direction=north;whiteSpace=wrap;html=1;', 60, 100, '', 'Arrow Up', true);
+	 	}),
+	 	this.addEntry('arrow down', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=singleArrow;direction=south;whiteSpace=wrap;html=1;', 60, 100, '', 'Arrow Down', true);
+	 	}),
+	 	this.addEntry('double arrow', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=doubleArrow;whiteSpace=wrap;html=1;', 100, 60, '', 'Double Arrow', true);
+	 	}),
+	 	this.addEntry('double arrow', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=doubleArrow;direction=south;whiteSpace=wrap;html=1;', 60, 100, '', 'Double Arrow Vertical', true);
+	 	}),
+	 	this.addEntry('user', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=actor;whiteSpace=wrap;html=1;', 40, 60, '', 'User', true);
+	 	}),
+	 	this.addEntry('cross', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=cross;whiteSpace=wrap;html=1;', 80, 80, '', 'Cross', true);
+	 	}),
+	 	this.addEntry('corner', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=corner;whiteSpace=wrap;html=1;', 80, 80, '', 'Corner', true);
+	 	}),
+	 	this.addEntry('tee', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=tee;whiteSpace=wrap;html=1;', 80, 80, '', 'Tee', true);
+	 	}),
+	 	this.addEntry('data store', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', true);
+	 	}),
+	 	this.addEntry('switch', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=switch;whiteSpace=wrap;html=1;', 60, 60, '', 'Switch', true);
+	 	}),
+	 	this.addEntry('logic or circle oval ellipse', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=orEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Or', true);
+	 	}),
+	 	this.addEntry('sum circle oval ellipse', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=sumEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Sum', true);
+	 	}),
+	 	this.addEntry('circle oval ellipse', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=lineEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Ellipse with horizontal divider', true);
+	 	}),
+	 	this.addEntry('circle oval ellipse', function()
+	 	{
+	 		return sb.createVertexTemplate('shape=lineEllipse;line=vertical;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Ellipse with vertical divider', true);
+	 	}),
+	 	this.addEntry('container swimlane lane', function()
+	 	{
+	 		return sb.createVertexTemplate('swimlane;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container', true);
+	 	}),
+	 	this.addEntry('container swimlane lane', function()
+	 	{
+	 		return sb.createVertexTemplate('swimlane;swimlaneLine=0;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Container w/o Divider', true);
+	 	}),
+	 	this.addEntry('container swimlane lane', function()
+	 	{
+	 		return sb.createVertexTemplate('swimlane;swimlaneFillColor=#ffffff;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Filled Container', true);
+	 	}),
+	 	this.addEntry('container swimlane lane', function()
+	 	{
+	 		return sb.createVertexTemplate('swimlane;swimlaneLine=0;swimlaneFillColor=#ffffff;whiteSpace=wrap;html=1;', 200, 200, 'Container', 'Filled Container w/o Divider', true);
+	 	})
+	];
 };
 
 /**
@@ -1618,7 +1731,6 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			
 			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Data Object', true);
 		}),
-		
 		this.addEntry('bpmn data store', function()
 		{
 			return sb.createVertexTemplate('shape=datastore;whiteSpace=wrap;html=1;', 60, 60, '', 'Data Store', true);

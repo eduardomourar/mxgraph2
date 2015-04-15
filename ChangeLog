@@ -1,3 +1,4 @@
+- Adds shape search for sidebar in grapheditor
 - Adds support for functions in mxObjectIdentity [JavaScript]
 - Adds handle for hexagon shape in grapheditor
 - Fixes undo for text editing and insert labels in grapheditor
