@@ -403,6 +403,7 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 	{
 		var tmp = searchTerms.toLowerCase().split(' ');
 		var dict = new mxDictionary();
+		var max = (page + 1) * count;
 		var results = null;
 
 		for (var i = 0; i < tmp.length; i++)
@@ -423,9 +424,9 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 						tmpDict.put(entry, entry);
 						results.push(entry);
 						
-						if (i == tmp.length - 1 && results.length == (page + 1) * count)
+						if (i == tmp.length - 1 && results.length == max)
 						{
-							success(results.slice(page * count, (page + 1) * count));
+							success(results.slice(page * count, max), max);
 							
 							return;
 						}
@@ -436,7 +437,8 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 			dict = tmpDict;
 		}
 		
-		success(results.slice(page * count, (page + 1) * count));
+		var len = results.length;
+		success(results.slice(page * count, (page + 1) * count), len);
 	}
 	else
 	{
@@ -532,7 +534,10 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	input.style.backgroundImage = 'url(' + IMAGE_PATH + '/clear.gif)';
 	input.style.backgroundRepeat = 'no-repeat';
 	input.style.backgroundPosition = '100% 50%';
-	input.style.paddingRight = '14px';
+	input.style.paddingRight = '10px';
+	input.style.marginTop = '6px';
+	input.style.marginLeft = '2px';
+	input.style.marginBottom = '2px';
 	inner.appendChild(input);
 
 	var cross = document.createElement('div');
@@ -570,8 +575,8 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	button.setAttribute('disabled', 'true');
 	// Workaround for inherited line-height in quirks mode
 	button.style.lineHeight = 'normal';
-	center.style.paddingTop = '4px';
-	center.style.marginBottom = '12px';
+	center.style.paddingTop = '8px';
+	center.style.paddingBottom = '14px';
 
 	center.appendChild(button);
 	div.appendChild(center);
@@ -605,7 +610,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	find = mxUtils.bind(this, function()
 	{
 		// Shows 4 rows
-		count = 4 * Math.round(this.container.clientWidth / (this.thumbWidth + 10));
+		count = 4 * Math.max(1, Math.floor(this.container.clientWidth / (this.thumbWidth + 10)));
 		this.hideTooltip();
 		
 		if (button.getAttribute('disabled') != 'true')
@@ -2736,17 +2741,14 @@ Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, 
 Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ignore, onInit, scale, tags)
 {
 	scale = (scale != null) ? scale : 1;
-	
+
 	if (this.addStencilsToIndex)
 	{
 		// LATER: Handle asynchronous loading dependency
-		var loading = true;
 		var fns = [];
-		
+
 		mxStencilRegistry.loadStencilSet(stencilFile, mxUtils.bind(this, function(packageName, stencilName, displayName, w, h)
 		{
-			loading = false;
-			
 			if (ignore == null || mxUtils.indexOf(ignore, stencilName) < 0)
 			{
 				var tmpTags = (tags != null) ? tags[stencilName] : null;
