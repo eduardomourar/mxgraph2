@@ -230,11 +230,14 @@ var mxUtils =
 	 */
 	findNode: function(node, attr, value)
 	{
-		var tmp = node.getAttribute(attr);
-		
-		if (tmp != null && tmp == value)
+		if (node.nodeType == mxConstants.NODETYPE_ELEMENT)
 		{
-			return node;
+			var tmp = node.getAttribute(attr);
+	
+			if (tmp != null && tmp == value)
+			{
+				return node;
+			}
 		}
 		
 		node = node.firstChild;
@@ -253,84 +256,6 @@ var mxUtils =
 		
 		return null;
 	},
-	
-	/**
-	 * Function: findNodeByAttribute
-	 * 
-	 * Returns the first node where the given attribute matches the given value.
-	 * 
-	 * Parameters:
-	 * 
-	 * node - Root node where the search should start.
-	 * attr - Name of the attribute to be checked.
-	 * value - Value of the attribute to match.
-	 */
-	findNodeByAttribute: function()
-	{
-		// Workaround for missing XPath support in IE9
-		if (document.documentMode >= 9)
-		{
-			return function(node, attr, value)
-			{
-				var result = null;
-
-				if (node != null)
-				{
-					if (node.nodeType == mxConstants.NODETYPE_ELEMENT && node.getAttribute(attr) == value)
-					{
-						result = node;
-					}
-					else
-					{
-						var child = node.firstChild;
-						
-						while (child != null && result == null)
-						{
-							result = mxUtils.findNodeByAttribute(child, attr, value);
-							child = child.nextSibling;
-						}
-					}
-				}
-		
-				return result;
-			};
-		}
-		else if (mxClient.IS_IE)
-		{
-			return function(node, attr, value)
-			{
-				if (node == null)
-				{
-					return null;
-				}
-				else
-				{
-					var expr = '//*[@' + attr + '=\'' + value + '\']';
-					
-					return node.ownerDocument.selectSingleNode(expr);
-				}
-			};
-		}
-		else
-		{
-			return function(node, attr, value)
-			{
-				if (node == null)
-				{
-					return null;
-				}
-				else
-				{
-					var result = node.ownerDocument.evaluate(
-							'//*[@' + attr + '=\'' + value + '\']',
-							node.ownerDocument, null,
-							XPathResult.ANY_TYPE, null);
-	
-					return result.iterateNext();
-				}
-			};
-		}
-	}(),
 
 	/**
 	 * Function: getFunctionName

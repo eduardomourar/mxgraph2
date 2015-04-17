@@ -1,6 +1,10 @@
+- Removes optional attr argument in mxCodec.getElementById [Java,JavaScript,Php,Dotnet]
+- Removes mxUtils.findNodeByAttribute, selectSingleNode [Java,JavaScript,Php,Dotnet]
+- Adds support for functions in mxObjectIdentity [JavaScript]
 - Adds plus click handling for child cells in grapheditor
 - Adds support for composite style in grapheditor [JavaScript]
 - Disables numeric conversion for value in mxCellCodec [JavaScript]
+- Adds mxUtils.isInteger, used in mxObjectCodec.encodeObject [JavaScript]
 - Fixes shadow for transparent ellipses in Firefox [JavaScript]
 - Adds composite style, no longer selects editing cell in grapheditor
 - Adds mxGraph.getEventState, mxMouseEvent.sourceState [JavaScript]
