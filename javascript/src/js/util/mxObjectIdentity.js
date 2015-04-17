@@ -56,7 +56,7 @@ var mxObjectIdentity =
 	 */
 	clear: function(obj)
 	{
-		if (typeof(obj) == 'object' || typeof obj === 'function')
+		if (typeof(obj) === 'object' || typeof obj === 'function')
 		{
 			delete obj[mxObjectIdentity.FIELD_NAME];
 		}
