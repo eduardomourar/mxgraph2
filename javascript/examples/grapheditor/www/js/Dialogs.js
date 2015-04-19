@@ -65,7 +65,7 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 	{
 		var img = document.createElement('img');
 
-		img.setAttribute('src', (isSvgBrowser) ? Dialog.prototype.closeData : IMAGE_PATH + '/close.png');
+		img.setAttribute('src', (mxClient.IS_SVG) ? Dialog.prototype.closeData : IMAGE_PATH + '/close.png');
 		img.setAttribute('title', mxResources.get('close'));
 		img.className = 'geDialogClose';
 		img.style.top = (top + 14) + 'px';
@@ -233,7 +233,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 					
 					if (clr == 'none')
 					{
-						td.style.background = (!isSvgBrowser) ? 'url(\'' + IMAGE_PATH + '/nocolor.png' + '\')' :
+						td.style.background = (!mxClient.IS_SVG) ? 'url(\'' + IMAGE_PATH + '/nocolor.png' + '\')' :
 							'url(\'' + Dialog.prototype.noColorData + '\')';
 					}
 					else
@@ -1706,7 +1706,7 @@ var MetadataDialog = function(ui, cell)
 		text.parentNode.style.marginRight = '12px';
 		
 		var removeAttr = document.createElement('a');
-		var img = mxUtils.createImage((isSvgBrowser) ? Dialog.prototype.closeData : IMAGE_PATH + '/close.png');
+		var img = mxUtils.createImage((mxClient.IS_SVG) ? Dialog.prototype.closeData : IMAGE_PATH + '/close.png');
 		img.style.height = '9px';
 		img.style.fontSize = '9px';
 		img.style.marginBottom = '7px';
@@ -1935,7 +1935,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn)
 	linkInput.setAttribute('type', 'text');
 	linkInput.style.marginTop = '6px';
 	linkInput.style.width = '300px';
-	linkInput.style.backgroundImage = 'url(\'' + ((isSvgBrowser) ? Dialog.prototype.clearData : IMAGE_PATH + '/clear.gif') + '\')';
+	linkInput.style.backgroundImage = 'url(\'' + ((mxClient.IS_SVG) ? Dialog.prototype.clearData : IMAGE_PATH + '/clear.gif') + '\')';
 	linkInput.style.backgroundRepeat = 'no-repeat';
 	linkInput.style.backgroundPosition = '100% 50%';
 	linkInput.style.paddingRight = '14px';

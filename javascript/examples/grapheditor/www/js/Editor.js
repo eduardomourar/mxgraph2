@@ -98,7 +98,7 @@ mxUtils.extend(Editor, mxEventSource);
 /**
  * Specifies the image URL to be used for the grid.
  */
-Editor.prototype.gridImage = (isSvgBrowser) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
+Editor.prototype.gridImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
 	IMAGE_PATH + '/grid.gif';
 
 /**
@@ -115,7 +115,7 @@ Editor.prototype.defaultPageVisible = true;
 /**
  * Specifies the image URL to be used for the transparent background.
  */
-Editor.prototype.transparentImage = (isSvgBrowser) ? 'data:image/gif;base64,R0lGODlhMAAwAIAAAP///wAAACH5BAEAAAAALAAAAAAwADAAAAIxhI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8egpAAA7' :
+Editor.prototype.transparentImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhMAAwAIAAAP///wAAACH5BAEAAAAALAAAAAAwADAAAAIxhI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8egpAAA7' :
 	IMAGE_PATH + '/transparent.gif';
 
 /**
