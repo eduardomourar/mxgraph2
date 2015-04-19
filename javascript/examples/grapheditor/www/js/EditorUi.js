@@ -16,7 +16,7 @@ EditorUi = function(editor, container)
 	new Image().src = mxPopupMenu.prototype.submenuImage;
 
 	// Pre-fetches connect image
-	if (mxConnectionHandler.prototype.connectImage != null)
+	if (!isSvgBrowser && mxConnectionHandler.prototype.connectImage != null)
 	{
 		new Image().src = mxConnectionHandler.prototype.connectImage.src;
 	}
