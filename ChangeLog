@@ -1,3 +1,4 @@
+- Uses data URIs for various images in grapheditor
 - Removes optional attr argument in mxCodec.getElementById [Java,JavaScript,Php,Dotnet]
 - Removes mxUtils.findNodeByAttribute, selectSingleNode [Java,JavaScript,Php,Dotnet]
 - Adds support for functions in mxObjectIdentity [JavaScript]

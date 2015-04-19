@@ -316,7 +316,7 @@ Format.prototype.refresh = function()
 		// and the menu item in the format menu
 		var img = document.createElement('img');
 		img.setAttribute('border', '0');
-		img.setAttribute('src', IMAGE_PATH + '/close.png');
+		img.setAttribute('src', (mxClient.IS_SVG) ? Dialog.prototype.closeData : IMAGE_PATH + '/close.png');
 		img.setAttribute('title', mxResources.get('hide'));
 		img.style.position = 'absolute';
 		img.style.display = 'block';
@@ -1109,7 +1109,8 @@ BaseFormatPanel.prototype.addArrow = function(elt, height)
 	
 	arrow.style.height = height + 'px';
 	arrow.style.borderLeft = '1px solid #a0a0a0';
-	arrow.innerHTML = '<img border="0" src="' + IMAGE_PATH + '/dropdown.png" style="margin-bottom:4px;">';
+	arrow.innerHTML = '<img border="0" src="' + ((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHBJREFUeNpidHB2ZyAGsACxDRBPIKCuA6TwCBB/h2rABu4A8SYmKCcXiP/iUFgAxL9gCi8A8SwsirZCMQMTkmANEH9E4v+CmsaArvAdyNFI/FlQ92EoBIE+qCRIUz168DBgsU4OqhinQpgHMABAgAEALY4XLIsJ20oAAAAASUVORK5CYII=' :
+		IMAGE_PATH + '/dropdown.png') + '" style="margin-bottom:4px;">';
 	mxUtils.setOpacity(arrow, 70);
 	
 	var symbol = elt.getElementsByTagName('div')[0];

@@ -98,7 +98,8 @@ mxUtils.extend(Editor, mxEventSource);
 /**
  * Specifies the image URL to be used for the grid.
  */
-Editor.prototype.gridImage = IMAGE_PATH + '/grid.gif';
+Editor.prototype.gridImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
+	IMAGE_PATH + '/grid.gif';
 
 /**
  * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
@@ -114,7 +115,8 @@ Editor.prototype.defaultPageVisible = true;
 /**
  * Specifies the image URL to be used for the transparent background.
  */
-Editor.prototype.transparentImage = IMAGE_PATH + '/transparent.gif';
+Editor.prototype.transparentImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhMAAwAIAAAP///wAAACH5BAEAAAAALAAAAAAwADAAAAIxhI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8egpAAA7' :
+	IMAGE_PATH + '/transparent.gif';
 
 /**
  * Specifies if the canvas should be extended in all directions. Default is true.
