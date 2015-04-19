@@ -103,6 +103,18 @@ Sidebar.prototype.init = function()
 };
 
 /**
+ * Sets the default font size.
+ */
+Sidebar.prototype.collapsedImage = (isSvgBrowser) ? 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIUnI+pa8Io3BtRsmoVfnXGSYHiCBYAOw==' :
+	IMAGE_PATH + '/checkmark.gif';
+
+/**
+ * Sets the default font size.
+ */
+Sidebar.prototype.expandedImage = (isSvgBrowser) ? 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIRnI+py90CI1RyLums27z7VgAAOw==' :
+	IMAGE_PATH + '/checkmark.gif';
+
+/**
  * Specifies if tooltips should be visible. Default is true.
  */
 Sidebar.prototype.enableTooltips = true;
@@ -382,12 +394,15 @@ Sidebar.prototype.addEntry = function(tags, fn)
 
 		for (var i = 0; i < tmp.length; i++)
 		{
-			if (this.taglist[tmp[i]] == null)
+			if (tmp[i].length > 0)
 			{
-				this.taglist[tmp[i]] = [];
+				if (this.taglist[tmp[i]] == null)
+				{
+					this.taglist[tmp[i]] = [];
+				}
+				
+				this.taglist[tmp[i]].push(fn);
 			}
-			
-			this.taglist[tmp[i]].push(fn);
 		}
 	}
 	
@@ -426,7 +441,7 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 						
 						if (i == tmp.length - 1 && results.length == max)
 						{
-							success(results.slice(page * count, max), max);
+							success(results.slice(page * count, max), max, true);
 							
 							return;
 						}
@@ -438,7 +453,7 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 		}
 		
 		var len = results.length;
-		success(results.slice(page * count, (page + 1) * count), len);
+		success(results.slice(page * count, (page + 1) * count), len, false);
 	}
 	else
 	{
@@ -451,27 +466,34 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
  */
 Sidebar.prototype.filterTags = function(tags)
 {
-	var arr = tags.split(' ');
-	var result = '';
-	
-	// Ignores tags with leading numbers, strips trailing numbers
-	for (var i = 0; i < arr.length; i++)
+	if (tags != null)
 	{
-		// Ignores single chars
-		if (arr[i].length > 1)
+		var arr = tags.split(' ');
+		var result = [];
+		var hash = {};
+		
+		// Ignores tags with leading numbers, strips trailing numbers
+		for (var i = 0; i < arr.length; i++)
 		{
-			// Ignores words that start with a number
-			var code = arr[i].charCodeAt(0);
-			
-			if (code < 48 || code > 57)
+			// Ignores single chars
+			if (arr[i].length > 1)
 			{
 				// Strips trailing numbers
-				result += arr[i].replace(/\.*\d*$/, '') + ' ';
+				var value = arr[i].replace(/\.*\d*$/, '');
+				
+				// Removes duplicates
+				if (value.length > 0 && hash[value] == null)
+				{
+					hash[value] = '1';
+					result.push(value);
+				}
 			}
 		}
+		
+		return result.join(' ');
 	}
 	
-	return (result.length > 0) ? result.substring(0, result.length - 1) : result;
+	return null;
 };
 
 /**
@@ -531,7 +553,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	input.style.border = 'solid 1px #d5d5d5';
 	input.style.width = '100%';
 	input.style.padding = '4px';
-	input.style.backgroundImage = 'url(' + IMAGE_PATH + '/clear.gif)';
+	input.style.backgroundImage = 'url(\'' + ((isSvgBrowser) ? Dialog.prototype.clearData : IMAGE_PATH + '/clear.gif') + '\')';
 	input.style.backgroundRepeat = 'no-repeat';
 	input.style.backgroundPosition = '100% 50%';
 	input.style.paddingRight = '10px';
@@ -553,7 +575,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	cross.style.top = ((mxClient.IS_VML) ? 0 : 4) + 'px';
 	
 	// Needed to block event transparency in IE
-	cross.style.background = 'url(' + IMAGE_PATH + '/transparent.gif)';
+	cross.style.background = 'url(\'' + this.editorUi.editor.transparentImage + '\')';
 	
 	var find;
 
@@ -609,7 +631,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	
 	find = mxUtils.bind(this, function()
 	{
-		// Shows 4 rows
+		// Shows 4 rows (minimum 4 results)
 		count = 4 * Math.max(1, Math.floor(this.container.clientWidth / (this.thumbWidth + 10)));
 		this.hideTooltip();
 		
@@ -634,7 +656,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 						button.innerHTML = mxResources.get('loading') + '...';
 						active = true;
 						
-						this.searchEntries(searchTerm, count, page, mxUtils.bind(this, function(results)
+						this.searchEntries(searchTerm, count, page, mxUtils.bind(this, function(results, len, more)
 						{
 							results = (results != null) ? results : [];
 							active = false;
@@ -653,14 +675,14 @@ Sidebar.prototype.addSearchPalette = function(expand)
 								}
 							}
 							
-							if (results.length < count)
+							if (more)
 							{
-								button.innerHTML = mxResources.get('reset');
-								complete = true;
+								button.innerHTML = mxResources.get('moreResults');
 							}
 							else
 							{
-								button.innerHTML = mxResources.get('moreResults');
+								button.innerHTML = mxResources.get('reset');
+								complete = true;
 							}
 							
 							button.style.cursor = '';
@@ -1352,7 +1374,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 			
 			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'User Task');
 		}),
-		this.addEntry('bpmn process attached timer event', function()
+		this.addEntry(this.getTagsForStencil('mxgraph.bpmn', 'timer_start', 'attached').join(' '), function()
 		{
 			var cell = new mxCell('Process', new mxGeometry(0, 0, 120, 80), 'html=1;whiteSpace=wrap;rounded=1;');
 			cell.vertex = true;
@@ -1365,7 +1387,7 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 
 			return sb.createVertexTemplateFromCells([cell], 120, 95, 'Attached Timer Event 1');
 		}),
-		this.addEntry('bpmn process attached timer event', function()
+		this.addEntry(this.getTagsForStencil('mxgraph.bpmn', 'timer_start', 'attached').join(' '), function()
 		{
 			var cell = new mxCell('Process', new mxGeometry(0, 0, 120, 80), 'html=1;whiteSpace=wrap;rounded=1;');
 			cell.vertex = true;
@@ -2643,13 +2665,13 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 	if (!mxClient.IS_IE || document.documentMode >= 8)
 	{
 		title.style.backgroundImage = (content.style.display == 'none') ?
-			'url(' + IMAGE_PATH + '/collapsed.gif)' : 'url(' + IMAGE_PATH + '/expanded.gif)';
+			'url(\'' + this.collapsedImage + '\')' : 'url(\'' + this.expandedImage + '\')';
 	}
 	
 	title.style.backgroundRepeat = 'no-repeat';
 	title.style.backgroundPosition = '0% 50%';
 	
-	mxEvent.addListener(title, 'click', function(evt)
+	mxEvent.addListener(title, 'click', mxUtils.bind(this, function(evt)
 	{
 		if (content.style.display == 'none')
 		{
@@ -2673,17 +2695,17 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 				}
 			}
 			
-			title.style.backgroundImage = 'url(' + IMAGE_PATH + '/expanded.gif)';
+			title.style.backgroundImage = 'url(\'' + this.expandedImage + '\')';
 			content.style.display = 'block';
 		}
 		else
 		{
-			title.style.backgroundImage = 'url(' + IMAGE_PATH + '/collapsed.gif)';
+			title.style.backgroundImage = 'url(\'' + this.collapsedImage + '\')';
 			content.style.display = 'none';
 		}
 		
 		mxEvent.consume(evt);
-	});
+	}));
 };
 
 /**
@@ -2724,15 +2746,37 @@ Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, 
 			{
 				var slash = item.lastIndexOf('/');
 				var dot = item.lastIndexOf('.');
-				var tmp = item.substring((slash >= 0) ? slash + 1 : 0, (dot >= 0) ? dot : item.length).replace(/[-_]/g, ' ');
-				tmpTags = this.filterTags(tmp);
+				tmpTags = item.substring((slash >= 0) ? slash + 1 : 0, (dot >= 0) ? dot : item.length).replace(/[-_]/g, ' ');
 			}
 			
-			fns.push(this.createVertexTemplateEntry('image;html=1;image=' + prefix + item + postfix, 80, 80, '', title, title != null, null, tmpTags));
+			fns.push(this.createVertexTemplateEntry('image;html=1;image=' + prefix + item + postfix, 80, 80,
+				'', title, title != null, null, this.filterTags(tmpTags)));
 		}))(items[i], (titles != null) ? titles[i] : null, (tags != null) ? tags[items[i]] : null);
 	}
 
 	this.addPaletteFunctions(id, title, false, fns);
+};
+
+/**
+ * Creates the array of tags for the given stencil. Duplicates are allowed and fill be filtered out later.
+ */
+Sidebar.prototype.getTagsForStencil = function(packageName, stencilName, moreTags)
+{
+	var tags = packageName.split('.');
+	
+	for (var i = 1; i < tags.length; i++)
+	{
+		tags[i] = tags[i].replace(/_/g, ' ')
+	}
+	
+	tags.push(stencilName.replace(/_/g, ' '));
+	
+	if (moreTags != null)
+	{
+		tags.push(moreTags);
+	}
+	
+	return tags.slice(1, tags.length);
 };
 
 /**
@@ -2751,15 +2795,17 @@ Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ig
 		{
 			if (ignore == null || mxUtils.indexOf(ignore, stencilName) < 0)
 			{
+				var tmp = this.getTagsForStencil(packageName, stencilName);
 				var tmpTags = (tags != null) ? tags[stencilName] : null;
-				
-				if (tmpTags == null)
+
+				if (tmpTags != null)
 				{
-					tmpTags = this.filterTags(title + ' ' + stencilName.replace(/_/g, ' '));
+					tmp.push(tmpTags);
 				}
 				
 				fns.push(this.createVertexTemplateEntry('shape=' + packageName + stencilName.toLowerCase() + style,
-					Math.round(w * scale), Math.round(h * scale), '', stencilName.replace(/_/g, ' '), null, null, tmpTags));
+					Math.round(w * scale), Math.round(h * scale), '', stencilName.replace(/_/g, ' '), null, null,
+					this.filterTags(tmp.join(' '))));
 			}
 		}), true);
 
