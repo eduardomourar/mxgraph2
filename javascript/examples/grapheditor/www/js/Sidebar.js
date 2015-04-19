@@ -105,13 +105,13 @@ Sidebar.prototype.init = function()
 /**
  * Sets the default font size.
  */
-Sidebar.prototype.collapsedImage = (isSvgBrowser) ? 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIUnI+pa8Io3BtRsmoVfnXGSYHiCBYAOw==' :
+Sidebar.prototype.collapsedImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIUnI+pa8Io3BtRsmoVfnXGSYHiCBYAOw==' :
 	IMAGE_PATH + '/checkmark.gif';
 
 /**
  * Sets the default font size.
  */
-Sidebar.prototype.expandedImage = (isSvgBrowser) ? 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIRnI+py90CI1RyLums27z7VgAAOw==' :
+Sidebar.prototype.expandedImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIRnI+py90CI1RyLums27z7VgAAOw==' :
 	IMAGE_PATH + '/checkmark.gif';
 
 /**
@@ -553,7 +553,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	input.style.border = 'solid 1px #d5d5d5';
 	input.style.width = '100%';
 	input.style.padding = '4px';
-	input.style.backgroundImage = 'url(\'' + ((isSvgBrowser) ? Dialog.prototype.clearData : IMAGE_PATH + '/clear.gif') + '\')';
+	input.style.backgroundImage = 'url(\'' + ((mxClient.IS_SVG) ? Dialog.prototype.clearData : IMAGE_PATH + '/clear.gif') + '\')';
 	input.style.backgroundRepeat = 'no-repeat';
 	input.style.backgroundPosition = '100% 50%';
 	input.style.paddingRight = '10px';
