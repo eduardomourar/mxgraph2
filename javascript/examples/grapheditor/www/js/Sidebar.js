@@ -990,7 +990,8 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		{
 			return sb.createVertexTemplateFromCells([divider.clone()], divider.geometry.width, divider.geometry.height, 'Divider');
 		}),
-		this.createVertexTemplateEntry('text;html=1;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];', 80, 26, 'Title', 'Title', null, null, 'uml static class title label'),
+		this.createVertexTemplateEntry('text;html=1;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];',
+			80, 26, 'Title', 'Title', null, null, 'uml static class title label'),
 		this.addEntry('uml static class section subsection', function()
 		{
 			var cell = new mxCell('Section', new mxGeometry(0, 0, 140, 90),
@@ -1143,9 +1144,10 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			var cell = new mxCell('Composite State', new mxGeometry(0, 0, 160, 60),
 					'swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;');
 			cell.vertex = true;
-			var cell2 = new mxCell('Subtitle', new mxGeometry(0, 0, 200, 26), 'text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
-			cell2.vertex = true;
-			cell.insert(cell2);
+			
+			var cell1 = new mxCell('Subtitle', new mxGeometry(0, 0, 200, 26), 'text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;');
+			cell1.vertex = true;
+			cell.insert(cell1);
 			
 			var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;');
 			edge.geometry.setTerminalPoint(new mxPoint(80, 120), false);
@@ -1207,7 +1209,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		this.createVertexTemplateEntry('shape=umlDestroy;whiteSpace=wrap;html=1;strokeWidth=3;', 30, 30, '', 'Destruction', null, null, 'uml sequence destruction destroy'),
 		this.createVertexTemplateEntry('shape=note;whiteSpace=wrap;html=1;size=20;', 120, 80, 'Note', 'Note', null, null, 'uml note'),
 		this.createVertexTemplateEntry('html=1;points=[];', 10, 80, '', 'Activation', null, null, 'uml sequence activation'),
-	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message'),
+	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message', null, 'uml sequence message call invoke dispatch'),
 	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=block;', 100, 0, 'dispatch', 'Message', null, 'uml sequence message call invoke dispatch'),
 		this.addEntry('uml sequence return message', function()
 		{
