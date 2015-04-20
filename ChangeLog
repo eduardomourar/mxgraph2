@@ -1,3 +1,4 @@
+- Adds zoom buttons in scrollbars.html example [JavaScript]
 - Adds enabled-if attribute in default popup menu configuration [JavaScript]
 - Uses data URIs for various images in grapheditor
 - Removes optional attr argument in mxCodec.getElementById [Java,JavaScript,Php,Dotnet]
