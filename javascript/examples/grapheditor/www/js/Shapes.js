@@ -725,6 +725,122 @@
 	// Replaces existing actor shape
 	mxCellRenderer.prototype.defaultShapes['umlActor'] = UmlActorShape;
 	
+	// UML Boundary Shape
+	function UmlBoundaryShape()
+	{
+		mxShape.call(this);
+	};
+	mxUtils.extend(UmlBoundaryShape, mxShape);
+	UmlBoundaryShape.prototype.getLabelBounds = function(rect)
+	{
+		return new mxRectangle(rect.x + rect.width / 6, rect.y, rect.width * 5 / 6, rect.height);
+	};
+	UmlBoundaryShape.prototype.paintBackground = function(c, x, y, w, h)
+	{
+		c.translate(x, y);
+		
+		// Base line
+		c.begin();
+		c.moveTo(0, h / 4);
+		c.lineTo(0, h * 3 / 4);
+		c.end();
+		c.stroke();
+		
+		// Horizontal line
+		c.begin();
+		c.moveTo(0, h / 2);
+		c.lineTo(w / 6, h / 2);
+		c.end();
+		c.stroke();
+		
+		// Circle
+		c.ellipse(w / 6, 0, w * 5 / 6, h);
+		c.fillAndStroke();
+	};
+
+	// Replaces existing actor shape
+	mxCellRenderer.prototype.defaultShapes['umlBoundary'] = UmlBoundaryShape;
+
+	// UML Entity Shape
+	function UmlEntityShape()
+	{
+		mxEllipse.call(this);
+	};
+	mxUtils.extend(UmlEntityShape, mxEllipse);
+	UmlEntityShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		mxEllipse.prototype.paintVertexShape.apply(this, arguments);
+		
+		c.begin();
+		c.moveTo(x + w / 8, y + h);
+		c.lineTo(x + w * 7 / 8, y + h);
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['umlEntity'] = UmlEntityShape;
+
+	// UML Destroy Shape
+	function UmlDestroyShape()
+	{
+		mxShape.call(this);
+	};
+	mxUtils.extend(UmlDestroyShape, mxShape);
+	UmlDestroyShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		c.translate(x, y);
+		
+		c.begin();
+		c.moveTo(0, 0);
+		c.lineTo(w, h);
+		c.end();
+		c.stroke();
+		
+		c.begin();
+		c.moveTo(w, 0);
+		c.lineTo(0, h);
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['umlDestroy'] = UmlDestroyShape;
+	
+	// UML Control Shape
+	function UmlControlShape()
+	{
+		mxShape.call(this);
+	};
+	mxUtils.extend(UmlControlShape, mxShape);
+	UmlControlShape.prototype.getLabelBounds = function(rect)
+	{
+		return new mxRectangle(rect.x, rect.y + rect.height / 8, rect.width, rect.height * 7 / 8);
+	};
+	UmlControlShape.prototype.paintBackground = function(c, x, y, w, h)
+	{
+		c.translate(x, y);
+
+		// Circle
+		c.ellipse(0, h / 8, w, h * 7 / 8);
+		c.fillAndStroke();
+		
+		// Lower line
+		c.begin();
+		c.moveTo(w * 3 / 8, h / 8 * 1.1);
+		c.lineTo(w * 5 / 8, h / 4);
+		c.end();
+		c.stroke();
+		
+		// Upper line
+		c.begin();
+		c.moveTo(w * 3 / 8, h / 8 * 1.1);
+		c.lineTo(w * 5 / 8, 0);
+		c.end();
+		c.stroke();
+	};
+
+	// Replaces existing actor shape
+	mxCellRenderer.prototype.defaultShapes['umlControl'] = UmlControlShape;
+
 	// UML Lifeline Shape
 	function UmlLifeline()
 	{

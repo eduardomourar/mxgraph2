@@ -1104,6 +1104,9 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			'<div style="box-sizing:border-box;width:100%;background:#e4e4e4;margin:1px;padding:2px;">Tablename</div><table style="width:100%;">' +
 			'<tr><td>PK</td><td style="padding:2px;">uniqueId</td></tr><tr><td>FK1</td><td style="padding:2px;">foreignKey</td></tr>' +
 			'<tr><td></td><td style="padding:2px;">fieldname</td></tr></table>', 'Entity', null, null, 'er entity table'),
+		this.createVertexTemplateEntry('shape=umlBoundary;whiteSpace=wrap;html=1;', 100, 80, 'Boundary Object', 'Boundary Object', null, null, 'uml boundary object'),
+		this.createVertexTemplateEntry('ellipse;shape=umlEntity;whiteSpace=wrap;html=1;', 80, 80, 'Entity Object', 'Entity Object', null, null, 'uml entity object'),
+		this.createVertexTemplateEntry('ellipse;shape=umlControl;whiteSpace=wrap;html=1;', 70, 80, 'Control Object', 'Control Object', null, null, 'uml control object'),
 		this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false, null, 'uml actor'),
 		this.createVertexTemplateEntry('ellipse;whiteSpace=wrap;html=1;', 140, 70, 'Use Case', 'Use Case', null, null, 'uml use case usecase'),
 		this.addEntry('uml activity state start', function()
@@ -1194,9 +1197,17 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		this.createVertexTemplateEntry('ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;', 30, 30, '', 'End', null, null, 'uml activity state end'),
 		this.createVertexTemplateEntry('shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;', 100, 300, ':Object', 'Lifeline', null, null, 'uml sequence participant lifeline'),
 		this.createVertexTemplateEntry('shape=umlLifeline;participant=umlActor;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;',
-				20, 300, '', 'Lifeline', null, null, 'uml sequence participant lifeline actor'),
-	 	this.createVertexTemplateEntry('shape=umlFrame;whiteSpace=wrap;html=1;', 300, 200, 'frame', 'Frame', null, null, 'uml sequence frame'),
-	 	this.createVertexTemplateEntry('html=1;points=[];', 10, 80, '', 'Activation', null, null, 'uml sequence activation'),
+				20, 300, 'Actor', 'Actor Lifeline', null, null, 'uml sequence participant lifeline actor'),
+		this.createVertexTemplateEntry('shape=umlLifeline;participant=umlBoundary;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;',
+				50, 300, 'Boundary', 'Boundary Lifeline', null, null, 'uml sequence participant lifeline boundary'),
+		this.createVertexTemplateEntry('shape=umlLifeline;participant=umlEntity;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;',
+				40, 300, 'Entity', 'Entity Lifeline', null, null, 'uml sequence participant lifeline entity'),
+		this.createVertexTemplateEntry('shape=umlLifeline;participant=umlControl;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;',
+				40, 300, 'Control', 'Entity Lifeline', null, null, 'uml sequence participant lifeline control'),
+		this.createVertexTemplateEntry('shape=umlFrame;whiteSpace=wrap;html=1;', 300, 200, 'frame', 'Frame', null, null, 'uml sequence frame'),
+		this.createVertexTemplateEntry('shape=umlDestroy;whiteSpace=wrap;html=1;strokeWidth=3;', 30, 30, '', 'Destroy', null, null, 'uml sequence destroy'),
+		this.createVertexTemplateEntry('shape=note;whiteSpace=wrap;html=1;size=20;', 120, 80, 'Note', 'Note', null, null, 'uml note'),
+		this.createVertexTemplateEntry('html=1;points=[];', 10, 80, '', 'Activation', null, null, 'uml sequence activation'),
 	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message'),
 	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=block;', 100, 0, 'dispatch', 'Message', null, 'uml sequence message call invoke dispatch'),
 		this.addEntry('uml sequence return message', function()
