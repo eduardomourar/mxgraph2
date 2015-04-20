@@ -617,8 +617,10 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	// Count is dynamically updated below
 	var count = 12;
 	
-	function clearDiv()
+	var clearDiv = mxUtils.bind(this, function()
 	{
+		active = false;
+		this.currentSearch = null;
 		var child = div.firstChild;
 		
 		while (child != null)
@@ -632,7 +634,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 			
 			child = next;
 		}
-	};
+	});
 	
 	find = mxUtils.bind(this, function()
 	{
@@ -661,55 +663,62 @@ Sidebar.prototype.addSearchPalette = function(expand)
 						button.innerHTML = mxResources.get('loading') + '...';
 						active = true;
 						
+						// Ignores old results
+						var current = new Object();
+						this.currentSearch = current;
+						
 						this.searchEntries(searchTerm, count, page, mxUtils.bind(this, function(results, len, more)
 						{
-							results = (results != null) ? results : [];
-							active = false;
-							page++;
-							center.parentNode.removeChild(center);
-							
-							for (var i = 0; i < results.length; i++)
+							if (this.currentSearch == current)
 							{
-								var elt = results[i]();
+								results = (results != null) ? results : [];
+								active = false;
+								page++;
+								center.parentNode.removeChild(center);
 								
-								// Avoids duplicates in results
-								if (hash[elt.innerHTML] == null)
+								for (var i = 0; i < results.length; i++)
 								{
-									hash[elt.innerHTML] = '1';
-									div.appendChild(results[i]());
+									var elt = results[i]();
+									
+									// Avoids duplicates in results
+									if (hash[elt.innerHTML] == null)
+									{
+										hash[elt.innerHTML] = '1';
+										div.appendChild(results[i]());
+									}
 								}
-							}
-							
-							if (more)
-							{
-								button.innerHTML = mxResources.get('moreResults');
-							}
-							else
-							{
-								button.innerHTML = mxResources.get('reset');
-								complete = true;
-							}
-							
-							button.style.cursor = '';
-							
-							if (results.length == 0 && page == 1)
-							{
-								var err = document.createElement('div');
-								err.className = 'geTitle';
-								err.style.backgroundColor = 'transparent';
-								err.style.borderColor = 'transparent';
-								err.style.color = 'gray';
-								err.style.padding = '0px';
-								err.style.margin = '0px 8px 0px 8px';
-								err.style.paddingTop = '6px';
-								err.style.textAlign = 'center';
-								err.style.cursor = 'default';
 								
-								mxUtils.write(err, mxResources.get('noResultsFor', [searchTerm]));
-								div.appendChild(err);
+								if (more)
+								{
+									button.innerHTML = mxResources.get('moreResults');
+								}
+								else
+								{
+									button.innerHTML = mxResources.get('reset');
+									complete = true;
+								}
+								
+								button.style.cursor = '';
+								
+								if (results.length == 0 && page == 1)
+								{
+									var err = document.createElement('div');
+									err.className = 'geTitle';
+									err.style.backgroundColor = 'transparent';
+									err.style.borderColor = 'transparent';
+									err.style.color = 'gray';
+									err.style.padding = '0px';
+									err.style.margin = '0px 8px 0px 8px';
+									err.style.paddingTop = '6px';
+									err.style.textAlign = 'center';
+									err.style.cursor = 'default';
+									
+									mxUtils.write(err, mxResources.get('noResultsFor', [searchTerm]));
+									div.appendChild(err);
+								}
+								
+								div.appendChild(center);
 							}
-							
-							div.appendChild(center);
 						}), mxUtils.bind(this, function()
 						{
 							// TODO: Error handling
