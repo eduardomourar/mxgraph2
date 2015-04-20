@@ -316,7 +316,7 @@ Format.prototype.refresh = function()
 		// and the menu item in the format menu
 		var img = document.createElement('img');
 		img.setAttribute('border', '0');
-		img.setAttribute('src', (mxClient.IS_SVG) ? Dialog.prototype.closeData : IMAGE_PATH + '/close.png');
+		img.setAttribute('src', Dialog.prototype.closeImage);
 		img.setAttribute('title', mxResources.get('hide'));
 		img.style.position = 'absolute';
 		img.style.display = 'block';
