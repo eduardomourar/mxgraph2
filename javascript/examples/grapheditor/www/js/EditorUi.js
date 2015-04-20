@@ -12,8 +12,15 @@ EditorUi = function(editor, container)
 	this.container = container || document.body;
 	var graph = this.editor.graph;
 
-	// Pre-fetches submenu image
-	new Image().src = mxPopupMenu.prototype.submenuImage;
+	// Pre-fetches submenu image or replaces with embedded image if supported
+	if (mxClient.IS_SVG)
+	{
+		mxPopupMenu.prototype.submenuImage = 'data:image/gif;base64,R0lGODlhCQAJAIAAAP///zMzMyH5BAEAAAAALAAAAAAJAAkAAAIPhI8WebHsHopSOVgb26AAADs=';
+	}
+	else
+	{
+		new Image().src = mxPopupMenu.prototype.submenuImage;
+	}
 
 	// Pre-fetches connect image
 	if (!mxClient.IS_SVG && mxConnectionHandler.prototype.connectImage != null)
