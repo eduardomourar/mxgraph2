@@ -522,7 +522,6 @@ Sidebar.prototype.cloneCell = function(cell, value)
  */
 Sidebar.prototype.addSearchPalette = function(expand)
 {
-	// TODO: Merge common code with iconfinder palette
 	var elt = this.createTitle(mxResources.get('search'));
 	this.container.appendChild(elt);
 	
