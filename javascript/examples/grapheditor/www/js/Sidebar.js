@@ -71,7 +71,10 @@ function Sidebar(editorUi, container)
 	this.init();
 	
 	// Pre-fetches tooltip image
-	new Image().src = IMAGE_PATH + '/tooltip.png';
+	if (!mxClient.IS_SVG)
+	{
+		new Image().src = IMAGE_PATH + '/tooltip.png';
+	}
 };
 
 /**
@@ -105,14 +108,17 @@ Sidebar.prototype.init = function()
 /**
  * Sets the default font size.
  */
-Sidebar.prototype.collapsedImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIUnI+pa8Io3BtRsmoVfnXGSYHiCBYAOw==' :
-	IMAGE_PATH + '/checkmark.gif';
+Sidebar.prototype.collapsedImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/checkmark.gif' : 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIUnI+pa8Io3BtRsmoVfnXGSYHiCBYAOw==';
 
 /**
  * Sets the default font size.
  */
-Sidebar.prototype.expandedImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIRnI+py90CI1RyLums27z7VgAAOw==' :
-	IMAGE_PATH + '/checkmark.gif';
+Sidebar.prototype.expandedImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/checkmark.gif' : 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIRnI+py90CI1RyLums27z7VgAAOw==';
+
+/**
+ * Sets the default font size.
+ */
+Sidebar.prototype.tooltipImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/tooltip.png' : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAbCAMAAAB7jU7LAAAACVBMVEX///+ZmZn///9Y2COLAAAAA3RSTlP//wDXyg1BAAAAOElEQVR42mXQMQ4AMAgDsWv//+iutcJmIQSk+9dJpVKpVCqVSqVSqZTdncWzF8/NeP7FkxWenPEDOnUBiL3jWx0AAAAASUVORK5CYII=';
 
 /**
  * Specifies if tooltips should be visible. Default is true.
@@ -223,7 +229,7 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel)
 						this.graph2.view.canvas.style.position = 'relative';
 					}
 					
-					this.tooltipImage = mxUtils.createImage(IMAGE_PATH + '/tooltip.png');
+					this.tooltipImage = mxUtils.createImage(this.tooltipImage);
 					this.tooltipImage.className = 'geSidebarTooltipImage';
 					this.tooltipImage.style.position = 'absolute';
 					this.tooltipImage.style.width = '14px';
