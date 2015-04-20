@@ -906,7 +906,7 @@ Actions.prototype.init = function()
 	    		{
 					var cells = graph.getSelectionCells();
 
-					if (cells.length > 0 && newValue != null)
+					if (newValue != null)
 					{
 						var select = null;
 						

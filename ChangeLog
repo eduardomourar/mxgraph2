@@ -1,3 +1,4 @@
+- Fixes image action if no cells are selected in grapheditor
 - Adds zoom buttons in scrollbars.html example [JavaScript]
 - Adds enabled-if attribute in default popup menu configuration [JavaScript]
 - Uses data URIs for various images in grapheditor
