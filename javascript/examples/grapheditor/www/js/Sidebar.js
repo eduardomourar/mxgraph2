@@ -563,6 +563,11 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	input.style.marginLeft = '2px';
 	input.style.marginBottom = '2px';
 	inner.appendChild(input);
+	
+	if (document.documentMode == 8)
+	{
+		input.style.boxSizing = 'border-box';
+	}
 
 	var cross = document.createElement('div');
 	cross.setAttribute('title', mxResources.get('reset'));
