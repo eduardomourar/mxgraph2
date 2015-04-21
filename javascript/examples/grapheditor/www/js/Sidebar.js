@@ -1213,7 +1213,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 				40, 300, 'Control', 'Entity Lifeline', null, null, 'uml sequence participant lifeline control'),
 		this.createVertexTemplateEntry('shape=umlFrame;whiteSpace=wrap;html=1;', 300, 200, 'frame', 'Frame', null, null, 'uml sequence frame'),
 		this.createVertexTemplateEntry('shape=umlDestroy;whiteSpace=wrap;html=1;strokeWidth=3;', 30, 30, '', 'Destruction', null, null, 'uml sequence destruction destroy'),
-		this.createVertexTemplateEntry('shape=note;whiteSpace=wrap;html=1;size=20;', 120, 80, 'Note', 'Note', null, null, 'uml note'),
+		this.createVertexTemplateEntry('shape=note;whiteSpace=wrap;html=1;size=14;verticalAlign=top;align=left;spacingTop=-6;', 100, 70, 'Note', 'Note', null, null, 'uml note'),
 		this.createVertexTemplateEntry('html=1;points=[];', 10, 80, '', 'Activation', null, null, 'uml sequence activation'),
 	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message', null, 'uml sequence message call invoke dispatch'),
 	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=block;', 100, 0, 'dispatch', 'Message', null, 'uml sequence message call invoke dispatch'),
