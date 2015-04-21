@@ -108,12 +108,12 @@ Sidebar.prototype.init = function()
 /**
  * Sets the default font size.
  */
-Sidebar.prototype.collapsedImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/checkmark.gif' : 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIUnI+pa8Io3BtRsmoVfnXGSYHiCBYAOw==';
+Sidebar.prototype.collapsedImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/collapsed.gif' : 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIUnI+pa8Io3BtRsmoVfnXGSYHiCBYAOw==';
 
 /**
  * Sets the default font size.
  */
-Sidebar.prototype.expandedImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/checkmark.gif' : 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIRnI+py90CI1RyLums27z7VgAAOw==';
+Sidebar.prototype.expandedImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/expanded.gif' : 'data:image/gif;base64,R0lGODlhDQANAJEAAAAAAP///9XV1f///yH5BAEAAAMALAAAAAANAA0AAAIRnI+py90CI1RyLums27z7VgAAOw==';
 
 /**
  * Sets the default font size.
