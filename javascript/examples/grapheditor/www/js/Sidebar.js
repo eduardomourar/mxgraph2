@@ -396,11 +396,15 @@ Sidebar.prototype.addEntry = function(tags, fn)
 {
 	if (this.taglist != null && tags != null && tags.length > 0)
 	{
-		var tmp = tags.toLowerCase().split(' ');
+		// Replaces special characters
+		var tmp = tags.toLowerCase().replace(/[\/\,\(\)]/, ' ').split(' ');
 
 		for (var i = 0; i < tmp.length; i++)
 		{
-			if (tmp[i].length > 0)
+			// Replaces trailing numbers and special characters
+			tmp[i] = tmp[i].replace(/[\(\)\,]/, '').replace(/\.*\d*$/, '');
+			
+			if (tmp[i].length > 1)
 			{
 				if (this.taglist[tmp[i]] == null)
 				{
@@ -481,18 +485,11 @@ Sidebar.prototype.filterTags = function(tags)
 		// Ignores tags with leading numbers, strips trailing numbers
 		for (var i = 0; i < arr.length; i++)
 		{
-			// Ignores single chars
-			if (arr[i].length > 1)
+			// Removes duplicates
+			if (hash[arr[i]] == null)
 			{
-				// Strips trailing numbers
-				var value = arr[i].replace(/\.*\d*$/, '');
-				
-				// Removes duplicates
-				if (value.length > 0 && hash[value] == null)
-				{
-					hash[value] = '1';
-					result.push(value);
-				}
+				hash[arr[i]] = '1';
+				result.push(arr[i]);
 			}
 		}
 		
