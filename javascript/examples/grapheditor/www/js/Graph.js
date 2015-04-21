@@ -192,7 +192,38 @@ Graph = function(container, model, renderHint, stylesheet)
 	    {
 	    	return rubberband;
 	    };
- 
+	    
+	    // Timer-based activation of outline connect in connection handler
+	    var startTime = new Date().getTime();
+	    var timeOnTarget = 0;
+	    
+	    var connectionHandlerMouseMove = this.connectionHandler.mouseMove;
+	    
+	    this.connectionHandler.mouseMove = function()
+	    {
+	    	var prev = this.currentState;
+	    	connectionHandlerMouseMove.apply(this, arguments);
+	    	
+	    	if (prev != this.currentState)
+	    	{
+	    		startTime = new Date().getTime();
+	    		timeOnTarget = 0;
+	    	}
+	    	else
+	    	{
+		    	timeOnTarget = new Date().getTime() - startTime;
+	    	}
+	    };
+	    
+	    // Activates outline connect after 500ms or if alt is pressed
+	    var connectionHandleIsOutlineConnectEvent = this.connectionHandler.isOutlineConnectEvent;
+	    
+	    this.connectionHandler.isOutlineConnectEvent = function(me)
+	    {
+	    	return (mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
+	    		connectionHandleIsOutlineConnectEvent.apply(this, arguments);
+	    };
+	    
 	    // Workaround for Firefox where first mouse down is received
 	    // after tap and hold if scrollbars are visible, which means
 	    // start rubberband immediately if no cell is under mouse.
@@ -2638,7 +2669,39 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			return !mxEvent.isShiftDown(me.getEvent());
 		};
-	
+
+	    // Timer-based activation of outline connect in connection handler
+	    var startTime = new Date().getTime();
+	    var timeOnTarget = 0;
+	    
+		var mxEdgeHandlerUpdatePreviewState = mxEdgeHandler.prototype.updatePreviewState;
+		
+		mxEdgeHandler.prototype.updatePreviewState = function(edge, point, terminalState, me)
+		{
+			mxEdgeHandlerUpdatePreviewState.apply(this, arguments);
+			
+	    	if (terminalState != this.currentTerminalState)
+	    	{
+	    		startTime = new Date().getTime();
+	    		timeOnTarget = 0;
+	    	}
+	    	else
+	    	{
+		    	timeOnTarget = new Date().getTime() - startTime;
+	    	}
+			
+			this.currentTerminalState = terminalState;
+		};
+
+		// Timer-based outline connect
+		var mxEdgeHandlerIsOutlineConnectEvent = mxEdgeHandler.prototype.isOutlineConnectEvent;
+		
+		mxEdgeHandler.prototype.isOutlineConnectEvent = function(me)
+		{
+			return (mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
+    			mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments);
+		};
+		
 		// Disables custom handles if shift is pressed
 		mxVertexHandler.prototype.isCustomHandleEvent = function(me)
 		{

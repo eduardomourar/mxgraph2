@@ -1,3 +1,4 @@
+- Adds timer-based outline connect in grapheditor
 - Fixes possible NPE in mxGraphView.updateContainerStyle [JavaScript]
 - Adds shape search in grapheditor
 - Adds UML boundary, entity and control shapes and lifelines in grapheditor
