@@ -2816,7 +2816,7 @@ mxGraphView.prototype.updateContainerStyle = function(container)
 	// Workaround for offset of container
 	var style = mxUtils.getCurrentStyle(container);
 	
-	if (style.position == 'static')
+	if (style != null && style.position == 'static')
 	{
 		container.style.position = 'relative';
 	}

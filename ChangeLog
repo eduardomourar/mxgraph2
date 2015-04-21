@@ -1,3 +1,4 @@
+- Fixes possible NPE in mxGraphView.updateContainerStyle [JavaScript]
 - Adds shape search in grapheditor
 - Adds UML boundary, entity and control shapes and lifelines in grapheditor
 - Fixes image action if no cells are selected in grapheditor
