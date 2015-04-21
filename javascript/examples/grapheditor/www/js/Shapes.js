@@ -819,21 +819,23 @@
 	{
 		c.translate(x, y);
 
-		// Circle
-		c.ellipse(0, h / 8, w, h * 7 / 8);
-		c.fillAndStroke();
-		
-		// Lower line
-		c.begin();
-		c.moveTo(w * 3 / 8, h / 8 * 1.1);
-		c.lineTo(w * 5 / 8, h / 4);
-		c.end();
-		c.stroke();
-		
 		// Upper line
 		c.begin();
 		c.moveTo(w * 3 / 8, h / 8 * 1.1);
 		c.lineTo(w * 5 / 8, 0);
+		c.end();
+		c.stroke();
+		
+		// Circle
+		c.ellipse(0, h / 8, w, h * 7 / 8);
+		c.fillAndStroke();
+	};
+	UmlControlShape.prototype.paintForeground = function(c, x, y, w, h)
+	{
+		// Lower line
+		c.begin();
+		c.moveTo(w * 3 / 8, h / 8 * 1.1);
+		c.lineTo(w * 5 / 8, h / 4);
 		c.end();
 		c.stroke();
 	};
