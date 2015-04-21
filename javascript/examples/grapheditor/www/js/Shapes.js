@@ -915,14 +915,15 @@
 	};
 	UmlFrame.prototype.paintBackground = function(c, x, y, w, h)
 	{
-		var w0 = Math.min(w, Math.max(this.corner, parseFloat(mxUtils.getValue(this.style, 'width', this.width)) * this.scale));
-		var h0 = Math.min(h, Math.max(this.corner * 1.5, parseFloat(mxUtils.getValue(this.style, 'height', this.height)) * this.scale));
+		var co = this.corner;
+		var w0 = Math.min(w, Math.max(co, parseFloat(mxUtils.getValue(this.style, 'width', this.width))));
+		var h0 = Math.min(h, Math.max(co * 1.5, parseFloat(mxUtils.getValue(this.style, 'height', this.height))));
 
 		c.begin();
 		c.moveTo(x, y);
 		c.lineTo(x + w0, y);
-		c.lineTo(x + w0, y + Math.max(0, h0 - this.corner * 1.5));
-		c.lineTo(x + Math.max(0, w0 - this.corner), y + h0);
+		c.lineTo(x + w0, y + Math.max(0, h0 - co * 1.5));
+		c.lineTo(x + Math.max(0, w0 - co), y + h0);
 		c.lineTo(x, y + h0);
 		c.close();
 		c.fillAndStroke();
