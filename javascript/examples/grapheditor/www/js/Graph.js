@@ -352,21 +352,8 @@ Graph = function(container, model, renderHint, stylesheet)
 			return graphHandlerShouldRemoveCellsFromParent.apply(this, arguments);
 		};
 		
-		// Disabled splitting edges when edges are moved
-		var isSplitTarget = this.isSplitTarget;
-		
-		this.isSplitTarget = function(target, cells, evt)
-		{
-			for (var i = 0; i < cells.length; i++)
-			{
-				if (this.model.isEdge(cells[i]))
-				{
-					return false;
-				}
-			}
-			
-			return isSplitTarget.apply(this, arguments);
-		};
+		// Splitting edges is disabled
+		this.setSplitEnabled(false);
 
 		// Unlocks all cells
 		this.isCellLocked = function(cell)

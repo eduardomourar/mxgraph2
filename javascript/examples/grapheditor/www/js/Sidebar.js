@@ -1613,8 +1613,8 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 	
 	if (cells.length > 1 || cells[0].vertex)
 	{
-		var ds = this.createDragSource(elt, this.createDropHandler(cells, true),
-				this.createDragPreview(width, height), cells);
+		var ds = this.createDragSource(elt, this.createDropHandler(cells, this.editorUi.editor.
+				graph.isSplitEnabled()), this.createDragPreview(width, height), cells);
 		this.addClickHandler(elt, ds, cells);
 	
 		// Uses guides for vertices only if enabled in graph
@@ -2465,7 +2465,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			}
 			
 			if (graph.view.currentRoot == target || (!graph.isValidRoot(target) &&
-				graph.getModel().getChildCount(target) == 0))
+				graph.getModel().getChildCount(target) == 0) ||
+				(model.isEdge(target) && !graph.isSplitEnabled()))
 			{
 				target = null;
 			}
