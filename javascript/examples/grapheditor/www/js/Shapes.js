@@ -789,16 +789,16 @@
 	UmlDestroyShape.prototype.paintVertexShape = function(c, x, y, w, h)
 	{
 		c.translate(x, y);
-		
+
 		c.begin();
-		c.moveTo(0, 0);
-		c.lineTo(w, h);
+		c.moveTo(w, 0);
+		c.lineTo(0, h);
 		c.end();
 		c.stroke();
 		
 		c.begin();
-		c.moveTo(w, 0);
-		c.lineTo(0, h);
+		c.moveTo(0, 0);
+		c.lineTo(w, h);
 		c.end();
 		c.stroke();
 	};
