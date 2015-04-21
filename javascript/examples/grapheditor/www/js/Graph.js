@@ -220,8 +220,8 @@ Graph = function(container, model, renderHint, stylesheet)
 	    
 	    this.connectionHandler.isOutlineConnectEvent = function(me)
 	    {
-	    	return (mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
-	    		connectionHandleIsOutlineConnectEvent.apply(this, arguments);
+	    	return timeOnTarget > 1500 || ((mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
+	    		connectionHandleIsOutlineConnectEvent.apply(this, arguments));
 	    };
 	    
 	    // Workaround for Firefox where first mouse down is received
@@ -2698,8 +2698,8 @@ if (typeof mxVertexHandler != 'undefined')
 		
 		mxEdgeHandler.prototype.isOutlineConnectEvent = function(me)
 		{
-			return (mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
-    			mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments);
+			return timeOnTarget > 1500 || ((mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
+    			mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments));
 		};
 		
 		// Disables custom handles if shift is pressed
