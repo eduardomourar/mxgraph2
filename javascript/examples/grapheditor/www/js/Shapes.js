@@ -793,10 +793,6 @@
 		c.begin();
 		c.moveTo(w, 0);
 		c.lineTo(0, h);
-		c.end();
-		c.stroke();
-		
-		c.begin();
 		c.moveTo(0, 0);
 		c.lineTo(w, h);
 		c.end();
