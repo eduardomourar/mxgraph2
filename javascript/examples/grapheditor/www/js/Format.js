@@ -4159,32 +4159,20 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 	portraitCheckBox.style.marginRight = '6px';
 	formatDiv.appendChild(portraitCheckBox);
 	
-	var span = document.createElement('span');
-	span.style.maxWidth = '100px';
-	mxUtils.write(span, mxResources.get('portrait'));
-	formatDiv.appendChild(span);
-	
-	mxEvent.addListener(span, 'click', function(evt)
-	{
-		portraitCheckBox.checked = true;
-		mxEvent.consume(evt);
-	});
-	
+	var portraitSpan = document.createElement('span');
+	portraitSpan.style.maxWidth = '100px';
+	mxUtils.write(portraitSpan, mxResources.get('portrait'));
+	formatDiv.appendChild(portraitSpan);
+
 	landscapeCheckBox.style.marginLeft = '10px';
 	landscapeCheckBox.style.marginRight = '6px';
 	formatDiv.appendChild(landscapeCheckBox);
 	
-	var span = document.createElement('span');
-	span.style.width = '100px';
-	mxUtils.write(span, mxResources.get('landscape'));
-	formatDiv.appendChild(span)
-	
-	mxEvent.addListener(span, 'click', function(evt)
-	{
-		landscapeCheckBox.checked = true;
-		mxEvent.consume(evt);
-	});
-	
+	var landscapeSpan = document.createElement('span');
+	landscapeSpan.style.width = '100px';
+	mxUtils.write(landscapeSpan, mxResources.get('landscape'));
+	formatDiv.appendChild(landscapeSpan)
+
 	var customDiv = document.createElement('div');
 	customDiv.style.marginLeft = '4px';
 	customDiv.style.width = '210px';
@@ -4314,6 +4302,20 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 
 	this.addKeyHandler(widthInput, listener);
 	this.addKeyHandler(heightInput, listener);
+	
+	mxEvent.addListener(portraitSpan, 'click', function(evt)
+	{
+		portraitCheckBox.checked = true;
+		update();
+		mxEvent.consume(evt);
+	});
+	
+	mxEvent.addListener(landscapeSpan, 'click', function(evt)
+	{
+		landscapeCheckBox.checked = true;
+		update();
+		mxEvent.consume(evt);
+	});
 	
 	mxEvent.addListener(widthInput, 'blur', update);
 	mxEvent.addListener(widthInput, 'click', update);
