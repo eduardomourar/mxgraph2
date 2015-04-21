@@ -156,7 +156,7 @@ Sidebar.prototype.thumbHeight = 36;
 Sidebar.prototype.thumbPadding = (document.documentMode >= 5) ? 0 : 1;
 
 /**
- * Specifies the delay for the tooltip. Default is 3 px.
+ * Specifies the delay for the tooltip. Default is 2 px.
  */
 Sidebar.prototype.thumbBorder = 2;
 
@@ -534,11 +534,11 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	}
 	
 	var inner = document.createElement('div');
-	inner.className = 'geTitle';
 	inner.style.backgroundColor = 'transparent';
 	inner.style.borderColor = 'transparent';
 	inner.style.padding = '4px';
 	inner.style.marginRight = '4px';
+	inner.style.whiteSpace = 'nowrap';
 	inner.style.textOverflow = 'clip';
 	inner.style.cursor = 'default';
 	
