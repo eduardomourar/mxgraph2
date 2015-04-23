@@ -1,3 +1,5 @@
+23-APR-2015: 3.3.0.0
+
 - Adds orthogonalPerimeter for UML activation in grapheditor
 - Adds UML sequence diagram building blocks in grapheditor
 - Adds timer for replace shape and connect icons in grapheditor
