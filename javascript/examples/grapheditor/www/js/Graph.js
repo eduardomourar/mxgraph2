@@ -214,7 +214,7 @@ Graph = function(container, model, renderHint, stylesheet)
 		    	timeOnTarget = new Date().getTime() - startTime;
 	    	}
 	    };
-	    
+
 	    // Activates outline connect after 500ms or if alt is pressed
 	    var connectionHandleIsOutlineConnectEvent = this.connectionHandler.isOutlineConnectEvent;
 	    
@@ -771,6 +771,36 @@ Graph.prototype.resizeParentStacks = function(parent, layout, dx, dy)
 };
 
 /**
+ * Disables drill-down for non-swimlanes.
+ */
+Graph.prototype.isContainer = function(cell)
+{
+	var state = this.view.getState(cell);
+	var style = (state != null) ? state.style : this.getCellStyle(cell);
+	
+	if (this.isSwimlane(cell))
+	{
+		return style['container'] != '0';
+	}
+	else
+	{
+		return style['container'] == '1';
+	}
+};
+
+/**
+ * Disables folding for non-swimlanes.
+ */
+Graph.prototype.isCellFoldable = function(cell)
+{
+	var state = this.view.getState(cell);
+	var style = (state != null) ? state.style : this.getCellStyle(cell);
+	
+	return this.foldingEnabled && ((this.isContainer(cell) && style['collapsible'] != '0') ||
+		(!this.isContainer(cell) && style['collapsible'] == '1'));
+};
+
+/**
  * These overrides only applied if  are only added if mxVertexHandler is defined (ie. not in embedded graph)
  */
 if (typeof mxVertexHandler != 'undefined')
@@ -867,19 +897,7 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 		}
 	};
-	
-	/**
-	 * Disables folding for non-swimlanes.
-	 */
-	Graph.prototype.isCellFoldable = function(cell)
-	{
-		var state = this.view.getState(cell);
-		var style = (state != null) ? state.style : this.getCellStyle(cell);
-		
-		return this.foldingEnabled && ((this.isContainer(cell) && style['collapsible'] != '0') ||
-			(!this.isContainer(cell) && style['collapsible'] == '1'));
-	};
-	
+
 	/**
 	 * Disables drill-down for non-swimlanes.
 	 */
@@ -899,25 +917,7 @@ if (typeof mxVertexHandler != 'undefined')
 		return mxUtils.getValue(style, 'part', '0') != '1' &&
 			(this.isContainer(cell) || mxGraph.prototype.isValidDropTarget.apply(this, arguments));
 	};
-	
-	/**
-	 * Disables drill-down for non-swimlanes.
-	 */
-	Graph.prototype.isContainer = function(cell)
-	{
-		var state = this.view.getState(cell);
-		var style = (state != null) ? state.style : this.getCellStyle(cell);
-		
-		if (this.isSwimlane(cell))
-		{
-			return style['container'] != '0';
-		}
-		else
-		{
-			return style['container'] == '1';
-		}
-	};
-	
+
 	/**
 	 * Overrides createGroupCell to set the group style for new groups to 'group'.
 	 */
