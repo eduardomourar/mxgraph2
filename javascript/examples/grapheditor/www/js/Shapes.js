@@ -953,6 +953,15 @@
 	};
 	
 	mxStyleRegistry.putValue('lifelinePerimeter', mxPerimeter.LifelinePerimeter);
+	
+	mxPerimeter.OrthogonalPerimeter = function (bounds, vertex, next, orthogonal)
+	{
+		orthogonal = true;
+		
+		return mxPerimeter.RectanglePerimeter.apply(this, arguments);
+	};
+	
+	mxStyleRegistry.putValue('orthogonalPerimeter', mxPerimeter.OrthogonalPerimeter);
 
 	// Lollipop Shape
 	function LollipopShape()

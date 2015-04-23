@@ -1209,28 +1209,99 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		this.createVertexTemplateEntry('ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;', 30, 30, '', 'End', null, null, 'uml activity state end'),
 		this.createVertexTemplateEntry('shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;', 100, 300, ':Object', 'Lifeline', null, null, 'uml sequence participant lifeline'),
 		this.createVertexTemplateEntry('shape=umlLifeline;participant=umlActor;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;',
-				20, 300, 'Actor', 'Actor Lifeline', null, null, 'uml sequence participant lifeline actor'),
+				20, 300, '', 'Actor Lifeline', null, null, 'uml sequence participant lifeline actor'),
 		this.createVertexTemplateEntry('shape=umlLifeline;participant=umlBoundary;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;',
-				50, 300, 'Boundary', 'Boundary Lifeline', null, null, 'uml sequence participant lifeline boundary'),
+				50, 300, '', 'Boundary Lifeline', null, null, 'uml sequence participant lifeline boundary'),
 		this.createVertexTemplateEntry('shape=umlLifeline;participant=umlEntity;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;',
-				40, 300, 'Entity', 'Entity Lifeline', null, null, 'uml sequence participant lifeline entity'),
+				40, 300, '', 'Entity Lifeline', null, null, 'uml sequence participant lifeline entity'),
 		this.createVertexTemplateEntry('shape=umlLifeline;participant=umlControl;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=36;labelBackgroundColor=#ffffff;',
-				40, 300, 'Control', 'Control Lifeline', null, null, 'uml sequence participant lifeline control'),
+				40, 300, '', 'Control Lifeline', null, null, 'uml sequence participant lifeline control'),
 		this.createVertexTemplateEntry('shape=umlFrame;whiteSpace=wrap;html=1;', 300, 200, 'frame', 'Frame', null, null, 'uml sequence frame'),
 		this.createVertexTemplateEntry('shape=umlDestroy;whiteSpace=wrap;html=1;strokeWidth=3;', 30, 30, '', 'Destruction', null, null, 'uml sequence destruction destroy'),
 		this.createVertexTemplateEntry('shape=note;whiteSpace=wrap;html=1;size=14;verticalAlign=top;align=left;spacingTop=-6;', 100, 70, 'Note', 'Note', null, null, 'uml note'),
-		this.createVertexTemplateEntry('html=1;points=[];', 10, 80, '', 'Activation', null, null, 'uml sequence activation'),
-	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;', 70, 0, 'dispatch', 'Found Message', null, 'uml sequence message call invoke dispatch'),
-	 	this.createEdgeTemplateEntry('edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=block;', 100, 0, 'dispatch', 'Message', null, 'uml sequence message call invoke dispatch'),
+		this.createVertexTemplateEntry('html=1;points=[];perimeter=orthogonalPerimeter;', 10, 80, '', 'Activation', null, null, 'uml sequence activation'),
+	 	this.createEdgeTemplateEntry('html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;', 60, 0, 'dispatch', 'Found Message', null, 'uml sequence message call invoke dispatch'),
+	 	this.createEdgeTemplateEntry('html=1;verticalAlign=bottom;endArrow=block;', 80, 0, 'dispatch', 'Message', null, 'uml sequence message call invoke dispatch'),
 		this.addEntry('uml sequence return message', function()
 		{
-			var edge = new mxCell('return', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;');
-			edge.geometry.setTerminalPoint(new mxPoint(100, 0), true);
+			var edge = new mxCell('return', new mxGeometry(0, 0, 0, 0), 'html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;');
+			edge.geometry.setTerminalPoint(new mxPoint(80, 0), true);
 			edge.geometry.setTerminalPoint(new mxPoint(0, 0), false);
 			edge.geometry.relative = true;
 			edge.edge = true;
 			
-			return sb.createEdgeTemplateFromCells([edge], 100, 0, 'Return');
+			return sb.createEdgeTemplateFromCells([edge], 80, 0, 'Return');
+		}),
+		this.addEntry('uml sequence invoke invocation call activation', function()
+		{
+	    	var cell = new mxCell('', new mxGeometry(0, 0, 10, 80), 'html=1;points=[];perimeter=orthogonalPerimeter;');
+	    	cell.vertex = true;
+	    	
+			var edge = new mxCell('dispatch', new mxGeometry(0, 0, 0, 0), 'html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;');
+			edge.geometry.setTerminalPoint(new mxPoint(-60, 0), true);
+			edge.geometry.relative = true;
+			edge.edge = true;
+			
+			cell.insertEdge(edge, false);
+	
+			return sb.createVertexTemplateFromCells([cell, edge], 10, 80, 'Found Message');
+		}),
+		this.addEntry('uml sequence invoke call delegation synchronous invocation activation', function()
+		{
+	    	var cell = new mxCell('', new mxGeometry(0, 0, 10, 80), 'html=1;points=[];perimeter=orthogonalPerimeter;');
+	    	cell.vertex = true;
+	    	
+			var edge1 = new mxCell('dispatch', new mxGeometry(0, 0, 0, 0), 'html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;');
+			edge1.geometry.setTerminalPoint(new mxPoint(-70, 0), true);
+			edge1.geometry.relative = true;
+			edge1.edge = true;
+
+			cell.insertEdge(edge1, false);
+			
+			var edge2 = new mxCell('return', new mxGeometry(0, 0, 0, 0), 'html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;exitX=0;exitY=0.95;');
+			edge2.geometry.setTerminalPoint(new mxPoint(-70, 76), false);
+			edge2.geometry.relative = true;
+			edge2.edge = true;
+			
+			cell.insertEdge(edge2, true);
+			
+			return sb.createVertexTemplateFromCells([cell, edge1, edge2], 10, 80, 'Synchronous Invocation');
+		}),
+		this.addEntry('uml sequence self call recursion delegation activation', function()
+		{
+	    	var cell = new mxCell('', new mxGeometry(0, 20, 10, 40), 'html=1;points=[];perimeter=orthogonalPerimeter;');
+	    	cell.vertex = true;
+	
+			var edge = new mxCell('self call', new mxGeometry(0, 0, 0, 0), 'edgeStyle=orthogonalEdgeStyle;html=1;align=left;spacingLeft=2;endArrow=block;rounded=0;entryX=1;entryY=0;');
+			edge.geometry.setTerminalPoint(new mxPoint(5, 0), true);
+			edge.geometry.points = [new mxPoint(30, 0)];
+			edge.geometry.relative = true;
+			edge.edge = true;
+			
+			cell.insertEdge(edge, false);
+	
+			return sb.createVertexTemplateFromCells([cell, edge], 10, 60, 'Self Call');
+		}),
+		this.addEntry('uml sequence invoke call delegation callback activation', function()
+		{
+	    	var cell = new mxCell('', new mxGeometry(0, 0, 10, 60), 'html=1;points=[];perimeter=orthogonalPerimeter;');
+	    	cell.vertex = true;
+	    	
+			var edge1 = new mxCell('callback', new mxGeometry(0, 0, 0, 0), 'html=1;verticalAlign=bottom;endArrow=block;entryX=1;entryY=0;');
+			edge1.geometry.setTerminalPoint(new mxPoint(70, 0), true);
+			edge1.geometry.relative = true;
+			edge1.edge = true;
+
+			cell.insertEdge(edge1, false);
+			
+			var edge2 = new mxCell('return', new mxGeometry(0, 0, 0, 0), 'html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;exitX=1;exitY=0.95;');
+			edge2.geometry.setTerminalPoint(new mxPoint(70, 57), false);
+			edge2.geometry.relative = true;
+			edge2.edge = true;
+			
+			cell.insertEdge(edge2, true);
+			
+			return sb.createVertexTemplateFromCells([cell, edge1, edge2], 10, 60, 'Callback');
 		}),
 		this.addEntry('uml relation', function()
 		{
@@ -2237,6 +2308,10 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		}
 	};
 	
+	var startTime = new Date().getTime();
+	var timeOnTarget = 0;
+	var prev = null;
+	
 	// Allows drop into cell only if target is a valid root
 	dragSource.getDropTarget = mxUtils.bind(this, function(graph, x, y, evt)
 	{
@@ -2246,9 +2321,23 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		var state = graph.view.getState(cell);
 		activeArrow = null;
 		var bbox = null;
-
+		
+		// Time on target
+		if (prev != state)
+		{
+			prev = state;
+			startTime = new Date().getTime();
+			timeOnTarget = 0;
+		}
+		else
+		{
+			timeOnTarget = new Date().getTime() - startTime;
+		}
+		
 		// Shift means no style targets - containers are ignored to simplify the UX
-		if (state != null && (graph.isContainer(state.cell) == mxEvent.isShiftDown(evt)) &&
+		// Style target hidden after 2 secs
+		if (timeOnTarget < 2000 && state != null &&
+			(graph.isContainer(state.cell) == mxEvent.isShiftDown(evt)) &&
 			((graph.model.isVertex(state.cell) && firstVertex != null) ||
 			(graph.model.isEdge(state.cell) && graph.model.isEdge(cells[0]))))
 		{
@@ -2269,7 +2358,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			checkArrow(x, y, tmp, styleTarget);
 		}
 		// Does not reset on ignored edges
-		else if (currentStyleTarget == null || !mxUtils.contains(currentStyleTarget, x, y))
+		else if (currentStyleTarget == null || !mxUtils.contains(currentStyleTarget, x, y) ||  timeOnTarget > 1500)
 		{
 			currentStyleTarget = null;
 			
@@ -2353,8 +2442,10 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		{
 			state = currentStyleTarget;
 		}
-		
-		if (currentTargetState != state && (bbox == null || !mxUtils.contains(bbox, x, y)))
+
+		// Drop arrows shown after 500ms, hidden after 5 secs
+		if (timeOnTarget >= 5000 || (currentTargetState != state && (state == null || timeOnTarget > 500) &&
+			(bbox == null || !mxUtils.contains(bbox, x, y))))
 		{
 			activeTarget = false;
 			currentTargetState = state;
@@ -2363,7 +2454,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				((graph.model.isEdge(cell) && firstVertex != null) ||
 				(graph.model.isVertex(cell) && graph.isCellConnectable(cell)));
 			
-			if (currentTargetState != null && validTarget)
+			if (currentTargetState != null && validTarget && timeOnTarget < 5000)
 			{
 				var elts = [roundSource, roundTarget, arrowUp, arrowRight, arrowDown, arrowLeft];
 				

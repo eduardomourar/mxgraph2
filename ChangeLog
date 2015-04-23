@@ -1,3 +1,6 @@
+- Adds orthogonalPerimeter for UML activation in grapheditor
+- Adds UML sequence diagram building blocks in grapheditor
+- Adds timer for replace shape and connect icons in grapheditor
 - Adds timer-based outline connect in grapheditor
 - Fixes possible NPE in mxGraphView.updateContainerStyle [JavaScript]
 - Adds shape search in grapheditor
