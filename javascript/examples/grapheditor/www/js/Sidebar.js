@@ -2361,7 +2361,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			checkArrow(x, y, tmp, styleTarget);
 		}
 		// Does not reset on ignored edges
-		else if (currentStyleTarget == null || !mxUtils.contains(currentStyleTarget, x, y) ||  timeOnTarget > 1500)
+		else if (currentStyleTarget == null || !mxUtils.contains(currentStyleTarget, x, y) ||
+			(timeOnTarget > 1500 && !mxEvent.isShiftDown(evt)))
 		{
 			currentStyleTarget = null;
 			
@@ -2598,6 +2599,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		currentStateHandle = null;
 		currentTargetState = null;
 		currentStyleTarget = null;
+		styleTargetParent = null;
 		activeArrow = null;
 	};
 	
