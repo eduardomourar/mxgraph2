@@ -2443,18 +2443,19 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			state = currentStyleTarget;
 		}
 
-		// Drop arrows shown after 500ms, hidden after 5 secs
-		if (timeOnTarget >= 5000 || (currentTargetState != state && (state == null || timeOnTarget > 500) &&
+		// Drop arrows shown after 300ms, hidden after 5 secs
+		if ((currentTargetState != null && timeOnTarget >= 5000) ||
+			(currentTargetState != state &&
 			(bbox == null || !mxUtils.contains(bbox, x, y))))
 		{
 			activeTarget = false;
-			currentTargetState = state;
+			currentTargetState = ((timeOnTarget < 5000 && timeOnTarget > 300) || graph.model.isEdge(cell)) ? state : null;
 
 			var validTarget = (firstVertex == null || graph.isCellConnectable(cells[firstVertex])) &&
 				((graph.model.isEdge(cell) && firstVertex != null) ||
 				(graph.model.isVertex(cell) && graph.isCellConnectable(cell)));
 			
-			if (currentTargetState != null && validTarget && timeOnTarget < 5000)
+			if (currentTargetState != null && validTarget)
 			{
 				var elts = [roundSource, roundTarget, arrowUp, arrowRight, arrowDown, arrowLeft];
 				
