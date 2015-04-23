@@ -2365,7 +2365,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		{
 			currentStyleTarget = null;
 			
-			if (styleTarget.parentNode != null)
+			if (styleTargetParent != null)
 			{
 				styleTarget.parentNode.removeChild(styleTarget);
 				styleTargetParent = null;
