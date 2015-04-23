@@ -2212,6 +2212,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	var arrowDown = createArrow(this.triangleDown);
 	var arrowLeft = createArrow(this.triangleLeft);
 	var styleTarget = createArrow(this.refreshTarget);
+	// Workaround for actual parentNode not being updated in old IE
+	var styleTargetParent = null;
 	var roundSource = createArrow(this.roundDrop);
 	var roundTarget = createArrow(this.roundDrop);
 	var arrowSpacing = 4;
@@ -2350,9 +2352,10 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			styleTarget.style.left = Math.floor(tmp.x) + 'px';
 			styleTarget.style.top = Math.floor(tmp.y) + 'px';
 			
-			if (styleTarget.parentNode == null)
+			if (styleTargetParent == null)
 			{
 				graph.container.appendChild(styleTarget);
+				styleTargetParent = styleTarget.parentNode;
 			}
 			
 			checkArrow(x, y, tmp, styleTarget);
@@ -2365,9 +2368,10 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			if (styleTarget.parentNode != null)
 			{
 				styleTarget.parentNode.removeChild(styleTarget);
+				styleTargetParent = null;
 			}
 		}
-		else if (currentStyleTarget != null && styleTarget.parentNode != null)
+		else if (currentStyleTarget != null && styleTargetParent != null)
 		{
 			// Sets active Arrow as side effect
 			var tmp = (graph.model.isEdge(currentStyleTarget.cell)) ? graph.view.getPoint(currentStyleTarget) : new mxPoint(currentStyleTarget.getCenterX(), currentStyleTarget.getCenterY());
