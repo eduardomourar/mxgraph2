@@ -2335,8 +2335,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		}
 		
 		// Shift means no style targets - containers are ignored to simplify the UX
-		// Style target hidden after 2 secs
-		if (timeOnTarget < 2000 && state != null &&
+		// Style target hidden after 1.5 secs
+		if (timeOnTarget < 1500 && state != null &&
 			(graph.isContainer(state.cell) == mxEvent.isShiftDown(evt)) &&
 			((graph.model.isVertex(state.cell) && firstVertex != null) ||
 			(graph.model.isEdge(state.cell) && graph.model.isEdge(cells[0]))))
