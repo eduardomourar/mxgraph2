@@ -217,7 +217,7 @@ Format.prototype.isGlassState = function(state)
 	var shape = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
 	
 	return (shape == 'label' || shape == 'rectangle' || shape == 'internalStorage' ||
-			shape == 'ext' || shape == 'swimlane');
+			shape == 'ext' || shape == 'umlLifeline' || shape == 'swimlane');
 };
 
 /**
@@ -232,7 +232,7 @@ Format.prototype.isRoundedState = function(state)
 			shape == 'ext' || shape == 'step' || shape == 'tee' || shape == 'process' || shape == 'link' ||
 			shape == 'rhombus' || shape == 'offPageConnector' || shape == 'loopLimit' || shape == 'hexagon' ||
 			shape == 'manualInput' || shape == 'curlyBracket' || shape == 'singleArrow' ||
-			shape == 'doubleArrow' || shape == 'flexArrow' || shape == 'card');
+			shape == 'doubleArrow' || shape == 'flexArrow' || shape == 'card' || shape == 'umlLifeline');
 };
 
 /**
