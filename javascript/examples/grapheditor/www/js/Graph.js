@@ -220,7 +220,7 @@ Graph = function(container, model, renderHint, stylesheet)
 	    
 	    this.connectionHandler.isOutlineConnectEvent = function(me)
 	    {
-	    	return timeOnTarget > 1500 || ((mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
+	    	return timeOnTarget > 1500 || ((mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
 	    		connectionHandleIsOutlineConnectEvent.apply(this, arguments));
 	    };
 	    
@@ -2698,7 +2698,7 @@ if (typeof mxVertexHandler != 'undefined')
 		
 		mxEdgeHandler.prototype.isOutlineConnectEvent = function(me)
 		{
-			return timeOnTarget > 1500 || ((mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
+			return timeOnTarget > 1500 || ((mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
     			mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments));
 		};
 		
