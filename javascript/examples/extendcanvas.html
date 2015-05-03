@@ -36,6 +36,7 @@
 				
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
+				graph.panningHandler.ignoreCell = true;
 				graph.setPanning(true);
 				
 				/**
