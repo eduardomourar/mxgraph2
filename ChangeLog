@@ -1,3 +1,4 @@
+- Fixes possible NPE in mxGraphView.transformControlPoint
 - Fixes accidental loss of meta data in grapheditor
 - Fixes handling of clicks in layers dialog for Chrome dev channel in grapheditor
 
