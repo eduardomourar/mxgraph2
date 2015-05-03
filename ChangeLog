@@ -1,4 +1,5 @@
-- Fixes possible NPE in mxGraphView.transformControlPoint
+- Adds extendcanvas.html example [JavaScript]
+- Fixes possible NPE in mxGraphView.transformControlPoint [JavaScript]
 - Fixes accidental loss of meta data in grapheditor
 - Fixes handling of clicks in layers dialog for Chrome dev channel in grapheditor
 
