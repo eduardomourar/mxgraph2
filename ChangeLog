@@ -1,3 +1,6 @@
+- Fixes accidental loss of meta data in grapheditor
+- Fixes handling of clicks in layers dialog for Chrome dev channel in grapheditor
+
 23-APR-2015: 3.3.0.0
 
 - Adds orthogonalPerimeter for UML activation in grapheditor

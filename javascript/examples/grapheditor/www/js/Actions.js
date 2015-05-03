@@ -158,7 +158,7 @@ Actions.prototype.init = function()
 		
 		if (cell != null)
 		{
-			ui.showDialog(new MetadataDialog(ui, cell).container, 300, 320, true, true);
+			ui.showDialog(new MetadataDialog(ui, cell).container, 300, 320, true, false);
 		}
 	}, null, null, 'Ctrl+M');
 	this.addAction('editTooltip...', function()
