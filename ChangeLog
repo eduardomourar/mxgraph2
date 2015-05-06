@@ -1,3 +1,4 @@
+- Adds mxCellEditor.applyValue hook [JavaScript]
 - Adds mxVertexHandler.moveLabel, resizeVertex, rotateVertex, updateLivePreview [JavaScript]
 - Adds extendcanvas.html example [JavaScript]
 - Fixes possible NPE in mxGraphView.transformControlPoint [JavaScript]
