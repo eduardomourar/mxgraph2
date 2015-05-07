@@ -1179,11 +1179,25 @@ EditorUi.prototype.initCanvas = function()
 			{
 				if (up)
 				{
-					graph.zoomIn();
+					if (mxEvent.isShiftDown(evt))
+					{
+						graph.zoomIn();
+					}
+					else
+					{
+						graph.fastZoom(graph.zoomFactor);
+					}
 				}
 				else
 				{
-					graph.zoomOut();
+					if (mxEvent.isShiftDown(evt))
+					{
+						graph.zoomOut();
+					}
+					else
+					{
+						graph.fastZoom(1 / graph.zoomFactor);
+					}
 				}
 				
 				if (resize != null)

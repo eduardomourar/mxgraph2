@@ -390,11 +390,11 @@ Actions.prototype.init = function()
 	}, null, null, 'Ctrl+0');
 	this.addAction('zoomIn', function()
 	{
-		graph.zoomIn();
+		graph.fastZoom(graph.zoomFactor);
 	}, null, null, 'Ctrl +');
 	this.addAction('zoomOut', function()
 	{
-		graph.zoomOut();
+		graph.fastZoom(1 / graph.zoomFactor);
 	}, null, null, 'Ctrl -');
 	this.addAction('fitWindow', function() { graph.fit(); }, null, null, 'Ctrl+1');
 	this.addAction('fitPage', mxUtils.bind(this, function()

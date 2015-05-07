@@ -599,6 +599,86 @@ Graph.prototype.getCellStyle = function(cell)
 };
 
 /**
+ * 
+ */
+Graph.prototype.fastZoom = function(factor)
+{
+	if (urlParams['zoom'] == 'fast' && mxClient.IS_SVG)
+	{
+		// FIXME: Test for labels in graph container (NO_FO)
+		var c = this.view.getDrawPane().ownerSVGElement;
+
+		if (this.currentZoom == null)
+		{
+			this.currentZoom = factor;
+		}
+		else
+		{
+			this.currentZoom *= factor;
+		}
+		
+		if (this.previousTransform == null)
+		{
+			this.previousTransform = c.style.transform;
+			this.scrollWidth = this.container.scrollWidth;
+			this.scrollHeight = this.container.scrollHeight;
+			this.scrollTop = this.container.scrollTop;
+			this.scrollLeft = this.container.scrollLeft;
+			this.clientWidth = this.container.clientWidth;
+			this.clientHeight = this.container.clientHeight;
+		}
+
+		window.setTimeout(mxUtils.bind(this, function()
+		{
+			var dx = this.scrollWidth * (this.currentZoom - 1) / 2;
+			var dy = this.scrollHeight * (this.currentZoom - 1) / 2;
+			var t = this.previousTransform + 'translate(' + dx + 'px,' + dy + 'px)scale(' + this.currentZoom + ')';
+			c.style.transform = t;
+			this.view.backgroundPageShape.node.style.transform = t;
+			
+			if (this.centerZoom)
+			{
+				this.container.scrollTop = this.scrollTop * this.currentZoom - this.clientHeight * (1 - this.currentZoom) / 2;
+				this.container.scrollLeft = this.scrollLeft * this.currentZoom - this.clientWidth * (1 - this.currentZoom) / 2;
+			}
+			else
+			{
+				this.container.scrollTop = this.scrollTop * this.currentZoom;
+				this.container.scrollLeft = this.scrollLeft * this.currentZoom;
+			}
+		}), 0);
+		
+		if (this.delayedZoomAnimated != null)
+		{
+			window.clearTimeout(this.delayedZoomAnimated);
+		}
+		
+		this.delayedZoomAnimated = window.setTimeout(mxUtils.bind(this, function()
+		{
+			mxUtils.setPrefixedStyle(c.style, 'transition', null);
+			c.style.transform = this.previousTransform;
+			this.view.backgroundPageShape.node.style.transform = '';
+			this.container.scrollTop = this.scrollTop;
+			this.container.scrollLeft = this.scrollLeft;
+			this.zoom(this.currentZoom);
+			this.delayedZoomAnimated = null;
+			this.currentZoom = null;			
+			this.previousTransform = null;
+			this.scrollWidth = null;
+			this.scrollHeight = null;
+			this.scrollTop = null;
+			this.scrollLeft = null;
+			this.clientWidth = null;
+			this.clientHeight = null;
+		}), 300);
+	}
+	else
+	{
+		this.zoom(factor);
+	}
+};
+
+/**
  * Disables alternate width persistence for stack layout parents
  */
 Graph.prototype.updateAlternateBounds = function(cell, geo, willCollapse)
