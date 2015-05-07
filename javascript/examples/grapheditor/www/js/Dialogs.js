@@ -2025,7 +2025,6 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn)
 	this.container = div;
 };
 
-
 /**
  * 
  */
@@ -2192,7 +2191,6 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 		});
 	}
 };
-
 
 /**
  * 
