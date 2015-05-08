@@ -605,7 +605,8 @@ Graph.prototype.fastZoom = function(factor)
 {
 	if (urlParams['zoom'] == 'fast' && mxClient.IS_SVG)
 	{
-		// FIXME: Test for labels in graph container (NO_FO)
+		// FIXME: Test for labels in graph container (NO_FO),
+		// container without scrollbars, fix for special cases
 		var c = this.view.getDrawPane().ownerSVGElement;
 
 		if (this.currentZoom == null)
@@ -655,7 +656,6 @@ Graph.prototype.fastZoom = function(factor)
 		
 		this.delayedZoomAnimated = window.setTimeout(mxUtils.bind(this, function()
 		{
-			mxUtils.setPrefixedStyle(c.style, 'transition', null);
 			c.style.transform = this.previousTransform;
 			this.view.backgroundPageShape.node.style.transform = '';
 			this.container.scrollTop = this.scrollTop;
