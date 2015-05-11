@@ -1602,14 +1602,16 @@ if (typeof mxVertexHandler != 'undefined')
 	 * @param {number} dx X-coordinate of the translation.
 	 * @param {number} dy Y-coordinate of the translation.
 	 */
-	Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp)
+	Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp, ignoreSelection)
 	{
 		scale = (scale != null) ? scale : 1;
 		border = (border != null) ? border : 1;
 		crisp = (crisp != null) ? crisp : true;
-	
+		ignoreSelection = (ignoreSelection != null) ? ignoreSelection : true;
+		
 		var imgExport = new mxImageExport();
-		var bounds = (nocrop) ? this.view.getBackgroundPageBounds() : this.getGraphBounds();
+		var bounds = (nocrop) ? this.view.getBackgroundPageBounds() : (ignoreSelection) ?
+				this.getGraphBounds() : this.view.getBounds(this.getSelectionCells());
 		var vs = this.view.scale;
 	
 		// Prepares SVG document that holds the output
@@ -1671,6 +1673,14 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			return this.getLinkForCell(state.cell);
 		});
+		
+		imgExport.drawCellState = function(state, canvas)
+		{
+			if (ignoreSelection || state.view.graph.isCellSelected(state.cell))
+			{
+				mxImageExport.prototype.drawCellState.apply(this, arguments);
+			}
+		};
 		
 		// Paints background image
 		var bgImg = this.backgroundImage;
