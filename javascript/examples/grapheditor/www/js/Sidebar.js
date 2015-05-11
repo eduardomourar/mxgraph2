@@ -1913,15 +1913,24 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				if (layout != null && layout.constructor == mxStackLayout)
 				{
 					validLayout = false;
-					
-					// FIXME: For dropping edges on stack children
+
 					var tmp = graph.view.getState(targetParent);
 					
 					// Offsets by parent position
 					if (tmp != null)
 					{
-						geo.x += (tmp.x / graph.view.scale - graph.view.translate.x);
-						geo.y += (tmp.y / graph.view.scale - graph.view.translate.y);
+						var pt = geo.getTerminalPoint(false);
+						
+						if (pt != null)
+						{
+							pt.x += (tmp.x / graph.view.scale - graph.view.translate.x);
+							pt.y += (tmp.y / graph.view.scale - graph.view.translate.y);
+						}
+						else
+						{
+							geo.x += (tmp.x / graph.view.scale - graph.view.translate.x);
+							geo.y += (tmp.y / graph.view.scale - graph.view.translate.y);
+						}
 					}
 				}
 			}
@@ -1944,12 +1953,6 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				geo2 = graph.getCellGeometry(targets[dropCellIndex]);
 				geo2.setTerminalPoint(geo.getTerminalPoint(false), false);
 				geo2.points = null;
-				
-				// FIXME: For dropping edges on stack children
-//				if (!validLayout)
-//				{
-//					geo2.setTerminalPoint(new mxPoint(geo.x, geo.y), false);
-//				}
 			}
 			else
 			{
