@@ -429,31 +429,34 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 		var tmp = searchTerms.toLowerCase().split(' ');
 		var dict = new mxDictionary();
 		var max = (page + 1) * count;
-		var results = null;
+		var results = [];
 
 		for (var i = 0; i < tmp.length; i++)
 		{
-			var arr = this.taglist[tmp[i]];
-			var tmpDict = new mxDictionary();
-			results = [];
-			
-			if (arr != null)
+			if (tmp[i].length > 0)
 			{
-				for (var j = 0; j < arr.length; j++)
+				var arr = this.taglist[tmp[i]];
+				var tmpDict = new mxDictionary();
+				results = [];
+				
+				if (arr != null)
 				{
-					var entry = arr[j];
-
-					if ((i == 0) == (dict.get(entry) == null) &&
-						tmpDict.get(entry) == null)
+					for (var j = 0; j < arr.length; j++)
 					{
-						tmpDict.put(entry, entry);
-						results.push(entry);
-						
-						if (i == tmp.length - 1 && results.length == max)
+						var entry = arr[j];
+	
+						if ((i == 0) == (dict.get(entry) == null) &&
+							tmpDict.get(entry) == null)
 						{
-							success(results.slice(page * count, max), max, true);
+							tmpDict.put(entry, entry);
+							results.push(entry);
 							
-							return;
+							if (i == tmp.length - 1 && results.length == max)
+							{
+								success(results.slice(page * count, max), max, true);
+								
+								return;
+							}
 						}
 					}
 				}
@@ -1911,12 +1914,13 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				{
 					validLayout = false;
 					
+					// FIXME: For dropping edges on stack children
 					var tmp = graph.view.getState(targetParent);
 					
 					// Offsets by parent position
 					if (tmp != null)
 					{
-						geo.x += (tmp.x/ graph.view.scale - graph.view.translate.x);
+						geo.x += (tmp.x / graph.view.scale - graph.view.translate.x);
 						geo.y += (tmp.y / graph.view.scale - graph.view.translate.y);
 					}
 				}
@@ -1940,6 +1944,12 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				geo2 = graph.getCellGeometry(targets[dropCellIndex]);
 				geo2.setTerminalPoint(geo.getTerminalPoint(false), false);
 				geo2.points = null;
+				
+				// FIXME: For dropping edges on stack children
+//				if (!validLayout)
+//				{
+//					geo2.setTerminalPoint(new mxPoint(geo.x, geo.y), false);
+//				}
 			}
 			else
 			{
