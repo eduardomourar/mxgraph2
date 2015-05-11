@@ -1332,22 +1332,25 @@ if (typeof mxVertexHandler != 'undefined')
 	 */
 	Graph.prototype.dblClick = function(evt, cell)
 	{
-		var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-
-		// Automatically adds new child cells to edges on double click
-		if (evt != null && !this.model.isVertex(cell))
+		if (this.isEnabled())
 		{
-			var state = (this.model.isEdge(cell)) ? this.view.getState(cell) : null;
-			
-			if (state == null || (state.text == null || state.text.node == null ||
-				(!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
-				!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
-			{
-				cell = this.addText(pt.x, pt.y, state);
-			}
-		}
+			var pt = mxUtils.convertPoint(this.container, mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 	
-		mxGraph.prototype.dblClick.call(this, evt, cell);
+			// Automatically adds new child cells to edges on double click
+			if (evt != null && !this.model.isVertex(cell))
+			{
+				var state = (this.model.isEdge(cell)) ? this.view.getState(cell) : null;
+				
+				if (state == null || (state.text == null || state.text.node == null ||
+					(!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
+					!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
+				{
+					cell = this.addText(pt.x, pt.y, state);
+				}
+			}
+		
+			mxGraph.prototype.dblClick.call(this, evt, cell);
+		}
 	};
 	
 	/**
