@@ -1602,12 +1602,13 @@ if (typeof mxVertexHandler != 'undefined')
 	 * @param {number} dx X-coordinate of the translation.
 	 * @param {number} dy Y-coordinate of the translation.
 	 */
-	Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp, ignoreSelection)
+	Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp, ignoreSelection, showText)
 	{
 		scale = (scale != null) ? scale : 1;
 		border = (border != null) ? border : 1;
 		crisp = (crisp != null) ? crisp : true;
 		ignoreSelection = (ignoreSelection != null) ? ignoreSelection : true;
+		showText = (showText != null) ? showText : true;
 		
 		var imgExport = new mxImageExport();
 		var bounds = (nocrop) ? this.view.getBackgroundPageBounds() : (ignoreSelection) ?
@@ -1667,6 +1668,7 @@ if (typeof mxVertexHandler != 'undefined')
 		var svgCanvas = new mxSvgCanvas2D(node);
 		svgCanvas.translate(Math.floor((border / scale - bounds.x) / vs), Math.floor((border / scale - bounds.y) / vs));
 		svgCanvas.scale(scale / vs);
+		svgCanvas.textEnabled = showText;
 		
 		// Adds hyperlinks (experimental)
 		imgExport.getLinkForCellState = mxUtils.bind(this, function(state, canvas)
@@ -1674,6 +1676,7 @@ if (typeof mxVertexHandler != 'undefined')
 			return this.getLinkForCell(state.cell);
 		});
 		
+		// Implements ignoreSelection flag
 		imgExport.drawCellState = function(state, canvas)
 		{
 			if (ignoreSelection || state.view.graph.isCellSelected(state.cell))
