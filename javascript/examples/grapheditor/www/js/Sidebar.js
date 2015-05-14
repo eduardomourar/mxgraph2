@@ -978,6 +978,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	divider.vertex = true;
 
 	var fns = [
+   		this.createVertexTemplateEntry('html=1;', 110, 50, 'Object', 'Object', null, null, 'uml static class object instance'),
 	 	this.addEntry('uml static class object instance', function()
 		{
 			var cell = new mxCell('Classname', new mxGeometry(0, 0, 160, 90),
@@ -988,6 +989,28 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			cell.insert(sb.cloneCell(field, '+ method(type): type'));
 			
 			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class'); 
+		}),
+		this.addEntry('uml static class section subsection', function()
+		{
+			var cell = new mxCell('Section', new mxGeometry(0, 0, 140, 110),
+		    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
+			cell.vertex = true;
+			cell.insert(field.clone());
+			cell.insert(field.clone());
+			cell.insert(field.clone());
+			
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Section');
+		}),
+		this.addEntry('er entity table', function()
+		{
+			var cell = new mxCell('Table', new mxGeometry(0, 0, 160, 110),
+		    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#e0e0e0;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
+			cell.vertex = true;
+			cell.insert(sb.cloneCell(field, 'Row 1'));
+			cell.insert(sb.cloneCell(field, 'Row 2'));
+			cell.insert(sb.cloneCell(field, 'Row 3'));
+	
+			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Table');
 		}),
 		this.addEntry('uml static class item member method function variable field attribute label', function()
 		{
@@ -1006,75 +1029,6 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		}),
 		this.createVertexTemplateEntry('text;html=1;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];',
 			80, 26, 'Title', 'Title', null, null, 'uml static class title label'),
-		this.addEntry('uml static class section subsection', function()
-		{
-			var cell = new mxCell('Section', new mxGeometry(0, 0, 140, 90),
-		    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
-			cell.vertex = true;
-			cell.insert(field.clone());
-			cell.insert(divider.clone());
-			cell.insert(sb.cloneCell(field, '+ method(type): type'));
-			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Section');
-		}),
-		this.addEntry('er entity table', function()
-		{
-			var cell = new mxCell('Table', new mxGeometry(0, 0, 160, 106),
-		    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#e0e0e0;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
-			cell.vertex = true;
-			cell.insert(sb.cloneCell(field, 'Row 1'));
-			cell.insert(sb.cloneCell(field, 'Row 2'));
-			cell.insert(sb.cloneCell(field, 'Row 3'));
-	
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Table');
-		}),
-		this.addEntry('er entity table section subsection', function()
-		{
-			var cell = new mxCell('Section', new mxGeometry(0, 0, 140, 102),
-		    	'swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=22;fillColor=none;horizontalStack=0;resizeParent=1;resizeLast=0;container=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;');
-			cell.vertex = true;
-			cell.insert(sb.cloneCell(field, 'Row 1'));
-			cell.insert(sb.cloneCell(field, 'Row 2'));
-			cell.insert(sb.cloneCell(field, 'Row 3'));
-			
-			return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Section');
-		}),
-		this.createVertexTemplateEntry('html=1;', 110, 50, 'Object', 'Object', null, null, 'uml static class object instance'),
-		this.addEntry('uml static class object instance', function()
-		{
-		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
-    			'<b>Class</b></p>' +
-				'<hr/><div style="height:2px;"></div><hr/>', new mxGeometry(0, 0, 140, 60),
-				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
-		    cell.vertex = true;
-		    
-	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class 1');
-		}),
-		this.addEntry('uml static class object instance', function()
-		{
-		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
-    			'<b>Class</b></p>' +
-				'<hr/><p style="margin:0px;margin-left:4px;">+ field: Type</p><hr/>' +
-				'<p style="margin:0px;margin-left:4px;">+ method(): Type</p>', new mxGeometry(0, 0, 160, 90),
-				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
-		    cell.vertex = true;
-	    	
-	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Class 2');
-		}),
-		this.addEntry('uml static class interface', function()
-		{
-		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
-    			'<i>&lt;&lt;Interface&gt;&gt;</i><br/><b>Interface</b></p>' +
-				'<hr/><p style="margin:0px;margin-left:4px;">+ field1: Type<br/>' +
-				'+ field2: Type</p>' +
-				'<hr/><p style="margin:0px;margin-left:4px;">' +
-				'+ method1(Type): Type<br/>' +
-				'+ method2(Type, Type): Type</p>', new mxGeometry(0, 0, 190, 140),
-				'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
-		    cell.vertex = true;
-	    	
-	    	return sb.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Interface');
-		}),
 		this.createVertexTemplateEntry('shape=component;align=left;spacingLeft=36;', 120, 60, 'Module', 'Module', null, null, 'uml static class module'),
 		this.addEntry('uml static class component', function()
 		{
@@ -2348,11 +2302,10 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		{
 			timeOnTarget = new Date().getTime() - startTime;
 		}
-		
-		// Shift means no style targets - containers are ignored to simplify the UX
-		// Style target hidden after 1.5 secs
-		if (timeOnTarget < 1500 && state != null &&
-			(graph.isContainer(state.cell) == mxEvent.isShiftDown(evt)) &&
+
+		// Shift means disabled, delayed on cells with children, hidden after 1500ms
+		if (timeOnTarget < 1500 && state != null && !mxEvent.isShiftDown(evt) &&
+			(graph.model.getChildCount(state.cell) == 0 || timeOnTarget > 500) &&
 			((graph.model.isVertex(state.cell) && firstVertex != null) ||
 			(graph.model.isEdge(state.cell) && graph.model.isEdge(cells[0]))))
 		{
@@ -2461,18 +2414,19 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			state = currentStyleTarget;
 		}
 
-		// Drop arrows shown after 300ms, hidden after 5 secs
+		var validTarget = (firstVertex == null || graph.isCellConnectable(cells[firstVertex])) &&
+			((graph.model.isEdge(cell) && firstVertex != null) ||
+			(graph.model.isVertex(cell) && graph.isCellConnectable(cell)));
+		
+		// Drop arrows shown after 300ms, hidden after 5 secs, switches arrows after 500ms
 		if ((currentTargetState != null && timeOnTarget >= 5000) ||
 			(currentTargetState != state &&
-			(bbox == null || !mxUtils.contains(bbox, x, y))))
+			(bbox == null || !mxUtils.contains(bbox, x, y) ||
+			(timeOnTarget > 500 && activeArrow == null && validTarget))))
 		{
 			activeTarget = false;
 			currentTargetState = ((timeOnTarget < 5000 && timeOnTarget > 300) || graph.model.isEdge(cell)) ? state : null;
 
-			var validTarget = (firstVertex == null || graph.isCellConnectable(cells[firstVertex])) &&
-				((graph.model.isEdge(cell) && firstVertex != null) ||
-				(graph.model.isVertex(cell) && graph.isCellConnectable(cell)));
-			
 			if (currentTargetState != null && validTarget)
 			{
 				var elts = [roundSource, roundTarget, arrowUp, arrowRight, arrowDown, arrowLeft];

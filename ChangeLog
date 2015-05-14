@@ -1,3 +1,5 @@
+- Removes old UML shapes with HTML labels in grapheditor
+- Adds timer for drop connect target switching in grapheditor
 - Adds mxCellEditor.applyValue hook [JavaScript]
 - Adds mxVertexHandler.moveLabel, resizeVertex, rotateVertex, updateLivePreview [JavaScript]
 - Adds extendcanvas.html example [JavaScript]
