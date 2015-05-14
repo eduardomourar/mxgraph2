@@ -2046,11 +2046,6 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 				if (direction == mxConstants.DIRECTION_NORTH)
 				{
 					geo2.y = geo2.y - geo.height / 2 - geo2.height / 2 - length;
-					
-					if (bbox != null)
-					{
-						geo2.x = geo2.x - bbox.x;
-					}
 				}
 				else if (direction == mxConstants.DIRECTION_EAST)
 				{
