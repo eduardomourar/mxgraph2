@@ -170,20 +170,27 @@ Graph = function(container, model, renderHint, stylesheet)
 		// Handles parts of cells when cloning the source for new connections
 		this.connectionHandler.createTargetVertex = function(evt, source)
 		{
-			var state = this.graph.view.getState(source);
-			var style = (state != null) ? state.style : this.graph.getCellStyle(source);
-	    	
-			if (mxUtils.getValue(style, 'part', false))
+			if (mxEvent.isControlDown(evt))
 			{
-		        var parent = this.graph.model.getParent(source);
-
-		        if (this.graph.model.isVertex(parent))
-		        {
-		        	source = parent;
-		        }
+				return null;
 			}
-			
-			return mxConnectionHandler.prototype.createTargetVertex.apply(this, arguments);
+			else
+			{
+				var state = this.graph.view.getState(source);
+				var style = (state != null) ? state.style : this.graph.getCellStyle(source);
+		    	
+				if (mxUtils.getValue(style, 'part', false))
+				{
+			        var parent = this.graph.model.getParent(source);
+	
+			        if (this.graph.model.isVertex(parent))
+			        {
+			        	source = parent;
+			        }
+				}
+				
+				return mxConnectionHandler.prototype.createTargetVertex.apply(this, arguments);
+			}
 		};
 		
 	    var rubberband = new mxRubberband(this);
