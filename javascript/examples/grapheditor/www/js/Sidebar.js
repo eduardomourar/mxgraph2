@@ -2060,8 +2060,35 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 					geo2.x = geo2.x - geo.width / 2 - geo2.width / 2 - length;
 				}
 				
-				// LATER: Offset to match cells without connecting edge with
-				// graph.getBoundingBoxFromGeometry(remove(targets, target))
+				// Adds offset to match cells without connecting edge
+				if (graph.model.isEdge(target) && geo2.getTerminalPoint(true) != null && target.getTerminal(false) != null)
+				{
+					var targetGeo = graph.getCellGeometry(target.getTerminal(false));
+					
+					if (targetGeo != null)
+					{
+						if (direction == mxConstants.DIRECTION_NORTH)
+						{
+							geo2.x -= targetGeo.getCenterX();
+							geo2.y -= targetGeo.getCenterY() + targetGeo.height / 2;
+						}
+						else if (direction == mxConstants.DIRECTION_EAST)
+						{
+							geo2.x -= targetGeo.getCenterX() - targetGeo.width / 2;
+							geo2.y -= targetGeo.getCenterY();
+						}
+						else if (direction == mxConstants.DIRECTION_SOUTH)
+						{
+							geo2.x -= targetGeo.getCenterX();
+							geo2.y -= targetGeo.getCenterY() - targetGeo.height / 2;
+						}
+						else if (direction == mxConstants.DIRECTION_WEST)
+						{
+							geo2.x -= targetGeo.getCenterX() + targetGeo.width / 2;
+							geo2.y -= targetGeo.getCenterY();
+						}
+					}
+				}
 			}
 		}
 	}
