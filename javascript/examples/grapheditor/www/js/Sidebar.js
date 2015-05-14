@@ -1840,7 +1840,7 @@ Sidebar.prototype.createDragPreview = function(width, height)
  */
 Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCellIndex)
 {
-	var geo = this.getDropAndConnectGeometry(source, targets[dropCellIndex], direction, targets.length > 1);
+	var geo = this.getDropAndConnectGeometry(source, targets[dropCellIndex], direction, targets);
 	
 	if (geo != null)
 	{
@@ -1864,6 +1864,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			{
 				var layout = graph.layoutManager.getLayout(targetParent);
 			
+				// LATER: Use parent of parent if valid layout
 				if (layout != null && layout.constructor == mxStackLayout)
 				{
 					validLayout = false;
@@ -1873,25 +1874,24 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 					// Offsets by parent position
 					if (tmp != null)
 					{
+						var offset = new mxPoint((tmp.x / graph.view.scale - graph.view.translate.x),
+								(tmp.y / graph.view.scale - graph.view.translate.y));
+						geo.x += offset.x;
+						geo.y += offset.y;
 						var pt = geo.getTerminalPoint(false);
 						
 						if (pt != null)
 						{
-							pt.x += (tmp.x / graph.view.scale - graph.view.translate.x);
-							pt.y += (tmp.y / graph.view.scale - graph.view.translate.y);
-						}
-						else
-						{
-							geo.x += (tmp.x / graph.view.scale - graph.view.translate.x);
-							geo.y += (tmp.y / graph.view.scale - graph.view.translate.y);
+							pt.x += offset.x;
+							pt.y += offset.y;
 						}
 					}
 				}
 			}
 			
-			targets = graph.importCells(targets, (geo.x - (validLayout ? geo2.x : 0)),
-					(geo.y - (validLayout ? geo2.y : 0)), (graph.model.isEdge(source) ||
-					(sourceGeo != null && !sourceGeo.relative && validLayout)) ? targetParent : null);
+			var useParent = graph.model.isEdge(source) || (sourceGeo != null && !sourceGeo.relative && validLayout);
+			targets = graph.importCells(targets, (geo.x - (useParent ? geo2.x : 0)),
+					(geo.y - (useParent ? geo2.y : 0)), (useParent) ? targetParent : null);
 			tmp = targets;
 			
 			if (graph.model.isEdge(source))
@@ -1904,9 +1904,21 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			{
 				// Adds new outgoing connection to vertex and clears points
 				graph.model.setTerminal(targets[dropCellIndex], source, true);
-				geo2 = graph.getCellGeometry(targets[dropCellIndex]);
-				geo2.setTerminalPoint(geo.getTerminalPoint(false), false);
-				geo2.points = null;
+				var geo3 = graph.getCellGeometry(targets[dropCellIndex]);
+				geo3.points = null;
+				
+				if (geo3.getTerminalPoint(false) != null)
+				{
+					geo3.setTerminalPoint(geo.getTerminalPoint(false), false);
+				}
+				else if (useParent && graph.model.isVertex(targetParent))
+				{
+					// Adds parent offset to other nodes
+					var tmp = graph.view.getState(targetParent);
+					var offset = new mxPoint((tmp.x / graph.view.scale - graph.view.translate.x),
+							(tmp.y / graph.view.scale - graph.view.translate.y));
+					graph.cellsMoved(targets, offset.x, offset.y, null, null, true);
+				}
 			}
 			else
 			{
@@ -1919,7 +1931,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				graph.cellsMoved(targets, dx, dy, null, null, true);
 				tmp = targets.slice();
 				targets.push(graph.insertEdge(null, null, '', source, targets[dropCellIndex],
-						this.editorUi.createCurrentEdgeStyle()));
+					this.editorUi.createCurrentEdgeStyle()));
 			}
 			
 			graph.fireEvent(new mxEventObject('cellsInserted', 'cells', targets));
@@ -1936,10 +1948,11 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 /**
  * Creates a drag source for the given element.
  */
-Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction, keepSize)
+Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction, targets)
 {
 	var graph = this.editorUi.editor.graph;
 	var view = graph.view;
+	var keepSize = targets.length > 1;
 	var geo = graph.getCellGeometry(source);
 	var geo2 = graph.getCellGeometry(target);
 	
@@ -2026,13 +2039,18 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 					geo2.width = geo2.width * (geo.height / geo2.height);
 					geo2.height = geo.height;
 				}
-				
+
 				geo2.x = geo.x + geo.width / 2 - geo2.width / 2;
 				geo2.y = geo.y + geo.height / 2 - geo2.height / 2;
-				
+
 				if (direction == mxConstants.DIRECTION_NORTH)
 				{
 					geo2.y = geo2.y - geo.height / 2 - geo2.height / 2 - length;
+					
+					if (bbox != null)
+					{
+						geo2.x = geo2.x - bbox.x;
+					}
 				}
 				else if (direction == mxConstants.DIRECTION_EAST)
 				{
@@ -2046,6 +2064,9 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 				{
 					geo2.x = geo2.x - geo.width / 2 - geo2.width / 2 - length;
 				}
+				
+				// LATER: Offset to match cells without connecting edge with
+				// graph.getBoundingBoxFromGeometry(remove(targets, target))
 			}
 		}
 	}
@@ -2242,7 +2263,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				var graph = sidebar.editorUi.editor.graph;
 				var view = graph.view;
 				var index = (graph.model.isEdge(currentTargetState.cell) || freeSourceEdge == null) ? firstVertex : freeSourceEdge;
-				var geo = sidebar.getDropAndConnectGeometry(currentTargetState.cell, cells[index], direction, cells.length > 1);
+				var geo = sidebar.getDropAndConnectGeometry(currentTargetState.cell, cells[index], direction, cells);
 				var geo2 = (!graph.model.isEdge(currentTargetState.cell)) ? graph.getCellGeometry(currentTargetState.cell) : null;
 				var geo3 = graph.getCellGeometry(cells[index]);
 				var parent = graph.model.getParent(currentTargetState.cell);
