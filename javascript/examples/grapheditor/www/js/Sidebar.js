@@ -1914,9 +1914,9 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				else if (useParent && graph.model.isVertex(targetParent))
 				{
 					// Adds parent offset to other nodes
-					var tmp = graph.view.getState(targetParent);
-					var offset = new mxPoint((tmp.x / graph.view.scale - graph.view.translate.x),
-							(tmp.y / graph.view.scale - graph.view.translate.y));
+					var tmpState = graph.view.getState(targetParent);
+					var offset = new mxPoint((tmpState.x / graph.view.scale - graph.view.translate.x),
+							(tmpState.y / graph.view.scale - graph.view.translate.y));
 					graph.cellsMoved(targets, offset.x, offset.y, null, null, true);
 				}
 			}
