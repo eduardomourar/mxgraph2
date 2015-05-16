@@ -430,7 +430,8 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 		var dict = new mxDictionary();
 		var max = (page + 1) * count;
 		var results = [];
-
+		var count = 0;
+		
 		for (var i = 0; i < tmp.length; i++)
 		{
 			if (tmp[i].length > 0)
@@ -445,7 +446,7 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 					{
 						var entry = arr[j];
 	
-						if ((i == 0) == (dict.get(entry) == null) &&
+						if ((count == 0) == (dict.get(entry) == null) &&
 							tmpDict.get(entry) == null)
 						{
 							tmpDict.put(entry, entry);
@@ -460,9 +461,10 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 						}
 					}
 				}
+				
+				count++;
+				dict = tmpDict;
 			}
-			
-			dict = tmpDict;
 		}
 		
 		var len = results.length;
