@@ -1891,9 +1891,19 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				}
 			}
 			
+			var dx = geo2.x;
+			var dy = geo2.y;
+			
+			// Ignores geometry of edges
+			if (graph.model.isEdge(targets[dropCellIndex]))
+			{
+				dx = 0;
+				dy = 0;
+			}
+			
 			var useParent = graph.model.isEdge(source) || (sourceGeo != null && !sourceGeo.relative && validLayout);
-			targets = graph.importCells(targets, (geo.x - (useParent ? geo2.x : 0)),
-					(geo.y - (useParent ? geo2.y : 0)), (useParent) ? targetParent : null);
+			targets = graph.importCells(targets, (geo.x - (useParent ? dx : 0)),
+					(geo.y - (useParent ? dy : 0)), (useParent) ? targetParent : null);
 			tmp = targets;
 			
 			if (graph.model.isEdge(source))
@@ -1925,8 +1935,8 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			else
 			{
 				geo2 = graph.getCellGeometry(targets[dropCellIndex]);
-				var dx = geo.x - Math.round(geo2.x);
-				var dy = geo.y - Math.round(geo2.y);
+				dx = geo.x - Math.round(geo2.x);
+				dy = geo.y - Math.round(geo2.y);
 				geo.x = Math.round(geo2.x);
 				geo.y = Math.round(geo2.y);
 				graph.model.setGeometry(targets[dropCellIndex], geo);
@@ -1961,7 +1971,7 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 	if (geo != null && geo2 != null)
 	{
 		geo2 = geo2.clone();
-	
+
 		if (graph.model.isEdge(source))
 		{
 			var state = graph.view.getState(source);
@@ -2041,7 +2051,7 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 					geo2.width = geo2.width * (geo.height / geo2.height);
 					geo2.height = geo.height;
 				}
-
+	
 				geo2.x = geo.x + geo.width / 2 - geo2.width / 2;
 				geo2.y = geo.y + geo.height / 2 - geo2.height / 2;
 
@@ -2301,9 +2311,19 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 					dy = pState.y;
 				}
 				
+				var dx2 = geo3.x;
+				var dy2 = geo3.y;
+				
+				// Ignores geometry of edges
+				if (graph.model.isEdge(cells[index]))
+				{
+					dx2 = 0;
+					dy2 = 0;
+				}
+				
 				// Shows preview at drop location
-				this.previewElement.style.left = ((geo.x - geo3.x) * view.scale + dx) + 'px';
-				this.previewElement.style.top = ((geo.y - geo3.y) * view.scale + dy) + 'px';
+				this.previewElement.style.left = ((geo.x - dx2) * view.scale + dx) + 'px';
+				this.previewElement.style.top = ((geo.y - dy2) * view.scale + dy) + 'px';
 				
 				if (cells.length == 1)
 				{
