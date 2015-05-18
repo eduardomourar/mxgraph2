@@ -1,3 +1,4 @@
+- Adds binary, timeout args in mxUtils.get, mxXmlRequest.send
 - Fixes composite drop connect offset in grapheditor
 - Removes old UML shapes with HTML labels in grapheditor
 - Adds timer for drop connect target switching in grapheditor
