@@ -1,3 +1,5 @@
+- Adds mxCodec.elements, addElement to cache mxCodec.getElementById [JavaScript]
+- Fixes document.getElementById in mxCodec.getElementById [JavaScript]
 - Fixes moving and selection for parts and groups in grapheditor
 - Adds binary, timeout args in mxUtils.get, mxXmlRequest.send
 - Fixes composite drop connect offset in grapheditor
