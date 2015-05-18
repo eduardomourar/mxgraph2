@@ -1,3 +1,4 @@
+- Fixes moving and selection for parts and groups in grapheditor
 - Adds binary, timeout args in mxUtils.get, mxXmlRequest.send
 - Fixes composite drop connect offset in grapheditor
 - Removes old UML shapes with HTML labels in grapheditor

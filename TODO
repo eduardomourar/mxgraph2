@@ -1,3 +1,4 @@
+- Check NPE for mxRefCount in mxShape.destroyCanvas
 - Fix DOM reorder after move in scrollbars.html (folding icon)
 
 - Fix middle/center in secondlabel.html example for wrap with no FO

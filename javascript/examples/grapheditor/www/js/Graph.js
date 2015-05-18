@@ -143,10 +143,12 @@ Graph = function(container, model, renderHint, stylesheet)
 		};
 		
 		// Handles parts of cells by checking if part=1 is in the style and returning the parent
+		// if the parent is not already in the list of cells
 		// LATER: Handle recursive parts
 		this.graphHandler.getCells = function(initialCell)
 		{
 		    var cells = mxGraphHandler.prototype.getCells.apply(this, arguments);
+		    var newCells = [];
 
 		    for (var i = 0; i < cells.length; i++)
 		    {
@@ -157,14 +159,18 @@ Graph = function(container, model, renderHint, stylesheet)
 				{
 			        var parent = this.graph.model.getParent(cells[i]);
 		
-			        if (this.graph.model.isVertex(parent))
+			        if (this.graph.model.isVertex(parent) && mxUtils.indexOf(cells, parent) < 0)
 			        {
-			            cells[i] = parent;
+			            newCells.push(parent);
 			        }
+				}
+				else
+				{
+					newCells.push(cells[i]);
 				}
 		    }
 
-		    return cells;
+		    return newCells;
 		};
 		
 		// Handles parts of cells when cloning the source for new connections
