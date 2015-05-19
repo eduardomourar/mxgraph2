@@ -27,7 +27,7 @@
  * 
  * var onerror = function(req)
  * {
- *   mxUtils.alert(req.getStatus());
+ *   mxUtils.alert('Error');
  * }
  * new mxXmlRequest(url, 'key=value').send(onload, onerror);
  * (end)
