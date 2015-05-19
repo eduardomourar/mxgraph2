@@ -993,6 +993,7 @@ EditorUi.prototype.initCanvas = function()
 				var s = graph.view.scale;
 				
 				// Normalizes the bounds
+				b = mxRectangle.fromRectangle(b);
 				b.x = b.x / s - tr.x;
 				b.y = b.y / s - tr.y;
 				b.width /= s;
