@@ -861,16 +861,20 @@ EditorUi.prototype.initClipboard = function()
 	var mxClipboardPaste = mxClipboard.paste;
 	mxClipboard.paste = function(graph)
 	{
+		var result = null;
+		
 		if (graph.cellEditor.isContentEditing())
 		{
 			document.execCommand('paste', false, null);
 		}
 		else
 		{
-			mxClipboardPaste.apply(this, arguments);
+			result = mxClipboardPaste.apply(this, arguments);
 		}
 		
 		updatePaste();
+		
+		return result;
 	};
 
 	// Overrides cell editor to update paste action state

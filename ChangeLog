@@ -1,3 +1,4 @@
+- Adds paste here action in contextmenu for grapheditor
 - Returns inserted cells in mxClipboard.paste [JavaScript]
 - Adds mxCodec.elements, addElement to cache mxCodec.getElementById [JavaScript]
 - Fixes document.getElementById in mxCodec.getElementById [JavaScript]
