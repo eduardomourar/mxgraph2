@@ -1051,6 +1051,7 @@ EditorUi.prototype.initCanvas = function()
 		});
 		zoomInBtn.className = 'geSprite geSprite-zoomin';
 		zoomInBtn.setAttribute('title', mxResources.get('zoomIn'));
+		zoomInBtn.style.cursor = 'pointer';
 		zoomInBtn.style.outline = 'none';
 		zoomInBtn.style.border = 'none';
 		zoomInBtn.style.margin = '2px';
@@ -1063,6 +1064,7 @@ EditorUi.prototype.initCanvas = function()
 		});
 		zoomOutBtn.className = 'geSprite geSprite-zoomout';
 		zoomOutBtn.setAttribute('title', mxResources.get('zoomOut'));
+		zoomOutBtn.style.cursor = 'pointer';
 		zoomOutBtn.style.outline = 'none';
 		zoomOutBtn.style.border = 'none';
 		zoomOutBtn.style.margin = '2px';
@@ -1074,6 +1076,7 @@ EditorUi.prototype.initCanvas = function()
 		});
 		zoomActualBtn.className = 'geSprite geSprite-actualsize';
 		zoomActualBtn.setAttribute('title', mxResources.get('actualSize'));
+		zoomActualBtn.style.cursor = 'pointer';
 		zoomActualBtn.style.outline = 'none';
 		zoomActualBtn.style.border = 'none';
 		zoomActualBtn.style.margin = '2px';
