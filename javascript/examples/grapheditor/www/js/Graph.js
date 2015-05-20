@@ -3185,6 +3185,7 @@ if (typeof mxVertexHandler != 'undefined')
 										mxEvent.consume(evt);
 									}
 									
+									this.graph.isMouseDown = false;
 									mousePoint = null;
 								}
 							})
