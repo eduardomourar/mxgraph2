@@ -445,10 +445,10 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 			if (tmp[i].length > 0)
 			{
 				var entry = this.taglist[tmp[i]];
+				var tmpDict = new mxDictionary();
 				
 				if (entry != null)
 				{
-					var tmpDict = new mxDictionary();
 					var arr = entry.entries;
 					results = [];
 
@@ -468,10 +468,6 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 								
 								return;
 							}
-						}
-						else
-						{
-							
 						}
 					}
 				}
