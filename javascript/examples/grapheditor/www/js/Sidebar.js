@@ -397,21 +397,29 @@ Sidebar.prototype.addEntry = function(tags, fn)
 	if (this.taglist != null && tags != null && tags.length > 0)
 	{
 		// Replaces special characters
-		var tmp = tags.toLowerCase().replace(/[\/\,\(\)]/, ' ').split(' ');
+		var tmp = tags.toLowerCase().replace(/[\/\,\(\)]/g, ' ').split(' ');
 
 		for (var i = 0; i < tmp.length; i++)
 		{
 			// Replaces trailing numbers and special characters
-			tmp[i] = tmp[i].replace(/[\(\)\,]/, '').replace(/\.*\d*$/, '');
+			tmp[i] = tmp[i].replace(/\.*\d*$/, '');
 			
 			if (tmp[i].length > 1)
 			{
-				if (this.taglist[tmp[i]] == null)
+				var entry = this.taglist[tmp[i]];
+				
+				if (entry == null)
 				{
-					this.taglist[tmp[i]] = [];
+					entry = {entries: [], dict: new mxDictionary()};
+					this.taglist[tmp[i]] = entry;
 				}
 				
-				this.taglist[tmp[i]].push(fn);
+				// Ignores duplicates
+				if (entry.dict.get(fn) == null)
+				{
+					entry.dict.put(fn, fn);
+					entry.entries.push(fn);
+				}
 			}
 		}
 	}
@@ -430,24 +438,26 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 		var dict = new mxDictionary();
 		var max = (page + 1) * count;
 		var results = [];
-		var count = 0;
+		var index = 0;
 		
 		for (var i = 0; i < tmp.length; i++)
 		{
 			if (tmp[i].length > 0)
 			{
-				var arr = this.taglist[tmp[i]];
-				var tmpDict = new mxDictionary();
-				results = [];
+				var entry = this.taglist[tmp[i]];
 				
-				if (arr != null)
+				if (entry != null)
 				{
+					var tmpDict = new mxDictionary();
+					var arr = entry.entries;
+					results = [];
+
 					for (var j = 0; j < arr.length; j++)
 					{
 						var entry = arr[j];
 	
-						if ((count == 0) == (dict.get(entry) == null) &&
-							tmpDict.get(entry) == null)
+						// NOTE Array does not contain duplicates
+						if ((index == 0) == (dict.get(entry) == null))
 						{
 							tmpDict.put(entry, entry);
 							results.push(entry);
@@ -459,11 +469,15 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 								return;
 							}
 						}
+						else
+						{
+							
+						}
 					}
 				}
 				
-				count++;
 				dict = tmpDict;
+				index++;
 			}
 		}
 		
