@@ -822,10 +822,12 @@ EditorUi.prototype.initClipboard = function()
 {
 	// Overrides clipboard to update paste action state
 	var paste = this.actions.get('paste');
+	var pasteHere = this.actions.get('pasteHere');
 	
 	var updatePaste = mxUtils.bind(this, function()
 	{
 		paste.setEnabled(this.editor.graph.cellEditor.isContentEditing() || !mxClipboard.isEmpty());
+		pasteHere.setEnabled(paste.isEnabled());
 	});
 	
 	var mxClipboardCut = mxClipboard.cut;
@@ -1093,6 +1095,26 @@ EditorUi.prototype.initCanvas = function()
 		tb.appendChild(zoomActualBtn);
 		
 		document.body.appendChild(tb);
+		
+		// Makes toolbar transparent on non-touch devices
+		if (!mxClient.IS_TOUCH)
+		{
+			mxEvent.addListener(tb, 'mouseenter', function(evt)
+			{
+				mxUtils.setOpacity(tb, 100);
+			});
+			
+			mxEvent.addListener(tb, 'mouseleave', function(evt)
+			{
+				mxUtils.setOpacity(tb, 20);
+			});
+			
+			mxUtils.setOpacity(tb, 20);
+		}
+		else
+		{
+			mxUtils.setOpacity(tb, 50);
+		}
 	}
 	else if (this.editor.extendCanvas)
 	{
