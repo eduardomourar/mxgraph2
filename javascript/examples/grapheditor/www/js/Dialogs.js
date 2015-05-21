@@ -1345,7 +1345,8 @@ var ExportDialog = function(editorUi)
 	row.appendChild(td);
 	
 	var backgroundInput = document.createElement('input');
-	backgroundInput.setAttribute('value', (graph.background || '#FFFFFF'));
+	var tmp = (graph.background == null || graph.background == mxConstants.NONE) ? '#ffffff' : graph.background;
+	backgroundInput.setAttribute('value', tmp);
 	backgroundInput.style.width = '80px';
 
 	var backgroundCheckbox = document.createElement('input');
@@ -1606,7 +1607,7 @@ var ExportDialog = function(editorUi)
 				// Requests image if request is valid
 				if (param != null && param.length <= MAX_REQUEST_SIZE && w * h < MAX_AREA)
 				{
-					var bg = '';
+					var bg = '&bg=none';
 					
 					if (backgroundInput.value != '' && backgroundInput.value != mxConstants.NONE &&
 						(format != 'png' || !backgroundCheckbox.checked))
