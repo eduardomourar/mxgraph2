@@ -2712,7 +2712,7 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells)
  */
 Sidebar.prototype.createVertexTemplateEntry = function(style, width, height, value, title, showLabel, showTitle, tags)
 {
-	tags = (tags != null) ? tags : title.toLowerCase();
+	tags = (tags != null && tags.length > 0) ? tags : title.toLowerCase();
 	
 	return this.addEntry(tags, mxUtils.bind(this, function()
  	{
@@ -2744,7 +2744,7 @@ Sidebar.prototype.createVertexTemplateFromCells = function(cells, width, height,
  */
 Sidebar.prototype.createEdgeTemplateEntry = function(style, width, height, value, title, showLabel, tags)
 {
-	tags = (tags != null) ? tags : title.toLowerCase();
+	tags = (tags != null && tags.length > 0) ? tags : title.toLowerCase();
 	
  	return this.addEntry(tags, mxUtils.bind(this, function()
  	{
