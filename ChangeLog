@@ -1,3 +1,4 @@
+- Fixes rectangle rendering for small, divider-less swimlanes [JavaScript]
 - Fixes paste here menu for chromeless mode in grapheditor
 - Makes toolbar for chromeless mode transparent in grapheditor
 
