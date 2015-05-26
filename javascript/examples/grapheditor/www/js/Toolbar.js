@@ -32,7 +32,12 @@ Toolbar.prototype.unselectedBackground = 'none';
  */
 Toolbar.prototype.init = function()
 {
-	this.addItems(['undo', 'redo', 'delete', '-', 'actualSize', 'zoomIn', 'zoomOut', '-']);
+	var elts = this.addItems(['undo', 'redo', 'delete', '-', 'actualSize', 'zoomIn', 'zoomOut', '-']);
+	
+	// Adds hints to tooltips
+	elts[5].setAttribute('title', mxResources.get('zoomIn') + ' (Alt+Scroll)');
+	elts[6].setAttribute('title', mxResources.get('zoomOut') + ' (Alt+Scroll)');
+
 	this.fontMenu = this.addMenu(Menus.prototype.defaultFont, mxResources.get('fontFamily'), true, 'fontFamily');
 	this.fontMenu.style.whiteSpace = 'nowrap';
 	this.fontMenu.style.overflow = 'hidden';

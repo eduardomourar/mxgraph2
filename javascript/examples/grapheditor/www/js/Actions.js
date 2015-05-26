@@ -422,11 +422,11 @@ Actions.prototype.init = function()
 	this.addAction('zoomIn', function()
 	{
 		graph.fastZoom(graph.zoomFactor);
-	}, null, null, 'Ctrl +');
+	}, null, null, 'Ctrl + / Alt+Scroll');
 	this.addAction('zoomOut', function()
 	{
 		graph.fastZoom(1 / graph.zoomFactor);
-	}, null, null, 'Ctrl -');
+	}, null, null, 'Ctrl - / Alt+Scroll');
 	this.addAction('fitWindow', function() { graph.fit(); }, null, null, 'Ctrl+1');
 	this.addAction('fitPage', mxUtils.bind(this, function()
 	{
