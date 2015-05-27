@@ -1,3 +1,6 @@
+- Adds clipping for labels with overflow=fill [JavaScript]
+- Fixes text size for overflow=fill in mxSvg-/VmlCanvas, mxText [JavaScript]
+- Sets value for mxSvgCanvas2D.lineHeightCorrection to 1 [JavaScript]
 - Safeguards capability check, fixes offsets in mxSvgCanvas2D [JavaScript]
 - Fixes handling of clicks on folding icon on iOS [JavaScript]
 - Fixes rectangle rendering for small, divider-less swimlanes [JavaScript]

@@ -226,9 +226,9 @@ mxSvgCanvas2D.prototype.blockImagePointerEvents = false;
 /**
  * Variable: lineHeightCorrection
  * 
- * Correction factor for <mxConstants.LINE_HEIGHT> in HTML output. Default is 1.05.
+ * Correction factor for <mxConstants.LINE_HEIGHT> in HTML output. Default is 1.
  */
-mxSvgCanvas2D.prototype.lineHeightCorrection = 1.05;
+mxSvgCanvas2D.prototype.lineHeightCorrection = 1;
 
 /**
  * Variable: pointerEventsValue
@@ -1243,7 +1243,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			}
 			else if (overflow == 'fill')
 			{
-				style += 'width:' + Math.round(w) + 'px;height:' + Math.round(h) + 'px;';
+				style += 'width:' + Math.round(w) + 'px;height:' + Math.round(h) + 'px;overflow:hidden;';
 			}
 			else if (overflow == 'width')
 			{
@@ -1433,7 +1433,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				ow = tmp + padX;
 
 				// Recomputes the height of the element for wrapped width
-				if (wrap)
+				if (wrap && overflow != 'fill')
 				{
 					if (clip)
 					{
