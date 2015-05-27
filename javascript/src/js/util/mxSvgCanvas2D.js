@@ -150,8 +150,15 @@ mxUtils.extend(mxSvgCanvas2D, mxAbstractCanvas2D);
 	{
 		// Checks using a generic test text if the parsing actually works. This is a workaround
 		// for older browsers where the capability check returns true but the parsing fails.
-		var doc = new DOMParser().parseFromString('test text', 'text/html');
-		mxSvgCanvas2D.prototype.useDomParser = doc != null;
+		try
+		{
+			var doc = new DOMParser().parseFromString('test text', 'text/html');
+			mxSvgCanvas2D.prototype.useDomParser = doc != null;
+		}
+		catch (e)
+		{
+			mxSvgCanvas2D.prototype.useDomParser = false;
+		}
 	}
 })();
 
@@ -1500,6 +1507,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			// Workaround for rendering offsets
 			// TODO: Check if export needs these fixes, too
 			//if (this.root.ownerDocument == document)
+			if (overflow != 'fill')
 			{
 				if (!mxClient.IS_OP && mxClient.IS_GC && mxClient.IS_MAC)
 				{

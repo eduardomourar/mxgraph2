@@ -1,3 +1,4 @@
+- Safeguards capability check, fixes offsets in mxSvgCanvas2D [JavaScript]
 - Fixes handling of clicks on folding icon on iOS [JavaScript]
 - Fixes rectangle rendering for small, divider-less swimlanes [JavaScript]
 - Fixes paste here menu for chromeless mode in grapheditor
