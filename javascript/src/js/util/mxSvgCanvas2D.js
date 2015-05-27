@@ -1507,16 +1507,9 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			// Workaround for rendering offsets
 			// TODO: Check if export needs these fixes, too
 			//if (this.root.ownerDocument == document)
-			if (overflow != 'fill')
+			if (overflow != 'fill' && mxClient.IS_FF && mxClient.IS_WIN)
 			{
-				if (!mxClient.IS_OP && mxClient.IS_GC && mxClient.IS_MAC)
-				{
-					dy += 1;
-				}
-				else if (mxClient.IS_FF && mxClient.IS_WIN)
-				{
-					dy -= 1;
-				}
+				dy -= 2;
 			}
 			
 			y += dy;
