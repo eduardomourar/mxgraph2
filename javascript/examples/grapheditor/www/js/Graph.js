@@ -143,7 +143,8 @@ Graph = function(container, model, renderHint, stylesheet)
 		};
 		
 		// Handles parts of cells by checking if part=1 is in the style and returning the parent
-		// if the parent is not already in the list of cells
+		// if the parent is not already in the list of cells. container style is used to disable
+		// step into swimlanes and dropTarget style is used to disable acting as a drop target.
 		// LATER: Handle recursive parts
 		this.graphHandler.getCells = function(initialCell)
 		{
@@ -1007,8 +1008,9 @@ if (typeof mxVertexHandler != 'undefined')
 		var state = this.view.getState(cell);
 		var style = (state != null) ? state.style : this.getCellStyle(cell);
 	
-		return mxUtils.getValue(style, 'part', '0') != '1' &&
-			(this.isContainer(cell) || mxGraph.prototype.isValidDropTarget.apply(this, arguments));
+		return mxUtils.getValue(style, 'part', '0') != '1' && (this.isContainer(cell) ||
+			(mxGraph.prototype.isValidDropTarget.apply(this, arguments) &&
+			mxUtils.getValue(style, 'dropTarget', '1') != '0'));
 	};
 
 	/**

@@ -1481,6 +1481,51 @@
 
 	mxCellRenderer.prototype.defaultShapes['sumEllipse'] = SumEllipseShape;
 
+	// SortShape
+	function SortShape()
+	{
+		mxRhombus.call(this);
+	};
+	mxUtils.extend(SortShape, mxRhombus);
+	SortShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		mxRhombus.prototype.paintVertexShape.apply(this, arguments);
+		
+		c.setShadow(false);
+		c.begin();
+		c.moveTo(x, y + h / 2);
+		c.lineTo(x + w, y + h / 2);
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['sortShape'] = SortShape;
+
+	// CollateShape
+	function CollateShape()
+	{
+		mxEllipse.call(this);
+	};
+	mxUtils.extend(CollateShape, mxEllipse);
+	CollateShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		c.begin();
+		c.moveTo(x, y);
+		c.lineTo(x + w, y);
+		c.lineTo(x + w / 2, y + h / 2);
+		c.close();
+		c.fillAndStroke();
+		
+		c.begin();
+		c.moveTo(x, y + h);
+		c.lineTo(x + w, y + h);
+		c.lineTo(x + w / 2, y + h / 2);
+		c.close();
+		c.fillAndStroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['collate'] = CollateShape;
+
 	// LineEllipseShape
 	function LineEllipseShape()
 	{
