@@ -118,7 +118,8 @@ var mxEdgeStyle =
 		{
 			var constraint = mxUtils.getPortConstraints(source, state, true, mxConstants.DIRECTION_MASK_NONE);
 			
-			if (constraint != mxConstants.DIRECTION_MASK_NONE)
+			if (constraint != mxConstants.DIRECTION_MASK_NONE && constraint != mxConstants.DIRECTION_MASK_WEST +
+				mxConstants.DIRECTION_MASK_EAST)
 			{
 				isSourceLeft = constraint == mxConstants.DIRECTION_MASK_WEST;
 			}
@@ -152,8 +153,9 @@ var mxEdgeStyle =
 		else if (target != null)
 	 	{
 			var constraint = mxUtils.getPortConstraints(target, state, false, mxConstants.DIRECTION_MASK_NONE);
-			
-			if (constraint != mxConstants.DIRECTION_MASK_NONE)
+
+			if (constraint != mxConstants.DIRECTION_MASK_NONE && constraint != mxConstants.DIRECTION_MASK_WEST +
+				mxConstants.DIRECTION_MASK_EAST)
 			{
 				isTargetLeft = constraint == mxConstants.DIRECTION_MASK_WEST;
 			}

@@ -1,3 +1,4 @@
+- Fixes handling of direction mask in ER edge style [JavaScript]
 - Adds collate and sort shape, schema rows in grapheditor
 - Drop on lifelines replaces participant shape in grapheditor
 - Adds support for dropTarget style in grapheditor
