@@ -8590,7 +8590,7 @@ mxGraph.prototype.getTooltip = function(state, node, x, y)
 			node.parentNode == state.control.node))
 		{
 			tip = this.collapseExpandResource;
-			tip = mxResources.get(tip) || tip;
+			tip = mxUtils.htmlEntities(mxResources.get(tip) || tip).replace(/\\n/g, '<br>');
 		}
 
 		if (tip == null && state.overlays != null)
