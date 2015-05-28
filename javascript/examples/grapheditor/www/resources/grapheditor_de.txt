@@ -50,6 +50,7 @@ clearDefaultStyle=Standardstyle löschen
 clearWaypoints=Wegpunkte löschen
 clipart=Clipart
 collapse=Einklappen
+collapseExpand=Ein-/Ausklappen
 collapsible=Einklappbar
 connect=Verbinden
 connection=Verbindung
