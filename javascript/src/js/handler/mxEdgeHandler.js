@@ -494,7 +494,13 @@ mxEdgeHandler.prototype.createMarker = function()
 				cell = null;
 			}
 		}
-
+		
+		// Uses first connectable ancestor
+		while (cell != null && !this.graph.isCellConnectable(cell))
+		{
+			cell = this.graph.getModel().getParent(cell);
+		}
+		
 		var model = self.graph.getModel();
 		
 		if ((this.graph.isSwimlane(cell) && this.graph.hitsSwimlaneContent(cell, point.x, point.y)) ||
