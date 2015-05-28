@@ -1086,22 +1086,22 @@ var mxEdgeStyle =
 			{
 				constraint[i][0] = (currentTerm.x - geo[i][0]) / geo[i][2];
 
-				if (constraint[i][0] < 0.01)
+				if (constraint[i][0] < 0.04)
 				{
 					dir[i] = mxConstants.DIRECTION_MASK_WEST;
 				}
-				else if (constraint[i][0] > 0.99)
+				else if (constraint[i][0] > 0.96)
 				{
 					dir[i] = mxConstants.DIRECTION_MASK_EAST;
 				}
 
 				constraint[i][1] = (currentTerm.y - geo[i][1]) / geo[i][3];
 
-				if (constraint[i][1] < 0.01)
+				if (constraint[i][1] < 0.04)
 				{
 					dir[i] = mxConstants.DIRECTION_MASK_NORTH;
 				}
-				else if (constraint[i][1] > 0.99)
+				else if (constraint[i][1] > 0.96)
 				{
 					dir[i] = mxConstants.DIRECTION_MASK_SOUTH;
 				}
@@ -1201,6 +1201,7 @@ var mxEdgeStyle =
 				preferredOrderSet = true;
 			}
 		}
+		
 		if (preferredVertDist > scaledOrthBuffer * 2 && !preferredOrderSet)
 		{
 			prefOrdering[0][0] = vertPref[0];
@@ -1210,6 +1211,7 @@ var mxEdgeStyle =
 			preferredOrderSet = true;
 
 		}
+		
 		if (preferredHorizDist > scaledOrthBuffer * 2 && !preferredOrderSet)
 		{
 			prefOrdering[0][0] = horPref[0];
@@ -1244,10 +1246,12 @@ var mxEdgeStyle =
 			{
 				dirPref[i] = dirPref[i] << 8;
 			}
+			
 			if ((dirPref[i] & 0xF00) == 0)
 			{
 				dirPref[i] = (dirPref[i] & 0xF) | dirPref[i] >> 8;
 			}
+			
 			if ((dirPref[i] & 0xF0000) == 0)
 			{
 				dirPref[i] = (dirPref[i] & 0xFFFF)
@@ -1280,6 +1284,7 @@ var mxEdgeStyle =
 		{
 			sourceIndex += 4;
 		}
+		
 		if (targetIndex < 1)
 		{
 			targetIndex += 4;
