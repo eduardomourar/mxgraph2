@@ -102,6 +102,22 @@ EditorUi = function(editor, container)
 
 	// Contains the main graph instance inside the given panel
 	graph.init(this.diagramContainer);
+	
+	// Adds tooltip when mouse is over scrollbars to show right-click pan option
+	mxEvent.addListener(this.diagramContainer, 'mousemove', mxUtils.bind(this, function(evt)
+	{
+		var off = mxUtils.getOffset(this.diagramContainer);
+		
+		if (mxEvent.getClientX(evt) - off.x - this.diagramContainer.clientWidth > 0 ||
+			mxEvent.getClientY(evt) - off.y - this.diagramContainer.clientHeight > 0)
+		{
+			this.diagramContainer.setAttribute('title', mxResources.get('panTooltip'));
+		}
+		else
+		{
+			this.diagramContainer.removeAttribute('title');
+		}
+	}));
 
 	var textMode = false;
 	var nodes = null;

@@ -197,6 +197,7 @@ pages=Pages
 pageView=Page view
 pageScale=Page scale
 pageSetup=Page setup
+panTooltip=Rightclick and drag to scroll
 paperSize=Paper size
 paste=Paste
 pasteHere=Paste here

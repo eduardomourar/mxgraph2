@@ -197,6 +197,7 @@ pages=Seiten
 pageView=Seitenansicht
 pageScale=Seitenskalierung
 pageSetup=Seite einrichten
+panTooltip=Rechtsklick und ziehen um zu scrollen
 paperSize=Papiergrösse
 paste=Einfügen
 pasteHere=Hier einfügen
