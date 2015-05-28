@@ -869,7 +869,7 @@
 		{
 			var ctor = this.state.view.graph.cellRenderer.getShape(participant);
 			
-			if (ctor != null)
+			if (ctor != null && ctor != UmlLifeline)
 			{
 				var shape = new ctor();
 				shape.apply(this.state);
