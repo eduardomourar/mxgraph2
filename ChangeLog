@@ -1,3 +1,4 @@
+- Fixes moved edges labels when zoom is changed in mxGraphView.getPoint [JavaScript]
 - Disables HTML in collapse/expand tooltip [JavaScript]
 - Uses first connectable ancestor in mxConnectionHandler, mxEdgeHandler, mxConstraintHandler [JavaScript]
 - Fixes handling of direction mask in ER edge style [JavaScript]

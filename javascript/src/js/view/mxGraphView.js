@@ -1934,12 +1934,12 @@ mxGraphView.prototype.getPoint = function(state, geometry)
 	{
 		var gx = (geometry != null) ? geometry.x / 2 : 0;
 		var pointCount = state.absolutePoints.length;
-		var dist = (gx + 0.5) * state.length;
+		var dist = Math.round((gx + 0.5) * state.length);
 		var segment = state.segments[0];
 		var length = 0;				
 		var index = 1;
 
-		while (dist > length + segment && index < pointCount-1)
+		while (dist >= Math.round(length + segment) && index < pointCount - 1)
 		{
 			length += segment;
 			segment = state.segments[index++];
