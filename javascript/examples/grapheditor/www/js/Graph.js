@@ -173,7 +173,7 @@ Graph = function(container, model, renderHint, stylesheet)
 
 		    return newCells;
 		};
-		
+
 		// Handles parts of cells when cloning the source for new connections
 		this.connectionHandler.createTargetVertex = function(evt, source)
 		{
@@ -3183,7 +3183,27 @@ if (typeof mxVertexHandler != 'undefined')
 									
 									if (Math.abs(pt.x - mousePoint.x) < tol && Math.abs(pt.y - mousePoint.y) < tol)
 									{
-										this.graph.setSelectionCells(this.graph.duplicateCells([this.state.cell], false));
+										this.graph.model.beginUpdate();
+										try
+										{
+											var dup = this.graph.duplicateCells([this.state.cell], false)[0];
+											this.graph.setSelectionCell(dup);
+
+											if (mxEvent.isShiftDown(evt))
+											{
+												var geo = this.graph.getCellGeometry(dup);
+												geo.x = this.state.cell.geometry.x + this.state.cell.geometry.width + 80;
+												geo.y = this.state.cell.geometry.y;
+												
+												// TODO: Apply editorUi.createCurrentEdgeStyle()
+												this.graph.insertEdge(null, null, '', this.state.cell, dup);
+											}
+										}
+										finally
+										{
+											this.graph.model.endUpdate();
+										}
+										
 										mxEvent.consume(evt);
 									}
 									

@@ -1526,6 +1526,41 @@
 
 	mxCellRenderer.prototype.defaultShapes['collate'] = CollateShape;
 
+	// DimensionShape
+	function DimensionShape()
+	{
+		mxEllipse.call(this);
+	};
+	mxUtils.extend(DimensionShape, mxEllipse);
+	DimensionShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		// Arrow size
+		var al = 10;
+		var cy = y + h - al / 2;
+		
+		c.begin();
+		c.moveTo(x, y);
+		c.lineTo(x, y + h);
+		c.moveTo(x, cy);
+		c.lineTo(x + al, cy - al / 2);
+		c.moveTo(x, cy);
+		c.lineTo(x + al, cy + al / 2);
+		c.moveTo(x, cy);
+		c.lineTo(x + w, cy);
+
+		// Opposite side
+		c.moveTo(x + w, y);
+		c.lineTo(x + w, y + h);
+		c.moveTo(x + w, cy);
+		c.lineTo(x + w - al, cy - al / 2);
+		c.moveTo(x + w, cy);
+		c.lineTo(x + w - al, cy + al / 2);
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['dimension'] = DimensionShape;
+
 	// LineEllipseShape
 	function LineEllipseShape()
 	{

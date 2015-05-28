@@ -1331,7 +1331,7 @@ ArrangePanel.prototype.init = function()
 	this.addGeometry(this.container);
 	this.addEdgeGeometry(this.container);
 	this.container.appendChild(this.addAngle(this.createPanel()));
-	
+
 	if (!ss.containsLabel)
 	{
 		this.container.appendChild(this.addFlip(this.createPanel()));
@@ -1344,6 +1344,11 @@ ArrangePanel.prototype.init = function()
 	}
 	
 	this.container.appendChild(this.addGroupOps(this.createPanel()));
+
+	if (graph.getSelectionCount() == 1 && graph.getModel().isEdge(graph.getSelectionCell()))
+	{
+		this.container.appendChild(this.addWaypoints(this.createPanel()));
+	}
 };
 
 /**
@@ -1549,6 +1554,29 @@ ArrangePanel.prototype.addDistribute = function(div)
 	btn.style.width = '100px';
 	div.appendChild(btn);
 	
+	return div;
+};
+
+/**
+ * 
+ */
+ArrangePanel.prototype.addWaypoints = function(div)
+{
+	var ui = this.editorUi;
+	var editor = ui.editor;
+	var graph = editor.graph;
+
+	div.style.paddingTop = '10px';
+	div.style.paddingBottom = '10px';
+	
+	var btn = mxUtils.button(mxResources.get('clearWaypoints'), mxUtils.bind(this, function(evt)
+	{
+		this.editorUi.actions.get('clearWaypoints').funct();
+	}));
+	
+	btn.style.width = '202px';
+	div.appendChild(btn);
+
 	return div;
 };
 
