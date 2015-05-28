@@ -586,47 +586,50 @@ mxText.prototype.updateHtmlTransform = function()
 	// Workaround for rendering offsets
 	var dy = 0;
 	
-	if (document.documentMode >= 10 && this.valign != mxConstants.ALIGN_TOP)
+	if (this.overflow != 'fill')
 	{
-		dy += 1;
-	}
-	else if (document.documentMode == 9 && this.valign == mxConstants.ALIGN_BOTTOM)
-	{
-		dy += 1;
-	}
-	else if (mxClient.IS_MAC && !mxClient.IS_OP && mxClient.IS_GC)
-	{
-		if (mxClient.IS_MAC)
+		if (document.documentMode >= 10 && this.valign != mxConstants.ALIGN_TOP)
+		{
+			dy += 1;
+		}
+		else if (document.documentMode == 9 && this.valign == mxConstants.ALIGN_BOTTOM)
+		{
+			dy += 1;
+		}
+		else if (mxClient.IS_MAC && !mxClient.IS_OP && mxClient.IS_GC)
+		{
+			if (mxClient.IS_MAC)
+			{
+				if (this.valign == mxConstants.ALIGN_BOTTOM)
+				{
+					dy += 2;
+				}
+				else
+				{
+					dy += 1;
+				}
+			}
+			else if (this.valign == mxConstants.ALIGN_BOTTOM)
+			{
+				dy += 1;
+			}
+		}
+		else if (mxClient.IS_MAC && mxClient.IS_FF)
 		{
 			if (this.valign == mxConstants.ALIGN_BOTTOM)
 			{
 				dy += 2;
 			}
-			else
+			else if (this.valign == mxConstants.ALIGN_MIDDLE)
 			{
 				dy += 1;
 			}
 		}
-		else if (this.valign == mxConstants.ALIGN_BOTTOM)
+		else if (!mxClient.IS_MAC && (mxClient.IS_GC || mxClient.IS_FF) &&
+				this.valign == mxConstants.ALIGN_BOTTOM) // includes Opera
 		{
 			dy += 1;
 		}
-	}
-	else if (mxClient.IS_MAC && mxClient.IS_FF)
-	{
-		if (this.valign == mxConstants.ALIGN_BOTTOM)
-		{
-			dy += 2;
-		}
-		else if (this.valign == mxConstants.ALIGN_MIDDLE)
-		{
-			dy += 1;
-		}
-	}
-	else if (!mxClient.IS_MAC && (mxClient.IS_GC || mxClient.IS_FF) &&
-			this.valign == mxConstants.ALIGN_BOTTOM) // includes Opera
-	{
-		dy += 1;
 	}
 
 	style.left = Math.round(this.bounds.x) + 'px';
@@ -841,7 +844,7 @@ mxText.prototype.updateHtmlFilter = function()
 	// Workaround for rendering offsets
 	var dy = 0;
 	
-	if (mxClient.IS_QUIRKS)
+	if (this.overflow != 'fill' && mxClient.IS_QUIRKS)
 	{
 		if (this.valign == mxConstants.ALIGN_TOP)
 		{
@@ -1032,6 +1035,7 @@ mxText.prototype.updateSize = function(node, enableWrap)
 	}
 	else if (this.overflow == 'fill')
 	{
+		style.overflow = 'hidden';
 		style.width = w + 'px';
 		style.height = h + 'px';
 	}
@@ -1046,7 +1050,7 @@ mxText.prototype.updateSize = function(node, enableWrap)
 		style.whiteSpace = 'normal';
 		style.width = w + 'px';
 
-		if (enableWrap)
+		if (enableWrap && this.overflow != 'fill')
 		{
 			var sizeDiv = node;
 			
@@ -1062,7 +1066,7 @@ mxText.prototype.updateSize = function(node, enableWrap)
 				tmp = Math.min(tmp, w);
 			}
 			
-			style.width = tmp+ 'px';
+			style.width = tmp + 'px';
 		}
 	}
 	else

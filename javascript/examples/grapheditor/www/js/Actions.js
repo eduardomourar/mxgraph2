@@ -533,7 +533,7 @@ Actions.prototype.init = function()
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.tooltipHandler.isEnabled(); });
 	
-	action = this.addAction('collapse-expand', function()
+	action = this.addAction('collapseExpand', function()
 	{
 		ui.setFoldingEnabled(!graph.foldingEnabled);
 	});

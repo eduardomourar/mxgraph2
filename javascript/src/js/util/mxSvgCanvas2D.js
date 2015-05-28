@@ -150,8 +150,15 @@ mxUtils.extend(mxSvgCanvas2D, mxAbstractCanvas2D);
 	{
 		// Checks using a generic test text if the parsing actually works. This is a workaround
 		// for older browsers where the capability check returns true but the parsing fails.
-		var doc = new DOMParser().parseFromString('test text', 'text/html');
-		mxSvgCanvas2D.prototype.useDomParser = doc != null;
+		try
+		{
+			var doc = new DOMParser().parseFromString('test text', 'text/html');
+			mxSvgCanvas2D.prototype.useDomParser = doc != null;
+		}
+		catch (e)
+		{
+			mxSvgCanvas2D.prototype.useDomParser = false;
+		}
 	}
 })();
 
@@ -219,9 +226,9 @@ mxSvgCanvas2D.prototype.blockImagePointerEvents = false;
 /**
  * Variable: lineHeightCorrection
  * 
- * Correction factor for <mxConstants.LINE_HEIGHT> in HTML output. Default is 1.05.
+ * Correction factor for <mxConstants.LINE_HEIGHT> in HTML output. Default is 1.
  */
-mxSvgCanvas2D.prototype.lineHeightCorrection = 1.05;
+mxSvgCanvas2D.prototype.lineHeightCorrection = 1;
 
 /**
  * Variable: pointerEventsValue
@@ -1236,7 +1243,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			}
 			else if (overflow == 'fill')
 			{
-				style += 'width:' + Math.round(w) + 'px;height:' + Math.round(h) + 'px;';
+				style += 'width:' + Math.round(w) + 'px;height:' + Math.round(h) + 'px;overflow:hidden;';
 			}
 			else if (overflow == 'width')
 			{
@@ -1426,7 +1433,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				ow = tmp + padX;
 
 				// Recomputes the height of the element for wrapped width
-				if (wrap)
+				if (wrap && overflow != 'fill')
 				{
 					if (clip)
 					{
@@ -1500,15 +1507,9 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			// Workaround for rendering offsets
 			// TODO: Check if export needs these fixes, too
 			//if (this.root.ownerDocument == document)
+			if (overflow != 'fill' && mxClient.IS_FF && mxClient.IS_WIN)
 			{
-				if (!mxClient.IS_OP && mxClient.IS_GC && mxClient.IS_MAC)
-				{
-					dy += 1;
-				}
-				else if (mxClient.IS_FF && mxClient.IS_WIN)
-				{
-					dy -= 1;
-				}
+				dy -= 2;
 			}
 			
 			y += dy;

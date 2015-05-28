@@ -1163,8 +1163,10 @@ BaseFormatPanel.prototype.addUnitInput = function(container, unit, right, width,
 /**
  * 
  */
-BaseFormatPanel.prototype.createRelativeOption = function(label, key)
+BaseFormatPanel.prototype.createRelativeOption = function(label, key, width)
 {
+	width = (width != null) ? width : 44;
+	
 	var graph = this.editorUi.editor.graph;
 	var div = this.createPanel();
 	div.style.paddingTop = '10px';
@@ -1192,7 +1194,7 @@ BaseFormatPanel.prototype.createRelativeOption = function(label, key)
 		mxEvent.consume(evt);
 	};
 
-	var input = this.addUnitInput(div, '%', 20, 44, update, 10, -15);
+	var input = this.addUnitInput(div, '%', 20, width, update, 10, -15);
 
 	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
@@ -1331,7 +1333,7 @@ ArrangePanel.prototype.init = function()
 	this.addGeometry(this.container);
 	this.addEdgeGeometry(this.container);
 	this.container.appendChild(this.addAngle(this.createPanel()));
-	
+
 	if (!ss.containsLabel)
 	{
 		this.container.appendChild(this.addFlip(this.createPanel()));
@@ -1344,6 +1346,11 @@ ArrangePanel.prototype.init = function()
 	}
 	
 	this.container.appendChild(this.addGroupOps(this.createPanel()));
+
+	if (graph.getSelectionCount() == 1 && graph.getModel().isEdge(graph.getSelectionCell()))
+	{
+		this.container.appendChild(this.addWaypoints(this.createPanel()));
+	}
 };
 
 /**
@@ -1549,6 +1556,29 @@ ArrangePanel.prototype.addDistribute = function(div)
 	btn.style.width = '100px';
 	div.appendChild(btn);
 	
+	return div;
+};
+
+/**
+ * 
+ */
+ArrangePanel.prototype.addWaypoints = function(div)
+{
+	var ui = this.editorUi;
+	var editor = ui.editor;
+	var graph = editor.graph;
+
+	div.style.paddingTop = '10px';
+	div.style.paddingBottom = '10px';
+	
+	var btn = mxUtils.button(mxResources.get('clearWaypoints'), mxUtils.bind(this, function(evt)
+	{
+		this.editorUi.actions.get('clearWaypoints').funct();
+	}));
+	
+	btn.style.width = '202px';
+	div.appendChild(btn);
+
 	return div;
 };
 
@@ -2965,7 +2995,7 @@ StyleFormatPanel.prototype.init = function()
 	}
 
 	this.container.appendChild(this.addStroke(this.createPanel()));
-	var opacityPanel = this.createRelativeOption(mxResources.get('opacity'), mxConstants.STYLE_OPACITY);
+	var opacityPanel = this.createRelativeOption(mxResources.get('opacity'), mxConstants.STYLE_OPACITY, 41);
 	opacityPanel.style.paddingTop = '8px';
 	opacityPanel.style.paddingBottom = '8px';
 	this.container.appendChild(opacityPanel);

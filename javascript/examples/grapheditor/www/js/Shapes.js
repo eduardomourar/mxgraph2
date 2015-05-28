@@ -869,7 +869,7 @@
 		{
 			var ctor = this.state.view.graph.cellRenderer.getShape(participant);
 			
-			if (ctor != null)
+			if (ctor != null && ctor != UmlLifeline)
 			{
 				var shape = new ctor();
 				shape.apply(this.state);
@@ -1480,6 +1480,86 @@
 	};
 
 	mxCellRenderer.prototype.defaultShapes['sumEllipse'] = SumEllipseShape;
+
+	// SortShape
+	function SortShape()
+	{
+		mxRhombus.call(this);
+	};
+	mxUtils.extend(SortShape, mxRhombus);
+	SortShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		mxRhombus.prototype.paintVertexShape.apply(this, arguments);
+		
+		c.setShadow(false);
+		c.begin();
+		c.moveTo(x, y + h / 2);
+		c.lineTo(x + w, y + h / 2);
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['sortShape'] = SortShape;
+
+	// CollateShape
+	function CollateShape()
+	{
+		mxEllipse.call(this);
+	};
+	mxUtils.extend(CollateShape, mxEllipse);
+	CollateShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		c.begin();
+		c.moveTo(x, y);
+		c.lineTo(x + w, y);
+		c.lineTo(x + w / 2, y + h / 2);
+		c.close();
+		c.fillAndStroke();
+		
+		c.begin();
+		c.moveTo(x, y + h);
+		c.lineTo(x + w, y + h);
+		c.lineTo(x + w / 2, y + h / 2);
+		c.close();
+		c.fillAndStroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['collate'] = CollateShape;
+
+	// DimensionShape
+	function DimensionShape()
+	{
+		mxEllipse.call(this);
+	};
+	mxUtils.extend(DimensionShape, mxEllipse);
+	DimensionShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		// Arrow size
+		var al = 10;
+		var cy = y + h - al / 2;
+		
+		c.begin();
+		c.moveTo(x, y);
+		c.lineTo(x, y + h);
+		c.moveTo(x, cy);
+		c.lineTo(x + al, cy - al / 2);
+		c.moveTo(x, cy);
+		c.lineTo(x + al, cy + al / 2);
+		c.moveTo(x, cy);
+		c.lineTo(x + w, cy);
+
+		// Opposite side
+		c.moveTo(x + w, y);
+		c.lineTo(x + w, y + h);
+		c.moveTo(x + w, cy);
+		c.lineTo(x + w - al, cy - al / 2);
+		c.moveTo(x + w, cy);
+		c.lineTo(x + w - al, cy + al / 2);
+		c.end();
+		c.stroke();
+	};
+
+	mxCellRenderer.prototype.defaultShapes['dimension'] = DimensionShape;
 
 	// LineEllipseShape
 	function LineEllipseShape()

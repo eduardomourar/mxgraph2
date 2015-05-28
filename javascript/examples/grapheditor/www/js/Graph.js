@@ -143,7 +143,8 @@ Graph = function(container, model, renderHint, stylesheet)
 		};
 		
 		// Handles parts of cells by checking if part=1 is in the style and returning the parent
-		// if the parent is not already in the list of cells
+		// if the parent is not already in the list of cells. container style is used to disable
+		// step into swimlanes and dropTarget style is used to disable acting as a drop target.
 		// LATER: Handle recursive parts
 		this.graphHandler.getCells = function(initialCell)
 		{
@@ -172,7 +173,7 @@ Graph = function(container, model, renderHint, stylesheet)
 
 		    return newCells;
 		};
-		
+
 		// Handles parts of cells when cloning the source for new connections
 		this.connectionHandler.createTargetVertex = function(evt, source)
 		{
@@ -1007,8 +1008,9 @@ if (typeof mxVertexHandler != 'undefined')
 		var state = this.view.getState(cell);
 		var style = (state != null) ? state.style : this.getCellStyle(cell);
 	
-		return mxUtils.getValue(style, 'part', '0') != '1' &&
-			(this.isContainer(cell) || mxGraph.prototype.isValidDropTarget.apply(this, arguments));
+		return mxUtils.getValue(style, 'part', '0') != '1' && (this.isContainer(cell) ||
+			(mxGraph.prototype.isValidDropTarget.apply(this, arguments) &&
+			mxUtils.getValue(style, 'dropTarget', '1') != '0'));
 	};
 
 	/**
@@ -3181,7 +3183,27 @@ if (typeof mxVertexHandler != 'undefined')
 									
 									if (Math.abs(pt.x - mousePoint.x) < tol && Math.abs(pt.y - mousePoint.y) < tol)
 									{
-										this.graph.setSelectionCells(this.graph.duplicateCells([this.state.cell], false));
+										this.graph.model.beginUpdate();
+										try
+										{
+											var dup = this.graph.duplicateCells([this.state.cell], false)[0];
+											this.graph.setSelectionCell(dup);
+
+											if (mxEvent.isShiftDown(evt))
+											{
+												var geo = this.graph.getCellGeometry(dup);
+												geo.x = this.state.cell.geometry.x + this.state.cell.geometry.width + 80;
+												geo.y = this.state.cell.geometry.y;
+												
+												// TODO: Apply editorUi.createCurrentEdgeStyle()
+												this.graph.insertEdge(null, null, '', this.state.cell, dup);
+											}
+										}
+										finally
+										{
+											this.graph.model.endUpdate();
+										}
+										
 										mxEvent.consume(evt);
 									}
 									
