@@ -1163,8 +1163,10 @@ BaseFormatPanel.prototype.addUnitInput = function(container, unit, right, width,
 /**
  * 
  */
-BaseFormatPanel.prototype.createRelativeOption = function(label, key)
+BaseFormatPanel.prototype.createRelativeOption = function(label, key, width)
 {
+	width = (width != null) ? width : 44;
+	
 	var graph = this.editorUi.editor.graph;
 	var div = this.createPanel();
 	div.style.paddingTop = '10px';
@@ -1192,7 +1194,7 @@ BaseFormatPanel.prototype.createRelativeOption = function(label, key)
 		mxEvent.consume(evt);
 	};
 
-	var input = this.addUnitInput(div, '%', 20, 44, update, 10, -15);
+	var input = this.addUnitInput(div, '%', 20, width, update, 10, -15);
 
 	var listener = mxUtils.bind(this, function(sender, evt, force)
 	{
@@ -2993,7 +2995,7 @@ StyleFormatPanel.prototype.init = function()
 	}
 
 	this.container.appendChild(this.addStroke(this.createPanel()));
-	var opacityPanel = this.createRelativeOption(mxResources.get('opacity'), mxConstants.STYLE_OPACITY);
+	var opacityPanel = this.createRelativeOption(mxResources.get('opacity'), mxConstants.STYLE_OPACITY, 41);
 	opacityPanel.style.paddingTop = '8px';
 	opacityPanel.style.paddingBottom = '8px';
 	this.container.appendChild(opacityPanel);
