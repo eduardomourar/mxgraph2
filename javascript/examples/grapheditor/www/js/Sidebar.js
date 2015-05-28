@@ -1719,6 +1719,7 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 Sidebar.prototype.updateShapes = function(source, targets)
 {
 	var graph = this.editorUi.editor.graph;
+	var sourceCellStyle = graph.getCellStyle(source);
 	var result = [];
 	
 	graph.model.beginUpdate();
@@ -1756,11 +1757,11 @@ Sidebar.prototype.updateShapes = function(source, targets)
 				if (style != null)
 				{
 					// Replaces the participant style in the lifeline shape with the target shape
-					if (style[mxConstants.STYLE_SHAPE] == 'umlLifeline')
+					if (style[mxConstants.STYLE_SHAPE] == 'umlLifeline' &&
+						sourceCellStyle[mxConstants.STYLE_SHAPE] != 'umlLifeline')
 					{
-						var tmp = graph.getCellStyle(targetCell);
 						graph.setCellStyles(mxConstants.STYLE_SHAPE, 'umlLifeline', [targetCell]);
-						graph.setCellStyles('participant', tmp[mxConstants.STYLE_SHAPE], [targetCell]);
+						graph.setCellStyles('participant', sourceCellStyle[mxConstants.STYLE_SHAPE], [targetCell]);
 					}
 					
 					for (var j = 0; j < styles.length; j++)
