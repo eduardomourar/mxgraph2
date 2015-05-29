@@ -1,3 +1,4 @@
+- Fixes lost connections for duplicate cells in grapheditor
 - Runs layouts for groups and finds tree roots in grapheditor
 - Adds rounding in mxGraph.updateGroupBounds [JavaScript]
 - Fixes moved edges labels when zoom is changed in mxGraphView.getPoint [JavaScript]

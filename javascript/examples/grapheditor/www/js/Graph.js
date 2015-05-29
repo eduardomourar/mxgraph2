@@ -1442,17 +1442,23 @@ if (typeof mxVertexHandler != 'undefined')
 		model.beginUpdate();
 		try
 		{
+			var clones = this.cloneCells(cells, false);
+			
 			for (var i = 0; i < cells.length; i++)
 			{
 				var parent = model.getParent(cells[i]);
-				var child = this.moveCells([cells[i]], s, s, true, parent)[0]; 
+				var child = this.moveCells([clones[i]], s, s, false, parent)[0]; 
 				select.push(child);
 				
-				// Maintains child index by inserting after cloned in parent
-				if (!append)
+				if (append)
 				{
+					model.add(parent, clones[i]);
+				}
+				else
+				{
+					// Maintains child index by inserting after cloned in parent
 					var index = parent.getIndex(cells[i]);
-					model.add(parent, child, index + 1);
+					model.add(parent, clones[i], index + 1);
 				}
 			}
 		}
@@ -2305,11 +2311,13 @@ if (typeof mxVertexHandler != 'undefined')
 					style.fontWeight = this.textarea.style.fontWeight;
 					style.fontStyle = this.textarea.style.fontStyle;
 					style.textAlign = this.textarea.style.textAlign;
-					// FIXME: Use zoom, not font style for scaling (fix affected position)
-					//style.zoom = Math.round(state.view.scale * 100) + '%';
-					style.fontSize = this.textarea.style.fontSize;
 					style.textDecoration = this.textarea.style.textDecoration;
 					style.color = this.textarea.style.color;
+					style.fontSize = this.textarea.style.fontSize;
+
+					// TODO: Scale font sizes via transform
+					// style.fontSize = Math.round(parseInt(this.textarea.style.fontSize) / state.view.scale) + 'px';
+					// mxUtils.setPrefixedStyle(style, 'transform', 'scale(' + state.view.scale + ',' + state.view.scale + ')');
 					
 					var dir = this.textarea.getAttribute('dir');
 					
