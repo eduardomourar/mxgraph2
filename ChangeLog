@@ -1,6 +1,7 @@
+- Adds rounding in mxGraph.updateGroupBounds [JavaScript]
 - Fixes moved edges labels when zoom is changed in mxGraphView.getPoint [JavaScript]
 - Disables HTML in collapse/expand tooltip [JavaScript]
-- Uses first connectable ancestor in mxConnectionHandler, mxEdgeHandler, mxConstraintHandler [JavaScript]
+- Uses connectable parent in mxConnectionHandler, mxEdgeHandler, mxConstraintHandler [JavaScript]
 - Fixes handling of direction mask in ER edge style [JavaScript]
 - Adds collate and sort shape, schema rows in grapheditor
 - Drop on lifelines replaces participant shape in grapheditor

@@ -514,10 +514,15 @@ mxConnectionHandler.prototype.createMarker = function()
 			cell = this.getCellAt(point.x, point.y);
 		}
 		
-		// Uses first connectable ancestor
-		while (cell != null && !this.graph.isCellConnectable(cell))
+		// Uses connectable parent vertex if one exists
+		if (cell != null && !this.graph.isCellConnectable(cell))
 		{
-			cell = this.graph.getModel().getParent(cell);
+			var parent = this.graph.getModel().getParent(cell);
+			
+			if (this.graph.getModel().isVertex(parent) && this.graph.isCellConnectable(parent))
+			{
+				cell = parent;
+			}
 		}
 		
 		if ((this.graph.isSwimlane(cell) && this.graph.hitsSwimlaneContent(cell, point.x, point.y)) ||

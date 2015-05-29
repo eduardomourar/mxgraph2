@@ -2398,10 +2398,15 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		// LATER: Show preview where result will go
 		var cell = (!mxEvent.isAltDown(evt) && cells != null) ? graph.getCellAt(x, y) : null;
 		
-		// Uses first connectable ancestor
-		while (cell != null && !this.graph.isCellConnectable(cell))
+		// Uses connectable parent vertex if one exists
+		if (cell != null && !this.graph.isCellConnectable(cell))
 		{
-			cell = this.graph.getModel().getParent(cell);
+			var parent = this.graph.getModel().getParent(cell);
+			
+			if (this.graph.getModel().isVertex(parent) && this.graph.isCellConnectable(parent))
+			{
+				cell = parent;
+			}
 		}
 		
 		var state = graph.view.getState(cell);
