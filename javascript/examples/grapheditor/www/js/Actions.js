@@ -906,7 +906,7 @@ Actions.prototype.init = function()
 				}
 			});
 			
-			ui.showDialog(dlg.container, 320, 90, true, true);
+			ui.showDialog(dlg.container, 420, 90, true, true);
 			dlg.init();
 		}
 	}).isEnabled = isGraphEnabled;

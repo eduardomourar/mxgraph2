@@ -1939,7 +1939,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn)
 	linkInput.setAttribute('placeholder', 'http://www.example.com/');
 	linkInput.setAttribute('type', 'text');
 	linkInput.style.marginTop = '6px';
-	linkInput.style.width = '300px';
+	linkInput.style.width = '400px';
 	linkInput.style.backgroundImage = 'url(\'' + Dialog.prototype.clearImage + '\')';
 	linkInput.style.backgroundRepeat = 'no-repeat';
 	linkInput.style.backgroundPosition = '100% 50%';
