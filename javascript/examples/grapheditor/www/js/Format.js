@@ -1421,7 +1421,11 @@ ArrangePanel.prototype.addGroupOps = function(div)
 	if (graph.getSelectionCount() == 1 && graph.getModel().isVertex(cell) &&
    		graph.getModel().isVertex(graph.getModel().getParent(cell)))
 	{
-		mxUtils.br(div);
+		if (count > 0)
+		{
+			mxUtils.br(div);
+		}
+		
 		btn = mxUtils.button(mxResources.get('removeFromGroup'), function(evt)
 		{
 			ui.actions.get('removeFromGroup').funct();
@@ -1435,7 +1439,11 @@ ArrangePanel.prototype.addGroupOps = function(div)
 	
 	if (graph.getSelectionCount() == 1)
 	{
-		mxUtils.br(div);
+		if (count > 0)
+		{
+			mxUtils.br(div);
+		}
+		
 		btn = mxUtils.button(mxResources.get('editLink'), mxUtils.bind(this, function(evt)
 		{
 			this.editorUi.actions.get('editLink').funct();
