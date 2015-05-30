@@ -3203,8 +3203,8 @@ if (typeof mxVertexHandler != 'undefined')
 												geo.x = this.state.cell.geometry.x + this.state.cell.geometry.width + 80;
 												geo.y = this.state.cell.geometry.y;
 												
-												// TODO: Apply editorUi.createCurrentEdgeStyle()
-												this.graph.insertEdge(null, null, '', this.state.cell, dup);
+												var edge = this.graph.insertEdge(null, null, '', this.state.cell, dup, ui.createCurrentEdgeStyle());
+												this.graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [edge]));
 											}
 										}
 										finally
@@ -3212,10 +3212,10 @@ if (typeof mxVertexHandler != 'undefined')
 											this.graph.model.endUpdate();
 										}
 										
+										this.graph.isMouseDown = false;
 										mxEvent.consume(evt);
 									}
 									
-									this.graph.isMouseDown = false;
 									mousePoint = null;
 								}
 							})
