@@ -2424,14 +2424,14 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		{
 			timeOnTarget = new Date().getTime() - startTime;
 		}
-
+		
 		// Shift means disabled, delayed on cells with children, shows after 300ms, hides after 2500ms
 		if (timeOnTarget < 2500 && state != null && !mxEvent.isShiftDown(evt) &&
-			// If shape is equal then add long delay
-			((mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE) != mxUtils.getValue(sourceCellStyle, mxConstants.STYLE_SHAPE) &&
-			mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, null) != null) ||
-			timeOnTarget > 1500 || graph.model.isEdge(state.cell)) &&
-			(/*graph.model.getChildCount(state.cell) == 0 || */timeOnTarget > 300) &&
+			// If shape is equal or target has no stroke then add long delay except for images
+			(((mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE) != mxUtils.getValue(sourceCellStyle, mxConstants.STYLE_SHAPE) &&
+			mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE) != mxConstants.NONE) ||
+			mxUtils.getValue(sourceCellStyle, mxConstants.STYLE_SHAPE) == 'image') ||
+			timeOnTarget > 1500 || graph.model.isEdge(state.cell)) && (timeOnTarget > 300) && 
 			((graph.model.isVertex(state.cell) && firstVertex != null) ||
 			(graph.model.isEdge(state.cell) && graph.model.isEdge(cells[0]))))
 		{
