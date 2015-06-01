@@ -1545,12 +1545,12 @@ var ExportDialog = function(editorUi)
 		else
 		{
 			var format = imageFormatSelect.value;
-	    	var name = encodeURIComponent(nameInput.value);
+	    	var name = nameInput.value;
 	    	
 	        if (format == 'xml')
 	    	{
-	        	var xml = encodeURIComponent(getXml());
-				new mxXmlRequest(SAVE_URL, 'filename=' + name + '&xml=' + xml).simulate(document, '_blank');
+				editorUi.hideDialog();
+	        	ExportDialog.saveLocalFile(getXml(), name, format);
 	    	}
 	        else if (format == 'svg')
 	    	{
@@ -1558,9 +1558,8 @@ var ExportDialog = function(editorUi)
 				
 				if (xml.length < MAX_REQUEST_SIZE)
 				{
-					xml = encodeURIComponent(xml);
-					new mxXmlRequest(SAVE_URL, 'filename=' + name + '&format=' + format +
-						'&xml=' + xml).simulate(document, '_blank');
+					editorUi.hideDialog();
+					ExportDialog.saveLocalFile(xml, name, format);
 				}
 				else
 				{
@@ -1615,17 +1614,17 @@ var ExportDialog = function(editorUi)
 						bg = '&bg=' + backgroundInput.value;
 					}
 					
-					new mxXmlRequest(EXPORT_URL, 'filename=' + name + '&format=' + format +
-	        			bg + '&w=' + w + '&h=' + h + '&border=' + b + '&' + param).
-	        			simulate(document, '_blank');
+					editorUi.hideDialog();
+					var data = decodeURIComponent(param.substring(param.indexOf('=') + 1));
+					ExportDialog.saveRequest(data, name, format, new mxXmlRequest(EXPORT_URL,
+						'filename=' + encodeURIComponent(name) + '&format=' + format + bg + '&w=' +
+						w + '&h=' + h + '&border=' + b + '&' + param));
 				}
 				else
 				{
 					mxUtils.alert(mxResources.get('drawingTooLarge'));
 				}
 	    	}
-	        
-			editorUi.hideDialog();
 		}
 	}));
 	saveBtn.className = 'geBtn gePrimaryBtn';
@@ -1657,6 +1656,29 @@ var ExportDialog = function(editorUi)
  * Global switches for the export dialog.
  */
 ExportDialog.showXmlOption = true;
+
+/**
+ * Hook for getting the export format. Returns null for the default
+ * intermediate XML export format or a function that returns the
+ * parameter and value to be used in the request in the form
+ * key=value, where value should be URL encoded.
+ */
+ExportDialog.saveLocalFile = function(data, filename, format)
+{
+	new mxXmlRequest(SAVE_URL, 'xml=' + encodeURIComponent(data) + '&filename=' +
+		encodeURIComponent(filename) + '&format=' + format).simulate(document, '_blank');
+};
+
+/**
+ * Hook for getting the export format. Returns null for the default
+ * intermediate XML export format or a function that returns the
+ * parameter and value to be used in the request in the form
+ * key=value, where value should be URL encoded.
+ */
+ExportDialog.saveRequest = function(data, filename, format, req)
+{
+	req.simulate(document, '_blank');
+};
 
 /**
  * Hook for getting the export format. Returns null for the default
