@@ -1,3 +1,4 @@
+- Add caching for labels (branch: html-panes)
 - Check NPE for mxRefCount in mxShape.destroyCanvas
 - Fix DOM reorder after move in scrollbars.html (folding icon)
 
