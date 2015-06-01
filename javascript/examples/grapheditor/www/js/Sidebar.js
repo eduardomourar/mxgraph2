@@ -1834,7 +1834,6 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit)
 						
 						if (layout != null)
 						{
-							var targetState = graph.view.getState(target);
 							var s = graph.view.scale;
 							var tr = graph.view.translate;
 							var tx = (x + tr.x) * s;
