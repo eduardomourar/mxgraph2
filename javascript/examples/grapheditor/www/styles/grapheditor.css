@@ -419,6 +419,9 @@
 	background-color: rgb(54, 115, 181);
 	background-image: none;
 }
+@media print {
+	div.geNoPrint { display: none !important; }
+}
 .geSprite-actualsize { background-position: 0 0; }
 .geSprite-bold { background-position: 0 -46px; }
 .geSprite-bottom { background-position: 0 -92px; }

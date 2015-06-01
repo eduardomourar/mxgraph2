@@ -1100,7 +1100,7 @@ EditorUi.prototype.initCanvas = function()
 		zoomActualBtn.style.margin = '2px';
 		
 		var tb = document.createElement('div');
-		tb.className = 'geToolbarContainer';
+		tb.className = 'geToolbarContainer geNoPrint';
 		tb.style.borderRight = '1px solid #e0e0e0';
 		tb.style.padding = '2px';
 		tb.style.left = '0px';
@@ -1112,7 +1112,7 @@ EditorUi.prototype.initCanvas = function()
 		
 		document.body.appendChild(tb);
 		
-		// Makes toolbar transparent on non-touch devices
+		// Changes toolbar opacity on hover
 		if (!mxClient.IS_TOUCH)
 		{
 			mxEvent.addListener(tb, 'mouseenter', function(evt)
