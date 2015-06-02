@@ -1616,9 +1616,12 @@ var ExportDialog = function(editorUi)
 					
 					editorUi.hideDialog();
 					var data = decodeURIComponent(param.substring(param.indexOf('=') + 1));
-					ExportDialog.saveRequest(data, name, format, new mxXmlRequest(EXPORT_URL,
-						'filename=' + encodeURIComponent(name) + '&format=' + format + bg + '&w=' +
-						w + '&h=' + h + '&border=' + b + '&' + param));
+					ExportDialog.saveRequest(data, name, format,
+						function(newTitle)
+						{
+							return new mxXmlRequest(EXPORT_URL, 'filename=' + encodeURIComponent(newTitle) +
+								'&format=' + format + bg + '&w=' + w + '&h=' + h + '&border=' + b + '&' + param);
+						});
 				}
 				else
 				{
@@ -1675,9 +1678,9 @@ ExportDialog.saveLocalFile = function(data, filename, format)
  * parameter and value to be used in the request in the form
  * key=value, where value should be URL encoded.
  */
-ExportDialog.saveRequest = function(data, filename, format, req)
+ExportDialog.saveRequest = function(data, filename, format, fn)
 {
-	req.simulate(document, '_blank');
+	fn(filename).simulate(document, '_blank');
 };
 
 /**
