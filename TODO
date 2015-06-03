@@ -1,6 +1,6 @@
-- Add caching for labels (branch: html-panes)
+- Check default value for mxText.prototype.allowCaching
+- Merge common code in mxSvgCanvas2D.updateText and text
 - Check NPE for mxRefCount in mxShape.destroyCanvas
-- Fix DOM reorder after move in scrollbars.html (folding icon)
 
 - Fix middle/center in secondlabel.html example for wrap with no FO
 - Fix channels when scaled in segment edge style

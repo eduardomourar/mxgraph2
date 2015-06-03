@@ -1,3 +1,8 @@
+- Fixes DOM order, scrollbar state in scrollbars.html example [JavaScript]
+- Adds mxSvgCanvas2D.updateText for updating cached labels [JavaScript]
+- Adds mxText.prototype.cacheEnabled for HTML labels [JavaScript]
+- Reduces number of DOM updates in mxCellRenderer.insertStateAfter [JavaScript]
+- Adds folding icon in mxCellRenderer.getShapesForState [JavaScript]
 - Fixes edge cases in mxStackLayout.moveCell [JavaScript]
 - Adds PartialRectangleShape in grapheditor
 - Fixes lost connections for duplicate cells in grapheditor
