@@ -31,7 +31,7 @@ mxText.prototype.baseSpacingTop = 5;
 mxText.prototype.baseSpacingBottom = 1;
 
 // Enables caching for HTML labels
-mxText.prototype.cacheEnabled = false;
+mxText.prototype.cacheEnabled = true;
 
 /**
  * Adds custom stencils defined via shape=stencil(value) style. The value is a base64 encoded, compressed and
