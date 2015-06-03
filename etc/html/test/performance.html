@@ -9,17 +9,21 @@
 		function main()
 		{
 			mxLog.TRACE = true;
+			//mxClient.NO_FO = false;
+			mxText.prototype.cacheEnabled = true;
 			mxLog.show();
-			//createGraph(30, 30);
+			mxLog.debug('NO_FO', mxClient.NO_FO);
+			mxLog.debug('caching', mxText.prototype.cacheEnabled);
+			createGraph(30, 30);
 			
-			var t0 = mxLog.enter('total');
+			//var t0 = mxLog.enter('total');
 			
-			for (var i = 0; i < 8; i++)
-			{
-				createGraph(5, 5, true);
-			}
+// 			for (var i = 0; i < 8; i++)
+// 			{
+// 				createGraph(5, 5, true);
+// 			}
 			
-			mxLog.leave('total', t0);
+			//mxLog.leave('total', t0);
 		};
 		
 		function createGraph(n, m, connect)
@@ -36,6 +40,7 @@
 			mxEvent.disableContextMenu(container);
 			
 			var graph = new mxGraph(container);
+			graph.setHtmlLabels(true);
 			graph.setPanning(true);
 
 			var parent = graph.getDefaultParent();
