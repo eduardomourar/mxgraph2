@@ -165,6 +165,20 @@ mxText.prototype.ignoreStringSize = false;
 mxText.prototype.textWidthPadding = (document.documentMode == 8 && !mxClient.IS_EM) ? 4 : 3;
 
 /**
+ * Variable: lastValue
+ * 
+ * Contains the last rendered text value. Used for caching.
+ */
+mxText.prototype.lastValue = null;
+
+/**
+ * Variable: cacheEnabled
+ * 
+ * Specifies if caching for HTML labels should be enabled. Default is false.
+ */
+mxText.prototype.cacheEnabled = false;
+
+/**
  * Function: isParseVml
  * 
  * Text shapes do not contain VML markup and do not need to be parsed. This
@@ -205,6 +219,110 @@ mxText.prototype.checkBounds = function()
 {
 	return (this.bounds != null && !isNaN(this.bounds.x) && !isNaN(this.bounds.y) &&
 			!isNaN(this.bounds.width) && !isNaN(this.bounds.height));
+};
+
+/**
+ * Function: paint
+ * 
+ * Generic rendering code.
+ */
+mxText.prototype.paint = function(c, update)
+{
+	// Scale is passed-through to canvas
+	var s = this.scale;
+	var x = this.bounds.x / s;
+	var y = this.bounds.y / s;
+	var w = this.bounds.width / s;
+	var h = this.bounds.height / s;
+	
+	this.updateTransform(c, x, y, w, h);
+	this.configureCanvas(c, x, y, w, h);
+		
+	if (update && c.updateText != null)
+	{
+		var divs = this.node.getElementsByTagName('div');
+		
+		if (divs.length > 0)
+		{
+			c.updateText(x, y, w, h, this.align, this.valign, this.wrap, this.overflow,
+					this.clipped, this.getTextRotation(), divs[0]);
+		}
+	}
+	else
+	{
+		// Checks if text contains HTML markup
+		var realHtml = mxUtils.isNode(this.value) || this.dialect == mxConstants.DIALECT_STRICTHTML;
+		
+		// Always renders labels as HTML in VML
+		var fmt = (realHtml || c instanceof mxVmlCanvas2D) ? 'html' : '';
+		var val = this.value;
+		
+		if (!realHtml && fmt == 'html')
+		{
+			val =  mxUtils.htmlEntities(val, false);
+		}
+		
+		val = (!mxUtils.isNode(this.value) && this.replaceLinefeeds && fmt == 'html') ?
+			val.replace(/\n/g, '<br/>') : val;
+			
+		var dir = this.textDirection;
+	
+		if (dir == mxConstants.TEXT_DIRECTION_AUTO && !realHtml)
+		{
+			dir = this.getAutoDirection();
+		}
+		
+		if (dir != mxConstants.TEXT_DIRECTION_LTR && dir != mxConstants.TEXT_DIRECTION_RTL)
+		{
+			dir = null;
+		}
+	
+		c.text(x, y, w, h, val, this.align, this.valign, this.wrap, fmt, this.overflow,
+			this.clipped, this.getTextRotation(), dir);
+	}
+};
+
+/**
+ * Function: redraw
+ * 
+ * Renders the text using the given DOM nodes.
+ */
+mxText.prototype.redraw = function()
+{
+	if (this.cacheEnabled && this.lastValue == this.value && (mxUtils.isNode(this.value) ||
+		this.dialect == mxConstants.DIALECT_STRICTHTML))
+	{
+		if (this.node.ownerSVGElement != null)
+		{
+			var canvas = this.createCanvas();
+			
+			if (canvas != null)
+			{
+				this.paint(canvas, true);
+				this.destroyCanvas(canvas);
+			}
+		}
+		else
+		{
+			this.updateSize(this.node, (this.state == null || this.state.view.textDiv == null));
+
+			if (mxClient.IS_IE && (document.documentMode == null || document.documentMode <= 8))
+			{
+				this.updateHtmlFilter();
+			}
+			else
+			{
+				this.updateHtmlTransform();
+			}
+		}
+		
+		this.updateBoundingBox();
+	}
+	else
+	{
+		mxShape.prototype.redraw.apply(this, arguments);
+		this.lastValue = this.value;
+	}
 };
 
 /**
@@ -377,9 +495,12 @@ mxText.prototype.updateBoundingBox = function()
 				{
 					sizeDiv = sizeDiv.firstChild;
 				}
+
+				this.offsetWidth = sizeDiv.offsetWidth + this.textWidthPadding;
+				this.offsetHeight = sizeDiv.offsetHeight;
 				
-				ow = (sizeDiv.offsetWidth + this.textWidthPadding) * this.scale;
-				oh = sizeDiv.offsetHeight * this.scale;
+				ow = this.offsetWidth * this.scale;
+				oh = this.offsetHeight * this.scale;
 			}
 		}
 
@@ -476,54 +597,6 @@ mxText.prototype.updateVmlContainer = function()
 	this.node.style.width = '1px';
 	this.node.style.height = '1px';
 	this.node.style.overflow = 'visible';
-};
-
-/**
- * Function: paint
- * 
- * Generic rendering code.
- */
-mxText.prototype.paint = function(c)
-{
-	// Scale is passed-through to canvas
-	var s = this.scale;
-	var x = this.bounds.x / s;
-	var y = this.bounds.y / s;
-	var w = this.bounds.width / s;
-	var h = this.bounds.height / s;
-
-	this.updateTransform(c, x, y, w, h);
-	this.configureCanvas(c, x, y, w, h);
-	
-	// Checks if text contains HTML markup
-	var realHtml = mxUtils.isNode(this.value) || this.dialect == mxConstants.DIALECT_STRICTHTML;
-	
-	// Always renders labels as HTML in VML
-	var fmt = (realHtml || c instanceof mxVmlCanvas2D) ? 'html' : '';
-	var val = this.value;
-	
-	if (!realHtml && fmt == 'html')
-	{
-		val =  mxUtils.htmlEntities(val, false);
-	}
-	
-	val = (!mxUtils.isNode(this.value) && this.replaceLinefeeds && fmt == 'html') ?
-		val.replace(/\n/g, '<br/>') : val;
-		
-	var dir = this.textDirection;
-
-	if (dir == mxConstants.TEXT_DIRECTION_AUTO && !realHtml)
-	{
-		dir = this.getAutoDirection();
-	}
-	
-	if (dir != mxConstants.TEXT_DIRECTION_LTR && dir != mxConstants.TEXT_DIRECTION_RTL)
-	{
-		dir = null;
-	}
-		
-	c.text(x, y, w, h, val, this.align, this.valign, this.wrap, fmt, this.overflow,
-		this.clipped, this.getTextRotation(), dir);
 };
 
 /**
