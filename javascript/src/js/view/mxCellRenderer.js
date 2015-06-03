@@ -1234,9 +1234,12 @@ mxCellRenderer.prototype.insertStateAfter = function(state, node, htmlNode)
 						canvas = canvas.parentNode;
 					}
 					
-					if (canvas != null && canvas.nextSibling != null && canvas.nextSibling != shapes[i].node)
+					if (canvas != null && canvas.nextSibling != null)
 					{
-						shapes[i].node.parentNode.insertBefore(shapes[i].node, canvas.nextSibling);
+						if (canvas.nextSibling != shapes[i].node)
+						{
+							shapes[i].node.parentNode.insertBefore(shapes[i].node, canvas.nextSibling);
+						}
 					}
 					else
 					{
@@ -1276,7 +1279,7 @@ mxCellRenderer.prototype.insertStateAfter = function(state, node, htmlNode)
  */
 mxCellRenderer.prototype.getShapesForState = function(state)
 {
-	return [state.shape, state.text];
+	return [state.shape, state.text, state.control];
 };
 
 /**
