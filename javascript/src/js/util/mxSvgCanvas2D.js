@@ -1218,10 +1218,17 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 /**
  * Updates existing DOM nodes for text rendering. LATER: Merge common parts with text function below.
  */
-mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, div)
+mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, node)
 {
-	if (this.textEnabled && div != null)
+	if (node != null && node.firstChild != null && node.firstChild.firstChild != null &&
+		node.firstChild.firstChild.firstChild != null)
 	{
+		// Uses outer group for opacity and transforms to
+		// fix rendering order in Chrome
+		var group = node.firstChild;
+		var fo = group.firstChild;
+		var div = fo.firstChild;
+
 		rotation = (rotation != null) ? rotation : 0;
 		
 		var s = this.state;
@@ -1252,11 +1259,6 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 		{
 			div.style.width = Math.round(w) + 'px';
 		}
-		
-		// Uses outer group for opacity and transforms to
-		// fix rendering order in Chrome
-		var fo = div.parentNode;
-		var group = fo.parentNode;
 		
 		// Code that depends on the size which is computed after
 		// the element was added to the DOM.

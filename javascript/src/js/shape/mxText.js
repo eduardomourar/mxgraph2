@@ -237,16 +237,11 @@ mxText.prototype.paint = function(c, update)
 	
 	this.updateTransform(c, x, y, w, h);
 	this.configureCanvas(c, x, y, w, h);
-		
-	if (update && c.updateText != null)
+	
+	if (update)
 	{
-		var divs = this.node.getElementsByTagName('div');
-		
-		if (divs.length > 0)
-		{
-			c.updateText(x, y, w, h, this.align, this.valign, this.wrap, this.overflow,
-					this.clipped, this.getTextRotation(), divs[0]);
-		}
+		c.updateText(x, y, w, h, this.align, this.valign, this.wrap, this.overflow,
+				this.clipped, this.getTextRotation(), this.node);
 	}
 	else
 	{
@@ -292,17 +287,7 @@ mxText.prototype.redraw = function()
 	if (this.cacheEnabled && this.lastValue == this.value && (mxUtils.isNode(this.value) ||
 		this.dialect == mxConstants.DIALECT_STRICTHTML))
 	{
-		if (this.node.ownerSVGElement != null)
-		{
-			var canvas = this.createCanvas();
-			
-			if (canvas != null)
-			{
-				this.paint(canvas, true);
-				this.destroyCanvas(canvas);
-			}
-		}
-		else
+		if (this.node.nodeName == 'DIV' && (this.isHtmlAllowed() || !mxClient.IS_VML))
 		{
 			this.updateSize(this.node, (this.state == null || this.state.view.textDiv == null));
 
@@ -314,9 +299,25 @@ mxText.prototype.redraw = function()
 			{
 				this.updateHtmlTransform();
 			}
+			
+			this.updateBoundingBox();
 		}
-		
-		this.updateBoundingBox();
+		else
+		{
+			var canvas = this.createCanvas();
+			
+			if (canvas != null && canvas.updateText != null)
+			{
+				this.paint(canvas, true);
+				this.destroyCanvas(canvas);
+				this.updateBoundingBox();
+			}
+			else
+			{
+				// Fallback if canvas does not support updateText (VML)
+				mxShape.prototype.redraw.apply(this, arguments);
+			}
+		}
 	}
 	else
 	{
