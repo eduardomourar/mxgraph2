@@ -419,14 +419,8 @@ Actions.prototype.init = function()
 		graph.zoomTo(1);
 		ui.resetScrollbars();
 	}, null, null, 'Ctrl+0');
-	this.addAction('zoomIn', function()
-	{
-		graph.fastZoom(graph.zoomFactor);
-	}, null, null, 'Ctrl + / Alt+Scroll');
-	this.addAction('zoomOut', function()
-	{
-		graph.fastZoom(1 / graph.zoomFactor);
-	}, null, null, 'Ctrl - / Alt+Scroll');
+	this.addAction('zoomIn', function(evt) { graph.zoomIn(); }, null, null, 'Ctrl + / Alt+Scroll');
+	this.addAction('zoomOut', function(evt) { graph.zoomOut(); }, null, null, 'Ctrl - / Alt+Scroll');
 	this.addAction('fitWindow', function() { graph.fit(); }, null, null, 'Ctrl+1');
 	this.addAction('fitPage', mxUtils.bind(this, function()
 	{

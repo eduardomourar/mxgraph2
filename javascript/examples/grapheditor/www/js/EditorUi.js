@@ -1216,44 +1216,50 @@ EditorUi.prototype.initCanvas = function()
 			}
 		};
 	}
+	
+	// Accumulates the zoom factor while the rendering is taking place
+	// so that not the complete sequence of zoom steps must be painted
+	graph.updateZoomTimeout = null;
+	graph.cumulativeZoomFactor = 1;
+	
+	graph.lazyZoom = function(zoomIn)
+	{
+		if (this.updateZoomTimeout != null)
+		{
+			window.clearTimeout(this.updateZoomTimeout);
+		}
 
+		if (zoomIn)
+		{
+			this.cumulativeZoomFactor *= this.zoomFactor;
+		}
+		else
+		{
+			this.cumulativeZoomFactor /= this.zoomFactor;
+		}
+		
+		this.updateZoomTimeout = window.setTimeout(mxUtils.bind(this, function()
+		{
+			this.zoom(this.cumulativeZoomFactor);					
+			this.cumulativeZoomFactor = 1;
+			this.updateZoomTimeout = null;
+			
+			if (resize != null)
+			{
+				resize(false);
+			}
+		}), 20);
+	};
+	
 	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up)
 	{
-		if (mxEvent.isAltDown(evt) || graph.panningHandler.isActive())
+		if ((mxEvent.isAltDown(evt) || graph.panningHandler.isActive()) &&
+			(this.dialogs == null || this.dialogs.length == 0))
 		{
-			if (this.dialogs == null || this.dialogs.length == 0)
-			{
-				if (up)
-				{
-					if (mxEvent.isShiftDown(evt))
-					{
-						graph.zoomIn();
-					}
-					else
-					{
-						graph.fastZoom(graph.zoomFactor);
-					}
-				}
-				else
-				{
-					if (mxEvent.isShiftDown(evt))
-					{
-						graph.zoomOut();
-					}
-					else
-					{
-						graph.fastZoom(1 / graph.zoomFactor);
-					}
-				}
-				
-				if (resize != null)
-				{
-					resize(false);
-				}
-			}
-
-			mxEvent.consume(evt);
+			graph.lazyZoom(up);
 		}
+		
+		mxEvent.consume(evt);
 	}));
 };
 
