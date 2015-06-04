@@ -217,8 +217,9 @@ mxText.prototype.getSvgScreenOffset = function()
  */
 mxText.prototype.checkBounds = function()
 {
-	return (this.bounds != null && !isNaN(this.bounds.x) && !isNaN(this.bounds.y) &&
-			!isNaN(this.bounds.width) && !isNaN(this.bounds.height) && this.scale > 0);
+	return (!isNaN(this.scale) && isFinite(this.scale) && this.scale > 0 &&
+			this.bounds != null && !isNaN(this.bounds.x) && !isNaN(this.bounds.y) &&
+			!isNaN(this.bounds.width) && !isNaN(this.bounds.height));
 };
 
 /**
@@ -284,8 +285,8 @@ mxText.prototype.paint = function(c, update)
  */
 mxText.prototype.redraw = function()
 {
-	if (this.cacheEnabled && this.lastValue == this.value && (mxUtils.isNode(this.value) ||
-		this.dialect == mxConstants.DIALECT_STRICTHTML))
+	if (this.visible && this.checkBounds() && this.cacheEnabled && this.lastValue == this.value &&
+		(mxUtils.isNode(this.value) || this.dialect == mxConstants.DIALECT_STRICTHTML))
 	{
 		if (this.node.nodeName == 'DIV' && (this.isHtmlAllowed() || !mxClient.IS_VML))
 		{
