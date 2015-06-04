@@ -1257,9 +1257,8 @@ EditorUi.prototype.initCanvas = function()
 			(this.dialogs == null || this.dialogs.length == 0))
 		{
 			graph.lazyZoom(up);
+			mxEvent.consume(evt);
 		}
-		
-		mxEvent.consume(evt);
 	}));
 };
 
