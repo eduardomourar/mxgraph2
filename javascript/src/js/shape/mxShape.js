@@ -444,7 +444,7 @@ mxShape.prototype.checkBounds = function()
 {
 	return (this.bounds != null && !isNaN(this.bounds.x) && !isNaN(this.bounds.y) &&
 			!isNaN(this.bounds.width) && !isNaN(this.bounds.height) &&
-			this.bounds.width > 0 && this.bounds.height > 0);
+			this.bounds.width > 0 && this.bounds.height > 0 && this.scale > 0);
 };
 
 /**
