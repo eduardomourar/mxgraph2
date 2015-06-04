@@ -1,3 +1,4 @@
+- Fixes routing tolerance in orthogonal connector [JavaScript]
 - Improves mousewheel zoom performance in grapheditor
 - Fixes possible NaN in mxShape, mxText for invalid scales [JavaScript]
 - Fixes DOM order, scrollbar state in scrollbars.html example [JavaScript]

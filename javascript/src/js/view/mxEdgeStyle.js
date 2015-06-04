@@ -1087,23 +1087,23 @@ var mxEdgeStyle =
 			if (currentTerm != null)
 			{
 				constraint[i][0] = (currentTerm.x - geo[i][0]) / geo[i][2];
-
-				if (constraint[i][0] < 0.04)
+				
+				if (Math.round(Math.abs(currentTerm.x - geo[i][0])) < 1)
 				{
 					dir[i] = mxConstants.DIRECTION_MASK_WEST;
 				}
-				else if (constraint[i][0] > 0.96)
+				else if (Math.round(Math.abs(currentTerm.x - geo[i][0] - geo[i][2])) < 1)
 				{
 					dir[i] = mxConstants.DIRECTION_MASK_EAST;
 				}
 
 				constraint[i][1] = (currentTerm.y - geo[i][1]) / geo[i][3];
 
-				if (constraint[i][1] < 0.04)
+				if (Math.round(Math.abs(currentTerm.y - geo[i][1])) < 1)
 				{
 					dir[i] = mxConstants.DIRECTION_MASK_NORTH;
 				}
-				else if (constraint[i][1] > 0.96)
+				else if (Math.round(Math.abs(currentTerm.y - geo[i][1] - geo[i][3])) < 1)
 				{
 					dir[i] = mxConstants.DIRECTION_MASK_SOUTH;
 				}
