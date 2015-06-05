@@ -1477,8 +1477,8 @@ var mxEdgeStyle =
 		while (index < result.length)
 		{
 			if (result[index - 1] == null || result[index] == null ||
-				(result[index - 1].x != result[index].x &&
-				result[index - 1].y != result[index].y))
+				result[index - 1].x != result[index].x ||
+				result[index - 1].y != result[index].y)
 			{
 				index++;
 			}
