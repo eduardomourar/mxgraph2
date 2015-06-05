@@ -1238,6 +1238,8 @@ EditorUi.prototype.initCanvas = function()
 			this.cumulativeZoomFactor /= this.zoomFactor;
 		}
 		
+		this.cumulativeZoomFactor = Math.round(this.view.scale * this.cumulativeZoomFactor * 100) / 100 / this.view.scale;
+		
 		this.updateZoomTimeout = window.setTimeout(mxUtils.bind(this, function()
 		{
 			this.zoom(this.cumulativeZoomFactor);					
