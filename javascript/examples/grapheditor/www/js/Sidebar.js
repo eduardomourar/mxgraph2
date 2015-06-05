@@ -2022,13 +2022,13 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 			
 			if (direction == mxConstants.DIRECTION_NORTH)
 			{
-				geo2.x = (p0.x - view.translate.x) / view.scale - geo2.width / 2;
-				geo2.y = (p0.y - view.translate.y) / view.scale - geo2.height / 2;
+				geo2.x = p0.x / view.scale - view.translate.x - geo2.width / 2;
+				geo2.y = p0.y / view.scale - view.translate.y - geo2.height / 2;
 			}
 			else
 			{
-				geo2.x = (pe.x - view.translate.x) / view.scale - geo2.width / 2;
-				geo2.y = (pe.y - view.translate.y) / view.scale - geo2.height / 2;
+				geo2.x = pe.x / view.scale - view.translate.x - geo2.width / 2;
+				geo2.y = pe.y / view.scale - view.translate.y - geo2.height / 2;
 			}
 		}
 		else
