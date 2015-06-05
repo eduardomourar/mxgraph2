@@ -996,13 +996,13 @@ var mxEdgeStyle =
 			if (rotation != 0)
 			{
 				var newRect = mxUtils.getBoundingBox(new mxRectangle(sourceX, sourceY, sourceWidth, sourceHeight), rotation);
-				sourceX = newRect.x;
+				sourceX = newRect.x; 
 				sourceY = newRect.y;
 				sourceWidth = newRect.width;
 				sourceHeight = newRect.height;
 			}
 		}
-		
+
 		if (target != null)
 		{
 			portConstraint[1] = mxUtils.getPortConstraints(target, state, false,
@@ -1018,7 +1018,18 @@ var mxEdgeStyle =
 				targetHeight = newRect.height;
 			}
 		}
-										
+
+		// Avoids floating point number errrors
+		sourceX = Math.round(sourceX * 10) / 10;
+		sourceY = Math.round(sourceY * 10) / 10;
+		sourceWidth = Math.round(sourceWidth * 10) / 10;
+		sourceHeight = Math.round(sourceHeight * 10) / 10;
+		
+		targetX = Math.round(targetX * 10) / 10;
+		targetY = Math.round(targetY * 10) / 10;
+		targetWidth = Math.round(targetWidth * 10) / 10;
+		targetHeight = Math.round(targetHeight * 10) / 10;
+		
 		var dir = [0, 0] ;
 
 		// Work out which faces of the vertices present against each other
@@ -1458,6 +1469,23 @@ var mxEdgeStyle =
 			}
 			
 			result.push(new mxPoint(Math.round(mxEdgeStyle.wayPoints1[i][0]), Math.round(mxEdgeStyle.wayPoints1[i][1])));
+		}
+		
+		// Removes duplicates
+		var index = 1;
+		
+		while (index < result.length)
+		{
+			if (result[index - 1] == null || result[index] == null ||
+				(result[index - 1].x != result[index].x &&
+				result[index - 1].y != result[index].y))
+			{
+				index++;
+			}
+			else
+			{
+				result.splice(index, 1);
+			}
 		}
 	},
 	
