@@ -115,32 +115,27 @@ Actions.prototype.init = function()
 	
 	this.addAction('delete', function()
 	{
-		// Handles special case where delete is pressed while connecting
-		if (graph.connectionHandler.isConnecting())
+		// Cancels interactive operations
+		graph.escape();
+		
+		var cells = graph.getSelectionCells();
+		var parents = graph.model.getParents(cells);
+		graph.removeCells(cells);
+		
+		// Selects parents for easier editing of groups
+		if (parents != null)
 		{
-			graph.connectionHandler.reset();
-		}
-		else
-		{
-			var cells = graph.getSelectionCells();
-			var parents = graph.model.getParents(cells);
-			graph.removeCells(cells);
+			var select = [];
 			
-			// Selects parents for easier editing of groups
-			if (parents != null)
+			for (var i = 0; i < parents.length; i++)
 			{
-				var select = [];
-				
-				for (var i = 0; i < parents.length; i++)
+				if (graph.model.isVertex(parents[i]) || graph.model.isEdge(parents[i]))
 				{
-					if (graph.model.isVertex(parents[i]) || graph.model.isEdge(parents[i]))
-					{
-						select.push(parents[i]);
-					}
+					select.push(parents[i]);
 				}
-				
-				graph.setSelectionCells(select);
 			}
+			
+			graph.setSelectionCells(select);
 		}
 	}, null, null, 'Delete');
 	this.addAction('duplicate', function()

@@ -1,3 +1,4 @@
+- Fixes delete action during interactive operation in grapheditor
 - Removes duplicate points mxEdgeStyle.OrthConnector [JavaScript]
 - Fixes rounding errors in mxGraphView.getPerimeterPoint [JavaScript]
 - Fixes rounding errors in mxEdgeStyle.OrthConnector [JavaScript]
