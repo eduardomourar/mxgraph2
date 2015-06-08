@@ -1,3 +1,4 @@
+- Sets initial state of general sidebar to expanded in grapheditor
 - Fixes delete action during interactive operation in grapheditor
 - Removes duplicate points mxEdgeStyle.OrthConnector [JavaScript]
 - Fixes rounding errors in mxGraphView.getPerimeterPoint [JavaScript]
