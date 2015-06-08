@@ -818,6 +818,16 @@ Graph.prototype.isCellFoldable = function(cell)
 };
 
 /**
+ * Overridden to limit zoom to 20x.
+ */
+Graph.prototype.zoom = function(factor, center)
+{
+	factor = Math.min(this.view.scale * factor, 20) / this.view.scale;
+	
+	mxGraph.prototype.zoom.apply(this, arguments);
+};
+
+/**
  * These overrides only applied if  are only added if mxVertexHandler is defined (ie. not in embedded graph)
  */
 if (typeof mxVertexHandler != 'undefined')
