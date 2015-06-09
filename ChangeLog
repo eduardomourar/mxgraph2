@@ -1,3 +1,4 @@
+- Adds clipboard.html example [JavaScript]
 - Limits zoom to 20x in grapheditor
 - Sets initial state of general sidebar to expanded in grapheditor
 - Fixes delete action during interactive operation in grapheditor
