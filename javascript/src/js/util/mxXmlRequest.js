@@ -333,14 +333,7 @@ mxXmlRequest.prototype.send = function(onload, onerror, timeout, ontimeout)
 				}
 			});
 		}
-		
-		if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 10) &&
-			window.XMLHttpRequest && timeout != null && ontimeout != null)
-		{
-			this.request.timeout = timeout;
-			this.request.ontimeout = ontimeout;
-		}
-		
+
 		this.request.open(this.method, this.url, this.async,
 			this.username, this.password);
 		this.setRequestHeaders(this.request, this.params);
@@ -350,6 +343,13 @@ mxXmlRequest.prototype.send = function(onload, onerror, timeout, ontimeout)
 			this.request.withCredentials = 'true';
 		}
 		
+		if (!mxClient.IS_QUIRKS && (document.documentMode == null || document.documentMode > 9) &&
+			window.XMLHttpRequest && timeout != null && ontimeout != null)
+		{
+			this.request.timeout = timeout;
+			this.request.ontimeout = ontimeout;
+		}
+				
 		this.request.send(this.params);
 	}
 };
