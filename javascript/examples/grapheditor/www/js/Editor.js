@@ -847,7 +847,7 @@ Editor.prototype.init = function()
 				var model = this.graph.getModel();
 				var parent = model.getParent(cell);
 				
-				while (!this.graph.isCellSelected(parent) && model.isVertex(parent) && !this.graph.isValidRoot(parent))
+				while (!this.graph.isCellSelected(parent) && model.isVertex(parent))
 				{
 					cell = parent;
 					parent = model.getParent(cell);
