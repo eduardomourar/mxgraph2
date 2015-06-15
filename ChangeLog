@@ -1,3 +1,6 @@
+- Click on sidebar stops editing in grapheditor
+- Fixes size of replace shape for touch devices in grapheditor
+- Uses (shift) click on plus icon to (connect and) clone in grapheditor
 - Uses move cursor for sidebar items in grapheditor
 - Fixes timeout handling for IE11 in mxXmlRequest [JavaScript]
 - Adds clipboard.html example [JavaScript]
