@@ -3130,7 +3130,7 @@ if (typeof mxVertexHandler != 'undefined')
 											var dup = this.graph.duplicateCells([this.state.cell], false)[0];
 											this.graph.setSelectionCell(dup);
 
-											if (mxEvent.isShiftDown(evt))
+											if (!mxEvent.isShiftDown(evt))
 											{
 												var geo = this.graph.getCellGeometry(dup);
 												geo.x = this.state.cell.geometry.x + this.state.cell.geometry.width + 80;
