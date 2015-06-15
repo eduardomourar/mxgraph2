@@ -2592,7 +2592,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindControlKey(13, function() { graph.setSelectionCells(graph.duplicateCells(graph.getSelectionCells(), false)); }); // Ctrl+Enter
 	keyHandler.bindKey(9, function() { graph.selectNextCell(); }); // Tab
 	keyHandler.bindShiftKey(9, function() { graph.selectPreviousCell(); }); // Shift+Tab
-	keyHandler.bindControlKey(9, function() { graph.selectParentCell(); }); // Ctrl++Tab
+	keyHandler.bindControlKey(9, function() { graph.selectParentCell(); }); // Ctrl+Tab
 	keyHandler.bindControlShiftKey(9, function() { graph.selectChildCell(); }); // Ctrl+Shift+Tab
 	keyHandler.bindAction(8, false, 'delete'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
@@ -2632,6 +2632,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(80, true, 'formatPanel', true); // Ctrl+Shift+P
 	keyHandler.bindAction(85, true, 'ungroup'); // Ctrl+U
 	keyHandler.bindAction(112, false, 'about'); // F1
+	keyHandler.bindKey(13, function() { graph.startEditingAtCell(); }); // Enter
 	keyHandler.bindKey(113, function() { graph.startEditingAtCell(); }); // F2
 	
 	if (mxClient.IS_MAC)
