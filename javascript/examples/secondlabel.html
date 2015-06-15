@@ -93,7 +93,7 @@
 				{
 					var state = createState.apply(this, arguments);
 					
-					if (secondLabelVisible && !state.cell.geometry.relative)
+					if (secondLabelVisible && state.cell.geometry != null && !state.cell.geometry.relative)
 					{
 						var secondLabel = graph.getSecondLabel(state.cell);
 	
