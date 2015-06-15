@@ -312,6 +312,7 @@
 	background-position:50% 50%;
 	border:1px solid transparent;
 	border-radius:2px;
+	cursor: move;
 }
 .geSidebar .geItem:hover {
 	border:1px solid gray !important;

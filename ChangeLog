@@ -1,3 +1,4 @@
+- Uses move cursor for sidebar items in grapheditor
 - Fixes timeout handling for IE11 in mxXmlRequest [JavaScript]
 - Adds clipboard.html example [JavaScript]
 - Limits zoom to 20x in grapheditor
