@@ -2155,8 +2155,10 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 {
 	// Checks if the cells contain any vertices
+	var graph = this.editorUi.editor.graph;
 	var freeSourceEdge = null;
 	var firstVertex = null;
+	var sidebar = this;
 	
 	for (var i = 0; i < cells.length; i++)
 	{
@@ -2212,6 +2214,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	{
 		if (!mxEvent.isPopupTrigger(evt) && !mxEvent.isMultiTouchEvent(evt))
 		{
+			graph.stopEditing();
 			mouseDown.apply(this, arguments);
 		}
 	};
@@ -2245,17 +2248,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		else
 		{
 			arrow = mxUtils.createImage(img.src);
-			
-			if (touchStyle)
-			{
-				arrow.style.width = '29px';
-				arrow.style.height = '29px';
-			}
-			else
-			{
-				arrow.style.width = img.width + 'px';
-				arrow.style.height = img.height + 'px';
-			}
+			arrow.style.width = img.width + 'px';
+			arrow.style.height = img.height + 'px';
 		}
 		
 		mxUtils.setOpacity(arrow, (img == this.refreshTarget) ? 30 : 20);
@@ -2299,7 +2293,6 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	};
 	
 	// Hides guides and preview if target is active
-	var sidebar = this;
 	var dsCreatePreviewElement = dragSource.createPreviewElement;
 	
 	// Stores initial size of preview element
@@ -2335,7 +2328,6 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			}
 			else if (currentTargetState != null && activeArrow != null)
 			{
-				var graph = sidebar.editorUi.editor.graph;
 				var view = graph.view;
 				var index = (graph.model.isEdge(currentTargetState.cell) || freeSourceEdge == null) ? firstVertex : freeSourceEdge;
 				var geo = sidebar.getDropAndConnectGeometry(currentTargetState.cell, cells[index], direction, cells);
