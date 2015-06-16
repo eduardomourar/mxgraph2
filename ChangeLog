@@ -1,3 +1,4 @@
+- mxLayoutManager no longer calls parent layout moveCells if selected [JavaScript] 
 - Enter key starts editing like F2 key in grapheditor
 - Click on sidebar stops editing in grapheditor
 - Fixes size of replace shape for touch devices in grapheditor
