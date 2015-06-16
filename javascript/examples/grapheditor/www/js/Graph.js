@@ -3129,13 +3129,20 @@ if (typeof mxVertexHandler != 'undefined')
 										{
 											var dup = this.graph.duplicateCells([this.state.cell], false)[0];
 											this.graph.setSelectionCell(dup);
+											var layout = null;
 
-											if (!mxEvent.isShiftDown(evt))
+											// Never connects children in stack layouts
+											if (this.graph.layoutManager != null)
+											{
+												layout = this.graph.layoutManager.getLayout(this.graph.model.getParent(dup));
+											}
+											
+											if (!mxEvent.isShiftDown(evt) && (layout == null || layout.constructor != mxStackLayout))
 											{
 												var geo = this.graph.getCellGeometry(dup);
 												geo.x = this.state.cell.geometry.x + this.state.cell.geometry.width + 80;
 												geo.y = this.state.cell.geometry.y;
-												
+
 												var edge = this.graph.insertEdge(null, null, '', this.state.cell, dup, ui.createCurrentEdgeStyle());
 												this.graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [edge]));
 											}
