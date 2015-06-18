@@ -36,6 +36,12 @@
 					}
 					else if (msg.event == 'exit')
 					{
+						iframe.contentWindow.postMessage(JSON.stringify({action: 'export', format: 'png'}), '*');
+					}
+					else if (msg.event == 'export')
+					{
+						document.getElementById('preview').setAttribute('src', msg.data);
+						
 						window.removeEventListener('resize', resize);
 						window.removeEventListener('message', receive);
 						document.body.removeChild(iframe);
@@ -44,7 +50,6 @@
 					{
 						iframe.contentWindow.postMessage(JSON.stringify({action: 'dialog',
 							title: 'title', message: 'message', button: 'button'}), '*');
-						 document.getElementById('preview').setAttribute('src', 'data:image/svg+xml;utf8,' + msg.svg);
 					}
 				}
 			};
