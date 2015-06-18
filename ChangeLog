@@ -1,3 +1,5 @@
+18-JUN-2015: 3.3.1.0
+
 - Adds support for mxConstants.STYLE_SWIMLANE_FILLCOLOR [Java]
 - Fixes jetty positions for South and East direction hierarchical layout [Java]
 - mxLayoutManager no longer calls parent layout moveCells if selected [JavaScript] 
