@@ -1,0 +1,63 @@
+<html>
+<head>
+	<script type="text/javascript">
+		var url = 'https://test.draw.io/?dev=1&embed=1&spin=1&proto=json';
+		var diagram = '<mxGraphModel dx="669" dy="1216" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" fold="1" page="1" pageScale="1" pageWidth="826" pageHeight="1169" style="default-style2" math="0">  <root>    <mxCell id="0"/>    <mxCell id="1" parent="0"/>    <mxCell id="299" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=1;" parent="1" source="288" target="297" edge="1">      <mxGeometry relative="1" as="geometry">        <Array as="points">          <mxPoint x="540" y="185"/>          <mxPoint x="540" y="342"/>        </Array>      </mxGeometry>    </mxCell>    <mxCell id="286" value="Table" style="swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#e0e0e0;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;shadow=1;rounded=1;" parent="1" vertex="1">      <mxGeometry x="330" y="120" width="160" height="110" as="geometry"/>    </mxCell>    <mxCell id="287" value="Row 1" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;shadow=1;" parent="286" vertex="1">      <mxGeometry y="26" width="160" height="26" as="geometry"/>    </mxCell>    <mxCell id="288" value="Row 2" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;shadow=1;" parent="286" vertex="1">      <mxGeometry y="52" width="160" height="26" as="geometry"/>    </mxCell>    <mxCell id="289" value="Row 3" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;shadow=1;" parent="286" vertex="1">      <mxGeometry y="78" width="160" height="26" as="geometry"/>    </mxCell>    <mxCell id="295" value="Table" style="swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#e0e0e0;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;shadow=1;rounded=1;" parent="1" vertex="1">      <mxGeometry x="140" y="278" width="160" height="110" as="geometry"/>    </mxCell>    <mxCell id="296" value="Row 1" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;shadow=1;" parent="295" vertex="1">      <mxGeometry y="26" width="160" height="26" as="geometry"/>    </mxCell>    <mxCell id="297" value="Row 2" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;shadow=1;" parent="295" vertex="1">      <mxGeometry y="52" width="160" height="26" as="geometry"/>    </mxCell>    <mxCell id="298" value="Row 3" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;shadow=1;" parent="295" vertex="1">      <mxGeometry y="78" width="160" height="26" as="geometry"/>    </mxCell>    <mxCell id="304" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=1;" parent="1" source="298" target="302" edge="1">      <mxGeometry relative="1" as="geometry">        <Array as="points">          <mxPoint x="355" y="369"/>          <mxPoint x="355" y="526"/>        </Array>      </mxGeometry>    </mxCell>    <mxCell id="300" value="Table" style="swimlane;html=1;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#e0e0e0;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;swimlaneFillColor=#ffffff;shadow=1;rounded=1;" parent="1" vertex="1">      <mxGeometry x="410" y="461" width="160" height="110" as="geometry"/>    </mxCell>    <mxCell id="301" value="Row 1" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;shadow=1;" parent="300" vertex="1">      <mxGeometry y="26" width="160" height="26" as="geometry"/>    </mxCell>    <mxCell id="302" value="Row 2" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;shadow=1;" parent="300" vertex="1">      <mxGeometry y="52" width="160" height="26" as="geometry"/>    </mxCell>    <mxCell id="303" value="Row 3" style="text;html=1;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;shadow=1;" parent="300" vertex="1">      <mxGeometry y="78" width="160" height="26" as="geometry"/>    </mxCell>  </root></mxGraphModel>';
+		
+		function edit()
+		{
+			var border = 0;
+			var iframe = document.createElement('iframe');
+			iframe.style.zIndex = '9999';
+			iframe.style.position = 'absolute';
+			iframe.style.top = border + 'px';
+			iframe.style.left = border + 'px';
+			iframe.setAttribute('frameborder', '0');
+
+			var resize = function()
+			{
+				iframe.setAttribute('width', document.body.clientWidth - 2 * border);
+				iframe.setAttribute('height', document.body.clientHeight - 2 * border);
+			};
+			 
+			window.addEventListener('resize', resize);
+			resize();
+			
+			var receive = function(evt)
+			{
+				if (evt.data.length > 0)
+				{
+					var msg = JSON.parse(evt.data);
+					console.log('msg', msg);
+					
+					if (msg.event == 'init')
+					{
+						iframe.contentWindow.postMessage(JSON.stringify({action: 'load', xml: diagram}), '*');
+					}
+					else if (msg.event == 'exit')
+					{
+						window.removeEventListener('resize', resize);
+						window.removeEventListener('message', receive);
+						document.body.removeChild(iframe);
+					}
+					else if (msg.event == 'save')
+					{
+						iframe.contentWindow.postMessage(JSON.stringify({action: 'dialog',
+							title: 'title', message: 'message', button: 'button'}), '*');
+						 document.getElementById('preview').setAttribute('src', 'data:image/svg+xml;utf8,' + msg.svg);
+					}
+				}
+			};
+
+			window.addEventListener('message', receive);
+			document.body.appendChild(iframe);
+			iframe.setAttribute('src', url);
+		};
+	</script>
+</head>
+<body>
+<button onclick="edit();">Edit</button>
+<br/>
+<img id="preview" src=""/>
+</body>
+</html>
