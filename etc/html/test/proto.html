@@ -46,6 +46,7 @@
 						{
 							iframe.contentWindow.postMessage(JSON.stringify({action: 'export',
 								format: 'xmlpng', xml: temp, spin: 'Updating page'}), '*');
+							temp = null;
 						}
 						else
 						{
@@ -61,7 +62,7 @@
 					{
 						temp = msg.xml;
 						iframe.contentWindow.postMessage(JSON.stringify({action: 'dialog',
-							title: 'Success', message: 'Image was saved.', button: 'OK'}), '*');
+							title: 'Success', message: 'All changes saved.', button: 'OK'}), '*');
 					}
 				}
 			};
