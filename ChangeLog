@@ -1,3 +1,5 @@
+- Changes default for mxText.prototype.cacheEnabled to true
+
 18-JUN-2015: 3.3.1.0
 
 - Adds support for mxConstants.STYLE_SWIMLANE_FILLCOLOR [Java]
