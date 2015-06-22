@@ -1,7 +1,7 @@
 <html>
 <head>
 	<script type="text/javascript">
-		var editor = 'https://test.draw.io/?dev=1&embed=1&spin=1&modified=0&proto=json';
+		var editor = 'https://test.draw.io/?dev=1&embed=1&spin=1&modified=unsavedChanges&saveAndExit=1&proto=json';
 		var temp = null;
 		
 		function edit(image)
@@ -34,13 +34,37 @@
 				if (evt.data.length > 0)
 				{
 					var msg = JSON.parse(evt.data);
+					console.log('msg', msg);
 					
 					if (msg.event == 'init')
 					{
 						iframe.contentWindow.postMessage(JSON.stringify({action: 'load',
 							xmlpng: image.getAttribute('src')}), '*');
+					} 
+					else if (msg.event == 'export')
+					{
+						image.setAttribute('src', msg.data);
+						close();
 					}
-					else if (msg.event == 'exit')
+					else if (msg.event == 'save')
+					{
+						temp = msg.xml;
+						
+						if (msg.exit)
+						{
+							msg.event = 'exit';
+						}
+						else
+						{
+							iframe.contentWindow.postMessage(JSON.stringify({action: 'status',
+								messageKey: 'allChangesSaved', modified: false}), '*');
+	// 						iframe.contentWindow.postMessage(JSON.stringify({action: 'dialog',
+	// 							titleKey: 'error', messageKey: 'fileNotFound',
+	// 							buttonKey: 'close'}), '*');
+						}
+					}
+					
+					if (msg.event == 'exit')
 					{
 						if (temp != null)
 						{
@@ -52,20 +76,6 @@
 						{
 							close();
 						}
-					}
-					else if (msg.event == 'export')
-					{
-						image.setAttribute('src', msg.data);
-						close();
-					}
-					else if (msg.event == 'save')
-					{
-						temp = msg.xml;
-						iframe.contentWindow.postMessage(JSON.stringify({action: 'status',
-							resource: 'allChangesSaved', modified: false}), '*');
-// 						iframe.contentWindow.postMessage(JSON.stringify({action: 'dialog',
-// 							titleKey: 'error', messageKey: 'fileNotFound',
-// 							buttonKey: 'close'}), '*');
 					}
 				}
 			};
