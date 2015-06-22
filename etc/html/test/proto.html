@@ -1,7 +1,7 @@
 <html>
 <head>
 	<script type="text/javascript">
-		var editor = 'https://test.draw.io/?dev=1&embed=1&spin=1&proto=json';
+		var editor = 'https://test.draw.io/?dev=1&embed=1&spin=1&modified=0&proto=json';
 		var temp = null;
 		
 		function edit(image)
@@ -45,7 +45,7 @@
 						if (temp != null)
 						{
 							iframe.contentWindow.postMessage(JSON.stringify({action: 'export',
-								format: 'xmlpng', xml: temp, spin: 'Updating page'}), '*');
+								format: 'xmlpng', xml: temp, spinKey: 'export'}), '*');
 							temp = null;
 						}
 						else
@@ -61,8 +61,11 @@
 					else if (msg.event == 'save')
 					{
 						temp = msg.xml;
-						iframe.contentWindow.postMessage(JSON.stringify({action: 'dialog',
-							title: 'Success', message: 'All changes saved.', button: 'OK'}), '*');
+						iframe.contentWindow.postMessage(JSON.stringify({action: 'status',
+							resource: 'allChangesSaved', modified: false}), '*');
+// 						iframe.contentWindow.postMessage(JSON.stringify({action: 'dialog',
+// 							titleKey: 'error', messageKey: 'fileNotFound',
+// 							buttonKey: 'close'}), '*');
 					}
 				}
 			};
