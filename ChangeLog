@@ -1,3 +1,5 @@
+- Replaces swimlane rendering code to match JavaScript output [Java]
+- Adds mxConstants.STYLE_SWIMLANE_LINE, STYLE_ARCSIZE for swimlanes [Java]
 - Adds mxCodec.elements, addElement to cache mxCodec.getElementById [Java,Php,Dotnet]
 - No longer uses document.getElementById in mxCodec.getElementById [Java,Php,Dotnet]
 - Adds pageNumber in mxPrintPreview.renderPage [JavaScript]
