@@ -1,3 +1,4 @@
+- Adds support for mxConstants.STYLE_SWIMLANE_FILLCOLOR [Php,Dotnet]
 - Replaces swimlane rendering code to match JavaScript output [Java]
 - Adds mxConstants.STYLE_SWIMLANE_LINE, STYLE_ARCSIZE for swimlanes [Java]
 - Adds mxCodec.elements, addElement to cache mxCodec.getElementById [Java,Php,Dotnet]
