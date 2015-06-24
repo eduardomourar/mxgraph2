@@ -665,7 +665,7 @@ EditorUi = function(editor, container)
 	}));
 	
 	// Update font size and font family labels
-	if (this.toolbar != null && toolbar.fontMenu != null && toolbar.sizeMenu != null)
+	if (this.toolbar != null && this.toolbar.fontMenu != null)
 	{
 		var update = mxUtils.bind(this, function()
 		{
