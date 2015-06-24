@@ -259,16 +259,7 @@ Graph = function(container, model, renderHint, stylesheet)
 		{
 			this.container.style.cursor = 'default';
 		}));
-	    
-	    // Forces panning for middle and right mouse buttons
-		var panningHandlerIsForcePanningEvent = this.panningHandler.isForcePanningEvent;
-		this.panningHandler.isForcePanningEvent = function(me)
-		{
-			return panningHandlerIsForcePanningEvent.apply(this, arguments) ||
-				(mxEvent.isMouseEvent(me.getEvent()) && (mxEvent.isRightMouseButton(me.getEvent()) ||
-				mxEvent.isMiddleMouseButton(me.getEvent())));
-		};
-	
+
 		this.popupMenuHandler.autoExpand = true;
 		
 		this.popupMenuHandler.isSelectOnPopup = function(me)
@@ -1299,6 +1290,26 @@ if (typeof mxVertexHandler != 'undefined')
 	};
 	
 	/**
+	 * Returns a point that specifies the location for inserting cells.
+	 */
+	Graph.prototype.getInsertPoint = function()
+	{
+		var gs = this.getGridSize();
+		var dx = this.container.scrollLeft / this.view.scale - this.view.translate.x;
+		var dy = this.container.scrollTop / this.view.scale - this.view.translate.y;
+		
+		if (this.pageVisible)
+		{
+			var layout = this.getPageLayout();
+			var page = this.getPageSize();
+			dx = Math.max(dx, layout.x * page.width);
+			dy = Math.max(dy, layout.y * page.height);
+		}
+		
+		return new mxPoint(this.snap(dx + gs), this.snap(dy + gs));
+	};
+	
+	/**
 	 * Adds a new label at the given position and returns the new cell. State is
 	 * an optional edge state to be used as the parent for the label. Vertices
 	 * are not allowed currently as states.
@@ -2093,7 +2104,22 @@ if (typeof mxVertexHandler != 'undefined')
 			EditorUi.prototype.init = function()
 			{
 				editorUiInit.apply(this, arguments);
-	
+				
+				mxEvent.addListener(this.editor.graph.container, 'keydown', mxUtils.bind(this, function(evt)
+				{
+					// Tab selects next cell
+					if (evt.which == 9)
+					{
+						if (this.editor.graph.isEditing())
+						{
+							this.editor.graph.stopEditing(false);
+						}
+						
+						this.editor.graph.selectNextCell();
+						mxEvent.consume(evt);
+					}
+				}));
+		
 				mxEvent.addListener(this.editor.graph.container, 'keypress', mxUtils.bind(this, function(evt)
 				{
 					// KNOWN: Focus does not work if label is empty in quirks mode

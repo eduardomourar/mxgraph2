@@ -878,12 +878,9 @@ Actions.prototype.init = function()
 							title = title.substring(0, 30) + '...';
 						}
 					}
-            		
-					var gs = graph.getGridSize();
-					var dx = graph.container.scrollLeft / graph.view.scale - graph.view.translate.x;
-					var dy = graph.container.scrollTop / graph.view.scale - graph.view.translate.y;
 					
-            	    var linkCell = new mxCell(title, new mxGeometry(graph.snap(dx + gs), graph.snap(dy + gs), 100, 40),
+					var pt = graph.getInsertPoint();
+            		var linkCell = new mxCell(title, new mxGeometry(pt.x, pt.y, 100, 40),
             	    	'fontColor=#0000EE;fontStyle=4;rounded=1;overflow=hidden;' + ((icon != null) ?
             	    	'shape=label;imageWidth=16;imageHeight=16;spacingLeft=26;align=left;image=' + icon :
             	    	'spacing=10;'));
@@ -936,12 +933,8 @@ Actions.prototype.init = function()
 			        		// Inserts new cell if no cell is selected
 			    			if (cells.length == 0)
 			    			{
-			    				var gs = graph.getGridSize();
-								var dx = graph.container.scrollLeft / graph.view.scale - graph.view.translate.x;
-								var dy = graph.container.scrollTop / graph.view.scale - graph.view.translate.y;
-			    				
-			    				cells = [graph.insertVertex(graph.getDefaultParent(), null, '',
-			    						graph.snap(dx + gs), graph.snap(dy + gs), w, h,
+			    				var pt = graph.getInsertPoint();
+			    				cells = [graph.insertVertex(graph.getDefaultParent(), null, '', pt.x, pt.y, w, h,
 			    						'shape=image;verticalLabelPosition=bottom;verticalAlign=top;')];
 			    				select = cells;
 			    			}
@@ -995,12 +988,23 @@ Actions.prototype.init = function()
 		{
 			// LATER: Check outline window for initial placement
 			this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 180);
+			this.layersWindow.window.addListener('show', function()
+			{
+				ui.fireEvent(new mxEventObject('layers'));
+			});
+			this.layersWindow.window.addListener('hide', function()
+			{
+				ui.fireEvent(new mxEventObject('layers'));
+			});
 			this.layersWindow.window.setVisible(true);
+			ui.fireEvent(new mxEventObject('layers'));
 		}
 		else
 		{
 			this.layersWindow.window.setVisible(!this.layersWindow.window.isVisible());
 		}
+		
+		//ui.fireEvent(new mxEventObject('layers'));
 	}), null, null, 'Ctrl+Shift+L');
 	action.setToggleAction(true);
 	action.setSelectedCallback(mxUtils.bind(this, function() { return this.layersWindow != null && this.layersWindow.window.isVisible(); }));
@@ -1020,12 +1024,23 @@ Actions.prototype.init = function()
 		{
 			// LATER: Check layers window for initial placement
 			this.outlineWindow = new OutlineWindow(ui, document.body.offsetWidth - 260, 100, 180, 180);
+			this.outlineWindow.window.addListener('show', function()
+			{
+				ui.fireEvent(new mxEventObject('outline'));
+			});
+			this.outlineWindow.window.addListener('hide', function()
+			{
+				ui.fireEvent(new mxEventObject('outline'));
+			});
 			this.outlineWindow.window.setVisible(true);
+			ui.fireEvent(new mxEventObject('outline'));
 		}
 		else
 		{
 			this.outlineWindow.window.setVisible(!this.outlineWindow.window.isVisible());
 		}
+		
+		ui.fireEvent(new mxEventObject('outline'));
 	}), null, null, 'Ctrl+Shift+O');
 	
 	action.setToggleAction(true);

@@ -30,6 +30,12 @@ Menus.prototype.defaultFontSize = '12';
 /**
  * Sets the default font size.
  */
+Menus.prototype.defaultMenuItems = (urlParams['simple'] != '1') ? ['file', 'edit', 'view', 'format', 'text', 'arrange', 'options', 'help'] :
+	['file', 'edit', 'arrange', 'options', 'help'];
+
+/**
+ * Sets the default font size.
+ */
 Menus.prototype.checkmarkImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhFQAVAMQfAGxsbHx8fIqKioaGhvb29nJycvr6+sDAwJqamltbW5OTk+np6YGBgeTk5Ly8vJiYmP39/fLy8qWlpa6ursjIyOLi4vj4+N/f3+3t7fT09LCwsHZ2dubm5r6+vmZmZv///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OEY4NTZERTQ5QUFBMTFFMUE5MTVDOTM5MUZGMTE3M0QiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OEY4NTZERTU5QUFBMTFFMUE5MTVDOTM5MUZGMTE3M0QiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Rjg1NkRFMjlBQUExMUUxQTkxNUM5MzkxRkYxMTczRCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Rjg1NkRFMzlBQUExMUUxQTkxNUM5MzkxRkYxMTczRCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAEAAB8ALAAAAAAVABUAAAVI4CeOZGmeaKqubKtylktSgCOLRyLd3+QJEJnh4VHcMoOfYQXQLBcBD4PA6ngGlIInEHEhPOANRkaIFhq8SuHCE1Hb8Lh8LgsBADs=' :
 	IMAGE_PATH + '/checkmark.gif';
 
@@ -550,9 +556,14 @@ Menus.prototype.init = function()
 
 	this.put('view', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		this.addMenuItems(menu, ['outline', 'layers'].concat((this.editorUi.format != null) ? ['formatPanel'] : []), parent);
-		menu.addSeparator();
-		var scales = [0.25, 0.5, 0.75, 1, 1.5, 2, 4];
+		if (urlParams['simple'] != '1')
+		{
+			this.addMenuItems(menu, ['outline', 'layers'].concat((this.editorUi.format != null) ? ['formatPanel'] : []), parent);
+			menu.addSeparator();
+		}
+		
+		var scales = (urlParams['simple'] != '1') ? [0.25, 0.5, 0.75, 1, 1.5, 2, 4] :
+			[0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
 		
 		for (var i = 0; i < scales.length; i++)
 		{
@@ -565,7 +576,24 @@ Menus.prototype.init = function()
 			})(scales[i]);
 		}
 		
-		this.addMenuItems(menu, ['-', 'actualSize', 'zoomIn', 'zoomOut', '-', 'fitWindow', 'fitPageWidth', 'fitPage', 'fitTwoPages', '-', 'customZoom'], parent);
+		this.addMenuItems(menu, ['-', 'actualSize', 'zoomIn', 'zoomOut'], parent);
+		
+		if (urlParams['simple'] != '1')
+		{
+			this.addMenuItems(menu, ['-', 'fitWindow', 'fitPageWidth', 'fitPage', 'fitTwoPages', '-', 'customZoom'], parent);
+		}
+		
+		this.addMenuItems(menu, ['-', 'fitWindow', 'fitPageWidth', 'fitPage', 'fitTwoPages', '-', 'customZoom'], parent);
+	})));
+	// A special dropdown with checkboxes for the simple toolbar
+	this.put('simpleView', new Menu(mxUtils.bind(this, function(menu, parent)
+	{
+		if (this.editorUi.format != null)
+		{
+			this.addMenuItems(menu, ['formatPanel'], parent);
+		}
+		
+		this.addMenuItems(menu, ['outline', 'layers'], parent);
 	})));
 	this.put('file', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -1113,21 +1141,24 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 
 	}
 
-	if (graph.getSelectionCount() == 1)
-	{
-		this.addMenuItems(menu, ['setAsDefaultStyle'], null, evt);
-	}
-	
-	menu.addSeparator();
-	
 	if (graph.getSelectionCount() > 0)
 	{
+		if (graph.getSelectionCount() == 1 && urlParams['simple'] != '1')
+		{
+			this.addMenuItems(menu, ['setAsDefaultStyle'], null, evt);
+		}
+		
+		menu.addSeparator();
+		
 		cell = graph.getSelectionCell();
 		var state = graph.view.getState(cell);
 		
 		if (state != null)
 		{
-			this.addMenuItems(menu, ['toFront', 'toBack', '-'], null, evt);
+			if (urlParams['simple'] != '1')
+			{
+				this.addMenuItems(menu, ['toFront', 'toBack', '-'], null, evt);
+			}
 	
 			if (graph.getModel().isEdge(cell) && mxUtils.getValue(state.style, mxConstants.STYLE_EDGE, null) != 'entityRelationEdgeStyle' &&
 				mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null) != 'arrow')
@@ -1173,8 +1204,11 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 			
 			if (graph.getSelectionCount() == 1)
 			{
-				menu.addSeparator();
-				this.addMenuItems(menu, ['editLink'], null, evt);
+				if (urlParams['simple'] != '1')
+				{
+					menu.addSeparator();
+					this.addMenuItems(menu, ['editLink'], null, evt);
+				}
 
 				// Shows edit image action if there is an image in the style
 				if (graph.getModel().isVertex(cell) && mxUtils.getValue(state.style, mxConstants.STYLE_IMAGE, null) != null)
@@ -1197,7 +1231,7 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 Menus.prototype.createMenubar = function(container)
 {
 	var menubar = new Menubar(this.editorUi, container);
-	var menus = ['file', 'edit', 'view', 'format', 'text', 'arrange', 'options', 'help'];
+	var menus = this.defaultMenuItems;
 	
 	for (var i = 0; i < menus.length; i++)
 	{

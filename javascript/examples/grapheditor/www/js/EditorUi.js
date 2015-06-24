@@ -103,7 +103,7 @@ EditorUi = function(editor, container)
 	// Contains the main graph instance inside the given panel
 	graph.init(this.diagramContainer);
 	
-	// Adds tooltip when mouse is over scrollbars to show right-click pan option
+	// Adds tooltip when mouse is over scrollbars to show space-drag panning option
 	mxEvent.addListener(this.diagramContainer, 'mousemove', mxUtils.bind(this, function(evt)
 	{
 		var off = mxUtils.getOffset(this.diagramContainer);
@@ -118,41 +118,43 @@ EditorUi = function(editor, container)
 			this.diagramContainer.removeAttribute('title');
 		}
 	}));
-
-	var textMode = false;
-	var nodes = null;
 	
-	var updateToolbar = mxUtils.bind(this, function()
+	// Adds space+drag for panning
+	var spaceKeyPressed = false;
+	
+	mxEvent.addListener(document.body, 'keydown', mxUtils.bind(this, function(evt)
 	{
-		if (textMode != graph.cellEditor.isContentEditing())
+		if (evt.which == 32)
 		{
-			var node = this.toolbar.container.firstChild;
-			var newNodes = [];
+			spaceKeyPressed = true;
+			graph.container.style.cursor = 'move';
 			
-			while (node != null)
+			// Disables scroll after space keystroke with scrollbars
+			if (!graph.isEditing() && mxEvent.getSource(evt) == graph.container)
 			{
-				var tmp = node.nextSibling;
-				node.parentNode.removeChild(node);
-				newNodes.push(node);
-				node = tmp;
+				mxEvent.consume(evt);
 			}
-			
-			if (nodes == null)
-			{
-				this.toolbar.createTextToolbar();
-			}
-			else
-			{
-				for (var i = 0; i < nodes.length; i++)
-				{
-					this.toolbar.container.appendChild(nodes[i]);
-				}
-			}
-			
-			textMode = graph.cellEditor.isContentEditing();
-			nodes = newNodes;
 		}
-	});
+	}));
+	
+	mxEvent.addListener(document.body, 'keyup', mxUtils.bind(this, function(evt)
+	{
+		if (evt.which == 32)
+		{
+			graph.container.style.cursor = '';
+			spaceKeyPressed = false;
+		}
+	}));
+    
+    // Forces panning for middle and right mouse buttons
+	var panningHandlerIsForcePanningEvent = graph.panningHandler.isForcePanningEvent;
+	graph.panningHandler.isForcePanningEvent = function(me)
+	{
+		return panningHandlerIsForcePanningEvent.apply(this, arguments) ||
+			spaceKeyPressed ||
+			(mxEvent.isMouseEvent(me.getEvent()) && (mxEvent.isRightMouseButton(me.getEvent()) ||
+			mxEvent.isMiddleMouseButton(me.getEvent())));
+	};
 
 	// Control-enter applies editing value
 	// FIXME: Fix for HTML editing
@@ -163,20 +165,59 @@ EditorUi = function(editor, container)
 			(evt.keyCode == 13 && mxEvent.isControlDown(evt));
 	};
 	
-	// Overrides cell editor to update toolbar
-	var cellEditorStartEditing = graph.cellEditor.startEditing;
-	graph.cellEditor.startEditing = function()
+	// Switches toolbar for text editing
+	if (urlParams['simple'] != '1')
 	{
-		cellEditorStartEditing.apply(this, arguments);
-		updateToolbar();
-	};
+		var textMode = false;
+		var nodes = null;
+		
+		var updateToolbar = mxUtils.bind(this, function()
+		{
+			if (textMode != graph.cellEditor.isContentEditing())
+			{
+				var node = this.toolbar.container.firstChild;
+				var newNodes = [];
+				
+				while (node != null)
+				{
+					var tmp = node.nextSibling;
+					node.parentNode.removeChild(node);
+					newNodes.push(node);
+					node = tmp;
+				}
+				
+				if (nodes == null)
+				{
+					this.toolbar.createTextToolbar();
+				}
+				else
+				{
+					for (var i = 0; i < nodes.length; i++)
+					{
+						this.toolbar.container.appendChild(nodes[i]);
+					}
+				}
+				
+				textMode = graph.cellEditor.isContentEditing();
+				nodes = newNodes;
+			}
+		});
 	
-	var cellEditorStopEditing = graph.cellEditor.stopEditing;
-	graph.cellEditor.stopEditing = function(cell, trigger)
-	{
-		cellEditorStopEditing.apply(this, arguments);
-		updateToolbar();
-	};
+		// Overrides cell editor to update toolbar
+		var cellEditorStartEditing = graph.cellEditor.startEditing;
+		graph.cellEditor.startEditing = function()
+		{
+			cellEditorStartEditing.apply(this, arguments);
+			updateToolbar();
+		};
+		
+		var cellEditorStopEditing = graph.cellEditor.stopEditing;
+		graph.cellEditor.stopEditing = function(cell, trigger)
+		{
+			cellEditorStopEditing.apply(this, arguments);
+			updateToolbar();
+		};
+	}
 	
     // Enables scrollbars and sets cursor style for the container
 	graph.container.setAttribute('tabindex', '0');
@@ -552,7 +593,7 @@ EditorUi = function(editor, container)
 			}
 		}
 
-		if (this.toolbar != null)
+		if (this.toolbar != null && this.toolbar.fontMenu != null)
 		{
 			var ff = currentStyle['fontFamily'] || Menus.prototype.defaultFont;
 			this.toolbar.fontMenu.innerHTML = mxUtils.htmlEntities(ff);
@@ -624,7 +665,7 @@ EditorUi = function(editor, container)
 	}));
 	
 	// Update font size and font family labels
-	if (this.toolbar != null)
+	if (this.toolbar != null && toolbar.fontMenu != null && toolbar.sizeMenu != null)
 	{
 		var update = mxUtils.bind(this, function()
 		{
@@ -1693,7 +1734,7 @@ EditorUi.prototype.updateActionStates = function()
    			graph.getModel().isVertex(graph.getModel().getParent(graph.getSelectionCell())));
 
 	// Updates menu states
-	var menus = ['alignment', 'position', 'spacing', 'writingDirection', 'gradient', 'layout', 'fontFamily', 'fontSize'];
+	var menus = ['alignment', 'position', 'spacing', 'writingDirection', 'gradient', 'fontFamily', 'fontSize'];
 
 	for (var i = 0; i < menus.length; i++)
 	{
@@ -2590,18 +2631,23 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindShiftKey(39, function() { nudge(39, graph.gridSize); }); // Shift+Right arrow
 	keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
 	keyHandler.bindControlKey(13, function() { graph.setSelectionCells(graph.duplicateCells(graph.getSelectionCells(), false)); }); // Ctrl+Enter
-	keyHandler.bindKey(9, function() { graph.selectNextCell(); }); // Tab
 	keyHandler.bindShiftKey(9, function() { graph.selectPreviousCell(); }); // Shift+Tab
 	keyHandler.bindControlKey(9, function() { graph.selectParentCell(); }); // Ctrl+Tab
 	keyHandler.bindControlShiftKey(9, function() { graph.selectChildCell(); }); // Ctrl+Shift+Tab
 	keyHandler.bindAction(8, false, 'delete'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
 	keyHandler.bindAction(48, true, 'actualSize'); // Ctrl+0
+	keyHandler.bindAction(96, true, 'actualSize'); // Ctrl+0 (Num)
 	keyHandler.bindAction(49, true, 'fitWindow'); // Ctrl+1
+	keyHandler.bindAction(97, true, 'fitWindow'); // Ctrl+1 (Num)
 	keyHandler.bindAction(50, true, 'fitPageWidth'); // Ctrl+2
+	keyHandler.bindAction(98, true, 'fitPageWidth'); // Ctrl+2 (Num)
 	keyHandler.bindAction(51, true, 'fitPage'); // Ctrl+3
+	keyHandler.bindAction(99, true, 'fitPage'); // Ctrl+3 (Num)
 	keyHandler.bindAction(52, true, 'fitTwoPages'); // Ctrl+4
+	keyHandler.bindAction(100, true, 'fitTwoPages'); // Ctrl+4 (Num)
 	keyHandler.bindAction(53, true, 'customZoom'); // Ctrl+5
+	keyHandler.bindAction(101, true, 'customZoom'); // Ctrl+5 (Num)
 	keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
 	keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
 	keyHandler.bindAction(83, true, 'save'); // Ctrl+S
