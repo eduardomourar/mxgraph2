@@ -7582,67 +7582,70 @@ mxGraph.prototype.fit = function(border, keepOrigin)
 		var h1 = this.container.clientHeight - sb;
 
 		var bounds = this.view.getGraphBounds();
-
-		if (keepOrigin && bounds.x != null && bounds.y != null)
-		{
-			bounds.width += bounds.x;
-			bounds.height += bounds.y;
-			bounds.x = 0;
-			bounds.y = 0;
-		}
 		
-		var s = this.view.scale;
-		var w2 = bounds.width / s;
-		var h2 = bounds.height / s;
-		
-		// Fits to the size of the background image if required
-		if (this.backgroundImage != null)
+		if (bounds.width > 0 && bounds.height > 0)
 		{
-			w2 = Math.max(w2, this.backgroundImage.width - bounds.x / s);
-			h2 = Math.max(h2, this.backgroundImage.height - bounds.y / s);
-		}
-		
-		var b = (keepOrigin) ? border : 2 * border;
-		var s2 = Math.floor(Math.min(w1 / (w2 + b), h1 / (h2 + b)) * 100) / 100;
-		
-		if (this.minFitScale != null)
-		{
-			s2 = Math.max(s2, this.minFitScale);
-		}
-		
-		if (this.maxFitScale != null)
-		{
-			s2 = Math.min(s2, this.maxFitScale);
-		}
-
-		if (!keepOrigin)
-		{
-			if (!mxUtils.hasScrollbars(this.container))
+			if (keepOrigin && bounds.x != null && bounds.y != null)
 			{
-				var x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border + 1) : border;
-				var y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border + 1) : border;
-
-				this.view.scaleAndTranslate(s2, x0, y0);
+				bounds.width += bounds.x;
+				bounds.height += bounds.y;
+				bounds.x = 0;
+				bounds.y = 0;
 			}
-			else
+			
+			var s = this.view.scale;
+			var w2 = bounds.width / s;
+			var h2 = bounds.height / s;
+			
+			// Fits to the size of the background image if required
+			if (this.backgroundImage != null)
+			{
+				w2 = Math.max(w2, this.backgroundImage.width - bounds.x / s);
+				h2 = Math.max(h2, this.backgroundImage.height - bounds.y / s);
+			}
+			
+			var b = (keepOrigin) ? border : 2 * border;
+			var s2 = Math.floor(Math.min(w1 / (w2 + b), h1 / (h2 + b)) * 100) / 100;
+			
+			if (this.minFitScale != null)
+			{
+				s2 = Math.max(s2, this.minFitScale);
+			}
+			
+			if (this.maxFitScale != null)
+			{
+				s2 = Math.min(s2, this.maxFitScale);
+			}
+	
+			if (!keepOrigin)
+			{
+				if (!mxUtils.hasScrollbars(this.container))
+				{
+					var x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border + 1) : border;
+					var y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border + 1) : border;
+	
+					this.view.scaleAndTranslate(s2, x0, y0);
+				}
+				else
+				{
+					this.view.setScale(s2);
+					var b2 = this.getGraphBounds();
+					
+					if (b2.x != null)
+					{
+						this.container.scrollLeft = b2.x;
+					}
+					
+					if (b2.y != null)
+					{
+						this.container.scrollTop = b2.y;
+					}
+				}
+			}
+			else if (this.view.scale != s2)
 			{
 				this.view.setScale(s2);
-				var b2 = this.getGraphBounds();
-				
-				if (b2.x != null)
-				{
-					this.container.scrollLeft = b2.x;
-				}
-				
-				if (b2.y != null)
-				{
-					this.container.scrollTop = b2.y;
-				}
 			}
-		}
-		else if (this.view.scale != s2)
-		{
-			this.view.setScale(s2);
 		}
 	}
 	
