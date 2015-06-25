@@ -2115,7 +2115,7 @@ if (typeof mxVertexHandler != 'undefined')
 							this.editor.graph.stopEditing(false);
 						}
 						
-						this.editor.graph.selectNextCell();
+						this.editor.graph.selectCell(!mxEvent.isShiftDown(evt));
 						mxEvent.consume(evt);
 					}
 				}));
