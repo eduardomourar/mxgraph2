@@ -414,8 +414,8 @@ Actions.prototype.init = function()
 		graph.zoomTo(1);
 		ui.resetScrollbars();
 	}, null, null, 'Ctrl+0');
-	this.addAction('zoomIn', function(evt) { graph.zoomIn(); }, null, null, 'Ctrl + / Alt+Scroll');
-	this.addAction('zoomOut', function(evt) { graph.zoomOut(); }, null, null, 'Ctrl - / Alt+Scroll');
+	this.addAction('zoomIn', function(evt) { graph.zoomIn(); }, null, null, 'Ctrl + / Alt+Mousewheel');
+	this.addAction('zoomOut', function(evt) { graph.zoomOut(); }, null, null, 'Ctrl - / Alt+Mousewheel');
 	this.addAction('fitWindow', function() { graph.fit(); }, null, null, 'Ctrl+1');
 	this.addAction('fitPage', mxUtils.bind(this, function()
 	{

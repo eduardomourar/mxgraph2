@@ -556,14 +556,17 @@ Menus.prototype.init = function()
 
 	this.put('view', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		if (urlParams['simple'] != '1')
+		if (urlParams['simple'] == '1')
+		{
+			this.addMenuItems(menu, ['actualSize', '-']);
+		}
+		else
 		{
 			this.addMenuItems(menu, ['outline', 'layers'].concat((this.editorUi.format != null) ? ['formatPanel'] : []), parent);
 			menu.addSeparator();
 		}
 		
-		var scales = (urlParams['simple'] != '1') ? [0.25, 0.5, 0.75, 1, 1.5, 2, 4] :
-			[0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
+		var scales = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
 		
 		for (var i = 0; i < scales.length; i++)
 		{
@@ -576,11 +579,9 @@ Menus.prototype.init = function()
 			})(scales[i]);
 		}
 		
-		this.addMenuItems(menu, ['-', 'actualSize', 'zoomIn', 'zoomOut'], parent);
-		
 		if (urlParams['simple'] != '1')
 		{
-			this.addMenuItems(menu, ['-', 'fitWindow', 'fitPageWidth', 'fitPage', 'fitTwoPages', '-', 'customZoom'], parent);
+			this.addMenuItems(menu, ['-', 'actualSize', 'zoomIn', 'zoomOut', '-', 'fitWindow', 'fitPageWidth', 'fitPage', 'fitTwoPages', '-', 'customZoom'], parent);
 		}
 		
 		this.addMenuItems(menu, ['-', 'fitWindow', 'fitPageWidth', 'fitPage', 'fitTwoPages', '-', 'customZoom'], parent);

@@ -37,12 +37,12 @@ Toolbar.prototype.init = function()
 		var elts = this.addItems(['undo', 'redo', 'delete', '-', 'actualSize', 'zoomIn', 'zoomOut', '-']);
 		
 		// Adds keyboard shortcuts to tooltips
-		elts[0].setAttribute('title', mxResources.get('undo') + ' (Ctrl+Z)');
-		elts[1].setAttribute('title', mxResources.get('redo') + (mxClient.IS_MAC) ? ' (Ctrl+Shift+Z)' : ' (Ctrl+Y)');
-		elts[2].setAttribute('title', mxResources.get('delete') + ' (Delete)');
-		elts[4].setAttribute('title', mxResources.get('actualSize') + ' (Ctrl+0)');
-		elts[5].setAttribute('title', mxResources.get('zoomIn') + ' (Ctrl + / Alt+Scroll)');
-		elts[6].setAttribute('title', mxResources.get('zoomOut') + ' (Ctrl - / Alt+Scroll)');
+		elts[0].setAttribute('title', mxResources.get('undo') + ' (' + this.editorUi.actions.get('undo').shortcut + ')');
+		elts[1].setAttribute('title', mxResources.get('redo') + ' (' + this.editorUi.actions.get('redo').shortcut + ')');
+		elts[2].setAttribute('title', mxResources.get('delete') + ' (' + this.editorUi.actions.get('delete').shortcut + ')');
+		elts[4].setAttribute('title', mxResources.get('actualSize') + ' (' + this.editorUi.actions.get('actualSize').shortcut + ')');
+		elts[5].setAttribute('title', mxResources.get('zoomIn') + ' (' + this.editorUi.actions.get('zoomIn').shortcut + ')');
+		elts[6].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
 	
 		this.fontMenu = this.addMenu(Menus.prototype.defaultFont, mxResources.get('fontFamily'), true, 'fontFamily');
 		this.fontMenu.style.whiteSpace = 'nowrap';
@@ -189,12 +189,11 @@ Toolbar.prototype.init = function()
 			formatMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
 		}
 		
-		//var elts = this.addItems(['actualSize']);//, 'zoomIn', 'zoomOut', '-']);
-		//elts[0].setAttribute('title', mxResources.get('actualSize') + ' (' + this.editorUi.actions.get('actualSize').shortcut + ')');
-		//elts[1].setAttribute('title', mxResources.get('zoomIn') + ' (' + this.editorUi.actions.get('zoomIn').shortcut + ')');
-		//elts[2].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
+		var elts = this.addItems(['zoomIn', 'zoomOut', '-']);
+		elts[0].setAttribute('title', mxResources.get('zoomIn') + ' (' + this.editorUi.actions.get('zoomIn').shortcut + ')');
+		elts[1].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
 
-		var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Scroll)', true, 'view');
+		var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'view');
 		viewMenu.style.whiteSpace = 'nowrap';
 		viewMenu.style.position = 'relative';
 		viewMenu.style.overflow = 'hidden';
@@ -221,11 +220,13 @@ Toolbar.prototype.init = function()
 			}
 		}));
 
-		var elts = this.addItems(['-', 'undo', 'redo', 'delete', '-']);
+		var elts = this.addItems(['-', 'undo', 'redo', '-', 'delete', '-']);
 		elts[1].setAttribute('title', mxResources.get('undo') + ' (' + this.editorUi.actions.get('undo').shortcut + ')');
 		elts[2].setAttribute('title', mxResources.get('redo') + ' (' + this.editorUi.actions.get('redo').shortcut + ')');
-		elts[3].setAttribute('title', mxResources.get('delete') + ' (' + this.editorUi.actions.get('delete').shortcut + ')');
+		elts[4].setAttribute('title', mxResources.get('delete') + ' (' + this.editorUi.actions.get('delete').shortcut + ')');
 
+		this.addItems(['fillColor', 'strokeColor', 'shadow', '-']);
+		
 		var insertMenu = this.addMenu('', mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')', true, 'insert');
 		insertMenu.style.whiteSpace = 'nowrap';
 		insertMenu.style.overflow = 'hidden';
