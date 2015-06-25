@@ -470,6 +470,7 @@ Menus.prototype.init = function()
 			if (tmp != null)
 			{
 				var layout = new mxRadialTreeLayout(graph, false);
+				layout.levelDistance = 60;
 				layout.autoRadius = true;
 				
 	    		this.editorUi.executeLayout(function()
