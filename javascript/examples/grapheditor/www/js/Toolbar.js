@@ -177,7 +177,7 @@ Toolbar.prototype.init = function()
 		formatMenu.style.overflow = 'hidden';
 		formatMenu.style.position = 'relative';
 		formatMenu.innerHTML = '<div class="geSprite geSprite-formatpanel" style="margin-left:-4px;margin-top:-3px;"></div>' +
-			'<img style="position:absolute;left:28px;top:8px;" src="' + Sidebar.prototype.expandedImage + '" valign="middle"/>';
+			'<img border="0" style="position:absolute;left:28px;top:8px;" src="' + Sidebar.prototype.expandedImage + '" valign="middle"/>';
 		formatMenu.style.width = (mxClient.IS_QUIRKS) ? '36px' : '16px';
 		this.addSeparator();
 		
@@ -212,7 +212,7 @@ Toolbar.prototype.init = function()
 		this.editorUi.editor.graph.view.addListener(mxEvent.EVENT_SCALE, mxUtils.bind(this, function()
 		{
 			viewMenu.innerHTML = Math.round(this.editorUi.editor.graph.view.scale * 100) +
-				'%<img style="position:absolute;right:6px;top:8px;" src="' + Sidebar.prototype.expandedImage + '" valign="middle"/>';
+				'%<img border="0" style="position:absolute;right:6px;top:8px;" src="' + Sidebar.prototype.expandedImage + '" valign="middle"/>';
 			
 			if (urlParams['ui'] != 'atlas')
 			{
@@ -231,7 +231,7 @@ Toolbar.prototype.init = function()
 		insertMenu.style.overflow = 'hidden';
 		insertMenu.style.position = 'relative';
 		insertMenu.innerHTML = '<div class="geSprite geSprite-plus" style="margin-left:-4px;margin-top:-3px;"></div>' +
-			'<img style="position:absolute;left:28px;top:8px;" src="' + Sidebar.prototype.expandedImage + '" valign="middle"/>';
+			'<img border="0" style="position:absolute;left:28px;top:8px;" src="' + Sidebar.prototype.expandedImage + '" valign="middle"/>';
 		insertMenu.style.width = (mxClient.IS_QUIRKS) ? '36px' : '16px';
 		
 		// Fix for item size in kennedy theme
