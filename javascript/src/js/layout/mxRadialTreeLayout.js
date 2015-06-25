@@ -53,16 +53,16 @@ mxRadialTreeLayout.prototype.rooty = 0;
 /**
  * Variable: levelDistance
  *
- * Holds the levelDistance. Default is 10.
+ * Holds the levelDistance. Default is 120.
  */
-mxRadialTreeLayout.prototype.levelDistance = 10;
+mxRadialTreeLayout.prototype.levelDistance = 120;
 
 /**
  * Variable: nodeDistance
  *
- * Holds the nodeDistance. Default is 20.
+ * Holds the nodeDistance. Default is 10.
  */
-mxRadialTreeLayout.prototype.nodeDistance = 20;
+mxRadialTreeLayout.prototype.nodeDistance = 10;
 
 /**
  * Variable: autoRadius
@@ -157,8 +157,6 @@ mxRadialTreeLayout.prototype.execute = function(parent, root)
 	
 	this.useBoundingBox = false;
 	this.edgeRouting = false;
-	this.levelDistance = 120;
-	this.nodeDistance = 10;
 	//this.horizontal = false;
 
 	mxCompactTreeLayout.prototype.execute.apply(this, arguments);
