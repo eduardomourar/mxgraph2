@@ -557,11 +557,7 @@ Menus.prototype.init = function()
 
 	this.put('view', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		if (urlParams['simple'] == '1')
-		{
-			this.addMenuItems(menu, ['actualSize', '-']);
-		}
-		else
+		if (urlParams['simple'] != '1')
 		{
 			this.addMenuItems(menu, ['outline', 'layers'].concat((this.editorUi.format != null) ? ['formatPanel'] : []), parent);
 			menu.addSeparator();

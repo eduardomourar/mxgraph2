@@ -189,9 +189,10 @@ Toolbar.prototype.init = function()
 			formatMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
 		}
 		
-		var elts = this.addItems(['zoomIn', 'zoomOut', '-']);
+		var elts = this.addItems(['zoomIn', 'zoomOut', 'actualSize', '-']);
 		elts[0].setAttribute('title', mxResources.get('zoomIn') + ' (' + this.editorUi.actions.get('zoomIn').shortcut + ')');
 		elts[1].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
+		elts[2].setAttribute('title', mxResources.get('actualSize') + ' (' + this.editorUi.actions.get('actualSize').shortcut + ')');
 
 		var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'view');
 		viewMenu.style.whiteSpace = 'nowrap';
