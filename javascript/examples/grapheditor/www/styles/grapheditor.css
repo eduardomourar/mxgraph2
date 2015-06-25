@@ -4,6 +4,9 @@
 	border:none;
 	margin:0px;
 }
+.geMenubarContainer .geItem, .geToolbar .geButton, .geToolbar .geLabel, .geSidebarContainer .geTitle {
+	cursor:pointer !important;
+}
 .geContentEditable div, .geContentEditable table, .geContentEditable table td {
 	border: 1px dashed lightGray;
 }
