@@ -1303,9 +1303,13 @@ var ExportDialog = function(editorUi)
 	imageFormatSelect.appendChild(pngOption);
 
 	var gifOption = document.createElement('option');
-	gifOption.setAttribute('value', 'gif');
-	mxUtils.write(gifOption, 'GIF - Graphics Interchange Format');
-	imageFormatSelect.appendChild(gifOption);
+	
+	if (ExportDialog.showGifOption)
+	{
+		gifOption.setAttribute('value', 'gif');
+		mxUtils.write(gifOption, 'GIF - Graphics Interchange Format');
+		imageFormatSelect.appendChild(gifOption);
+	}
 	
 	var jpgOption = document.createElement('option');
 	jpgOption.setAttribute('value', 'jpg');
@@ -1654,6 +1658,11 @@ var ExportDialog = function(editorUi)
 	table.appendChild(tbody);
 	this.container = table;
 };
+
+/**
+ * Global switches for the export dialog.
+ */
+ExportDialog.showGifOption = true;
 
 /**
  * Global switches for the export dialog.
