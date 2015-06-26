@@ -158,7 +158,7 @@ mxCellState.prototype.text = null;
  * border - Optional border to be added around the perimeter bounds.
  * bounds - Optional <mxRectangle> to be used as the initial bounds.
  */
-mxCellState.prototype.getPerimeterBounds = function (border, bounds)
+mxCellState.prototype.getPerimeterBounds = function(border, bounds)
 {
 	border = border || 0;
 	bounds = (bounds != null) ? bounds : new mxRectangle(this.x, this.y, this.width, this.height);
@@ -192,7 +192,7 @@ mxCellState.prototype.getPerimeterBounds = function (border, bounds)
  * isSource - Boolean that specifies if the first or last point should
  * be assigned.
  */
-mxCellState.prototype.setAbsoluteTerminalPoint = function (point, isSource)
+mxCellState.prototype.setAbsoluteTerminalPoint = function(point, isSource)
 {
 	if (isSource)
 	{
@@ -234,7 +234,7 @@ mxCellState.prototype.setAbsoluteTerminalPoint = function (point, isSource)
  * 
  * Sets the given cursor on the shape and text shape.
  */
-mxCellState.prototype.setCursor = function (cursor)
+mxCellState.prototype.setCursor = function(cursor)
 {
 	if (this.shape != null)
 	{
@@ -257,7 +257,7 @@ mxCellState.prototype.setCursor = function (cursor)
  * source - Boolean that specifies if the source or target cell should be
  * returned.
  */
-mxCellState.prototype.getVisibleTerminal = function (source)
+mxCellState.prototype.getVisibleTerminal = function(source)
 {
 	var tmp = this.getVisibleTerminalState(source);
 	
@@ -274,7 +274,7 @@ mxCellState.prototype.getVisibleTerminal = function (source)
  * source - Boolean that specifies if the source or target state should be
  * returned.
  */
-mxCellState.prototype.getVisibleTerminalState = function (source)
+mxCellState.prototype.getVisibleTerminalState = function(source)
 {
 	return (source) ? this.visibleSourceState : this.visibleTargetState;
 };
@@ -289,7 +289,7 @@ mxCellState.prototype.getVisibleTerminalState = function (source)
  * terminalState - <mxCellState> that represents the terminal.
  * source - Boolean that specifies if the source or target state should be set.
  */
-mxCellState.prototype.setVisibleTerminalState = function (terminalState, source)
+mxCellState.prototype.setVisibleTerminalState = function(terminalState, source)
 {
 	if (source)
 	{
@@ -306,7 +306,7 @@ mxCellState.prototype.setVisibleTerminalState = function (terminalState, source)
  * 
  * Returns the unscaled, untranslated bounds.
  */
-mxCellState.prototype.getCellBounds = function ()
+mxCellState.prototype.getCellBounds = function()
 {
 	return this.cellBounds;
 };
@@ -318,7 +318,7 @@ mxCellState.prototype.getCellBounds = function ()
  * <getCellBounds> but with a 90 degree rotation if the shape's
  * isPaintBoundsInverted returns true.
  */
-mxCellState.prototype.getPaintBounds = function ()
+mxCellState.prototype.getPaintBounds = function()
 {
 	return this.paintBounds;
 };
@@ -346,7 +346,7 @@ mxCellState.prototype.updateCachedBounds = function()
  * 
  * Destroys the state and all associated resources.
  */
-mxCellState.prototype.destroy = function ()
+mxCellState.prototype.destroy = function()
 {
 	this.view.graph.cellRenderer.destroy(this);
 };
