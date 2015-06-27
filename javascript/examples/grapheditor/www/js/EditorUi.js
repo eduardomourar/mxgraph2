@@ -167,6 +167,8 @@ EditorUi = function(editor, container)
 	
 	// Switches toolbar for text editing
 	var textMode = false;
+	var fontMenu = null;
+	var sizeMenu = null;
 	var nodes = null;
 	
 	var updateToolbar = mxUtils.bind(this, function()
@@ -189,6 +191,10 @@ EditorUi = function(editor, container)
 				node = tmp;
 			}
 			
+			// Saves references to special items
+			var tmp1 = this.toolbar.fontMenu;
+			var tmp2 = this.toolbar.sizeMenu;
+			
 			if (nodes == null)
 			{
 				this.toolbar.createTextToolbar();
@@ -199,9 +205,15 @@ EditorUi = function(editor, container)
 				{
 					this.toolbar.container.appendChild(nodes[i]);
 				}
+				
+				// Restores references to special items
+				this.toolbar.fontMenu = fontMenu;
+				this.toolbar.sizeMenu = sizeMenu;
 			}
 			
 			textMode = graph.cellEditor.isContentEditing();
+			fontMenu = tmp1;
+			sizeMenu = tmp2;
 			nodes = newNodes;
 		}
 	});
