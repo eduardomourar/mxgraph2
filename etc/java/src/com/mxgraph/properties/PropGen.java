@@ -74,6 +74,11 @@ public class PropGen
 
 				if (codes.length > 0)
 				{
+					if (codes[0].equals(""))
+					{
+						codes[0] = "i18n";
+					}
+					
 					StringBuilder[] outputFiles = new StringBuilder[codes.length];
 
 					while ((line = in.readLine()) != null)
@@ -94,21 +99,28 @@ public class PropGen
 										{
 											outputFiles[i] = new StringBuilder();
 										}
-
-										String value = (entries.length > i) ? entries[i] : "";
-
-										// Empty entries will be translated to English
-										if (value.equals(""))
+										
+										if (codes[i] == "i18n")
 										{
-											value = entries[1];
+											outputFiles[i].append(key + "=" + key + "\n");
 										}
-
-										if (PropGen.encodeValues)
+										else
 										{
-											value = encodeString(value);
+											String value = (entries.length > i) ? entries[i] : "";
+	
+											// Empty entries will be translated to English
+											if (value.equals(""))
+											{
+												value = entries[1];
+											}
+	
+											if (PropGen.encodeValues)
+											{
+												value = encodeString(value);
+											}
+	
+											outputFiles[i].append(key + "=" + value + "\n");
 										}
-
-										outputFiles[i].append(key + "=" + value + "\n");
 									}
 								}
 							}
