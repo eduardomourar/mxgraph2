@@ -166,58 +166,115 @@ EditorUi = function(editor, container)
 	};
 	
 	// Switches toolbar for text editing
-	if (urlParams['simple'] != '1')
-	{
-		var textMode = false;
-		var nodes = null;
-		
-		var updateToolbar = mxUtils.bind(this, function()
-		{
-			if (textMode != graph.cellEditor.isContentEditing())
-			{
-				var node = this.toolbar.container.firstChild;
-				var newNodes = [];
-				
-				while (node != null)
-				{
-					var tmp = node.nextSibling;
-					node.parentNode.removeChild(node);
-					newNodes.push(node);
-					node = tmp;
-				}
-				
-				if (nodes == null)
-				{
-					this.toolbar.createTextToolbar();
-				}
-				else
-				{
-					for (var i = 0; i < nodes.length; i++)
-					{
-						this.toolbar.container.appendChild(nodes[i]);
-					}
-				}
-				
-				textMode = graph.cellEditor.isContentEditing();
-				nodes = newNodes;
-			}
-		});
+	var textMode = false;
+	var nodes = null;
 	
-		// Overrides cell editor to update toolbar
-		var cellEditorStartEditing = graph.cellEditor.startEditing;
-		graph.cellEditor.startEditing = function()
+	var updateToolbar = mxUtils.bind(this, function()
+	{
+		if (textMode != graph.cellEditor.isContentEditing())
 		{
-			cellEditorStartEditing.apply(this, arguments);
-			updateToolbar();
-		};
+			var node = this.toolbar.container.firstChild;
+			var newNodes = [];
+			
+			while (node != null)
+			{
+				var tmp = node.nextSibling;
+				node.parentNode.removeChild(node);
+				newNodes.push(node);
+				node = tmp;
+			}
+			
+			if (nodes == null)
+			{
+				this.toolbar.createTextToolbar();
+			}
+			else
+			{
+				for (var i = 0; i < nodes.length; i++)
+				{
+					this.toolbar.container.appendChild(nodes[i]);
+				}
+			}
+			
+			textMode = graph.cellEditor.isContentEditing();
+			nodes = newNodes;
+		}
+	});
+
+	var ui = this;
+	
+	// Overrides cell editor to update toolbar
+	var cellEditorStartEditing = graph.cellEditor.startEditing;
+	graph.cellEditor.startEditing = function()
+	{
+		cellEditorStartEditing.apply(this, arguments);
+		updateToolbar();
 		
-		var cellEditorStopEditing = graph.cellEditor.stopEditing;
-		graph.cellEditor.stopEditing = function(cell, trigger)
+		if (graph.cellEditor.text2 != null)
 		{
-			cellEditorStopEditing.apply(this, arguments);
-			updateToolbar();
-		};
-	}
+			var updating = false;
+			
+			var updateCssHandler = function()
+			{
+				if (!updating)
+				{
+					updating = true;
+				
+					window.setTimeout(function()
+					{
+						var selectedElement = graph.getSelectedElement();
+						var node = selectedElement;
+						
+						while (node != null && node.nodeType != mxConstants.NODETYPE_ELEMENT)
+						{
+							node = node.parentNode;
+						}
+						
+						if (node != null)
+						{
+							var css = mxUtils.getCurrentStyle(node);
+	
+							// Workaround for firstChild is null or not an object
+							// in the log which seems to be IE8- only / 29.01.15
+							if (ui.toolbar != null)
+							{
+								// Strips leading and trailing quotes
+								var ff = css.fontFamily;
+								
+								if (ff.charAt(0) == '\'')
+								{
+									ff = ff.substring(1);
+								}
+								
+								if (ff.charAt(ff.length - 1) == '\'')
+								{
+									ff = ff.substring(0, ff.length - 1);
+								}
+								
+								ui.toolbar.setFontName(ff);
+								ui.toolbar.setFontSize(parseInt(css.fontSize));
+							}
+						}
+						
+						updating = false;
+					}, 0);
+				}
+			};
+			
+			mxEvent.addListener(graph.cellEditor.text2, 'input', updateCssHandler)
+			mxEvent.addListener(graph.cellEditor.text2, 'touchend', updateCssHandler);
+			mxEvent.addListener(graph.cellEditor.text2, 'mouseup', updateCssHandler);
+			mxEvent.addListener(graph.cellEditor.text2, 'keyup', updateCssHandler);
+			updateCssHandler();
+		}
+	};
+	
+	var cellEditorStopEditing = graph.cellEditor.stopEditing;
+	graph.cellEditor.stopEditing = function(cell, trigger)
+	{
+		cellEditorStopEditing.apply(this, arguments);
+		updateToolbar();
+	};
 	
     // Enables scrollbars and sets cursor style for the container
 	graph.container.setAttribute('tabindex', '0');
@@ -593,53 +650,56 @@ EditorUi = function(editor, container)
 			}
 		}
 
-		if (this.toolbar != null && this.toolbar.fontMenu != null)
+		if (this.toolbar != null)
 		{
-			var ff = currentStyle['fontFamily'] || Menus.prototype.defaultFont;
-			this.toolbar.fontMenu.innerHTML = mxUtils.htmlEntities(ff);
+			this.toolbar.setFontName(currentStyle['fontFamily'] || Menus.prototype.defaultFont);
+			this.toolbar.setFontSize(currentStyle['fontSize'] || Menus.prototype.defaultFontSize);
 			
-			var fs = String(currentStyle['fontSize'] || Menus.prototype.defaultFontSize);
-			this.toolbar.sizeMenu.innerHTML = mxUtils.htmlEntities(fs);
-	
-			// Updates toolbar icon for edge style
-			var edgeStyleDiv = this.toolbar.edgeStyleMenu.getElementsByTagName('div')[0];
+			if (this.toolbar.edgeStyleMenu != null)
+			{
+				// Updates toolbar icon for edge style
+				var edgeStyleDiv = this.toolbar.edgeStyleMenu.getElementsByTagName('div')[0];
+				
+				if (currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle' && currentEdgeStyle['curved'] == '1')
+				{
+					edgeStyleDiv.className = 'geSprite geSprite-curved';
+				}
+				else if (currentEdgeStyle['edgeStyle'] == 'straight' || currentEdgeStyle['edgeStyle'] == 'none' ||
+						currentEdgeStyle['edgeStyle'] == null)
+				{
+					edgeStyleDiv.className = 'geSprite geSprite-straight';
+				}
+				else if (currentEdgeStyle['edgeStyle'] == 'entityRelationEdgeStyle')
+				{
+					edgeStyleDiv.className = 'geSprite geSprite-entity';
+				}
+				else
+				{
+					edgeStyleDiv.className = 'geSprite geSprite-orthogonal';
+				}
+			}
 			
-			if (currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle' && currentEdgeStyle['curved'] == '1')
+			if (this.toolbar.edgeShapeMenu != null)
 			{
-				edgeStyleDiv.className = 'geSprite geSprite-curved';
-			}
-			else if (currentEdgeStyle['edgeStyle'] == 'straight' || currentEdgeStyle['edgeStyle'] == 'none' ||
-					currentEdgeStyle['edgeStyle'] == null)
-			{
-				edgeStyleDiv.className = 'geSprite geSprite-straight';
-			}
-			else if (currentEdgeStyle['edgeStyle'] == 'entityRelationEdgeStyle')
-			{
-				edgeStyleDiv.className = 'geSprite geSprite-entity';
-			}
-			else
-			{
-				edgeStyleDiv.className = 'geSprite geSprite-orthogonal';
-			}
-
-			// Updates icon for edge shape
-			var edgeShapeDiv = this.toolbar.edgeShapeMenu.getElementsByTagName('div')[0];
-			
-			if (currentEdgeStyle['shape'] == 'link')
-			{
-				edgeShapeDiv.className = 'geSprite geSprite-linkedge';
-			}
-			else if (currentEdgeStyle['shape'] == 'flexArrow')
-			{
-				edgeShapeDiv.className = 'geSprite geSprite-arrow';
-			}
-			else if (currentEdgeStyle['shape'] == 'arrow')
-			{
-				edgeShapeDiv.className = 'geSprite geSprite-simplearrow';
-			}
-			else
-			{
-				edgeShapeDiv.className = 'geSprite geSprite-connection';
+				// Updates icon for edge shape
+				var edgeShapeDiv = this.toolbar.edgeShapeMenu.getElementsByTagName('div')[0];
+				
+				if (currentEdgeStyle['shape'] == 'link')
+				{
+					edgeShapeDiv.className = 'geSprite geSprite-linkedge';
+				}
+				else if (currentEdgeStyle['shape'] == 'flexArrow')
+				{
+					edgeShapeDiv.className = 'geSprite geSprite-arrow';
+				}
+				else if (currentEdgeStyle['shape'] == 'arrow')
+				{
+					edgeShapeDiv.className = 'geSprite geSprite-simplearrow';
+				}
+				else
+				{
+					edgeShapeDiv.className = 'geSprite geSprite-connection';
+				}
 			}
 			
 			// Updates icon for optinal line start shape
@@ -649,7 +709,7 @@ EditorUi = function(editor, container)
 				
 				lineStartDiv.className = this.getCssClassForMarker('start',
 						currentEdgeStyle['shape'], currentEdgeStyle[mxConstants.STYLE_STARTARROW],
-						mxUtils.getValue(currentEdgeStyle, 'startFill', '0'));
+						mxUtils.getValue(currentEdgeStyle, 'startFill', '1'));
 			}
 
 			// Updates icon for optinal line end shape
@@ -659,13 +719,13 @@ EditorUi = function(editor, container)
 				
 				lineEndDiv.className = this.getCssClassForMarker('end',
 						currentEdgeStyle['shape'], currentEdgeStyle[mxConstants.STYLE_ENDARROW],
-						mxUtils.getValue(currentEdgeStyle, 'endFill', '0'));
+						mxUtils.getValue(currentEdgeStyle, 'endFill', '1'));
 			}
 		}
 	}));
 	
 	// Update font size and font family labels
-	if (this.toolbar != null && this.toolbar.fontMenu != null)
+	if (this.toolbar != null)
 	{
 		var update = mxUtils.bind(this, function()
 		{
@@ -683,9 +743,9 @@ EditorUi = function(editor, container)
 	    			ff = ff.substring(0, 8) + '...';
 	    		}
 	    	}
-	
-			this.toolbar.fontMenu.innerHTML = ff;
-			this.toolbar.sizeMenu.innerHTML = fs;
+	    	
+	    	this.toolbar.setFontName(ff);
+	    	this.toolbar.setFontSize(fs);
 		});
 		
 	    graph.getSelectionModel().addListener(mxEvent.CHANGE, update);
@@ -1712,7 +1772,7 @@ EditorUi.prototype.updateActionStates = function()
 	               'editStyle', 'editTooltip', 'editLink', 'backgroundColor', 'borderColor',
 	               'toFront', 'toBack', 'lockUnlock', 'editData', 'solid', 'dashed',
 	               'dotted', 'fillColor', 'gradientColor', 'shadow', 'fontColor',
-	               'formattedText', 'rounded', 'sharp', 'strokeColor'];
+	               'formattedText', 'rounded', 'toggleRounded', 'sharp', 'strokeColor'];
 	
 	for (var i = 0; i < actions.length; i++)
 	{

@@ -2168,12 +2168,12 @@ TextFormatPanel.prototype.addFont = function(container)
 		
 		var tmp = stylePanel3.cloneNode(false);
 		tmp.style.paddingTop = '4px';
-		var btns = [this.editorUi.toolbar.addButton('geSprite-orderedlist', mxResources.get('numberelist'),
+		var btns = [this.editorUi.toolbar.addButton('geSprite-orderedlist', mxResources.get('numberedList'),
 				function()
 				{
 					document.execCommand('insertorderedlist', false, null);
 				}, tmp),
-			this.editorUi.toolbar.addButton('geSprite-unorderedlist', mxResources.get('bulletedlist'),
+			this.editorUi.toolbar.addButton('geSprite-unorderedlist', mxResources.get('bulletedList'),
 				function()
 				{
 					document.execCommand('insertunorderedlist', false, null);
@@ -3709,9 +3709,9 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		};
 		
 		var sourceDiv = updateArrow(mxUtils.getValue(ss.style, mxConstants.STYLE_STARTARROW, null),
-				mxUtils.getValue(ss.style, 'startFill', '0'), lineStart, 'start');
+				mxUtils.getValue(ss.style, 'startFill', '1'), lineStart, 'start');
 		var targetDiv = updateArrow(mxUtils.getValue(ss.style, mxConstants.STYLE_ENDARROW, null),
-				mxUtils.getValue(ss.style, 'endFill', '0'), lineEnd, 'end');
+				mxUtils.getValue(ss.style, 'endFill', '1'), lineEnd, 'end');
 
 		// Special cases for markers
 		if (ss.style.shape == 'arrow')

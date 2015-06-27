@@ -727,6 +727,29 @@ Actions.prototype.init = function()
 			graph.getModel().endUpdate();
 		}
 	});
+	this.addAction('toggleRounded', function()
+	{
+		if (!graph.isSelectionEmpty() && graph.isEnabled())
+		{
+			graph.getModel().beginUpdate();
+			try
+			{
+				var cells = graph.getSelectionCells();
+	    		var state = graph.view.getState(cells[0]);
+	    		var style = (state != null) ? state.style : graph.getCellStyle(cells[0]);
+	    		var value = (mxUtils.getValue(style, mxConstants.STYLE_ROUNDED, '0') == '1') ? '0' : '1';
+	    		
+				graph.setCellStyles(mxConstants.STYLE_ROUNDED, value);
+				graph.setCellStyles(mxConstants.STYLE_CURVED, null);
+				ui.fireEvent(new mxEventObject('styleChanged', 'keys', [mxConstants.STYLE_ROUNDED, mxConstants.STYLE_CURVED],
+						'values', [value, '0'], 'cells', graph.getSelectionCells()));
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+		}
+	});
 	this.addAction('curved', function()
 	{
 		graph.getModel().beginUpdate();
