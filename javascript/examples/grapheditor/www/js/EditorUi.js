@@ -179,8 +179,13 @@ EditorUi = function(editor, container)
 			while (node != null)
 			{
 				var tmp = node.nextSibling;
-				node.parentNode.removeChild(node);
-				newNodes.push(node);
+				
+				if (mxUtils.indexOf(this.toolbar.staticElements, node) < 0)
+				{
+					node.parentNode.removeChild(node);
+					newNodes.push(node);
+				}
+				
 				node = tmp;
 			}
 			

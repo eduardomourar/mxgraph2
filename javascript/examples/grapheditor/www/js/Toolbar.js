@@ -8,6 +8,7 @@ function Toolbar(editorUi, container)
 {
 	this.editorUi = editorUi;
 	this.container = container;
+	this.staticElements = [];
 	this.init();
 
 	// Global handler to hide the current menu
@@ -37,6 +38,11 @@ Toolbar.prototype.selectedBackground = '#d0d0d0';
  * Defines the background for selected buttons.
  */
 Toolbar.prototype.unselectedBackground = 'none';
+
+/**
+ * Array that contains the DOM nodes that should never be removed.
+ */
+Toolbar.prototype.staticElements = null;
 
 /**
  * Adds the toolbar elements.
