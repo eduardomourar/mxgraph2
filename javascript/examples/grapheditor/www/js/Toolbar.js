@@ -56,18 +56,30 @@ Toolbar.prototype.init = function()
 		elts[6].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
 	
 		this.fontMenu = this.addMenu('', mxResources.get('fontFamily'), true, 'fontFamily');
+		this.fontMenu.style.position = 'relative';
 		this.fontMenu.style.whiteSpace = 'nowrap';
 		this.fontMenu.style.overflow = 'hidden';
-		this.fontMenu.style.width = (mxClient.IS_QUIRKS) ? '76px' : '56px';
+		this.fontMenu.style.width = (mxClient.IS_QUIRKS) ? '80px' : '60px';
+
+		if (urlParams['ui'] != 'atlas')
+		{
+			this.fontMenu.style.paddingRight = '18px';
+		}
 		
 		this.setFontName(Menus.prototype.defaultFont);
 		
 		this.addSeparator();
 		
 		this.sizeMenu = this.addMenu(Menus.prototype.defaultFontSize, mxResources.get('fontSize'), true, 'fontSize');
+		this.sizeMenu.style.position = 'relative';
 		this.sizeMenu.style.whiteSpace = 'nowrap';
 		this.sizeMenu.style.overflow = 'hidden';
-		this.sizeMenu.style.width = (mxClient.IS_QUIRKS) ? '42px' : '22px';
+		this.sizeMenu.style.width = (mxClient.IS_QUIRKS) ? '44px' : '24px';
+		
+		if (urlParams['ui'] != 'atlas')
+		{
+			this.sizeMenu.style.paddingRight = '18px';
+		}
 	
 		this.setFontSize(Menus.prototype.defaultFontSize);
 		
