@@ -25,7 +25,8 @@ Toolbar.prototype.dropdownImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/dropdown.g
 /**
  * Image element for the dropdown arrow.
  */
-Toolbar.prototype.dropdownImageHtml = '<img border="0" style="position:absolute;right:4px;top:8px;" src="' + Toolbar.prototype.dropdownImage + '" valign="middle"/>';
+Toolbar.prototype.dropdownImageHtml = '<img border="0" style="position:absolute;right:4px;top:' +
+	((urlParams['ui'] == 'atlas') ? 8 : 6) + 'px;" src="' + Toolbar.prototype.dropdownImage + '" valign="middle"/>';
 
 /**
  * Defines the background for selected buttons.
