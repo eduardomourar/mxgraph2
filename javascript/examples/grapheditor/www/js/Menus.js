@@ -559,7 +559,7 @@ Menus.prototype.init = function()
 	{
 		if (urlParams['simple'] != '1')
 		{
-			this.addMenuItems(menu, ['outline', 'layers'].concat((this.editorUi.format != null) ? ['formatPanel'] : []), parent);
+			this.addMenuItems(menu, ((this.editorUi.format != null) ? ['formatPanel'] : []).concat(['outline', 'layers']), parent);
 			menu.addSeparator();
 		}
 		
