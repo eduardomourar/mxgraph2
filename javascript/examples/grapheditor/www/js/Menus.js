@@ -1153,7 +1153,10 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 		
 		if (state != null)
 		{
-			this.addMenuItems(menu, ['toFront', 'toBack', '-'], null, evt);
+			if (graph.getSelectionCount() == 1 && urlParams['simple'] != '1')
+			{
+				this.addMenuItems(menu, ['toFront', 'toBack', '-'], null, evt);
+			}
 
 			if (graph.getModel().isEdge(cell) && mxUtils.getValue(state.style, mxConstants.STYLE_EDGE, null) != 'entityRelationEdgeStyle' &&
 				mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null) != 'arrow')

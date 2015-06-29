@@ -223,11 +223,6 @@ Toolbar.prototype.init = function()
 			formatMenu.getElementsByTagName('img')[0].style.top = '5px';
 			formatMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
 		}
-		
-		var elts = this.addItems(['zoomIn', 'zoomOut', 'actualSize', '-']);
-		elts[0].setAttribute('title', mxResources.get('zoomIn') + ' (' + this.editorUi.actions.get('zoomIn').shortcut + ')');
-		elts[1].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
-		elts[2].setAttribute('title', mxResources.get('actualSize') + ' (' + this.editorUi.actions.get('actualSize').shortcut + ')');
 
 		var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'view');
 		viewMenu.style.whiteSpace = 'nowrap';
@@ -243,6 +238,12 @@ Toolbar.prototype.init = function()
 			viewMenu.style.width = (mxClient.IS_QUIRKS) ? '70px' : '50px';
 		}
 		
+		this.addSeparator();
+		var elts = this.addItems(['actualSize', 'zoomIn', 'zoomOut']);
+		elts[0].setAttribute('title', mxResources.get('actualSize') + ' (' + this.editorUi.actions.get('actualSize').shortcut + ')');
+		elts[1].setAttribute('title', mxResources.get('zoomIn') + ' (' + this.editorUi.actions.get('zoomIn').shortcut + ')');
+		elts[2].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
+
 		// Updates the label if the scale changes
 		this.editorUi.editor.graph.view.addListener(mxEvent.EVENT_SCALE, mxUtils.bind(this, function()
 		{
@@ -256,15 +257,14 @@ Toolbar.prototype.init = function()
 			}
 		}));
 
-		var elts = this.addItems(['-', 'undo', 'redo', '-', 'delete', '-']);
+		var elts = this.addItems(['-', 'undo', 'redo', '-', 'delete', '-', 'toFront', 'toBack', '-', 'fillColor', 'gradientColor', 'strokeColor', '-', 'shadow']);
 		elts[1].setAttribute('title', mxResources.get('undo') + ' (' + this.editorUi.actions.get('undo').shortcut + ')');
 		elts[2].setAttribute('title', mxResources.get('redo') + ' (' + this.editorUi.actions.get('redo').shortcut + ')');
 		elts[4].setAttribute('title', mxResources.get('delete') + ' (' + this.editorUi.actions.get('delete').shortcut + ')');
 
-		this.addItems(['fillColor', 'gradientColor', 'strokeColor', '-', 'shadow']);
 		this.addItem('geSprite-rounded', 'toggleRounded').setAttribute('title', mxResources.get('rounded'));
 		this.addSeparator();
-		
+
 		var insertMenu = this.addMenu('', mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')', true, 'insert');
 		insertMenu.style.whiteSpace = 'nowrap';
 		insertMenu.style.overflow = 'hidden';
