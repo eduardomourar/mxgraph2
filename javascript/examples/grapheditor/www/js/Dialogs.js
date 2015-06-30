@@ -2357,11 +2357,11 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	{
 		if (graph.isEnabled())
 		{
+			var newCell = null;
 			graph.model.beginUpdate();
-			
 			try
 			{
-				var newCell = graph.cloneCells([selectionLayer])[0];
+				newCell = graph.cloneCells([selectionLayer])[0];
 				newCell.value = mxResources.get('layer') + ' ' + layerCount;
 				newCell.setVisible(true);
 				newCell = graph.addCell(newCell, graph.model.root);
@@ -2370,6 +2370,11 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			finally
 			{
 				graph.model.endUpdate();
+			}
+
+			if (newCell != null && !graph.isCellLocked(newCell))
+			{
+				graph.selectAll(newCell);
 			}
 		}
 	});
