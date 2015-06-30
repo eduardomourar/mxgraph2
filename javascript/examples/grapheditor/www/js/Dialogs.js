@@ -2280,7 +2280,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	
 	var ldiv = document.createElement('div');
 	
-	ldiv.className = (mxClient.IS_QUIRKS) ? '' : 'geToolbarContainer';
+	ldiv.className = 'geToolbarContainer';
 	ldiv.style.position = 'absolute';
 	ldiv.style.bottom = '0px';
 	ldiv.style.left = '0px';
@@ -2305,6 +2305,11 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	link.style.padding = '2px';
 	link.className = 'geButton';
 	link.style.cursor = 'pointer';
+	
+	if (mxClient.IS_QUIRKS)
+	{
+		link.style.filter = 'none';
+	}
 	
 	var removeLink = link.cloneNode();
 	removeLink.innerHTML = '<div class="geSprite geSprite-delete" style="display:inline-block;"></div>';
@@ -2416,7 +2421,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		function addLayer(index, label, child, defaultParent)
 		{
 			var ldiv = document.createElement('div');
-			ldiv.className = (mxClient.IS_QUIRKS) ? '' : 'geToolbarContainer';
+			ldiv.className = 'geToolbarContainer';
 
 			ldiv.style.overflow = 'hidden';
 			ldiv.style.position = 'relative';
@@ -2550,7 +2555,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			ldiv.appendChild(left);
 
 			// Fallback if no drag and drop is available
-			if (mxClient.IS_VML)
+			if (mxClient.IS_VML || (mxClient.IS_IE && document.documentMode < 10))
 			{
 				var right = document.createElement('div');
 				right.style.display = 'block';
