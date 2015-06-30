@@ -2535,7 +2535,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			}
 			else
 			{
-				ldiv.style.color = 'gray';
+				mxUtils.setOpacity(ldiv, 50);
 			}
 
 			var handlingClick = false;
