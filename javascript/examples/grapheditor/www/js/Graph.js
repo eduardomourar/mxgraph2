@@ -869,6 +869,29 @@ Graph.prototype.selectCells = function(vertices, edges, parent)
 };
 
 /**
+ * Function: getSwimlaneAt
+ * 
+ * Returns the bottom-most swimlane that intersects the given point (x, y)
+ * in the cell hierarchy that starts at the given parent.
+ * 
+ * Parameters:
+ * 
+ * x - X-coordinate of the location to be checked.
+ * y - Y-coordinate of the location to be checked.
+ * parent - <mxCell> that should be used as the root of the recursion.
+ * Default is <defaultParent>.
+ */
+Graph.prototype.getSwimlaneAt = function (x, y, parent)
+{
+	parent = parent || this.getDefaultParent();
+
+	if (!this.isCellLocked(parent))
+	{
+		mxGraph.prototype.getSwimlaneAt.apply(this, arguments);
+	}
+};
+
+/**
  * Disables folding for non-swimlanes.
  */
 Graph.prototype.isCellFoldable = function(cell)
