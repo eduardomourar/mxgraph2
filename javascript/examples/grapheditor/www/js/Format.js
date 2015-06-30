@@ -1857,7 +1857,7 @@ ArrangePanel.prototype.addGeometryHandler = function(input, fn)
 	{
 		if (input.value != '')
 		{
-			var value = parseInt(input.value);
+			var value = parseFloat(input.value);
 
 			if (value != initialValue)
 			{
