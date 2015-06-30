@@ -887,8 +887,10 @@ Graph.prototype.getSwimlaneAt = function (x, y, parent)
 
 	if (!this.isCellLocked(parent))
 	{
-		mxGraph.prototype.getSwimlaneAt.apply(this, arguments);
+		return mxGraph.prototype.getSwimlaneAt.apply(this, arguments);
 	}
+	
+	return null;
 };
 
 /**
