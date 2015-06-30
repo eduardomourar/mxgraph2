@@ -1380,7 +1380,11 @@ if (typeof mxVertexHandler != 'undefined')
 					(!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
 					!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
 				{
-					cell = this.addText(pt.x, pt.y, state);
+					if ((state == null && !this.isCellLocked(this.getDefaultParent())) ||
+						(state != null && !this.isCellLocked(state.cell)))
+					{
+						cell = this.addText(pt.x, pt.y, state);
+					}
 				}
 			}
 		
