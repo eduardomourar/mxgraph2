@@ -350,7 +350,7 @@ Graph = function(container, model, renderHint, stylesheet)
 						var cell = model.getChildAt(parent, i);
 						var state = this.view.getState(cell);
 						
-						if (state != null && this.isCellVisible(cell))
+						if (state != null && this.isCellVisible(cell) && mxUtils.getValue(state.style, 'locked', '0') != '1')
 						{
 							var deg = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION) || 0;
 							var box = state;
@@ -375,7 +375,7 @@ Graph = function(container, model, renderHint, stylesheet)
 			
 			return result;
 		};
-		
+
 		// Never removes cells from parents that are being moved
 		var graphHandlerShouldRemoveCellsFromParent = this.graphHandler.shouldRemoveCellsFromParent;
 		this.graphHandler.shouldRemoveCellsFromParent = function(parent, cells, evt)
@@ -394,6 +394,18 @@ Graph = function(container, model, renderHint, stylesheet)
 		// Unlocks all cells
 		this.isCellLocked = function(cell)
 		{
+			var pState = this.view.getState(cell);
+			
+			while (pState != null)
+			{
+				if (mxUtils.getValue(pState.style, 'locked', '0') == '1')
+				{
+					return true;
+				}
+				
+				pState = this.view.getState(this.model.getParent(pState.cell));
+			}
+			
 			return false;
 		};
 		
@@ -454,6 +466,22 @@ Graph = function(container, model, renderHint, stylesheet)
 		{
 			this.initTouch();
 		}
+		
+		/**
+		 * Adds locking
+		 */
+		var graphUpdateMouseEvent = this.updateMouseEvent;
+		this.updateMouseEvent = function(me)
+		{
+			me = graphUpdateMouseEvent.apply(this, arguments);
+			
+			if (this.isCellLocked(me.getCell()))
+			{
+				me.state = null;
+			}
+			
+			return me;
+		};
 	}
 };
 
@@ -794,6 +822,53 @@ Graph.prototype.isContainer = function(cell)
 };
 
 /**
+ * Function: selectAll
+ * 
+ * Selects all children of the given parent cell or the children of the
+ * default parent if no parent is specified. To select leaf vertices and/or
+ * edges use <selectCells>.
+ * 
+ * Parameters:
+ * 
+ * parent - Optional <mxCell> whose children should be selected.
+ * Default is <defaultParent>.
+ */
+Graph.prototype.selectAll = function(parent)
+{
+	parent = parent || this.getDefaultParent();
+
+	if (!this.isCellLocked(parent))
+	{
+		mxGraph.prototype.selectAll.apply(this, arguments);
+	}
+};
+
+/**
+ * Function: selectCells
+ * 
+ * Selects all vertices and/or edges depending on the given boolean
+ * arguments recursively, starting at the given parent or the default
+ * parent if no parent is specified. Use <selectAll> to select all cells.
+ * For vertices, only cells with no children are selected.
+ * 
+ * Parameters:
+ * 
+ * vertices - Boolean indicating if vertices should be selected.
+ * edges - Boolean indicating if edges should be selected.
+ * parent - Optional <mxCell> that acts as the root of the recursion.
+ * Default is <defaultParent>.
+ */
+Graph.prototype.selectCells = function(vertices, edges, parent)
+{
+	parent = parent || this.getDefaultParent();
+
+	if (!this.isCellLocked(parent))
+	{
+		mxGraph.prototype.selectCells.apply(this, arguments);
+	}
+};
+
+/**
  * Disables folding for non-swimlanes.
  */
 Graph.prototype.isCellFoldable = function(cell)
@@ -801,7 +876,8 @@ Graph.prototype.isCellFoldable = function(cell)
 	var state = this.view.getState(cell);
 	var style = (state != null) ? state.style : this.getCellStyle(cell);
 	
-	return this.foldingEnabled && ((this.isContainer(cell) && style['collapsible'] != '0') ||
+	return this.foldingEnabled && !this.isCellLocked(cell) &&
+		((this.isContainer(cell) && style['collapsible'] != '0') ||
 		(!this.isContainer(cell) && style['collapsible'] == '1'));
 };
 
@@ -1853,7 +1929,7 @@ if (typeof mxVertexHandler != 'undefined')
 	        sel.createRange().pasteHTML(html);
 	    }
 	};
-	
+
 	/**
 	 * Customized graph for touch devices.
 	 */
@@ -1872,10 +1948,11 @@ if (typeof mxVertexHandler != 'undefined')
 		});
 	
 		// Adds custom hit detection if native hit detection found no cell
+		var graphUpdateMouseEvent = this.updateMouseEvent;
 		this.updateMouseEvent = function(me)
 		{
-			var me = mxGraph.prototype.updateMouseEvent.apply(this, arguments);
-	
+			me = graphUpdateMouseEvent.apply(this, arguments);
+
 			if (mxEvent.isTouchEvent(me.getEvent()) && me.getState() == null)
 			{
 				var cell = this.getCellAt(me.graphX, me.graphY);

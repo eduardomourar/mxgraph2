@@ -68,10 +68,10 @@ Actions.prototype.init = function()
 	this.addAction('save', function() { ui.saveFile(false); }, null, null, 'Ctrl+S').isEnabled = isGraphEnabled;
 	this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, 'Ctrl+Shift+S').isEnabled = isGraphEnabled;
 	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 210, true, true); });
-	this.put('editFile', new Action(mxResources.get('edit') + '...', function()
+	this.addAction('editFile...', function()
 	{
 		ui.showDialog(new EditFileDialog(ui).container, 620, 420, true, true);
-	})).isEnabled = isGraphEnabled;
+	}).isEnabled = isGraphEnabled;
 	this.addAction('pageSetup...', function() { ui.showDialog(new PageSetupDialog(ui).container, 320, 120, true, true); });
 	this.addAction('print...', function() { ui.showDialog(new PrintDialog(ui).container, 300, 140, true, true); }, null, 'sprite-print', 'Ctrl+P');
 	this.addAction('preview', function() { mxUtils.show(graph, null, 10, 10); });
@@ -178,7 +178,7 @@ Actions.prototype.init = function()
 	this.addAction('ungroup', function() { graph.setSelectionCells(graph.ungroupCells()); }, null, null, 'Ctrl+U');
 	this.addAction('removeFromGroup', function() { graph.removeCellsFromParent(); });
 	// Adds action
-	this.addAction('editData...', function()
+	this.addAction('editMetadata...', function()
 	{
 		var cell = graph.getSelectionCell() || graph.getModel().getRoot();
 		
@@ -206,7 +206,7 @@ Actions.prototype.init = function()
 				}
 			}
 			
-	    	var dlg = new TextareaDialog(ui, mxResources.get('enterValue') + ':', tooltip, function(newValue)
+	    	var dlg = new TextareaDialog(ui, mxResources.get('editTooltip') + ':', tooltip, function(newValue)
 			{
 				graph.setTooltipForCell(cell, newValue);
 			});

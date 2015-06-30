@@ -204,10 +204,7 @@ Toolbar.prototype.init = function()
 	}
 	else
 	{
-		// TODO: Move embed buttons to toolbar
-		// FIXME: Wrong default arrow in style panel (should be filled classic)
-		// LATER: Fix indirection via simpleView menu
-		var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'simpleView');
+		var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels');
 		formatMenu.style.whiteSpace = 'nowrap';
 		formatMenu.style.overflow = 'hidden';
 		formatMenu.style.position = 'relative';
@@ -224,7 +221,7 @@ Toolbar.prototype.init = function()
 			formatMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
 		}
 
-		var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'view');
+		var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'viewZoom');
 		viewMenu.style.whiteSpace = 'nowrap';
 		viewMenu.style.position = 'relative';
 		viewMenu.style.overflow = 'hidden';

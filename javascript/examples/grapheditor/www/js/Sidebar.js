@@ -1889,54 +1889,57 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit)
 				{
 					target = null;
 				}
-
-				graph.model.beginUpdate();
-				try
+				
+				if (!graph.isCellLocked(target || graph.getDefaultParent()))
 				{
-					x = Math.round(x);
-					y = Math.round(y);
-					
-					// Splits the target edge or inserts into target group
-					if (allowSplit && graph.isSplitEnabled() && graph.isSplitTarget(target, cells, evt))
+					graph.model.beginUpdate();
+					try
 					{
-						graph.splitEdge(target, cells, null, x, y);
-						select = cells;
-					}
-					else if (cells.length > 0)
-					{
-						select = graph.importCells(cells, x, y, target);
-					}
-					
-					// Executes parent layout hooks for position/order
-					if (graph.layoutManager != null)
-					{
-						var layout = graph.layoutManager.getLayout(target);
+						x = Math.round(x);
+						y = Math.round(y);
 						
-						if (layout != null)
+						// Splits the target edge or inserts into target group
+						if (allowSplit && graph.isSplitEnabled() && graph.isSplitTarget(target, cells, evt))
 						{
-							var s = graph.view.scale;
-							var tr = graph.view.translate;
-							var tx = (x + tr.x) * s;
-							var ty = (y + tr.y) * s;
+							graph.splitEdge(target, cells, null, x, y);
+							select = cells;
+						}
+						else if (cells.length > 0)
+						{
+							select = graph.importCells(cells, x, y, target);
+						}
+						
+						// Executes parent layout hooks for position/order
+						if (graph.layoutManager != null)
+						{
+							var layout = graph.layoutManager.getLayout(target);
 							
-							for (var i = 0; i < select.length; i++)
+							if (layout != null)
 							{
-								layout.moveCell(select[i], tx, ty);
+								var s = graph.view.scale;
+								var tr = graph.view.translate;
+								var tx = (x + tr.x) * s;
+								var ty = (y + tr.y) * s;
+								
+								for (var i = 0; i < select.length; i++)
+								{
+									layout.moveCell(select[i], tx, ty);
+								}
 							}
 						}
+	
+						graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
 					}
-
-					graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
-				}
-				finally
-				{
-					graph.model.endUpdate();
-				}
-
-				if (select != null && select.length > 0)
-				{
-					graph.scrollCellToVisible(select[0]);
-					graph.setSelectionCells(select);
+					finally
+					{
+						graph.model.endUpdate();
+					}
+	
+					if (select != null && select.length > 0)
+					{
+						graph.scrollCellToVisible(select[0]);
+						graph.setSelectionCells(select);
+					}
 				}
 			}
 			
@@ -2480,6 +2483,12 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			}
 		}
 		
+		// Ignores locked cells
+		if (graph.isCellLocked(cell))
+		{
+			cell = null;
+		}
+		
 		var state = graph.view.getState(cell);
 		activeArrow = null;
 		var bbox = null;
@@ -2732,6 +2741,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			
 			if (graph.view.currentRoot == target || (!graph.isValidRoot(target) &&
 				graph.getModel().getChildCount(target) == 0) ||
+				(graph.isCellLocked(target)) ||
 				(model.isEdge(target) && !graph.isSplitEnabled()))
 			{
 				target = null;

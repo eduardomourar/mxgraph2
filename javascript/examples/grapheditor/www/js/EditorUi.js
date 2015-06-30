@@ -1787,7 +1787,7 @@ EditorUi.prototype.updateActionStates = function()
 	// Updates action states
 	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'delete', 'duplicate',
 	               'editStyle', 'editTooltip', 'editLink', 'backgroundColor', 'borderColor',
-	               'toFront', 'toBack', 'lockUnlock', 'editData', 'solid', 'dashed',
+	               'toFront', 'toBack', 'lockUnlock', 'solid', 'dashed',
 	               'dotted', 'fillColor', 'gradientColor', 'shadow', 'fontColor',
 	               'formattedText', 'rounded', 'toggleRounded', 'sharp', 'strokeColor'];
 	
@@ -1961,6 +1961,7 @@ EditorUi.prototype.createDivs = function()
 	this.diagramContainer = this.createDiv('geDiagramContainer');
 	this.footerContainer = this.createDiv('geFooterContainer');
 	this.hsplit = this.createDiv('geHsplit');
+	this.hsplit.setAttribute('title', mxResources.get('collapseExpand'));
 
 	// Sets static style for containers
 	this.menubarContainer.style.top = '0px';
@@ -2746,7 +2747,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(81, true, 'connectionPoints'); // Ctrl+Q
 	keyHandler.bindAction(86, true, 'paste'); // Ctrl+V
 	keyHandler.bindAction(71, true, 'group'); // Ctrl+G
-	keyHandler.bindAction(77, true, 'editData'); // Ctrl+M
+	keyHandler.bindAction(77, true, 'editMetadata'); // Ctrl+M
 	keyHandler.bindAction(71, true, 'grid', true); // Ctrl+Shift+G
 	keyHandler.bindAction(76, true, 'lockUnlock'); // Ctrl+L
 	keyHandler.bindAction(76, true, 'layers', true); // Ctrl+Shift+L
