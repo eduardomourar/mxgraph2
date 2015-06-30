@@ -2553,79 +2553,84 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 			mxUtils.write(left, label);
 			ldiv.appendChild(left);
-
-			// Fallback if no drag and drop is available
-			if (mxClient.IS_VML || (mxClient.IS_IE && document.documentMode < 10))
+			
+			if (graph.isEnabled())
 			{
-				var right = document.createElement('div');
-				right.style.display = 'block';
-				right.style.textAlign = 'right';
-				right.style.whiteSpace = 'nowrap';
-				right.style.position = 'absolute';
-				right.style.right = '6px';
-				right.style.top = '6px';
-	
-				// Poor man's change layer order
-				if (index > 0)
+				// Fallback if no drag and drop is available
+				if (mxClient.IS_TOUCH || mxClient.IS_POINTER || mxClient.IS_VML ||
+					(mxClient.IS_IE && document.documentMode < 10))
 				{
-					var img2 = document.createElement('a');
-					
-					img2.setAttribute('title', mxResources.get('toBack'));
-					
-					img2.className = 'geButton';
-					img2.style.cssFloat = 'none';
-					img2.innerHTML = '&#9650;';
-					img2.style.width = '14px';
-					img2.style.height = '14px';
-					img2.style.fontSize = '14px';
-					img2.style.margin = '0px';
-					img2.style.marginTop = '-1px';
-					right.appendChild(img2);
-					
-					mxEvent.addListener(img2, 'click', function(evt)
+					var right = document.createElement('div');
+					right.style.display = 'block';
+					right.style.textAlign = 'right';
+					right.style.whiteSpace = 'nowrap';
+					right.style.position = 'absolute';
+					right.style.right = '6px';
+					right.style.top = '6px';
+		
+					// Poor man's change layer order
+					if (index > 0)
 					{
-						if (graph.isEnabled())
-						{
-							graph.addCell(child, graph.model.root, index - 1);
-						}
+						var img2 = document.createElement('a');
 						
-						mxEvent.consume(evt);
-					});
-				}
-	
-				if (index >= 0 && index < layerCount - 1)
-				{
-					var img1 = document.createElement('a');
-					
-					img1.setAttribute('title', mxResources.get('toFront'));
-					
-					img1.className = 'geButton';
-					img1.style.cssFloat = 'none';
-					img1.innerHTML = '&#9660;';
-					img1.style.width = '14px';
-					img1.style.height = '14px';
-					img1.style.fontSize = '14px';
-					img1.style.margin = '0px';
-					img1.style.marginTop = '-1px';
-					right.appendChild(img1);
-					
-					mxEvent.addListener(img1, 'click', function(evt)
+						img2.setAttribute('title', mxResources.get('toBack'));
+						
+						img2.className = 'geButton';
+						img2.style.cssFloat = 'none';
+						img2.innerHTML = '&#9650;';
+						img2.style.width = '14px';
+						img2.style.height = '14px';
+						img2.style.fontSize = '14px';
+						img2.style.margin = '0px';
+						img2.style.marginTop = '-1px';
+						right.appendChild(img2);
+						
+						mxEvent.addListener(img2, 'click', function(evt)
+						{
+							if (graph.isEnabled())
+							{
+								graph.addCell(child, graph.model.root, index - 1);
+							}
+							
+							mxEvent.consume(evt);
+						});
+					}
+		
+					if (index >= 0 && index < layerCount - 1)
 					{
-						if (graph.isEnabled())
-						{
-							graph.addCell(child, graph.model.root, index + 1);
-						}
+						var img1 = document.createElement('a');
 						
-						mxEvent.consume(evt);
-					});
+						img1.setAttribute('title', mxResources.get('toFront'));
+						
+						img1.className = 'geButton';
+						img1.style.cssFloat = 'none';
+						img1.innerHTML = '&#9660;';
+						img1.style.width = '14px';
+						img1.style.height = '14px';
+						img1.style.fontSize = '14px';
+						img1.style.margin = '0px';
+						img1.style.marginTop = '-1px';
+						right.appendChild(img1);
+						
+						mxEvent.addListener(img1, 'click', function(evt)
+						{
+							if (graph.isEnabled())
+							{
+								graph.addCell(child, graph.model.root, index + 1);
+							}
+							
+							mxEvent.consume(evt);
+						});
+					}
+					
+					ldiv.appendChild(right);
 				}
 				
-				ldiv.appendChild(right);
-			}
-			else if (graph.isEnabled())
-			{
-				ldiv.setAttribute('draggable', 'true');
-				ldiv.style.cursor = 'move';
+				if (mxClient.IS_SVG && (!mxClient.IS_IE || document.documentMode >= 10))
+				{
+					ldiv.setAttribute('draggable', 'true');
+					ldiv.style.cursor = 'move';
+				}
 			}
 
 			mxEvent.addListener(ldiv, 'dblclick', function(evt)
