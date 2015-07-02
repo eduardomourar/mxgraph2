@@ -3936,7 +3936,7 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 	var editor = ui.editor;
 	var graph = editor.graph;
 	
-	div.appendChild(this.createTitle(mxResources.get('options')));	
+	div.appendChild(this.createTitle(mxResources.get('view')));	
 	this.addGridOption(div);
 
 	// Guides
@@ -3972,37 +3972,14 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 		graph.setConnectable(checked);
 	}));
 
-	// Copy connect
-	div.appendChild(this.createOption(mxResources.get('copyConnect'), function()
+	// Page view
+	// LATER: Add pageViewChanged event
+	div.appendChild(this.createOption(mxResources.get('pageView'), function()
 	{
-		return graph.connectionHandler.isCreateTarget();
+		return graph.pageVisible;
 	}, function(checked)
 	{
-		graph.connectionHandler.setCreateTarget(checked);
-	}));
-
-	// Scrollbars
-	div.appendChild(this.createOption(mxResources.get('scrollbars'), function()
-	{
-		return ui.hasScrollbars();
-	}, function(checked)
-	{
-		ui.setScrollbars(checked);
-	},
-	{
-		install: function(apply)
-		{
-			this.listener = function()
-			{
-				apply(ui.hasScrollbars());
-			};
-			
-			ui.addListener('scrollbarsChanged', this.listener);
-		},
-		destroy: function()
-		{
-			ui.removeListener(this.listener);
-		}
+		ui.actions.get('pageView').funct();
 	}));
 	
 	return div;
@@ -4103,18 +4080,17 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 	var editor = ui.editor;
 	var graph = editor.graph;
 	
-	div.appendChild(this.createTitle(mxResources.get('documentProperties')));
+	div.appendChild(this.createTitle(mxResources.get('options')));
 
-	// Page view
-	// LATER: Add pageViewChanged event
-	div.appendChild(this.createOption(mxResources.get('pageView'), function()
+	// Copy connect
+	div.appendChild(this.createOption(mxResources.get('copyConnect'), function()
 	{
-		return graph.pageVisible;
+		return graph.connectionHandler.isCreateTarget();
 	}, function(checked)
 	{
-		ui.actions.get('pageView').funct();
+		graph.connectionHandler.setCreateTarget(checked);
 	}));
-	
+
 	var bg = this.createColorOption(mxResources.get('background'), function()
 	{
 		return graph.background;

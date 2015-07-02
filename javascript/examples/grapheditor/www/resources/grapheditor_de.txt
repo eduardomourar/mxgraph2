@@ -98,6 +98,7 @@ entityRelation=Entity Relation
 exitGroup=Aus Gruppe heraus
 expand=Ausklappen
 export=Exportieren
+extras=Extras
 file=Datei
 fileNotFound=Datei nicht gefunden
 filename=Dateiname

@@ -1,3 +1,4 @@
+- Rearranges menus, removes toolbar items in grapheditor
 - Adds locking for layers, updates dialog in grapheditor
 - Fixes possible division by zero in mxGraph.fit [JavaScript]
 - Adds space+drag for panning, handles tab while editing in grapheditor

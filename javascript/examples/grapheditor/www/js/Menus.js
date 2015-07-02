@@ -30,8 +30,7 @@ Menus.prototype.defaultFontSize = '12';
 /**
  * Sets the default font size.
  */
-Menus.prototype.defaultMenuItems = (urlParams['simple'] != '1') ? ['file', 'edit', 'view', 'format', 'text', 'arrange', 'options', 'help'] :
-	['file', 'edit', 'view', 'arrange', 'options', 'help'];
+Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'arrange', 'extras', 'help'];
 
 /**
  * Sets the default font size.
@@ -556,23 +555,9 @@ Menus.prototype.init = function()
 	})));
 	this.put('view', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		this.addMenuItems(menu, ((this.editorUi.format != null) ? ['formatPanel'] : []).concat(['outline', 'layers']), parent);
-		menu.addSeparator();
-		
-		var scales = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
-		
-		for (var i = 0; i < scales.length; i++)
-		{
-			(function(scale)
-			{
-				menu.addItem((scale * 100) + '%', null, function()
-				{
-					graph.zoomTo(scale);
-				}, parent);
-			})(scales[i]);
-		}
-		
-		this.addMenuItems(menu, ['-', 'actualSize', 'zoomIn', 'zoomOut', '-', 'fitWindow', 'fitPageWidth', 'fitPage', 'fitTwoPages', '-', 'customZoom'], parent);
+		this.addMenuItems(menu, ((this.editorUi.format != null) ? ['formatPanel'] : []).
+			concat(['outline', 'layers', '-', 'pageView', 'scrollbars', 'tooltips', '-',
+			        'grid', 'guides', 'connectionPoints', '-', 'actualSize', 'zoomIn', 'zoomOut'], parent));
 	})));
 	// Two special dropdowns that are only used in the toolbar
 	this.put('viewPanels', new Menu(mxUtils.bind(this, function(menu, parent)
@@ -603,7 +588,7 @@ Menus.prototype.init = function()
 	})));
 	this.put('file', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		this.addMenuItems(menu, ['new', 'open', '-', 'save', 'saveAs', '-', 'import', 'export', '-', 'editFile', '-', 'pageSetup', 'print'], parent);
+		this.addMenuItems(menu, ['new', 'open', '-', 'save', 'saveAs', '-', 'import', 'export', '-', 'pageSetup', 'print'], parent);
 	})));
 	this.put('edit', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -611,10 +596,9 @@ Menus.prototype.init = function()
 		                         'editMetadata', 'editTooltip', 'editStyle', '-', 'editLink', 'openLink', '-', 'selectVertices',
 		                         'selectEdges', 'selectAll', '-', 'lockUnlock']);
 	})));
-	this.put('options', new Menu(mxUtils.bind(this, function(menu, parent)
+	this.put('extras', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		this.addMenuItems(menu, ['pageView', '-', 'grid', 'guides', '-', 'scrollbars', 'tooltips', '-',
- 		                         'connectionPoints', 'copyConnect', 'collapseExpand', '-', 'pageBackgroundColor', 'autosave']);
+		this.addMenuItems(menu, ['copyConnect', 'collapseExpand', '-', 'pageBackgroundColor', 'autosave', '-', 'editFile']);
 	})));
 	this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
@@ -1149,7 +1133,7 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 
 	if (graph.getSelectionCount() > 0)
 	{
-		if (graph.getSelectionCount() == 1 && urlParams['simple'] != '1')
+		if (graph.getSelectionCount() == 1)
 		{
 			this.addMenuItems(menu, ['setAsDefaultStyle'], null, evt);
 		}
@@ -1161,7 +1145,7 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 		
 		if (state != null)
 		{
-			if (graph.getSelectionCount() == 1 && urlParams['simple'] != '1')
+			if (graph.getSelectionCount() == 1)
 			{
 				this.addMenuItems(menu, ['toFront', 'toBack', '-'], null, evt);
 			}
@@ -1210,11 +1194,8 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 			
 			if (graph.getSelectionCount() == 1)
 			{
-				if (urlParams['simple'] != '1')
-				{
-					menu.addSeparator();
-					this.addMenuItems(menu, ['editLink'], null, evt);
-				}
+				menu.addSeparator();
+				this.addMenuItems(menu, ['editLink'], null, evt);
 
 				// Shows edit image action if there is an image in the style
 				if (graph.getModel().isVertex(cell) && mxUtils.getValue(state.style, mxConstants.STYLE_IMAGE, null) != null)
