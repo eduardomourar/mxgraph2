@@ -49,8 +49,7 @@ Toolbar.prototype.staticElements = null;
  */
 Toolbar.prototype.init = function()
 {
-	var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels');
-	formatMenu.showDisabled = true;
+	var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels', null, true);
 	formatMenu.style.whiteSpace = 'nowrap';
 	formatMenu.style.overflow = 'hidden';
 	formatMenu.style.position = 'relative';
@@ -67,7 +66,7 @@ Toolbar.prototype.init = function()
 		formatMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
 	}
 
-	var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'viewZoom');
+	var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'viewZoom', null, true);
 	viewMenu.showDisabled = true;
 	viewMenu.style.whiteSpace = 'nowrap';
 	viewMenu.style.position = 'relative';
@@ -109,8 +108,7 @@ Toolbar.prototype.init = function()
 	this.addItem('geSprite-rounded', 'toggleRounded').setAttribute('title', mxResources.get('rounded'));
 	this.addSeparator();
 
-	var insertMenu = this.addMenu('', mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')', true, 'insert');
-	insertMenu.showDisabled = true;
+	var insertMenu = this.addMenu('', mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')', true, 'insert', null, true);
 	insertMenu.style.whiteSpace = 'nowrap';
 	insertMenu.style.overflow = 'hidden';
 	insertMenu.style.position = 'relative';
@@ -534,10 +532,10 @@ Toolbar.prototype.hideMenu = function()
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name, c)
+Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name, c, showAll)
 {
 	var menu = this.editorUi.menus.get(name);
-	var elt = this.addMenuFunction(label, tooltip, showLabels, menu.funct, c);
+	var elt = this.addMenuFunction(label, tooltip, showLabels, menu.funct, c, showAll);
 	
 	menu.addListener('stateChanged', function()
 	{
@@ -550,19 +548,19 @@ Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name, c)
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenuFunction = function(label, tooltip, showLabels, funct, c)
+Toolbar.prototype.addMenuFunction = function(label, tooltip, showLabels, funct, c, showAll)
 {
-	return this.addMenuFunctionInContainer((c != null) ? c : this.container, label, tooltip, showLabels, funct);
+	return this.addMenuFunctionInContainer((c != null) ? c : this.container, label, tooltip, showLabels, funct, showAll);
 };
 
 /**
  * Adds a label to the toolbar.
  */
-Toolbar.prototype.addMenuFunctionInContainer = function(container, label, tooltip, showLabels, funct)
+Toolbar.prototype.addMenuFunctionInContainer = function(container, label, tooltip, showLabels, funct, showAll)
 {
 	var elt = (showLabels) ? this.createLabel(label) : this.createButton(label);
 	this.initElement(elt, tooltip);
-	this.addMenuHandler(elt, showLabels, funct);
+	this.addMenuHandler(elt, showLabels, funct, showAll);
 	container.appendChild(elt);
 	
 	return elt;
