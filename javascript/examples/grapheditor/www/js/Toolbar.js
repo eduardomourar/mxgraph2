@@ -50,6 +50,7 @@ Toolbar.prototype.staticElements = null;
 Toolbar.prototype.init = function()
 {
 	var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels');
+	formatMenu.showDisabled = true;
 	formatMenu.style.whiteSpace = 'nowrap';
 	formatMenu.style.overflow = 'hidden';
 	formatMenu.style.position = 'relative';
@@ -67,6 +68,7 @@ Toolbar.prototype.init = function()
 	}
 
 	var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'viewZoom');
+	viewMenu.showDisabled = true;
 	viewMenu.style.whiteSpace = 'nowrap';
 	viewMenu.style.position = 'relative';
 	viewMenu.style.overflow = 'hidden';
@@ -108,6 +110,7 @@ Toolbar.prototype.init = function()
 	this.addSeparator();
 
 	var insertMenu = this.addMenu('', mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')', true, 'insert');
+	insertMenu.showDisabled = true;
 	insertMenu.style.whiteSpace = 'nowrap';
 	insertMenu.style.overflow = 'hidden';
 	insertMenu.style.position = 'relative';
