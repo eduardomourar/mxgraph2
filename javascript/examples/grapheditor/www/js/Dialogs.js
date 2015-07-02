@@ -2321,15 +2321,23 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			graph.model.beginUpdate();
 			try
 			{
+				var index = graph.model.root.getIndex(selectionLayer);
 				graph.removeCells([selectionLayer]);
 				
 				// Creates default layer if no layer exists
 				if (graph.model.getChildCount(graph.model.root) == 0)
 				{
 					graph.model.add(graph.model.root, new mxCell());
+					graph.setDefaultParent(null);
 				}
-				
-				graph.setDefaultParent(null);
+				else if (index > 0 && index <= graph.model.getChildCount(graph.model.root))
+				{
+					graph.setDefaultParent(graph.model.getChildAt(graph.model.root, index - 1));
+				}
+				else
+				{
+					graph.setDefaultParent(null);
+				}
 			}
 			finally
 			{
