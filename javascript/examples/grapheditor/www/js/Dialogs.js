@@ -2546,16 +2546,12 @@ var LayersWindow = function(editorUi, x, y, w, h)
 				mxUtils.setOpacity(ldiv, 50);
 			}
 
-			var handlingClick = false;
-			
 			mxEvent.addListener(inp, 'click', function(evt)
 			{
-				if (!handlingClick)
+				if (graph.isEnabled())
 				{
-					handlingClick = true;
 					graph.model.setVisible(child, !graph.model.isVisible(child));
 					mxEvent.consume(evt);
-					handlingClick = false;
 				}
 			});
 
@@ -2668,7 +2664,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			{
 				mxEvent.addListener(ldiv, 'click', function(evt)
 				{
-					if (graph.isEnabled() && !handlingClick)
+					if (graph.isEnabled())
 					{
 						graph.setDefaultParent(defaultParent);
 						graph.view.setCurrentRoot(null);

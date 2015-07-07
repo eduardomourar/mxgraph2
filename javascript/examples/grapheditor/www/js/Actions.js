@@ -879,7 +879,7 @@ Actions.prototype.init = function()
 	});
 	this.addAction('insertLink', function()
 	{
-		if (graph.isEnabled())
+		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
 		{
 			var dlg = new LinkDialog(ui, '', mxResources.get('insert'), function(link, docs)
 			{
@@ -921,7 +921,7 @@ Actions.prototype.init = function()
 	}).isEnabled = isGraphEnabled;
 	this.addAction('image...', function()
 	{
-		if (graph.isEnabled())
+		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
 		{
 			var title = mxResources.get('image') + ' (' + mxResources.get('url') + '):';
 	    	var state = graph.getView().getState(graph.getSelectionCell());

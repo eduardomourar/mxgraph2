@@ -897,6 +897,21 @@ EditorUi.prototype.init = function()
 		this.updateActionStates();
 	}));
 	
+	this.editor.graph.getModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
+	{
+		this.updateActionStates();
+	}));
+	
+	// Adds "event" for change of default parent
+	var ui = this;
+	var graphSetDefaultParent = this.editor.graph.setDefaultParent;
+	
+	this.editor.graph.setDefaultParent = function()
+	{
+		graphSetDefaultParent.apply(this, arguments);
+		ui.updateActionStates();
+	};
+	
 	this.updateActionStates();
 	this.initClipboard();
 	this.initCanvas();
@@ -1822,6 +1837,8 @@ EditorUi.prototype.updateActionStates = function()
    	
     this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
     this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
+    this.menus.get('layout').setEnabled(graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()));
+    this.menus.get('insert').setEnabled(graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()));
     this.menus.get('connection').setEnabled(edgeSelected);
     this.menus.get('waypoints').setEnabled(edgeSelected);
     this.menus.get('linestart').setEnabled(edgeSelected);

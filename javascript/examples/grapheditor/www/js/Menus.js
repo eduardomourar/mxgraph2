@@ -530,7 +530,7 @@ Menus.prototype.init = function()
     			}
     		}, true);
 		}), parent);
-	}))).isEnabled = isGraphEnabled;
+	})));
 	this.put('navigation', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['home', '-', 'exitGroup', 'enterGroup', '-', 'expand', 'collapse', '-', 'collapsible'], parent);
