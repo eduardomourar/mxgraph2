@@ -2212,6 +2212,7 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 		{
 			var pt = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 			onChange(Math.max(0, initial + ((horizontal) ? (pt.x - start.x) : (start.y - pt.y)) - dx));
+			mxEvent.consume(evt);
 			
 			if (initial != getValue())
 			{
@@ -2243,6 +2244,7 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 			var next = (last != null) ? last - dx : 0;
 			last = getValue();
 			onChange(next);
+			mxEvent.consume(evt);
 		}
 	});
 
