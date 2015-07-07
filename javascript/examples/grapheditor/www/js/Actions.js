@@ -486,7 +486,6 @@ Actions.prototype.init = function()
 		if (mxUtils.hasScrollbars(graph.container))
 		{
 			var pad = graph.getPagePadding();
-			graph.container.scrollTop = pad.y;
 			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
 	}), null, null, 'Ctrl+2');
