@@ -967,18 +967,24 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
 /**
  * Hook for allowing selection and context menu for certain events.
  */
-EditorUi.prototype.initClipboard = function()
+EditorUi.prototype.updatePasteActionStates = function()
 {
-	// Overrides clipboard to update paste action state
+	var graph = this.editor.graph;
 	var paste = this.actions.get('paste');
 	var pasteHere = this.actions.get('pasteHere');
 	
-	var updatePaste = mxUtils.bind(this, function()
-	{
-		paste.setEnabled(this.editor.graph.cellEditor.isContentEditing() || !mxClipboard.isEmpty());
-		pasteHere.setEnabled(paste.isEnabled());
-	});
-	
+	paste.setEnabled(this.editor.graph.cellEditor.isContentEditing() || (!mxClipboard.isEmpty() &&
+		graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent())));
+	pasteHere.setEnabled(paste.isEnabled());
+};
+
+/**
+ * Hook for allowing selection and context menu for certain events.
+ */
+EditorUi.prototype.initClipboard = function()
+{
+	var ui = this;
+
 	var mxClipboardCut = mxClipboard.cut;
 	mxClipboard.cut = function(graph)
 	{
@@ -991,7 +997,7 @@ EditorUi.prototype.initClipboard = function()
 			mxClipboardCut.apply(this, arguments);
 		}
 		
-		updatePaste();
+		ui.updatePasteActionStates();
 	};
 	
 	var mxClipboardCopy = mxClipboard.copy;
@@ -1006,7 +1012,7 @@ EditorUi.prototype.initClipboard = function()
 			mxClipboardCopy.apply(this, arguments);
 		}
 		
-		updatePaste();
+		ui.updatePasteActionStates();
 	};
 	
 	var mxClipboardPaste = mxClipboard.paste;
@@ -1023,7 +1029,7 @@ EditorUi.prototype.initClipboard = function()
 			result = mxClipboardPaste.apply(this, arguments);
 		}
 		
-		updatePaste();
+		ui.updatePasteActionStates();
 		
 		return result;
 	};
@@ -1034,7 +1040,7 @@ EditorUi.prototype.initClipboard = function()
 	this.editor.graph.cellEditor.startEditing = function()
 	{
 		cellEditorStartEditing.apply(this, arguments);
-		updatePaste();
+		ui.updatePasteActionStates();
 	};
 	
 	var cellEditorStopEditing = this.editor.graph.cellEditor.stopEditing;
@@ -1042,10 +1048,10 @@ EditorUi.prototype.initClipboard = function()
 	this.editor.graph.cellEditor.stopEditing = function(cell, trigger)
 	{
 		cellEditorStopEditing.apply(this, arguments);
-		updatePaste();
+		ui.updatePasteActionStates();
 	};
 	
-	updatePaste();
+	this.updatePasteActionStates();
 };
 
 /**
@@ -1837,8 +1843,6 @@ EditorUi.prototype.updateActionStates = function()
    	
     this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
     this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
-    this.menus.get('layout').setEnabled(graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()));
-    this.menus.get('insert').setEnabled(graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()));
     this.menus.get('connection').setEnabled(edgeSelected);
     this.menus.get('waypoints').setEnabled(edgeSelected);
     this.menus.get('linestart').setEnabled(edgeSelected);
@@ -1859,6 +1863,15 @@ EditorUi.prototype.updateActionStates = function()
     		graph.getLinkForCell(graph.getSelectionCell()) != null);
     this.actions.get('guides').setEnabled(graph.isEnabled());
     this.actions.get('grid').setEnabled(graph.isEnabled());
+
+    var unlocked = graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent());
+    this.menus.get('layout').setEnabled(unlocked);
+    this.menus.get('insert').setEnabled(unlocked);
+    this.actions.get('selectVertices').setEnabled(unlocked);
+    this.actions.get('selectEdges').setEnabled(unlocked);
+    this.actions.get('selectAll').setEnabled(unlocked);
+    
+    this.updatePasteActionStates();
 };
 
 /**

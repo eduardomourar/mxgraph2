@@ -81,35 +81,44 @@ Actions.prototype.init = function()
 	this.addAction('redo', function() { ui.redo(); }, null, 'sprite-redo', (mxClient.IS_MAC) ? 'Ctrl+Shift+Z' : 'Ctrl+Y');
 	this.addAction('cut', function() { mxClipboard.cut(graph); }, null, 'sprite-cut', 'Ctrl+X');
 	this.addAction('copy', function() { mxClipboard.copy(graph); }, null, 'sprite-copy', 'Ctrl+C');
-	this.addAction('paste', function() { mxClipboard.paste(graph); }, false, 'sprite-paste', 'Ctrl+V');
+	this.addAction('paste', function()
+	{
+		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
+		{
+			mxClipboard.paste(graph);
+		}
+	}, false, 'sprite-paste', 'Ctrl+V');
 	this.addAction('pasteHere', function(evt)
 	{
-		graph.getModel().beginUpdate();
-		try
+		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
 		{
-			var cells = mxClipboard.paste(graph);
-			
-			if (cells != null)
+			graph.getModel().beginUpdate();
+			try
 			{
-				var bb = graph.getBoundingBoxFromGeometry(cells);
+				var cells = mxClipboard.paste(graph);
 				
-				if (bb != null)
+				if (cells != null)
 				{
-					var t = graph.view.translate;
-					var s = graph.view.scale;
-					var dx = t.x;
-					var dy = t.y;
+					var bb = graph.getBoundingBoxFromGeometry(cells);
 					
-					var x = Math.round(graph.snap(graph.popupMenuHandler.triggerX / s - dx));
-					var y = Math.round(graph.snap(graph.popupMenuHandler.triggerY / s - dy));
-					
-					graph.cellsMoved(cells, x - bb.x, y - bb.y);
+					if (bb != null)
+					{
+						var t = graph.view.translate;
+						var s = graph.view.scale;
+						var dx = t.x;
+						var dy = t.y;
+						
+						var x = Math.round(graph.snap(graph.popupMenuHandler.triggerX / s - dx));
+						var y = Math.round(graph.snap(graph.popupMenuHandler.triggerY / s - dy));
+						
+						graph.cellsMoved(cells, x - bb.x, y - bb.y);
+					}
 				}
 			}
-		}
-		finally
-		{
-			graph.getModel().endUpdate();
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
 		}
 	});
 	
@@ -146,9 +155,9 @@ Actions.prototype.init = function()
 	{
 		graph.setSelectionCells(graph.turnShapes(graph.getSelectionCells()));
 	}, null, null, 'Ctrl+R');
-	this.addAction('selectVertices', function() { graph.selectVertices(); }, null, null, 'Ctrl+Shift+A').isEnabled = isGraphEnabled;
-	this.addAction('selectEdges', function() { graph.selectEdges(); }, null, null, 'Ctrl+Shift+E').isEnabled = isGraphEnabled;
-	this.addAction('selectAll', function() { graph.selectAll(); }, null, null, 'Ctrl+A').isEnabled = isGraphEnabled;
+	this.addAction('selectVertices', function() { graph.selectVertices(); }, null, null, 'Ctrl+Shift+A');
+	this.addAction('selectEdges', function() { graph.selectEdges(); }, null, null, 'Ctrl+Shift+E');
+	this.addAction('selectAll', function() { graph.selectAll(); }, null, null, 'Ctrl+A');
 	this.addAction('lockUnlock', function()
 	{
 		graph.getModel().beginUpdate();
