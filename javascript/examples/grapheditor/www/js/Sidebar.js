@@ -839,13 +839,13 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	var fns = [
 	 	this.createVertexTemplateEntry('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', null, null, 'rect rectangle box'),
 	 	this.createVertexTemplateEntry('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', null, null, 'rounded rect rectangle box'),
- 		this.createVertexTemplateEntry('ellipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Circle', null, null, 'circle oval ellipse state'),
+ 		this.createVertexTemplateEntry('ellipse;whiteSpace=wrap;html=1;', 120, 80, '', 'Ellipse', null, null, 'circle oval ellipse state'),
 	 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
  		this.createVertexTemplateEntry('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;',
  			40, 20, 'Text', 'Text', null, null, 'text textbox textarea label'),
  		this.createVertexTemplateEntry('shape=ext;double=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rectangle', null, null, 'rect rectangle box double'),
 	 	this.createVertexTemplateEntry('shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rounded Rectangle', null, null, 'rounded rect rectangle box double'),
-	 	this.createVertexTemplateEntry('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 80, 80, '', 'Double Ellipse', null, null, 'circle oval ellipse start end state double'),
+	 	this.createVertexTemplateEntry('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 120, 80, '', 'Double Ellipse', null, null, 'circle oval ellipse start end state double'),
 	 	this.createVertexTemplateEntry('rhombus;whiteSpace=wrap;html=1;', 80, 80, '', 'Rhombus', null, null, 'if condition decision conditional question test'),
 	 	this.createVertexTemplateEntry('shape=parallelogram;whiteSpace=wrap;html=1;', 120, 60, '', 'Parallelogram'),
 	 	this.createVertexTemplateEntry('triangle;whiteSpace=wrap;html=1;', 60, 80, '', 'Triangle', null, null, 'triangle logic inverter buffer'),
@@ -874,33 +874,36 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 Sidebar.prototype.addMiscPalette = function(expand)
 {
 	var fns = [
-        this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false),
-	 	this.createVertexTemplateEntry('shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;', 20, 120, '', 'Curly Bracket'),
-	 	this.createVertexTemplateEntry('line;html=1;', 160, 10, '', 'Horizontal Line'),
-	 	this.createVertexTemplateEntry('line;direction=south;html=1;', 10, 160, '', 'Vertical Line'),
+   	 	this.createVertexTemplateEntry('text;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;', 100, 40, 'Title', 'Title', null, null, 'text heading title'),
 	 	this.createVertexTemplateEntry('text;html=1;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;', 190, 120,
-	 			'<h1>Heading</h1><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>',
-	 			'Textbox', null, null, 'text textbox textarea'),
+			'<h1>Heading</h1><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>',
+			'Textbox', null, null, 'text textbox textarea'),
 	 	this.createVertexTemplateEntry('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
-	 			'<ul><li>Value 1</li><li>Value 2</li><li>Value 3</li></ul>', 'Unordered List'),
+ 			'<ul><li>Value 1</li><li>Value 2</li><li>Value 3</li></ul>', 'Unordered List'),
 	 	this.createVertexTemplateEntry('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
-	 			'<ol><li>Value 1</li><li>Value 2</li><li>Value 3</li></ol>', 'Ordered List'),
-	 	this.createVertexTemplateEntry('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=1;aspect=fixed;image=' + this.gearImage, 52, 61, '', 'Image', false, null, 'fixed image icon symbol'),
-		this.createVertexTemplateEntry('text;html=1;strokeColor=#c0c0c0;overflow=fill;', 180, 180,
-	 			'<table border="0" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
-	 			'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
-	 			'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
-	 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 1'),
-	 	this.createVertexTemplateEntry('text;html=1;overflow=fill;', 180, 180,
-	 			'<table border="1" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
-	 			'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
-	 			'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
-	 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 2'),
-	 	this.createVertexTemplateEntry('text;html=1;overflow=fill;', 160, 180,
-	 			'<table border="1" width="100%" height="100%" cellpadding="4" style="width:100%;height:100%;border-collapse:collapse;">' +
-	 			'<tr><th align="center"><b>Title</b></th></tr>' +
-	 			'<tr><td align="center">Section 1.1\nSection 1.2\nSection 1.3</td></tr>' +
-	 			'<tr><td align="center">Section 2.1\nSection 2.2\nSection 2.3</td></tr></table>', 'Table 3'),
+ 			'<ol><li>Value 1</li><li>Value 2</li><li>Value 3</li></ol>', 'Ordered List'),
+	 	this.createVertexTemplateEntry('text;html=1;overflow=fill;', 280, 160,
+ 			'<table border="1" width="100%" height="100%" cellpadding="4" style="width:100%;height:100%;border-collapse:collapse;">' +
+ 			'<tr style="background-color:#A7C942;color:#ffffff;border:1px solid #98bf21;"><th align="left">Title 1</th><th align="left">Title 2</th><th align="left">Title 3</th></tr>' +
+ 			'<tr style="border:1px solid #98bf21;"><td>Value 1</td><td>Value 2</td><td>Value 3</td></tr>' +
+ 			'<tr style="background-color:#EAF2D3;border:1px solid #98bf21;"><td>Value 4</td><td>Value 5</td><td>Value 6</td></tr>' +
+ 			'<tr style="border:1px solid #98bf21;"><td>Value 7</td><td>Value 8</td><td>Value 9</td></tr>' +
+ 			'<tr style="background-color:#EAF2D3;border:1px solid #98bf21;"><td>Value 10</td><td>Value 11</td><td>Value 12</td></tr></table>', 'Table 1'),
+		this.createVertexTemplateEntry('text;html=1;strokeColor=#c0c0c0;overflow=fill;', 180, 140,
+ 			'<table border="0" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
+ 			'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
+ 			'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
+ 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 2'),
+	 	this.createVertexTemplateEntry('text;html=1;overflow=fill;', 180, 140,
+ 			'<table border="1" width="100%" height="100%" style="width:100%;height:100%;border-collapse:collapse;">' +
+ 			'<tr><td align="center">Value 1</td><td align="center">Value 2</td><td align="center">Value 3</td></tr>' +
+ 			'<tr><td align="center">Value 4</td><td align="center">Value 5</td><td align="center">Value 6</td></tr>' +
+ 			'<tr><td align="center">Value 7</td><td align="center">Value 8</td><td align="center">Value 9</td></tr></table>', 'Table 3'),
+	 	this.createVertexTemplateEntry('text;html=1;overflow=fill;', 160, 140,
+ 			'<table border="1" width="100%" height="100%" cellpadding="4" style="width:100%;height:100%;border-collapse:collapse;">' +
+ 			'<tr><th align="center"><b>Title</b></th></tr>' +
+ 			'<tr><td align="center">Section 1.1\nSection 1.2\nSection 1.3</td></tr>' +
+ 			'<tr><td align="center">Section 2.1\nSection 2.2\nSection 2.3</td></tr></table>', 'Table 4'),
 	 	this.addEntry('link hyperlink', mxUtils.bind(this, function()
 	 	{
 	 		var cell = new mxCell('Link', new mxGeometry(0, 0, 60, 40), 'text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontColor=#0000EE;fontStyle=4;');
@@ -909,7 +912,12 @@ Sidebar.prototype.addMiscPalette = function(expand)
 
 	 		return this.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Link');
 	 	})),
-	 	this.createVertexTemplateEntry('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;image=' + this.gearImage, 50, 60, '', 'Stretched Image', false, null, 'strechted image icon symbol'),
+        this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false),
+	 	this.createVertexTemplateEntry('shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;', 20, 120, '', 'Curly Bracket'),
+	 	this.createVertexTemplateEntry('line;html=1;', 160, 10, '', 'Horizontal Line'),
+	 	this.createVertexTemplateEntry('line;direction=south;html=1;', 10, 160, '', 'Vertical Line'),
+	 	this.createVertexTemplateEntry('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=1;aspect=fixed;image=' + this.gearImage, 52, 61, '', 'Image (Fixed Aspect)', false, null, 'fixed image icon symbol'),
+	 	this.createVertexTemplateEntry('shape=image;html=1;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;image=' + this.gearImage, 50, 60, '', 'Image (Variable Aspect)', false, null, 'strechted image icon symbol'),
 	 	this.createVertexTemplateEntry('icon;html=1;image=' + this.gearImage, 60, 60, 'Icon', 'Icon', false, null, 'icon image symbol'),
 	 	this.createVertexTemplateEntry('label;whiteSpace=wrap;html=1;image=' + this.gearImage, 140, 60, 'Label', 'Label 1', null, null, 'label image icon symbol'),
 	 	this.createVertexTemplateEntry('label;whiteSpace=wrap;html=1;align=center;verticalAlign=bottom;spacingLeft=0;spacingBottom=4;imageAlign=center;imageVerticalAlign=top;image=' + this.gearImage, 120, 80, 'Label', 'Label 2', null, null, 'label image icon symbol'),
