@@ -552,7 +552,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	inner.style.backgroundColor = 'transparent';
 	inner.style.borderColor = 'transparent';
 	inner.style.padding = '4px';
-	inner.style.marginRight = '4px';
+	inner.style.marginRight = '8px';
 	inner.style.whiteSpace = 'nowrap';
 	inner.style.textOverflow = 'clip';
 	inner.style.cursor = 'default';
@@ -569,20 +569,17 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	input.setAttribute('type', 'text');
 	input.style.border = 'solid 1px #d5d5d5';
 	input.style.width = '100%';
+	input.style.outline = 'none';
 	input.style.padding = '4px';
 	input.style.backgroundImage = 'url(\'' + Dialog.prototype.clearImage + '\')';
 	input.style.backgroundRepeat = 'no-repeat';
 	input.style.backgroundPosition = '100% 50%';
-	input.style.paddingRight = '10px';
+	input.style.paddingRight = '14px';
 	input.style.marginTop = '6px';
 	input.style.marginLeft = '2px';
 	input.style.marginBottom = '2px';
+	input.value = '';
 	inner.appendChild(input);
-	
-	if (document.documentMode == 8)
-	{
-		input.style.boxSizing = 'border-box';
-	}
 
 	var cross = document.createElement('div');
 	cross.setAttribute('title', mxResources.get('reset'));
@@ -607,6 +604,23 @@ Sidebar.prototype.addSearchPalette = function(expand)
 		find();
 		input.focus();
 	});
+	
+	
+	if (document.documentMode == 8)
+	{
+		input.style.boxSizing = 'border-box';
+
+		// Workaround for no mouse events on cross in IE8 standards
+		mxEvent.addListener(input, 'click', function(evt)
+		{
+			var x = mxEvent.getClientX(evt);
+			
+			if (x > input.clientWidth - 8)
+			{
+				cross.click();
+			}
+		});
+	}
 
 	inner.appendChild(cross);
 	div.appendChild(inner);
