@@ -98,7 +98,7 @@ Graph = function(container, model, renderHint, stylesheet)
 		
 		return result;
 	};
-	
+
 	// All code below not available and not needed in embed mode
 	if (typeof mxVertexHandler !== 'undefined')
 	{
@@ -1363,6 +1363,18 @@ if (typeof mxVertexHandler != 'undefined')
 		
 		return mxGraph.prototype.getDropTarget.apply(this, arguments);
 	};
+
+	/**
+	 * Overrides double click handling to avoid accidental inserts of new labels in dblClick below.
+	 */
+	Graph.prototype.click = function(me)
+	{
+		mxGraph.prototype.click.call(this, me);
+		
+		// Stores state and source for checking in dblClick
+		this.firstClickState = me.getState();
+		this.firstClickSource = me.getSource();
+	};
 	
 	/**
 	 * Overrides double click handling to add the tolerance and inserting text.
@@ -1377,15 +1389,24 @@ if (typeof mxVertexHandler != 'undefined')
 			if (evt != null && !this.model.isVertex(cell))
 			{
 				var state = (this.model.isEdge(cell)) ? this.view.getState(cell) : null;
+				var src = mxEvent.getSource(evt);
 				
-				if (state == null || (state.text == null || state.text.node == null ||
-					(!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
-					!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
+				if (this.firstClickState == state && this.firstClickSource == src)
 				{
-					if ((state == null && !this.isCellLocked(this.getDefaultParent())) ||
-						(state != null && !this.isCellLocked(state.cell)))
+					if (state == null || (state.text == null || state.text.node == null ||
+						(!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
+						!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
 					{
-						cell = this.addText(pt.x, pt.y, state);
+						if ((state == null && !this.isCellLocked(this.getDefaultParent())) ||
+							(state != null && !this.isCellLocked(state.cell)))
+						{
+							// Avoids accidental inserts on background
+							if (state != null || (mxClient.IS_VML && src == this.view.getCanvas()) ||
+								(mxClient.IS_SVG && src == this.view.getCanvas().ownerSVGElement))
+							{
+								cell = this.addText(pt.x, pt.y, state);
+							}
+						}
 					}
 				}
 			}
@@ -2015,6 +2036,8 @@ if (typeof mxVertexHandler != 'undefined')
 		var selectionEmpty = false;
 		var menuShowing = false;
 		
+		var oldFireMouseEvent = this.fireMouseEvent;
+		
 		this.fireMouseEvent = function(evtName, me, sender)
 		{
 			if (evtName == mxEvent.MOUSE_DOWN)
@@ -2027,7 +2050,7 @@ if (typeof mxVertexHandler != 'undefined')
 				menuShowing = this.popupMenuHandler.isMenuShowing();
 			}
 			
-			mxGraph.prototype.fireMouseEvent.apply(this, arguments);
+			oldFireMouseEvent.apply(this, arguments);
 		};
 		
 		// Shows popup menu if cell was selected or selection was empty and background was clicked
