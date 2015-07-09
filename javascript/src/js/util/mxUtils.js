@@ -571,8 +571,10 @@ var mxUtils =
 			return function(xml)
 			{
 				var result = mxUtils.createXmlDocument();
-				
-				result.async = 'false';
+				result.async = false;
+				// Workaround for parsing errors with SVG DTD
+				result.validateOnParse = false;
+				result.resolveExternals = false;
 				result.loadXML(xml);
 				
 				return result;
