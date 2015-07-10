@@ -58,7 +58,6 @@ connectionPoints=Verbindungspunkte
 constrainProportions=Proportionen beibehalten
 copy=Kopieren
 copyConnect=Beim Verbinden kopieren
-copyOf=Kopie von
 create=Erstellen
 curved=Gebogen
 custom=Benutzerdefiniert

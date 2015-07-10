@@ -58,7 +58,6 @@ connectionPoints=Connection points
 constrainProportions=Constrain proportions
 copy=Copy
 copyConnect=Copy on connect
-copyOf=Copy of
 create=Create
 curved=Curved
 custom=Custom

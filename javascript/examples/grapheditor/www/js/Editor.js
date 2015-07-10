@@ -3,7 +3,7 @@
  */
 // Specifies if local storage should be used (eg. on the iPad which has no filesystem)
 var useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
-var fileSupport = window.File != null && window.FileReader != null && window.FileList != null;
+var fileSupport = window.File != null && window.FileReader != null && window.FileList != null && urlParams['filesupport'] != '0';
 
 // Workaround for allowing target="_blank" in HTML sanitizer
 // see https://code.google.com/p/google-caja/issues/detail?can=2&q=&colspec=ID%20Type%20Status%20Priority%20Owner%20Summary&groupby=&sort=&id=1296
