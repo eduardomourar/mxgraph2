@@ -630,14 +630,24 @@ var mxEdgeStyle =
 		// Adds the waypoints
 		if (hints != null && hints.length > 0)
 		{
-			// Converts all hints
+			// Converts all hints and removes nulls
 			var newHints = [];
 			
 			for (var i = 0; i < hints.length; i++)
 			{
-				newHints[i] = state.view.transformControlPoint(state, hints[i]);
-				newHints[i].x = Math.round(newHints[i].x);
-				newHints[i].y = Math.round(newHints[i].y);
+				var tmp = state.view.transformControlPoint(state, hints[i]);
+				
+				if (tmp != null)
+				{
+					tmp.x = Math.round(tmp.x);
+					tmp.y = Math.round(tmp.y);
+					newHints.push(tmp);
+				}
+			}
+			
+			if (newHints.length == 0)
+			{
+				return;
 			}
 			
 			hints = newHints;

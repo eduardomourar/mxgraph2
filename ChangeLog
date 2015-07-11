@@ -1,3 +1,4 @@
+- Fixes possible NPE in mxEdgeStyle.SegmentConnector [JavaScript]
 - Ignores doctype, validation in mxUtils.parseXml for IE<=9 [JavaScript]
 - Rearranges menus, removes toolbar items in grapheditor
 - Adds locking for layers, updates dialog in grapheditor
