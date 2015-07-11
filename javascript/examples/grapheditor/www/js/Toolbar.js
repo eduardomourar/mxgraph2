@@ -378,13 +378,27 @@ Toolbar.prototype.createTextToolbar = function()
 
 			elt = menu.addItem('', null, mxUtils.bind(this, function()
 			{
-				graph.selectNode(graph.insertColumn(table, (cell != null) ? cell.cellIndex : 0));
+				try
+				{
+					graph.selectNode(graph.insertColumn(table, (cell != null) ? cell.cellIndex : 0));
+				}
+				catch (e)
+				{
+					mxUtils.alert(mxResources.get('error') + ': ' + e.message);
+				}
 			}), null, 'geIcon geSprite geSprite-insertcolumnbefore');
 			elt.setAttribute('title', mxResources.get('insertColumnBefore'));
 			
 			elt = menu.addItem('', null, mxUtils.bind(this, function()
-			{
-				graph.selectNode(graph.insertColumn(table, (cell != null) ? cell.cellIndex + 1 : -1));
+			{	
+				try
+				{
+					graph.selectNode(graph.insertColumn(table, (cell != null) ? cell.cellIndex + 1 : -1));
+				}
+				catch (e)
+				{
+					mxUtils.alert(mxResources.get('error') + ': ' + e.message);
+				}
 			}), null, 'geIcon geSprite geSprite-insertcolumnafter');
 			elt.setAttribute('title', mxResources.get('insertColumnAfter'));
 
@@ -392,26 +406,54 @@ Toolbar.prototype.createTextToolbar = function()
 			{
 				if (cell != null)
 				{
-					graph.deleteColumn(table, cell.cellIndex);
+					try
+					{
+						graph.deleteColumn(table, cell.cellIndex);
+					}
+					catch (e)
+					{
+						mxUtils.alert(mxResources.get('error') + ': ' + e.message);
+					}
 				}
 			}), null, 'geIcon geSprite geSprite-deletecolumn');
 			elt.setAttribute('title', mxResources.get('deleteColumn'));
 			
 			elt = menu.addItem('', null, mxUtils.bind(this, function()
 			{
-				graph.selectNode(graph.insertRow(table, row.sectionRowIndex));
+				try
+				{
+					graph.selectNode(graph.insertRow(table, row.sectionRowIndex));
+				}
+				catch (e)
+				{
+					mxUtils.alert(mxResources.get('error') + ': ' + e.message);
+				}
 			}), null, 'geIcon geSprite geSprite-insertrowbefore');
 			elt.setAttribute('title', mxResources.get('insertRowBefore'));
 
 			elt = menu.addItem('', null, mxUtils.bind(this, function()
 			{
-				graph.selectNode(graph.insertRow(table, row.sectionRowIndex + 1));
+				try
+				{
+					graph.selectNode(graph.insertRow(table, row.sectionRowIndex + 1));
+				}
+				catch (e)
+				{
+					mxUtils.alert(mxResources.get('error') + ': ' + e.message);
+				}
 			}), null, 'geIcon geSprite geSprite-insertrowafter');
 			elt.setAttribute('title', mxResources.get('insertRowAfter'));
 
 			elt = menu.addItem('', null, mxUtils.bind(this, function()
 			{
-				graph.deleteRow(table, row.sectionRowIndex);
+				try
+				{
+					graph.deleteRow(table, row.sectionRowIndex);
+				}
+				catch (e)
+				{
+					mxUtils.alert(mxResources.get('error') + ': ' + e.message);
+				}
 			}), null, 'geIcon geSprite geSprite-deleterow');
 			elt.setAttribute('title', mxResources.get('deleteRow'));
 			
