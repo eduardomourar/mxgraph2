@@ -50,21 +50,7 @@ Toolbar.prototype.staticElements = null;
 Toolbar.prototype.init = function()
 {
 	var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels', null, true);
-	formatMenu.style.whiteSpace = 'nowrap';
-	formatMenu.style.overflow = 'hidden';
-	formatMenu.style.position = 'relative';
-	formatMenu.innerHTML = '<div class="geSprite geSprite-formatpanel" style="margin-left:-4px;margin-top:-3px;"></div>' +
-		this.dropdownImageHtml;
-	formatMenu.style.width = (mxClient.IS_QUIRKS) ? '36px' : '16px';
-	this.addSeparator();
-	
-	// Fix for item size in kennedy theme
-	if (urlParams['ui'] != 'atlas')
-	{
-		formatMenu.getElementsByTagName('img')[0].style.left = '24px';
-		formatMenu.getElementsByTagName('img')[0].style.top = '5px';
-		formatMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
-	}
+	this.addDropDownArrow(formatMenu, 'geSprite-formatpanel', 36, 50, -4, -3);
 
 	var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'viewZoom', null, true);
 	viewMenu.showDisabled = true;
@@ -100,28 +86,58 @@ Toolbar.prototype.init = function()
 		}
 	}));
 
-	var elts = this.addItems(['-', 'undo', 'redo', '-', 'delete', '-', 'toFront', 'toBack', '-', 'fillColor', 'gradientColor', 'strokeColor', '-', 'shadow']);
+	var elts = this.addItems(['-', 'undo', 'redo', '-', 'delete', '-', 'toFront', 'toBack', '-', 'fillColor', 'strokeColor', '-', 'shadow']);
 	elts[1].setAttribute('title', mxResources.get('undo') + ' (' + this.editorUi.actions.get('undo').shortcut + ')');
 	elts[2].setAttribute('title', mxResources.get('redo') + ' (' + this.editorUi.actions.get('redo').shortcut + ')');
 	elts[4].setAttribute('title', mxResources.get('delete') + ' (' + this.editorUi.actions.get('delete').shortcut + ')');
 
 	this.addItem('geSprite-rounded', 'toggleRounded').setAttribute('title', mxResources.get('rounded'));
 	this.addSeparator();
+	
+	this.edgeShapeMenu = this.addMenuFunction('', mxResources.get('connection'), false, mxUtils.bind(this, function(menu)
+	{
+		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, 'width'], [null, null], 'geIcon geSprite geSprite-connection', null, true).setAttribute('title', mxResources.get('line'));
+		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, 'width'], ['link', null], 'geIcon geSprite geSprite-linkedge', null, true).setAttribute('title', mxResources.get('link'));
+		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, 'width'], ['flexArrow', null], 'geIcon geSprite geSprite-arrow', null, true).setAttribute('title', mxResources.get('arrow'));
+		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, 'width'], ['arrow', null], 'geIcon geSprite geSprite-simplearrow', null, true).setAttribute('title', mxResources.get('simpleArrow'));
+	}));
+	
+	this.addDropDownArrow(this.edgeShapeMenu, 'geSprite-connection', 56, 56, 0, 0);
+
+	this.edgeStyleMenu = this.addMenuFunction('geSprite-orthogonal', mxResources.get('waypoints'), false, mxUtils.bind(this, function(menu)
+	{
+		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [null, null, null], 'geIcon geSprite geSprite-straight', null, true).setAttribute('title', mxResources.get('straight'));
+		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['orthogonalEdgeStyle', null, null], 'geIcon geSprite geSprite-orthogonal', null, true).setAttribute('title', mxResources.get('orthogonal'));
+		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['orthogonalEdgeStyle', '1', null], 'geIcon geSprite geSprite-curved', null, true).setAttribute('title', mxResources.get('curved'));
+		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['entityRelationEdgeStyle', null, null], 'geIcon geSprite geSprite-entity', null, true).setAttribute('title', mxResources.get('entityRelation'));
+	}));
+	
+	this.addDropDownArrow(this.edgeStyleMenu, 'geSprite-orthogonal', 56, 56, 0, 0);
+	
+	this.addSeparator();
 
 	var insertMenu = this.addMenu('', mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')', true, 'insert', null, true);
-	insertMenu.style.whiteSpace = 'nowrap';
-	insertMenu.style.overflow = 'hidden';
-	insertMenu.style.position = 'relative';
-	insertMenu.innerHTML = '<div class="geSprite geSprite-plus" style="margin-left:-4px;margin-top:-3px;"></div>' +
+	this.addDropDownArrow(insertMenu, 'geSprite-plus', 36, 50, -4, -3);
+};
+
+/**
+ * Adds the toolbar elements.
+ */
+Toolbar.prototype.addDropDownArrow = function(menu, sprite, width, atlasWidth, left, top)
+{
+	menu.style.whiteSpace = 'nowrap';
+	menu.style.overflow = 'hidden';
+	menu.style.position = 'relative';
+	menu.innerHTML = '<div class="geSprite ' + sprite + '" style="margin-left:' + left + 'px;margin-top:' + top + 'px;"></div>' +
 		this.dropdownImageHtml;
-	insertMenu.style.width = (mxClient.IS_QUIRKS) ? '36px' : '16px';
+	menu.style.width = (mxClient.IS_QUIRKS) ? width + 'px' : (width - 20) + 'px';
 	
 	// Fix for item size in kennedy theme
 	if (urlParams['ui'] != 'atlas')
 	{
-		insertMenu.getElementsByTagName('img')[0].style.left = '24px';
-		insertMenu.getElementsByTagName('img')[0].style.top = '5px';
-		insertMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
+		menu.getElementsByTagName('img')[0].style.left = '24px';
+		menu.getElementsByTagName('img')[0].style.top = '5px';
+		menu.style.width = (mxClient.IS_QUIRKS) ? atlasWidth + 'px' : (atlasWidth - 20) + 'px';
 	}
 };
 
