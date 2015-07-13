@@ -337,9 +337,42 @@
 }
 .geFooterContainer {
 	background:#e5e5e5;
-}
-.geFooter {
 	border-top:1px solid #c0c0c0;
+}
+.geFooterContainer a {
+	font-size:14px;
+	color:#235695;
+	font-weight:bold;
+	text-decoration:none;
+}
+.geFooterContainer table {
+	border-collapse:collapse;
+	margin:0 auto;
+}
+.geFooterContainer td {
+	padding:12px 30px 10px 30px;
+	border-left:1px solid #c0c0c0;
+	border-right:1px solid #c0c0c0;
+	white-space:nowrap;
+}
+.geFooterContainer td:hover {
+	background-color: #d3d3d3;
+}
+.geFooterContainer>div>img {
+	opacity:0.5;
+	background:#e5e5e5;
+	border:1px solid transparent;
+	cusor:pointer;
+	margin-top:3px;
+	margin-right:8px;
+	position:absolute;
+	right:4px;
+	top:14px;
+	padding:1px;
+}
+.geFooterContainer>div>img:hover {
+	opacity: 1;
+	border: 1px solid gray;
 }
 .geHsplit {
 	cursor:col-resize;
@@ -576,7 +609,9 @@ table.mxPopupMenu tr {
 	font-size:4pt;
 }
 html td.mxWindowTitle {
+	font-family:Helvetica Neue,Helvetica,Arial Unicode MS,Arial;
  	text-align:left;
  	font-size:12px;
+ 	color:rgb(112, 112, 112);
  	padding:4px;
 }
