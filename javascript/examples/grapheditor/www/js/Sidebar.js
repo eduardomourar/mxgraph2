@@ -543,6 +543,12 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	div.style.width = '100%';
 	div.style.padding = '0px';
 
+	if (urlParams['plainsidebar'] == '1')
+	{
+		div.style.backgroundColor = '#ffffff';
+		div.style.borderColor = 'transparent';
+	}
+	
 	if (!expand)
 	{
 		div.style.display = 'none';
@@ -1614,6 +1620,14 @@ Sidebar.prototype.createTitle = function(label)
 	elt.setAttribute('title', label);
 	elt.className = 'geTitle';
 	mxUtils.write(elt, label);
+	
+	if (urlParams['plainsidebar'] == '1')
+	{
+		elt.style.backgroundColor = '#ffffff';
+		elt.style.borderColor = 'transparent';
+		elt.style.fontWeight = 'bold';
+		elt.style.fontSize = '12px';
+	}
 
 	return elt;
 };
@@ -2883,6 +2897,12 @@ Sidebar.prototype.addPalette = function(id, title, expanded, onInit)
 	var div = document.createElement('div');
 	div.className = 'geSidebar';
 	
+	if (urlParams['plainsidebar'] == '1')
+	{
+		div.style.backgroundColor = '#ffffff';
+		div.style.borderColor = 'transparent';
+	}
+	
 	if (expanded)
 	{
 		onInit(div);
@@ -2915,15 +2935,22 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 {
 	var initialized = false;
 
-	// Avoids mixed content warning in IE6-8
-	if (!mxClient.IS_IE || document.documentMode >= 8)
+	if (urlParams['plainsidebar'] == '1')
 	{
-		title.style.backgroundImage = (content.style.display == 'none') ?
-			'url(\'' + this.collapsedImage + '\')' : 'url(\'' + this.expandedImage + '\')';
+		title.style.paddingLeft = '6px';
 	}
-	
-	title.style.backgroundRepeat = 'no-repeat';
-	title.style.backgroundPosition = '0% 50%';
+	else
+	{
+		// Avoids mixed content warning in IE6-8
+		if (!mxClient.IS_IE || document.documentMode >= 8)
+		{
+			title.style.backgroundImage = (content.style.display == 'none') ?
+				'url(\'' + this.collapsedImage + '\')' : 'url(\'' + this.expandedImage + '\')';
+		}
+		
+		title.style.backgroundRepeat = 'no-repeat';
+		title.style.backgroundPosition = '0% 50%';
+	}
 	
 	mxEvent.addListener(title, 'click', mxUtils.bind(this, function(evt)
 	{
@@ -2949,12 +2976,20 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 				}
 			}
 			
-			title.style.backgroundImage = 'url(\'' + this.expandedImage + '\')';
+			if (urlParams['plainsidebar'] != '1')
+			{
+				title.style.backgroundImage = 'url(\'' + this.expandedImage + '\')';
+			}
+			
 			content.style.display = 'block';
 		}
 		else
 		{
-			title.style.backgroundImage = 'url(\'' + this.collapsedImage + '\')';
+			if (urlParams['plainsidebar'] != '1')
+			{
+				title.style.backgroundImage = 'url(\'' + this.collapsedImage + '\')';
+			}
+			
 			content.style.display = 'none';
 		}
 		
