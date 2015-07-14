@@ -68,10 +68,9 @@ Toolbar.prototype.init = function()
 	}
 	
 	this.addSeparator();
-	var elts = this.addItems(['actualSize', 'zoomIn', 'zoomOut']);
-	elts[0].setAttribute('title', mxResources.get('actualSize') + ' (' + this.editorUi.actions.get('actualSize').shortcut + ')');
-	elts[1].setAttribute('title', mxResources.get('zoomIn') + ' (' + this.editorUi.actions.get('zoomIn').shortcut + ')');
-	elts[2].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
+	var elts = this.addItems(['zoomIn', 'zoomOut']);
+	elts[0].setAttribute('title', mxResources.get('zoomIn') + ' (' + this.editorUi.actions.get('zoomIn').shortcut + ')');
+	elts[1].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
 
 	// Updates the label if the scale changes
 	this.editorUi.editor.graph.view.addListener(mxEvent.EVENT_SCALE, mxUtils.bind(this, function()
