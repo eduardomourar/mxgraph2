@@ -972,7 +972,7 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 
 			    evt.stopPropagation();
 			    evt.preventDefault();
-			}), false);
+			}));
 		}
 	};
 
