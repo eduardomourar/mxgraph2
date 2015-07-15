@@ -578,7 +578,6 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	input.style.marginTop = '6px';
 	input.style.marginLeft = '2px';
 	input.style.marginBottom = '2px';
-	input.value = '';
 	inner.appendChild(input);
 
 	var cross = document.createElement('div');
