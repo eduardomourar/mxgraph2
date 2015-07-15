@@ -179,6 +179,7 @@ mxImageShape.prototype.redrawHtmlShape = function()
 		// VML image supports PNG in IE6
 		var useVml = mxClient.IS_IE6 || ((document.documentMode == null || document.documentMode <= 8) && this.rotation != 0);
 		var img = document.createElement((useVml) ? mxClient.VML_PREFIX + ':image' : 'img');
+		img.setAttribute('border', '0');
 		img.style.position = 'absolute';
 		img.src = this.image;
 
