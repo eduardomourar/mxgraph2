@@ -273,6 +273,7 @@ top=Oben
 topAlign=Oben
 transparent=Transparent
 turn=Drehen
+uml=UML
 underline=Unterstrichen
 undo=Rückgängig
 ungroup=Gruppierung aufheben

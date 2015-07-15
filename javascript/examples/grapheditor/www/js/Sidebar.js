@@ -1419,7 +1419,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	 	this.createEdgeTemplateEntry('endArrow=block;startArrow=block;endFill=1;startFill=1;html=1;', 160, 0, '', 'Association 2', null, 'uml association')
 	];
 	
-	this.addPaletteFunctions('uml', 'UML', expand || false, fns);
+	this.addPaletteFunctions('uml', mxResources.get('uml'), expand || false, fns);
 };
 
 /**
