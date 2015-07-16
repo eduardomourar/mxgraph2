@@ -536,6 +536,7 @@ Actions.prototype.init = function()
 	});
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.foldingEnabled; });
+	action.isEnabled = isGraphEnabled;
 	action = this.addAction('scrollbars', function()
 	{
 		ui.setScrollbars(!ui.hasScrollbars());
@@ -602,6 +603,7 @@ Actions.prototype.init = function()
 	});
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.connectionHandler.isCreateTarget(); });
+	action.isEnabled = isGraphEnabled;
 	action = this.addAction('autosave', function()
 	{
 		ui.editor.autosave = !ui.editor.autosave;

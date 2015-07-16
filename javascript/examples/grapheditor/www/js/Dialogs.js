@@ -2348,6 +2348,11 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		mxEvent.consume(evt);
 	});
 	
+	if (!graph.isEnabled())
+	{
+		removeLink.className = 'geButton mxDisabled';
+	}
+	
 	ldiv.appendChild(removeLink);
 
 	var insertLink = link.cloneNode();
@@ -2391,6 +2396,11 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			}
 		}
 	});
+	
+	if (!graph.isEnabled())
+	{
+		duplicateLink.className = 'geButton mxDisabled';
+	}
 
 	ldiv.appendChild(duplicateLink);
 
@@ -2417,6 +2427,11 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		
 		mxEvent.consume(evt);
 	});
+	
+	if (!graph.isEnabled())
+	{
+		addLink.className = 'geButton mxDisabled';
+	}
 	
 	ldiv.appendChild(addLink);
 	div.appendChild(ldiv);	
@@ -2535,6 +2550,11 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			inp.style.marginRight = '6px';
 			inp.style.marginTop = '4px';
 			left.appendChild(inp);
+			
+			if (!graph.isEnabled())
+			{
+				inp.setAttribute('disabled', 'disabled');
+			}
 
 			if (graph.model.isVisible(child))
 			{
