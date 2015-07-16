@@ -3922,9 +3922,13 @@ DiagramFormatPanel.prototype.init = function()
 	var graph = editor.graph;
 
 	this.container.appendChild(this.addOptions(this.createPanel()));
-	this.container.appendChild(this.addDocumentProperties(this.createPanel()));
-	this.container.appendChild(this.addPaperSize(this.createPanel()));
-	this.container.appendChild(this.addStyleOps(this.createPanel()));
+
+	if (graph.isEnabled())
+	{
+		this.container.appendChild(this.addDocumentProperties(this.createPanel()));
+		this.container.appendChild(this.addPaperSize(this.createPanel()));
+		this.container.appendChild(this.addStyleOps(this.createPanel()));
+	}
 };
 
 /**
@@ -3940,37 +3944,40 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 	this.addGridOption(div);
 
 	// Guides
-	div.appendChild(this.createOption(mxResources.get('guides'), function()
+	if (graph.isEnabled())
 	{
-		return graph.graphHandler.guidesEnabled;
-	}, function(checked)
-	{
-		ui.actions.get('guides').funct();
-	},
-	{
-		install: function(apply)
+		div.appendChild(this.createOption(mxResources.get('guides'), function()
 		{
-			this.listener = function()
-			{
-				apply(graph.graphHandler.guidesEnabled);
-			};
-			
-			ui.addListener('guidesEnabledChanged', this.listener);
+			return graph.graphHandler.guidesEnabled;
+		}, function(checked)
+		{
+			ui.actions.get('guides').funct();
 		},
-		destroy: function()
 		{
-			ui.removeListener(this.listener);
-		}
-	}));
-
-	// Connection points
-	div.appendChild(this.createOption(mxResources.get('connectionPoints'), function()
-	{
-		return graph.connectionHandler.isEnabled();
-	}, function(checked)
-	{
-		graph.setConnectable(checked);
-	}));
+			install: function(apply)
+			{
+				this.listener = function()
+				{
+					apply(graph.graphHandler.guidesEnabled);
+				};
+				
+				ui.addListener('guidesEnabledChanged', this.listener);
+			},
+			destroy: function()
+			{
+				ui.removeListener(this.listener);
+			}
+		}));
+	
+		// Connection points
+		div.appendChild(this.createOption(mxResources.get('connectionPoints'), function()
+		{
+			return graph.connectionHandler.isEnabled();
+		}, function(checked)
+		{
+			graph.setConnectable(checked);
+		}));
+	}
 
 	// Page view
 	// LATER: Add pageViewChanged event
