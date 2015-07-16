@@ -177,6 +177,27 @@ Menus.prototype.init = function()
 			this.customFontSizes.push(newValue);
 		}));
 	})));
+	this.put('direction', new Menu(mxUtils.bind(this, function(menu, parent)
+	{
+		menu.addItem(mxResources.get('flipH'), null, function() { graph.toggleCellStyles(mxConstants.STYLE_FLIPH, false); }, parent);
+		menu.addItem(mxResources.get('flipV'), null, function() { graph.toggleCellStyles(mxConstants.STYLE_FLIPV, false); }, parent);
+		this.addMenuItems(menu, ['-', 'rotation'], parent);
+	})));
+	this.put('align', new Menu(mxUtils.bind(this, function(menu, parent)
+	{
+		menu.addItem(mxResources.get('leftAlign'), null, function() { graph.alignCells(mxConstants.ALIGN_LEFT); }, parent);
+		menu.addItem(mxResources.get('center'), null, function() { graph.alignCells(mxConstants.ALIGN_CENTER); }, parent);
+		menu.addItem(mxResources.get('rightAlign'), null, function() { graph.alignCells(mxConstants.ALIGN_RIGHT); }, parent);
+		menu.addSeparator(parent);
+		menu.addItem(mxResources.get('topAlign'), null, function() { graph.alignCells(mxConstants.ALIGN_TOP); }, parent);
+		menu.addItem(mxResources.get('middle'), null, function() { graph.alignCells(mxConstants.ALIGN_MIDDLE); }, parent);
+		menu.addItem(mxResources.get('bottomAlign'), null, function() { graph.alignCells(mxConstants.ALIGN_BOTTOM); }, parent);
+	})));
+	this.put('distribute', new Menu(mxUtils.bind(this, function(menu, parent)
+	{
+		menu.addItem(mxResources.get('horizontal'), null, function() { graph.distributeCells(true); }, parent);
+		menu.addItem(mxResources.get('vertical'), null, function() { graph.distributeCells(false); }, parent);
+	})));
 	this.put('layout', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		menu.addItem(mxResources.get('horizontalFlow'), null, mxUtils.bind(this, function()
