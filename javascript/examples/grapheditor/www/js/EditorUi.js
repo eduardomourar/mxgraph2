@@ -1832,23 +1832,7 @@ EditorUi.prototype.updateActionStates = function()
    			graph.getModel().isVertex(graph.getModel().getParent(graph.getSelectionCell())));
 
 	// Updates menu states
-	var menus = ['alignment', 'position', 'spacing', 'writingDirection', 'gradient', 'fontFamily', 'fontSize'];
-
-	for (var i = 0; i < menus.length; i++)
-	{
-		this.menus.get(menus[i]).setEnabled(selected);
-	}
- 	
    	var state = graph.view.getState(graph.getSelectionCell());
-   	
-    this.menus.get('align').setEnabled(graph.getSelectionCount() > 1);
-    this.menus.get('distribute').setEnabled(graph.getSelectionCount() > 1);
-    this.menus.get('connection').setEnabled(edgeSelected);
-    this.menus.get('waypoints').setEnabled(edgeSelected);
-    this.menus.get('linestart').setEnabled(edgeSelected);
-    this.menus.get('lineend').setEnabled(edgeSelected);
-    this.menus.get('linewidth').setEnabled(!graph.isSelectionEmpty());
-    this.menus.get('direction').setEnabled(vertexSelected || (edgeSelected && state != null && graph.isLoop(state)));
     this.menus.get('navigation').setEnabled(selected || graph.view.currentRoot != null);
     this.actions.get('collapsible').setEnabled(vertexSelected && graph.getSelectionCount() == 1 &&
     	(graph.isContainer(graph.getSelectionCell()) || graph.model.getChildCount(graph.getSelectionCell()) > 0));
@@ -1862,7 +1846,6 @@ EditorUi.prototype.updateActionStates = function()
     this.actions.get('openLink').setEnabled(graph.getSelectionCount() == 1 &&
     		graph.getLinkForCell(graph.getSelectionCell()) != null);
     this.actions.get('guides').setEnabled(graph.isEnabled());
-    this.actions.get('grid').setEnabled(graph.isEnabled());
 
     var unlocked = graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent());
     this.menus.get('layout').setEnabled(unlocked);
