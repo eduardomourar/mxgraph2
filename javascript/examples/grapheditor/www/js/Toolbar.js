@@ -51,6 +51,7 @@ Toolbar.prototype.init = function()
 {
 	var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels', null, true);
 	this.addDropDownArrow(formatMenu, 'geSprite-formatpanel', 36, 50, -4, -3);
+	this.addSeparator();
 
 	var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'viewZoom', null, true);
 	viewMenu.showDisabled = true;
