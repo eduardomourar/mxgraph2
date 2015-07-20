@@ -2401,8 +2401,13 @@ if (typeof mxVertexHandler != 'undefined')
 					style.fontSize = this.textarea.style.fontSize;
 
 					// TODO: Scale font sizes via transform
-					// style.fontSize = Math.round(parseInt(this.textarea.style.fontSize) / state.view.scale) + 'px';
-					// mxUtils.setPrefixedStyle(style, 'transform', 'scale(' + state.view.scale + ',' + state.view.scale + ')');
+//					var scale = state.view.scale;
+//					style.fontSize = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) + 'px';
+//					mxUtils.setPrefixedStyle(style, 'transform', 'scale(' + state.view.scale + ',' + state.view.scale + ')');
+//					style.width = parseInt(this.textarea.style.width) * scale + 'px';
+//					style.height = (parseInt(this.textarea.style.height) - 4) * scale + 'px';
+//					style.left = parseInt(this.textarea.style.left) * scale + 'px';
+//					style.top = parseInt(this.textarea.style.top) * scale + 'px';
 					
 					var dir = this.textarea.getAttribute('dir');
 					
