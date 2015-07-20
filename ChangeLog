@@ -1,3 +1,4 @@
+- Fixes parsing of decimal values in mxSaxOutputHandler [Dotnet]
 - Fixes possible border for older browsers in mxImageShape [JavaScript]
 - Fixes possible NPE in mxEdgeStyle.SegmentConnector [JavaScript]
 - Ignores doctype, validation in mxUtils.parseXml for IE<=9 [JavaScript]
