@@ -50,7 +50,7 @@ Toolbar.prototype.staticElements = null;
 Toolbar.prototype.init = function()
 {
 	var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels', null, true);
-	this.addDropDownArrow(formatMenu, 'geSprite-formatpanel', 36, 50, -4, -3);
+	this.addDropDownArrow(formatMenu, 'geSprite-formatpanel', 38, 50, -4, -3, 36, -8);
 	this.addSeparator();
 
 	var viewMenu = this.addMenu('', mxResources.get('zoom') + ' (Alt+Mousewheel)', true, 'viewZoom', null, true);
@@ -61,11 +61,11 @@ Toolbar.prototype.init = function()
 	
 	if (urlParams['ui'] == 'atlas')
 	{
-		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '56px' : '36px';
+		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '62px' : '36px';
 	}
 	else
 	{
-		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '70px' : '50px';
+		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '58px' : '50px';
 	}
 	
 	this.addSeparator();
@@ -102,7 +102,7 @@ Toolbar.prototype.init = function()
 		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, 'width'], ['arrow', null], 'geIcon geSprite geSprite-simplearrow', null, true).setAttribute('title', mxResources.get('simpleArrow'));
 	}));
 	
-	this.addDropDownArrow(this.edgeShapeMenu, 'geSprite-connection', 56, 56, 0, 0);
+	this.addDropDownArrow(this.edgeShapeMenu, 'geSprite-connection', 44, 50, 0, 0, 22, -4);
 
 	this.edgeStyleMenu = this.addMenuFunction('geSprite-orthogonal', mxResources.get('waypoints'), false, mxUtils.bind(this, function(menu)
 	{
@@ -112,32 +112,40 @@ Toolbar.prototype.init = function()
 		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['entityRelationEdgeStyle', null, null], 'geIcon geSprite geSprite-entity', null, true).setAttribute('title', mxResources.get('entityRelation'));
 	}));
 	
-	this.addDropDownArrow(this.edgeStyleMenu, 'geSprite-orthogonal', 56, 56, 0, 0);
+	this.addDropDownArrow(this.edgeStyleMenu, 'geSprite-orthogonal', 44, 50, 0, 0, 22, -4);
 	
 	this.addSeparator();
 
 	var insertMenu = this.addMenu('', mxResources.get('insert') + ' (' + mxResources.get('doubleClickTooltip') + ')', true, 'insert', null, true);
-	this.addDropDownArrow(insertMenu, 'geSprite-plus', 36, 50, -4, -3);
+	this.addDropDownArrow(insertMenu, 'geSprite-plus', 38, 48, -4, -3, 36, -8);
 };
 
 /**
  * Adds the toolbar elements.
  */
-Toolbar.prototype.addDropDownArrow = function(menu, sprite, width, atlasWidth, left, top)
+Toolbar.prototype.addDropDownArrow = function(menu, sprite, width, atlasWidth, left, top, atlasDelta, atlasLeft)
 {
+	atlasDelta = (atlasDelta != null) ? atlasDelta : 32;
+	left = (urlParams['ui'] != 'atlas') ? left : atlasLeft;
+	
 	menu.style.whiteSpace = 'nowrap';
 	menu.style.overflow = 'hidden';
 	menu.style.position = 'relative';
 	menu.innerHTML = '<div class="geSprite ' + sprite + '" style="margin-left:' + left + 'px;margin-top:' + top + 'px;"></div>' +
 		this.dropdownImageHtml;
-	menu.style.width = (mxClient.IS_QUIRKS) ? width + 'px' : (width - 20) + 'px';
+	menu.style.width = (mxClient.IS_QUIRKS) ? atlasWidth + 'px' : (atlasWidth - atlasDelta) + 'px';
+	
+	if (mxClient.IS_QUIRKS)
+	{
+		menu.style.height = (urlParams['ui'] != 'atlas') ? '24px' : '26px';
+	}
 	
 	// Fix for item size in kennedy theme
 	if (urlParams['ui'] != 'atlas')
 	{
 		menu.getElementsByTagName('img')[0].style.left = '24px';
 		menu.getElementsByTagName('img')[0].style.top = '5px';
-		menu.style.width = (mxClient.IS_QUIRKS) ? atlasWidth + 'px' : (atlasWidth - 20) + 'px';
+		menu.style.width = (mxClient.IS_QUIRKS) ? width + 'px' : (width - 10) + 'px';
 	}
 };
 
