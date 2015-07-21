@@ -53,7 +53,10 @@ mxCellRenderer.prototype.createShape = function(state)
     		}
     		catch (e)
     		{
-    			console.log('Error in shape: ' + e);
+    			if (window.console != null)
+    			{
+    				console.log('Error in shape: ' + e);
+    			}
     		}
     	}
 	}
