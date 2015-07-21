@@ -2233,34 +2233,35 @@ if (typeof mxVertexHandler != 'undefined')
 			EditorUi.prototype.init = function()
 			{
 				editorUiInit.apply(this, arguments);
+				var graph = this.editor.graph;
 				
-				mxEvent.addListener(this.editor.graph.container, 'keydown', mxUtils.bind(this, function(evt)
+				mxEvent.addListener(graph.container, 'keydown', mxUtils.bind(this, function(evt)
 				{
 					// Tab selects next cell
 					if (evt.which == 9)
 					{
-						if (this.editor.graph.isEditing())
+						if (graph.isEditing())
 						{
-							this.editor.graph.stopEditing(false);
+							graph.stopEditing(false);
 						}
 						
-						this.editor.graph.selectCell(!mxEvent.isShiftDown(evt));
+						graph.selectCell(!mxEvent.isShiftDown(evt));
 						mxEvent.consume(evt);
 					}
 				}));
 		
-				mxEvent.addListener(this.editor.graph.container, 'keypress', mxUtils.bind(this, function(evt)
+				mxEvent.addListener(graph.container, 'keypress', mxUtils.bind(this, function(evt)
 				{
 					// KNOWN: Focus does not work if label is empty in quirks mode
-					if (!this.editor.graph.isEditing() && !this.editor.graph.isSelectionEmpty() && evt.which !== 0 &&
+					if (!graph.isEditing() && !graph.isSelectionEmpty() && evt.which !== 0 &&
 						!mxEvent.isAltDown(evt) && !mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
 					{
-						this.editor.graph.escape();
-						this.editor.graph.startEditing();
+						graph.escape();
+						graph.startEditing();
 	
 						if (mxClient.IS_FF)
 						{
-							var ce = this.editor.graph.cellEditor;
+							var ce = graph.cellEditor;
 	
 							// Initial keystroke is lost in FF
 							if (ce.textarea.style.display != 'none')
@@ -2281,6 +2282,32 @@ if (typeof mxVertexHandler != 'undefined')
 						}
 					}
 				}));
+				
+				// Invokes resize on editor after zoom changes
+				var cellEditorResize = mxUtils.bind(this, function()
+				{
+					if (graph.isEditing())
+					{
+						console.log('calling resize');
+						var state = graph.view.getState(graph.cellEditor.editingCell);
+						var scale = state.view.scale;
+						
+						if (graph.cellEditor.text2 == null)
+						{
+							var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
+							graph.cellEditor.textarea.style.fontSize = Math.round(size) + 'px';
+						}
+						else
+						{
+							mxUtils.setPrefixedStyle(graph.cellEditor.text2.style, 'transform', 'scale(' + state.view.scale + ',' + state.view.scale + ')');
+						}
+						
+						graph.cellEditor.resize();
+					}
+				});
+				
+				graph.view.addListener(mxEvent.SCALE, cellEditorResize);
+				graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, cellEditorResize);
 			};
 	
 			/**
@@ -2401,13 +2428,14 @@ if (typeof mxVertexHandler != 'undefined')
 					style.fontSize = this.textarea.style.fontSize;
 
 					// TODO: Scale font sizes via transform
-//					var scale = state.view.scale;
-//					style.fontSize = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) + 'px';
-//					mxUtils.setPrefixedStyle(style, 'transform', 'scale(' + state.view.scale + ',' + state.view.scale + ')');
-//					style.width = parseInt(this.textarea.style.width) * scale + 'px';
-//					style.height = (parseInt(this.textarea.style.height) - 4) * scale + 'px';
-//					style.left = parseInt(this.textarea.style.left) * scale + 'px';
-//					style.top = parseInt(this.textarea.style.top) * scale + 'px';
+					var scale = state.view.scale;
+					style.fontSize = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) + 'px';
+					mxUtils.setPrefixedStyle(style, 'transform', 'scale(' + state.view.scale + ',' + state.view.scale + ')');
+					style.width = parseInt(this.textarea.style.width) * scale + 'px';
+					style.height = (parseInt(this.textarea.style.height) - 4) * scale + 'px';
+					style.left = parseInt(this.textarea.style.left) * scale + 'px';
+					style.top = parseInt(this.textarea.style.top) * scale + 'px';
+					style.backgroundColor = 'red';
 					
 					var dir = this.textarea.getAttribute('dir');
 					
@@ -2467,6 +2495,28 @@ if (typeof mxVertexHandler != 'undefined')
 					}
 				}
 			};
+			
+//			var mxCellEditorCreateTextDiv = mxCellEditor.prototype.createTextDiv;
+//			mxCellEditor.prototype.createTextDiv = function()
+//			{
+//				var div = mxCellEditorCreateTextDiv.apply(this, arguments);
+//				
+//				if (this.textarea.style.display == 'none')
+//				{
+//					var state = this.graph.getView().getState(this.editingCell);
+//					
+//					if (state != null)
+//					{
+//						// Resets the font size on the text measuring div to be unscaled
+//						var scale = this.graph.getView().scale;
+//						var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
+//						div.style.fontSize = Math.round(size) + 'px';
+//						console.log('fontSize', div.style.fontSize);
+//					}
+//				}
+//				
+//				return div;
+//			};
 	
 			var mxCellEditorResize = mxCellEditor.prototype.resize;
 			mxCellEditor.prototype.resize = function()

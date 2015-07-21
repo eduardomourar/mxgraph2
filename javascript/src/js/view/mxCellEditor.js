@@ -413,11 +413,13 @@ mxCellEditor.prototype.resize = function()
 					}
 				}
 				
+				var s2 = scale;
+				
 				var value = this.getCurrentHtmlValue();
 				this.textDiv.innerHTML = (value.length > 0) ? value : '&nbsp;';
 				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
-				var ow = this.textDiv.offsetWidth + size;
-				var oh = this.textDiv.offsetHeight + 16;
+				var ow = this.textDiv.offsetWidth / s2 + size;
+				var oh = this.textDiv.offsetHeight / s2 + 16;
 
 				if (this.minResize != null)
 				{
@@ -429,7 +431,15 @@ mxCellEditor.prototype.resize = function()
 				{
 					ow = Math.min(this.bounds.width, ow);
 				}
-								
+
+//				ow /= s2;
+//				oh /= s2;
+//				
+//				//this.bounds.x /= s2;
+//				//this.bounds.y /= s2;
+//				this.bounds.width /= s2;
+//				this.bounds.height /= s2;
+//								
 				// LATER: Keep in visible area
 				this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * (this.bounds.width - ow - 3))) + 'px';
 
@@ -443,7 +453,7 @@ mxCellEditor.prototype.resize = function()
 					this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh + size * 0.1 + 8))) + 'px';
 				}
 
-				this.textarea.style.width = Math.ceil(ow + this.textarea.offsetWidth - this.textarea.clientWidth) + 'px';
+				this.textarea.style.width = Math.ceil(ow + this.textarea.offsetWidth / s2 - this.textarea.clientWidth / s2) + 'px';
 				this.textarea.style.height = Math.ceil(oh) + 'px';
 		 	}
 		}
