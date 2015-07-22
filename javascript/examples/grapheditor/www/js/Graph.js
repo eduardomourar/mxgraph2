@@ -2288,7 +2288,6 @@ if (typeof mxVertexHandler != 'undefined')
 				{
 					if (graph.isEditing())
 					{
-						console.log('calling resize');
 						var state = graph.view.getState(graph.cellEditor.editingCell);
 						var scale = state.view.scale;
 						
@@ -2427,16 +2426,6 @@ if (typeof mxVertexHandler != 'undefined')
 					style.color = this.textarea.style.color;
 					style.fontSize = this.textarea.style.fontSize;
 
-					// TODO: Scale font sizes via transform
-					var scale = state.view.scale;
-					style.fontSize = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) + 'px';
-					mxUtils.setPrefixedStyle(style, 'transform', 'scale(' + state.view.scale + ',' + state.view.scale + ')');
-					style.width = parseInt(this.textarea.style.width) * scale + 'px';
-					style.height = (parseInt(this.textarea.style.height) - 4) * scale + 'px';
-					style.left = parseInt(this.textarea.style.left) * scale + 'px';
-					style.top = parseInt(this.textarea.style.top) * scale + 'px';
-					style.backgroundColor = 'red';
-					
 					var dir = this.textarea.getAttribute('dir');
 					
 					if (dir != null && dir.length > 0)
@@ -2495,28 +2484,6 @@ if (typeof mxVertexHandler != 'undefined')
 					}
 				}
 			};
-			
-//			var mxCellEditorCreateTextDiv = mxCellEditor.prototype.createTextDiv;
-//			mxCellEditor.prototype.createTextDiv = function()
-//			{
-//				var div = mxCellEditorCreateTextDiv.apply(this, arguments);
-//				
-//				if (this.textarea.style.display == 'none')
-//				{
-//					var state = this.graph.getView().getState(this.editingCell);
-//					
-//					if (state != null)
-//					{
-//						// Resets the font size on the text measuring div to be unscaled
-//						var scale = this.graph.getView().scale;
-//						var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
-//						div.style.fontSize = Math.round(size) + 'px';
-//						console.log('fontSize', div.style.fontSize);
-//					}
-//				}
-//				
-//				return div;
-//			};
 	
 			var mxCellEditorResize = mxCellEditor.prototype.resize;
 			mxCellEditor.prototype.resize = function()
