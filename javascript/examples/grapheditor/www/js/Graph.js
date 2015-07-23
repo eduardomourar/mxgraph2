@@ -2478,16 +2478,11 @@ if (typeof mxVertexHandler != 'undefined')
 			var mxCellEditorResize = mxCellEditor.prototype.resize;
 			mxCellEditor.prototype.resize = function()
 			{
-				var state = this.graph.getView().getState(this.editingCell);
-				var scale = state.view.scale;
-				
-				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
-				this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * scale * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-				this.textarea.style.fontSize = Math.round(size * scale) + 'px';
-				
 				// Shows in full size for HTML source mode
 				if (this.text2 != null && this.textarea.style.display != 'none')
 				{
+					var state = this.graph.getView().getState(this.editingCell);
+					
 					if (state != null && this.graph.getModel().isVertex(state.cell))
 					{
 						var x = state.x;
@@ -2525,28 +2520,10 @@ if (typeof mxVertexHandler != 'undefined')
 					
 					if (this.textarea.style.display == 'none' && this.text2 != null)
 					{
-						this.text2.style.left = parseInt(this.textarea.style.left) + 1 + 'px';
 						this.text2.style.top = parseInt(this.textarea.style.top) + 2 + 'px';
+						this.text2.style.left = parseInt(this.textarea.style.left) + 1 + 'px';
 						this.text2.style.width = this.textarea.style.width;
 						this.text2.style.height = this.textarea.style.height;
-
-						if (!mxClient.IS_QUIRKS)
-						{
-							// DEBUGGING
-							this.text2.style.background = 'red';
-	
-							mxUtils.setPrefixedStyle(this.text2.style, 'transform', 'scale(' + scale + ',' + scale + ')');
-							this.text2.style.fontSize = Math.round(size) + 'px';
-							this.text2.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-	
-							// Workaround for scaled text measuring in mxCellEditor
-							if (state != null && this.graph.isWrapping(state.cell) && (this.bounds.width >= 2 || this.bounds.height >= 2))
-							{
-								this.text2.style.width = Math.round(parseInt(this.textarea.style.width) / scale) + 'px';
-								this.text2.style.left = Math.round(parseInt(this.textarea.style.left) + 2 -
-									parseInt(this.textarea.style.width) * (1 - scale)) + 'px';
-							}
-						}
 					}				
 				}
 			};

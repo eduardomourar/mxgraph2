@@ -405,22 +405,19 @@ mxCellEditor.prototype.resize = function()
 					// of the text around it, so there is no need to simulate maxWidth in quirks mode.
 					if (mxClient.IS_QUIRKS)
 					{
-						this.textDiv.style.width = Math.ceil(this.bounds.width / scale) + 'px';
+						this.textDiv.style.width = Math.ceil(this.bounds.width) + 'px';
 					}
 					else
 					{
-						this.textDiv.style.maxWidth = Math.ceil(this.bounds.width / scale) - 6 + 'px';
-						console.log('maxWidth', this.bounds.width, this.textDiv.style.maxWidth);
+						this.textDiv.style.maxWidth = Math.ceil(this.bounds.width) + 'px';
 					}
 				}
 				
 				var value = this.getCurrentHtmlValue();
 				this.textDiv.innerHTML = (value.length > 0) ? value : '&nbsp;';
 				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
-				var ow = this.textDiv.offsetWidth * scale + size;
-				var oh = (this.textDiv.offsetHeight + 16) * scale;
-				
-				console.log('oh',this.textDiv.style.maxWidth, oh);
+				var ow = this.textDiv.offsetWidth + size;
+				var oh = this.textDiv.offsetHeight + 16;
 
 				if (this.minResize != null)
 				{
@@ -447,8 +444,6 @@ mxCellEditor.prototype.resize = function()
 				}
 
 				this.textarea.style.width = Math.ceil(ow + this.textarea.offsetWidth - this.textarea.clientWidth) + 'px';
-				console.log('scrollbarWidth', ow, this.textarea.offsetWidth, this.textarea.clientWidth, this.textarea.style.width)
-				this.textarea.style.border = '1px solid gray';
 				this.textarea.style.height = Math.ceil(oh) + 'px';
 		 	}
 		}
@@ -531,16 +526,17 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		var uline = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
 				mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE;
 		
+		this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
 		this.textarea.style.textDecoration = (uline) ? 'underline' : '';
 		this.textarea.style.fontWeight = (bold) ? 'bold' : 'normal';
 		this.textarea.style.fontStyle = (italic) ? 'italic' : '';
+		this.textarea.style.fontSize = Math.round(size) + 'px';
 		this.textarea.style.fontFamily = family;
 		this.textarea.style.textAlign = align;
 		this.textarea.style.overflow = 'auto';
 		this.textarea.style.outline = 'none';
 		this.textarea.style.color = color;
 		this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-		this.textarea.style.fontSize = Math.round(size) + 'px';
 		
 		var dir = this.textDirection = mxUtils.getValue(state.style, mxConstants.STYLE_TEXT_DIRECTION, mxConstants.DEFAULT_TEXT_DIRECTION);
 		
@@ -596,12 +592,6 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 			if (this.autoSize)
 			{
 				this.textDiv = this.createTextDiv();
-				
-				// Uses unscaled font size for measuring
-				size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
-				this.textDiv.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-				this.textDiv.fontSize = Math.round(size) + 'px';
-				
 				document.body.appendChild(this.textDiv);
 				this.resize();
 			}
@@ -644,13 +634,14 @@ mxCellEditor.prototype.createTextDiv = function()
 	var style = div.style;
 	style.position = 'absolute';
 	style.whiteSpace = 'nowrap';
-	//style.visibility = 'hidden';
-	style.border = '1px solid black';
+	style.visibility = 'hidden';
 	style.padding = '0px';
 	style.margin = '0px';
 	style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
 	style.zoom = '1';
 	style.verticalAlign = 'top';
+	style.lineHeight = this.textarea.style.lineHeight;
+	style.fontSize = this.textarea.style.fontSize;
 	style.fontFamily = this.textarea.style.fontFamily;
 	style.fontWeight = this.textarea.style.fontWeight;
 	style.textAlign = this.textarea.style.textAlign;
