@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.Bidi;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -119,7 +120,28 @@ public class PropGen
 												value = encodeString(value);
 											}
 	
-											outputFiles[i].append(key + "=" + value + "\n");
+											String lang = codes[i].toLowerCase();
+											boolean rtl = false;
+											
+											if (lang.equals("ar") || lang.equals("fa") || lang.equals("he"))
+											{
+												Bidi bidi = new Bidi(value, 0);
+												
+												if (!bidi.isLeftToRight())
+												{
+													System.out.println(value);
+													rtl = true;
+												}
+											}
+											
+											if (rtl)
+											{
+												outputFiles[i].append(key + "=" + "\u202B" + value + "\u202C" + "\n");
+											}
+											else
+											{
+												outputFiles[i].append(key + "=" + value + "\n");
+											}
 										}
 									}
 								}
