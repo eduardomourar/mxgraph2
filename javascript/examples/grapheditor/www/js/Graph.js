@@ -2370,9 +2370,12 @@ if (typeof mxVertexHandler != 'undefined')
 					{
 						if (this.autoSize && !mxEvent.isConsumed(evt))
 						{
+							this.text2.style.overflow = 'hidden';
+							
 							setTimeout(mxUtils.bind(this, function()
 							{
 								this.resize();
+								this.text2.style.overflow = '';
 							}), 0);
 						}
 					}));
@@ -2439,7 +2442,7 @@ if (typeof mxVertexHandler != 'undefined')
 					
 					if (this.autoSize)
 					{
-						this.textDiv = this.createTextDiv();
+						this.textDiv = this.createTextDiv(state);
 						document.body.appendChild(this.textDiv);
 						this.resize();
 					}
