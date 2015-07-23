@@ -405,22 +405,31 @@ mxCellEditor.prototype.resize = function()
 					// of the text around it, so there is no need to simulate maxWidth in quirks mode.
 					if (mxClient.IS_QUIRKS)
 					{
-						this.textDiv.style.width = Math.ceil(this.bounds.width / scale) + 'px';
+						this.textDiv.style.width = Math.max(this.textDiv.scrollWidth, Math.ceil(this.bounds.width / scale)) + 'px';
 					}
 					else
 					{
-						this.textDiv.style.maxWidth = Math.ceil(this.bounds.width / scale) - 6 + 'px';
-						console.log('maxWidth', this.bounds.width, this.textDiv.style.maxWidth);
+						this.textDiv.style.maxWidth = Math.ceil(this.bounds.width / scale) + 'px';
 					}
 				}
 				
 				var value = this.getCurrentHtmlValue();
 				this.textDiv.innerHTML = (value.length > 0) ? value : '&nbsp;';
-				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
-				var ow = this.textDiv.offsetWidth * scale + size;
-				var oh = (this.textDiv.offsetHeight + 16) * scale;
 				
-				console.log('oh',this.textDiv.style.maxWidth, oh);
+				console.log('offsetWidth', this.textDiv.offsetWidth, this.textDiv.clientWidth, this.textDiv.scrollWidth);
+				
+				// Handles very long words with no spaces
+				// TODO: Use contentEditbale for contentEditable measuring
+				// TODO: Add quirks
+				if (wrap && this.textDiv.scrollWidth > parseInt(this.textDiv.style.maxWidth))
+				{
+					this.textDiv.style.maxWidth = this.textDiv.scrollWidth + 'px';
+				}
+				
+				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
+				var ow = this.textDiv.scrollWidth + size / 2;
+				var oh = this.textDiv.scrollHeight;
+				size *= scale;
 
 				if (this.minResize != null)
 				{
@@ -430,7 +439,7 @@ mxCellEditor.prototype.resize = function()
 
 				if (wrap)
 				{
-					ow = Math.min(this.bounds.width, ow);
+					//ow = Math.min(this.bounds.width, ow);
 				}
 								
 				// LATER: Keep in visible area
@@ -443,12 +452,17 @@ mxCellEditor.prototype.resize = function()
 				else
 				{
 
-					this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh + size * 0.1 + 8))) + 'px';
+					this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh))) + 'px';
 				}
 
-				this.textarea.style.width = Math.ceil(ow + this.textarea.offsetWidth - this.textarea.clientWidth) + 'px';
-				console.log('scrollbarWidth', ow, this.textarea.offsetWidth, this.textarea.clientWidth, this.textarea.style.width)
-				this.textarea.style.border = '1px solid gray';
+				this.textarea.style.width = Math.ceil(ow) + 'px';
+				
+				window.setTimeout(mxUtils.bind(this, function()
+				{
+					//this.textarea.style.width = Math.ceil(ow + this.textarea.offsetWidth - this.textarea.clientWidth) + 'px';
+				}), 0);
+				
+				this.textarea.style.background = 'red';
 				this.textarea.style.height = Math.ceil(oh) + 'px';
 		 	}
 		}
@@ -595,13 +609,7 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		{
 			if (this.autoSize)
 			{
-				this.textDiv = this.createTextDiv();
-				
-				// Uses unscaled font size for measuring
-				size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
-				this.textDiv.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-				this.textDiv.fontSize = Math.round(size) + 'px';
-				
+				this.textDiv = this.createTextDiv(state);
 				document.body.appendChild(this.textDiv);
 				this.resize();
 			}
@@ -638,14 +646,14 @@ mxCellEditor.prototype.isSelectText = function()
  *
  * Creates the textDiv used for measuring text.
  */
-mxCellEditor.prototype.createTextDiv = function()
+mxCellEditor.prototype.createTextDiv = function(state)
 {
 	var div = document.createElement('div');
 	var style = div.style;
 	style.position = 'absolute';
 	style.whiteSpace = 'nowrap';
 	//style.visibility = 'hidden';
-	style.border = '1px solid black';
+	style.background = 'red';
 	style.padding = '0px';
 	style.margin = '0px';
 	style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
@@ -656,6 +664,11 @@ mxCellEditor.prototype.createTextDiv = function()
 	style.textAlign = this.textarea.style.textAlign;
 	style.fontStyle = this.textarea.style.fontStyle;
 	style.textDecoration = this.textarea.style.textDecoration;
+	
+	// Uses unscaled font size for measuring
+	var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
+	style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
+	style.fontSize = Math.round(size) + 'px';
 	
 	return div;
 };
