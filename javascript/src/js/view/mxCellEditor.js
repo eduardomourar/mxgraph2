@@ -202,7 +202,8 @@ mxCellEditor.prototype.init = function ()
 
 	this.textarea.className = 'mxCellEditor';
 	this.textarea.style.position = 'absolute';
-	this.textarea.style.overflow = 'visible';
+	this.textarea.style.padding = '0px';
+	this.textarea.style.margin = '0px';
 
 	this.textarea.setAttribute('cols', '20');
 	this.textarea.setAttribute('rows', '4');
@@ -225,7 +226,7 @@ mxCellEditor.prototype.installListeners = function(elt)
 {
 	mxEvent.addListener(elt, 'blur', mxUtils.bind(this, function(evt)
 	{
-		this.focusLost(evt);
+		//this.focusLost(evt);
 	}));
 	
 	mxEvent.addListener(elt, 'change', mxUtils.bind(this, function(evt)
@@ -386,10 +387,9 @@ mxCellEditor.prototype.resize = function()
 							bds.height - ((vpos == mxConstants.ALIGN_MIDDLE) ? (spacingTop + spacingBottom) : 0));
 				 	}
 
-					// +2/-1 is used to match the box model workarounds in the rendering code
-					this.bounds.x = bds.x + state.absoluteOffset.x - 1;
+					this.bounds.x = bds.x + state.absoluteOffset.x;
 					this.bounds.y = bds.y + state.absoluteOffset.y;
-					this.bounds.width = bds.width + 2;
+					this.bounds.width = bds.width;
 					this.bounds.height = bds.height;
 				}
 				
@@ -409,41 +409,34 @@ mxCellEditor.prototype.resize = function()
 					}
 					else
 					{
-						this.textDiv.style.maxWidth = Math.ceil(this.bounds.width / scale) + 'px';
+						this.textDiv.style.width = Math.ceil(this.bounds.width / scale) + 'px';
 					}
 				}
 				
 				var value = this.getCurrentHtmlValue();
 				this.textDiv.innerHTML = (value.length > 0) ? value : '&nbsp;';
-				
-				console.log('offsetWidth', this.textDiv.offsetWidth, this.textDiv.clientWidth, this.textDiv.scrollWidth);
+				var ow = this.textDiv.scrollWidth;
 				
 				// Handles very long words with no spaces
-				// TODO: Use contentEditbale for contentEditable measuring
-				// TODO: Add quirks
-				if (wrap && this.textDiv.scrollWidth > parseInt(this.textDiv.style.maxWidth))
+				if (wrap && this.textDiv.scrollWidth > parseInt(this.textDiv.style.width))
 				{
-					this.textDiv.style.maxWidth = this.textDiv.scrollWidth + 'px';
+					this.textDiv.style.width = ow + 'px';
 				}
 				
-				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
-				var ow = this.textDiv.scrollWidth + size / 2;
+				var ow = this.textDiv.scrollWidth;
 				var oh = this.textDiv.scrollHeight;
-				size *= scale;
 
 				if (this.minResize != null)
 				{
 					ow = Math.max(ow, this.minResize.width);
 					oh = Math.max(oh, this.minResize.height);
 				}
-
-				if (wrap)
-				{
-					//ow = Math.min(this.bounds.width, ow);
-				}
+				
+				ow *= scale;
+				oh *= scale;
 								
 				// LATER: Keep in visible area
-				this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * (this.bounds.width - ow - 3))) + 'px';
+				this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * (this.bounds.width - ow))) + 'px';
 
 				if (isEdge)
 				{
@@ -454,16 +447,12 @@ mxCellEditor.prototype.resize = function()
 
 					this.textarea.style.top = Math.max(0, Math.floor(this.bounds.y - m.y * (this.bounds.height - oh))) + 'px';
 				}
-
+				
 				this.textarea.style.width = Math.ceil(ow) + 'px';
-				
-				window.setTimeout(mxUtils.bind(this, function()
-				{
-					//this.textarea.style.width = Math.ceil(ow + this.textarea.offsetWidth - this.textarea.clientWidth) + 'px';
-				}), 0);
-				
+				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE) * scale;
+
 				this.textarea.style.background = 'red';
-				this.textarea.style.height = Math.ceil(oh) + 'px';
+				this.textarea.style.height = Math.ceil(oh + size) + 'px';
 		 	}
 		}
 	}

@@ -2370,12 +2370,9 @@ if (typeof mxVertexHandler != 'undefined')
 					{
 						if (this.autoSize && !mxEvent.isConsumed(evt))
 						{
-							this.text2.style.overflow = 'hidden';
-							
 							setTimeout(mxUtils.bind(this, function()
 							{
 								this.resize();
-								this.text2.style.overflow = '';
 							}), 0);
 						}
 					}));
@@ -2405,6 +2402,10 @@ if (typeof mxVertexHandler != 'undefined')
 	
 					style.cursor = 'text';
 					style.position = 'absolute';
+					style.padding = '0px';
+					style.margin = '0px';
+					style.display = 'inline-block';
+					style.whiteSpace = 'normal';
 					style.border = this.textarea.style.border;
 					style.outline = this.textarea.style.outline;
 					style.width = parseInt(this.textarea.style.width) + 'px';
@@ -2520,6 +2521,8 @@ if (typeof mxVertexHandler != 'undefined')
 						this.textarea.style.top = Math.round(y) + 'px';
 						this.textarea.style.width = Math.round(w) + 'px';
 						this.textarea.style.height = Math.round(h) + 'px';
+
+						this.textarea.style.overflow = 'auto';
 					}
 				}
 				else
@@ -2541,13 +2544,18 @@ if (typeof mxVertexHandler != 'undefined')
 							mxUtils.setPrefixedStyle(this.text2.style, 'transform', 'scale(' + scale + ',' + scale + ')');
 							this.text2.style.fontSize = Math.round(size) + 'px';
 							this.text2.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-	
+							this.text2.style.overflow = 'visible';
+							
 							// Workaround for scaled text measuring in mxCellEditor
 							if (state != null && this.graph.isWrapping(state.cell) && (this.bounds.width >= 2 || this.bounds.height >= 2))
 							{
 								this.text2.style.width = Math.round(parseInt(this.textarea.style.width) / scale) + 'px';
 								this.text2.style.left = Math.round(parseInt(this.textarea.style.left) + 2 -
 									parseInt(this.textarea.style.width) * (1 - scale)) + 'px';
+							}
+							else if (state != null && !this.graph.isWrapping(state.cell))
+							{
+								this.text2.style.whiteSpace = 'nowrap';
 							}
 						}
 					}				
