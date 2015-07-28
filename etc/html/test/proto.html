@@ -43,17 +43,21 @@
 						if (data.indexOf('data:image/svg+xml;utf8,') == 0)
 						{
 							iframe.contentWindow.postMessage(JSON.stringify({action: 'load',
-								xml: data.substring(24)}), '*');
+								autosave: 1, xml: data.substring(24)}), '*');
 						}
 						else
 						{
 							iframe.contentWindow.postMessage(JSON.stringify({action: 'load',
-								xmlpng: data}), '*');
+								autosave: 1, xmlpng: data}), '*');
 						}
 						
 						filetype.style.display = '';
 						status.style.display = 'none';
-					} 
+					}
+					else if (msg.event == 'autosave')
+					{
+						temp = msg.xml;
+					}
 					else if (msg.event == 'export')
 					{
 						image.setAttribute('src', msg.data);
