@@ -227,7 +227,7 @@ EditorUi = function(editor, container)
 		cellEditorStartEditing.apply(this, arguments);
 		updateToolbar();
 		
-		if (graph.cellEditor.text2 != null)
+		if (graph.cellEditor.isContentEditing())
 		{
 			var updating = false;
 			
@@ -278,10 +278,10 @@ EditorUi = function(editor, container)
 				}
 			};
 			
-			mxEvent.addListener(graph.cellEditor.text2, 'input', updateCssHandler)
-			mxEvent.addListener(graph.cellEditor.text2, 'touchend', updateCssHandler);
-			mxEvent.addListener(graph.cellEditor.text2, 'mouseup', updateCssHandler);
-			mxEvent.addListener(graph.cellEditor.text2, 'keyup', updateCssHandler);
+			mxEvent.addListener(graph.cellEditor.textarea, 'input', updateCssHandler)
+			mxEvent.addListener(graph.cellEditor.textarea, 'touchend', updateCssHandler);
+			mxEvent.addListener(graph.cellEditor.textarea, 'mouseup', updateCssHandler);
+			mxEvent.addListener(graph.cellEditor.textarea, 'keyup', updateCssHandler);
 			updateCssHandler();
 		}
 	};
@@ -1506,13 +1506,15 @@ EditorUi.prototype.updateDocumentTitle = function()
  */
 EditorUi.prototype.redo = function()
 {
-	if (this.editor.graph.isEditing())
+	var graph = this.editor.graph;
+	
+	if (graph.isEditing())
 	{
 		document.execCommand('redo', false, null);
 	}
 	else
 	{
-		this.editor.graph.stopEditing(false);
+		graph.stopEditing(false);
 		this.editor.undoManager.redo();
 	}
 };
@@ -1522,21 +1524,25 @@ EditorUi.prototype.redo = function()
  */
 EditorUi.prototype.undo = function()
 {	
-	if (this.editor.graph.isEditing())
+	var graph = this.editor.graph;
+	var state = graph.view.getState(graph.cellEditor.getEditingCell());
+	
+	if (state)
 	{
-		// Stops editing and executes undo on graph if undo doesn't change editing value
-		var value = this.editor.graph.cellEditor.getCurrentValue();
+		// Stops editing and executes undo on graph if native undo
+		// does not affect current editing value
+		var value = graph.cellEditor.getCurrentValue(state);
 		document.execCommand('undo', false, null);
 
-		if (value == this.editor.graph.cellEditor.getCurrentValue())
+		if (value == graph.cellEditor.getCurrentValue(state))
 		{
-			this.editor.graph.stopEditing(true);
+			graph.stopEditing(true);
 			this.editor.undoManager.undo();
 		}
 	}
 	else
 	{
-		this.editor.graph.stopEditing(true);
+		graph.stopEditing(true);
 		this.editor.undoManager.undo();
 	}
 };

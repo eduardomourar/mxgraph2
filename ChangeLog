@@ -1,3 +1,6 @@
+- Removes mxCellEditor.modified and accessors, adds initialValue [JavaScript]
+- Uses div and contentEditable for text editing in mxCellEditor [JavaScript]
+- Does not redraw label for editing cell in mxCellRenderer [JavaScript]
 - Fixes parsing of decimal values in mxSaxOutputHandler [Dotnet]
 - Fixes possible border for older browsers in mxImageShape [JavaScript]
 - Fixes possible NPE in mxEdgeStyle.SegmentConnector [JavaScript]

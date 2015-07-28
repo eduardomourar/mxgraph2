@@ -793,6 +793,35 @@ var mxUtils =
 	},
 	
 	/**
+	 * Function: getSelectableText
+	 * 
+	 * Returns the text content of the specified node.
+	 * This implementation gets the text with a
+	 * selection range and preserves line breaks.
+	 * 
+	 * Parameters:
+	 * 
+	 * node - DOM node to return the text for.
+	 */
+	getSelectableText: function(node)
+	{
+		if (typeof document.selection !== 'undefined' && typeof document.body.createTextRange !== 'undefined')
+	    {
+	        var range = document.body.createTextRange();
+	        range.moveToElementText(node);
+	        
+	        return range.text;
+	    }
+	    else if (typeof window.getSelection != 'undefined' && typeof document.createRange != 'undefined')
+	    {
+	    	var sel = window.getSelection();
+	        sel.selectAllChildren(node);
+	        
+	        return '' + sel;
+	    }
+	},
+	
+	/**
 	 * Function: getTextContent
 	 * 
 	 * Returns the text content of the specified node.

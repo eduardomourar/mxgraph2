@@ -83,6 +83,7 @@ Graph = function(container, model, renderHint, stylesheet)
 	};
 	
 	// HTML entities are displayed as plain text in wrapped plain text labels
+	// TODO: Wrap should not affect isHtmlLabel output (should be handled later)
 	this.cellRenderer.getLabelValue = function(state)
 	{
 		var result = mxCellRenderer.prototype.getLabelValue.apply(this, arguments);
@@ -1549,7 +1550,7 @@ if (typeof mxVertexHandler != 'undefined')
 		// To find the new image, we create a list of all existing links first
 		if (newValue != null)
 		{
-			var tmp = this.cellEditor.text2.getElementsByTagName('img');
+			var tmp = this.cellEditor.textarea.getElementsByTagName('img');
 			var oldImages = [];
 			
 			for (var i = 0; i < tmp.length; i++)
@@ -1560,7 +1561,7 @@ if (typeof mxVertexHandler != 'undefined')
 			document.execCommand('insertimage', false, newValue);
 			
 			// Sets size of new image
-			var newImages = this.cellEditor.text2.getElementsByTagName('img');
+			var newImages = this.cellEditor.textarea.getElementsByTagName('img');
 			
 			if (newImages.length == oldImages.length + 1)
 			{
@@ -2076,7 +2077,9 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		mxCellEditor.prototype.isContentEditing = function()
 		{
-			return this.text2 != null && this.text2.style.display != 'none';
+			var state = this.graph.view.getState(this.editingCell);
+			
+			return state != null && state.style['html'] == 1;
 		};
 	
 		/**
@@ -2151,6 +2154,7 @@ if (typeof mxVertexHandler != 'undefined')
 		/**
 		 * HTML in-place editor
 		 */
+		// TODO: Toggle view mode, search for text2 in all code
 		mxCellEditor.prototype.toggleViewMode = function()
 		{
 			if (this.text2 != null)
@@ -2226,457 +2230,245 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			return guide;
 		};
-	
-		if ('contentEditable' in document.documentElement)
+
+		/**
+		 * Keypress starts immediate editing on selection cell
+		 */
+		var editorUiInit = EditorUi.prototype.init;
+		EditorUi.prototype.init = function()
 		{
-			/**
-			 * Keypress starts immediate editing on selection cell
-			 */
-			var editorUiInit = EditorUi.prototype.init;
-			EditorUi.prototype.init = function()
+			editorUiInit.apply(this, arguments);
+			var graph = this.editor.graph;
+			
+			mxEvent.addListener(graph.container, 'keydown', mxUtils.bind(this, function(evt)
 			{
-				editorUiInit.apply(this, arguments);
-				var graph = this.editor.graph;
-				
-				mxEvent.addListener(graph.container, 'keydown', mxUtils.bind(this, function(evt)
-				{
-					// Tab selects next cell
-					if (evt.which == 9)
-					{
-						if (graph.isEditing())
-						{
-							graph.stopEditing(false);
-						}
-						
-						graph.selectCell(!mxEvent.isShiftDown(evt));
-						mxEvent.consume(evt);
-					}
-				}));
-		
-				mxEvent.addListener(graph.container, 'keypress', mxUtils.bind(this, function(evt)
-				{
-					// KNOWN: Focus does not work if label is empty in quirks mode
-					if (!graph.isEditing() && !graph.isSelectionEmpty() && evt.which !== 0 &&
-						!mxEvent.isAltDown(evt) && !mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
-					{
-						graph.escape();
-						graph.startEditing();
-	
-						if (mxClient.IS_FF)
-						{
-							var ce = graph.cellEditor;
-	
-							// Initial keystroke is lost in FF
-							if (ce.textarea.style.display != 'none')
-							{
-								ce.textarea.value = String.fromCharCode(evt.which);
-							}
-							else if (ce.text2 != null)
-							{
-								ce.text2.innerHTML = String.fromCharCode(evt.which);
-					            var range = document.createRange();
-					            range.selectNodeContents(ce.text2);
-					            range.collapse(false);
-					            
-					            var selection = window.getSelection();
-					            selection.removeAllRanges();
-					            selection.addRange(range);
-							}
-						}
-					}
-				}));
-				
-				// Invokes resize on editor after zoom changes
-				var cellEditorResize = mxUtils.bind(this, function()
+				// Tab selects next cell
+				if (evt.which == 9)
 				{
 					if (graph.isEditing())
 					{
-						graph.cellEditor.resize();
+						graph.stopEditing(false);
 					}
-				});
-				
-				graph.view.addListener(mxEvent.SCALE, cellEditorResize);
-				graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, cellEditorResize);
-			};
+					
+					graph.selectCell(!mxEvent.isShiftDown(evt));
+					mxEvent.consume(evt);
+				}
+			}));
 	
-			/**
-			 * HTML in-place editor
-			 */
-			var mxCellEditorStartEditing = mxCellEditor.prototype.startEditing;
-			mxCellEditor.prototype.startEditing = function(cell, trigger)
+			mxEvent.addListener(graph.container, 'keypress', mxUtils.bind(this, function(evt)
 			{
-				this.graph.tooltipHandler.hideTooltip();
-				this.switchSelectionState = null;
-				
-				// Selects editing cell
-				this.graph.setSelectionCell(cell);
-	
-				// First run cannot set display before supercall because textarea is lazy created
-				// Lazy instantiates textarea to save memory in IE
-				if (this.textarea == null)
+				// KNOWN: Focus does not work if label is empty in quirks mode
+				if (!graph.isEditing() && !graph.isSelectionEmpty() && evt.which !== 0 &&
+					!mxEvent.isAltDown(evt) && !mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
 				{
-					this.init();
-				}
-				
-				var state = this.graph.view.getState(cell);
-		
-				if (state != null && state.style['html'] == 1)
-				{
-					this.textarea.style.display = 'none';
-				}
-				else
-				{
-					this.textarea.style.display = 'block';
-				}
-		
-				mxCellEditorStartEditing.apply(this, arguments);
-				
-				// Enables focus outline for edges and edge labels
-				var parent = this.graph.getModel().getParent(cell);
-				var geo = this.graph.getCellGeometry(cell);
-				
-				if ((this.graph.getModel().isEdge(parent) && geo != null && geo.relative) ||
-					this.graph.getModel().isEdge(cell))
-				{
-					// Quirks does not support outline at all so use border instead
-					if (mxClient.IS_QUIRKS)
-					{
-						this.textarea.style.border = 'gray dotted 1px';
-					}
-					// IE>8 and FF on Windows uses outline default of none
-					else if (mxClient.IS_IE || mxClient.IS_IE11 || (mxClient.IS_FF && mxClient.IS_WIN))
-					{
-						this.textarea.style.outline = 'gray dotted 1px';
-					}
-					else
-					{
-						this.textarea.style.outline = '';
-					}
-				}
-				else if (mxClient.IS_QUIRKS)
-				{
-					this.textarea.style.border = '';
-				}
-		
-				if (this.textarea.style.display == 'none')
-				{
-					this.text2 = document.createElement('div');
-					this.text2.className = 'geContentEditable';
-					var nl2Br = mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
-					this.text2.innerHTML = this.graph.sanitizeHtml((nl2Br) ? this.textarea.value.replace(/\n/g, '<br/>') : this.textarea.value);
-					
-					var evtName = (!mxClient.IS_IE11 && (!mxClient.IS_IE || document.documentMode >= 9)) ? 'input' : 'keypress';
-					mxEvent.addListener(this.text2, evtName, mxUtils.bind(this, function(evt)
-					{
-						if (this.autoSize && !mxEvent.isConsumed(evt))
-						{
-							setTimeout(mxUtils.bind(this, function()
-							{
-								this.resize();
-							}), 0);
-						}
-					}));
-					
-					// Invokes stop editing and escape hooks
-					mxEvent.addListener(this.text2, 'keydown', mxUtils.bind(this, function(evt)
-					{
-						if (!mxEvent.isConsumed(evt))
-						{
-							if (this.isStopEditingEvent(evt))
-							{
-								this.graph.stopEditing(false);
-								mxEvent.consume(evt);
-							}
-							else if (evt.keyCode == 27 /* Escape */)
-							{
-								this.graph.stopEditing(true);
-								mxEvent.consume(evt);
-							}
-						}
-					}));
-					
-					var style = this.text2.style;
-									
-					// Required to catch all events on the background in IE
-					style.backgroundImage = 'url(\'' + mxClient.imageBasePath + '/transparent.gif\')';
-	
-					style.cursor = 'text';
-					style.position = 'absolute';
-					style.padding = '0px';
-					style.margin = '0px';
-					style.display = 'inline-block';
-					style.whiteSpace = 'normal';
-					style.border = this.textarea.style.border;
-					style.outline = this.textarea.style.outline;
-					style.width = parseInt(this.textarea.style.width) + 'px';
-					style.height = (parseInt(this.textarea.style.height) - 4) + 'px';
-					style.left = parseInt(this.textarea.style.left) + 'px';
-					style.top = parseInt(this.textarea.style.top) + 'px';
-					style.fontFamily = this.textarea.style.fontFamily;
-					style.fontWeight = this.textarea.style.fontWeight;
-					style.fontStyle = this.textarea.style.fontStyle;
-					style.textAlign = this.textarea.style.textAlign;
-					style.textDecoration = this.textarea.style.textDecoration;
-					style.color = this.textarea.style.color;
-					style.fontSize = this.textarea.style.fontSize;
+					graph.escape();
+					graph.startEditing();
 
-					var dir = this.textarea.getAttribute('dir');
-					
-					if (dir != null && dir.length > 0)
+					if (mxClient.IS_FF)
 					{
-						this.text2.setAttribute('dir', dir);
-					}
-					
-					// Matches line height correctionFactor in embedded HTML output
-					if (state.text != null && state.text.node != null && state.text.node.ownerSVGElement != null)
-					{
-						var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(parseInt(this.textarea.style.fontSize) * mxConstants.LINE_HEIGHT) + 'px' :
-							(mxConstants.LINE_HEIGHT * mxSvgCanvas2D.prototype.lineHeightCorrection);
-						style.lineHeight = lh;
-					}
-					else
-					{
-						style.lineHeight = this.textarea.style.lineHeight;
-					}
-					
-					this.graph.container.appendChild(this.text2);
-					
-					if (this.autoSize)
-					{
-						this.textDiv = this.createTextDiv(state);
-						document.body.appendChild(this.textDiv);
-						this.resize();
-					}
-					
-					this.text2.contentEditable = true;
-					this.text2.focus();
-	
-					if (this.isSelectText() && this.text2.innerHTML.length > 0)
-					{
-						document.execCommand('selectAll', false, null);
-					}
-					
-					// Hides handles on selected cell
-					this.currentStateHandle = this.graph.selectionCellsHandler.getHandler(cell);
-					
-					if (this.currentStateHandle != null && this.currentStateHandle.setHandlesVisible != null)
-					{
-						this.currentStateHandle.setHandlesVisible(false);
-	
-						// Hides the bounding box while editing edge labels
-						if (this.currentStateHandle.selectionBorder != null)
-						{
-							var model = this.graph.getModel();
-							var parent = model.getParent(state.cell);
-							var geo = this.graph.getCellGeometry(state.cell);
-							
-							if (model.isEdge(parent) && geo != null && geo.relative && state.width < 2 && state.height < 2 && state.text != null && state.text.boundingBox != null)
-							{
-								this.currentStateHandle.selectionBorder.node.style.display = 'none';
-							}
-						}
-					}
-				}
-			};
-	
-			var mxCellEditorResize = mxCellEditor.prototype.resize;
-			mxCellEditor.prototype.resize = function()
-			{
-				var state = this.graph.getView().getState(this.editingCell);
-				var scale = state.view.scale;
-				
-				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
-				this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * scale * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-				this.textarea.style.fontSize = Math.round(size * scale) + 'px';
-				
-				// Shows in full size for HTML source mode
-				if (this.text2 != null && this.textarea.style.display != 'none')
-				{
-					if (state != null && this.graph.getModel().isVertex(state.cell))
-					{
-						var x = state.x;
-						var y = state.y;
-						var w = state.width;
-						var h = state.height;
-						
-						if (w <= 1 && h <= 1)
-						{
-							w = Math.max(w, 120);
-							h = Math.max(h, 40);
-							var m = (state.text != null) ? state.text.margin : null;
-							
-							if (m == null)
-							{
-								var align = mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER);
-								var valign = mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE);
-						
-								m = mxUtils.getAlignmentAsPoint(align, valign);
-							}
-							
-							x += m.x * w;
-							y += m.y * h;
-						}
-						
-						this.textarea.style.left = Math.round(x) + 'px';
-						this.textarea.style.top = Math.round(y) + 'px';
-						this.textarea.style.width = Math.round(w) + 'px';
-						this.textarea.style.height = Math.round(h) + 'px';
+						var ce = graph.cellEditor;
 
-						this.textarea.style.overflow = 'auto';
+						// Initial keystroke is lost in FF
+						if (ce.textarea.style.display != 'none')
+						{
+							ce.textarea.value = String.fromCharCode(evt.which);
+						}
+						else if (ce.text2 != null)
+						{
+							ce.text2.innerHTML = String.fromCharCode(evt.which);
+				            var range = document.createRange();
+				            range.selectNodeContents(ce.text2);
+				            range.collapse(false);
+				            
+				            var selection = window.getSelection();
+				            selection.removeAllRanges();
+				            selection.addRange(range);
+						}
 					}
 				}
-				else
-				{
-					mxCellEditorResize.apply(this, arguments);
-					
-					if (this.textarea.style.display == 'none' && this.text2 != null)
-					{
-						this.text2.style.left = parseInt(this.textarea.style.left) + 1 + 'px';
-						this.text2.style.top = parseInt(this.textarea.style.top) + 2 + 'px';
-						this.text2.style.width = this.textarea.style.width;
-						this.text2.style.height = this.textarea.style.height;
+			}));
+		};
 
-						if (!mxClient.IS_QUIRKS)
-						{
-							// DEBUGGING
-							this.text2.style.background = 'red';
-	
-							mxUtils.setPrefixedStyle(this.text2.style, 'transform', 'scale(' + scale + ',' + scale + ')');
-							this.text2.style.fontSize = Math.round(size) + 'px';
-							this.text2.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-							this.text2.style.overflow = 'visible';
-							
-							// Workaround for scaled text measuring in mxCellEditor
-							if (state != null && this.graph.isWrapping(state.cell) && (this.bounds.width >= 2 || this.bounds.height >= 2))
-							{
-								this.text2.style.width = Math.round(parseInt(this.textarea.style.width) / scale) + 'px';
-								this.text2.style.left = Math.round(parseInt(this.textarea.style.left) + 2 -
-									parseInt(this.textarea.style.width) * (1 - scale)) + 'px';
-							}
-							else if (state != null && !this.graph.isWrapping(state.cell))
-							{
-								this.text2.style.whiteSpace = 'nowrap';
-							}
-						}
-					}				
-				}
-			};
+		/**
+		 * HTML in-place editor
+		 */
+		var mxCellEditorStartEditing = mxCellEditor.prototype.startEditing;
+		mxCellEditor.prototype.startEditing = function(cell, trigger)
+		{
+			mxCellEditorStartEditing.apply(this, arguments);
+
+			// Stores current selection range when switching between markup and code
+			this.switchSelectionState = null;
 			
-			var mxCellEditorStopEditing = mxCellEditor.prototype.stopEditing;
-			mxCellEditor.prototype.stopEditing = function(cancel)
+			// Selects editing cell
+			this.graph.setSelectionCell(cell);
+
+			// First run cannot set display before supercall because textarea is lazy created
+			// Lazy instantiates textarea to save memory in IE
+			if (this.textarea == null)
 			{
-				// Hides handles on selected cell
-				if (this.currentStateHandle != null)
-				{
-					if (this.currentStateHandle.setHandlesVisible != null)
-					{
-						this.currentStateHandle.setHandlesVisible(true);
-						
-						if (this.currentStateHandle.selectionBorder != null)
-						{
-							this.currentStateHandle.selectionBorder.node.style.display = '';
-						}
-					}
-					
-					this.currentStateHandle = null;
-				}
-				
-				if (this.text2 != null)
-				{
-					var content = this.text2.innerHTML;
-					
-					// Modified state also updated in code view action
-					if (this.text2.style.display != 'none' && this.textarea.value != content)
-					{
-						this.textarea.value = content.replace(/\r\n/g, '').replace(/\n/g, '');
-						this.setModified(true);
-					}
-					else
-					{
-						var state = this.graph.view.getState(this.editingCell);
-						var nl2Br = state != null && mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
-						
-						if (nl2Br)
-						{
-							this.textarea.value = this.textarea.value.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>');
-						}
-					}
-					
-					this.textarea.value = this.graph.sanitizeHtml(this.textarea.value);
-					this.text2.parentNode.removeChild(this.text2);
-					this.text2 = null;
-				}
-				
-				// Removes empty relative child labels in edges
-				var cell = this.editingCell;
-				this.graph.getModel().beginUpdate();
-				
-				try
-				{
-					mxCellEditorStopEditing.apply(this, arguments);
-	
-					var parent = this.graph.getModel().getParent(cell);
-					var geo = this.graph.getCellGeometry(cell);
-					
-					if (this.textarea != null && mxUtils.trim(this.textarea.value) == '' &&
-						this.graph.getModel().isEdge(parent) && geo != null && geo.relative)
-					{
-						this.graph.removeCells([cell]);
-					}
-				}
-				finally
-				{
-					this.graph.getModel().endUpdate();
-				}
-				
-				this.graph.container.focus();
-			};
+				this.init();
+			}
+
+			// Enables focus outline for edges and edge labels
+			var parent = this.graph.getModel().getParent(cell);
+			var geo = this.graph.getCellGeometry(cell);
 			
-			// Allows resizing for current HTML value
-			var mxCellEditorGetCurrentValue = mxCellEditor.prototype.getCurrentValue;
-			mxCellEditor.prototype.getCurrentValue = function()
+			if ((this.graph.getModel().isEdge(parent) && geo != null && geo.relative) ||
+				this.graph.getModel().isEdge(cell))
 			{
-				if (this.textarea.style.display == 'none' && this.text2 != null)
+				// Quirks does not support outline at all so use border instead
+				if (mxClient.IS_QUIRKS)
 				{
-					return this.text2.innerHTML;
+					this.textarea.style.border = 'gray dotted 1px';
+				}
+				// IE>8 and FF on Windows uses outline default of none
+				else if (mxClient.IS_IE || mxClient.IS_IE11 || (mxClient.IS_FF && mxClient.IS_WIN))
+				{
+					this.textarea.style.outline = 'gray dotted 1px';
 				}
 				else
 				{
-					return mxCellEditorGetCurrentValue.apply(this, arguments);
+					this.textarea.style.outline = '';
 				}
-			};
-			
-			mxCellEditor.prototype.getMinimumSize = function(state)
+			}
+			else if (mxClient.IS_QUIRKS)
 			{
-				var scale = this.graph.getView().scale;
-				
-				return new mxRectangle(0, 0, (state.text == null) ? 30 :  state.text.size * scale + 20, 30);
-			};
+				this.textarea.style.outline = 'none';
+				this.textarea.style.border = '';
+			}
 			
-			var mxCellEditorGetCurrentHtmlValue = mxCellEditor.prototype.getCurrentHtmlValue;
-			mxCellEditor.prototype.getCurrentHtmlValue = function()
+			// TODO: Fix code view for HTML
+			
+			// Hides handles on selected cell
+			this.currentStateHandle = this.graph.selectionCellsHandler.getHandler(cell);
+			
+			if (this.currentStateHandle != null && this.currentStateHandle.setHandlesVisible != null)
 			{
-				if (this.textarea.style.display == 'none' && this.text2 != null)
+				this.currentStateHandle.setHandlesVisible(false);
+
+				// Hides the bounding box while editing edge labels
+				if (this.currentStateHandle.selectionBorder != null)
 				{
-					return this.getCurrentValue();
+					this.currentStateHandle.selectionBorder.node.style.display = 'none';
+				}
+			}
+			
+			// Handles special styles for HTML content
+			// TODO: Check is this can be applied regardless of HTML since
+			// there should be no markup inside the textarea if no HTML
+			var state = this.graph.view.getState(cell);
+	
+			if (state != null && state.style['html'] == 1)
+			{
+				this.textarea.className += ' geContentEditable';
+			}
+		};
+
+		mxCellEditorGetInitialValue = mxCellEditor.prototype.getInitialValue;
+		mxCellEditor.prototype.getInitialValue = function(state, trigger)
+		{
+			if (mxUtils.getValue(state.style['html'], '0') == '0')
+			{
+				return mxCellEditorGetInitialValue.apply(this, arguments);
+			}
+			else
+			{
+				var result = this.graph.getEditingValue(state.cell, trigger)
+			
+				if (mxUtils.getValue(state.style, 'nl2Br', '1') == '1')
+				{
+					result = result.replace(/\n/g, '<br/>');
+				}
+				
+				return result;
+			}
+		};
+		
+		mxCellEditorGetCurrentValue = mxCellEditor.prototype.getCurrentValue;
+		mxCellEditor.prototype.getCurrentValue = function(state)
+		{
+			if (mxUtils.getValue(state.style['html'], '0') == '0')
+			{
+				return mxCellEditorGetCurrentValue.apply(this, arguments);
+			}
+			else
+			{
+				var result = this.graph.sanitizeHtml(this.textarea.innerHTML);
+
+				if (mxUtils.getValue(state.style, 'nl2Br', '1') == '1')
+				{
+					result = result.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>');
 				}
 				else
 				{
-					return mxCellEditorGetCurrentHtmlValue.apply(this, arguments);
+					result = result.replace(/\r\n/g, '').replace(/\n/g, '');
 				}
-			};
-	
-			// Workaround for focusLost calls stopEditing when in HTML view
-			var mxCellEditorFocusLost = mxCellEditor.prototype.focusLost;
-			mxCellEditor.prototype.focusLost = function(evt)
+				
+				return result;
+			}
+		};
+
+		var mxCellEditorStopEditing = mxCellEditor.prototype.stopEditing;
+		mxCellEditor.prototype.stopEditing = function(cancel)
+		{
+			// Shows handles on selected cell
+			if (this.currentStateHandle != null)
 			{
-				if (this.text2 == null)
+				if (this.currentStateHandle.setHandlesVisible != null)
 				{
-					mxCellEditorFocusLost.apply(this, arguments);
+					this.currentStateHandle.setHandlesVisible(true);
+					
+					if (this.currentStateHandle.selectionBorder != null)
+					{
+						this.currentStateHandle.selectionBorder.node.style.display = '';
+					}
 				}
-			};
-		}
-	
+				
+				this.currentStateHandle = null;
+			}
+			
+			mxCellEditorStopEditing.apply(this, arguments);
+			this.graph.container.focus();
+		};
+
+		var mxCellEditorApplyValue = mxCellEditor.prototype.applyValue;
+		mxCellEditor.prototype.applyValue = function(state, value)
+		{
+			// Removes empty relative child labels in edges
+			this.graph.getModel().beginUpdate();
+			
+			try
+			{
+				mxCellEditorApplyValue.apply(this, arguments);
+				
+				console.log('applyValue', value, state.cell.value);
+
+				var parent = this.graph.getModel().getParent(state.cell);
+				var geo = this.graph.getCellGeometry(state.cell);
+				
+				if (mxUtils.trim(value) == this.emptyLabelText && geo != null &&
+					this.graph.getModel().isEdge(parent) && geo.relative)
+				{
+					this.graph.removeCells([state.cell]);
+				}
+			}
+			finally
+			{
+				this.graph.getModel().endUpdate();
+			}
+		};
+		
+		mxCellEditor.prototype.getMinimumSize = function(state)
+		{
+			var scale = this.graph.getView().scale;
+			
+			return new mxRectangle(0, 0, (state.text == null) ? 30 :  state.text.size * scale + 20, 30);
+		};
+		
+		/**
+		 * Hints on handlers
+		 */
 		function createHint()
 		{
 			var hint = document.createElement('div');

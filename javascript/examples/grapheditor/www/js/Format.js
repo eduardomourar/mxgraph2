@@ -2341,7 +2341,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		// Changes the css font size of the first font element inside the in-place editor with size 7
 		// hopefully the above element that we've just created. LATER: Check for new element using
 		// previous result of getElementsByTagName (see other actions)
-		var elts = graph.cellEditor.text2.getElementsByTagName('font');
+		var elts = graph.cellEditor.textarea.getElementsByTagName('font');
 		
 		for (var i = 0; i < elts.length; i++)
 		{
@@ -2875,17 +2875,17 @@ TextFormatPanel.prototype.addFont = function(container)
 					{
 						var css = mxUtils.getCurrentStyle(node);
 						
-						setSelected(fontStyleItems[0], css.fontWeight == 'bold' || graph.getParentByName(node, 'B', graph.cellEditor.text2) != null);
-						setSelected(fontStyleItems[1], css.fontStyle == 'italic' || graph.getParentByName(node, 'I', graph.cellEditor.text2) != null);
-						setSelected(fontStyleItems[2], graph.getParentByName(node, 'U', graph.cellEditor.text2) != null);
+						setSelected(fontStyleItems[0], css.fontWeight == 'bold' || graph.getParentByName(node, 'B', graph.cellEditor.textarea) != null);
+						setSelected(fontStyleItems[1], css.fontStyle == 'italic' || graph.getParentByName(node, 'I', graph.cellEditor.textarea) != null);
+						setSelected(fontStyleItems[2], graph.getParentByName(node, 'U', graph.cellEditor.textarea) != null);
 						setSelected(left, css.textAlign == 'left');
 						setSelected(center, css.textAlign == 'center');
 						setSelected(right, css.textAlign == 'right');
 						setSelected(full, css.textAlign == 'justify');
-						setSelected(sup, graph.getParentByName(node, 'SUP', graph.cellEditor.text2) != null);
-						setSelected(sub, graph.getParentByName(node, 'SUB', graph.cellEditor.text2) != null);
+						setSelected(sup, graph.getParentByName(node, 'SUP', graph.cellEditor.textarea) != null);
+						setSelected(sub, graph.getParentByName(node, 'SUB', graph.cellEditor.textarea) != null);
 						
-						currentTable = graph.getParentByName(node, 'TABLE', graph.cellEditor.text2);
+						currentTable = graph.getParentByName(node, 'TABLE', graph.cellEditor.textarea);
 						tableRow = (currentTable == null) ? null : graph.getParentByName(node, 'TR', currentTable);
 						tableCell = (currentTable == null) ? null : graph.getParentByName(node, 'TD', currentTable);
 						tableWrapper.style.display = (currentTable != null) ? '' : 'none';
@@ -2962,13 +2962,13 @@ TextFormatPanel.prototype.addFont = function(container)
 			}
 		};
 		
-		mxEvent.addListener(graph.cellEditor.text2, 'input', updateCssHandler)
-		mxEvent.addListener(graph.cellEditor.text2, 'touchend', updateCssHandler);
-		mxEvent.addListener(graph.cellEditor.text2, 'mouseup', updateCssHandler);
-		mxEvent.addListener(graph.cellEditor.text2, 'keyup', updateCssHandler);
+		mxEvent.addListener(graph.cellEditor.textarea, 'input', updateCssHandler)
+		mxEvent.addListener(graph.cellEditor.textarea, 'touchend', updateCssHandler);
+		mxEvent.addListener(graph.cellEditor.textarea, 'mouseup', updateCssHandler);
+		mxEvent.addListener(graph.cellEditor.textarea, 'keyup', updateCssHandler);
 		this.listeners.push({destroy: function()
 		{
-			// No need to remove listener since text2 is destroyed after edit
+			// No need to remove listener since textarea is destroyed after edit
 		}});
 		updateCssHandler();
 	}
@@ -3978,15 +3978,28 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 			graph.setConnectable(checked);
 		}));
 	}
-
-	// Page view
-	// LATER: Add pageViewChanged event
+	
 	div.appendChild(this.createOption(mxResources.get('pageView'), function()
 	{
 		return graph.pageVisible;
 	}, function(checked)
 	{
 		ui.actions.get('pageView').funct();
+	},
+	{
+		install: function(apply)
+		{
+			this.listener = function()
+			{
+				apply(graph.pageVisible);
+			};
+			
+			ui.addListener('pageViewChanged', this.listener);
+		},
+		destroy: function()
+		{
+			ui.removeListener(this.listener);
+		}
 	}));
 	
 	return div;

@@ -36,6 +36,12 @@
 				
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
+				graph.setHtmlLabels(true);
+				
+				graph.isWrapping = function(cell)
+				{
+					return true;
+				};
 
 				// Enables rubberband selection
 				new mxRubberband(graph);
@@ -67,7 +73,7 @@
 
 	<!-- Creates a container for the graph with a grid wallpaper -->
 	<div id="graphContainer"
-		style="position:relative;overflow:hidden;width:321px;height:241px;background:url('editors/images/grid.gif');cursor:default;">
+		style="position:relative;overflow:hidden;width:641px;height:481px;background:url('editors/images/grid.gif');cursor:default;">
 	</div>
 </body>
 </html>

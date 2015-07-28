@@ -1,3 +1,8 @@
+- Check if wrapping forces HTML labels
+- Fix center aligned oversize labels in IE8 standards mode
+- Fix missing cursor in quirks mode vor space after oversize label
+
+- Check code for batched DOM changes, cssText instead of direct style changes
 - Fix bounding box for edges (see edge-bbox branch)
 - Merge common code in mxSvgCanvas2D.updateText and text
 - Check NPE for mxRefCount in mxShape.destroyCanvas
