@@ -351,7 +351,7 @@ EditorUi = function(editor, container)
 	};
 	
 	// Stores the current style and assigns it to new cells
-	var styles = ['shadow', 'glass', 'dashed', 'dashPattern'];
+	var styles = ['rounded', 'shadow', 'glass', 'dashed', 'dashPattern'];
 	var connectStyles = ['shape', 'edgeStyle', 'curved', 'rounded', 'elbow'];
 	
 	// Sets the default edge style
@@ -524,7 +524,7 @@ EditorUi = function(editor, container)
 				var value = graph.convertValueToString(cell);
 				var edge = graph.getModel().isEdge(cell);
 				var current = (edge) ? currentEdgeStyle : currentStyle;
-
+				
 				for (var j = 0; j < appliedStyles.length; j++)
 				{
 					var key = appliedStyles[j];
@@ -652,6 +652,11 @@ EditorUi = function(editor, container)
 				{
 					currentEdgeStyle[keys[i]] = values[i];
 				}
+				// Uses style for vertex if defined in styles
+				else if (vertex && mxUtils.indexOf(styles, keys[i]) >= 0)
+				{
+					currentStyle[keys[i]] = values[i];
+				}
 			}
 			else if (mxUtils.indexOf(styles, keys[i]) >= 0)
 			{
@@ -666,7 +671,7 @@ EditorUi = function(editor, container)
 				}
 			}
 		}
-
+		
 		if (this.toolbar != null)
 		{
 			this.toolbar.setFontName(currentStyle['fontFamily'] || Menus.prototype.defaultFont);
@@ -1394,7 +1399,7 @@ EditorUi.prototype.initCanvas = function()
 	
 	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up)
 	{
-		if ((mxEvent.isAltDown(evt) || graph.panningHandler.isActive()) &&
+		if ((mxEvent.isAltDown(evt) || (!mxClient.IS_MAC && mxEvent.isControlDown(evt)) || graph.panningHandler.isActive()) &&
 			(this.dialogs == null || this.dialogs.length == 0))
 		{
 			graph.lazyZoom(up);
@@ -1525,16 +1530,15 @@ EditorUi.prototype.redo = function()
 EditorUi.prototype.undo = function()
 {	
 	var graph = this.editor.graph;
-	var state = graph.view.getState(graph.cellEditor.getEditingCell());
-	
-	if (state)
+
+	if (graph.isEditing())
 	{
 		// Stops editing and executes undo on graph if native undo
 		// does not affect current editing value
-		var value = graph.cellEditor.getCurrentValue(state);
+		var value = graph.cellEditor.textarea.innerHTML;
 		document.execCommand('undo', false, null);
 
-		if (value == graph.cellEditor.getCurrentValue(state))
+		if (value == graph.cellEditor.textarea.innerHTML)
 		{
 			graph.stopEditing(true);
 			this.editor.undoManager.undo();
@@ -2623,8 +2627,9 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	var isEventIgnored = keyHandler.isEventIgnored;
 	keyHandler.isEventIgnored = function(evt)
 	{
-		// Handles undo via action
-		return (!this.isControlDown(evt) || mxEvent.isShiftDown(evt) || evt.keyCode != 90) &&
+		// Handles undo/redo via action and allows ctrl+b/u/i only if editing value is HTML
+		return (!this.isControlDown(evt) || mxEvent.isShiftDown(evt) || (evt.keyCode != 90 && evt.keyCode != 89)) &&
+			((evt.keyCode != 66 && evt.keyCode != 73 && evt.keyCode != 85) || !this.isControlDown(evt) || this.graph.cellEditor.isContentEditing()) &&
 			isEventIgnored.apply(this, arguments);
 	};
 	
@@ -2736,6 +2741,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindControlShiftKey(9, function() { graph.selectChildCell(); }); // Ctrl+Shift+Tab
 	keyHandler.bindAction(8, false, 'delete'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
+	keyHandler.bindAction(46, true, 'deleteAll'); // Ctrl+Delete
 	keyHandler.bindAction(48, true, 'actualSize'); // Ctrl+0
 	keyHandler.bindAction(96, true, 'actualSize'); // Ctrl+0 (Num)
 	keyHandler.bindAction(49, true, 'fitWindow'); // Ctrl+1
@@ -2758,7 +2764,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(65, true, 'selectVertices', true); // Ctrl+Shift+A
 	keyHandler.bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
 	keyHandler.bindAction(69, true, 'editStyle'); // Ctrl+E
-	keyHandler.bindAction(66, true, 'toBack'); // Ctrl+B
+	keyHandler.bindAction(66, true, 'bold'); // Ctrl+B
+	keyHandler.bindAction(66, true, 'toBack', true); // Ctrl+Shift+B
 	keyHandler.bindAction(70, true, 'toFront', true); // Ctrl+Shift+F
 	keyHandler.bindAction(68, true, 'duplicate'); // Ctrl+D
 	keyHandler.bindAction(68, true, 'setAsDefaultStyle', true); // Ctrl+Shift+D   
@@ -2771,12 +2778,14 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(71, true, 'group'); // Ctrl+G
 	keyHandler.bindAction(77, true, 'editMetadata'); // Ctrl+M
 	keyHandler.bindAction(71, true, 'grid', true); // Ctrl+Shift+G
+	keyHandler.bindAction(73, true, 'italic'); // Ctrl+I
 	keyHandler.bindAction(76, true, 'lockUnlock'); // Ctrl+L
 	keyHandler.bindAction(76, true, 'layers', true); // Ctrl+Shift+L
 	keyHandler.bindAction(79, true, 'outline', true); // Ctrl+Shift+O
 	keyHandler.bindAction(80, true, 'print'); // Ctrl+P
 	keyHandler.bindAction(80, true, 'formatPanel', true); // Ctrl+Shift+P
-	keyHandler.bindAction(85, true, 'ungroup'); // Ctrl+U
+	keyHandler.bindAction(85, true, 'underline'); // Ctrl+U
+	keyHandler.bindAction(85, true, 'ungroup', true); // Ctrl+Shift+U
 	keyHandler.bindAction(112, false, 'about'); // F1
 	keyHandler.bindKey(13, function() { graph.startEditingAtCell(); }); // Enter
 	keyHandler.bindKey(113, function() { graph.startEditingAtCell(); }); // F2
