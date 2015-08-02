@@ -1,6 +1,21 @@
+- Fixes repaint for zoom while editing label in grapheditor
+- Fixes font size in format panel for zoomed text in grapheditor
+- Adds ctrl+connect to copy source terminal in grapheditor
+- Adds ctrl+delete to delete shape with connections in grapheditor
+- Deletes shapes and connections separately in grapheditor
+- Changes plus icon to arrow icon in grapheditor
+- Adds rounded to copy style and default style in grapheditor
+- Adds ctrl+mouse wheel zoom on Windows and Linux in grapheditor
+- mxKeyHandler ignores key events with alt key pressed [JavaScript]
+- Adds event argument in mxConnectionHandler.isCreateTarget [JavaScript]
+- Adds mxPlainTextEditor CSS class in common.css [JavaScript]
+- Fixes possible NaN in mxArrowConnector [JavaScript]
+- mxCellEditor ignores focus lost, adds blurEnabled switch [JavaScript]
+- Fixes stylesheets access in mxUtils.show [JavaScript]
+- Adds mxUtils.extractTextWithWhitespace [JavaScript]
+- Fixes rendering of trailing newline in HTML labels [JavaScript]
 - Removes mxCellEditor.modified and accessors, adds initialValue [JavaScript]
 - Uses div and contentEditable for text editing in mxCellEditor [JavaScript]
-- Does not redraw label for editing cell in mxCellRenderer [JavaScript]
 - Fixes parsing of decimal values in mxSaxOutputHandler [Dotnet]
 - Fixes possible border for older browsers in mxImageShape [JavaScript]
 - Fixes possible NPE in mxEdgeStyle.SegmentConnector [JavaScript]

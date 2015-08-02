@@ -1,5 +1,8 @@
-- Check if wrapping forces HTML labels
+- Handle minResize in mxCellEditor.resize
+
 - Fix center aligned oversize labels in IE8 standards mode
+- Block ctrl+u/i/b in core text editor for plain text values
+- Find regular expression for mxUtils.replaceTrailingNewlines
 - Fix missing cursor in quirks mode vor space after oversize label
 
 - Check code for batched DOM changes, cssText instead of direct style changes
