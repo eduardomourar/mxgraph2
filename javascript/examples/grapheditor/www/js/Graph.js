@@ -2070,8 +2070,12 @@ if (typeof mxVertexHandler != 'undefined')
 		// Workaround for bad vertical cell editor position
 		mxCellEditor.prototype.verticalOffset = -2;
 
-		// Workaround for border in empty placeholder
-		mxCellEditor.prototype.emptyLabelText = '<div style="border:transparent;><br></div>';
+		// Workaround for border in empty placeholder.
+		// It is needed in IE for rendering the cursor.
+		if (!mxClient.IS_IE11)
+		{
+			mxCellEditor.prototype.emptyLabelText = '<div style="border:solid 1px transparent;"><br></div>';
+		}
 		
 		/**
 		 * HTML in-place editor
