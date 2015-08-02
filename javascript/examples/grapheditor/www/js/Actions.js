@@ -122,14 +122,14 @@ Actions.prototype.init = function()
 		}
 	});
 	
-	this.addAction('delete', function()
+	function deleteCells(includeEdges)
 	{
 		// Cancels interactive operations
 		graph.escape();
 		
 		var cells = graph.getSelectionCells();
 		var parents = graph.model.getParents(cells);
-		graph.removeCells(cells);
+		graph.removeCells(cells, includeEdges);
 		
 		// Selects parents for easier editing of groups
 		if (parents != null)
@@ -146,7 +146,16 @@ Actions.prototype.init = function()
 			
 			graph.setSelectionCells(select);
 		}
+	};
+	
+	this.addAction('delete', function()
+	{
+		deleteCells(false);
 	}, null, null, 'Delete');
+	this.addAction('deleteAll', function()
+	{
+		deleteCells(true);
+	}, null, null, 'Ctrl+Delete');
 	this.addAction('duplicate', function()
 	{
 		graph.setSelectionCells(graph.duplicateCells());
@@ -182,9 +191,9 @@ Actions.prototype.init = function()
 
 	// Arrange actions
 	this.addAction('toFront', function() { graph.orderCells(false); }, null, null, 'Ctrl+Shift+F');
-	this.addAction('toBack', function() { graph.orderCells(true); }, null, null, 'Ctrl+B');
+	this.addAction('toBack', function() { graph.orderCells(true); }, null, null, 'Ctrl+Shift+B');
 	this.addAction('group', function() { graph.setSelectionCell(graph.groupCells(null, 0)); }, null, null, 'Ctrl+G');
-	this.addAction('ungroup', function() { graph.setSelectionCells(graph.ungroupCells()); }, null, null, 'Ctrl+U');
+	this.addAction('ungroup', function() { graph.setSelectionCells(graph.ungroupCells()); }, null, null, 'Ctrl+Shift+U');
 	this.addAction('removeFromGroup', function() { graph.removeCellsFromParent(); });
 	// Adds action
 	this.addAction('editMetadata...', function()
@@ -256,12 +265,12 @@ Actions.prototype.init = function()
 		{
 			if (graph.cellEditor.isContentEditing())
 			{
-				var link = graph.getParentByName(graph.getSelectedElement(), 'A', graph.cellEditor.text2);
+				var link = graph.getParentByName(graph.getSelectedElement(), 'A', graph.cellEditor.textarea);
 				var oldValue = '';
 				
 				if (link != null)
 				{
-					oldValue = link.getAttribute('href');
+					oldValue = link.getAttribute('href') || '';
 				}
 				
 				var selState = graph.cellEditor.saveSelection();
@@ -269,23 +278,23 @@ Actions.prototype.init = function()
 				ui.showLinkDialog(oldValue, mxResources.get('apply'), mxUtils.bind(this, function(value)
 				{
 		    		graph.cellEditor.restoreSelection(selState);
-					
-					// To find the new link, we create a list of all existing links first
-		    		// LATER: Refactor for reuse with code for finding inserted image below
-					var tmp = graph.cellEditor.text2.getElementsByTagName('a');
-					var oldLinks = [];
-					
-					for (var i = 0; i < tmp.length; i++)
-					{
-						oldLinks.push(tmp[i]);
-					}
-		
+
 					if (value != null && value.length > 0)
 					{
-						document.execCommand('createlink', false, mxUtils.trim(value));
+						// To find the new link, we create a list of all existing links first
+						var tmp = graph.cellEditor.textarea.getElementsByTagName('a');
+						var oldLinks = [];
 						
+						for (var i = 0; i < tmp.length; i++)
+						{
+							oldLinks.push(tmp[i]);
+						}
+
+						// LATER: Fix inserting link/image in IE8/quirks after focus lost
+						document.execCommand('createlink', false, mxUtils.trim(value));
+
 						// Adds target="_blank" for the new link
-						var newLinks = graph.cellEditor.text2.getElementsByTagName('a');
+						var newLinks = graph.cellEditor.textarea.getElementsByTagName('a');
 						
 						if (newLinks.length == oldLinks.length + 1)
 						{
@@ -346,6 +355,8 @@ Actions.prototype.init = function()
     	var state = graph.getView().getState(graph.getSelectionCell());
     	var value = '1';
     	
+		graph.stopEditing();
+		
 		graph.getModel().beginUpdate();
 		try
 		{
@@ -388,6 +399,8 @@ Actions.prototype.init = function()
 	{
     	var state = graph.getView().getState(graph.getSelectionCell());
     	var value = 'wrap';
+    	
+		graph.stopEditing();
     	
     	if (state != null && state.style[mxConstants.STYLE_WHITE_SPACE] == 'wrap')
     	{
@@ -631,9 +644,9 @@ Actions.prototype.init = function()
 	}, null, null, 'F1'));
 	
 	// Font style actions
-	var toggleFontStyle = mxUtils.bind(this, function(key, style, fn)
+	var toggleFontStyle = mxUtils.bind(this, function(key, style, fn, shortcut)
 	{
-		this.addAction(key, function()
+		return this.addAction(key, function()
 		{
 			if (fn != null && graph.cellEditor.isContentEditing())
 			{
@@ -644,12 +657,12 @@ Actions.prototype.init = function()
 				graph.stopEditing(false);
 				graph.toggleCellStyleFlags(mxConstants.STYLE_FONTSTYLE, style);
 			}
-		});
+		}, null, null, shortcut);
 	});
 	
-	toggleFontStyle('bold', mxConstants.FONT_BOLD, function() { document.execCommand('bold', false, null); });
-	toggleFontStyle('italic', mxConstants.FONT_ITALIC, function() { document.execCommand('italic', false, null); });
-	toggleFontStyle('underline', mxConstants.FONT_UNDERLINE, function() { document.execCommand('underline', false, null); });
+	toggleFontStyle('bold', mxConstants.FONT_BOLD, function() { document.execCommand('bold', false, null); }, 'Ctrl+B');
+	toggleFontStyle('italic', mxConstants.FONT_ITALIC, function() { document.execCommand('italic', false, null); }, 'Ctrl+I');
+	toggleFontStyle('underline', mxConstants.FONT_UNDERLINE, function() { document.execCommand('underline', false, null); }, 'Ctrl+U');
 	
 	// Color actions
 	this.addAction('fontColor...', function() { ui.menus.pickColor(mxConstants.STYLE_FONTCOLOR, 'forecolor', '000000'); });

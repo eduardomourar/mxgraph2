@@ -119,8 +119,8 @@ Graph = function(container, model, renderHint, stylesheet)
 		this.graphHandler.scrollOnMove = false;
 		this.graphHandler.scaleGrid = true;
 
-		// Enables cloning of connection sources by default
-		this.connectionHandler.setCreateTarget(true);
+		// Disables cloning of connection sources by default
+		this.connectionHandler.setCreateTarget(false);
 		
 		// Disables built-in connection starts except shift is pressed when hovering the cell
 		this.connectionHandler.isValidSource = function(cell, me)
@@ -181,27 +181,20 @@ Graph = function(container, model, renderHint, stylesheet)
 		// Handles parts of cells when cloning the source for new connections
 		this.connectionHandler.createTargetVertex = function(evt, source)
 		{
-			if (mxEvent.isControlDown(evt))
+			var state = this.graph.view.getState(source);
+			var style = (state != null) ? state.style : this.graph.getCellStyle(source);
+	    	
+			if (mxUtils.getValue(style, 'part', false))
 			{
-				return null;
+		        var parent = this.graph.model.getParent(source);
+
+		        if (this.graph.model.isVertex(parent))
+		        {
+		        	source = parent;
+		        }
 			}
-			else
-			{
-				var state = this.graph.view.getState(source);
-				var style = (state != null) ? state.style : this.graph.getCellStyle(source);
-		    	
-				if (mxUtils.getValue(style, 'part', false))
-				{
-			        var parent = this.graph.model.getParent(source);
-	
-			        if (this.graph.model.isVertex(parent))
-			        {
-			        	source = parent;
-			        }
-				}
-				
-				return mxConnectionHandler.prototype.createTargetVertex.apply(this, arguments);
-			}
+			
+			return mxConnectionHandler.prototype.createTargetVertex.apply(this, arguments);
 		};
 		
 	    var rubberband = new mxRubberband(this);
@@ -1543,7 +1536,7 @@ if (typeof mxVertexHandler != 'undefined')
 	
 	/**
 	 * Inserts the given image at the cursor in a content editable text box using
-	 * the insertimage command on the document instance and updates the size.
+	 * the insertimage command on the document instance.
 	 */
 	Graph.prototype.insertImage = function(newValue, w, h)
 	{
@@ -1557,7 +1550,8 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				oldImages.push(tmp[i]);
 			}
-	
+			
+			// LATER: Fix inserting link/image in IE8/quirks after focus lost
 			document.execCommand('insertimage', false, newValue);
 			
 			// Sets size of new image
@@ -1570,8 +1564,9 @@ if (typeof mxVertexHandler != 'undefined')
 				{
 					if (i == 0 || newImages[i] != oldImages[i - 1])
 					{
-						newImages[i].style.width = w + 'px';
-						newImages[i].style.height = h + 'px';
+						// Workaround for lost styles during undo and redo is using attributes
+						newImages[i].setAttribute('width', w);
+						newImages[i].setAttribute('height', h);
 						
 						break;
 					}
@@ -2081,7 +2076,7 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			return state != null && state.style['html'] == 1;
 		};
-	
+
 		/**
 		 * Creates the keyboard event handler for the current graph and history.
 		 */
@@ -2134,7 +2129,7 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			}
 		};
-		
+
 		/**
 		 * Handling of special nl2Br style for not converting newlines to breaks in HTML labels.
 		 * NOTE: Since it's easier to set this when the label is created we assume that it does
@@ -2151,63 +2146,6 @@ if (typeof mxVertexHandler != 'undefined')
 			mxCellRendererInitializeLabel.apply(this, arguments);
 		};
 
-		/**
-		 * HTML in-place editor
-		 */
-		// TODO: Toggle view mode, search for text2 in all code
-		mxCellEditor.prototype.toggleViewMode = function()
-		{
-			if (this.text2 != null)
-			{
-				var state = this.graph.view.getState(this.editingCell);
-				var nl2Br = state != null && mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
-				var tmp = this.saveSelection();
-				
-				if (this.textarea.style.display == 'none')
-				{
-					// Removes newlines from HTML and converts breaks to newlines
-					// to match the HTML output in plain text
-					var content = this.graph.sanitizeHtml((nl2Br) ? this.text2.innerHTML.replace(/\n/g, '').
-						replace(/<br\s*.?>/g, '\n') : this.text2.innerHTML);
-					
-					if (this.textarea.value != content)
-					{
-						this.textarea.value = content;
-						this.setModified(true);
-					}
-					
-					this.textarea.style.display = 'block';
-					this.text2.style.display = 'none';
-					this.textarea.focus();
-				}
-				else
-				{
-					// Converts newlines in plain text to breaks in HTML
-					// to match the plain text output
-					var content = this.graph.sanitizeHtml((nl2Br) ? this.textarea.value.
-						replace(/\n/g, '<br/>') : this.textarea.value);
-					
-					if (this.text2.innerHTML != content)
-					{
-						this.text2.innerHTML = content;
-						this.setModified(true);
-					}
-					
-					this.text2.style.display = '';
-					this.textarea.style.display = 'none';
-					this.text2.focus();
-				}
-			
-				if (this.switchSelectionState != null)
-				{
-					this.restoreSelection(this.switchSelectionState);
-				}
-				
-				this.switchSelectionState = tmp;
-				this.resize();
-			}
-		};
-		
 		var mxConstraintHandlerUpdate = mxConstraintHandler.prototype.update;
 		mxConstraintHandler.prototype.update = function(me, source)
 		{
@@ -2254,7 +2192,7 @@ if (typeof mxVertexHandler != 'undefined')
 					mxEvent.consume(evt);
 				}
 			}));
-	
+			
 			mxEvent.addListener(graph.container, 'keypress', mxUtils.bind(this, function(evt)
 			{
 				// KNOWN: Focus does not work if label is empty in quirks mode
@@ -2271,18 +2209,7 @@ if (typeof mxVertexHandler != 'undefined')
 						// Initial keystroke is lost in FF
 						if (ce.textarea.style.display != 'none')
 						{
-							ce.textarea.value = String.fromCharCode(evt.which);
-						}
-						else if (ce.text2 != null)
-						{
-							ce.text2.innerHTML = String.fromCharCode(evt.which);
-				            var range = document.createRange();
-				            range.selectNodeContents(ce.text2);
-				            range.collapse(false);
-				            
-				            var selection = window.getSelection();
-				            selection.removeAllRanges();
-				            selection.addRange(range);
+							ce.textarea.innerHTML = String.fromCharCode(evt.which);
 						}
 					}
 				}
@@ -2296,7 +2223,23 @@ if (typeof mxVertexHandler != 'undefined')
 		mxCellEditor.prototype.startEditing = function(cell, trigger)
 		{
 			mxCellEditorStartEditing.apply(this, arguments);
-
+			
+			// Overrides class in case of HTML content to add
+			// dashed borders for divs and table cells
+			var state = this.graph.view.getState(cell);
+	
+			if (state != null && state.style['html'] == 1)
+			{
+				this.textarea.className = 'mxCellEditor geContentEditable';
+			}
+			else
+			{
+				this.textarea.className = 'mxCellEditor mxPlainTextEditor';
+			}
+			
+			// Toggles markup vs wysiwyg mode
+			this.codeViewMode = false;
+			
 			// Stores current selection range when switching between markup and code
 			this.switchSelectionState = null;
 			
@@ -2338,8 +2281,6 @@ if (typeof mxVertexHandler != 'undefined')
 				this.textarea.style.border = '';
 			}
 			
-			// TODO: Fix code view for HTML
-			
 			// Hides handles on selected cell
 			this.currentStateHandle = this.graph.selectionCellsHandler.getHandler(cell);
 			
@@ -2353,22 +2294,206 @@ if (typeof mxVertexHandler != 'undefined')
 					this.currentStateHandle.selectionBorder.node.style.display = 'none';
 				}
 			}
-			
-			// Handles special styles for HTML content
-			// TODO: Check is this can be applied regardless of HTML since
-			// there should be no markup inside the textarea if no HTML
-			var state = this.graph.view.getState(cell);
-	
-			if (state != null && state.style['html'] == 1)
-			{
-				this.textarea.className += ' geContentEditable';
-			}
 		};
 
+		/**
+		 * HTML in-place editor
+		 */
+		mxCellEditor.prototype.toggleViewMode = function()
+		{
+			var state = this.graph.view.getState(this.editingCell);
+			var nl2Br = state != null && mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
+			var tmp = this.saveSelection();
+			
+			if (!this.codeViewMode)
+			{
+				// Clears the initial empty label on the first keystroke
+				if (this.clearOnChange && this.textarea.innerHTML == this.getEmptyLabelText())
+				{
+					this.clearOnChange = false;
+					this.textarea.innerHTML = '';
+				}
+				
+				// Removes newlines from HTML and converts breaks to newlines
+				// to match the HTML output in plain text
+				var content = mxUtils.htmlEntities(this.textarea.innerHTML);
+
+			    // Workaround for trailing line breaks being ignored in the editor
+				if (!mxClient.IS_QUIRKS && document.documentMode != 8)
+				{
+					content = mxUtils.replaceTrailingNewlines(content, '<div><br></div>');
+				}
+				
+			    content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '').replace(/&lt;br\s*.?&gt;/g, '<br>') : content);
+				this.textarea.className = 'mxCellEditor mxPlainTextEditor';
+				
+				var size = mxConstants.DEFAULT_FONTSIZE;
+				
+				this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
+				this.textarea.style.fontSize = Math.round(size) + 'px';
+				this.textarea.style.textDecoration = '';
+				this.textarea.style.fontWeight = 'normal';
+				this.textarea.style.fontStyle = '';
+				this.textarea.style.fontFamily = mxConstants.DEFAULT_FONTFAMILY;
+				this.textarea.style.textAlign = 'left';
+				
+				// Adds padding to make cursor visible with borders
+				this.textarea.style.padding = '2px';
+				
+				if (this.textarea.innerHTML != content)
+				{
+					this.textarea.innerHTML = content;
+				}
+
+				this.codeViewMode = true;
+			}
+			else
+			{
+				var content = mxUtils.extractTextWithWhitespace(this.textarea.childNodes);
+			    
+				// Strips trailing line break
+			    if (content.length > 0 && content.charAt(content.length - 1) == '\n')
+			    {
+			    	content = content.substring(0, content.length - 1);
+			    }
+			    
+				content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '<br/>') : content)
+				this.textarea.className = 'mxCellEditor geContentEditable';
+				
+				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
+				var family = mxUtils.getValue(state.style, mxConstants.STYLE_FONTFAMILY, mxConstants.DEFAULT_FONTFAMILY);
+				var align = mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_LEFT);
+				var bold = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
+						mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD;
+				var italic = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
+						mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC;
+				var uline = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
+						mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE;
+				
+				this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
+				this.textarea.style.fontSize = Math.round(size) + 'px';
+				this.textarea.style.textDecoration = (uline) ? 'underline' : '';
+				this.textarea.style.fontWeight = (bold) ? 'bold' : 'normal';
+				this.textarea.style.fontStyle = (italic) ? 'italic' : '';
+				this.textarea.style.fontFamily = family;
+				this.textarea.style.textAlign = align;
+				this.textarea.style.padding = '0px';
+				
+				if (this.textarea.innerHTML != content)
+				{
+					this.textarea.innerHTML = content;
+					
+					if (this.textarea.innerHTML.length == 0)
+					{
+						this.textarea.innerHTML = this.getEmptyLabelText();
+						this.clearOnChange = this.textarea.innerHTML.length > 0;
+					}
+				}
+
+				this.codeViewMode = false;
+			}
+			
+			this.textarea.focus();
+		
+			if (this.switchSelectionState != null)
+			{
+				this.restoreSelection(this.switchSelectionState);
+			}
+			
+			this.switchSelectionState = tmp;
+			this.resize();
+		};
+		
+		var mxCellEditorResize = mxCellEditor.prototype.resize;
+		mxCellEditor.prototype.resize = function(state, trigger)
+		{
+			var state = this.graph.getView().getState(this.editingCell);
+			
+			// Workaround for visible handles after zoom
+			if (this.currentStateHandle != null && this.currentStateHandle.setHandlesVisible != null)
+			{
+				this.currentStateHandle.setHandlesVisible(false);
+			}
+			
+			if (this.codeViewMode && state != null)
+			{
+				var scale = state.view.scale;
+				this.bounds = mxRectangle.fromRectangle(state);
+				
+				// General placement of code editor if cell has no size
+				// LATER: Fix HTML editor bounds for edge labels
+				if (this.bounds.width == 0 && this.bounds.height == 0)
+				{
+					this.bounds.width = 160 * scale;
+					this.bounds.height = 60 * scale;
+					
+					var m = (state.text != null) ? state.text.margin : null;
+					
+					if (m == null)
+					{
+						m = mxUtils.getAlignmentAsPoint(mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER),
+								mxUtils.getValue(state.style, mxConstants.STYLE_VERTICAL_ALIGN, mxConstants.ALIGN_MIDDLE));
+					}
+					
+					this.bounds.x += m.x * this.bounds.width;
+					this.bounds.y += m.y * this.bounds.height;
+				}
+
+				this.textarea.style.width = Math.round((this.bounds.width - 4) / scale) + 'px';
+				this.textarea.style.height = Math.round((this.bounds.height - 4) / scale) + 'px';
+				this.textarea.style.overflow = 'auto';
+
+				// Adds scrollbar offset if visible
+				if (this.textarea.clientHeight < this.textarea.offsetHeight)
+				{
+					this.textarea.style.height = Math.round((this.bounds.height / scale)) + (this.textarea.offsetHeight - this.textarea.clientHeight) + 'px';
+					this.bounds.height = parseInt(this.textarea.style.height) * scale;
+				}
+				
+				if (this.textarea.clientWidth < this.textarea.offsetWidth)
+				{
+					this.textarea.style.width = Math.round((this.bounds.width / scale)) + (this.textarea.offsetWidth - this.textarea.clientWidth) + 'px';
+					this.bounds.width = parseInt(this.textarea.style.width) * scale;
+				}
+								
+//				// FIXME: Offset when scaled
+				if (document.documentMode == 8)
+				{
+					this.textarea.style.left = Math.round(this.bounds.x) + 'px';
+					this.textarea.style.top = Math.round(this.bounds.y) + 'px';
+				}
+				else if (mxClient.IS_QUIRKS)
+				{
+					this.textarea.style.left = Math.round(this.bounds.x) + 'px';
+					this.textarea.style.top = Math.round(this.bounds.y) + 'px';
+				}
+				else
+				{
+					this.textarea.style.left = Math.round(this.bounds.x - 0.5 * this.bounds.width * (1 - scale) / scale) + 'px';
+					this.textarea.style.top = Math.round(this.bounds.y - 0.5 * this.bounds.height * (1 - scale) / scale) + 'px';
+				}
+
+				if (mxClient.IS_VML)
+				{
+					this.textarea.style.zoom = scale;
+				}
+				else
+				{
+					mxUtils.setPrefixedStyle(this.textarea.style, 'transform', 'scale(' + scale + ',' + scale + ')');	
+				}
+			}
+			else
+			{
+				this.textarea.style.height = '';
+				this.textarea.style.overflow = '';
+				mxCellEditorResize.apply(this, arguments);
+			}
+		};
+		
 		mxCellEditorGetInitialValue = mxCellEditor.prototype.getInitialValue;
 		mxCellEditor.prototype.getInitialValue = function(state, trigger)
 		{
-			if (mxUtils.getValue(state.style['html'], '0') == '0')
+			if (mxUtils.getValue(state.style, 'html', '0') == '0')
 			{
 				return mxCellEditorGetInitialValue.apply(this, arguments);
 			}
@@ -2388,7 +2513,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxCellEditorGetCurrentValue = mxCellEditor.prototype.getCurrentValue;
 		mxCellEditor.prototype.getCurrentValue = function(state)
 		{
-			if (mxUtils.getValue(state.style['html'], '0') == '0')
+			if (mxUtils.getValue(state.style, 'html', '0') == '0')
 			{
 				return mxCellEditorGetCurrentValue.apply(this, arguments);
 			}
@@ -2425,7 +2550,14 @@ if (typeof mxVertexHandler != 'undefined')
 					}
 				}
 				
+				this.currentStateHandle.redrawHandles();
 				this.currentStateHandle = null;
+			}
+			
+			// Restores default view mode before applying value
+			if (this.codeViewMode)
+			{
+				this.toggleViewMode();
 			}
 			
 			mxCellEditorStopEditing.apply(this, arguments);
@@ -2441,14 +2573,11 @@ if (typeof mxVertexHandler != 'undefined')
 			try
 			{
 				mxCellEditorApplyValue.apply(this, arguments);
-				
-				console.log('applyValue', value, state.cell.value);
 
 				var parent = this.graph.getModel().getParent(state.cell);
 				var geo = this.graph.getCellGeometry(state.cell);
 				
-				if (mxUtils.trim(value) == this.emptyLabelText && geo != null &&
-					this.graph.getModel().isEdge(parent) && geo.relative)
+				if (mxUtils.trim(value || '') == '' && geo != null && this.graph.getModel().isEdge(parent) && geo.relative)
 				{
 					this.graph.removeCells([state.cell]);
 				}
@@ -2626,7 +2755,7 @@ if (typeof mxVertexHandler != 'undefined')
 		/**
 		 * Defines the handles for the UI. Uses data-URIs to speed-up loading time where supported.
 		 */
-		var connectHandle = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABLZJREFUeNqcVl1MHFUUPrPMsn8s7UItthFa/ImNRB7aIC0aWyQhpqZWTBMNkQc3PvjiQ4MR05honyQmpjE8mmw01EqMwQcIopYAdUNR0CYYsk37oMIGuru1rEt2Z3Zm7lzPnbl3dlgXqE5ysnfPved85++ecyW4v0/aaZPit6OwJO2oQOLkcf16XKBMuVlGFUG3AxK8Kk5eJLm/v39vNBo9UVtb20gIUTc2NpJDQ0MLsVhsE/d1JAOJcNoCyIAqgTCrq5GCSHVra2vvFQqFON3my+fzs8lk8jyejXAZr/CcYVWKqhskPDExcRyVXBcKVYPSpb8pnUqZNH7XpIkcpRopAaIx06Ojo0dRtobrcMDKk8w2ZCTf1NTUsc7Ozgl0ObCuAHyxSuD7eyYopmRLUFuyFiVO7/PAqw95oN6HMSMkPTs7e66rq+sGniiycDIj3DmSeD58k5OTrd3d3TO4Wf1j2oSLt3RQTVuz2yoMisPZI0tw8XEZjtV7GFhubGzsuZ6engRuaTxnVHJ5w2IbUhTlB7/ff3R6ncCFhMbNt21xwiAJ21gO7KWMzI+e8EJHgwwYxmuhUOgl3ClwMOouXW8qlXqbgfy5acIHSwUwNQOJcDKA6sSiEs+0/xcJaKoB7y+pkFFMCAaDz2KBRHkqqoQnjkdYul3sTyyhQL5ogIHKjSInzaafng9bZGg6JwOIbtM9RYfLN1VLYSQS6eFRsu6jAzQ8PNyE3jyVK5owvlqwFTDluuGsGYmPuHhu+ur3PCgGZV49PTAwEBHOOEAdHR0n2GIppYGKlglPSJEDqvZ/8elq6YybNhUDbv+lWWf6+vraBIYsXKupqTnEGGs5DRUTdrWtG81yfTPa+K9Lt/zaQWd9JLbqrhm4kzOgtcEH4XC4SVwhWRw2TdMyQ0YBDa21SouVlCTt2nE17qm4Yh6OilVKxBmZ71Es6xRj1PmlLSFim02Xbjnmrpx/zFo1XbpdKn1hFD+zL2BnJJvNJsUh4ZE5Pz8/19zcDK0HsV1h6HQmSLcfFHpRdzqEsIjh7ZE9cKQhYLFGRkYWRVcXxWD29vauoFcLdaEqONMYwEpDMCwCh4o2lYC28tmahfDlh4Pg90qAuuKDg4MbAsjxiMliE70WCATa3jq1H75ObGBvo+7hZrWc2gu/Wl5QUSxO05QgjK3ozZP7Rdi+46ODlrcg1nFDqqpO+3y+J6/E78Ab36zwyiv1OgolxaLfCXO+fOUwnG17gLWgeWxBLyArz2eV6XHlnKGry8vL7zJG7zMPwqdnG8FDsGtjGBVsNQWd/ZoWWWvkFzBkfkLg8rlDFghTuri4+A7v3kQUQ8UxgYVxsr29fYwxf/sjBx+PrcDniayrgG1RP3r7eute6H/xMDxyIGhxZ2ZmunDELHAgXYyJ8sFnjQo2+NCq0xjGhBhsa3dV+u1Cmn52dZVemU7SqzcyNJ0tOoMPk/9LPB4/xWS5ji2Dr9KUrRL5QqrPZDKfYMwXtxvlCPBzOp3+kJ3lMtWVRrm0y+tH5h3YOz4+/mhLS8txrMoDKKwh+Prc3Nx17GcrPOE6z4nJ3yb0/zy3PNxTaZfnFv0vz62dHo/l5+n9PCIZ0D8CDACEWhv+nM/wTwAAAABJRU5ErkJggg==' :
+		var connectHandle = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjQ3OTk0QjMyRDcyMTFFNThGQThGNDVBMjNBMjFDMzkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjQ3OTk0QjQyRDcyMTFFNThGQThGNDVBMjNBMjFDMzkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoyRjA0N0I2MjJENzExMUU1OEZBOEY0NUEyM0EyMUMzOSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGNDc5OTRCMjJENzIxMUU1OEZBOEY0NUEyM0EyMUMzOSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PjIf+MgAAATlSURBVHjanFZraFxFFD735u4ru3ls0yZG26ShgmJoKK1J2vhIYzBgRdtIURHyw1hQUH9IxIgI2h8iCEUF/1RRlNQYCsYfCTHVhiTtNolpZCEStqSC22xIsrs1bDfu7t37Gs/cO3Ozxs1DBw73zpk555vzmHNGgJ0NYatFgmNLYUHYUoHASMz5ijmgVLmxgfKCUiBxC4ACJAeSG8nb1dVVOTc3dyoSibwWDofPBIPBJzo7O8vpGtvjpDICGztxkciECpF2LS0tvZtOpwNkk5FKpcYXFxffwL1+JuPgllPj8nk1F6RoaGjoKCqZ5ApljZDZO4SMRA0SuG2QUJIQRV8HxMOM9vf3H0ZZH9Nhg20MMl2QkFwjIyNHWlpahtADnuUMwLcRHX5aNSBjCJYEsSSLUeLEbhGe3ytCmQtA1/XY+Pj46dbW1iDuyCJp9BC5ycBj4hoeHq5ra2sbw0Xn1ZgBZ+dVkA1Lc+6p0Ck2p0QS4Ox9EhwpEylYcmBg4LH29vYQLilIOt0u5FhDfevNZDI/u93uw6PLOrwTUtjxrbPYbhD42WgMrF8JmR894ICmCgnQjVe8Xu8pXEkzMJKbuo5oNPomBbm1ZsD7s2kwFA1JZ6QBUXWT1nmGNc/qoMgavDcrQzxjQGFh4aOYIJ0sFAXcEtui4uLiVjr5KpSBVFYDDZVrWUaKRRWSAYeK0fmKykgDXbVoNaPChRuyqdDv97czL5nXxQbq6empQmsaklkDBiNpSwFVrmr2P6UyicD5piI4f8wHh0oEm8/p4h8pyGiEWvVQd3e3nxtjAzU1NR2jP7NRBWQ8GbdEzzJAmc0V3RR4cI8Dvmwuhc8fKUFA0d6/ltHg5p+Kuaejo6OeY0jcNJ/PV00ZS0nFUoZRvvFS1bZFsKHCCQ2Pl8H0chY+C96B6ZUsrCQ1qKtwQVFRURW/QhIXMAzDPAZ6BgOr8tTa8dDxCmiYGApaJbJMxSzV+brE8pdgWkcpY5dbMF1AR9XH8/xu2ilef48bvn92n82ZwHh+8ssqTEXS9p7dHisiiURikd8PbpExNTU1UVNTA3V3Y7lC16n0gpB/NwpNcZjfa7dScC4Qh0kOQCwnlEgi3F/hMVl9fX0zvKrzSk2lfXjRhj0eT/2rvWG4+Pta3oJY7XfC3hInXAv/ldeFLx8shQ+eqQL0UAAz7ylkpej5eNZRVBWL6BU6ef14OYiY1oqyTtmsavr/5koaRucT1pzx+ZpL1+GV5nLutksUgIcmtwTRiuuVZXnU5XId7A2swJkfFsymRWC91hHg1Viw6x23+7vn9sPJ+j20BE1hCXqSWaNSQ8ScbknRZWxub1PGCw/fBV+c3AeijlUbY5bBjEqr9GuYZP4jP41WudGSC6erTRCqdGZm5i1WvXWeDHnbBCZGc2Nj4wBl/hZOwrmBBfgmlID1HmGJutHaF+tKoevp/XCgstDkjo2NtWKLuc6AVN4mNjY+s1XQxoenOoFuDPHGtnRbJj9ej5GvL0dI7+giuRyMk1giazc+DP6vgUDgOJVlOv7R+PJ12QIeL6SyeDz+Kfp8ZrNWjgDTsVjsQ7qXyTjztXJhm9ePxFLfMTg4eG9tbe1RTP9KFFYQfHliYmIS69kCC7jKYmKwxxD5P88tkVkqbPPcIps9t4T/+HjcuJ/s5BFJgf4WYABCtxGuxIZ90gAAAABJRU5ErkJggg==' :
 			IMAGE_PATH + '/handle-connect.png', 26, 26);
 		var mainHandle = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAACXBIWXMAAAsTAAALEwEAmpwYAAABLUlEQVQ4y61US4rCQBBNeojiRrLSnbMOWWU3V1FPouARcgc9hyLOCSSbYZw5gRCIkM9KbevJaycS4zCOBY+iq6pf1y+xrNtiE6oEY/tVzMUXgSNoCJrUDu3qHpldutwSuIKOoEvt0m7I7DoCvNj2fb8XRdEojuN5lmVraJxhh59xFSLFF9phGL7lef6hRb63R73aHM8aAjv8JHJ47yqLlud5r0VRbHa51sPZQVuT/QU4ww4/4ljaJRubrC5SxouD6TWBQV/sEIkbs0eOIVGssSO1L5D6LQID+BHHZjdMSYpj7KZpun7/uk8CP5rNqTXLJP/OpNyTMWruP9CTP08nCILKdCp7gkCzJ8vPnz2BvW5PKhuLjJBykiQLaWIEjTP3o3Zjn/LtPO0rfvh/cgKu7z6wtPPltQAAAABJRU5ErkJggg==' :
 			IMAGE_PATH + '/handle-main.png', 17, 17);
@@ -2978,6 +3107,14 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			};
 			
+			// Extends connection handler to enable ctrl+drag for cloning source cell
+			// since copyOnConnect is now disabled by default
+			var mxConnectionHandlerCreateTarget = mxConnectionHandler.prototype.isCreateTarget;
+			mxConnectionHandler.prototype.isCreateTarget = function(evt)
+			{
+				return mxEvent.isControlDown(evt) || mxConnectionHandlerCreateTarget.apply(this, arguments);
+			};
+			
 			var vertexHandlerInit = mxVertexHandler.prototype.init;
 			mxVertexHandler.prototype.init = function()
 			{
@@ -3089,7 +3226,8 @@ if (typeof mxVertexHandler != 'undefined')
 							mxUtils.bind(this, function(evt)
 							{
 								// FIXME: Use native event in isForceRubberband, isForcePanningEvent
-								if (!mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt))
+								// Note: Even if control is a popup trigger in this case it should initiate a drag for copy on connect
+								if (mxEvent.isControlDown(evt) || (!mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt)))
 								{
 									this.graph.popupMenuHandler.hideMenu();
 									this.graph.stopEditing(false);
@@ -3112,6 +3250,7 @@ if (typeof mxVertexHandler != 'undefined')
 											mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 									var tol = this.graph.tolerance;
 									
+									// Handles single click
 									if (Math.abs(pt.x - mousePoint.x) < tol && Math.abs(pt.y - mousePoint.y) < tol)
 									{
 										this.graph.model.beginUpdate();
@@ -3340,7 +3479,7 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 				
 				this.connectorImg.style.left = Math.round(pt.x - this.connectorImg.offsetWidth / 2) + 'px';
-				this.connectorImg.style.top = Math.round(pt.y - this.connectorImg.offsetHeight / 2) + 'px';
+				this.connectorImg.style.top = Math.round(pt.y - this.connectorImg.offsetHeight / 2 + 1) + 'px';
 			}
 			
 			if (this.state != null && this.linkHint != null)

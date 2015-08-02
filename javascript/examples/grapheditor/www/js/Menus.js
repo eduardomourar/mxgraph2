@@ -102,7 +102,7 @@ Menus.prototype.init = function()
 			return menu.addItem(label, null, mxUtils.bind(this, function()
 			{
 				// TODO: Check if visible
-				graph.cellEditor.text2.focus();
+				graph.cellEditor.textarea.focus();
 	      		document.execCommand('formatBlock', false, '<' + tag + '>');
 			}), parent);
 		};
@@ -127,22 +127,32 @@ Menus.prototype.init = function()
 		{
 			this.styleChange(menu, fontsize, [mxConstants.STYLE_FONTSIZE], [fontsize], null, parent, function()
 			{
+				var tmp = this.cellEditor.textarea.getElementsByTagName('font');
+				var oldTags = [];
+				
+				for (var i = 0; i < tmp.length; i++)
+				{
+					oldTags.push(tmp[i]);
+				}
+				
 				// Creates an element with arbitrary size 3
 				document.execCommand('fontSize', false, '3');
 				
-				// Changes the css font size of the first font element inside the in-place editor with size 3
-				// hopefully the above element that we've just created. LATER: Check for new element using
-				// previous result of getElementsByTagName (see other actions)
-				var elts = graph.cellEditor.text2.getElementsByTagName('font');
+				// Sets size of new image
+				var newTags = this.cellEditor.textarea.getElementsByTagName('font');
 				
-				for (var i = 0; i < elts.length; i++)
+				if (newTags.length == oldTags.length + 1)
 				{
-					if (elts[i].getAttribute('size') == '3')
+					// Inverse order in favor of appended images
+					for (var i = newTags.length - 1; i >= 0; i--)
 					{
-						elts[i].removeAttribute('size');
-						elts[i].style.fontSize = fontsize + 'px';
-						
-						break;
+						if (i == 0 || newTags[i] != oldTags[i - 1])
+						{
+							newTags[i].removeAttribute('size');
+							newTags[i].style.fontSize = fontsize + 'px';
+							
+							break;
+						}
 					}
 				}
 			});
@@ -536,7 +546,7 @@ Menus.prototype.addInsertTableItem = function(menu)
 			
 			// To find the new link, we create a list of all existing links first
     		// LATER: Refactor for reuse with code for finding inserted image below
-			var tmp = graph.cellEditor.text2.getElementsByTagName('table');
+			var tmp = graph.cellEditor.textarea.getElementsByTagName('table');
 			var oldTables = [];
 			
 			for (var i = 0; i < tmp.length; i++)
@@ -549,7 +559,7 @@ Menus.prototype.addInsertTableItem = function(menu)
 			graph.pasteHtmlAtCaret(createTable(row2.sectionRowIndex + 1, td.cellIndex + 1));
 			
 			// Moves cursor to first table cell
-			var newTables = graph.cellEditor.text2.getElementsByTagName('table');
+			var newTables = graph.cellEditor.textarea.getElementsByTagName('table');
 			
 			if (newTables.length == oldTables.length + 1)
 			{

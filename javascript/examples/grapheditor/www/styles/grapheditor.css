@@ -179,6 +179,7 @@
 	color:#b3b3b3;
 	padding-left:6px;
 	display:inline-block;
+	cursor:default !important;
 }
 .geMenubar a.geStatus:hover {
 	background:transparent;
@@ -364,10 +365,10 @@
 	border:1px solid transparent;
 	cusor:pointer;
 	margin-top:3px;
-	margin-right:8px;
+	margin-right:6px;
 	position:absolute;
 	right:4px;
-	top:14px;
+	top:12px;
 	padding:1px;
 	cursor:pointer;
 }
