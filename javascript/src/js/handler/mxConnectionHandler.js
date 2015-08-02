@@ -394,8 +394,12 @@ mxConnectionHandler.prototype.setEnabled = function(enabled)
  * Function: isCreateTarget
  * 
  * Returns <createTarget>.
+ *
+ * Parameters:
+ *
+ * evt - Current active native pointer event.
  */
-mxConnectionHandler.prototype.isCreateTarget = function()
+mxConnectionHandler.prototype.isCreateTarget = function(evt)
 {
 	return this.createTarget;
 };
@@ -544,7 +548,7 @@ mxConnectionHandler.prototype.createMarker = function()
 						cell = null;
 						
 						// Enables create target inside groups
-						if (this.isCreateTarget())
+						if (this.isCreateTarget(me.getEvent()))
 						{
 							this.error = null;
 						}
@@ -556,7 +560,7 @@ mxConnectionHandler.prototype.createMarker = function()
 				cell = null;
 			}
 		}
-		else if (this.isConnecting() && !this.isCreateTarget() &&
+		else if (this.isConnecting() && !this.isCreateTarget(me.getEvent()) &&
 				!this.graph.allowDanglingEdges)
 		{
 			this.error = '';
@@ -1685,7 +1689,7 @@ mxConnectionHandler.prototype.getEdgeWidth = function(valid)
  */
 mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget)
 {
-	if (target != null || this.isCreateTarget() || this.graph.allowDanglingEdges)
+	if (target != null || this.isCreateTarget(evt) || this.graph.allowDanglingEdges)
 	{
 		// Uses the common parent of source and target or
 		// the default parent to insert the edge
@@ -1696,7 +1700,7 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 		model.beginUpdate();
 		try
 		{
-			if (source != null && target == null && this.isCreateTarget())
+			if (source != null && target == null && this.isCreateTarget(evt))
 			{
 				target = this.createTargetVertex(evt, source);
 				
