@@ -895,7 +895,7 @@ Sidebar.prototype.addMiscPalette = function(expand)
  			'<ul><li>Value 1</li><li>Value 2</li><li>Value 3</li></ul>', 'Unordered List'),
 	 	this.createVertexTemplateEntry('text;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
  			'<ol><li>Value 1</li><li>Value 2</li><li>Value 3</li></ol>', 'Ordered List'),
-	 	this.createVertexTemplateEntry('text;html=1;fillColor=#ffffff;overflow=fill;', 280, 160,
+	 	this.createVertexTemplateEntry('text;html=1;fillColor=#ffffff;overflow=fill;rounded=0;', 280, 160,
  			'<table border="1" width="100%" height="100%" cellpadding="4" style="width:100%;height:100%;border-collapse:collapse;">' +
  			'<tr style="background-color:#A7C942;color:#ffffff;border:1px solid #98bf21;"><th align="left">Title 1</th><th align="left">Title 2</th><th align="left">Title 3</th></tr>' +
  			'<tr style="border:1px solid #98bf21;"><td>Value 1</td><td>Value 2</td><td>Value 3</td></tr>' +
