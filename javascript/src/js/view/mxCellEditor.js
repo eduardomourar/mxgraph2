@@ -559,7 +559,8 @@ mxCellEditor.prototype.resize = function()
 			// Needed for word wrap inside text blocks with oversize lines to match the final result where
 	 		// the width of the longest line is used as the reference for text alignment in the cell
 	 		// TODO: Fix word wrapping preview for edge labels in helloworld.html
-			if (this.graph.isWrapping(state.cell) && (this.bounds.width >= 2 || this.bounds.height >= 2))
+			if (this.graph.isWrapping(state.cell) && (this.bounds.width >= 2 || this.bounds.height >= 2) &&
+				this.textarea.innerHTML != this.getEmptyLabelText())
 			{
 				this.textarea.style.whiteSpace = 'normal';
 				
