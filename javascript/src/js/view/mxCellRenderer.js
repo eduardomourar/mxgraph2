@@ -1304,20 +1304,16 @@ mxCellRenderer.prototype.redraw = function(state, force, rendering)
 	
 	if (state.shape != null && (rendering == null || rendering))
 	{
-		if (!state.view.graph.isEditing(state.cell))
-		{
-			this.redrawLabel(state, shapeChanged);
-		}
-		
+		this.redrawLabel(state, shapeChanged);
 		this.redrawCellOverlays(state, shapeChanged);
 		this.redrawControl(state, shapeChanged);
 	}
 };
 
 /**
- * Function: redrawLabel
+ * Function: redrawShape
  * 
- * Redraws the label for the given cell state.
+ * Redraws the shape for the given cell state.
  * 
  * Parameters:
  * 
