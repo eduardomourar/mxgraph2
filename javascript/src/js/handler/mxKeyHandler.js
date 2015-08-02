@@ -261,7 +261,7 @@ mxKeyHandler.prototype.isControlDown = function(evt)
  */
 mxKeyHandler.prototype.getFunction = function(evt)
 {
-	if (evt != null)
+	if (evt != null && !mxEvent.isAltDown(evt))
 	{
 		if (this.isControlDown(evt))
 		{
