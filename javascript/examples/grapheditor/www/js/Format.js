@@ -821,7 +821,7 @@ BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setChecked
 /**
  * The string 'null' means use null in values.
  */
-BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, enabledValue, disabledValue, fn, action)
+BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, enabledValue, disabledValue, fn, action, stopEditing)
 {
 	enabledValue = (enabledValue != null) ? ((enabledValue == 'null') ? null : enabledValue) : '1';
 	disabledValue = (disabledValue != null) ? ((disabledValue == 'null') ? null : disabledValue) : '0';
@@ -843,6 +843,11 @@ BaseFormatPanel.prototype.createCellOption = function(label, key, defaultValue, 
 		return null;
 	}, function(checked)
 	{
+		if (stopEditing)
+		{
+			graph.stopEditing();
+		}
+		
 		if (action != null)
 		{
 			action.funct();
@@ -1411,7 +1416,7 @@ ArrangePanel.prototype.addGroupOps = function(div)
 			ui.actions.get('ungroup').funct();
 		})
 		
-		btn.setAttribute('title', 'Ctrl+Shift+G');
+		btn.setAttribute('title', 'Ctrl+Shift+U');
 		btn.style.width = '202px';
 		btn.style.marginBottom = '2px';
 		div.appendChild(btn);
@@ -2074,6 +2079,9 @@ TextFormatPanel.prototype.addFont = function(container)
 	var stylePanel2 = stylePanel.cloneNode(false);
 	stylePanel2.style.marginLeft = '-3px';
 	var fontStyleItems = this.editorUi.toolbar.addItems(['bold', 'italic', 'underline'], stylePanel2, true);
+	fontStyleItems[0].setAttribute('title', mxResources.get('bold') + ' (' + this.editorUi.actions.get('bold').shortcut + ')');
+	fontStyleItems[1].setAttribute('title', mxResources.get('italic') + ' (' + this.editorUi.actions.get('italic').shortcut + ')');
+	fontStyleItems[2].setAttribute('title', mxResources.get('underline') + ' (' + this.editorUi.actions.get('underline').shortcut + ')');
 	
 	var verticalItem = this.editorUi.toolbar.addItems(['vertical'], stylePanel2, true)[0];
 	
@@ -2441,7 +2449,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	extraPanel.style.paddingBottom = '4px';
 	
 	// LATER: Fix toggle using '' instead of 'null'
-	var wwOpt = this.createCellOption(mxResources.get('wordWrap'), mxConstants.STYLE_WHITE_SPACE, null, 'wrap', 'null');
+	var wwOpt = this.createCellOption(mxResources.get('wordWrap'), mxConstants.STYLE_WHITE_SPACE, null, 'wrap', 'null', null, null, true);
 	wwOpt.style.fontWeight = 'bold';
 	
 	// Word wrap in edge labels only supported via labelWidth style
@@ -2513,8 +2521,8 @@ TextFormatPanel.prototype.addFont = function(container)
 	{
 		var insertPanel = stylePanel.cloneNode(false);
 		insertPanel.style.paddingLeft = '0px';
-		var inserBtns = this.editorUi.toolbar.addItems(['link', 'image'], insertPanel, true);
-		
+		var insertBtns = this.editorUi.toolbar.addItems(['link', 'image'], insertPanel, true);
+
 		var btns = [
 		        this.editorUi.toolbar.addButton('geSprite-horizontalrule', mxResources.get('insertHorizontalRule'),
 				function()
@@ -2525,7 +2533,7 @@ TextFormatPanel.prototype.addFont = function(container)
 				{
 					this.editorUi.menus.addInsertTableItem(menu);
 				}))];
-		this.styleButtons(inserBtns);
+		this.styleButtons(insertBtns);
 		this.styleButtons(btns);
 		
 		var wrapper2 = this.createPanel();
