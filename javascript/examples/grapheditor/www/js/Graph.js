@@ -2069,6 +2069,9 @@ if (typeof mxVertexHandler != 'undefined')
 	{
 		// Workaround for bad vertical cell editor position
 		mxCellEditor.prototype.verticalOffset = -2;
+
+		// Workaround for border in empty placeholder
+		mxCellEditor.prototype.emptyLabelText = '<div style="border:transparent;><br></div>';
 		
 		/**
 		 * HTML in-place editor
