@@ -227,11 +227,12 @@ Toolbar.prototype.createTextToolbar = function()
 		this.sizeMenu.getElementsByTagName('img')[0].style.top = '5px';
 	}
 	
-	var elts = this.addItems(['-', 'undo', 'redo']);
+	var elts = this.addItems(['-', 'undo', 'redo','-', 'bold', 'italic', 'underline']);
 	elts[1].setAttribute('title', mxResources.get('undo') + ' (' + this.editorUi.actions.get('undo').shortcut + ')');
 	elts[2].setAttribute('title', mxResources.get('redo') + ' (' + this.editorUi.actions.get('redo').shortcut + ')');
-	
-	this.addItems(['-', 'bold', 'italic', 'underline']);
+	elts[4].setAttribute('title', mxResources.get('bold') + ' (' + this.editorUi.actions.get('bold').shortcut + ')');
+	elts[5].setAttribute('title', mxResources.get('italic') + ' (' + this.editorUi.actions.get('italic').shortcut + ')');
+	elts[6].setAttribute('title', mxResources.get('underline') + ' (' + this.editorUi.actions.get('underline').shortcut + ')');
 
 	// KNOWN: Lost focus after click on submenu with text (not icon) in quirks and IE8. This is because the TD seems
 	// to catch the focus on click in these browsers. NOTE: Workaround in mxPopupMenu for icon items (without text).
@@ -343,6 +344,14 @@ Toolbar.prototype.createTextToolbar = function()
 	this.addButton('geIcon geSprite geSprite-code', mxResources.get('html'), function()
 	{
 		graph.cellEditor.toggleViewMode();
+		
+		if (graph.cellEditor.textarea.innerHTML.length > 0 && (graph.cellEditor.textarea.innerHTML != '&nbsp;' || !graph.cellEditor.clearOnChange))
+		{
+			window.setTimeout(function()
+			{
+				document.execCommand('selectAll', false, null);
+			});
+		}
 	});
 	
 	this.addSeparator();
