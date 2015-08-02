@@ -196,6 +196,13 @@ mxCellEditor.prototype.textNode = '';
 mxCellEditor.prototype.zIndex = 5;
 
 /**
+ * Variable: verticalOffset
+ * 
+ * Specifies a global vertical offset. Default is 0.
+ */
+mxCellEditor.prototype.verticalOffset = 0;
+
+/**
  * Variable: minResize
  * 
  * Defines the minimum width and height to be used in <resize>. Default is 0x20px.
@@ -608,7 +615,7 @@ mxCellEditor.prototype.resize = function()
 			else
 			{			
 				this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * (this.bounds.width - (ow + 1) * scale) + ow * (scale - 1) * 0.5 + (m.x + 0.5) * 2)) + 'px';
-				this.textarea.style.top = Math.max(0, Math.ceil(this.bounds.y - m.y * (this.bounds.height - (oh + 0.5) * scale) + oh * (scale - 1) * 0.5 + Math.abs(m.y + 0.5) * 1)) + 'px';
+				this.textarea.style.top = Math.max(0, Math.ceil(this.bounds.y - m.y * (this.bounds.height - (oh + 0.5) * scale) + oh * (scale - 1) * 0.5 + Math.abs(m.y + 0.5) * 1) + this.verticalOffset) + 'px';
 			}
 	 	}
 
