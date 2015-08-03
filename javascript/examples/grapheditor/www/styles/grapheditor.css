@@ -51,6 +51,20 @@
 	opacity:0.8;
 	filter:alpha(opacity=80);
 }
+.geStatusAlert {
+	white-space:nowrap;
+	margin-top:-5px;
+	font-size:11px;
+	padding:4px 6px 4px 6px;
+	background-color:#f2dede;
+	border:1px solid #ebccd1;
+	color:#a94442 !important;
+	border-radius:3px;
+}
+.geStatusAlert:hover {
+	background-color:#f1d8d8;
+	border-color:#d6b2b8;
+}
 .geAlert {
 	position:absolute;
 	white-space:nowrap;
