@@ -390,29 +390,23 @@ mxCellEditor.prototype.installListeners = function(elt)
 	{
 		if (this.editingCell != null && this.autoSize && !mxEvent.isConsumed(evt))
 		{
-			if (evtName == 'input')
+			// Asynchronous is needed for keydown and shows better results for input events overall
+			// (ie non-blocking and cases where the offsetWidth/-Height was wrong at this time)
+			if (this.resizeThread != null)
 			{
+				window.clearTimeout(this.resizeThread);
+			}
+			
+			this.resizeThread = window.setTimeout(mxUtils.bind(this, function()
+			{
+				this.resizeThread = null;
 				this.resize();
-			}
-			else
-			{
-				// Asynchronous is needed for keydown and shows better results for not blocking input events
-				if (this.resizeThread != null)
-				{
-					window.clearTimeout(this.resizeThread);
-				}
-				
-				this.resizeThread = window.setTimeout(mxUtils.bind(this, function()
-				{
-					this.resizeThread = null;
-					this.resize();
-				}), 0);
-			}
+			}), 0);
 		}
 	});
 	
 	mxEvent.addListener(elt, evtName, resizeHandler);
-	
+
 	if (document.documentMode >= 9)
 	{
 		mxEvent.addListener(elt, 'DOMNodeRemoved', resizeHandler);
@@ -772,10 +766,7 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 			if (this.isSelectText() && this.textarea.innerHTML.length > 0 &&
 				(this.textarea.innerHTML != this.getEmptyLabelText() || !this.clearOnChange))
 			{
-				window.setTimeout(function()
-				{
-					document.execCommand('selectAll', false, null);
-				}, 0);
+				document.execCommand('selectAll', false, null);
 			}
 		}
 	}
