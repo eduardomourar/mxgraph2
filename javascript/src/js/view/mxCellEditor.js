@@ -174,12 +174,13 @@ mxCellEditor.prototype.selectText = true;
 /**
  * Variable: emptyLabelText
  * 
- * Text to be displayed for empty labels. Default is '&nbsp;'. This can be set
- * to eg. "[Type Here]" to easier visualize editing of empty labels. The
- * value is only displayed before the first keystroke and is never used
- * as the actual editing value.
+ * Text to be displayed for empty labels. Default is '' or '<br>' in Firefox as
+ * a workaround for the missing cursor bug for empty content editable. This can
+ * be set to eg. "[Type Here]" to easier visualize editing of empty labels. The
+ * value is only displayed before the first keystroke and is never used as the
+ * actual editing value.
  */
-mxCellEditor.prototype.emptyLabelText = '<div><br></div>';
+mxCellEditor.prototype.emptyLabelText = (mxClient.IS_FF) ? '<br>' : '';
 
 /**
  * Variable: textNode
@@ -266,7 +267,8 @@ mxCellEditor.prototype.getInitialValue = function(state, trigger)
 	var result = mxUtils.htmlEntities(this.graph.getEditingValue(state.cell, trigger), false);
 	
     // Workaround for trailing line breaks being ignored in the editor
-	if (!mxClient.IS_QUIRKS && document.documentMode != 8)
+	if (!mxClient.IS_QUIRKS && document.documentMode != 8 && document.documentMode != 9 &&
+		document.documentMode != 10)
 	{
 		result = mxUtils.replaceTrailingNewlines(result, '<div><br></div>');
 	}
@@ -380,27 +382,35 @@ mxCellEditor.prototype.installListeners = function(elt)
 	mxEvent.addListener(elt, (!mxClient.IS_IE11 && !mxClient.IS_IE) ? 'input' : 'keyup', keyupHandler);
 	mxEvent.addListener(elt, 'cut', keyupHandler);
 	mxEvent.addListener(elt, 'paste', keyupHandler);
+
+	// Adds automatic resizing of the textbox while typing using input, keyup and/or DOM change events
+	var evtName = (!mxClient.IS_IE11 && !mxClient.IS_IE) ? 'input' : 'keydown';
 	
 	var resizeHandler = mxUtils.bind(this, function(evt)
 	{
 		if (this.editingCell != null && this.autoSize && !mxEvent.isConsumed(evt))
 		{
-			// Asynchronous is needed for keydown and shows better results for not blocking input events
-			if (this.resizeThread != null)
+			if (evtName == 'input')
 			{
-				window.clearTimeout(this.resizeThread);
-			}
-			
-			this.resizeThread = window.setTimeout(mxUtils.bind(this, function()
-			{
-				this.resizeThread = null;
 				this.resize();
-			}), 0);
+			}
+			else
+			{
+				// Asynchronous is needed for keydown and shows better results for not blocking input events
+				if (this.resizeThread != null)
+				{
+					window.clearTimeout(this.resizeThread);
+				}
+				
+				this.resizeThread = window.setTimeout(mxUtils.bind(this, function()
+				{
+					this.resizeThread = null;
+					this.resize();
+				}), 0);
+			}
 		}
 	});
 	
-	// Adds automatic resizing of the textbox while typing using input, keyup and/or DOM change events
-	var evtName = (!mxClient.IS_IE11 && !mxClient.IS_IE) ? 'input' : 'keydown';
 	mxEvent.addListener(elt, evtName, resizeHandler);
 	
 	if (document.documentMode >= 9)
@@ -575,8 +585,9 @@ mxCellEditor.prototype.resize = function()
 			}
 			else
 			{
+				// KNOWN: Trailing cursor in IE9 quirks mode is not visible
 				this.textarea.style.whiteSpace = 'nowrap';
-				this.textarea.style.width = '1px';
+				this.textarea.style.width = '';
 			}
 			
 			// LATER: Keep in visible area, add fine tuning for pixel precision
@@ -589,7 +600,7 @@ mxCellEditor.prototype.resize = function()
 			
 			var ow = this.textarea.scrollWidth;
 			var oh = this.textarea.scrollHeight;
-
+			
 			// TODO: Update CSS width and height if smaller than minResize or remove minResize
 			if (this.minResize != null)
 			{
@@ -729,15 +740,6 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 			this.clearOnChange = this.textarea.innerHTML == this.getEmptyLabelText();
 		}
 
-		if (this.autoSize && (this.graph.model.isEdge(state.cell) || state.style[mxConstants.STYLE_OVERFLOW] != 'fill'))
-		{
-			// Workaround for initial offsetHeight not ready for heading
-			window.setTimeout(mxUtils.bind(this, function()
-			{
-				this.resize();
-			}), 0);
-		}
-		
 		this.graph.container.appendChild(this.textarea);
 		
 		// Update this after firing all potential events that could update the cleanOnChange flag
@@ -749,6 +751,15 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		{
 			this.textNode = state.text.node;
 			this.textNode.style.visibility = 'hidden';
+		}
+
+		// Workaround for initial offsetHeight not ready for heading in markup
+		if (this.autoSize && (this.graph.model.isEdge(state.cell) || state.style[mxConstants.STYLE_OVERFLOW] != 'fill'))
+		{
+			window.setTimeout(mxUtils.bind(this, function()
+			{
+				this.resize();
+			}), 0);
 		}
 		
 		this.resize();

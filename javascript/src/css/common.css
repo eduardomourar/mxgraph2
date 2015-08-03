@@ -14,6 +14,7 @@ div.mxRubberband {
 	overflow: visible;
 	word-wrap: normal;
 	border-width: 0;
+	min-width: 1px;
 	resize: none;
 	padding: 0px;
 	margin: 0px;
