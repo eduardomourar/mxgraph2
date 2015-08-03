@@ -2740,6 +2740,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindControlKey(9, function() { graph.selectParentCell(); }); // Ctrl+Tab
 	keyHandler.bindControlShiftKey(9, function() { graph.selectChildCell(); }); // Ctrl+Shift+Tab
 	keyHandler.bindAction(8, false, 'delete'); // Backspace
+	keyHandler.bindAction(8, true, 'deleteAll'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
 	keyHandler.bindAction(46, true, 'deleteAll'); // Ctrl+Delete
 	keyHandler.bindAction(48, true, 'actualSize'); // Ctrl+0
