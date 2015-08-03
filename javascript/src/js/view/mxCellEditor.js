@@ -817,10 +817,10 @@ mxCellEditor.prototype.stopEditing = function(cancel)
 			this.clearOnChange = false;
 		}
 		
-		if (this.textarea.innerHTML != initial)
+		if (state != null && this.textarea.innerHTML != initial)
 		{
-			var value = (state != null) ? this.getCurrentValue(state) : null;
-
+			var value = this.getCurrentValue(state);
+			
 			if (value != null)
 			{
 				this.applyValue(state, value);
