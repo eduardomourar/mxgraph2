@@ -258,8 +258,12 @@ mxText.prototype.paint = function(c, update)
 			val =  mxUtils.htmlEntities(val, false);
 		}
 		
+		if (fmt == 'html' && !mxUtils.isNode(this.value))
+		{
+			val = mxUtils.replaceTrailingNewlines(val, '<div><br></div>');			
+		}
+		
 		// Handles trailing newlines to make sure they are visible in rendering output
-		val = mxUtils.replaceTrailingNewlines(val, '<div><br></div>');
 		val = (!mxUtils.isNode(this.value) && this.replaceLinefeeds && fmt == 'html') ?
 			val.replace(/\n/g, '<br/>') : val;
 			
