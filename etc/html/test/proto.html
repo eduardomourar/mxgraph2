@@ -35,6 +35,7 @@
 				if (evt.data.length > 0)
 				{
 					var msg = JSON.parse(evt.data);
+					console.log('msg', msg);
 					
 					if (msg.event == 'init')
 					{
