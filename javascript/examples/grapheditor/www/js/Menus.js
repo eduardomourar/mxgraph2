@@ -127,7 +127,7 @@ Menus.prototype.init = function()
 		{
 			this.styleChange(menu, fontsize, [mxConstants.STYLE_FONTSIZE], [fontsize], null, parent, function()
 			{
-				var tmp = this.cellEditor.textarea.getElementsByTagName('font');
+				var tmp = graph.cellEditor.textarea.getElementsByTagName('font');
 				var oldTags = [];
 				
 				for (var i = 0; i < tmp.length; i++)
@@ -139,7 +139,7 @@ Menus.prototype.init = function()
 				document.execCommand('fontSize', false, '3');
 				
 				// Sets size of new image
-				var newTags = this.cellEditor.textarea.getElementsByTagName('font');
+				var newTags = graph.cellEditor.textarea.getElementsByTagName('font');
 				
 				if (newTags.length == oldTags.length + 1)
 				{
