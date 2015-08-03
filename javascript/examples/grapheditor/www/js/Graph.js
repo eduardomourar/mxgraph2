@@ -2205,15 +2205,19 @@ if (typeof mxVertexHandler != 'undefined')
 					graph.escape();
 					graph.startEditing();
 
+					// Workaround for FF where char is lost of cursor is placed before char
 					if (mxClient.IS_FF)
 					{
 						var ce = graph.cellEditor;
+						ce.textarea.innerHTML = String.fromCharCode(evt.which);
 
-						// Initial keystroke is lost in FF
-						if (ce.textarea.style.display != 'none')
-						{
-							ce.textarea.innerHTML = String.fromCharCode(evt.which);
-						}
+						// Moves cursor to end of textarea
+						var range = document.createRange();
+						range.selectNodeContents(ce.textarea);
+						range.collapse(false);
+						var sel = window.getSelection();
+						sel.removeAllRanges();
+						sel.addRange(range);
 					}
 				}
 			}));
