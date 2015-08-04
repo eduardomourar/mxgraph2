@@ -1511,16 +1511,22 @@ EditorUi.prototype.updateDocumentTitle = function()
  */
 EditorUi.prototype.redo = function()
 {
-	var graph = this.editor.graph;
-	
-	if (graph.isEditing())
+	try
 	{
-		document.execCommand('redo', false, null);
+		var graph = this.editor.graph;
+		
+		if (graph.isEditing())
+		{
+			document.execCommand('redo', false, null);
+		}
+		else
+		{
+			this.editor.undoManager.redo();
+		}
 	}
-	else
+	catch (e)
 	{
-		graph.stopEditing(false);
-		this.editor.undoManager.redo();
+		// ignore all errors
 	}
 };
 
@@ -1528,26 +1534,32 @@ EditorUi.prototype.redo = function()
  * Returns the URL for a copy of this editor with no state.
  */
 EditorUi.prototype.undo = function()
-{	
-	var graph = this.editor.graph;
-
-	if (graph.isEditing())
+{
+	try
 	{
-		// Stops editing and executes undo on graph if native undo
-		// does not affect current editing value
-		var value = graph.cellEditor.textarea.innerHTML;
-		document.execCommand('undo', false, null);
-
-		if (value == graph.cellEditor.textarea.innerHTML)
+		var graph = this.editor.graph;
+	
+		if (graph.isEditing())
 		{
-			graph.stopEditing(true);
+			// Stops editing and executes undo on graph if native undo
+			// does not affect current editing value
+			var value = graph.cellEditor.textarea.innerHTML;
+			document.execCommand('undo', false, null);
+	
+			if (value == graph.cellEditor.textarea.innerHTML)
+			{
+				graph.stopEditing(true);
+				this.editor.undoManager.undo();
+			}
+		}
+		else
+		{
 			this.editor.undoManager.undo();
 		}
 	}
-	else
+	catch (e)
 	{
-		graph.stopEditing(true);
-		this.editor.undoManager.undo();
+		// ignore all errors
 	}
 };
 
