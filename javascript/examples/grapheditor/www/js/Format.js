@@ -2555,49 +2555,91 @@ TextFormatPanel.prototype.addFont = function(container)
 		        this.editorUi.toolbar.addButton('geSprite-insertcolumnbefore', mxResources.get('insertColumnBefore'),
 				function()
 				{
-		        	if (currentTable != null)
-		        	{
-		        		graph.selectNode(graph.insertColumn(currentTable, (tableCell != null) ? tableCell.cellIndex : 0));
-		        	}
+					try
+					{
+			        	if (currentTable != null)
+			        	{
+			        		graph.selectNode(graph.insertColumn(currentTable, (tableCell != null) ? tableCell.cellIndex : 0));
+			        	}
+					}
+					catch (e)
+					{
+						alert(e);
+					}
 				}, tablePanel),
 				this.editorUi.toolbar.addButton('geSprite-insertcolumnafter', mxResources.get('insertColumnAfter'),
 				function()
 				{
-					if (currentTable != null)
-		        	{
-						graph.selectNode(graph.insertColumn(currentTable, (tableCell != null) ? tableCell.cellIndex + 1 : -1));
-		        	}
+					try
+					{
+						if (currentTable != null)
+			        	{
+							graph.selectNode(graph.insertColumn(currentTable, (tableCell != null) ? tableCell.cellIndex + 1 : -1));
+			        	}
+					}
+					catch (e)
+					{
+						alert(e);
+					}
 				}, tablePanel),
 				this.editorUi.toolbar.addButton('geSprite-deletecolumn', mxResources.get('deleteColumn'),
 				function()
 				{
-					if (currentTable != null && tableCell != null)
+					try
 					{
-						graph.deleteColumn(currentTable, tableCell.cellIndex);
+						if (currentTable != null && tableCell != null)
+						{
+							graph.deleteColumn(currentTable, tableCell.cellIndex);
+						}
+					}
+					catch (e)
+					{
+						alert(e);
 					}
 				}, tablePanel),
 				this.editorUi.toolbar.addButton('geSprite-insertrowbefore', mxResources.get('insertRowBefore'),
 				function()
 				{
-					if (currentTable != null && tableRow != null)
+					try
 					{
-						graph.selectNode(graph.insertRow(currentTable, tableRow.sectionRowIndex));
+						if (currentTable != null && tableRow != null)
+						{
+							graph.selectNode(graph.insertRow(currentTable, tableRow.sectionRowIndex));
+						}
+					}
+					catch (e)
+					{
+						alert(e);
 					}
 				}, tablePanel),
 				this.editorUi.toolbar.addButton('geSprite-insertrowafter', mxResources.get('insertRowAfter'),
 				function()
 				{
-					if (currentTable != null && tableRow != null)
+					try
 					{
-						graph.selectNode(graph.insertRow(currentTable, tableRow.sectionRowIndex + 1));
+						if (currentTable != null && tableRow != null)
+						{
+							graph.selectNode(graph.insertRow(currentTable, tableRow.sectionRowIndex + 1));
+						}
+					}
+					catch (e)
+					{
+						alert(e);
 					}
 				}, tablePanel),
 				this.editorUi.toolbar.addButton('geSprite-deleterow', mxResources.get('deleteRow'),
 				function()
 				{
-					if (currentTable != null && tableRow != null)
+					try
 					{
-						graph.deleteRow(currentTable, tableRow.sectionRowIndex);
+						if (currentTable != null && tableRow != null)
+						{
+							graph.deleteRow(currentTable, tableRow.sectionRowIndex);
+						}
+					}
+					catch (e)
+					{
+						alert(e);
 					}
 				}, tablePanel)];
 		this.styleButtons(btns);
