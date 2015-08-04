@@ -363,7 +363,7 @@ EditorUi = function(editor, container)
 	{
 		var state = graph.view.getState(cell);
 		
-		if (cell != null)
+		if (state != null)
 		{
 			// Ignores default styles
 			var clone = cell.clone();
