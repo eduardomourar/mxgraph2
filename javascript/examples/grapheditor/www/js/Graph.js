@@ -2068,7 +2068,7 @@ if (typeof mxVertexHandler != 'undefined')
 	(function()
 	{
 		// Workaround for bad vertical cell editor position
-		mxCellEditor.prototype.verticalOffset = -1;
+		mxCellEditor.prototype.verticalOffset = (mxClient.IS_IE11) ? -2 : -1;
 		
 		/**
 		 * HTML in-place editor
