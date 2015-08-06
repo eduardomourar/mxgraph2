@@ -2287,20 +2287,6 @@ if (typeof mxVertexHandler != 'undefined')
 				this.textarea.style.outline = 'none';
 				this.textarea.style.border = '';
 			}
-			
-			// Hides handles on selected cell
-			this.currentStateHandle = this.graph.selectionCellsHandler.getHandler(cell);
-			
-			if (this.currentStateHandle != null && this.currentStateHandle.setHandlesVisible != null)
-			{
-				this.currentStateHandle.setHandlesVisible(false);
-
-				// Hides the bounding box while editing edge labels
-				if (this.currentStateHandle.selectionBorder != null)
-				{
-					this.currentStateHandle.selectionBorder.node.style.display = 'none';
-				}
-			}
 		};
 
 		/**
@@ -2415,12 +2401,6 @@ if (typeof mxVertexHandler != 'undefined')
 		mxCellEditor.prototype.resize = function(state, trigger)
 		{
 			var state = this.graph.getView().getState(this.editingCell);
-			
-			// Workaround for visible handles after zoom
-			if (this.currentStateHandle != null && this.currentStateHandle.setHandlesVisible != null)
-			{
-				this.currentStateHandle.setHandlesVisible(false);
-			}
 			
 			if (this.codeViewMode && state != null)
 			{
