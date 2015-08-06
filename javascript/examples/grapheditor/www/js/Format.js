@@ -4172,15 +4172,6 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 	
 	div.appendChild(this.createTitle(mxResources.get('options')));
 
-	// Copy connect
-	div.appendChild(this.createOption(mxResources.get('copyConnect'), function()
-	{
-		return graph.connectionHandler.isCreateTarget();
-	}, function(checked)
-	{
-		graph.connectionHandler.setCreateTarget(checked);
-	}));
-
 	var bg = this.createColorOption(mxResources.get('background'), function()
 	{
 		return graph.background;
@@ -4226,6 +4217,15 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 
 	bg.appendChild(btn);
 	div.appendChild(bg);
+
+	// Copy connect
+	div.appendChild(this.createOption(mxResources.get('copyConnect'), function()
+	{
+		return graph.connectionHandler.isCreateTarget();
+	}, function(checked)
+	{
+		graph.connectionHandler.setCreateTarget(checked);
+	}));
 
 	return div;
 };
