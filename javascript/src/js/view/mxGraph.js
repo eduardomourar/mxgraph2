@@ -4637,7 +4637,8 @@ mxGraph.prototype.cellsRemoved = function(cells)
 			for (var i = 0; i < cells.length; i++)
 			{
 				// Disconnects edges which are not in cells
-				var edges = this.getConnections(cells[i]);
+				//var edges = this.getConnections(cells[i]);
+				var edges = this.getAllEdges([cells[i]]);
 				
 				for (var j = 0; j < edges.length; j++)
 				{
@@ -4653,11 +4654,24 @@ mxGraph.prototype.cellsRemoved = function(cells)
 									
 							if (state != null)
 							{
+								// Checks which side of the edge is being disconnected
+								var tmp = state.getVisibleTerminal(true);
+								var source = false;
+								
+								while (tmp != null)
+								{
+									if (cells[i] == tmp)
+									{
+										source = true;
+										break;
+									}
+									
+									tmp = this.model.getParent(tmp);
+								}
+								
 								geo = geo.clone();
-								var source = state.getVisibleTerminal(true) == cells[i];
 								var pts = state.absolutePoints;
 								var n = (source) ? 0 : pts.length - 1;
-
 								geo.setTerminalPoint(
 										new mxPoint(pts[n].x / scale - tr.x,
 											pts[n].y / scale - tr.y), source);

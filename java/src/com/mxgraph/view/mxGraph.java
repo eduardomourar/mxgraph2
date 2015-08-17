@@ -2874,9 +2874,22 @@ public class mxGraph extends mxEventSource
 
 								if (state != null)
 								{
+									// Checks which side of the edge is being disconnected
+									Object tmp = state.getVisibleTerminal(true);
+									boolean source = false;
+									
+									while (tmp != null)
+									{
+										if (cells[i] == tmp)
+										{
+											source = true;
+											break;
+										}
+										
+										tmp = model.getParent(tmp);
+									}
+									
 									geo = (mxGeometry) geo.clone();
-									boolean source = state
-											.getVisibleTerminal(true) == cells[i];
 									int n = (source) ? 0 : state
 											.getAbsolutePointCount() - 1;
 									mxPoint pt = state.getAbsolutePoint(n);

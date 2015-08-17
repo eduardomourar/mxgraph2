@@ -1,3 +1,4 @@
+- Fixes mxGraph.cellsRemoved for recursive delete with no edges [Java,JavaScript]
 - Fixes repaint for zoom while editing label in grapheditor
 - Fixes font size in format panel for zoomed text in grapheditor
 - Adds ctrl+connect to copy source terminal in grapheditor
