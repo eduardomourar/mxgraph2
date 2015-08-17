@@ -13,7 +13,7 @@ var mxPerimeter =
 	 * Example:
 	 * 
 	 * (code)
-	 * <add as="perimeter">mxPerimeter.RightAngleRectanglePerimeter</add>
+	 * <add as="perimeter">mxPerimeter.RectanglePerimeter</add>
 	 * (end)
 	 * 
 	 * Or programmatically:
