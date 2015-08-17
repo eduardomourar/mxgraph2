@@ -1442,15 +1442,15 @@ if (typeof mxVertexHandler != 'undefined')
 		// Creates a new edge label with a predefined text
 		var label = new mxCell();
 		label.value = 'Text';
-		label.style = 'text;html=1;resizable=0;'
+		label.style = 'text;html=1;resizable=0;points=[];'
 		label.geometry = new mxGeometry(0, 0, 0, 0);
-		label.connectable = false;
 		label.vertex = true;
 		
 		if (state != null)
 		{
 			label.style += ';align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;'
 			label.geometry.relative = true;
+			label.connectable = false;
 			
 			// Resets the relative location stored inside the geometry
 			var pt2 = this.view.getRelativePoint(state, x, y);
