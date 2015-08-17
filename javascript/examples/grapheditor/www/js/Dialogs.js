@@ -2319,7 +2319,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			try
 			{
 				var index = graph.model.root.getIndex(selectionLayer);
-				graph.removeCells([selectionLayer]);
+				graph.removeCells([selectionLayer], false);
 				
 				// Creates default layer if no layer exists
 				if (graph.model.getChildCount(graph.model.root) == 0)
