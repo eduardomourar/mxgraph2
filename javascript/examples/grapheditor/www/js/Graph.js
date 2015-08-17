@@ -2566,7 +2566,7 @@ if (typeof mxVertexHandler != 'undefined')
 				
 				if (mxUtils.trim(value || '') == '' && geo != null && this.graph.getModel().isEdge(parent) && geo.relative)
 				{
-					this.graph.removeCells([state.cell]);
+					this.graph.removeCells([state.cell], false);
 				}
 			}
 			finally
