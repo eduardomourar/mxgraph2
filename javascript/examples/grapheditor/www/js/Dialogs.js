@@ -2252,7 +2252,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	div.style.marginBottom = '10px';
 	div.style.overflow = 'auto';
 
-	var tbarHeight = (urlParams['ui'] == 'atlas') ? '32px' : '28px';
+	var tbarHeight = (urlParams['ui'] == 'atlas') ? '30px' : '26px';
 	
 	var listDiv = document.createElement('div')
 	listDiv.style.backgroundColor = '#e5e5e5';
@@ -2301,10 +2301,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	}
 	
 	var link = document.createElement('a');
-	link.style.marginTop = '-2px';
-	link.style.padding = '2px';
 	link.className = 'geButton';
-	link.style.cursor = 'pointer';
 	
 	if (mxClient.IS_QUIRKS)
 	{
@@ -2368,6 +2365,43 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 	ldiv.appendChild(insertLink);
 	
+	var renameLink = link.cloneNode();
+	renameLink.innerHTML = '<div class="geSprite geSprite-dots" style="display:inline-block;"></div>';
+	renameLink.setAttribute('title', mxResources.get('rename'));
+	
+	function renameLayer(layer)
+	{
+		if (graph.isEnabled() && layer != null)
+		{
+			var dlg = new FilenameDialog(editorUi, layer.value || mxResources.get('background'), mxResources.get('rename'), mxUtils.bind(this, function(newValue)
+			{
+				if (newValue != null)
+				{
+					graph.getModel().setValue(layer, newValue);
+				}
+			}), mxResources.get('enterName'));
+			editorUi.showDialog(dlg.container, 300, 100, true, true);
+			dlg.init();
+		}
+	};
+	
+	mxEvent.addListener(renameLink, 'click', function(evt)
+	{
+		if (graph.isEnabled())
+		{
+			renameLayer(selectionLayer);
+		}
+		
+		mxEvent.consume(evt);
+	});
+	
+	if (!graph.isEnabled())
+	{
+		renameLink.className = 'geButton mxDisabled';
+	}
+	
+	ldiv.appendChild(renameLink);
+	
 	var duplicateLink = link.cloneNode();
 	duplicateLink.innerHTML = '<div class="geSprite geSprite-duplicate" style="display:inline-block;"></div>';
 	
@@ -2380,7 +2414,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			try
 			{
 				newCell = graph.cloneCells([selectionLayer])[0];
-				newCell.value = mxResources.get('layer') + ' ' + layerCount;
+				newCell.value = mxResources.get('untitledLayer');
 				newCell.setVisible(true);
 				newCell = graph.addCell(newCell, graph.model.root);
 				graph.setDefaultParent(newCell);
@@ -2416,7 +2450,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			
 			try
 			{
-				var cell = graph.addCell(new mxCell(mxResources.get('layer') + ' ' + layerCount), graph.model.root);
+				var cell = graph.addCell(new mxCell(mxResources.get('untitledLayer')), graph.model.root);
 				graph.setDefaultParent(cell);
 			}
 			finally
@@ -2434,6 +2468,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	}
 	
 	ldiv.appendChild(addLink);
+
 	div.appendChild(ldiv);	
 	
 	function refresh()
@@ -2479,7 +2514,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 				if (mxClient.IS_FF)
 				{
 					// LATER: Check what triggers a parse as XML on this in FF after drop
-					evt.dataTransfer.setData('Text', '<layer/>');//child.value || mxResources.get('background'));
+					evt.dataTransfer.setData('Text', '<layer/>');
 				}
 			});
 			
@@ -2560,10 +2595,6 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			{
 				inp.setAttribute('checked', 'checked');
 				inp.defaultChecked = true;
-			}
-			else
-			{
-				mxUtils.setOpacity(ldiv, 50);
 			}
 
 			mxEvent.addListener(inp, 'click', function(evt)
@@ -2659,19 +2690,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 			mxEvent.addListener(ldiv, 'dblclick', function(evt)
 			{
-				if (graph.isEnabled())
-				{
-					var dlg = new FilenameDialog(editorUi, child.value || mxResources.get('background'), mxResources.get('rename'), mxUtils.bind(this, function(newValue)
-					{
-						if (newValue != null)
-						{
-							graph.getModel().setValue(child, newValue);
-						}
-					}), mxResources.get('enterName'));
-					editorUi.showDialog(dlg.container, 300, 100, true, true);
-					dlg.init();
-				}
-				
+				renameLayer(child);
 				mxEvent.consume(evt);
 			});
 
@@ -2708,6 +2727,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		removeLink.setAttribute('title', mxResources.get('removeIt', [selectionLayer.value || mxResources.get('background')]));
 		insertLink.setAttribute('title', mxResources.get('moveSelectionTo', [selectionLayer.value || mxResources.get('background')]));
 		duplicateLink.setAttribute('title', mxResources.get('duplicateIt', [selectionLayer.value || mxResources.get('background')]));
+		renameLink.setAttribute('title', mxResources.get('renameIt', [selectionLayer.value || mxResources.get('background')]));
 		
 		if (graph.isSelectionEmpty())
 		{
@@ -2732,7 +2752,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			insertLink.className = 'geButton';
 		}
 	});
-	
+
 	this.window = new mxWindow(mxResources.get('layers'), div, x, y, w, h, true, true);
 	this.window.destroyOnClose = false;
 	this.window.setMaximizable(false);
