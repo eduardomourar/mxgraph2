@@ -1,3 +1,4 @@
+- Fix mxClient.IS_GC for Safari
 - Handle minResize in mxCellEditor.resize
 
 - Fix center aligned oversize labels in IE8 standards mode
