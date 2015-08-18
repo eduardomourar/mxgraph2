@@ -61,6 +61,7 @@
 					}
 					else if (msg.event == 'export')
 					{
+						console.log('data', msg.data);
 						image.setAttribute('src', msg.data);
 						close();
 					}
