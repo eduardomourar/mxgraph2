@@ -5590,7 +5590,7 @@ mxGraph.prototype.scaleCell = function(cell, dx, dy, recurse)
 		var style = (state != null) ? state.style : this.getCellStyle(cell);
 		
 		geo = geo.clone();
-		geo.scale(dx, dy, state.style[mxConstants.STYLE_ASPECT] == 'fixed');
+		geo.scale(dx, dy, style[mxConstants.STYLE_ASPECT] == 'fixed');
 		
 		if (this.model.isVertex(cell))
 		{
