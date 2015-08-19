@@ -3995,7 +3995,6 @@ DiagramFormatPanel.prototype.init = function()
 
 	if (graph.isEnabled())
 	{
-		this.container.appendChild(this.addDocumentProperties(this.createPanel()));
 		this.container.appendChild(this.addPaperSize(this.createPanel()));
 		this.container.appendChild(this.addStyleOps(this.createPanel()));
 	}
@@ -4010,7 +4009,7 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 	var editor = ui.editor;
 	var graph = editor.graph;
 	
-	div.appendChild(this.createTitle(mxResources.get('view')));	
+	div.appendChild(this.createTitle(mxResources.get('options')));	
 	this.addGridOption(div);
 
 	// Guides
@@ -4071,6 +4070,56 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 			ui.removeListener(this.listener);
 		}
 	}));
+	
+	// Background
+	if (graph.isEnabled())
+	{
+		var bg = this.createColorOption(mxResources.get('background'), function()
+		{
+			return graph.background;
+		}, function(color)
+		{
+			ui.setBackgroundColor(color);
+		}, '#ffffff',
+		{
+			install: function(apply)
+			{
+				this.listener = function()
+				{
+					apply(graph.background);
+				};
+				
+				ui.addListener('backgroundColorChanged', this.listener);
+			},
+			destroy: function()
+			{
+				ui.removeListener(this.listener);
+			}
+		});
+		
+		var btn = mxUtils.button(mxResources.get('image'), function(evt)
+		{
+			var dlg = new BackgroundImageDialog(ui, function(image)
+			{
+				ui.setBackgroundImage(image);
+			});
+			ui.showDialog(dlg.container, 360, 200, true, true);
+			dlg.init();
+			
+			mxEvent.consume(evt);
+		})
+	
+		btn.style.position = 'absolute';
+		btn.className = 'geColorBtn';
+		btn.style.marginTop = '-4px';
+		btn.style.paddingBottom = (document.documentMode == 11 || mxClient.IS_MT) ? '0px' : '2px';
+		btn.style.height = '22px';
+		btn.style.right = (mxClient.IS_QUIRKS) ? '52px' : '72px';
+		btn.style.width = '56px';
+	
+		bg.appendChild(btn);
+		div.appendChild(bg);
+	}
 	
 	return div;
 };
@@ -4166,57 +4215,12 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
  */
 DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 {
+	// Hook for subclassers
 	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
 	
 	div.appendChild(this.createTitle(mxResources.get('options')));
-
-	var bg = this.createColorOption(mxResources.get('background'), function()
-	{
-		return graph.background;
-	}, function(color)
-	{
-		ui.setBackgroundColor(color);
-	}, '#ffffff',
-	{
-		install: function(apply)
-		{
-			this.listener = function()
-			{
-				apply(graph.background);
-			};
-			
-			ui.addListener('backgroundColorChanged', this.listener);
-		},
-		destroy: function()
-		{
-			ui.removeListener(this.listener);
-		}
-	});
-	
-	var btn = mxUtils.button(mxResources.get('image'), function(evt)
-	{
-		var dlg = new BackgroundImageDialog(ui, function(image)
-		{
-			ui.setBackgroundImage(image);
-		});
-		ui.showDialog(dlg.container, 360, 200, true, true);
-		dlg.init();
-		
-		mxEvent.consume(evt);
-	})
-
-	btn.style.position = 'absolute';
-	btn.className = 'geColorBtn';
-	btn.style.marginTop = '-4px';
-	btn.style.paddingBottom = (document.documentMode == 11 || mxClient.IS_MT) ? '0px' : '2px';
-	btn.style.height = '22px';
-	btn.style.right = (mxClient.IS_QUIRKS) ? '52px' : '72px';
-	btn.style.width = '56px';
-
-	bg.appendChild(btn);
-	div.appendChild(bg);
 
 	return div;
 };
