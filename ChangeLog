@@ -1,3 +1,4 @@
+- Sets mxClient.IS_NS, IS_SF and IS_GC to false in Microsoft Edge [JavaScript]
 - Disposes Graphics instance in mxGraphicsCanvas2D.restore [Java]
 - Fixes mxGraph.cellsRemoved for recursive delete with no edges [Java,JavaScript]
 - Fixes repaint for zoom while editing label in grapheditor
