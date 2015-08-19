@@ -4218,30 +4218,6 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 	bg.appendChild(btn);
 	div.appendChild(bg);
 
-	// Copy connect
-	div.appendChild(this.createOption(mxResources.get('copyConnect'), function()
-	{
-		return graph.connectionHandler.isCreateTarget();
-	}, function(checked)
-	{
-		ui.actions.get('copyConnect').funct();
-	},
-	{
-		install: function(apply)
-		{
-			this.listener = function()
-			{
-				apply(graph.connectionHandler.isCreateTarget());
-			};
-			
-			ui.addListener('copyConnectChanged', this.listener);
-		},
-		destroy: function()
-		{
-			ui.removeListener(this.listener);
-		}
-	}));
-
 	return div;
 };
 
