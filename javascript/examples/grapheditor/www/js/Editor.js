@@ -980,11 +980,21 @@ Editor.prototype.initStencilRegistry = function() { };
 							}
 							else if (fname.toLowerCase().substring(fname.length - 3, fname.length) == '.js')
 							{
-								var req = mxUtils.load(fname);
-								
-								if (req != null)
+								try
 								{
-									eval.call(window, req.getText());
+									var req = mxUtils.load(fname);
+									
+									if (req != null)
+									{
+										eval.call(window, req.getText());
+									}
+								}
+								catch (e)
+								{
+									if (window.console != null)
+									{
+										console.log('error in getStencil:', fname);
+									}
 								}
 							}
 							else
@@ -1049,10 +1059,20 @@ Editor.prototype.initStencilRegistry = function() { };
 			
 			if (xmlDoc == null)
 			{
-				var req = mxUtils.load(stencilFile);
-				xmlDoc = req.getXml();
-				mxStencilRegistry.packages[stencilFile] = xmlDoc;
-				install = true;
+				try
+				{
+					var req = mxUtils.load(stencilFile);
+					xmlDoc = req.getXml();
+					mxStencilRegistry.packages[stencilFile] = xmlDoc;
+					install = true;
+				}
+				catch (e)
+				{
+					if (window.console != null)
+					{
+						console.log('error in loadStencilSet:', stencilFile);
+					}
+				}
 			}
 		
 			if (xmlDoc != null && xmlDoc.documentElement != null)
