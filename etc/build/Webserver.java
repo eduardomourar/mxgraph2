@@ -7,17 +7,20 @@ import org.mortbay.jetty.servlet.Context;
 /**
  * Simple webserver for ../../.. (workspace root in etc/build)
  */
-public class Webserver {
+public class Webserver
+{
 
 	public static int DEFAULT_PORT = 8080;
 
 	/**
 	 * Maps the workspace to / on the given port.
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception
+	{
 		int port = DEFAULT_PORT;
 
-		if (args.length > 0) {
+		if (args.length > 0)
+		{
 			port = Integer.parseInt(args[0]);
 		}
 
