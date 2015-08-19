@@ -44,7 +44,7 @@
 						if (data.indexOf('data:image/svg+xml;utf8,') == 0)
 						{
 							iframe.contentWindow.postMessage(JSON.stringify({action: 'load',
-								autosave: 1, xml: data.substring(24)}), '*');
+								autosave: 1, xml: data.substring(data.lastIndexOf(',') + 1)}), '*');
 						}
 						else
 						{
