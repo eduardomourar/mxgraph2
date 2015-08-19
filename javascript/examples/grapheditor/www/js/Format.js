@@ -4224,7 +4224,22 @@ DiagramFormatPanel.prototype.addDocumentProperties = function(div)
 		return graph.connectionHandler.isCreateTarget();
 	}, function(checked)
 	{
-		graph.connectionHandler.setCreateTarget(checked);
+		ui.actions.get('copyConnect').funct();
+	},
+	{
+		install: function(apply)
+		{
+			this.listener = function()
+			{
+				apply(graph.connectionHandler.isCreateTarget());
+			};
+			
+			ui.addListener('copyConnectChanged', this.listener);
+		},
+		destroy: function()
+		{
+			ui.removeListener(this.listener);
+		}
 	}));
 
 	return div;

@@ -613,6 +613,7 @@ Actions.prototype.init = function()
 	action = this.addAction('copyConnect', function()
 	{
 		graph.connectionHandler.setCreateTarget(!graph.connectionHandler.isCreateTarget());
+		ui.fireEvent(new mxEventObject('copyConnectChanged'));
 	});
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.connectionHandler.isCreateTarget(); });
