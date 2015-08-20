@@ -2252,7 +2252,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	div.style.marginBottom = '10px';
 	div.style.overflow = 'auto';
 
-	var tbarHeight = (urlParams['ui'] == 'atlas') ? '30px' : '26px';
+	var tbarHeight = (uiTheme == 'atlas') ? '30px' : '26px';
 	
 	var listDiv = document.createElement('div')
 	listDiv.style.backgroundColor = '#e5e5e5';
@@ -2287,7 +2287,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	ldiv.style.right = '0px';
 	ldiv.style.height = tbarHeight;
 	ldiv.style.overflow = 'hidden';
-	ldiv.style.padding = (urlParams['ui'] == 'atlas') ? '1px' : '4px 0px 3px 0px';
+	ldiv.style.padding = (uiTheme == 'atlas') ? '1px' : '4px 0px 3px 0px';
 	ldiv.style.backgroundColor = 'whiteSmoke';
 	ldiv.style.borderWidth = '1px 0px 0px 0px';
 	ldiv.style.borderColor = '#c3c3c3';
