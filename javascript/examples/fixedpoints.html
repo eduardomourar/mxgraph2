@@ -32,7 +32,10 @@
 			else
 			{
 				// Snaps to points as floating ports are disabled
-				mxConstraintHandler.prototype.snapToPoints = true;
+				mxConstraintHandler.prototype.intersects = function(icon, point, source, existingEdge)
+				{
+					return (!source || existingEdge) || mxUtils.intersects(icon.bounds, point);
+				};
 				
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);

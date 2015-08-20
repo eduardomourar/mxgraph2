@@ -46,13 +46,6 @@ mxConstraintHandler.prototype.graph = null;
 mxConstraintHandler.prototype.enabled = true;
 
 /**
- * Variable: snapToPoints
- * 
- * Specifies if the nearest point should be returned. Default is false.
- */
-mxConstraintHandler.prototype.snapToPoints = false;
-
-/**
  * Variable: highlightColor
  * 
  * Specifies the color for the highlight. Default is <mxConstants.DEFAULT_VALID_COLOR>.
@@ -340,8 +333,7 @@ mxConstraintHandler.prototype.update = function(me, source, existingEdge)
 				var dy = me.getGraphY() - this.focusIcons[i].bounds.getCenterY();
 				var tmp = dx * dx + dy * dy;
 				
-				if ((this.snapToPoints && (!source || existingEdge) ||
-					mxUtils.intersects(this.focusIcons[i].bounds, mouse)) &&
+				if (this.intersects(this.focusIcons[i], mouse, source, existingEdge) &&
 					(minDistSq == null || tmp < minDistSq))
 				{
 					this.currentConstraint = this.constraints[i];
@@ -394,6 +386,16 @@ mxConstraintHandler.prototype.update = function(me, source, existingEdge)
 		this.currentFocus = null;
 		this.currentPoint = null;
 	}
+};
+
+/**
+ * Function: intersects
+ * 
+ * Returns true if the given icon intersects the given point.
+ */
+mxConstraintHandler.prototype.intersects = function(icon, point, source, existingEdge)
+{
+	return mxUtils.intersects(icon.bounds, point);
 };
 
 /**
