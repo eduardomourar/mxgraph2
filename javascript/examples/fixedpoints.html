@@ -31,6 +31,9 @@
 			}
 			else
 			{
+				// Snaps to points as floating ports are disabled
+				mxConstraintHandler.prototype.snapToPoints = true;
+				
 				// Creates the graph inside the given container
 				var graph = new mxGraph(container);
 				graph.setConnectable(true);
