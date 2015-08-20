@@ -2470,7 +2470,7 @@ EditorUi.prototype.save = function(name)
 			if (useLocalStorage)
 			{
 				if (localStorage.getItem(name) != null &&
-					!mxUtils.confirm(mxResources.get('replace', [name])))
+					!mxUtils.confirm(mxResources.get('replaceIt', [name])))
 				{
 					return;
 				}

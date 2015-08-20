@@ -2257,7 +2257,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	};
 
 	// Workaround for event redirection via image tag in quirks and IE8
-	function createArrow(img)
+	function createArrow(img, tooltip)
 	{
 		var arrow = null;
 		
@@ -2289,6 +2289,11 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			arrow.style.height = img.height + 'px';
 		}
 		
+		if (tooltip != null)
+		{
+			arrow.setAttribute('title', tooltip);
+		}
+		
 		mxUtils.setOpacity(arrow, (img == this.refreshTarget) ? 30 : 20);
 		arrow.style.position = 'absolute';
 		arrow.style.cursor = 'crosshair';
@@ -2301,11 +2306,11 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	var currentStyleTarget = null;
 	var activeTarget = false;
 	
-	var arrowUp = createArrow(this.triangleUp);
-	var arrowRight = createArrow(this.triangleRight);
-	var arrowDown = createArrow(this.triangleDown);
-	var arrowLeft = createArrow(this.triangleLeft);
-	var styleTarget = createArrow(this.refreshTarget);
+	var arrowUp = createArrow(this.triangleUp, mxResources.get('connect'));
+	var arrowRight = createArrow(this.triangleRight, mxResources.get('connect'));
+	var arrowDown = createArrow(this.triangleDown, mxResources.get('connect'));
+	var arrowLeft = createArrow(this.triangleLeft, mxResources.get('connect'));
+	var styleTarget = createArrow(this.refreshTarget, mxResources.get('replace'));
 	// Workaround for actual parentNode not being updated in old IE
 	var styleTargetParent = null;
 	var roundSource = createArrow(this.roundDrop);
@@ -2336,6 +2341,12 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	dragSource.createPreviewElement = function(graph)
 	{
 		var elt = dsCreatePreviewElement.apply(this, arguments);
+		
+		// Pass-through events required to tooltip on replace shape
+		if (mxClient.IS_SVG)
+		{
+			elt.style.pointerEvents = 'none';
+		}
 		
 		this.previewElementWidth = elt.style.width;
 		this.previewElementHeight = elt.style.height;
@@ -2446,13 +2457,28 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		var state = graph.view.getState(cell);
 		activeArrow = null;
 		var bbox = null;
-		
+
 		// Time on target
 		if (prev != state)
 		{
 			prev = state;
 			startTime = new Date().getTime();
 			timeOnTarget = 0;
+
+			if (state != null)
+			{
+				this.updateThread = window.setTimeout(function()
+				{
+					dragSource.getDropTarget(graph, x, y, evt);
+				}, 320);
+			}
+			else
+			{
+				if (this.updateThread != null)
+				{
+					window.clearTimeout(this.updateThread);
+				}
+			}
 		}
 		else
 		{
