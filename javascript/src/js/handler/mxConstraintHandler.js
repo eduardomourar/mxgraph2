@@ -46,6 +46,13 @@ mxConstraintHandler.prototype.graph = null;
 mxConstraintHandler.prototype.enabled = true;
 
 /**
+ * Variable: snapToPoints
+ * 
+ * Specifies if the nearest point should be returned. Default is false.
+ */
+mxConstraintHandler.prototype.snapToPoints = false;
+
+/**
  * Variable: highlightColor
  * 
  * Specifies the color for the highlight. Default is <mxConstants.DEFAULT_VALID_COLOR>.
@@ -227,7 +234,7 @@ mxConstraintHandler.prototype.getCellForEvent = function(me)
  * Updates the state of this handler based on the given <mxMouseEvent>.
  * Source is a boolean indicating if the cell is a source or target.
  */
-mxConstraintHandler.prototype.update = function(me, source)
+mxConstraintHandler.prototype.update = function(me, source, existingEdge)
 {
 	if (this.isEnabled() && !this.isEventIgnored(me))
 	{
@@ -333,7 +340,9 @@ mxConstraintHandler.prototype.update = function(me, source)
 				var dy = me.getGraphY() - this.focusIcons[i].bounds.getCenterY();
 				var tmp = dx * dx + dy * dy;
 				
-				if (mxUtils.intersects(this.focusIcons[i].bounds, mouse) && (minDistSq == null || tmp < minDistSq))
+				if ((this.snapToPoints && (!source || existingEdge) ||
+					mxUtils.intersects(this.focusIcons[i].bounds, mouse)) &&
+					(minDistSq == null || tmp < minDistSq))
 				{
 					this.currentConstraint = this.constraints[i];
 					this.currentPoint = this.focusPoints[i];
