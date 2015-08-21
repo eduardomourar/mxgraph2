@@ -2465,19 +2465,21 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			startTime = new Date().getTime();
 			timeOnTarget = 0;
 
+			if (this.updateThread != null)
+			{
+				window.clearTimeout(this.updateThread);
+			}
+			
 			if (state != null)
 			{
 				this.updateThread = window.setTimeout(function()
 				{
-					dragSource.getDropTarget(graph, x, y, evt);
+					if (activeArrow == null)
+					{
+						prev = state;
+						dragSource.getDropTarget(graph, x, y, evt);
+					}
 				}, 320);
-			}
-			else
-			{
-				if (this.updateThread != null)
-				{
-					window.clearTimeout(this.updateThread);
-				}
 			}
 		}
 		else
