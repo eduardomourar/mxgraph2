@@ -2487,6 +2487,19 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			timeOnTarget = new Date().getTime() - startTime;
 		}
 		
+		// Shows drop target icons on selection cell if connector handler is under the mouse
+		if (currentStyleTarget == null && activeArrow == null && graph.getSelectionCount() == 1)
+		{
+			var handler = graph.selectionCellsHandler.getHandler(graph.getSelectionCell());
+			
+			if (handler != null && mxEvent.getSource(evt) == handler.connectorImg)
+			{
+				cell = graph.getSelectionCell();
+				state = graph.view.getState(cell);
+				timeOnTarget = 320;
+			}
+		}
+		
 		// Shift means disabled, delayed on cells with children, shows after 300ms, hides after 2500ms
 		if (timeOnTarget < 2500 && state != null && !mxEvent.isShiftDown(evt) &&
 			// If shape is equal or target has no stroke then add long delay except for images
