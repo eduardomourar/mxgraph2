@@ -137,6 +137,11 @@ Sidebar.prototype.tooltipBorder = 16;
 Sidebar.prototype.tooltipDelay = 300;
 
 /**
+ * Specifies the delay for the drop target icons. Default is 200 ms.
+ */
+Sidebar.prototype.dropTargetDelay = 200;
+
+/**
  * Specifies the URL of the gear image.
  */
 Sidebar.prototype.gearImage = STENCIL_PATH + '/clipart/Gear_128x128.png';
@@ -2479,7 +2484,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 						prev = state;
 						dragSource.getDropTarget(graph, x, y, evt);
 					}
-				}, 320);
+				}, this.dropTargetDelay + 10);
 			}
 		}
 		else
@@ -2496,17 +2501,17 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			{
 				cell = graph.getSelectionCell();
 				state = graph.view.getState(cell);
-				timeOnTarget = 320;
+				timeOnTarget = this.dropTargetDelay + 10;
 			}
 		}
 		
-		// Shift means disabled, delayed on cells with children, shows after 300ms, hides after 2500ms
+		// Shift means disabled, delayed on cells with children, shows after this.dropTargetDelay, hides after 2500ms
 		if (timeOnTarget < 2500 && state != null && !mxEvent.isShiftDown(evt) &&
 			// If shape is equal or target has no stroke then add long delay except for images
 			(((mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE) != mxUtils.getValue(sourceCellStyle, mxConstants.STYLE_SHAPE) &&
 			mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE) != mxConstants.NONE) ||
 			mxUtils.getValue(sourceCellStyle, mxConstants.STYLE_SHAPE) == 'image') ||
-			timeOnTarget > 1500 || graph.model.isEdge(state.cell)) && (timeOnTarget > 300) && 
+			timeOnTarget > 1500 || graph.model.isEdge(state.cell)) && (timeOnTarget > this.dropTargetDelay) && 
 			((graph.model.isVertex(state.cell) && firstVertex != null) ||
 			(graph.model.isEdge(state.cell) && graph.model.isEdge(cells[0]))))
 		{
@@ -2619,14 +2624,14 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			((graph.model.isEdge(cell) && firstVertex != null) ||
 			(graph.model.isVertex(cell) && graph.isCellConnectable(cell)));
 		
-		// Drop arrows shown after 300ms, hidden after 5 secs, switches arrows after 500ms
+		// Drop arrows shown after this.dropTargetDelay, hidden after 5 secs, switches arrows after 500ms
 		if ((currentTargetState != null && timeOnTarget >= 5000) ||
 			(currentTargetState != state &&
 			(bbox == null || !mxUtils.contains(bbox, x, y) ||
 			(timeOnTarget > 500 && activeArrow == null && validTarget))))
 		{
 			activeTarget = false;
-			currentTargetState = ((timeOnTarget < 5000 && timeOnTarget > 300) || graph.model.isEdge(cell)) ? state : null;
+			currentTargetState = ((timeOnTarget < 5000 && timeOnTarget > this.dropTargetDelay) || graph.model.isEdge(cell)) ? state : null;
 
 			if (currentTargetState != null && validTarget)
 			{
