@@ -530,7 +530,7 @@ EditorUi = function(editor, container)
 					var key = appliedStyles[j];
 					var styleValue = current[key];
 
-					if (styleValue != null)
+					if (styleValue != null && (key != 'shape' || edge))
 					{
 						// Special case: Connect styles are not applied here but in the connection handler
 						if (!edge || mxUtils.indexOf(connectStyles, key) < 0)
