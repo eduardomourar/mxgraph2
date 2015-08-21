@@ -2429,6 +2429,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	};
 	
 	var startTime = new Date().getTime();
+	var connectorImgBounds = null;
 	var timeOnTarget = 0;
 	var prev = null;
 	
@@ -2493,12 +2494,16 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		}
 		
 		// Shows drop target icons on selection cell if connector handler is under the mouse
-		if (currentStyleTarget == null && activeArrow == null && graph.getSelectionCount() == 1)
+		var connectorHit = connectorImgBounds != null && mxUtils.contains(connectorImgBounds, x, y);
+		
+		if (connectorHit || (currentStyleTarget == null && activeArrow == null && graph.getSelectionCount() == 1))
 		{
 			var handler = graph.selectionCellsHandler.getHandler(graph.getSelectionCell());
 			
-			if (handler != null && mxEvent.getSource(evt) == handler.connectorImg)
+			if (handler != null && (mxEvent.getSource(evt) == handler.connectorImg || connectorHit))
 			{
+				var s = handler.connectorImg.style;
+				connectorImgBounds = new mxRectangle(parseInt(s.left), parseInt(s.top), parseInt(s.width), parseInt(s.height));
 				cell = graph.getSelectionCell();
 				state = graph.view.getState(cell);
 				timeOnTarget = this.dropTargetDelay + 10;
@@ -2708,6 +2713,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			}
 			else
 			{
+				connectorImgBounds = null;
 				var elts = [roundSource, roundTarget, arrowUp, arrowRight, arrowDown, arrowLeft];
 				
 				for (var i = 0; i < elts.length; i++)
