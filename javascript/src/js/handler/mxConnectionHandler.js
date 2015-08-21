@@ -1200,37 +1200,7 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 			// Uses edge state to compute the terminal points
 			if (this.edgeState != null)
 			{
-				this.edgeState.absolutePoints = [null, (this.currentState != null) ? null : current];
-				this.graph.view.updateFixedTerminalPoint(this.edgeState, this.previous, true, this.sourceConstraint);
-				
-				if (this.currentState != null)
-				{
-					if (constraint == null)
-					{
-						constraint = this.graph.getConnectionConstraint(this.edgeState, this.previous, false);
-					}
-					
-					this.edgeState.setAbsoluteTerminalPoint(null, false);
-					this.graph.view.updateFixedTerminalPoint(this.edgeState, this.currentState, false, constraint);
-				}
-				
-				// Scales and translates the waypoints to the model
-				var realPoints = null;
-				
-				if (this.waypoints != null)
-				{
-					realPoints = [];
-					
-					for (var i = 0; i < this.waypoints.length; i++)
-					{
-						var pt = this.waypoints[i].clone();
-						this.convertWaypoint(pt);
-						realPoints[i] = pt;
-					}
-				}
-				
-				this.graph.view.updatePoints(this.edgeState, realPoints, this.previous, this.currentState);
-				this.graph.view.updateFloatingTerminalPoints(this.edgeState, this.previous, this.currentState);
+				this.updateEdgeState(current, constraint);
 				current = this.edgeState.absolutePoints[this.edgeState.absolutePoints.length - 1];
 				pt2 = this.edgeState.absolutePoints[0];
 			}
@@ -1390,6 +1360,46 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 	{
 		this.constraintHandler.reset();
 	}
+};
+
+/**
+ * Function: updateEdgeState
+ * 
+ * Updates <edgeState>.
+ */
+mxConnectionHandler.prototype.updateEdgeState = function(current, constraint)
+{
+	this.edgeState.absolutePoints = [null, (this.currentState != null) ? null : current];
+	this.graph.view.updateFixedTerminalPoint(this.edgeState, this.previous, true, this.sourceConstraint);
+	
+	if (this.currentState != null)
+	{
+		if (constraint == null)
+		{
+			constraint = this.graph.getConnectionConstraint(this.edgeState, this.previous, false);
+		}
+		
+		this.edgeState.setAbsoluteTerminalPoint(null, false);
+		this.graph.view.updateFixedTerminalPoint(this.edgeState, this.currentState, false, constraint);
+	}
+	
+	// Scales and translates the waypoints to the model
+	var realPoints = null;
+	
+	if (this.waypoints != null)
+	{
+		realPoints = [];
+		
+		for (var i = 0; i < this.waypoints.length; i++)
+		{
+			var pt = this.waypoints[i].clone();
+			this.convertWaypoint(pt);
+			realPoints[i] = pt;
+		}
+	}
+	
+	this.graph.view.updatePoints(this.edgeState, realPoints, this.previous, this.currentState);
+	this.graph.view.updateFloatingTerminalPoints(this.edgeState, this.previous, this.currentState);
 };
 
 /**
