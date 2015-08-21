@@ -3983,6 +3983,11 @@ DiagramFormatPanel = function(format, editorUi, container)
 mxUtils.extend(DiagramFormatPanel, BaseFormatPanel);
 
 /**
+ * Specifies if the background image option should be shown. Default is true.
+ */
+DiagramFormatPanel.prototype.showBackgroundImageOption = true;
+
+/**
  * Adds the label menu items to the given menu and parent.
  */
 DiagramFormatPanel.prototype.init = function()
@@ -4097,27 +4102,31 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 			}
 		});
 		
-		var btn = mxUtils.button(mxResources.get('image'), function(evt)
+		if (this.showBackgroundImageOption)
 		{
-			var dlg = new BackgroundImageDialog(ui, function(image)
+			var btn = mxUtils.button(mxResources.get('image'), function(evt)
 			{
-				ui.setBackgroundImage(image);
-			});
-			ui.showDialog(dlg.container, 360, 200, true, true);
-			dlg.init();
-			
-			mxEvent.consume(evt);
-		})
-	
-		btn.style.position = 'absolute';
-		btn.className = 'geColorBtn';
-		btn.style.marginTop = '-4px';
-		btn.style.paddingBottom = (document.documentMode == 11 || mxClient.IS_MT) ? '0px' : '2px';
-		btn.style.height = '22px';
-		btn.style.right = (mxClient.IS_QUIRKS) ? '52px' : '72px';
-		btn.style.width = '56px';
-	
-		bg.appendChild(btn);
+				var dlg = new BackgroundImageDialog(ui, function(image)
+				{
+					ui.setBackgroundImage(image);
+				});
+				ui.showDialog(dlg.container, 360, 200, true, true);
+				dlg.init();
+				
+				mxEvent.consume(evt);
+			})
+		
+			btn.style.position = 'absolute';
+			btn.className = 'geColorBtn';
+			btn.style.marginTop = '-4px';
+			btn.style.paddingBottom = (document.documentMode == 11 || mxClient.IS_MT) ? '0px' : '2px';
+			btn.style.height = '22px';
+			btn.style.right = (mxClient.IS_QUIRKS) ? '52px' : '72px';
+			btn.style.width = '56px';
+		
+			bg.appendChild(btn);
+		}
+		
 		div.appendChild(bg);
 	}
 	
