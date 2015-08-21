@@ -1,4 +1,5 @@
 - Handle minResize in mxCellEditor.resize
+- Add lineSpacing style
 
 - Fix center aligned oversize labels in IE8 standards mode
 - Block ctrl+u/i/b in core text editor for plain text values
