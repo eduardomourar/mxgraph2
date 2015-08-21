@@ -43,11 +43,7 @@ public class EchoServlet extends HttpServlet
 			String filename = request.getParameter("filename");
 			String xml = request.getParameter("xml");
 
-			if (filename != null)
-			{
-				filename = URLDecoder.decode(filename, "UTF-8");
-			}
-			else
+			if (filename == null)
 			{
 				filename = "export";
 			}

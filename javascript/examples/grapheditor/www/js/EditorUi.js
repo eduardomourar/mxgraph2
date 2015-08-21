@@ -2482,9 +2482,8 @@ EditorUi.prototype.save = function(name)
 			{
 				if (xml.length < MAX_REQUEST_SIZE)
 				{
-					xml = encodeURIComponent(xml);
-					name = encodeURIComponent(name);
-					new mxXmlRequest(SAVE_URL, 'filename=' + name + '&xml=' + xml).simulate(document, '_blank');
+					new mxXmlRequest(SAVE_URL, 'filename=' + encodeURIComponent(name) +
+						'&xml=' + encodeURIComponent(xml)).simulate(document, '_blank');
 				}
 				else
 				{
