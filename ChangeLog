@@ -1,3 +1,4 @@
+- Fixes short, straight orthogonal connector case [JavaScript]
 - Implements sets of cells using mxObjectIdentity [JavaScript]
 - Fixes possible NPE in mxObjectIdenity.get [JavaScript]
 - Ignores relative edges labels with selected terminals in mxGraph.moveCells [JavaScript]
