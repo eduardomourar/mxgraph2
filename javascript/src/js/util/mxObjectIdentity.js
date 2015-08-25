@@ -29,7 +29,8 @@ var mxObjectIdentity =
 	/**
 	 * Function: get
 	 * 
-	 * Returns the ID for the given object or function.
+	 * Returns the ID for the given object or function or null if no object
+	 * is specified.
 	 */
 	get: function(obj)
 	{
