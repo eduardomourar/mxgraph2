@@ -5688,9 +5688,57 @@ mxGraph.prototype.moveCells = function(cells, dx, dy, clone, target, evt)
 	
 	if (cells != null && (dx != 0 || dy != 0 || clone || target != null))
 	{
+		// Removes descandants with ancestors in cells to avoid multiple moving
+		cells = this.model.getTopmostCells(cells);
+
 		this.model.beginUpdate();
 		try
 		{
+			// Prepares a hashtable for faster cell lookups to remove relative
+			// edge labels with selected terminals for avoiding duplicate move
+			var hash = new Object();
+			
+			for (var i = 0; i < cells.length; i++)
+			{
+				var id = mxCellPath.create(cells[i]);
+				hash[id] = cells[i];
+			}
+			
+			var isSelected = mxUtils.bind(this, function(cell)
+			{
+				while (cell != null)
+				{
+					var id = mxCellPath.create(cell);
+					
+					if (hash[id] != null)
+					{
+						return true;
+					}
+					
+					cell = this.model.getParent(cell);
+				}
+				
+				return false;
+			});
+			
+			// Removes relative edge labels with selected terminals
+			var checked = [];
+			
+			for (var i = 0; i < cells.length; i++)
+			{
+				var geo = this.getCellGeometry(cells[i]);
+				var parent = this.model.getParent(cells[i]);
+		
+				if ((geo == null || !geo.relative) || !this.model.isEdge(parent) ||
+					(!isSelected(this.model.getTerminal(parent, true)) &&
+					!isSelected(this.model.getTerminal(parent, false))))
+				{
+					checked.push(cells[i]);
+				}
+			}
+
+			cells = checked;
+			
 			if (clone)
 			{
 				cells = this.cloneCells(cells, this.isCloneInvalidEdges());
@@ -5750,9 +5798,6 @@ mxGraph.prototype.cellsMoved = function(cells, dx, dy, disconnect, constrain, ex
 	{
 		extend = (extend != null) ? extend : false;
 
-		// Removes descandants with ancestors in cells to avoid multiple moving
-		cells = this.model.getTopmostCells(cells);
-		
 		this.model.beginUpdate();
 		try
 		{

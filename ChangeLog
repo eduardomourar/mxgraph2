@@ -1,3 +1,5 @@
+- Ignores relative edges labels with selected terminals in mxGraph.moveCells [JavaScript]
+- Moves logic for ignoring descendants to mxGraph.moveCells [JavaScript]
 - Adds mxConstraintHandler.intersects, updateEdgeState hooks [JavaScript]
 - Fixes possible NPE In mxGraph.scaleCell [JavaScript]
 - Sets mxClient.IS_NS, IS_SF and IS_GC to false in Microsoft Edge [JavaScript]
