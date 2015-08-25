@@ -11046,7 +11046,7 @@ mxGraph.prototype.getOpposites = function(edges, terminal, sources, targets)
 	var terminals = [];
 	
 	// Fast lookup to avoid duplicates in terminals array
-	var dict = new mxDicionary();
+	var dict = new mxDictionary();
 	
 	if (edges != null)
 	{
