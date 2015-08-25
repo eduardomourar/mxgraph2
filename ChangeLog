@@ -1,3 +1,4 @@
+- Implements sets of cells using mxObjectIdentity [JavaScript]
 - Fixes possible NPE in mxObjectIdenity.get [JavaScript]
 - Ignores relative edges labels with selected terminals in mxGraph.moveCells [JavaScript]
 - Moves logic for ignoring descendants to mxGraph.moveCells [JavaScript]

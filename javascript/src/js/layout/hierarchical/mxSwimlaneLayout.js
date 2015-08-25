@@ -548,7 +548,7 @@ mxSwimlaneLayout.prototype.run = function(parent)
 				var vertexSet = Object();
 				hierarchyVertices.push(vertexSet);
 
-				this.traverse(candidateRoots[i], true, null, allVertexSet, vertexSet,
+				this.graph.traverse(candidateRoots[i], true, null, allVertexSet, vertexSet,
 						hierarchyVertices, filledVertexSet, laneCounter);
 			}
 

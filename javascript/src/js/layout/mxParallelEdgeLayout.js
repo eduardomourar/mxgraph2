@@ -141,8 +141,8 @@ mxParallelEdgeLayout.prototype.getEdgeId = function(edge)
 
 	if (src != null && trg != null)
 	{
-		src = mxCellPath.create(src);
-		trg = mxCellPath.create(trg);
+		src = mxObjectIdentity.get(src);
+		trg = mxObjectIdentity.get(trg);
 		
 		return (src > trg) ? trg + '-' + src : src + '-' + trg;
 	}

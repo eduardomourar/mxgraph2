@@ -1,3 +1,4 @@
+- Replace cellpath lookups with dictionary
 - Handle minResize in mxCellEditor.resize
 - Add lineSpacing style
 

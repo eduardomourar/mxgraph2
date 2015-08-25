@@ -4111,14 +4111,13 @@ mxGraph.prototype.cloneCells = function(cells, allowInvalidEdges)
 	
 	if (cells != null)
 	{
-		// Creates a hashtable for cell lookups
-		var hash = new Object();
+		// Creates a dictionary for fast lookups
+		var dict = new mxDictionary();
 		var tmp = [];
 		
 		for (var i = 0; i < cells.length; i++)
 		{
-			var id = mxCellPath.create(cells[i]);
-			hash[id] = cells[i];
+			dict.put(cells[i], true);
 			tmp.push(cells[i]);
 		}
 		
@@ -4157,12 +4156,10 @@ mxGraph.prototype.cloneCells = function(cells, allowInvalidEdges)
 								
 								// Checks if the source is cloned or sets the terminal point
 								var src = this.model.getTerminal(cells[i], true);
-								var srcId = mxCellPath.create(src);
 								
-								while (src != null && hash[srcId] == null)
+								while (src != null && !dict.get(src))
 								{
 									src = this.model.getParent(src);
-									srcId = mxCellPath.create(src);
 								}
 								
 								if (src == null)
@@ -4174,12 +4171,10 @@ mxGraph.prototype.cloneCells = function(cells, allowInvalidEdges)
 								
 								// Checks if the target is cloned or sets the terminal point
 								var trg = this.model.getTerminal(cells[i], false);
-								var trgId = mxCellPath.create(trg);
 								
-								while (trg != null && hash[trgId] == null)
+								while (trg != null && !dict.get(trg))
 								{
 									trg = this.model.getParent(trg);
-									trgId = mxCellPath.create(trg);
 								}
 								
 								if (trg == null)
@@ -4627,25 +4622,21 @@ mxGraph.prototype.cellsRemoved = function(cells)
 		try
 		{
 			// Creates hashtable for faster lookup
-			var hash = new Object();
+			var dict = new mxDictionary();
 			
 			for (var i = 0; i < cells.length; i++)
 			{
-				var id = mxCellPath.create(cells[i]);
-				hash[id] = cells[i];
+				dict.put(cells[i], true);
 			}
 			
 			for (var i = 0; i < cells.length; i++)
 			{
 				// Disconnects edges which are not in cells
-				//var edges = this.getConnections(cells[i]);
 				var edges = this.getAllEdges([cells[i]]);
 				
 				for (var j = 0; j < edges.length; j++)
 				{
-					var id = mxCellPath.create(edges[j]);
-					
-					if (hash[id] == null)
+					if (!dict.get(edges[j]))
 					{
 						var geo = this.model.getGeometry(edges[j]);
 
@@ -5694,23 +5685,20 @@ mxGraph.prototype.moveCells = function(cells, dx, dy, clone, target, evt)
 		this.model.beginUpdate();
 		try
 		{
-			// Prepares a hashtable for faster cell lookups to remove relative
-			// edge labels with selected terminals for avoiding duplicate move
-			var hash = new Object();
+			// Faster cell lookups to remove relative edge labels with selected
+			// terminals to avoid explicit and implicit move at same time
+			var dict = new mxDictionary();
 			
 			for (var i = 0; i < cells.length; i++)
 			{
-				var id = mxCellPath.create(cells[i]);
-				hash[id] = cells[i];
+				dict.put(cells[i], true);
 			}
 			
 			var isSelected = mxUtils.bind(this, function(cell)
 			{
 				while (cell != null)
 				{
-					var id = mxCellPath.create(cell);
-					
-					if (hash[id] != null)
+					if (dict.get(cell))
 					{
 						return true;
 					}
@@ -6110,13 +6098,12 @@ mxGraph.prototype.resetEdges = function(cells)
 {
 	if (cells != null)
 	{
-		// Prepares a hashtable for faster cell lookups
-		var hash = new Object();
+		// Prepares faster cells lookup
+		var dict = new mxDictionary();
 		
 		for (var i = 0; i < cells.length; i++)
 		{
-			var id = mxCellPath.create(cells[i]);
-			hash[id] = cells[i];
+			dict.put(cells[i], true);
 		}
 		
 		this.model.beginUpdate();
@@ -6135,11 +6122,8 @@ mxGraph.prototype.resetEdges = function(cells)
 						var source = (state != null) ? state.getVisibleTerminal(true) : this.view.getVisibleTerminal(edges[j], true);
 						var target = (state != null) ? state.getVisibleTerminal(false) : this.view.getVisibleTerminal(edges[j], false);
 						
-						var sourceId = mxCellPath.create(source);
-						var targetId = mxCellPath.create(target);
-						
 						// Checks if one of the terminals is not in the given array
-						if (hash[sourceId] == null || hash[targetId] == null)
+						if (!dict.get(source) || !dict.get(target))
 						{
 							this.resetEdge(edges[j]);
 						}
@@ -6647,15 +6631,14 @@ mxGraph.prototype.disconnectGraph = function(cells)
 			var scale = this.view.scale;
 			var tr = this.view.translate;
 			
-			// Prepares a hashtable for faster cell lookups
-			var hash = new Object();
+			// Fast lookup for finding cells in array
+			var dict = new mxDictionary();
 			
 			for (var i = 0; i < cells.length; i++)
 			{
-				var id = mxCellPath.create(cells[i]);
-				hash[id] = cells[i];
+				dict.put(cells[i], true);
 			}
-
+			
 			for (var i = 0; i < cells.length; i++)
 			{
 				if (this.model.isEdge(cells[i]))
@@ -6681,12 +6664,9 @@ mxGraph.prototype.disconnectGraph = function(cells)
 							
 							if (src != null && this.isCellDisconnectable(cells[i], src, true))
 							{
-								var srcId = mxCellPath.create(src);
-								
-								while (src != null && hash[srcId] == null)
+								while (src != null && !dict.get(src))
 								{
 									src = this.model.getParent(src);
-									srcId = mxCellPath.create(src);
 								}
 								
 								if (src == null)
@@ -6702,12 +6682,9 @@ mxGraph.prototype.disconnectGraph = function(cells)
 							
 							if (trg != null && this.isCellDisconnectable(cells[i], trg, false))
 							{
-								var trgId = mxCellPath.create(trg);
-								
-								while (trg != null && hash[trgId] == null)
+								while (trg != null && !dict.get(trg))
 								{
 									trg = this.model.getParent(trg);
-									trgId = mxCellPath.create(trg);
 								}
 								
 								if (trg == null)
@@ -11068,9 +11045,8 @@ mxGraph.prototype.getOpposites = function(edges, terminal, sources, targets)
 	
 	var terminals = [];
 	
-	// Implements set semantic on the terminals array using a string
-	// representation of each cell in an associative array lookup
-	var hash = new Object();
+	// Fast lookup to avoid duplicates in terminals array
+	var dict = new mxDicionary();
 	
 	if (edges != null)
 	{
@@ -11083,28 +11059,22 @@ mxGraph.prototype.getOpposites = function(edges, terminal, sources, targets)
 			
 			// Checks if the terminal is the source of the edge and if the
 			// target should be stored in the result
-			if (source == terminal && target != null &&
-				target != terminal && targets)
+			if (source == terminal && target != null && target != terminal && targets)
 			{
-				var id = mxCellPath.create(target);
-				
-				if (hash[id] == null)
+				if (!dict.get(target))
 				{
-					hash[id] = target;
+					dict.put(target, true);
 					terminals.push(target);
 				}
 			}
 			
 			// Checks if the terminal is the taget of the edge and if the
 			// source should be stored in the result
-			else if (target == terminal && source != null &&
-					source != terminal && sources)
+			else if (target == terminal && source != null && source != terminal && sources)
 			{
-				var id = mxCellPath.create(source);
-				
-				if (hash[id] == null)
+				if (!dict.get(source))
 				{
-					hash[id] = source;
+					dict.put(source, true);
 					terminals.push(source);
 				}
 			}
@@ -11414,19 +11384,18 @@ mxGraph.prototype.findTreeRoots = function(parent, isolate, invert)
  * edge as arguments. The traversal stops if the function returns false.
  * edge - Optional <mxCell> that represents the incoming edge. This is
  * null for the first step of the traversal.
- * visited - Optional array of cell paths for the visited cells.
+ * visited - Optional <mxDictionary> from cells to true for the visited cells.
  */
 mxGraph.prototype.traverse = function(vertex, directed, func, edge, visited)
 {
 	if (func != null && vertex != null)
 	{
 		directed = (directed != null) ? directed : true;
-		visited = visited || [];
-		var id = mxCellPath.create(vertex);
+		visited = visited || new mxDictionary();
 		
-		if (visited[id] == null)
+		if (!visited.get(vertex))
 		{
-			visited[id] = vertex;
+			visited.put(vertex, true);
 			var result = func(vertex, edge);
 			
 			if (result == null || result)

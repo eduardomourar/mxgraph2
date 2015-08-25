@@ -2104,21 +2104,16 @@ mxGraphModel.prototype.getParents = function(cells)
 	
 	if (cells != null)
 	{
-		var hash = new Object();
+		var dict = new mxDictionary();
 		
 		for (var i = 0; i < cells.length; i++)
 		{
 			var parent = this.getParent(cells[i]);
 			
-			if (parent != null)
+			if (parent != null && !dict.get(parent))
 			{
-				var id = mxCellPath.create(parent);
-				
-				if (hash[id] == null)
-				{
-					hash[id] = parent;
-					parents.push(parent);
-				}
+				dict.put(parent, true);
+				parents.push(parent);
 			}
 		}
 	}
