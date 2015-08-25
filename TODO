@@ -1,6 +1,6 @@
-- Replace cellpath lookups with dictionary
 - Handle minResize in mxCellEditor.resize
 - Add lineSpacing style
+- Replace cellpath lookups with dictionary
 
 - Fix center aligned oversize labels in IE8 standards mode
 - Block ctrl+u/i/b in core text editor for plain text values
