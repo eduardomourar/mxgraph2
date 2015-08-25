@@ -252,6 +252,7 @@ setAsDefaultStyle=Set as default style
 shadow=Shadow
 shape=Shape
 sharp=Sharp
+sidebarTooltip=Click to expand. Drag and drop shapes into the diagram.
 simpleArrow=Simple arrow
 size=Size
 solid=Solid

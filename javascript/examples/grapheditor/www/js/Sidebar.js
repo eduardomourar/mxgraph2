@@ -1615,7 +1615,7 @@ Sidebar.prototype.createTitle = function(label)
 {
 	var elt = document.createElement('a');
 	elt.setAttribute('href', 'javascript:void(0);');
-	elt.setAttribute('title', label);
+	elt.setAttribute('title', mxResources.get('sidebarTooltip'));
 	elt.className = 'geTitle';
 	mxUtils.write(elt, label);
 
