@@ -1201,8 +1201,8 @@ var mxEdgeStyle =
 			prefOrdering[i][1] = horPref[i];
 		}
 
-		if (preferredVertDist > scaledOrthBuffer * 2
-				&& preferredHorizDist > scaledOrthBuffer * 2)
+		if (preferredVertDist > 0
+				&& preferredHorizDist > 0)
 		{
 			// Possibility of two segment edge connection
 			if (((horPref[0] & portConstraint[0]) > 0)
@@ -1225,7 +1225,7 @@ var mxEdgeStyle =
 			}
 		}
 		
-		if (preferredVertDist > scaledOrthBuffer * 2 && !preferredOrderSet)
+		if (preferredVertDist > 0 && !preferredOrderSet)
 		{
 			prefOrdering[0][0] = vertPref[0];
 			prefOrdering[0][1] = horPref[0];
@@ -1235,7 +1235,7 @@ var mxEdgeStyle =
 
 		}
 		
-		if (preferredHorizDist > scaledOrthBuffer * 2 && !preferredOrderSet)
+		if (preferredHorizDist > 0 && !preferredOrderSet)
 		{
 			prefOrdering[0][0] = horPref[0];
 			prefOrdering[0][1] = vertPref[0];
