@@ -33,20 +33,25 @@ var mxObjectIdentity =
 	 */
 	get: function(obj)
 	{
-		if (obj[mxObjectIdentity.FIELD_NAME] == null)
+		if (obj != null)
 		{
-			if (typeof obj === 'object')
+			if (obj[mxObjectIdentity.FIELD_NAME] == null)
 			{
-				var ctor = mxUtils.getFunctionName(obj.constructor);
-				obj[mxObjectIdentity.FIELD_NAME] = ctor + '#' + mxObjectIdentity.counter++;
+				if (typeof obj === 'object')
+				{
+					var ctor = mxUtils.getFunctionName(obj.constructor);
+					obj[mxObjectIdentity.FIELD_NAME] = ctor + '#' + mxObjectIdentity.counter++;
+				}
+				else if (typeof obj === 'function')
+				{
+					obj[mxObjectIdentity.FIELD_NAME] = 'Function#' + mxObjectIdentity.counter++;
+				}
 			}
-			else if (typeof obj === 'function')
-			{
-				obj[mxObjectIdentity.FIELD_NAME] = 'Function#' + mxObjectIdentity.counter++;
-			}
+			
+			return obj[mxObjectIdentity.FIELD_NAME];
 		}
 		
-		return obj[mxObjectIdentity.FIELD_NAME];
+		return null;
 	},
 
 	/**

@@ -1,3 +1,4 @@
+- Fixes possible NPE in mxObjectIdenity.get [JavaScript]
 - Ignores relative edges labels with selected terminals in mxGraph.moveCells [JavaScript]
 - Moves logic for ignoring descendants to mxGraph.moveCells [JavaScript]
 - Adds mxConstraintHandler.intersects, updateEdgeState hooks [JavaScript]
