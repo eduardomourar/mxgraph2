@@ -1490,7 +1490,13 @@ mxGraphModel.prototype.getOpposites = function(edges, terminal, sources, targets
  */
 mxGraphModel.prototype.getTopmostCells = function(cells)
 {
+	var dict = new mxDictionary();
 	var tmp = [];
+	
+	for (var i = 0; i < cells.length; i++)
+	{
+		dict.put(cells[i], true);
+	}
 	
 	for (var i = 0; i < cells.length; i++)
 	{
@@ -1500,7 +1506,7 @@ mxGraphModel.prototype.getTopmostCells = function(cells)
 		
 		while (parent != null)
 		{
-			if (mxUtils.indexOf(cells, parent) >= 0)
+			if (dict.get(parent))
 			{
 				topmost = false;
 				break;
