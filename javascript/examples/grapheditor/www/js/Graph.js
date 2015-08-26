@@ -18,6 +18,7 @@ Graph = function(container, model, renderHint, stylesheet)
     // Adds support for HTML labels via style. Note: Currently, only the Java
     // backend supports HTML labels but CSS support is limited to the following:
     // http://docs.oracle.com/javase/6/docs/api/index.html?javax/swing/text/html/CSS.html
+	// TODO: Wrap should not affect isHtmlLabel output (should be handled later)
 	this.isHtmlLabel = function(cell)
 	{
 		var state = this.view.getState(cell);
@@ -27,7 +28,6 @@ Graph = function(container, model, renderHint, stylesheet)
 	};
 	
 	// HTML entities are displayed as plain text in wrapped plain text labels
-	// TODO: Wrap should not affect isHtmlLabel output (should be handled later)
 	this.cellRenderer.getLabelValue = function(state)
 	{
 		var result = mxCellRenderer.prototype.getLabelValue.apply(this, arguments);
@@ -2416,7 +2416,7 @@ if (typeof mxVertexHandler != 'undefined')
 				this.bounds.width = parseInt(this.textarea.style.width) * scale;
 			}
 							
-//				// FIXME: Offset when scaled
+			// FIXME: Offset when scaled
 			if (document.documentMode == 8)
 			{
 				this.textarea.style.left = Math.round(this.bounds.x) + 'px';
@@ -2465,6 +2465,8 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				result = result.replace(/\n/g, '<br/>');
 			}
+			
+			result = this.graph.sanitizeHtml(result);
 			
 			return result;
 		}

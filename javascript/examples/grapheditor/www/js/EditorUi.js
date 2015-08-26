@@ -923,7 +923,7 @@ EditorUi.prototype.init = function()
 		ui.updateActionStates();
 	};
 	
-	// Special case: Routes UI via graph instance to make available in handlers
+	// LATER: Move currentEdgeStyle to graph as it is needed in the handlers
 	this.editor.graph.createCurrentEdgeStyle = this.createCurrentEdgeStyle;
 	this.editor.graph.editLink = ui.actions.get('editLink').funct;
 	
