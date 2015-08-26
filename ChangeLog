@@ -1,3 +1,4 @@
+- Adds create and destroy for grapheditor instances
 - Fixes short, straight orthogonal connector case [JavaScript]
 - Uses dictionary in mxGraphModel.getTopmostCells [JavaScript]
 - Implements sets of cells using mxObjectIdentity [JavaScript]
