@@ -1,3 +1,4 @@
+- Uses CSS transforms in mxCellEditor.resize [JavaScript]
 - Adds create and destroy for grapheditor instances
 - Fixes global mousewheel handling in grapheditor
 - Fixes short, straight orthogonal connector case [JavaScript]

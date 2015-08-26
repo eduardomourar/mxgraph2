@@ -197,13 +197,6 @@ mxCellEditor.prototype.textNode = '';
 mxCellEditor.prototype.zIndex = 5;
 
 /**
- * Variable: verticalOffset
- * 
- * Specifies a global vertical offset. Default is 0.
- */
-mxCellEditor.prototype.verticalOffset = 0;
-
-/**
  * Variable: minResize
  * 
  * Defines the minimum width and height to be used in <resize>. Default is 0x20px.
@@ -605,7 +598,7 @@ mxCellEditor.prototype.resize = function()
 			// LATER: Keep in visible area, add fine tuning for pixel precision
 			if (document.documentMode == 8)
 			{
-				// LATER: Scaled wrapping is wrong in IE8
+				// LATER: Scaled wrapping and position is wrong in IE8
 				this.textarea.style.left = Math.max(0, Math.ceil((this.bounds.x - m.x * (this.bounds.width - (ow + 1) * scale) + ow * (scale - 1) * 0 + (m.x + 0.5) * 2) / scale)) + 'px';
 				this.textarea.style.top = Math.max(0, Math.ceil((this.bounds.y - m.y * (this.bounds.height - (oh + 0.5) * scale) + oh * (scale - 1) * 0 + Math.abs(m.y + 0.5) * 1) / scale)) + 'px';
 				// Workaround for wrong event handling width and height
@@ -619,8 +612,8 @@ mxCellEditor.prototype.resize = function()
 			}
 			else
 			{			
-				this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * (this.bounds.width - (ow + 1) * scale) + ow * (scale - 1) * 0.5 + (m.x + 0.5) * 2)) + 'px';
-				this.textarea.style.top = Math.max(0, Math.ceil(this.bounds.y - m.y * (this.bounds.height - (oh + 1) * scale) + oh * (scale - 1) * 0.5 + Math.abs(m.y + 0.5) * 1) + this.verticalOffset) + 'px';
+				this.textarea.style.left = Math.max(0, Math.round(this.bounds.x - m.x * (this.bounds.width - 2)) + 1) + 'px';
+				this.textarea.style.top = Math.max(0, Math.round(this.bounds.y - m.y * (this.bounds.height - 4) + ((m.y == -1) ? 3 : 0)) + 1) + 'px';
 			}
 	 	}
 
@@ -630,7 +623,9 @@ mxCellEditor.prototype.resize = function()
 		}
 		else
 		{
-			mxUtils.setPrefixedStyle(this.textarea.style, 'transform', 'scale(' + scale + ',' + scale + ')');	
+			mxUtils.setPrefixedStyle(this.textarea.style, 'transformOrigin', '0px 0px');
+			mxUtils.setPrefixedStyle(this.textarea.style, 'transform',
+				'scale(' + scale + ',' + scale + ') translate(' + (m.x * 100) + '%,' + (m.y * 100) + '%)');
 		}
 	}
 };

@@ -2042,9 +2042,6 @@ if (typeof mxVertexHandler != 'undefined')
 			mxPopupMenuHandler.prototype.mouseUp.apply(this.popupMenuHandler, arguments);
 		});
 	};
-
-	// Workaround for bad vertical cell editor position
-	mxCellEditor.prototype.verticalOffset = (mxClient.IS_IE11) ? -2 : -1;
 	
 	/**
 	 * HTML in-place editor
