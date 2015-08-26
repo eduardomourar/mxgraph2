@@ -1447,8 +1447,8 @@ if (typeof mxVertexHandler != 'undefined')
 			label.style += 'autosize=1;align=left;verticalAlign=top;spacingTop=-4;'
 	
 			var tr = this.view.translate;
-			label.geometry.width = '40';
-			label.geometry.height = '20';
+			label.geometry.width = 40;
+			label.geometry.height = 20;
 			label.geometry.x = Math.round(x / this.view.scale) - tr.x;
 			label.geometry.y = Math.round(y / this.view.scale) - tr.y;
 		}
