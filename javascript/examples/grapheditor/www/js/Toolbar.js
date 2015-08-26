@@ -12,10 +12,12 @@ function Toolbar(editorUi, container)
 	this.init();
 
 	// Global handler to hide the current menu
-	mxEvent.addGestureListeners(document, mxUtils.bind(this, function(evt)
+	this.gestureHandler = mxUtils.bind(this, function(evt)
 	{
 		this.hideMenu();
-	}));
+	});
+
+	mxEvent.addGestureListeners(document, this.gestureHandler);
 };
 
 /**
@@ -868,5 +870,17 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll)
 				evt.preventDefault();
 			}
 		}));
+	}
+};
+
+/**
+ * Adds a handler for showing a menu in the given element.
+ */
+Toolbar.prototype.destroy = function()
+{
+	if (this.gestureHandler != null)
+	{	
+		mxEvent.removeGestureListeners(document, this.gestureHandler);
+		this.gestureHandler = null;
 	}
 };

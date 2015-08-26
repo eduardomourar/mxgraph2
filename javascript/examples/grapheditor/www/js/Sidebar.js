@@ -24,19 +24,23 @@ function Sidebar(editorUi, container)
 	this.graph.container.style.visibility = 'hidden';
 	this.graph.container.style.position = 'absolute';
 	document.body.appendChild(this.graph.container);
-
-	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerUp' : 'mouseup', mxUtils.bind(this, function()
+	
+	this.pointerUpHandler = mxUtils.bind(this, function()
 	{
 		this.showTooltips = true;
-	}));
+	});
 
-	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerDown' : 'mousedown', mxUtils.bind(this, function()
+	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerUp' : 'mouseup', this.pointerUpHandler);
+
+	this.pointerDownHandler = mxUtils.bind(this, function()
 	{
 		this.showTooltips = false;
 		this.hideTooltip();
-	}));
-
-	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerMove' : 'mousemove', mxUtils.bind(this, function(evt)
+	});
+	
+	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerDown' : 'mousedown', this.pointerDownHandler);
+	
+	this.pointerMoveHandler = mxUtils.bind(this, function(evt)
 	{
 		var src = mxEvent.getSource(evt);
 		
@@ -51,16 +55,20 @@ function Sidebar(editorUi, container)
 		}
 		
 		this.hideTooltip();
-	}));
+	});
+
+	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerMove' : 'mousemove', this.pointerMoveHandler);
 
 	// Handles mouse leaving the window
-	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerOut' : 'mouseout', mxUtils.bind(this, function(evt)
+	this.pointerOutHandler = mxUtils.bind(this, function(evt)
 	{
 		if (evt.toElement == null && evt.relatedTarget == null)
 		{
 			this.hideTooltip();
 		}
-	}));
+	});
+	
+	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerOut' : 'mouseout', this.pointerOutHandler);
 
 	// Enables tooltips after scroll
 	mxEvent.addListener(container, 'scroll', mxUtils.bind(this, function()
@@ -331,9 +339,9 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel)
 				this.tooltip.style.height = height + 'px';
 				var x0 = -Math.min(0, Math.round(bounds.x - this.tooltipBorder));
 				var y0 = -Math.min(0, Math.round(bounds.y - this.tooltipBorder));
-
-				var left = this.container.clientWidth + this.editorUi.splitSize + 3;
-				var top = Math.max(0, (this.container.offsetTop + elt.offsetTop - this.container.scrollTop - height / 2 + 16));
+				
+				var left = this.container.clientWidth + this.editorUi.splitSize + 3 + this.editorUi.container.offsetLeft;
+				var top = Math.max(0, (this.editorUi.container.offsetTop + this.container.offsetTop + elt.offsetTop - this.container.scrollTop - height / 2 + 16));
 				
 				if (mxClient.IS_SVG)
 				{
@@ -3140,5 +3148,46 @@ Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ig
 				}
 			}), true);
 	    }));
+	}
+};
+
+/**
+ * Adds the given stencil palette.
+ */
+Sidebar.prototype.destroy = function()
+{
+	if (this.graph != null)
+	{
+		if (this.graph.container != null && this.graph.container.parentNode != null)
+		{
+			this.graph.container.parentNode.removeChild(this.graph.container);
+		}
+		
+		this.graph.destroy();
+		this.graph = null;
+	}
+	
+	if (this.pointerUpHandler != null)
+	{
+		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'MSPointerUp' : 'mouseup', this.pointerUpHandler);
+		this.pointerUpHandler = null;
+	}
+
+	if (this.pointerDownHandler != null)
+	{
+		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'MSPointerDown' : 'mousedown', this.pointerDownHandler);
+		this.pointerDownHandler = null;
+	}
+	
+	if (this.pointerMoveHandler != null)
+	{
+		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'MSPointerMove' : 'mousemove', this.pointerMoveHandler);
+		this.pointerMoveHandler = null;
+	}
+	
+	if (this.pointerOutHandler != null)
+	{
+		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'MSPointerOut' : 'mouseout', this.pointerOutHandler);
+		this.pointerOutHandler = null;
 	}
 };

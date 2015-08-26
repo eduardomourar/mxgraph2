@@ -7,7 +7,8 @@
 EditorUi = function(editor, container)
 {
 	mxEventSource.call(this);
-	
+	this.destroyFunctions = [];
+
 	this.editor = editor || new Editor();
 	this.container = container || document.body;
 	var graph = this.editor.graph;
@@ -118,13 +119,13 @@ EditorUi = function(editor, container)
 			this.diagramContainer.removeAttribute('title');
 		}
 	}));
-	
-	// Adds space+drag for panning
+
+   	// Escape key hides dialogs, adds space+drag panning
 	var spaceKeyPressed = false;
 	
-	mxEvent.addListener(document.body, 'keydown', mxUtils.bind(this, function(evt)
+	this.keydownHandler = mxUtils.bind(this, function(evt)
 	{
-		if (evt.which == 32)
+		if (evt.which == 32 /* Space */)
 		{
 			spaceKeyPressed = true;
 			graph.container.style.cursor = 'move';
@@ -135,16 +136,21 @@ EditorUi = function(editor, container)
 				mxEvent.consume(evt);
 			}
 		}
-	}));
-	
-	mxEvent.addListener(document.body, 'keyup', mxUtils.bind(this, function(evt)
-	{
-		if (evt.which == 32)
+		else if (!mxEvent.isConsumed(evt) && evt.keyCode == 27 /* Escape */)
 		{
-			graph.container.style.cursor = '';
-			spaceKeyPressed = false;
+			this.hideDialog();
 		}
-	}));
+	});
+   	
+	mxEvent.addListener(document, 'keydown', this.keydownHandler);
+	
+	this.keyupHandler = mxUtils.bind(this, function(evt)
+	{
+		graph.container.style.cursor = '';
+		spaceKeyPressed = false;
+	});
+
+	mxEvent.addListener(document, 'keyup', this.keyupHandler);
     
     // Forces panning for middle and right mouse buttons
 	var panningHandlerIsForcePanningEvent = graph.panningHandler.isForcePanningEvent;
@@ -789,27 +795,33 @@ EditorUi = function(editor, container)
 	// Updates the editor UI after the window has been resized or the orientation changes
 	// Timeout is workaround for old IE versions which have a delay for DOM client sizes.
 	// Should not use delay > 0 to avoid handle multiple repaints during window resize
-   	mxEvent.addListener(window, 'resize', mxUtils.bind(this, function()
+	this.resizeHandler = mxUtils.bind(this, function()
    	{
    		window.setTimeout(mxUtils.bind(this, function()
    		{
    			this.refresh();
    		}), 0);
-   	}));
+   	});
+	
+   	mxEvent.addListener(window, 'resize', this.resizeHandler);
    	
-   	mxEvent.addListener(window, 'orientationchange', mxUtils.bind(this, function()
+   	this.orientationChangeHandler = mxUtils.bind(this, function()
    	{
    		this.refresh();
-   	}));
+   	});
+   	
+   	mxEvent.addListener(window, 'orientationchange', this.orientationChangeHandler);
    	
 	// Workaround for bug on iOS see
 	// http://stackoverflow.com/questions/19012135/ios-7-ipad-safari-landscape-innerheight-outerheight-layout-issue
 	if (mxClient.IS_IOS && !window.navigator.standalone)
 	{
-	   	mxEvent.addListener(window, 'scroll', mxUtils.bind(this, function()
+		this.scrollHandler = mxUtils.bind(this, function()
 	   	{
 	   		window.scrollTo(0, 0);
-	   	}));
+	   	});
+		
+	   	mxEvent.addListener(window, 'scroll', this.scrollHandler);
 	}
 
 	/**
@@ -820,18 +832,12 @@ EditorUi = function(editor, container)
 		// Timeout is a workaround for delay needed in older browsers and IE
 		window.setTimeout(mxUtils.bind(this, function()
 		{
-			this.resetScrollbars();
+			// Does not invoke callback if instance was destroyed
+			if (this.editor != null)
+			{
+				this.resetScrollbars();
+			}
 		}), 0);
-	}));
-   	
-   	// Escape key hides dialogs
-	mxEvent.addListener(document, 'keydown', mxUtils.bind(this, function(evt)
-	{
-		// Cancels the editing if escape is pressed
-		if (!mxEvent.isConsumed(evt) && evt.keyCode == 27 /* Escape */)
-		{
-			this.hideDialog();
-		}
 	}));
 
    	// Resets UI, updates action and menu states
@@ -916,6 +922,10 @@ EditorUi.prototype.init = function()
 		graphSetDefaultParent.apply(this, arguments);
 		ui.updateActionStates();
 	};
+	
+	// Special case: Routes UI via graph instance to make available in handlers
+	this.editor.graph.createCurrentEdgeStyle = this.createCurrentEdgeStyle;
+	this.editor.graph.editLink = ui.actions.get('editLink').funct;
 	
 	this.updateActionStates();
 	this.initClipboard();
@@ -1184,10 +1194,18 @@ EditorUi.prototype.initCanvas = function()
 			}
 	   	});
 		
-	   	mxEvent.addListener(window, 'resize', mxUtils.bind(this, function()
+		// Removable resize listener
+		var autoscaleResize = mxUtils.bind(this, function()
 	   	{
-	   		resize(false);
-	   	}));
+			resize(false);
+	   	});
+		
+	   	mxEvent.addListener(window, 'resize', autoscaleResize);
+	   	
+	   	this.destroyFunctions.push(function()
+	   	{
+	   		mxEvent.removeListener(window, 'resize', autoscaleResize);
+	   	});
 	   	
 		this.editor.addListener('resetGraphView', mxUtils.bind(this, function()
 		{
@@ -1243,37 +1261,37 @@ EditorUi.prototype.initCanvas = function()
 		zoomActualBtn.style.border = 'none';
 		zoomActualBtn.style.margin = '2px';
 		
-		var tb = document.createElement('div');
-		tb.className = 'geToolbarContainer geNoPrint';
-		tb.style.borderRight = '1px solid #e0e0e0';
-		tb.style.padding = '2px';
-		tb.style.left = '0px';
-		tb.style.top = '0px';
+		this.chromelessToolbar = document.createElement('div');
+		this.chromelessToolbar.className = 'geToolbarContainer geNoPrint';
+		this.chromelessToolbar.style.borderRight = '1px solid #e0e0e0';
+		this.chromelessToolbar.style.padding = '2px';
+		this.chromelessToolbar.style.left = (graph.container.offsetLeft + 2) + 'px';
+		this.chromelessToolbar.style.top = (graph.container.offsetTop + 2) + 'px';
 		
-		tb.appendChild(zoomInBtn);
-		tb.appendChild(zoomOutBtn);
-		tb.appendChild(zoomActualBtn);
+		this.chromelessToolbar.appendChild(zoomInBtn);
+		this.chromelessToolbar.appendChild(zoomOutBtn);
+		this.chromelessToolbar.appendChild(zoomActualBtn);
 		
-		document.body.appendChild(tb);
+		graph.container.offsetParent.appendChild(this.chromelessToolbar);
 		
 		// Changes toolbar opacity on hover
 		if (!mxClient.IS_TOUCH)
 		{
-			mxEvent.addListener(tb, 'mouseenter', function(evt)
+			mxEvent.addListener(this.chromelessToolbar, 'mouseenter', mxUtils.bind(this, function(evt)
 			{
-				mxUtils.setOpacity(tb, 100);
-			});
+				mxUtils.setOpacity(this.chromelessToolbar, 100);
+			}));
 			
-			mxEvent.addListener(tb, 'mouseleave', function(evt)
+			mxEvent.addListener(this.chromelessToolbar, 'mouseleave',  mxUtils.bind(this, function(evt)
 			{
-				mxUtils.setOpacity(tb, 20);
-			});
+				mxUtils.setOpacity(this.chromelessToolbar, 20);
+			}));
 			
-			mxUtils.setOpacity(tb, 20);
+			mxUtils.setOpacity(this.chromelessToolbar, 20);
 		}
 		else
 		{
-			mxUtils.setOpacity(tb, 50);
+			mxUtils.setOpacity(this.chromelessToolbar, 50);
 		}
 	}
 	else if (this.editor.extendCanvas)
@@ -1402,8 +1420,20 @@ EditorUi.prototype.initCanvas = function()
 		if ((mxEvent.isAltDown(evt) || (!mxClient.IS_MAC && mxEvent.isControlDown(evt)) || graph.panningHandler.isActive()) &&
 			(this.dialogs == null || this.dialogs.length == 0))
 		{
-			graph.lazyZoom(up);
-			mxEvent.consume(evt);
+			var source = mxEvent.getSource(evt);
+			
+			while (source != null)
+			{
+				if (source == graph.container)
+				{
+					graph.lazyZoom(up);
+					mxEvent.consume(evt);
+					
+					return;
+				}
+				
+				source = source.parentNode;
+			}
 		}
 	}));
 };
@@ -2255,6 +2285,11 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 	});
 
 	mxEvent.addGestureListeners(document, null, moveHandler, dropHandler);
+	
+	this.destroyFunctions.push(function()
+	{
+		mxEvent.removeGestureListeners(document, null, moveHandler, dropHandler);
+	});	
 };
 
 /**
@@ -2812,4 +2847,86 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	}
 	
 	return keyHandler;
+};
+
+/**
+ * Creates the keyboard event handler for the current graph and history.
+ */
+EditorUi.prototype.destroy = function()
+{
+	if (this.editor != null)
+	{
+		this.editor.destroy();
+		this.editor = null;
+	}
+	
+	if (this.menubar != null)
+	{
+		this.menubar.destroy();
+		this.menubar = null;
+	}
+	
+	if (this.toolbar != null)
+	{
+		this.toolbar.destroy();
+		this.toolbar = null;
+	}
+	
+	if (this.sidebar != null)
+	{
+		this.sidebar.destroy();
+		this.sidebar = null;
+	}
+	
+	if (this.keydownHandler != null)
+	{
+		mxEvent.removeListener(document, 'keydown', this.keydownHandler);
+		this.keydownHandler = null;
+	}
+		
+	if (this.keyupHandler != null)
+	{
+		mxEvent.removeListener(document, 'keyup', this.keyupHandler);
+		this.keyupHandler = null;
+	}
+	
+	if (this.resizeHandler != null)
+	{
+		mxEvent.removeListener(window, 'resize', this.resizeHandler);
+		this.resizeHandler = null;
+	}
+	
+	if (this.orientationChangeHandler != null)
+	{
+		mxEvent.removeListener(window, 'orientationchange', this.orientationChangeHandler);
+		this.orientationChangeHandler = null;
+	}
+	
+	if (this.scrollHandler != null)
+	{
+		mxEvent.removeListener(window, 'scroll', this.scrollHandler);
+		this.scrollHandler = null;
+	}
+
+	if (this.destroyFunctions != null)
+	{
+		for (var i = 0; i < this.destroyFunctions.length; i++)
+		{
+			this.destroyFunctions[i]();
+		}
+		
+		this.destroyFunctions = null;
+	}
+	
+	var c = [this.menubarContainer, this.toolbarContainer, this.sidebarContainer,
+	         this.formatContainer, this.diagramContainer, this.footerContainer,
+	         this.chromelessToolbar, this.hsplit, this.sidebarFooterContainer];
+	
+	for (var i = 0; i < c.length; i++)
+	{
+		if (c[i] != null && c[i].parentNode != null)
+		{
+			c[i].parentNode.removeChild(c[i]);
+		}
+	}
 };

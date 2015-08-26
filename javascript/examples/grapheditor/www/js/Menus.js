@@ -1112,13 +1112,15 @@ function Menubar(editorUi, container)
 	this.container = container;
 	
 	// Global handler to hide the current menu
-	mxEvent.addGestureListeners(document, mxUtils.bind(this, function(evt)
+	this.gestureHandler = mxUtils.bind(this, function(evt)
 	{
 		if (this.currentMenu != null && mxEvent.getSource(evt) != this.currentMenu.div)
 		{
 			this.hideMenu();
 		}
-	}));
+	});
+	
+	mxEvent.addGestureListeners(document, this.gestureHandler);
 };
 
 /**
@@ -1207,6 +1209,18 @@ Menubar.prototype.addMenuHandler = function(elt, funct)
 			clickHandler(evt);
 			show = true;
 		}));
+	}
+};
+
+/**
+ * Creates the keyboard event handler for the current graph and history.
+ */
+Menubar.prototype.destroy = function()
+{
+	if (this.gestureHandler != null)
+	{
+		mxEvent.removeGestureListeners(document, this.gestureHandler);
+		this.gestureHandler = null;
 	}
 };
 
