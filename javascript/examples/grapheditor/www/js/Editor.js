@@ -191,6 +191,11 @@ Editor.prototype.initialTopSpacing = 0;
 Editor.prototype.appName = document.title;
 
 /**
+ * Initializes the environment.
+ */
+Editor.prototype.init = function() { };
+
+/**
  * Sets the XML node for the current diagram.
  */
 Editor.prototype.createGraph = function()
@@ -447,15 +452,6 @@ Editor.prototype.setModified = function(value)
 Editor.prototype.setFilename = function(value)
 {
 	this.filename = value;
-};
-
-/**
- * Initializes the environment.
- */
-Editor.prototype.init = function()
-{
-	var editor = this;
-
 };
 
 /**
