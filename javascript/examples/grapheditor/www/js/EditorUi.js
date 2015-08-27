@@ -850,6 +850,11 @@ EditorUi = function(editor, container)
 mxUtils.extend(EditorUi, mxEventSource);
 
 /**
+ * Global config that specifies if the compact UI elements should be used.
+ */
+EditorUi.compactUi = true;
+
+/**
  * Specifies the size of the split bar.
  */
 EditorUi.prototype.splitSize = (mxClient.IS_TOUCH || mxClient.IS_POINTER) ? 12 : 8;

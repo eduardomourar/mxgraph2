@@ -29,7 +29,7 @@ Toolbar.prototype.dropdownImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/dropdown.g
  * Image element for the dropdown arrow.
  */
 Toolbar.prototype.dropdownImageHtml = '<img border="0" style="position:absolute;right:4px;top:' +
-	((uiTheme == 'atlas') ? 8 : 6) + 'px;" src="' + Toolbar.prototype.dropdownImage + '" valign="middle"/>';
+	((!EditorUi.compactUi) ? 8 : 6) + 'px;" src="' + Toolbar.prototype.dropdownImage + '" valign="middle"/>';
 
 /**
  * Defines the background for selected buttons.
@@ -61,13 +61,13 @@ Toolbar.prototype.init = function()
 	viewMenu.style.position = 'relative';
 	viewMenu.style.overflow = 'hidden';
 	
-	if (uiTheme == 'atlas')
+	if (EditorUi.compactUi)
 	{
-		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '62px' : '36px';
+		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '58px' : '50px';
 	}
 	else
 	{
-		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '58px' : '50px';
+		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '62px' : '36px';
 	}
 	
 	this.addSeparator();
@@ -81,7 +81,7 @@ Toolbar.prototype.init = function()
 		viewMenu.innerHTML = Math.round(this.editorUi.editor.graph.view.scale * 100) + '%' +
 			this.dropdownImageHtml;
 		
-		if (uiTheme != 'atlas')
+		if (EditorUi.compactUi)
 		{
 			viewMenu.getElementsByTagName('img')[0].style.right = '1px';
 			viewMenu.getElementsByTagName('img')[0].style.top = '5px';
@@ -128,7 +128,7 @@ Toolbar.prototype.init = function()
 Toolbar.prototype.addDropDownArrow = function(menu, sprite, width, atlasWidth, left, top, atlasDelta, atlasLeft)
 {
 	atlasDelta = (atlasDelta != null) ? atlasDelta : 32;
-	left = (uiTheme != 'atlas') ? left : atlasLeft;
+	left = (EditorUi.compactUi) ? left : atlasLeft;
 	
 	menu.style.whiteSpace = 'nowrap';
 	menu.style.overflow = 'hidden';
@@ -139,11 +139,11 @@ Toolbar.prototype.addDropDownArrow = function(menu, sprite, width, atlasWidth, l
 	
 	if (mxClient.IS_QUIRKS)
 	{
-		menu.style.height = (uiTheme != 'atlas') ? '24px' : '26px';
+		menu.style.height = (EditorUi.compactUi) ? '24px' : '26px';
 	}
 	
 	// Fix for item size in kennedy theme
-	if (uiTheme != 'atlas')
+	if (EditorUi.compactUi)
 	{
 		menu.getElementsByTagName('img')[0].style.left = '24px';
 		menu.getElementsByTagName('img')[0].style.top = '5px';
@@ -188,7 +188,7 @@ Toolbar.prototype.createTextToolbar = function()
 	styleElt.style.overflow = 'hidden';
 	styleElt.innerHTML = mxResources.get('style') + this.dropdownImageHtml;
 	
-	if (uiTheme != 'atlas')
+	if (EditorUi.compactUi)
 	{
 		styleElt.style.paddingRight = '18px';
 		styleElt.getElementsByTagName('img')[0].style.right = '1px';
@@ -205,7 +205,7 @@ Toolbar.prototype.createTextToolbar = function()
 	
 	this.setFontName(Menus.prototype.defaultFont);
 	
-	if (uiTheme != 'atlas')
+	if (EditorUi.compactUi)
 	{
 		this.fontMenu.style.paddingRight = '18px';
 		this.fontMenu.getElementsByTagName('img')[0].style.right = '1px';
@@ -222,7 +222,7 @@ Toolbar.prototype.createTextToolbar = function()
 	
 	this.setFontSize(Menus.prototype.defaultFontSize);
 	
-	if (uiTheme != 'atlas')
+	if (EditorUi.compactUi)
 	{
 		this.sizeMenu.style.paddingRight = '18px';
 		this.sizeMenu.getElementsByTagName('img')[0].style.right = '1px';
@@ -295,7 +295,7 @@ Toolbar.prototype.createTextToolbar = function()
 	alignMenu.innerHTML = '<div class="geSprite geSprite-left" style="margin-left:-2px;"></div>' + this.dropdownImageHtml;
 	alignMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
 
-	if (uiTheme != 'atlas')
+	if (EditorUi.compactUi)
 	{
 		alignMenu.getElementsByTagName('img')[0].style.left = '22px';
 		alignMenu.getElementsByTagName('img')[0].style.top = '5px';
@@ -335,7 +335,7 @@ Toolbar.prototype.createTextToolbar = function()
 	formatMenu.innerHTML = '<div class="geSprite geSprite-superscript" style="margin-left:-2px;"></div>' + this.dropdownImageHtml;
 	formatMenu.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
 
-	if (uiTheme != 'atlas')
+	if (EditorUi.compactUi)
 	{
 		formatMenu.getElementsByTagName('img')[0].style.left = '22px';
 		formatMenu.getElementsByTagName('img')[0].style.top = '5px';
@@ -385,7 +385,7 @@ Toolbar.prototype.createTextToolbar = function()
 	insertMenu.style.width = (mxClient.IS_QUIRKS) ? '36px' : '16px';
 	
 	// Fix for item size in kennedy theme
-	if (uiTheme != 'atlas')
+	if (EditorUi.compactUi)
 	{
 		insertMenu.getElementsByTagName('img')[0].style.left = '24px';
 		insertMenu.getElementsByTagName('img')[0].style.top = '5px';
@@ -587,7 +587,7 @@ Toolbar.prototype.createTextToolbar = function()
 	elt.style.width = (mxClient.IS_QUIRKS) ? '50px' : '30px';
 
 	// Fix for item size in kennedy theme
-	if (uiTheme != 'atlas')
+	if (EditorUi.compactUi)
 	{
 		elt.getElementsByTagName('img')[0].style.left = '22px';
 		elt.getElementsByTagName('img')[0].style.top = '5px';
