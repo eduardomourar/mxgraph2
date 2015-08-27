@@ -453,6 +453,7 @@ mxCellEditor.prototype.resize = function()
 	{
 		var isEdge = this.graph.getModel().isEdge(state.cell);
  		var scale = this.graph.getView().scale;
+ 		var m = null;
 		
 		if (!this.autoSize || (state.style[mxConstants.STYLE_OVERFLOW] == 'fill'))
 		{
@@ -461,7 +462,7 @@ mxCellEditor.prototype.resize = function()
 			this.textarea.style.width = Math.round(this.bounds.width / scale) + 'px';
 			this.textarea.style.height = Math.round(this.bounds.height / scale) + 'px';
 			
-//			// FIXME: Offset when scaled
+			// FIXME: Offset when scaled
 			if (document.documentMode == 8)
 			{
 				this.textarea.style.left = Math.round(this.bounds.x) + 'px';
@@ -474,8 +475,8 @@ mxCellEditor.prototype.resize = function()
 			}
 			else
 			{
-				this.textarea.style.left = Math.round(this.bounds.x - 0.5 * this.bounds.width * (1 - scale) / scale) + 'px';
-				this.textarea.style.top = Math.round(this.bounds.y - 0.5 * this.bounds.height * (1 - scale) / scale) + 'px';
+				this.textarea.style.left = Math.max(0, Math.round(this.bounds.x + 1)) + 'px';
+				this.textarea.style.top = Math.max(0, Math.round(this.bounds.y + 1)) + 'px';
 			}
 			
 			// Installs native word wrapping and avoids word wrap for empty label placeholder
@@ -502,7 +503,7 @@ mxCellEditor.prototype.resize = function()
 		else
 	 	{
 	 		var lw = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_WIDTH, null);
-			var m = (state.text != null) ? state.text.margin : null;
+			m = (state.text != null) ? state.text.margin : null;
 			
 			if (m == null)
 			{
@@ -625,7 +626,8 @@ mxCellEditor.prototype.resize = function()
 		{
 			mxUtils.setPrefixedStyle(this.textarea.style, 'transformOrigin', '0px 0px');
 			mxUtils.setPrefixedStyle(this.textarea.style, 'transform',
-				'scale(' + scale + ',' + scale + ') translate(' + (m.x * 100) + '%,' + (m.y * 100) + '%)');
+				'scale(' + scale + ',' + scale + ')' + ((m == null) ? '' :
+				' translate(' + (m.x * 100) + '%,' + (m.y * 100) + '%)'));
 		}
 	}
 };
