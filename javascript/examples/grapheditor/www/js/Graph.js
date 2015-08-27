@@ -2523,7 +2523,16 @@ if (typeof mxVertexHandler != 'undefined')
 		}
 		
 		mxCellEditorStopEditing.apply(this, arguments);
-		this.graph.container.focus();
+		
+		// Tries to move focus back to container after editing if possible
+		try
+		{
+			this.graph.container.focus();
+		}
+		catch (e)
+		{
+			// ignore
+		}
 	};
 
 	var mxCellEditorApplyValue = mxCellEditor.prototype.applyValue;
