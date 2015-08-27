@@ -895,6 +895,56 @@ if (typeof mxVertexHandler != 'undefined')
 	{
 		return mxEvent.isControlDown(evt) || mxConnectionHandlerCreateTarget.apply(this, arguments);
 	};
+	
+	/**
+	 * Adapter function to redirect current edge style via graph for use in handlers.
+	 */
+	Graph.prototype.defaultEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1'};
+	
+	/**
+	 * Adapter function to redirect current edge style via graph for use in handlers.
+	 */
+	Graph.prototype.currentEdgeStyle = Graph.prototype.defaultEdgeStyle;
+	
+	/**
+	 * Returns the current edge style as a string.
+	 */
+	Graph.prototype.createCurrentEdgeStyle = function()
+	{
+		var style = 'edgeStyle=' + (this.currentEdgeStyle['edgeStyle'] || 'none') + ';';
+		
+		if (this.currentEdgeStyle['shape'] != null)
+		{
+			style += 'shape=' + this.currentEdgeStyle['shape'] + ';';
+		}
+		
+		if (this.currentEdgeStyle['curved'] != null)
+		{
+			style += 'curved=' + this.currentEdgeStyle['curved'] + ';';
+		}
+		
+		if (this.currentEdgeStyle['rounded'] != null)
+		{
+			style += 'rounded=' + this.currentEdgeStyle['rounded'] + ';';
+		}
+		
+		// Special logic for custom property of elbowEdgeStyle
+		if (this.currentEdgeStyle['edgeStyle'] == 'elbowEdgeStyle' && this.currentEdgeStyle['elbow'] != null)
+		{
+			style += 'elbow=' + this.currentEdgeStyle['elbow'] + ';';
+		}
+		
+		if (this.currentEdgeStyle['html'] != null)
+		{
+			style += 'html=' + this.currentEdgeStyle['html'] + ';';
+		}
+		else
+		{
+			style += 'html=1;';
+		}
+		
+		return style;
+	};
 
 	/**
 	 * Hook for subclassers.
@@ -3299,7 +3349,7 @@ if (typeof mxVertexHandler != 'undefined')
 			this.linkHint.innerHTML = '';
 			this.linkHint.appendChild(a);
 
-			if (this.graph.isEnabled())
+			if (this.graph.isEnabled() && typeof this.graph.editLink === 'function')
 			{
 				var changeLink = document.createElement('img');
 				changeLink.setAttribute('src', IMAGE_PATH + '/edit.gif');

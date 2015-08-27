@@ -2034,7 +2034,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 				graph.cellsMoved(targets, dx, dy, null, null, true);
 				tmp = targets.slice();
 				targets.push(graph.insertEdge(null, null, '', source, targets[dropCellIndex],
-					this.editorUi.createCurrentEdgeStyle()));
+					graph.createCurrentEdgeStyle()));
 			}
 			
 			graph.fireEvent(new mxEventObject('cellsInserted', 'cells', targets));

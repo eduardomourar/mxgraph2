@@ -361,7 +361,6 @@ EditorUi = function(editor, container)
 	var connectStyles = ['shape', 'edgeStyle', 'curved', 'rounded', 'elbow'];
 	
 	// Sets the default edge style
-	var currentEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1'};
 	var currentStyle = {};
 	
 	// Note: Everything that is not in styles is ignored (styles is augmented below)
@@ -412,7 +411,7 @@ EditorUi = function(editor, container)
 			// Resets current style
 			if (graph.getModel().isEdge(state.cell))
 			{
-				currentEdgeStyle = {};
+				graph.currentEdgeStyle = {};
 			}
 			else
 			{
@@ -425,7 +424,7 @@ EditorUi = function(editor, container)
 	
 	this.clearDefaultStyle = function()
 	{
-		currentEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1'};
+		graph.currentEdgeStyle = graph.defaultEdgeStyle;
 		currentStyle = {};
 	};
 	
@@ -433,9 +432,9 @@ EditorUi = function(editor, container)
 	// This function is overridden below as soon as any style is set in the app.
 	var initialEdgeCellStyle = '';
 	
-	for (var key in currentEdgeStyle)
+	for (var key in graph.currentEdgeStyle)
 	{
-		initialEdgeCellStyle += key + '=' + currentEdgeStyle[key] + ';';
+		initialEdgeCellStyle += key + '=' + graph.currentEdgeStyle[key] + ';';
 	}
 	
 	// Uses the default edge style for connect preview
@@ -529,7 +528,7 @@ EditorUi = function(editor, container)
 				// Applies the current style to the cell
 				var value = graph.convertValueToString(cell);
 				var edge = graph.getModel().isEdge(cell);
-				var current = (edge) ? currentEdgeStyle : currentStyle;
+				var current = (edge) ? graph.currentEdgeStyle : currentStyle;
 				
 				for (var j = 0; j < appliedStyles.length; j++)
 				{
@@ -569,50 +568,12 @@ EditorUi = function(editor, container)
 		
 		insertHandler(cells, true);
 	});
-	
-	// This is used below and in Sidebar.dropAndConnect
-	this.createCurrentEdgeStyle = function()
-	{
-		var style = 'edgeStyle=' + (currentEdgeStyle['edgeStyle'] || 'none') + ';';
-		
-		if (currentEdgeStyle['shape'] != null)
-		{
-			style += 'shape=' + currentEdgeStyle['shape'] + ';';
-		}
-		
-		if (currentEdgeStyle['curved'] != null)
-		{
-			style += 'curved=' + currentEdgeStyle['curved'] + ';';
-		}
-		
-		if (currentEdgeStyle['rounded'] != null)
-		{
-			style += 'rounded=' + currentEdgeStyle['rounded'] + ';';
-		}
-		
-		// Special logic for custom property of elbowEdgeStyle
-		if (currentEdgeStyle['edgeStyle'] == 'elbowEdgeStyle' && currentEdgeStyle['elbow'] != null)
-		{
-			style += 'elbow=' + currentEdgeStyle['elbow'] + ';';
-		}
-		
-		if (currentEdgeStyle['html'] != null)
-		{
-			style += 'html=' + currentEdgeStyle['html'] + ';';
-		}
-		else
-		{
-			style += 'html=1;';
-		}
-		
-		return style;
-	};
 
 	// Uses current edge style for connect preview
 	// NOTE: Do not use "this" in here as it points to the UI
 	graph.connectionHandler.createEdgeState = mxUtils.bind(this, function(me)
 	{
-		var style = this.createCurrentEdgeStyle();
+		var style = graph.createCurrentEdgeStyle();
 		var edge = graph.createEdge(null, null, null, null, null, style);
 		
 		return new mxCellState(graph.view, edge, graph.getCellStyle(edge));
@@ -656,7 +617,7 @@ EditorUi = function(editor, container)
 			{
 				if (edge || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
 				{
-					currentEdgeStyle[keys[i]] = values[i];
+					graph.currentEdgeStyle[keys[i]] = values[i];
 				}
 				// Uses style for vertex if defined in styles
 				else if (vertex && mxUtils.indexOf(styles, keys[i]) >= 0)
@@ -673,7 +634,7 @@ EditorUi = function(editor, container)
 				
 				if (edge || common || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
 				{
-					currentEdgeStyle[keys[i]] = values[i];
+					graph.currentEdgeStyle[keys[i]] = values[i];
 				}
 			}
 		}
@@ -688,16 +649,16 @@ EditorUi = function(editor, container)
 				// Updates toolbar icon for edge style
 				var edgeStyleDiv = this.toolbar.edgeStyleMenu.getElementsByTagName('div')[0];
 				
-				if (currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle' && currentEdgeStyle['curved'] == '1')
+				if (graph.currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle' && graph.currentEdgeStyle['curved'] == '1')
 				{
 					edgeStyleDiv.className = 'geSprite geSprite-curved';
 				}
-				else if (currentEdgeStyle['edgeStyle'] == 'straight' || currentEdgeStyle['edgeStyle'] == 'none' ||
-						currentEdgeStyle['edgeStyle'] == null)
+				else if (graph.currentEdgeStyle['edgeStyle'] == 'straight' || graph.currentEdgeStyle['edgeStyle'] == 'none' ||
+						graph.currentEdgeStyle['edgeStyle'] == null)
 				{
 					edgeStyleDiv.className = 'geSprite geSprite-straight';
 				}
-				else if (currentEdgeStyle['edgeStyle'] == 'entityRelationEdgeStyle')
+				else if (graph.currentEdgeStyle['edgeStyle'] == 'entityRelationEdgeStyle')
 				{
 					edgeStyleDiv.className = 'geSprite geSprite-entity';
 				}
@@ -712,15 +673,15 @@ EditorUi = function(editor, container)
 				// Updates icon for edge shape
 				var edgeShapeDiv = this.toolbar.edgeShapeMenu.getElementsByTagName('div')[0];
 				
-				if (currentEdgeStyle['shape'] == 'link')
+				if (graph.currentEdgeStyle['shape'] == 'link')
 				{
 					edgeShapeDiv.className = 'geSprite geSprite-linkedge';
 				}
-				else if (currentEdgeStyle['shape'] == 'flexArrow')
+				else if (graph.currentEdgeStyle['shape'] == 'flexArrow')
 				{
 					edgeShapeDiv.className = 'geSprite geSprite-arrow';
 				}
-				else if (currentEdgeStyle['shape'] == 'arrow')
+				else if (graph.currentEdgeStyle['shape'] == 'arrow')
 				{
 					edgeShapeDiv.className = 'geSprite geSprite-simplearrow';
 				}
@@ -736,8 +697,8 @@ EditorUi = function(editor, container)
 				var lineStartDiv = this.toolbar.lineStartMenu.getElementsByTagName('div')[0];
 				
 				lineStartDiv.className = this.getCssClassForMarker('start',
-						currentEdgeStyle['shape'], currentEdgeStyle[mxConstants.STYLE_STARTARROW],
-						mxUtils.getValue(currentEdgeStyle, 'startFill', '1'));
+						graph.currentEdgeStyle['shape'], graph.currentEdgeStyle[mxConstants.STYLE_STARTARROW],
+						mxUtils.getValue(graph.currentEdgeStyle, 'startFill', '1'));
 			}
 
 			// Updates icon for optinal line end shape
@@ -746,8 +707,8 @@ EditorUi = function(editor, container)
 				var lineEndDiv = this.toolbar.lineEndMenu.getElementsByTagName('div')[0];
 				
 				lineEndDiv.className = this.getCssClassForMarker('end',
-						currentEdgeStyle['shape'], currentEdgeStyle[mxConstants.STYLE_ENDARROW],
-						mxUtils.getValue(currentEdgeStyle, 'endFill', '1'));
+						graph.currentEdgeStyle['shape'], graph.currentEdgeStyle[mxConstants.STYLE_ENDARROW],
+						mxUtils.getValue(graph.currentEdgeStyle, 'endFill', '1'));
 			}
 		}
 	}));
@@ -928,8 +889,7 @@ EditorUi.prototype.init = function()
 		ui.updateActionStates();
 	};
 	
-	// LATER: Move currentEdgeStyle to graph as it is needed in the handlers
-	this.editor.graph.createCurrentEdgeStyle = this.createCurrentEdgeStyle;
+	// Hack to make editLink available in vertex handler
 	this.editor.graph.editLink = ui.actions.get('editLink').funct;
 	
 	this.updateActionStates();
