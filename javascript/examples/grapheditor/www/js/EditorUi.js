@@ -2843,6 +2843,12 @@ EditorUi.prototype.destroy = function()
 		this.sidebar = null;
 	}
 	
+	if (this.keyHandler != null)
+	{
+		this.keyHandler.destroy();
+		this.keyHandler = null;
+	}
+	
 	if (this.keydownHandler != null)
 	{
 		mxEvent.removeListener(document, 'keydown', this.keydownHandler);
