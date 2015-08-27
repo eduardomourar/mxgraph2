@@ -865,22 +865,68 @@ EditorUi.prototype.allowAnimation = true;
  */
 EditorUi.prototype.init = function()
 {
+	/**
+	 * Keypress starts immediate editing on selection cell
+	 */
+	var graph = this.editor.graph;
+		
+	mxEvent.addListener(graph.container, 'keydown', mxUtils.bind(this, function(evt)
+	{
+		// Tab selects next cell
+		if (evt.which == 9)
+		{
+			if (graph.isEditing())
+			{
+				graph.stopEditing(false);
+			}
+			
+			graph.selectCell(!mxEvent.isShiftDown(evt));
+			mxEvent.consume(evt);
+		}
+	}));
+	
+	mxEvent.addListener(graph.container, 'keypress', mxUtils.bind(this, function(evt)
+	{
+		// KNOWN: Focus does not work if label is empty in quirks mode
+		if (!graph.isEditing() && !graph.isSelectionEmpty() && evt.which !== 0 &&
+			!mxEvent.isAltDown(evt) && !mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
+		{
+			graph.escape();
+			graph.startEditing();
+
+			// Workaround for FF where char is lost of cursor is placed before char
+			if (mxClient.IS_FF)
+			{
+				var ce = graph.cellEditor;
+				ce.textarea.innerHTML = String.fromCharCode(evt.which);
+
+				// Moves cursor to end of textarea
+				var range = document.createRange();
+				range.selectNodeContents(ce.textarea);
+				range.collapse(false);
+				var sel = window.getSelection();
+				sel.removeAllRanges();
+				sel.addRange(range);
+			}
+		}
+	}));
+
 	// Updates action states
 	this.addUndoListener();
 	this.addBeforeUnloadListener();
 	
-	this.editor.graph.getSelectionModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
+	graph.getSelectionModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
 	{
 		this.updateActionStates();
 	}));
 	
-	this.editor.graph.getModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
+	graph.getModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
 	{
 		this.updateActionStates();
 	}));
 	
-	// Adds "event" for change of default parent
-	var graphSetDefaultParent = this.editor.graph.setDefaultParent;
+	// Changes action states after change of default parent
+	var graphSetDefaultParent = graph.setDefaultParent;
 	var ui = this;
 	
 	this.editor.graph.setDefaultParent = function()
@@ -890,7 +936,7 @@ EditorUi.prototype.init = function()
 	};
 	
 	// Hack to make editLink available in vertex handler
-	this.editor.graph.editLink = ui.actions.get('editLink').funct;
+	graph.editLink = ui.actions.get('editLink').funct;
 	
 	this.updateActionStates();
 	this.initClipboard();
