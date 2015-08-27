@@ -914,8 +914,8 @@ EditorUi.prototype.init = function()
 	}));
 	
 	// Adds "event" for change of default parent
-	var ui = this;
 	var graphSetDefaultParent = this.editor.graph.setDefaultParent;
+	var ui = this;
 	
 	this.editor.graph.setDefaultParent = function()
 	{
@@ -1272,7 +1272,7 @@ EditorUi.prototype.initCanvas = function()
 		this.chromelessToolbar.appendChild(zoomOutBtn);
 		this.chromelessToolbar.appendChild(zoomActualBtn);
 		
-		graph.container.offsetParent.appendChild(this.chromelessToolbar);
+		graph.container.parentNode.appendChild(this.chromelessToolbar);
 		
 		// Changes toolbar opacity on hover
 		if (!mxClient.IS_TOUCH)
