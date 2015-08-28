@@ -848,11 +848,11 @@ Graph.prototype.isCellFoldable = function(cell)
 };
 
 /**
- * Overridden to limit zoom to 20x.
+ * Overridden to limit zoom to 160x.
  */
 Graph.prototype.zoom = function(factor, center)
 {
-	factor = Math.min(this.view.scale * factor, 20) / this.view.scale;
+	factor = Math.min(this.view.scale * factor, 160) / this.view.scale;
 	
 	mxGraph.prototype.zoom.apply(this, arguments);
 };
