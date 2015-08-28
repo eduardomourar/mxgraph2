@@ -1,3 +1,5 @@
+28-JUN-2015: 3.4.0.0
+
 - Uses CSS transforms in mxCellEditor.resize [JavaScript]
 - Adds create and destroy for grapheditor instances
 - Fixes global mousewheel handling in grapheditor
