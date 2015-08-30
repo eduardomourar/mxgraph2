@@ -2438,6 +2438,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	
 	var startTime = new Date().getTime();
 	var connectorImgBounds = null;
+	var connectImgState = null;
 	var timeOnTarget = 0;
 	var prev = null;
 	
@@ -2502,22 +2503,25 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		}
 		
 		// Shows drop target icons on selection cell if connector handler is under the mouse
-		var connectorHit = connectorImgBounds != null && mxUtils.contains(connectorImgBounds, x, y);
-		
-		if (connectorHit || (currentStyleTarget == null && activeArrow == null && graph.getSelectionCount() == 1))
+		if (connectorImgBounds == null && currentStyleTarget == null && activeArrow == null && graph.getSelectionCount() == 1)
 		{
 			var handler = graph.selectionCellsHandler.getHandler(graph.getSelectionCell());
 			
-			if (handler != null && (mxEvent.getSource(evt) == handler.connectorImg || connectorHit))
+			if (handler != null && mxEvent.getSource(evt) == handler.connectorImg)
 			{
 				var s = handler.connectorImg.style;
 				connectorImgBounds = new mxRectangle(parseInt(s.left), parseInt(s.top), parseInt(s.width), parseInt(s.height));
-				cell = graph.getSelectionCell();
-				state = graph.view.getState(cell);
-				timeOnTarget = this.dropTargetDelay + 10;
+				connectorImgState = graph.view.getState(graph.getSelectionCell());
 			}
 		}
-		
+	
+		if (connectorImgBounds != null && mxUtils.contains(connectorImgBounds, x, y) && connectorImgState != null)
+		{
+			timeOnTarget = this.dropTargetDelay + 10;
+			state = connectorImgState;
+			cell = state.cell;
+		}
+
 		// Shift means disabled, delayed on cells with children, shows after this.dropTargetDelay, hides after 2500ms
 		if (timeOnTarget < 2500 && state != null && !mxEvent.isShiftDown(evt) &&
 			// If shape is equal or target has no stroke then add long delay except for images
@@ -2722,6 +2726,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			else
 			{
 				connectorImgBounds = null;
+				connectorImgState = null;
+				
 				var elts = [roundSource, roundTarget, arrowUp, arrowRight, arrowDown, arrowLeft];
 				
 				for (var i = 0; i < elts.length; i++)
