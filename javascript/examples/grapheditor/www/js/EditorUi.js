@@ -156,9 +156,11 @@ EditorUi = function(editor, container)
 	var panningHandlerIsForcePanningEvent = graph.panningHandler.isForcePanningEvent;
 	graph.panningHandler.isForcePanningEvent = function(me)
 	{
+		// Ctrl+left button is reported as right button in FF on Mac
 		return panningHandlerIsForcePanningEvent.apply(this, arguments) ||
-			spaceKeyPressed ||
-			(mxEvent.isMouseEvent(me.getEvent()) && (mxEvent.isRightMouseButton(me.getEvent()) ||
+			spaceKeyPressed || (mxEvent.isMouseEvent(me.getEvent()) &&
+			((!mxEvent.isControlDown(me.getEvent()) &&
+			mxEvent.isRightMouseButton(me.getEvent())) ||
 			mxEvent.isMiddleMouseButton(me.getEvent())));
 	};
 

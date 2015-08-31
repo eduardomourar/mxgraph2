@@ -3180,6 +3180,7 @@ if (typeof mxVertexHandler != 'undefined')
 								this.graph.connectionHandler.start(this.state, mousePoint.x, mousePoint.y);
 								this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
 								this.graph.isMouseDown = true;
+								this.connectorImg.style.display = 'none';
 								
 								mxEvent.consume(evt);
 							}
@@ -3191,6 +3192,7 @@ if (typeof mxVertexHandler != 'undefined')
 							{
 								var pt = mxUtils.convertPoint(this.graph.container,
 										mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+								this.connectorImg.style.display = '';
 								var tol = this.graph.tolerance;
 								
 								// Handles single click
