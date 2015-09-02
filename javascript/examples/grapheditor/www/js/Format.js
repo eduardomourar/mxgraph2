@@ -1390,6 +1390,7 @@ ArrangePanel.prototype.addGroupOps = function(div)
 	var ui = this.editorUi;
 	var graph = ui.editor.graph;
 	var cell = graph.getSelectionCell();
+	var ss = this.format.getSelectionState();
 	var count = 0;
 	
 	div.style.paddingTop = '8px';
@@ -1441,6 +1442,19 @@ ArrangePanel.prototype.addGroupOps = function(div)
 		div.appendChild(btn);
 		count++;
 	}
+	else if (ss.edges.length > 0)
+	{
+		mxUtils.br(div);
+		btn = mxUtils.button(mxResources.get('clearWaypoints'), mxUtils.bind(this, function(evt)
+		{
+			this.editorUi.actions.get('clearWaypoints').funct();
+		}));
+		
+		btn.style.width = '202px';
+		btn.style.marginBottom = '2px';
+		div.appendChild(btn);
+		count++;
+	}
 	
 	if (graph.getSelectionCount() == 1)
 	{
@@ -1458,20 +1472,6 @@ ArrangePanel.prototype.addGroupOps = function(div)
 		btn.style.marginBottom = '2px';
 		div.appendChild(btn);
 		count++;
-		
-		if (graph.getModel().isEdge(graph.getSelectionCell()))
-		{
-			mxUtils.br(div);
-			btn = mxUtils.button(mxResources.get('clearWaypoints'), mxUtils.bind(this, function(evt)
-			{
-				this.editorUi.actions.get('clearWaypoints').funct();
-			}));
-			
-			btn.style.width = '202px';
-			btn.style.marginBottom = '2px';
-			div.appendChild(btn);
-			count++;
-		}
 	}
 	
 	if (count == 0)
