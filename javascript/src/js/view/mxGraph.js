@@ -7606,13 +7606,15 @@ mxGraph.prototype.zoomToRect = function(rect)
  * border - Optional number that specifies the border. Default is 0.
  * keepOrigin - Optional boolean that specifies if the translate should be
  * changed. Default is false.
+ * margin - Optional margin in pixels. Default is 1.
  */
-mxGraph.prototype.fit = function(border, keepOrigin)
+mxGraph.prototype.fit = function(border, keepOrigin, margin)
 {
 	if (this.container != null)
 	{
 		border = (border != null) ? border : 0;
 		keepOrigin = (keepOrigin != null) ? keepOrigin : false;
+		margin = (margin != null) ? margin : 1;
 		
 		var sb = (document.documentMode >= 9) ? 4 : 0;
 		var w1 = this.container.clientWidth - sb;
@@ -7641,7 +7643,7 @@ mxGraph.prototype.fit = function(border, keepOrigin)
 				h2 = Math.max(h2, this.backgroundImage.height - bounds.y / s);
 			}
 			
-			var b = (keepOrigin) ? border : 2 * border;
+			var b = ((keepOrigin) ? border : 2 * border) + margin;
 			var s2 = Math.floor(Math.min(w1 / (w2 + b), h1 / (h2 + b)) * 100) / 100;
 			
 			if (this.minFitScale != null)
@@ -7658,8 +7660,8 @@ mxGraph.prototype.fit = function(border, keepOrigin)
 			{
 				if (!mxUtils.hasScrollbars(this.container))
 				{
-					var x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border + 1) : border;
-					var y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border + 1) : border;
+					var x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border / s2 + margin / 2) : border;
+					var y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border / s2 + margin / 2) : border;
 	
 					this.view.scaleAndTranslate(s2, x0, y0);
 				}
