@@ -7688,9 +7688,7 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin)
 			}
 		}
 	}
-	
-	console.log('fit', this.view.translate.x, this.view.translate.y, this.view.scale);
-	
+
 	return this.view.scale;
 };
 
