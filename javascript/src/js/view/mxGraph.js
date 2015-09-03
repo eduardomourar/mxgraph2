@@ -7632,6 +7632,7 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin)
 				bounds.y = 0;
 			}
 			
+			// LATER: Use unscaled bounding boxes to fix rounding errors
 			var s = this.view.scale;
 			var w2 = bounds.width / s;
 			var h2 = bounds.height / s;
@@ -7687,6 +7688,8 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin)
 			}
 		}
 	}
+	
+	console.log('fit', this.view.translate.x, this.view.translate.y, this.view.scale);
 	
 	return this.view.scale;
 };
