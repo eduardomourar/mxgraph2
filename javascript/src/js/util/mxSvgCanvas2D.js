@@ -607,8 +607,14 @@ mxSvgCanvas2D.prototype.addNode = function(filled, stroked)
 			node.setAttribute('pointer-events', 'none');
 		}
 		
-		// LATER: Update existing DOM for performance
-		this.root.appendChild(node);
+		// Removes invisible nodes from output if they don't handle events
+		if ((node.nodeName != 'rect' && node.nodeName != 'path' && node.nodeName != 'ellipse') ||
+			(node.getAttribute('fill') != 'none' && node.getAttribute('fill') != 'transparent') ||
+			node.getAttribute('stroke') != 'none' || node.getAttribute('pointer-events') != 'none')
+		{
+			// LATER: Update existing DOM for performance		
+			this.root.appendChild(node);
+		}
 	}
 };
 

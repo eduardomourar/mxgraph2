@@ -1,3 +1,4 @@
+- Avoids output of invisible nodes in mxSvgCanvas2D [JavaScript]
 - Adds margin, fixes scrollbars in mxGraph.fit [JavaScript]
 
 28-AUG-2015: 3.4.0.0
