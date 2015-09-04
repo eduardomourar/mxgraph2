@@ -2700,34 +2700,82 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	};
 	
 	// Helper function to move cells with the cursor keys
-	function nudge(keyCode, stepSize)
+	function nudge(keyCode, stepSize, resize)
 	{
 		if (!graph.isSelectionEmpty() && graph.isEnabled())
 		{
 			stepSize = (stepSize != null) ? stepSize : 1;
-			
-			var dx = 0;
-			var dy = 0;
-			
-			if (keyCode == 37)
+
+			if (resize)
 			{
-				dx = -stepSize;
+				// Resizes all selected vertices
+				graph.getModel().beginUpdate();
+				try
+				{
+					var cells = graph.getSelectionCells();
+					
+					for (var i = 0; i < cells.length; i++)
+					{
+						if (graph.getModel().isVertex(cells[i]))
+						{
+							var geo = graph.getCellGeometry(cells[i]);
+							
+							if (geo != null)
+							{
+								geo = geo.clone();
+								
+								if (keyCode == 37)
+								{
+									geo.width = Math.max(0, geo.width - stepSize);
+								}
+								else if (keyCode == 38)
+								{
+									geo.height = Math.max(0, geo.height - stepSize);
+								}
+								else if (keyCode == 39)
+								{
+									geo.width += stepSize;
+								}
+								else if (keyCode == 40)
+								{
+									geo.height += stepSize;
+								}
+								
+								graph.getModel().setGeometry(cells[i], geo);
+							}
+						}
+					}
+				}
+				finally
+				{
+					graph.getModel().endUpdate();
+				}
 			}
-			else if (keyCode == 38)
+			else
 			{
-				dy = -stepSize;
+				var dx = 0;
+				var dy = 0;
+				
+				if (keyCode == 37)
+				{
+					dx = -stepSize;
+				}
+				else if (keyCode == 38)
+				{
+					dy = -stepSize;
+				}
+				else if (keyCode == 39)
+				{
+					dx = stepSize;
+				}
+				else if (keyCode == 40)
+				{
+					dy = stepSize;
+				}
+				
+				graph.moveCells(graph.getSelectionCells(), dx, dy);
+				graph.scrollCellToVisible(graph.getSelectionCell());
 			}
-			else if (keyCode == 39)
-			{
-				dx = stepSize;
-			}
-			else if (keyCode == 40)
-			{
-				dy = stepSize;
-			}
-			
-			graph.moveCells(graph.getSelectionCells(), dx, dy);
-			graph.scrollCellToVisible(graph.getSelectionCell());
 		}
 	};
 	
@@ -2795,6 +2843,14 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindShiftKey(38, function() { nudge(38, graph.gridSize); }); // Shift+Up arrow
 	keyHandler.bindShiftKey(39, function() { nudge(39, graph.gridSize); }); // Shift+Right arrow
 	keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
+	keyHandler.bindControlKey(37, function() { nudge(37, null, true); }); // Ctrl+Left arrow
+	keyHandler.bindControlKey(38, function() { nudge(38, null, true); }); // Ctrl+Up arrow
+	keyHandler.bindControlKey(39, function() { nudge(39, null, true); }); // Ctrl+Right arrow
+	keyHandler.bindControlKey(40, function() { nudge(40, null, true); }); // Ctrl+Down arrow
+	keyHandler.bindControlShiftKey(37, function() { nudge(37, graph.gridSize, true); }); // Ctrl+Left arrow
+	keyHandler.bindControlShiftKey(38, function() { nudge(38, graph.gridSize, true); }); // Ctrl+Shift+Up arrow
+	keyHandler.bindControlShiftKey(39, function() { nudge(39, graph.gridSize, true); }); // Ctrl+Shift+Right arrow
+	keyHandler.bindControlShiftKey(40, function() { nudge(40, graph.gridSize, true); }); // Ctrl+Shift+Down arrow
 	keyHandler.bindControlKey(13, function() { graph.setSelectionCells(graph.duplicateCells(graph.getSelectionCells(), false)); }); // Ctrl+Enter
 	keyHandler.bindShiftKey(9, function() { graph.selectPreviousCell(); }); // Shift+Tab
 	keyHandler.bindControlKey(9, function() { graph.selectParentCell(); }); // Ctrl+Tab
