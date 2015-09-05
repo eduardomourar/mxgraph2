@@ -1,5 +1,7 @@
-- Add unscaledBoundingBox in mxShape
+- Fix mxPanningHandler.ignoreCell = true forces panning
+
 - Add lineSpacing style
+- Add unscaledBoundingBox in mxShape
 - Replace cellpath lookups with dictionary
 - Handle minResize in mxCellEditor.resize
 
