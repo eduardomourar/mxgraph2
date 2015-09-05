@@ -620,54 +620,66 @@ OpenFile.prototype.cancel = function(cancel)
 
 			if (this.backgroundPageShape == null)
 			{
-				this.backgroundPageShape = this.createBackgroundPageShape(bounds);
-				this.backgroundPageShape.scale = 1;
+				// Finds first child of type element
+				var firstChild = this.graph.container.firstChild;
 				
-				// Shadow filter causes problems in outline window in quirks mode. IE8 standards
-				// also has known rendering issues inside mxWindow but not using shadow is worse.
-				this.backgroundPageShape.isShadow = !mxClient.IS_QUIRKS;
-				this.backgroundPageShape.dialect = mxConstants.DIALECT_STRICTHTML;
-				this.backgroundPageShape.init(this.graph.container);
+				while (firstChild != null && firstChild.nodeType != mxConstants.NODETYPE_ELEMENT)
+				{
+					firstChild = firstChild.nextSibling;
+				}
+				
+				if (firstChild != null)
+				{
+					this.backgroundPageShape = this.createBackgroundPageShape(bounds);
+					this.backgroundPageShape.scale = 1;
+					
+					// Shadow filter causes problems in outline window in quirks mode. IE8 standards
+					// also has known rendering issues inside mxWindow but not using shadow is worse.
+					this.backgroundPageShape.isShadow = !mxClient.IS_QUIRKS;
+					this.backgroundPageShape.dialect = mxConstants.DIALECT_STRICTHTML;
+					this.backgroundPageShape.init(this.graph.container);
 
-				// Required for the browser to render the background page in correct order
-				this.graph.container.firstChild.style.position = 'absolute';
-				this.graph.container.insertBefore(this.backgroundPageShape.node, this.graph.container.firstChild);
-				this.backgroundPageShape.redraw();
-				
-				this.backgroundPageShape.node.className = 'geBackgroundPage';
-				
-				// Adds listener for double click handling on background
-				mxEvent.addListener(this.backgroundPageShape.node, 'dblclick',
-					mxUtils.bind(this, function(evt)
-					{
-						this.graph.dblClick(evt);
-					})
-				);
-				
-				// Adds basic listeners for graph event dispatching outside of the
-				// container and finishing the handling of a single gesture
-				mxEvent.addGestureListeners(this.backgroundPageShape.node,
-					mxUtils.bind(this, function(evt)
-					{
-						this.graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt));
-					}),
-					mxUtils.bind(this, function(evt)
-					{
-						// Hides the tooltip if mouse is outside container
-						if (this.graph.tooltipHandler != null && this.graph.tooltipHandler.isHideOnHover())
+					// Required for the browser to render the background page in correct order
+					firstChild.style.position = 'absolute';
+					this.graph.container.insertBefore(this.backgroundPageShape.node, firstChild);
+					this.backgroundPageShape.redraw();
+					
+					this.backgroundPageShape.node.className = 'geBackgroundPage';
+					
+					// Adds listener for double click handling on background
+					mxEvent.addListener(this.backgroundPageShape.node, 'dblclick',
+						mxUtils.bind(this, function(evt)
 						{
-							this.graph.tooltipHandler.hide();
-						}
-						
-						if (this.graph.isMouseDown && !mxEvent.isConsumed(evt))
+							this.graph.dblClick(evt);
+						})
+					);
+					
+					// Adds basic listeners for graph event dispatching outside of the
+					// container and finishing the handling of a single gesture
+					mxEvent.addGestureListeners(this.backgroundPageShape.node,
+						mxUtils.bind(this, function(evt)
 						{
-							this.graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt));
-						}
-					}),
-					mxUtils.bind(this, function(evt)
-					{
-						this.graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));
-					}));
+							this.graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt));
+						}),
+						mxUtils.bind(this, function(evt)
+						{
+							// Hides the tooltip if mouse is outside container
+							if (this.graph.tooltipHandler != null && this.graph.tooltipHandler.isHideOnHover())
+							{
+								this.graph.tooltipHandler.hide();
+							}
+							
+							if (this.graph.isMouseDown && !mxEvent.isConsumed(evt))
+							{
+								this.graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt));
+							}
+						}),
+						mxUtils.bind(this, function(evt)
+						{
+							this.graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));
+						})
+					);
+				}
 			}
 			else
 			{
