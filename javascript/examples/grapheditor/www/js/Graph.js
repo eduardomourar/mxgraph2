@@ -2999,6 +2999,54 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 		};
 		
+		// Handles single clicks on the connector img
+		var mxVertexHandlerMouseUp = mxVertexHandler.prototype.mouseUp;
+		mxVertexHandler.prototype.mouseUp = function(sender, me)
+		{
+			if (this.connectorImageMousePoint != null)
+			{
+				this.connectorImg.style.display = '';
+				var tol = this.graph.tolerance;
+				
+				// Handles single click
+				if (Math.abs(me.getGraphX() - this.connectorImageMousePoint.x) < tol &&
+					Math.abs(me.getGraphY() - this.connectorImageMousePoint.y) < tol)
+				{
+					this.graph.model.beginUpdate();
+					try
+					{
+						var dup = this.graph.duplicateCells([this.state.cell], false)[0];
+						this.graph.setSelectionCell(dup);
+						var layout = null;
+
+						// Never connects children in stack layouts
+						if (this.graph.layoutManager != null)
+						{
+							layout = this.graph.layoutManager.getLayout(this.graph.model.getParent(dup));
+						}
+						
+						if (!mxEvent.isShiftDown(me.getEvent()) && (layout == null || layout.constructor != mxStackLayout))
+						{
+							var geo = this.graph.getCellGeometry(dup);
+							geo.x = this.state.cell.geometry.x + this.state.cell.geometry.width + 80;
+							geo.y = this.state.cell.geometry.y;
+
+							var edge = this.graph.insertEdge(null, null, '', this.state.cell, dup, this.graph.createCurrentEdgeStyle());
+							this.graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [edge]));
+						}
+					}
+					finally
+					{
+						this.graph.model.endUpdate();
+					}
+					
+					me.consume();
+				}
+			}
+			
+			mxVertexHandlerMouseUp.apply(this, arguments);
+		};
+
 		// Shows rotation handle for edge labels.
 		mxVertexHandler.prototype.isRotationHandleVisible = function()
 		{
@@ -3162,78 +3210,29 @@ if (typeof mxVertexHandler != 'undefined')
 						mxEvent.redirectMouseEvents(this.connectorImg, this.graph, this.state);
 					}
 					
-					var mousePoint = null;
+					this.connectorImageMousePoint = null;
 					
-					// Starts connecting on touch/mouse down
-					mxEvent.addGestureListeners(this.connectorImg,
-						mxUtils.bind(this, function(evt)
+					// Starts connecting on touch/mouse down. Single clicks are handled in mouseUp.
+					mxEvent.addGestureListeners(this.connectorImg, mxUtils.bind(this, function(evt)
+					{
+						// FIXME: Use native event in isForceRubberband, isForcePanningEvent
+						// Note: Even if control is a popup trigger in this case it should initiate a drag for copy on connect
+						if (mxEvent.isControlDown(evt) || (!mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt)))
 						{
-							// FIXME: Use native event in isForceRubberband, isForcePanningEvent
-							// Note: Even if control is a popup trigger in this case it should initiate a drag for copy on connect
-							if (mxEvent.isControlDown(evt) || (!mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt)))
-							{
-								this.graph.popupMenuHandler.hideMenu();
-								this.graph.stopEditing(false);
-								
-								mousePoint = mxUtils.convertPoint(this.graph.container,
-										mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-								this.graph.connectionHandler.start(this.state, mousePoint.x, mousePoint.y);
-								this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-								this.graph.isMouseDown = true;
-								this.connectorImg.style.display = 'none';
-								
-								mxEvent.consume(evt);
-							}
-						}),
-						null,
-						mxUtils.bind(this, function(evt)
-						{
-							if (mousePoint != null)
-							{
-								var pt = mxUtils.convertPoint(this.graph.container,
-										mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-								this.connectorImg.style.display = '';
-								var tol = this.graph.tolerance;
-								
-								// Handles single click
-								if (Math.abs(pt.x - mousePoint.x) < tol && Math.abs(pt.y - mousePoint.y) < tol)
-								{
-									this.graph.model.beginUpdate();
-									try
-									{
-										var dup = this.graph.duplicateCells([this.state.cell], false)[0];
-										this.graph.setSelectionCell(dup);
-										var layout = null;
-	
-										// Never connects children in stack layouts
-										if (this.graph.layoutManager != null)
-										{
-											layout = this.graph.layoutManager.getLayout(this.graph.model.getParent(dup));
-										}
-										
-										if (!mxEvent.isShiftDown(evt) && (layout == null || layout.constructor != mxStackLayout))
-										{
-											var geo = this.graph.getCellGeometry(dup);
-											geo.x = this.state.cell.geometry.x + this.state.cell.geometry.width + 80;
-											geo.y = this.state.cell.geometry.y;
-	
-											var edge = this.graph.insertEdge(null, null, '', this.state.cell, dup, this.graph.createCurrentEdgeStyle());
-											this.graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [edge]));
-										}
-									}
-									finally
-									{
-										this.graph.model.endUpdate();
-									}
-									
-									this.graph.isMouseDown = false;
-									mxEvent.consume(evt);
-								}
-								
-								mousePoint = null;
-							}
-						})
-					);
+							this.graph.popupMenuHandler.hideMenu();
+							this.graph.stopEditing(false);
+							
+							mousePoint = mxUtils.convertPoint(this.graph.container,
+									mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+							this.graph.connectionHandler.start(this.state, mousePoint.x, mousePoint.y);
+							this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+							this.graph.isMouseDown = true;
+							this.connectorImageMousePoint = mousePoint;
+							this.connectorImg.style.display = 'none';
+							
+							mxEvent.consume(evt);
+						}
+					}), null, null);
 	
 					this.graph.container.appendChild(this.connectorImg);
 					redraw = true;
@@ -3480,6 +3479,8 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				this.linkHint.style.visibility = '';
 			}
+			
+			this.connectorImageMousePoint != null;
 		};
 	
 		var vertexHandlerDestroy = mxVertexHandler.prototype.destroy;
