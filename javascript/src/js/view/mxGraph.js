@@ -7378,11 +7378,15 @@ mxGraph.prototype.zoomTo = function(scale, center)
  * horizontally. Default is true.
  * vertical - Optional boolean that specifies if the graph should be centered
  * vertically. Default is true.
+ * cx - Optional float that specifies the horizontal center. Default is 0.5.
+ * cy - Optional float that specifies the vertical center. Default is 0.5.
  */
-mxGraph.prototype.center = function(horizontal, vertical)
+mxGraph.prototype.center = function(horizontal, vertical, cx, cy)
 {
 	horizontal = (horizontal != null) ? horizontal : true;
 	vertical = (vertical != null) ? vertical : true;
+	cx = (cx != null) ? cx : 0.5;
+	cy = (cy != null) ? cy : 0.5;
 	
 	var hasScrollbars = mxUtils.hasScrollbars(this.container);
 	var cw = this.container.clientWidth;
@@ -7397,8 +7401,8 @@ mxGraph.prototype.center = function(horizontal, vertical)
 	
 	if (!hasScrollbars)
 	{
-		this.view.setTranslate((horizontal) ? Math.floor(t.x - bounds.x / s + dx / (2 * s)) : t.x,
-				(vertical) ? Math.floor(t.y - bounds.y / s + dy / (2 * s)) : t.y);
+		this.view.setTranslate((horizontal) ? Math.floor(t.x - bounds.x / s + dx * cx * s) : t.x,
+				(vertical) ? Math.floor(t.y - bounds.y / s + dy * cy * s) : t.y);
 	}
 	else
 	{

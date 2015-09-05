@@ -1,3 +1,4 @@
+- Adds cx, cy args in mxGraph.center [JavaScript]
 - Avoids output of invisible nodes in mxSvgCanvas2D [JavaScript]
 - Adds margin, fixes scrollbars in mxGraph.fit [JavaScript]
 
