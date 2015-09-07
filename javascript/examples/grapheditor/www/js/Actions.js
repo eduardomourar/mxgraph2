@@ -626,7 +626,7 @@ Actions.prototype.init = function()
 	action.isEnabled = isGraphEnabled;
 	action = this.addAction('autosave', function()
 	{
-		ui.editor.autosave = !ui.editor.autosave;
+		ui.editor.setAutosave(!ui.editor.autosave);
 	});
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return ui.editor.autosave; });

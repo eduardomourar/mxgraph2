@@ -198,6 +198,15 @@ Editor.prototype.init = function() { };
 /**
  * Sets the XML node for the current diagram.
  */
+Editor.prototype.setAutosave = function(value)
+{
+	this.autosave = value;
+	this.fireEvent(new mxEventObject('autosaveChanged'));
+};
+
+/**
+ * Sets the XML node for the current diagram.
+ */
 Editor.prototype.createGraph = function()
 {
 	return new Graph();
