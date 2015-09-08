@@ -1,0 +1,12 @@
+<html>
+<body>
+	http://stackoverflow.com/questions/27990347/ie-showing-horizontal-scrollbar-after-dom-element-transformed
+	<br>
+	No known workaround on DOM node level, only knon workaround it to clip the container with known bbox
+	<div style="position:relative;overflow:hidden;width:100px;height:100px;border:1px solid gray;">
+		<div style="position:absolute;top:0px;left:0px;transform-origin:top left;transform:scale(0.5,0.5);">
+			<div style="zoom:1;display:inline-block;_display:inline;text-decoration:inherit;padding-bottom:1px;padding-right:1px;line-height:1.2;">WWWWWWWWWWWWW</div>
+		</div>
+	</div>
+</body>
+</html>
