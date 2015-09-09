@@ -1,3 +1,4 @@
+- Fix mxClient.IS_IE for IE11
 - Add DIV around DIV-labels in SVG (iescrollbug.html)
 - Add lineSpacing style
 
