@@ -191,14 +191,17 @@ Graph = function(container, model, renderHint, stylesheet)
 	    };
 	    
 	    // Shows hand cursor while panning
+	    var prevCursor = null;
+	    
 		this.panningHandler.addListener(mxEvent.PAN_START, mxUtils.bind(this, function()
 		{
+			prevCursor = this.container.style.cursor;
 			this.container.style.cursor = 'move';
 		}));
 			
 		this.panningHandler.addListener(mxEvent.PAN_END, mxUtils.bind(this, function()
 		{
-			this.container.style.cursor = 'default';
+			this.container.style.cursor = prevCursor;
 		}));
 
 		this.popupMenuHandler.autoExpand = true;
