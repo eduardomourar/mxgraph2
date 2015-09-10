@@ -1,3 +1,4 @@
+- Adds optional textAntiAlias argument in mxImageCanvas c'tor [Java]
 - Adds optional type argument in mxUtils.createBufferedImage [Java]
 - Adds cx, cy args in mxGraph.center [JavaScript]
 - Avoids output of invisible nodes in mxSvgCanvas2D [JavaScript]

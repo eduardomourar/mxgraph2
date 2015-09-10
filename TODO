@@ -1,11 +1,11 @@
-- Fix mxClient.IS_IE for IE11
 - Add DIV around DIV-labels in SVG (iescrollbug.html)
 - Add lineSpacing style
-
 - Add unscaledBoundingBox in mxShape
+
 - Fix mxPanningHandler.ignoreCell = true forces panning
 - Handle minResize in mxCellEditor.resize
 - Replace cellpath lookups with dictionary
+- Fix mxClient.IS_IE for IE11
 
 - Fallback to text if word wrap / formatting not needed
 - Fix center aligned oversize labels in IE8 standards mode
