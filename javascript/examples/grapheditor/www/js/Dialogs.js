@@ -743,8 +743,11 @@ var PrintDialog = function(editorUi)
 		if (isNaN(printScale))
 		{
 			printScale = 1;
-			pageScaleInput.value = '100 %';
+			pageScaleInput.value = '100%';
 		}
+		
+		// Workaround to match available paper size
+		printScale *= 0.75;
 
 		var pf = graph.pageFormat || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
 		var scale = 1 / graph.pageScale;
