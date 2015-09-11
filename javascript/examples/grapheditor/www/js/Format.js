@@ -4315,6 +4315,8 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 		paperSizeSelect.appendChild(paperSizeOption);
 	}
 	
+	var customSize = false;
+	
 	function listener(sender, evt, force)
 	{
 		if (force || (widthInput != document.activeElement && heightInput != document.activeElement))
@@ -4325,7 +4327,16 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 			{
 				var f = formats[i];
 	
-				if (f.format != null)
+				// Special case where custom was chosen
+				if (customSize)
+				{
+					if (f.key == 'custom')
+					{
+						paperSizeSelect.value = f.key;
+						customSize = false;
+					}
+				}
+				else if (f.format != null)
 				{
 					if (graph.pageFormat.width == f.format.width && graph.pageFormat.height == f.format.height)
 					{
@@ -4431,7 +4442,12 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 	mxEvent.addListener(heightInput, 'click', update);
 	mxEvent.addListener(landscapeCheckBox, 'change', update);
 	mxEvent.addListener(portraitCheckBox, 'change', update);
-	mxEvent.addListener(paperSizeSelect, 'change', update);
+	mxEvent.addListener(paperSizeSelect, 'change', function()
+	{
+		// Handles special case where custom was chosen
+		customSize = paperSizeSelect.value == 'custom';
+		update();
+	});
 	
 	ui.addListener('pageFormatChanged', listener);
 	this.listeners.push({destroy: function() { ui.removeListener(listener); }});
