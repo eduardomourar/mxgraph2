@@ -1,6 +1,7 @@
 - Add DIV around DIV-labels in SVG (iescrollbug.html)
 - Add lineSpacing style
 - Add unscaledBoundingBox in mxShape
+- Fix duplicate text labels for print preview in IE
 
 - Fix mxPanningHandler.ignoreCell = true forces panning
 - Handle minResize in mxCellEditor.resize
