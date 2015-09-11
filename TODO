@@ -1,4 +1,4 @@
-- Add DIV around DIV-labels in SVG (iescrollbug.html)
+- Add DIV for NO_FO labels (iescrollbug.html)
 - Add lineSpacing style
 - Add unscaledBoundingBox in mxShape
 - Fix duplicate text labels for print preview in IE
