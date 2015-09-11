@@ -4432,7 +4432,13 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 	mxEvent.addListener(landscapeCheckBox, 'change', update);
 	mxEvent.addListener(portraitCheckBox, 'change', update);
 	mxEvent.addListener(paperSizeSelect, 'change', update);
+	
 	ui.addListener('pageFormatChanged', listener);
+	this.listeners.push({destroy: function() { ui.removeListener(listener); }});
+	
+	graph.getModel().addListener(mxEvent.CHANGE, listener);
+	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
+	
 	update();
 	
 	return div;
