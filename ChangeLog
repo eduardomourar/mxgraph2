@@ -1,3 +1,4 @@
+- Adds Shift+Click to toggle selection state in grapheditor
 - Adds optional textAntiAlias argument in mxImageCanvas c'tor [Java]
 - Adds optional type argument in mxUtils.createBufferedImage [Java]
 - Adds cx, cy args in mxGraph.center [JavaScript]

@@ -179,6 +179,13 @@ Graph = function(container, model, renderHint, stylesheet)
 	    		connectionHandleIsOutlineConnectEvent.apply(this, arguments));
 	    };
 	    
+	    // Adds shift+click to toggle selection state
+	    var isToggleEvent = this.isToggleEvent;
+	    this.isToggleEvent = function(evt)
+	    {
+	    	return isToggleEvent.apply(this, arguments) || mxEvent.isShiftDown(evt);
+	    };
+	    
 	    // Workaround for Firefox where first mouse down is received
 	    // after tap and hold if scrollbars are visible, which means
 	    // start rubberband immediately if no cell is under mouse.
