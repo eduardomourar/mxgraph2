@@ -1,3 +1,4 @@
+- Adds mxCellEditor.getBackgroundColor hook [JavaScript]
 - Adds mxShape.useSvgBoundingBox switch, uses getBBox in SVG [JavaScript]
 - Fixes mxUtils.extractTextWithWhitespace for text sequence [JavaScript]
 - Adds Shift+Click to toggle selection state in grapheditor
