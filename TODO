@@ -1,7 +1,7 @@
-- Add DIV for NO_FO labels (see iescrollbug.html, html-panes)
+- Add container for HTML labels with no foreignObject (see iescrollbug.html, html-panes)
 - Add lineSpacing, jetty-size and source-/targetConstraint styles
 
-- Add unscaledBoundingBox, use getBoundingClientRect in mxShape
+- Add unscaledBoundingBox, use getBoundingClientRect for VML in mxShape
 - Fix duplicate text labels for print preview in IE
 - Fix mxPanningHandler.ignoreCell = true forces panning
 - Handle minResize in mxCellEditor.resize
