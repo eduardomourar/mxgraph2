@@ -1133,6 +1133,7 @@ var EditFileDialog = function(editorUi)
 	var div = document.createElement('div');
 	div.style.textAlign = 'right';
 	var textarea = document.createElement('textarea');
+	textarea.style.whiteSpace = 'nowrap';
 	textarea.style.resize = 'none';
 	textarea.style.width = '600px';
 	textarea.style.height = '370px';
@@ -1214,6 +1215,7 @@ var EditFileDialog = function(editorUi)
 	{
 		// Removes all illegal control characters before parsing
 		var data = editorUi.editor.graph.zapGremlins(mxUtils.trim(textarea.value));
+		var error = null;
 		
 		if (select.value == 'new')
 		{
@@ -1228,28 +1230,51 @@ var EditFileDialog = function(editorUi)
 		}
 		else if (select.value == 'replace')
 		{
+			editorUi.editor.graph.model.beginUpdate();
 			try
 			{
-				var doc = mxUtils.parseXml(data); 
-				editorUi.editor.setGraphXml(doc.documentElement);
+				editorUi.editor.setGraphXml(mxUtils.parseXml(data).documentElement);
+				// LATER: Why is hideDialog between begin-/endUpdate faster?
 				editorUi.hideDialog();
 			}
 			catch (e)
 			{
-				mxUtils.alert(e.message);
+				error = e;
+			}
+			finally
+			{
+				editorUi.editor.graph.model.endUpdate();				
 			}
 		}
 		else if (select.value == 'import')
 		{
-			var doc = mxUtils.parseXml(data);
-			var model = new mxGraphModel();
-			var codec = new mxCodec(doc);
-			codec.decode(doc.documentElement, model);
+			editorUi.editor.graph.model.beginUpdate();
+			try
+			{
+				var doc = mxUtils.parseXml(data);
+				var model = new mxGraphModel();
+				var codec = new mxCodec(doc);
+				codec.decode(doc.documentElement, model);
+				
+				var children = model.getChildren(model.getChildAt(model.getRoot(), 0));
+				editorUi.editor.graph.setSelectionCells(editorUi.editor.graph.importCells(children));
+				
+				// LATER: Why is hideDialog between begin-/endUpdate faster?
+				editorUi.hideDialog();
+			}
+			catch (e)
+			{
+				error = e;
+			}
+			finally
+			{
+				editorUi.editor.graph.model.endUpdate();				
+			}
+		}
 			
-			var children = model.getChildren(model.getChildAt(model.getRoot(), 0));
-			editorUi.editor.graph.setSelectionCells(editorUi.editor.graph.importCells(children));
-			
-			editorUi.hideDialog();
+		if (error != null)
+		{
+			mxUtils.alert(error.message);
 		}
 	});
 	okBtn.className = 'geBtn gePrimaryBtn';
