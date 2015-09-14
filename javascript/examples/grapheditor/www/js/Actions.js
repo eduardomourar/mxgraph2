@@ -340,7 +340,20 @@ Actions.prototype.init = function()
 					}
 					else
 					{
-						graph.updateCellSize(cell);
+						var state = graph.view.getState(cell);
+						var geo = graph.getCellGeometry(cell);
+
+						if (graph.getModel().isVertex(cell) && state != null && state.text != null &&
+							geo != null && graph.isWrapping(cell))
+						{
+							geo = geo.clone();
+							geo.height = state.text.boundingBox.height / graph.view.scale;
+							graph.getModel().setGeometry(cell, geo);
+						}
+						else
+						{
+							graph.updateCellSize(cell);
+						}
 					}
 				}
 			}
