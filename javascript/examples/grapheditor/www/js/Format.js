@@ -2457,7 +2457,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	wwOpt.style.fontWeight = 'bold';
 	
 	// Word wrap in edge labels only supported via labelWidth style
-	if (!ss.containsLabel)
+	if (!ss.containsLabel && ss.edges.length == 0)
 	{
 		extraPanel.appendChild(wwOpt);
 	}
