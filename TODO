@@ -1,20 +1,18 @@
-- Add DIV for NO_FO labels (iescrollbug.html)
-- Add lineSpacing style
-- Add unscaledBoundingBox in mxShape
-- Fix duplicate text labels for print preview in IE
+- Add DIV for NO_FO labels (see iescrollbug.html, html-panes)
+- Add lineSpacing, jetty-size and source-/targetConstraint styles
 
+- Add unscaledBoundingBox, use getBoundingClientRect in mxShape
+- Fix duplicate text labels for print preview in IE
 - Fix mxPanningHandler.ignoreCell = true forces panning
 - Handle minResize in mxCellEditor.resize
-- Replace cellpath lookups with dictionary
-- Fix mxClient.IS_IE for IE11
 
+- Replace cellpath lookups with dictionary
 - Fallback to text if word wrap / formatting not needed
 - Fix center aligned oversize labels in IE8 standards mode
 - Block ctrl+u/i/b in core text editor for plain text values
-- Fix missing cursor in quirks mode before space after oversize label
 
+- Fix missing cursor in quirks mode before space after oversize label
 - Check code for batched DOM changes, cssText instead of direct style changes
-- Fix bounding box for edges (see edge-bbox branch)
 - Merge common code in mxSvgCanvas2D.updateText and text
 - Check NPE for mxRefCount in mxShape.destroyCanvas
 

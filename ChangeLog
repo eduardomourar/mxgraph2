@@ -1,3 +1,4 @@
+- Adds mxShape.useSvgBoundingBox switch, uses getBBox in SVG [JavaScript]
 - Fixes mxUtils.extractTextWithWhitespace for text sequence [JavaScript]
 - Adds Shift+Click to toggle selection state in grapheditor
 - Adds optional textAntiAlias argument in mxImageCanvas c'tor [Java]
