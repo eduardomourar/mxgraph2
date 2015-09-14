@@ -1430,7 +1430,7 @@ EditorUi.prototype.initCanvas = function()
 	
 	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up)
 	{
-		if ((mxEvent.isAltDown(evt) || (!mxClient.IS_MAC && mxEvent.isControlDown(evt)) || graph.panningHandler.isActive()) &&
+		if ((mxEvent.isAltDown(evt) || (mxEvent.isControlDown(evt)) || graph.panningHandler.isActive()) &&
 			(this.dialogs == null || this.dialogs.length == 0))
 		{
 			var source = mxEvent.getSource(evt);
