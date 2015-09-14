@@ -822,7 +822,8 @@ var mxUtils =
         			break;
         		}
 	        	
-	        	ret.push(elem.nodeValue + '\n');
+	        	// Only inserts a newline if the next element is not another text element
+	        	ret.push(elem.nodeValue + ((elem.nextSibling == null || elem.nextSibling.nodeType != 3) ? '\n' : ''));
 	            ignoreBr = true;
 
 	        // Traverse everything else, except comment nodes
