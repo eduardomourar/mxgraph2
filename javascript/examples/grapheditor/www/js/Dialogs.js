@@ -1142,6 +1142,11 @@ var EditFileDialog = function(editorUi)
 	textarea.value = mxUtils.getPrettyXml(editorUi.editor.getGraphXml());
 	div.appendChild(textarea);
 	
+	this.init = function()
+	{
+		textarea.focus();
+	};
+	
 	// Enables dropping files
 	if (fileSupport)
 	{

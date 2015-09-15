@@ -70,7 +70,9 @@ Actions.prototype.init = function()
 	this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 210, true, true); });
 	this.addAction('editFile...', function()
 	{
-		ui.showDialog(new EditFileDialog(ui).container, 620, 420, true, true);
+		var dlg = new EditFileDialog(ui);
+		ui.showDialog(dlg.container, 620, 420, true, true);
+		dlg.init();
 	}).isEnabled = isGraphEnabled;
 	this.addAction('pageSetup...', function() { ui.showDialog(new PageSetupDialog(ui).container, 320, 120, true, true); }).isEnabled = isGraphEnabled;
 	this.addAction('print...', function() { ui.showDialog(new PrintDialog(ui).container, 300, 140, true, true); }, null, 'sprite-print', 'Ctrl+P');
