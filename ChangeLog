@@ -1,3 +1,6 @@
+- Adds mxVertexHandler.getHandlePadding hook [JavaScript]
+- Renames actual size to reset view in grapheditor
+- mxGraph.isEventIgnored no longer returns true while editing [JavaScript]
 - Adds mxCellEditor.getBackgroundColor hook [JavaScript]
 - Adds mxShape.useSvgBoundingBox switch, uses getBBox in SVG [JavaScript]
 - Fixes mxUtils.extractTextWithWhitespace for text sequence [JavaScript]
