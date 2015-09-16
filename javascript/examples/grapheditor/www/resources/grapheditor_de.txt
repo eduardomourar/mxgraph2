@@ -232,6 +232,7 @@ replace=Ersetzen
 replaceIt={1} existiert bereits. Soll die Datei überschrieben werden?
 replaceExistingDrawing=Vorhandene Zeichnung ersetzen
 reset=Zurücksetzen
+resetView=Ansicht zurücksetzen
 right=Rechts
 rightAlign=Rechts
 rightToLeft=Von rechts nach links

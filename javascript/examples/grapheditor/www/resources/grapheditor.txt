@@ -232,6 +232,7 @@ replace=Replace
 replaceIt={1} already exists. Do you want to replace it?
 replaceExistingDrawing=Replace existing drawing
 reset=Reset
+resetView=Reset view
 right=Right
 rightAlign=Right align
 rightToLeft=Right to left

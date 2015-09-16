@@ -452,7 +452,7 @@ Actions.prototype.init = function()
 		dlg.init();
 	});
 	// View actions
-	this.addAction('actualSize', function()
+	this.addAction('resetView', function()
 	{
 		graph.zoomTo(1);
 		ui.resetScrollbars();
