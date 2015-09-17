@@ -1093,6 +1093,25 @@ mxSvgCanvas2D.prototype.convertHtml = function(val)
 			}
 		}
 	}
+	else if (document.implementation != null && document.implementation.createDocument != null)
+	{
+		var xd = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null);
+		var xb = xd.createElement('body');
+		xd.documentElement.appendChild(xb);
+		
+		var div = document.createElement('div');
+		div.innerHTML = val;
+		var child = div.firstChild;
+		
+		while (child != null)
+		{
+			var next = child.nextSibling;
+			xb.appendChild(xd.adoptNode(child));
+			child = next;
+		}
+		
+		return xb.innerHTML;
+	}
 	else
 	{
 		var ta = document.createElement('textarea');
