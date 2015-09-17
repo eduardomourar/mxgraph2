@@ -1,3 +1,4 @@
+- Fixes mxGraph.fireMouseEvent for mouseUp on scrollbars in IE11 [JavaScript]
 - Fixes possible NaN for scale in mxOutline [JavaScript]
 - mxGraph.isEventIgnored no longer returns true while editing [JavaScript]
 - Replaces connect handle with hover icons in grapheditor
