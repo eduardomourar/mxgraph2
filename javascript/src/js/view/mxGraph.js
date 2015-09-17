@@ -2930,8 +2930,8 @@ mxGraph.prototype.sizeDidChange = function()
 		{
 			var root = this.view.getDrawPane().ownerSVGElement;
 
-			root.style.minWidth = Math.max(1, width) + 'px';
-			root.style.minHeight = Math.max(1, height) + 'px';
+			root.style.minWidth = Math.max(1, Math.round(width / this.view.scale)) + 'px';
+			root.style.minHeight = Math.max(1, Math.round(height / this.view.scale)) + 'px';
 			root.style.width = '100%';
 			root.style.height = '100%';
 		}
