@@ -1134,6 +1134,7 @@ var EditFileDialog = function(editorUi)
 	div.style.textAlign = 'right';
 	var textarea = document.createElement('textarea');
 	textarea.style.whiteSpace = 'nowrap';
+	textarea.style.overflow = 'auto';
 	textarea.style.resize = 'none';
 	textarea.style.width = '600px';
 	textarea.style.height = '370px';
