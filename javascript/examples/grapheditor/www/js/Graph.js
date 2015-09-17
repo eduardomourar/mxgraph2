@@ -473,7 +473,7 @@ Graph.prototype.init = function()
  */
 Graph.prototype.initHoverIcons = function()
 {
-	new HoverIcons(this);
+	this.hoverIcons = new HoverIcons(this);
 };
 
 /**
@@ -1155,7 +1155,7 @@ HoverIcons.prototype.init = function()
 	    {
 	    	if (!this.isActive())
 	    	{
-	    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
+	    		this.update(this.getState(me.getState()));
 	    	}
 	    	
 	    	this.setDisplay('none');
@@ -1272,9 +1272,13 @@ HoverIcons.prototype.createArrow = function(img, tooltip)
 	
 	mxEvent.addListener(arrow, 'mouseenter', mxUtils.bind(this, function(evt)
 	{
-		this.graph.connectionHandler.constraintHandler.reset();
-		mxUtils.setOpacity(arrow, 100);
-		this.activeArrow = arrow;
+		// Workaround for Firefox firing mouseenter on touchend
+		if (mxEvent.isMouseEvent(evt))
+		{
+			this.graph.connectionHandler.constraintHandler.reset();
+			mxUtils.setOpacity(arrow, 100);
+			this.activeArrow = arrow;
+		}
 	}));
 	
 	mxEvent.addListener(arrow, 'mouseleave', mxUtils.bind(this, function(evt)
