@@ -4634,43 +4634,60 @@ mxGraph.prototype.cellsRemoved = function(cells)
 				// Disconnects edges which are not in cells
 				var edges = this.getAllEdges([cells[i]]);
 				
-				for (var j = 0; j < edges.length; j++)
+				var disconnectTerminal = mxUtils.bind(this, function(edge, source)
 				{
-					if (!dict.get(edges[j]))
-					{
-						var geo = this.model.getGeometry(edges[j]);
+					var geo = this.model.getGeometry(edge);
 
-						if (geo != null)
-						{
-							var state = this.view.getState(edges[j]);
-									
-							if (state != null)
-							{
-								// Checks which side of the edge is being disconnected
-								var tmp = state.getVisibleTerminal(true);
-								var source = false;
+					if (geo != null)
+					{
+						var state = this.view.getState(edge);
 								
-								while (tmp != null)
+						if (state != null)
+						{
+							// Checks which side of the edge is being disconnected
+							var tmp = state.getVisibleTerminal(source);
+							var connected = false;
+							
+							while (tmp != null)
+							{
+								if (cells[i] == tmp)
 								{
-									if (cells[i] == tmp)
-									{
-										source = true;
-										break;
-									}
-									
-									tmp = this.model.getParent(tmp);
+									connected = true;
+									break;
+								}
+								
+								tmp = this.model.getParent(tmp);
+							}
+							
+							if (connected)
+							{
+								var dx = tr.x;
+								var dy = tr.y;
+								var parentState = this.view.getState(this.model.getParent(edge));
+								
+								if (parentState != null && this.model.isVertex(parentState.cell))
+								{
+									dx = parentState.x / scale;
+									dy = parentState.y / scale;
 								}
 								
 								geo = geo.clone();
 								var pts = state.absolutePoints;
 								var n = (source) ? 0 : pts.length - 1;
-								geo.setTerminalPoint(
-										new mxPoint(pts[n].x / scale - tr.x,
-											pts[n].y / scale - tr.y), source);
+								geo.setTerminalPoint(new mxPoint(pts[n].x / scale - dx, pts[n].y / scale - dy), source);
 								this.model.setTerminal(edges[j], null, source);
 								this.model.setGeometry(edges[j], geo);
 							}
 						}
+					}
+				});
+				
+				for (var j = 0; j < edges.length; j++)
+				{
+					if (!dict.get(edges[j]))
+					{
+						disconnectTerminal(edges[j], true);
+						disconnectTerminal(edges[j], false);
 					}
 				}
 
