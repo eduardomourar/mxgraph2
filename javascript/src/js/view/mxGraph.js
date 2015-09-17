@@ -2912,8 +2912,8 @@ mxGraph.prototype.sizeDidChange = function()
 			
 			if (size != null)
 			{
-				width = size.width;
-				height = size.height;
+				width = size.width * this.view.scale;
+				height = size.height * this.view.scale;
 			}
 		}
 		
@@ -12058,7 +12058,7 @@ mxGraph.prototype.getStateForTouchEvent = function(evt)
 mxGraph.prototype.isEventIgnored = function(evtName, me, sender)
 {
 	var mouseEvent = mxEvent.isMouseEvent(me.getEvent());
-	var result = this.isEditing();
+	var result = false;
 
 	// Drops events that are fired more than once
 	if (me.getEvent() == this.lastEvent)

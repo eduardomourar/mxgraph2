@@ -1,3 +1,4 @@
+- mxGraph.isEventIgnored no longer returns true while editing [JavaScript]
 - Replaces connect handle with hover icons in grapheditor
 - Adds hover style for virtual bends in mxEdgeHandler [JavaScript]
 - Adds mxVertexHandler.getHandlePadding hook [JavaScript]
