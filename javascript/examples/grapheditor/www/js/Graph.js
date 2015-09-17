@@ -1182,16 +1182,12 @@ HoverIcons.prototype.init = function()
 	    }),
 	    mouseUp: mxUtils.bind(this, function(sender, me)
 	    {
+	    	var active = this.isActive();
+	    	var state = this.currentState;
+	    	var dir = this.getDirection();
+	    	var mp = this.mouseDownPoint;
 	    	this.setDisplay('');
-
-	    	if (this.isActive() && this.mouseDownPoint != null &&
-	    		Math.abs(me.getGraphX() - this.mouseDownPoint.x) < this.graph.tolerance &&
-	    		Math.abs(me.getGraphY() - this.mouseDownPoint.y) < this.graph.tolerance)
-			{
-	    		this.click(me.getEvent(), me.getGraphX(), me.getGraphY());
-	    		me.consume();
-			}
-
+	    	
 	    	if (this.activeArrow != null)
 	    	{
 	    		mxUtils.setOpacity(this.activeArrow, 20);
@@ -1202,10 +1198,17 @@ HoverIcons.prototype.init = function()
 	    	{
 	    		this.reset();
 	    	}
-	    	else
+	    	else if (!mxEvent.isAltDown(me.getEvent()))
 	    	{
 	    		this.repaint();
 	    	}
+	    	
+	    	if (active && mp != null && Math.abs(me.getGraphX() - mp.x) < this.graph.tolerance &&
+	    		Math.abs(me.getGraphY() - mp.y) < this.graph.tolerance)
+			{
+	    		this.click(state, dir, me.getEvent(), me.getGraphX(), me.getGraphY());
+	    		me.consume();
+			}
 	    })
 	});
 };
@@ -1275,10 +1278,13 @@ HoverIcons.prototype.createArrow = function(img, tooltip)
 		}
 	}));
 	
+	// Captures mouse events as events on graph
+	mxEvent.redirectMouseEvents(arrow, this.graph, this.currentState);
+	
 	mxEvent.addListener(arrow, 'mouseenter', mxUtils.bind(this, function(evt)
 	{
 		// Workaround for Firefox firing mouseenter on touchend
-		if (mxEvent.isMouseEvent(evt))
+		if (mxEvent.isMouseEvent(evt) && !mxEvent.isAltDown(evt))
 		{
 			this.graph.connectionHandler.constraintHandler.reset();
 			mxUtils.setOpacity(arrow, 100);
@@ -1398,12 +1404,18 @@ HoverIcons.prototype.drag = function(evt, x, y)
 /**
  * 
  */
-HoverIcons.prototype.click = function(evt, x, y)
+HoverIcons.prototype.click = function(state, dir, evt, x, y)
 {
-	if (this.currentState != null)
+	if (state != null)
 	{
-		this.graph.setSelectionCells(this.graph.connectVertex(this.currentState.cell,
-			this.getDirection(), this.graph.defaultEdgeLength, evt));
+		var cells = this.graph.connectVertex(state.cell, dir, this.graph.defaultEdgeLength, evt);
+		this.graph.setSelectionCells(cells);
+		
+		// Special case shows hover icons on new target for touch events
+		if (mxEvent.isTouchEvent(evt) && cells.length == 2 && this.graph.model.isVertex(cells[1]))
+		{
+			this.update(this.graph.view.getState(cells[1]));
+		}
 	}
 };
 
