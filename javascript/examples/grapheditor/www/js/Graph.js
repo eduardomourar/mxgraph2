@@ -1046,6 +1046,11 @@ HoverIcons.prototype.arrowSpacing = 6;
 /**
  * Up arrow.
  */
+HoverIcons.prototype.edgeHoverIcons = false;
+
+/**
+ * Up arrow.
+ */
 HoverIcons.prototype.currentState = null;
 
 /**
@@ -1563,6 +1568,11 @@ HoverIcons.prototype.getState = function(state)
 		
 		// Ignores locked cells
 		if (this.graph.isCellLocked(cell))
+		{
+			cell = null;
+		}
+		
+		if (!this.edgeHoverIcons && this.graph.model.isEdge(cell))
 		{
 			cell = null;
 		}
