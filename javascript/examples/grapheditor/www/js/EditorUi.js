@@ -2375,7 +2375,7 @@ EditorUi.prototype.openFile = function()
 	}));
 
 	// Removes openFile if dialog is closed
-	this.showDialog(new OpenDialog(this).container, 320, 220, true, true, function()
+	this.showDialog(new OpenDialog(this).container, (useLocalStorage) ? 640 : 320, (useLocalStorage) ? 480 : 220, true, true, function()
 	{
 		window.openFile = null;
 	});
