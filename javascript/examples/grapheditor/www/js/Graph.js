@@ -473,26 +473,7 @@ Graph.prototype.init = function()
  */
 Graph.prototype.initHoverIcons = function()
 {
-	var hoverIcons = new HoverIcons(this, true);
-
-	if (touchStyle)
-	{
-		var permanentIcons = new HoverIcons(this, false);
-	
-		// Disables hover icons if permanent icons are showing
-		var getState = hoverIcons.getState;
-		hoverIcons.getState = function(cell)
-		{
-			var result = getState.apply(this, arguments);
-			
-			if (result == permanentIcons.currentState)
-			{
-				result = null;
-			}
-			
-			return result;
-		};
-	}
+	new HoverIcons(this);
 };
 
 /**
@@ -1051,125 +1032,16 @@ Graph.prototype.zoom = function(factor, center)
 /**
  * Hover icons are used for hover, vertex handler and drag from sidebar.
  */
-HoverIcons = function(graph, enableHover)
+HoverIcons = function(graph)
 {
 	this.graph = graph;
-	this.arrowUp = this.createArrow(this.triangleUp, mxResources.get('plusTooltip'));
-	this.arrowRight = this.createArrow(this.triangleRight, mxResources.get('plusTooltip'));
-	this.arrowDown = this.createArrow(this.triangleDown, mxResources.get('plusTooltip'));
-	this.arrowLeft = this.createArrow(this.triangleLeft, mxResources.get('plusTooltip'));
-
-	this.roundSource = this.createArrow(this.roundDrop);
-	this.roundTarget = this.createArrow(this.roundDrop);
-	
-	this.elts = [this.roundSource, this.roundTarget, this.arrowUp, this.arrowRight, this.arrowDown, this.arrowLeft];
-	
-	// TODO: Add destroy, remove listeners
-	this.repaintHandler = mxUtils.bind(this, function()
-	{
-    	if (!enableHover)
-    	{
-    		if (this.currentState == null && this.graph.getSelectionCount() == 1 &&
-    			this.graph.model.isVertex(this.graph.getSelectionCell()))
-			{
-				this.update(this.getState(this.graph.view.getState(this.graph.getSelectionCell())));
-			}
-    		else
-    		{
-    			this.reset();
-    		}
-    	}
-    	
-		this.repaint();
-	});
-	
-	graph.selectionModel.addListener(mxEvent.CHANGE, this.repaintHandler);
-	graph.model.addListener(mxEvent.CHANGE, this.repaintHandler);
-	graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.repaintHandler);
-	graph.view.addListener(mxEvent.TRANSLATE, this.repaintHandler);
-	graph.view.addListener(mxEvent.SCALE, this.repaintHandler);
-	graph.view.addListener(mxEvent.DOWN, this.repaintHandler);
-	graph.view.addListener(mxEvent.UP, this.repaintHandler);
-	
-	// Resets the mouse point on escape
-	graph.addListener(mxEvent.ESCAPE, mxUtils.bind(this, function()
-	{
-		this.mouseDownPoint = null;
-	}));
-
-	// Removes hover icons if mouse leaves the container
-	if (enableHover)
-	{
-		mxEvent.addListener(graph.container, 'mouseleave',  mxUtils.bind(this, function(evt)
-		{
-			if (mxEvent.getSource(evt) == this.graph.container)
-			{
-				this.reset();
-			}
-		}));
-	}
-
-	// Implements a listener for hover and click handling
-	this.graph.addMouseListener(
-	{
-	    mouseDown: mxUtils.bind(this, function(sender, me)
-	    {
-    		this.setDisplay('none');
-	    }),
-	    mouseMove: mxUtils.bind(this, function(sender, me)
-	    {
-	    	if (enableHover && !mxEvent.isShiftDown(me.getEvent()))
-	    	{
-		    	if (mxEvent.isAltDown(me.getEvent()))
-		    	{
-		    		this.reset();
-		    	}
-		    	else if (!this.graph.isMouseDown)
-		    	{
-		    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
-		    	}
-	    	}
-	    	else if (this.graph.isMouseDown)
-	    	{
-	    		this.setDisplay('none');
-	    	}
-	    }),
-	    mouseUp: mxUtils.bind(this, function(sender, me)
-	    {
-	    	if (this.isActive() && this.mouseDownPoint != null &&
-	    		Math.abs(me.getGraphX() - this.mouseDownPoint.x) < this.graph.tolerance &&
-	    		Math.abs(me.getGraphY() - this.mouseDownPoint.y) < this.graph.tolerance)
-			{
-	    		this.click(me.getEvent(), me.getGraphX(), me.getGraphY());
-	    		me.consume();
-			}
-
-    		if (enableHover)
-    		{
-    			// Only keeps focused state if hit detection returns this state
-    			this.bbox = null;
-    			this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
-    			this.repaint();
-    		}
-    		else if (this.graph.getSelectionCount() == 1 && this.graph.model.isVertex(this.graph.getSelectionCell()))
-			{
-				this.update(this.getState(this.graph.view.getState(this.graph.getSelectionCell())));
-			}
-    		
-	    	this.mouseDownPoint = null;
-	    })
-	});
+	this.init();
 };
 
 /**
  * Up arrow.
  */
 HoverIcons.prototype.arrowSpacing = 6;
-
-/**
- * Up arrow.
- */
-HoverIcons.prototype.defaultDelay = 0;
 
 /**
  * Up arrow.
@@ -1220,9 +1092,202 @@ HoverIcons.prototype.refreshTarget = new mxImage((mxClient.IS_SVG) ? 'data:image
 /**
  * 
  */
-HoverIcons.prototype.getCurrentState = function()
+HoverIcons.prototype.init = function()
 {
-	return this.currentState;
+	this.arrowUp = this.createArrow(this.triangleUp, mxResources.get('plusTooltip'));
+	this.arrowRight = this.createArrow(this.triangleRight, mxResources.get('plusTooltip'));
+	this.arrowDown = this.createArrow(this.triangleDown, mxResources.get('plusTooltip'));
+	this.arrowLeft = this.createArrow(this.triangleLeft, mxResources.get('plusTooltip'));
+
+	this.roundSource = this.createArrow(this.roundDrop);
+	this.roundTarget = this.createArrow(this.roundDrop);
+	
+	this.elts = [this.roundSource, this.roundTarget, this.arrowUp, this.arrowRight, this.arrowDown, this.arrowLeft];
+
+	this.graph.selectionModel.addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
+	{
+		if (this.graph.getSelectionCount() == 1 && this.graph.model.isVertex(this.graph.getSelectionCell()))
+		{
+			// Rotation handle is shown after this call when switching from multiple selected cells
+			window.setTimeout(mxUtils.bind(this, function()
+			{
+    			this.update(this.getState(this.graph.view.getState(this.graph.getSelectionCell())));
+			}), 0);
+		}
+		else
+		{
+			this.reset();
+		}
+	}));
+	
+	this.repaintHandler = mxUtils.bind(this, function()
+	{
+		this.repaint();
+	});
+	
+	this.graph.model.addListener(mxEvent.CHANGE, this.repaintHandler);
+	this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.repaintHandler);
+	this.graph.view.addListener(mxEvent.TRANSLATE, this.repaintHandler);
+	this.graph.view.addListener(mxEvent.SCALE, this.repaintHandler);
+	this.graph.view.addListener(mxEvent.DOWN, this.repaintHandler);
+	this.graph.view.addListener(mxEvent.UP, this.repaintHandler);
+	
+	// Resets the mouse point on escape
+	this.graph.addListener(mxEvent.ESCAPE, mxUtils.bind(this, function()
+	{
+		this.mouseDownPoint = null;
+	}));
+
+	// Removes hover icons if mouse leaves the container
+	mxEvent.addListener(this.graph.container, 'mouseleave',  mxUtils.bind(this, function(evt)
+	{
+		// Workaround for IE11 firing mouseleave for touch in diagram
+		if (evt.relatedTarget != null && mxEvent.getSource(evt) == this.graph.container)
+		{
+			this.reset();
+		}
+	}));
+
+	// Implements a listener for hover and click handling
+	this.graph.addMouseListener(
+	{
+	    mouseDown: mxUtils.bind(this, function(sender, me)
+	    {
+	    	if (!this.isActive())
+	    	{
+	    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
+	    	}
+	    	
+	    	this.setDisplay('none');
+	    }),
+	    mouseMove: mxUtils.bind(this, function(sender, me)
+	    {
+	    	if (mxEvent.isAltDown(me.getEvent()))
+	    	{
+	    		this.reset();
+	    	}
+	    	else if (this.graph.isMouseDown)
+	    	{
+	    		this.setDisplay('none');
+	    	}
+	    	else if (!mxEvent.isShiftDown(me.getEvent()))
+	    	{
+	    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
+	    	}
+	    }),
+	    mouseUp: mxUtils.bind(this, function(sender, me)
+	    {
+	    	this.setDisplay('');
+
+	    	if (this.isActive() && this.mouseDownPoint != null &&
+	    		Math.abs(me.getGraphX() - this.mouseDownPoint.x) < this.graph.tolerance &&
+	    		Math.abs(me.getGraphY() - this.mouseDownPoint.y) < this.graph.tolerance)
+			{
+	    		this.click(me.getEvent(), me.getGraphX(), me.getGraphY());
+	    		me.consume();
+			}
+
+	    	if (this.activeArrow != null)
+	    	{
+	    		mxUtils.setOpacity(this.activeArrow, 20);
+	    		this.activeArrow = null;
+	    	}
+	    	
+	    	if (this.currentState != null && !mxUtils.contains(this.currentState, me.getGraphX(), me.getGraphY()))
+	    	{
+	    		this.reset();
+	    	}
+	    	else
+	    	{
+	    		this.repaint();
+	    	}
+	    })
+	});
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.createArrow = function(img, tooltip)
+{
+	var arrow = null;
+	
+	if (mxClient.IS_IE && !mxClient.IS_SVG)
+	{
+		// Workaround for PNG images in IE6
+		if (mxClient.IS_IE6 && document.compatMode != 'CSS1Compat')
+		{
+			arrow = document.createElement(mxClient.VML_PREFIX + ':image');
+			arrow.setAttribute('src', img.src);
+			arrow.style.borderStyle = 'none';
+		}
+		else
+		{
+			arrow = document.createElement('div');
+			arrow.style.backgroundImage = 'url(' + img.src + ')';
+			arrow.style.backgroundPosition = 'center';
+			arrow.style.backgroundRepeat = 'no-repeat';
+		}
+		
+		arrow.style.width = (img.width + 4) + 'px';
+		arrow.style.height = (img.height + 4) + 'px';
+		arrow.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+	}
+	else
+	{
+		arrow = mxUtils.createImage(img.src);
+		arrow.style.width = img.width + 'px';
+		arrow.style.height = img.height + 'px';
+	}
+	
+	if (tooltip != null)
+	{
+		arrow.setAttribute('title', tooltip);
+	}
+	
+	arrow.style.position = 'absolute';
+	arrow.style.cursor = 'crosshair';
+	mxUtils.setOpacity(arrow, 20);
+
+	mxEvent.addGestureListeners(arrow, mxUtils.bind(this, function(evt)
+	{
+		if (this.currentState != null && !mxEvent.isAltDown(evt))
+		{
+	    	if (this.activeArrow != null && this.activeArrow != arrow)
+	    	{
+	    		mxUtils.setOpacity(this.activeArrow, 20);
+	    	}
+	    	else
+	    	{
+	    		mxUtils.setOpacity(arrow, 100);	
+	    	}
+	    	
+			this.mouseDownPoint = mxUtils.convertPoint(this.graph.container,
+				mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+			this.drag(evt, this.mouseDownPoint.x, this.mouseDownPoint.y);
+			this.activeArrow = arrow;
+			mxEvent.consume(evt);
+		}
+	}));
+	
+	mxEvent.addListener(arrow, 'mouseenter', mxUtils.bind(this, function(evt)
+	{
+		this.graph.connectionHandler.constraintHandler.reset();
+		mxUtils.setOpacity(arrow, 100);
+		this.activeArrow = arrow;
+	}));
+	
+	mxEvent.addListener(arrow, 'mouseleave', mxUtils.bind(this, function(evt)
+	{
+		// Workaround for IE11 firing this event on touch
+		if (!this.graph.isMouseDown && this.activeArrow != null)
+		{
+			mxUtils.setOpacity(this.activeArrow, 20);
+			this.activeArrow = null;
+		}
+	}));
+	
+	return arrow;
 };
 
 /**
@@ -1290,17 +1355,6 @@ HoverIcons.prototype.setDisplay = function(display)
 /**
  * 
  */
-HoverIcons.prototype.setVisibility = function(visibility)
-{
-	this.visitNodes(function(elt)
-	{
-		elt.style.visibility = visibility;
-	});
-};
-
-/**
- * 
- */
 HoverIcons.prototype.isActive = function()
 {
 	return this.activeArrow != null && this.currentState != null;
@@ -1349,6 +1403,7 @@ HoverIcons.prototype.click = function(evt, x, y)
  */
 HoverIcons.prototype.reset = function()
 {
+	this.mouseDownPoint = null;
 	this.currentState = null;
 	this.removeNodes();
 	this.bbox = null;
@@ -1439,12 +1494,15 @@ HoverIcons.prototype.repaint = function()
 			}
 			
 			// Updates bounding box
-			this.bbox = this.computeBoundingBox();
-			
-			// Adds tolerance for hover
-			if (this.bbox != null)
+			if (this.currentState != null)
 			{
-				this.bbox.grow(10);
+				this.bbox = this.computeBoundingBox();
+				
+				// Adds tolerance for hover
+				if (this.bbox != null)
+				{
+					this.bbox.grow(10);
+				}
 			}
 		}
 	}
@@ -1466,79 +1524,6 @@ HoverIcons.prototype.computeBoundingBox = function()
 	});
 	
 	return bbox;
-};
-
-/**
- * 
- */
-HoverIcons.prototype.createArrow = function(img, tooltip)
-{
-	var arrow = null;
-	
-	if (mxClient.IS_IE && !mxClient.IS_SVG)
-	{
-		// Workaround for PNG images in IE6
-		if (mxClient.IS_IE6 && document.compatMode != 'CSS1Compat')
-		{
-			arrow = document.createElement(mxClient.VML_PREFIX + ':image');
-			arrow.setAttribute('src', img.src);
-			arrow.style.borderStyle = 'none';
-		}
-		else
-		{
-			arrow = document.createElement('div');
-			arrow.style.backgroundImage = 'url(' + img.src + ')';
-			arrow.style.backgroundPosition = 'center';
-			arrow.style.backgroundRepeat = 'no-repeat';
-		}
-		
-		arrow.style.width = (img.width + 4) + 'px';
-		arrow.style.height = (img.height + 4) + 'px';
-		arrow.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
-	}
-	else
-	{
-		arrow = mxUtils.createImage(img.src);
-		arrow.style.width = img.width + 'px';
-		arrow.style.height = img.height + 'px';
-	}
-	
-	if (tooltip != null)
-	{
-		arrow.setAttribute('title', tooltip);
-	}
-	
-	mxUtils.setOpacity(arrow, (img == this.refreshTarget) ? 30 : 20);
-	arrow.style.position = 'absolute';
-	arrow.style.cursor = 'crosshair';
-
-	mxEvent.addGestureListeners(arrow, mxUtils.bind(this, function(evt)
-	{
-		if (this.currentState != null && (mxEvent.isControlDown(evt) ||
-			(!mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt))))
-		{
-			this.mouseDownPoint = mxUtils.convertPoint(this.graph.container,
-				mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-			this.drag(evt, this.mouseDownPoint.x, this.mouseDownPoint.y);
-			this.setDisplay('none');
-		}
-	}), null, null);
-	
-	mxEvent.addListener(arrow, 'mouseenter', mxUtils.bind(this, function(evt)
-	{
-		mxUtils.setOpacity(arrow, 100);
-		this.activeArrow = arrow;
-	}));
-	
-	mxEvent.addListener(arrow, 'mouseleave', mxUtils.bind(this, function(evt)
-	{
-		mxUtils.setOpacity(arrow, (img == this.refreshTarget) ? 30 : 20);
-		this.activeArrow = null;
-	}));
-	
-	mxEvent.redirectMouseEvents(arrow, this.graph);
-	
-	return arrow;
 };
 
 /**
