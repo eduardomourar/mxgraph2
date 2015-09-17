@@ -1157,7 +1157,7 @@ HoverIcons = function(graph, enableHover)
 			}
     		
 	    	this.mouseDownPoint = null;
-	    }),
+	    })
 	});
 };
 
