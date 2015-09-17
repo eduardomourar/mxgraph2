@@ -634,17 +634,6 @@ mxEdgeHandler.prototype.validateConnection = function(source, target)
 			{
 				this.initBend(bend);
 				bend.setCursor(mxConstants.CURSOR_VIRTUAL_BEND_HANDLE);
-				
-				mxEvent.addListener(bend.node, 'mouseenter', mxUtils.bind(this, function()
-				{
-					mxUtils.setOpacity(bend.node, 100);
-				}));
-				
-				mxEvent.addListener(bend.node, 'mouseleave', mxUtils.bind(this, function()
-				{
-					mxUtils.setOpacity(bend.node, this.virtualBendOpacity);
-				}));
-				
 				bends.push(bend);
 			}))(this.createHandleShape(i));
 		}
