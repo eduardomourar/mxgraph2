@@ -66,12 +66,10 @@ Graph = function(container, model, renderHint, stylesheet)
 		// Disables cloning of connection sources by default
 		this.connectionHandler.setCreateTarget(false);
 		
-		// Disables built-in connection starts except shift is pressed when hovering the cell
+		// Disables built-in connection starts
 		this.connectionHandler.isValidSource = function(cell, me)
 		{
-			return mxConnectionHandler.prototype.isValidSource.apply(this, arguments) &&
-				((urlParams['connect'] != '2' && urlParams['connect'] != null) ||
-				(!this.graph.isCellSelected(cell) && mxEvent.isControlDown(me.getEvent())));
+			return false;
 		};
 
 		// Sets the style to be used when an elbow edge is double clicked
@@ -455,13 +453,53 @@ Graph.prototype.maxFitScale = null;
 Graph.prototype.linkTarget = '_blank';
 
 /**
+ * Sets the default target for all links in cells.
+ */
+Graph.prototype.defaultEdgeLength = 100;
+
+/**
  * Installs child layout styles.
  */
 Graph.prototype.init = function()
 {
 	mxGraph.prototype.init.apply(this, arguments);
-	var graph = this;
 
+	this.initLayoutManager();
+	this.initHoverIcons();
+};
+
+/**
+ * Adds hover connect mode.
+ */
+Graph.prototype.initHoverIcons = function()
+{
+	var hoverIcons = new HoverIcons(this, true);
+
+	if (touchStyle)
+	{
+		var permanentIcons = new HoverIcons(this, false);
+	
+		// Disables hover icons if permanent icons are showing
+		var getState = hoverIcons.getState;
+		hoverIcons.getState = function(cell)
+		{
+			var result = getState.apply(this, arguments);
+			
+			if (result == permanentIcons.currentState)
+			{
+				result = null;
+			}
+			
+			return result;
+		};
+	}
+};
+
+/**
+ * Installs automatic layout via styles
+ */
+Graph.prototype.initLayoutManager = function()
+{
 	this.layoutManager = new mxLayoutManager(this);
 
 	this.layoutManager.getLayout = function(cell)
@@ -529,6 +567,131 @@ Graph.prototype.sanitizeHtml = function(value)
     function idX(id) { return id }
 	
 	return html_sanitize(value, urlX, idX);
+};
+
+/**
+ * Adds a connection to the given vertex.
+ */
+Graph.prototype.connectVertex = function(source, direction, length, evt)
+{
+	var pt = new mxPoint(source.geometry.x, source.geometry.y);
+	var duplicate = !mxEvent.isControlDown(evt);
+		
+	if (direction == mxConstants.DIRECTION_NORTH)
+	{
+		pt.x += source.geometry.width / 2;
+		pt.y -= length ;
+	}
+	else if (direction == mxConstants.DIRECTION_SOUTH)
+	{
+		pt.x += source.geometry.width / 2;
+		pt.y += source.geometry.height + length;
+	}
+	else if (direction == mxConstants.DIRECTION_WEST)
+	{
+		pt.x -= length;
+		pt.y += source.geometry.height / 2;
+	}
+	else
+	{
+		pt.x += source.geometry.width + length;
+		pt.y += source.geometry.height / 2;
+	}
+
+	var parentState = this.view.getState(this.model.getParent(source));
+	var s = this.view.scale;
+	var t = this.view.translate;
+	var dx = t.x * s;
+	var dy = t.y * s;
+	
+	if (this.model.isVertex(parentState.cell))
+	{
+		dx = parentState.x;
+		dy = parentState.y;
+	}
+
+	// Checks actual end point of edge for target cell
+	var target = (mxEvent.isShiftDown(evt)) ? null : this.getCellAt(dx + pt.x * s, dy + pt.y * s);
+	var duplicate = !mxEvent.isControlDown(evt);
+	
+	if (duplicate)
+	{
+		if (direction == mxConstants.DIRECTION_NORTH)
+		{
+			pt.y -= source.geometry.height / 2;
+		}
+		else if (direction == mxConstants.DIRECTION_SOUTH)
+		{
+			pt.y += source.geometry.height / 2;
+		}
+		else if (direction == mxConstants.DIRECTION_WEST)
+		{
+			pt.x -= source.geometry.width / 2;
+		}
+		else
+		{
+			pt.x += source.geometry.width / 2;
+		}
+	}
+
+	// Uses connectable parent vertex if one exists
+	if (target != null && !this.isCellConnectable(target))
+	{
+		var parent = this.getModel().getParent(target);
+		
+		if (this.getModel().isVertex(parent) && this.isCellConnectable(parent))
+		{
+			target = parent;
+		}
+	}
+	
+	if (target == source || this.model.isEdge(target) || !this.isCellConnectable(target))
+	{
+		target = null;
+	}
+	
+	var result = [];
+	
+	this.model.beginUpdate();
+	try
+	{
+		var realTarget = target;
+		
+		if (realTarget == null && duplicate)
+		{
+			realTarget = this.duplicateCells([source], false)[0];
+			
+			var geo = this.getCellGeometry(realTarget);
+			geo.x = pt.x - geo.width / 2;
+			geo.y = pt.y - geo.height / 2;
+		}
+
+		var edge = (mxEvent.isShiftDown(evt) && duplicate) ? null :
+			this.insertEdge(null, null, '', source, realTarget, this.createCurrentEdgeStyle());
+		
+		if (edge != null)
+		{
+			result.push(edge);
+		}
+		
+		if (target == null && realTarget != null)
+		{
+			result.push(realTarget);
+		}
+		
+		if (realTarget == null && edge != null)
+		{
+			edge.geometry.setTerminalPoint(pt, false);
+		}
+		
+		this.fireEvent(new mxEventObject('cellsInserted', 'cells', result));
+	}
+	finally
+	{
+		this.model.endUpdate();
+	}
+	
+	return result;
 };
 
 /**
@@ -858,6 +1021,24 @@ Graph.prototype.isCellFoldable = function(cell)
 };
 
 /**
+ * Stops all interactions and clears the selection.
+ */
+Graph.prototype.reset = function()
+{
+	if (this.isEditing())
+	{
+		this.stopEditing(true);
+	}
+	
+	this.escape();
+					
+	if (!this.isSelectionEmpty())
+	{
+		this.clearSelection();
+	}
+};
+
+/**
  * Overridden to limit zoom to 160x.
  */
 Graph.prototype.zoom = function(factor, center)
@@ -865,6 +1046,603 @@ Graph.prototype.zoom = function(factor, center)
 	factor = Math.min(this.view.scale * factor, 160) / this.view.scale;
 	
 	mxGraph.prototype.zoom.apply(this, arguments);
+};
+
+/**
+ * Hover icons are used for hover, vertex handler and drag from sidebar.
+ */
+HoverIcons = function(graph, enableHover)
+{
+	this.graph = graph;
+	this.arrowUp = this.createArrow(this.triangleUp, mxResources.get('plusTooltip'));
+	this.arrowRight = this.createArrow(this.triangleRight, mxResources.get('plusTooltip'));
+	this.arrowDown = this.createArrow(this.triangleDown, mxResources.get('plusTooltip'));
+	this.arrowLeft = this.createArrow(this.triangleLeft, mxResources.get('plusTooltip'));
+
+	this.roundSource = this.createArrow(this.roundDrop);
+	this.roundTarget = this.createArrow(this.roundDrop);
+	
+	this.elts = [this.roundSource, this.roundTarget, this.arrowUp, this.arrowRight, this.arrowDown, this.arrowLeft];
+	
+	// TODO: Add destroy, remove listeners
+	this.repaintHandler = mxUtils.bind(this, function()
+	{
+    	if (!enableHover)
+    	{
+    		if (this.currentState == null && this.graph.getSelectionCount() == 1 &&
+    			this.graph.model.isVertex(this.graph.getSelectionCell()))
+			{
+				this.update(this.getState(this.graph.view.getState(this.graph.getSelectionCell())));
+			}
+    		else
+    		{
+    			this.reset();
+    		}
+    	}
+    	
+		this.repaint();
+	});
+	
+	graph.selectionModel.addListener(mxEvent.CHANGE, this.repaintHandler);
+	graph.model.addListener(mxEvent.CHANGE, this.repaintHandler);
+	graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.repaintHandler);
+	graph.view.addListener(mxEvent.TRANSLATE, this.repaintHandler);
+	graph.view.addListener(mxEvent.SCALE, this.repaintHandler);
+	graph.view.addListener(mxEvent.DOWN, this.repaintHandler);
+	graph.view.addListener(mxEvent.UP, this.repaintHandler);
+	
+	// Resets the mouse point on escape
+	graph.addListener(mxEvent.ESCAPE, mxUtils.bind(this, function()
+	{
+		this.mouseDownPoint = null;
+	}));
+
+	// Removes hover icons if mouse leaves the container
+	if (enableHover)
+	{
+		mxEvent.addListener(graph.container, 'mouseleave',  mxUtils.bind(this, function(evt)
+		{
+			if (mxEvent.getSource(evt) == this.graph.container)
+			{
+				this.reset();
+			}
+		}));
+	}
+
+	// Implements a listener for hover and click handling
+	this.graph.addMouseListener(
+	{
+	    mouseDown: mxUtils.bind(this, function(sender, me)
+	    {
+    		this.setDisplay('none');
+	    }),
+	    mouseMove: mxUtils.bind(this, function(sender, me)
+	    {
+	    	if (enableHover && !mxEvent.isShiftDown(me.getEvent()))
+	    	{
+		    	if (mxEvent.isAltDown(me.getEvent()))
+		    	{
+		    		this.reset();
+		    	}
+		    	else if (!this.graph.isMouseDown)
+		    	{
+		    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
+		    	}
+	    	}
+	    	else if (this.graph.isMouseDown)
+	    	{
+	    		this.setDisplay('none');
+	    	}
+	    }),
+	    mouseUp: mxUtils.bind(this, function(sender, me)
+	    {
+	    	if (this.isActive() && this.mouseDownPoint != null &&
+	    		Math.abs(me.getGraphX() - this.mouseDownPoint.x) < this.graph.tolerance &&
+	    		Math.abs(me.getGraphY() - this.mouseDownPoint.y) < this.graph.tolerance)
+			{
+	    		this.click(me.getEvent(), me.getGraphX(), me.getGraphY());
+	    		me.consume();
+			}
+
+    		if (enableHover)
+    		{
+    			// Only keeps focused state if hit detection returns this state
+    			this.bbox = null;
+    			this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
+    			this.repaint();
+    		}
+    		else if (this.graph.getSelectionCount() == 1 && this.graph.model.isVertex(this.graph.getSelectionCell()))
+			{
+				this.update(this.getState(this.graph.view.getState(this.graph.getSelectionCell())));
+			}
+    		
+	    	this.mouseDownPoint = null;
+	    }),
+	});
+};
+
+/**
+ * Up arrow.
+ */
+HoverIcons.prototype.arrowSpacing = 6;
+
+/**
+ * Up arrow.
+ */
+HoverIcons.prototype.defaultDelay = 0;
+
+/**
+ * Up arrow.
+ */
+HoverIcons.prototype.currentState = null;
+
+/**
+ * Up arrow.
+ */
+HoverIcons.prototype.activeArrow = null;
+
+/**
+ * Up arrow.
+ */
+HoverIcons.prototype.triangleUp = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDA3RjREMDM0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDA3RjREMDQ0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0MDdGNEQwMTQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0MDdGNEQwMjQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PpFdYkUAAAEsSURBVHjaYvz//z8DPQATA50AC+P6D6Tq0QViHiA+TpJFZDhuMhDzA7EhLYMuEIjtgdgAiJNJ0cjIsO49sWo5gfgqECtC+S+AWBWIv1DbR0VIloCABBA3UttHIENvQxMBMvgFxNpAfIdaPurFYgkIsAFxF7WCzgyIowgkEA9qWDSZSB8zU2JRMtRHhIAWEKeRmxh4oAlAgsh4fAdN7u9I9VEFCZaAgBAQt5DqIxVo5mQjseT4C8R6QHyNWB91kWEJAzRBTCA26JygSZZc4IpNPxMWF01moBxghAi6RWnQpEopAMVxPq7EIARNzkJUqlS/QJP7C3QftVDRElg+bEH3ESi4LhEqRsgEoJr4AhNSeUYLS0BgJqzNACrLRIH4Mo0sAtXM9ozDrl0HEGAAOt00sQRg5yAAAAAASUVORK5CYII=' :
+	IMAGE_PATH + '/triangle-up.png', 26, 26);
+
+/**
+ * Right arrow.
+ */
+HoverIcons.prototype.triangleRight = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RkQ3OEM2Nzg0NTVBMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RkQ3OEM2Nzk0NTVBMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGRDc4QzY3NjQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGRDc4QzY3NzQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PmADGesAAAE2SURBVHjatJaxSgNBFEU3iQhCQEllK1hFItjsB1jYr6WtgigIAcFGwSafIBaipa1pBRG0Eq0koI1+QCqxSCXIekbug2UhGJN5Fw7Dzi4c5s283a3keZ6EVLqfKcNTEjl5Nvc7Vgtz53ALzcQh1dL1KvTgFBqeopAa7MCbxpqXyNLQynpaqZvI0tTeXcGip8iSwQt0oO4pCpmGQ+3fpqfIMq92eITUU2RJJbuU3E1k2VA5Q1lnPEWJDkhHBybzFFkW1Ap30PIUWWaLbeAh6sMWrMCDTU5FFHzBCRzDoHwzlqgLB/A+7IFJRa+wD9deDfsBu7A8imScFX3DGRxJNnL+I7qBtsrl8pkIG7wOa+NK/hINdJKWdKomyrDSXWgf+rGarCwK/3Xb8Bz7dVEU7cG914vvR4ABAGCSNhcpqHjLAAAAAElFTkSuQmCC':
+	IMAGE_PATH + '/triangle-right.png', 26, 26);
+
+/**
+ * Down arrow.
+ */
+HoverIcons.prototype.triangleDown = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RkQ3OEM2N0M0NTVBMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RkQ3OEM2N0Q0NTVBMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGRDc4QzY3QTQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGRDc4QzY3QjQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuktDIwAAAE0SURBVHjaYvz//z8DPQATA50AC+P6D/ZAejKN7UlhARIHgfg7EJvRyJJ9QHwKFnTpNLLkLxDnIsfRBSCeSwOLZgHxNRCDkWHde5igBBDfBmIeKlnyDohVoTRKqnsBxE1U9E0NzBJ0H4EAGxBfBWIVCi0BBZceNI6w5qNfQFxGBd/kIluCK8OuB+LdFFiyHpqkiSoZCtBdRCTAGSJMeMJ4FhkWdQPxHWwS6IkBGQhBk7sQkZa8gCbnL6QWqu+gSZSU5PyF3NIbnrMJgFOEShYmIsqqYiKTM8X10Q5oksUFlkF9RJWKrwyadNHBFyJ9TLRFoCQ7BYt4BzS1EQT4kjc64IEmdwko/z4Qa0MrTaq2Gb6gJfdiYi0h1UcwcB6IPwKxA0mNEzKKmSx8GROnj4Zduw4gwAC3tEnG5i1iXgAAAABJRU5ErkJggg==' :
+	IMAGE_PATH + '/triangle-down.png', 26, 26);
+
+/**
+ * Left arrow.
+ */
+HoverIcons.prototype.triangleLeft = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDA3RjRDRkY0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDA3RjREMDA0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGRDc4QzY3RTQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0MDdGNENGRTQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PquyPQ0AAAE+SURBVHjatJaxSgNBFEU3KoKQQqzyAdoohFSKlQERbGNrqVik8QeCVdIIgpVBMK2lW9oF0qYRFFMJtlZBQRAEWc/AHVklxE123oUDm+zA4b03s0whSZLIpRC/RgbZSmqLPfcwF9mkApewAGX3x0xgQQmu4A7W0y9CVTQPx3ACxVELQohqcArL4xblEa3COexkWTzNjJbgAu6zSiataBaOoCnZRMkq2oUztWuq/Nc6N+AbuM0jGScqqoJH7arcGdW6A82hFPIkp0Wb2k0Vi29SunXv8Gb07fsleoAq7MGzpcgnhjVoqEozkcsHtGAFri1FPi+wDxvQtxT59CU7lNxM5NNRO11bPy1F/hg0tGFiS5HPk47CNgwsRT5dXUDqMLQUuXxBW/Nr67eJyGeoysqqNPgt6G8Gmt3PletbgAEAmkYzZ9MOuCsAAAAASUVORK5CYII=' :
+	IMAGE_PATH + '/triangle-left.png', 26, 26);
+
+/**
+ * Round target.
+ */
+HoverIcons.prototype.roundDrop = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RTgxRjYzRTU1MDRFMTFFNEExQ0VFNDQwNDhGNzg2RDkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RTgxRjYzRTY1MDRFMTFFNEExQ0VFNDQwNDhGNzg2RDkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFODFGNjNFMzUwNEUxMUU0QTFDRUU0NDA0OEY3ODZEOSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFODFGNjNFNDUwNEUxMUU0QTFDRUU0NDA0OEY3ODZEOSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuJ657wAAAE0SURBVHjaYvz//z8DPQATA50AC4zBuP4DLjXaQOwMxJZArAfE8lDxh0B8CYiPA/FeIL6KTfP/QAFUi7AABSBOAOJoIFbBIq8FxRFAfAeIlwLxAiB+gNdHaMABiIuB2IfIkAE5pB6IjYG4F4gPEBNHIEtaSLAEGfhA9ToQskgB6hNrCuLdGmqGAj6LEsj0CTafJeCySBsa8dQC0VAzMSxyxpG6yAUqUDMxLLKkQT61xGaRHg0s0sNmkTwNLJKne1mHbNFDGpj/EJtFl2hg0SVsFh2ngUXHsVm0F1oKUwvcgZqJYdFVaFFPLbAUuY5CT3Wg+mQLFSzZAjULZ6H6AFqfHKXAkqNQMx4Qqo9AlVYNmT7bAtV7gNga9gDURWfxVOXoEY+3KmeENbdo3ThhHHbtOoAAAwDmEETshQ0fBAAAAABJRU5ErkJggg==' :
+	IMAGE_PATH + '/round-drop.png', 26, 26);
+
+/**
+ * Refresh target.
+ */
+HoverIcons.prototype.refreshTarget = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAmCAYAAACoPemuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDQxNERDRTU1QjY1MTFFNDkzNTRFQTVEMTdGMTdBQjciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDQxNERDRTY1QjY1MTFFNDkzNTRFQTVEMTdGMTdBQjciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0NDE0RENFMzVCNjUxMUU0OTM1NEVBNUQxN0YxN0FCNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0NDE0RENFNDVCNjUxMUU0OTM1NEVBNUQxN0YxN0FCNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsvuX50AAANaSURBVHja7FjRZ1tRGD9ZJ1NCyIQSwrivI4Q8hCpjlFDyFEoYfSp9Ko1QWnmo0If+BSXkIfo0QirTMUpeGo2EPfWllFYjZMLKLDJn53d3biU337m5J223bPbxk5t7v+/c3/2+73znO8fDOWezKM/YjMpz68Lj8ejY+QTeCCwLxOS9qPxtyN+6wAeBTwJ31CCO0cJDjXBGBN4LfIepSwykTUT1bgpuib0SONIgo8KRHOtRiCFcvUcgZeGrHPNBxLIyFPyRgTGz0xLbegJCdmzpElue5KlAIMDX19d5uVzm5+fnfDAYmMA17uEZdOx2Yvb/sHlu2S0xwymn5ufneTab5b1ej08S6EAXNrDd2dnhiUTim21MvMtwQ6yiIrWwsMDPzs64rsBmf3/fvM7n89TYlUnEllSkQqEQv7q64g+Vk5MTVXosORErU0Zer5f0FEIlw2N6MxwO82QyaXql2+2SxDqdjopYWUUsqEp45IldqtWq6UWVh/1+P7+8vCTJ4QMUJSRIEXuneoH96w8PDyeWAnhSJfCqwm6NIlaklFdXV0cGhRcQ2mlJQXK5nMq2YPEZbnteU1U2lUqN/D84OGD9fl+5fgnSrFarsUwmw0qlEru4uBjTicViTk3Cr27HSnxR+Doyz0ZE1CAWiUTusbu7y9rttlZv5fP5WDQavYfIMba4uEipfhF8XtqJoZXx/uH+sC/4vPg7OljZZQbsCmLtYzc3N6zRaJhotVrmfx0xDINtbm6athYUeXpHdbBNaqZUKpWxWXV7e2vex+xaWVnhc3NzjrPUXgexyCt0m67LBV7uJMITjqRE4o8tZeg8FPpFitgapYxiOC0poFgsji1jKNo6BZZckrAGUtJsNk1vqAihCBcKhTE7hNWhqw2qFnGy5UFOUYJVIJ1OjzSE+BCEilon0URavRmBqnbbQ00AXbm+vnZc9O1tj72OnQoc2+cwygRkb2+P1et17ZoEm3g87lRmjgWZ00kbXkNuse6/Bu2wlegIxfb2tuvWGroO4bO2c4bbzUh60mxDXm1sbJhhxkQYnhS4h2fUZoRAWnf7lv8N27f8P7Xhnekjgpk+VKGOoQbsiY+hhhtF3YO7twIJ+ULvUGv+GQ2fQEvWxI/THNx5/p/BaspPAQYAqStgiSQwCDoAAAAASUVORK5CYII=' :
+	IMAGE_PATH + '/refresh.png', 38, 38);
+
+/**
+ * 
+ */
+HoverIcons.prototype.getCurrentState = function()
+{
+	return this.currentState;
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.getDirection = function()
+{
+	var dir = mxConstants.DIRECTION_EAST;
+
+	if (this.activeArrow == this.arrowUp)
+	{
+		dir = mxConstants.DIRECTION_NORTH;
+	}
+	else if (this.activeArrow == this.arrowDown)
+	{
+		dir = mxConstants.DIRECTION_SOUTH;
+	}
+	else if (this.activeArrow == this.arrowLeft)
+	{
+		dir = mxConstants.DIRECTION_WEST;
+	}
+		
+	return dir;
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.visitNodes = function(visitor)
+{
+	for (var i = 0; i < this.elts.length; i++)
+	{
+		if (this.elts[i] != null)
+		{
+			visitor(this.elts[i]);
+		}
+	}
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.removeNodes = function()
+{
+	this.visitNodes(function(elt)
+	{
+		if (elt.parentNode != null)
+		{
+			elt.parentNode.removeChild(elt);
+		}
+	});
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.setDisplay = function(display)
+{
+	this.visitNodes(function(elt)
+	{
+		elt.style.display = display;
+	});
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.setVisibility = function(visibility)
+{
+	this.visitNodes(function(elt)
+	{
+		elt.style.visibility = visibility;
+	});
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.isActive = function()
+{
+	return this.activeArrow != null && this.currentState != null;
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.drag = function(evt, x, y)
+{
+	this.graph.popupMenuHandler.hideMenu();
+	this.graph.stopEditing(false);
+	
+	if (this.graph.model.isEdge(this.currentState.cell))
+	{
+		this.graph.setSelectionCell(this.currentState.cell);
+		var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
+		
+		if (handler != null)
+		{
+			handler.start(x, y, (this.activeArrow == this.roundSource) ? 0 : handler.bends.length - 1);
+		}
+	}
+	else
+	{
+		this.graph.connectionHandler.start(this.currentState, x, y);
+		this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+		this.graph.isMouseDown = true;
+	}
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.click = function(evt, x, y)
+{
+	if (this.currentState != null)
+	{
+		this.graph.setSelectionCells(this.graph.connectVertex(this.currentState.cell,
+			this.getDirection(), this.graph.defaultEdgeLength, evt));
+	}
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.reset = function()
+{
+	this.currentState = null;
+	this.removeNodes();
+	this.bbox = null;
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.repaint = function()
+{
+	this.bbox = null;
+	
+	if (this.currentState != null)
+	{
+		this.currentState = this.getState(this.currentState);
+		
+		// Cell was deleted	
+		if (this.currentState == null)
+		{
+			this.reset();
+		}
+		else
+		{
+			if (this.graph.model.isEdge(this.currentState.cell))
+			{
+				var pts = this.currentState.absolutePoints;
+				
+				if (pts != null)
+				{
+					var p0 = pts[0];
+					var pe = pts[pts.length - 1];
+					
+					this.roundSource.style.left = Math.round(p0.x - this.roundDrop.width / 2) + 'px';
+					this.roundSource.style.top = Math.round(p0.y - this.roundDrop.height / 2) + 'px';
+					
+					this.roundTarget.style.left = Math.round(pe.x - this.roundDrop.width / 2) + 'px';
+					this.roundTarget.style.top = Math.round(pe.y - this.roundDrop.height / 2) + 'px';
+				}
+			}
+			else if (this.graph.model.isVertex(this.currentState.cell) &&
+				this.graph.isCellConnectable(this.currentState.cell))
+			{
+				var bds = mxRectangle.fromRectangle(this.currentState);
+				
+				// Uses outer bounding box to take rotation into account
+				if (this.currentState.shape != null && this.currentState.shape.boundingBox != null)
+				{
+					bds = mxRectangle.fromRectangle(this.currentState.shape.boundingBox);
+				}
+
+				bds.grow(this.graph.tolerance);
+				bds.grow(this.arrowSpacing);
+				
+				var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
+				
+				if (handler != null)
+				{
+					bds.x -= handler.horizontalOffset / 2;
+					bds.y -= handler.verticalOffset / 2;
+					bds.width += handler.horizontalOffset;
+					bds.height += handler.verticalOffset;
+					
+					// Adds bounding box of rotation handle to avoid overlap
+					if (handler.rotationShape != null && handler.rotationShape.node != null &&
+						handler.rotationShape.node.style.visibility != 'hidden' &&
+						handler.rotationShape.node.style.display != 'none' &&
+						handler.rotationShape.boundingBox != null)
+					{
+						bds.add(handler.rotationShape.boundingBox);
+					}
+				}
+				
+				this.arrowUp.style.left = Math.round(this.currentState.getCenterX() - this.triangleUp.width / 2) + 'px';
+				this.arrowUp.style.top = Math.round(bds.y - this.triangleUp.height) + 'px';
+				
+				this.arrowRight.style.left = Math.round(bds.x + bds.width) + 'px';
+				this.arrowRight.style.top = Math.round(this.currentState.getCenterY() - this.triangleRight.height / 2) + 'px';
+				
+				this.arrowDown.style.left = this.arrowUp.style.left
+				this.arrowDown.style.top = Math.round(bds.y + bds.height) + 'px';
+				
+				this.arrowLeft.style.left = Math.round(bds.x - this.triangleLeft.width) + 'px';
+				this.arrowLeft.style.top = this.arrowRight.style.top;
+			}
+			else
+			{
+				this.reset();
+			}
+			
+			// Updates bounding box
+			this.bbox = this.computeBoundingBox();
+			
+			// Adds tolerance for hover
+			if (this.bbox != null)
+			{
+				this.bbox.grow(10);
+			}
+		}
+	}
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.computeBoundingBox = function()
+{
+	var bbox = mxRectangle.fromRectangle(this.currentState);
+	
+	this.visitNodes(function(elt)
+	{
+		if (elt.parentNode != null)
+		{
+			bbox.add(new mxRectangle(elt.offsetLeft, elt.offsetTop, elt.offsetWidth, elt.offsetHeight));
+		}
+	});
+	
+	return bbox;
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.createArrow = function(img, tooltip)
+{
+	var arrow = null;
+	
+	if (mxClient.IS_IE && !mxClient.IS_SVG)
+	{
+		// Workaround for PNG images in IE6
+		if (mxClient.IS_IE6 && document.compatMode != 'CSS1Compat')
+		{
+			arrow = document.createElement(mxClient.VML_PREFIX + ':image');
+			arrow.setAttribute('src', img.src);
+			arrow.style.borderStyle = 'none';
+		}
+		else
+		{
+			arrow = document.createElement('div');
+			arrow.style.backgroundImage = 'url(' + img.src + ')';
+			arrow.style.backgroundPosition = 'center';
+			arrow.style.backgroundRepeat = 'no-repeat';
+		}
+		
+		arrow.style.width = (img.width + 4) + 'px';
+		arrow.style.height = (img.height + 4) + 'px';
+		arrow.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+	}
+	else
+	{
+		arrow = mxUtils.createImage(img.src);
+		arrow.style.width = img.width + 'px';
+		arrow.style.height = img.height + 'px';
+	}
+	
+	if (tooltip != null)
+	{
+		arrow.setAttribute('title', tooltip);
+	}
+	
+	mxUtils.setOpacity(arrow, (img == this.refreshTarget) ? 30 : 20);
+	arrow.style.position = 'absolute';
+	arrow.style.cursor = 'crosshair';
+
+	mxEvent.addGestureListeners(arrow, mxUtils.bind(this, function(evt)
+	{
+		if (this.currentState != null && (mxEvent.isControlDown(evt) ||
+			(!mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt))))
+		{
+			this.mouseDownPoint = mxUtils.convertPoint(this.graph.container,
+				mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+			this.drag(evt, this.mouseDownPoint.x, this.mouseDownPoint.y);
+			this.setDisplay('none');
+		}
+	}), null, null);
+	
+	mxEvent.addListener(arrow, 'mouseenter', mxUtils.bind(this, function(evt)
+	{
+		mxUtils.setOpacity(arrow, 100);
+		this.activeArrow = arrow;
+	}));
+	
+	mxEvent.addListener(arrow, 'mouseleave', mxUtils.bind(this, function(evt)
+	{
+		mxUtils.setOpacity(arrow, (img == this.refreshTarget) ? 30 : 20);
+		this.activeArrow = null;
+	}));
+	
+	mxEvent.redirectMouseEvents(arrow, this.graph);
+	
+	return arrow;
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.getState = function(state)
+{
+	if (state != null)
+	{
+		var cell = state.cell;
+		
+		if (cell != null && !this.graph.model.isEdge(cell) && this.graph.connectionHandler.constraintHandler.currentFocus != null)
+		{
+			cell = this.graph.connectionHandler.constraintHandler.currentFocus.cell;
+		}
+		
+		if (this.graph.model.isEdge(cell) && this.graph.isCellSelected(cell) &&
+			this.graph.getSelectionCount() == 1)
+		{
+			cell = null;
+		}
+		
+		// Uses connectable parent vertex if one exists
+		if (cell != null && !this.graph.isCellConnectable(cell))
+		{
+			var parent = this.graph.getModel().getParent(cell);
+			
+			if (this.graph.getModel().isVertex(parent) && this.graph.isCellConnectable(parent))
+			{
+				cell = parent;
+			}
+		}
+		
+		// Ignores locked cells
+		if (this.graph.isCellLocked(cell))
+		{
+			cell = null;
+		}
+		
+		state = this.graph.view.getState(cell);
+	}
+	
+	return state;
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.update = function(state, x, y)
+{
+	this.setDisplay('');
+
+	if (this.currentState != state && (this.bbox == null || x == null || y == null || !mxUtils.contains(this.bbox, x, y)))
+	{
+		if (state != null && this.graph.isEnabled())
+		{
+			this.removeNodes();
+			this.setCurrentState(state);
+			this.repaint();
+		}
+		else
+		{
+			this.reset();
+		}
+	}
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.setCurrentState = function(state)
+{
+	if (this.graph.model.isEdge(state.cell))
+	{
+		var pts = state.absolutePoints;
+		
+		if (pts != null)
+		{
+			this.graph.container.appendChild(this.roundSource);
+			this.graph.container.appendChild(this.roundTarget);
+		}
+	}
+	else
+	{
+		// Checks layout to decide which arrows to show
+		var layout = null;
+		
+		// Never connects children in stack layouts
+		if (this.graph.layoutManager != null)
+		{
+			layout = this.graph.layoutManager.getLayout(this.graph.model.getParent(state.cell));
+		}
+		
+		if (layout == null || layout.constructor != mxStackLayout)
+		{
+			this.graph.container.appendChild(this.arrowUp);
+			this.graph.container.appendChild(this.arrowDown);
+		}
+
+		this.graph.container.appendChild(this.arrowRight);
+		this.graph.container.appendChild(this.arrowLeft);
+	}
+
+	this.currentState = state;
 };
 
 /**
@@ -2510,23 +3288,6 @@ if (typeof mxVertexHandler != 'undefined')
 		var mxCellEditorStopEditing = mxCellEditor.prototype.stopEditing;
 		mxCellEditor.prototype.stopEditing = function(cancel)
 		{
-			// Shows handles on selected cell
-			if (this.currentStateHandle != null)
-			{
-				if (this.currentStateHandle.setHandlesVisible != null)
-				{
-					this.currentStateHandle.setHandlesVisible(true);
-					
-					if (this.currentStateHandle.selectionBorder != null)
-					{
-						this.currentStateHandle.selectionBorder.node.style.display = '';
-					}
-				}
-				
-				this.currentStateHandle.redrawHandles();
-				this.currentStateHandle = null;
-			}
-			
 			// Restores default view mode before applying value
 			if (this.codeViewMode)
 			{
@@ -2568,6 +3329,27 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				this.graph.getModel().endUpdate();
 			}
+		};
+
+		/**
+		 * Returns the background color to be used for the editing box. This returns
+		 * the label background for edge labels and null for all other cases.
+		 */
+		mxCellEditor.prototype.getBackgroundColor = function(state)
+		{
+			var color = null;
+			
+			if (this.graph.getModel().isEdge(state.cell) || this.graph.getModel().isEdge(this.graph.getModel().getParent(state.cell)))
+			{
+				var color = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, null);
+				
+				if (color == mxConstants.NONE)
+				{
+					color = null;
+				}
+			}
+			
+			return color;
 		};
 		
 		mxCellEditor.prototype.getMinimumSize = function(state)
@@ -2737,8 +3519,6 @@ if (typeof mxVertexHandler != 'undefined')
 		/**
 		 * Defines the handles for the UI. Uses data-URIs to speed-up loading time where supported.
 		 */
-		var connectHandle = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjQ3OTk0QjMyRDcyMTFFNThGQThGNDVBMjNBMjFDMzkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjQ3OTk0QjQyRDcyMTFFNThGQThGNDVBMjNBMjFDMzkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoyRjA0N0I2MjJENzExMUU1OEZBOEY0NUEyM0EyMUMzOSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGNDc5OTRCMjJENzIxMUU1OEZBOEY0NUEyM0EyMUMzOSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PjIf+MgAAATlSURBVHjanFZraFxFFD735u4ru3ls0yZG26ShgmJoKK1J2vhIYzBgRdtIURHyw1hQUH9IxIgI2h8iCEUF/1RRlNQYCsYfCTHVhiTtNolpZCEStqSC22xIsrs1bDfu7t37Gs/cO3Ozxs1DBw73zpk555vzmHNGgJ0NYatFgmNLYUHYUoHASMz5ijmgVLmxgfKCUiBxC4ACJAeSG8nb1dVVOTc3dyoSibwWDofPBIPBJzo7O8vpGtvjpDICGztxkciECpF2LS0tvZtOpwNkk5FKpcYXFxffwL1+JuPgllPj8nk1F6RoaGjoKCqZ5ApljZDZO4SMRA0SuG2QUJIQRV8HxMOM9vf3H0ZZH9Nhg20MMl2QkFwjIyNHWlpahtADnuUMwLcRHX5aNSBjCJYEsSSLUeLEbhGe3ytCmQtA1/XY+Pj46dbW1iDuyCJp9BC5ycBj4hoeHq5ra2sbw0Xn1ZgBZ+dVkA1Lc+6p0Ck2p0QS4Ox9EhwpEylYcmBg4LH29vYQLilIOt0u5FhDfevNZDI/u93uw6PLOrwTUtjxrbPYbhD42WgMrF8JmR894ICmCgnQjVe8Xu8pXEkzMJKbuo5oNPomBbm1ZsD7s2kwFA1JZ6QBUXWT1nmGNc/qoMgavDcrQzxjQGFh4aOYIJ0sFAXcEtui4uLiVjr5KpSBVFYDDZVrWUaKRRWSAYeK0fmKykgDXbVoNaPChRuyqdDv97czL5nXxQbq6empQmsaklkDBiNpSwFVrmr2P6UyicD5piI4f8wHh0oEm8/p4h8pyGiEWvVQd3e3nxtjAzU1NR2jP7NRBWQ8GbdEzzJAmc0V3RR4cI8Dvmwuhc8fKUFA0d6/ltHg5p+Kuaejo6OeY0jcNJ/PV00ZS0nFUoZRvvFS1bZFsKHCCQ2Pl8H0chY+C96B6ZUsrCQ1qKtwQVFRURW/QhIXMAzDPAZ6BgOr8tTa8dDxCmiYGApaJbJMxSzV+brE8pdgWkcpY5dbMF1AR9XH8/xu2ilef48bvn92n82ZwHh+8ssqTEXS9p7dHisiiURikd8PbpExNTU1UVNTA3V3Y7lC16n0gpB/NwpNcZjfa7dScC4Qh0kOQCwnlEgi3F/hMVl9fX0zvKrzSk2lfXjRhj0eT/2rvWG4+Pta3oJY7XfC3hInXAv/ldeFLx8shQ+eqQL0UAAz7ylkpej5eNZRVBWL6BU6ef14OYiY1oqyTtmsavr/5koaRucT1pzx+ZpL1+GV5nLutksUgIcmtwTRiuuVZXnU5XId7A2swJkfFsymRWC91hHg1Viw6x23+7vn9sPJ+j20BE1hCXqSWaNSQ8ScbknRZWxub1PGCw/fBV+c3AeijlUbY5bBjEqr9GuYZP4jP41WudGSC6erTRCqdGZm5i1WvXWeDHnbBCZGc2Nj4wBl/hZOwrmBBfgmlID1HmGJutHaF+tKoevp/XCgstDkjo2NtWKLuc6AVN4mNjY+s1XQxoenOoFuDPHGtnRbJj9ej5GvL0dI7+giuRyMk1giazc+DP6vgUDgOJVlOv7R+PJ12QIeL6SyeDz+Kfp8ZrNWjgDTsVjsQ7qXyTjztXJhm9ePxFLfMTg4eG9tbe1RTP9KFFYQfHliYmIS69kCC7jKYmKwxxD5P88tkVkqbPPcIps9t4T/+HjcuJ/s5BFJgf4WYABCtxGuxIZ90gAAAABJRU5ErkJggg==' :
-			IMAGE_PATH + '/handle-connect.png', 26, 26);
 		var mainHandle = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAACXBIWXMAAAsTAAALEwEAmpwYAAABLUlEQVQ4y61US4rCQBBNeojiRrLSnbMOWWU3V1FPouARcgc9hyLOCSSbYZw5gRCIkM9KbevJaycS4zCOBY+iq6pf1y+xrNtiE6oEY/tVzMUXgSNoCJrUDu3qHpldutwSuIKOoEvt0m7I7DoCvNj2fb8XRdEojuN5lmVraJxhh59xFSLFF9phGL7lef6hRb63R73aHM8aAjv8JHJ47yqLlud5r0VRbHa51sPZQVuT/QU4ww4/4ljaJRubrC5SxouD6TWBQV/sEIkbs0eOIVGssSO1L5D6LQID+BHHZjdMSYpj7KZpun7/uk8CP5rNqTXLJP/OpNyTMWruP9CTP08nCILKdCp7gkCzJ8vPnz2BvW5PKhuLjJBykiQLaWIEjTP3o3Zjn/LtPO0rfvh/cgKu7z6wtPPltQAAAABJRU5ErkJggg==' :
 			IMAGE_PATH + '/handle-main.png', 17, 17);
 		var fixedHandle = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NkE1NkU4Njk2QjI1MTFFNEFDMjFGQTcyODkzNTc3NkYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NkE1NkU4NkE2QjI1MTFFNEFDMjFGQTcyODkzNTc3NkYiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo2QTU2RTg2NzZCMjUxMUU0QUMyMUZBNzI4OTM1Nzc2RiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo2QTU2RTg2ODZCMjUxMUU0QUMyMUZBNzI4OTM1Nzc2RiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pmuk6K8AAAGBSURBVHjarFRBSsNQEM3/atNs6qLowixcKELoqjuXoqfQeoF6BMEj9BCC1YIXcCGlV8hGLNZlBKWlCk1JSs13Xvw/nca6UDrwmMzMy8tk/iTCWmwi52Eq53+QeWwg2bXSSNi1WiRibgRWCTahwEQmhJgw1WJGML2BC6wQnEqlsuH7fr3f7zdHo9EdPGLkUdc8mX8TJNYIpUajsR+G4YMie3pNVKebpB6GPOrgab7kr5F24Hne9ng87r6HStUuP5V1Mc2AGHnUwWMdCck6sVut1onjOHtnt4nV7M0fAuI65VEnXk3PTFq5Eyi4rnvUe1PW9fO3QOdUzvkbyqNOvEM2dMEHK2zbLr98zJ5+cJWkAvDGUC8Wi2X28Gww6bnHcTzYWp+JGAHTCQz1KIoGfFckCyZBELR3N4V1vCOyTrhHHnXw9N5kQn8+nWq1Onc6C/cERLMn7cfZniD/257wbjDxEjqiDT0fDof3tLE+PGK9HyXNy7pYyrez9K/43/+TLwEGAMb7AY6w980DAAAAAElFTkSuQmCC' :
@@ -2747,23 +3527,10 @@ if (typeof mxVertexHandler != 'undefined')
 			IMAGE_PATH + '/handle-secondary.png', 17, 17);
 		var rotationHandle = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,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' :
 			IMAGE_PATH + '/handle-rotate.png', 19, 21);
-		var triangleUp = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDA3RjREMDM0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDA3RjREMDQ0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0MDdGNEQwMTQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0MDdGNEQwMjQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PpFdYkUAAAEsSURBVHjaYvz//z8DPQATA50AC+P6D6Tq0QViHiA+TpJFZDhuMhDzA7EhLYMuEIjtgdgAiJNJ0cjIsO49sWo5gfgqECtC+S+AWBWIv1DbR0VIloCABBA3UttHIENvQxMBMvgFxNpAfIdaPurFYgkIsAFxF7WCzgyIowgkEA9qWDSZSB8zU2JRMtRHhIAWEKeRmxh4oAlAgsh4fAdN7u9I9VEFCZaAgBAQt5DqIxVo5mQjseT4C8R6QHyNWB91kWEJAzRBTCA26JygSZZc4IpNPxMWF01moBxghAi6RWnQpEopAMVxPq7EIARNzkJUqlS/QJP7C3QftVDRElg+bEH3ESi4LhEqRsgEoJr4AhNSeUYLS0BgJqzNACrLRIH4Mo0sAtXM9ozDrl0HEGAAOt00sQRg5yAAAAAASUVORK5CYII=' :
-			IMAGE_PATH + '/triangle-up.png', 26, 26);
-		var triangleRight = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RkQ3OEM2Nzg0NTVBMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RkQ3OEM2Nzk0NTVBMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGRDc4QzY3NjQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGRDc4QzY3NzQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PmADGesAAAE2SURBVHjatJaxSgNBFEU3iQhCQEllK1hFItjsB1jYr6WtgigIAcFGwSafIBaipa1pBRG0Eq0koI1+QCqxSCXIekbug2UhGJN5Fw7Dzi4c5s283a3keZ6EVLqfKcNTEjl5Nvc7Vgtz53ALzcQh1dL1KvTgFBqeopAa7MCbxpqXyNLQynpaqZvI0tTeXcGip8iSwQt0oO4pCpmGQ+3fpqfIMq92eITUU2RJJbuU3E1k2VA5Q1lnPEWJDkhHBybzFFkW1Ap30PIUWWaLbeAh6sMWrMCDTU5FFHzBCRzDoHwzlqgLB/A+7IFJRa+wD9deDfsBu7A8imScFX3DGRxJNnL+I7qBtsrl8pkIG7wOa+NK/hINdJKWdKomyrDSXWgf+rGarCwK/3Xb8Bz7dVEU7cG914vvR4ABAGCSNhcpqHjLAAAAAElFTkSuQmCC':
-			IMAGE_PATH + '/triangle-right.png', 26, 26);
-		var triangleDown = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RkQ3OEM2N0M0NTVBMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RkQ3OEM2N0Q0NTVBMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGRDc4QzY3QTQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGRDc4QzY3QjQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuktDIwAAAE0SURBVHjaYvz//z8DPQATA50AC+P6D/ZAejKN7UlhARIHgfg7EJvRyJJ9QHwKFnTpNLLkLxDnIsfRBSCeSwOLZgHxNRCDkWHde5igBBDfBmIeKlnyDohVoTRKqnsBxE1U9E0NzBJ0H4EAGxBfBWIVCi0BBZceNI6w5qNfQFxGBd/kIluCK8OuB+LdFFiyHpqkiSoZCtBdRCTAGSJMeMJ4FhkWdQPxHWwS6IkBGQhBk7sQkZa8gCbnL6QWqu+gSZSU5PyF3NIbnrMJgFOEShYmIsqqYiKTM8X10Q5oksUFlkF9RJWKrwyadNHBFyJ9TLRFoCQ7BYt4BzS1EQT4kjc64IEmdwko/z4Qa0MrTaq2Gb6gJfdiYi0h1UcwcB6IPwKxA0mNEzKKmSx8GROnj4Zduw4gwAC3tEnG5i1iXgAAAABJRU5ErkJggg==' :
-			IMAGE_PATH + '/triangle-down.png', 26, 26);
-		var triangleLeft = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDA3RjRDRkY0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDA3RjREMDA0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGRDc4QzY3RTQ1NUExMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0MDdGNENGRTQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PquyPQ0AAAE+SURBVHjatJaxSgNBFEU3KoKQQqzyAdoohFSKlQERbGNrqVik8QeCVdIIgpVBMK2lW9oF0qYRFFMJtlZBQRAEWc/AHVklxE123oUDm+zA4b03s0whSZLIpRC/RgbZSmqLPfcwF9mkApewAGX3x0xgQQmu4A7W0y9CVTQPx3ACxVELQohqcArL4xblEa3COexkWTzNjJbgAu6zSiataBaOoCnZRMkq2oUztWuq/Nc6N+AbuM0jGScqqoJH7arcGdW6A82hFPIkp0Wb2k0Vi29SunXv8Gb07fsleoAq7MGzpcgnhjVoqEozkcsHtGAFri1FPi+wDxvQtxT59CU7lNxM5NNRO11bPy1F/hg0tGFiS5HPk47CNgwsRT5dXUDqMLQUuXxBW/Nr67eJyGeoysqqNPgt6G8Gmt3PletbgAEAmkYzZ9MOuCsAAAAASUVORK5CYII=' :
-			IMAGE_PATH + '/triangle-left.png', 26, 26);
-		var refreshTarget = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAmCAYAAACoPemuAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDQxNERDRTU1QjY1MTFFNDkzNTRFQTVEMTdGMTdBQjciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDQxNERDRTY1QjY1MTFFNDkzNTRFQTVEMTdGMTdBQjciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0NDE0RENFMzVCNjUxMUU0OTM1NEVBNUQxN0YxN0FCNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0NDE0RENFNDVCNjUxMUU0OTM1NEVBNUQxN0YxN0FCNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsvuX50AAANaSURBVHja7FjRZ1tRGD9ZJ1NCyIQSwrivI4Q8hCpjlFDyFEoYfSp9Ko1QWnmo0If+BSXkIfo0QirTMUpeGo2EPfWllFYjZMLKLDJn53d3biU337m5J223bPbxk5t7v+/c3/2+73znO8fDOWezKM/YjMpz68Lj8ejY+QTeCCwLxOS9qPxtyN+6wAeBTwJ31CCO0cJDjXBGBN4LfIepSwykTUT1bgpuib0SONIgo8KRHOtRiCFcvUcgZeGrHPNBxLIyFPyRgTGz0xLbegJCdmzpElue5KlAIMDX19d5uVzm5+fnfDAYmMA17uEZdOx2Yvb/sHlu2S0xwymn5ufneTab5b1ej08S6EAXNrDd2dnhiUTim21MvMtwQ6yiIrWwsMDPzs64rsBmf3/fvM7n89TYlUnEllSkQqEQv7q64g+Vk5MTVXosORErU0Zer5f0FEIlw2N6MxwO82QyaXql2+2SxDqdjopYWUUsqEp45IldqtWq6UWVh/1+P7+8vCTJ4QMUJSRIEXuneoH96w8PDyeWAnhSJfCqwm6NIlaklFdXV0cGhRcQ2mlJQXK5nMq2YPEZbnteU1U2lUqN/D84OGD9fl+5fgnSrFarsUwmw0qlEru4uBjTicViTk3Cr27HSnxR+Doyz0ZE1CAWiUTusbu7y9rttlZv5fP5WDQavYfIMba4uEipfhF8XtqJoZXx/uH+sC/4vPg7OljZZQbsCmLtYzc3N6zRaJhotVrmfx0xDINtbm6athYUeXpHdbBNaqZUKpWxWXV7e2vex+xaWVnhc3NzjrPUXgexyCt0m67LBV7uJMITjqRE4o8tZeg8FPpFitgapYxiOC0poFgsji1jKNo6BZZckrAGUtJsNk1vqAihCBcKhTE7hNWhqw2qFnGy5UFOUYJVIJ1OjzSE+BCEilon0URavRmBqnbbQ00AXbm+vnZc9O1tj72OnQoc2+cwygRkb2+P1et17ZoEm3g87lRmjgWZ00kbXkNuse6/Bu2wlegIxfb2tuvWGroO4bO2c4bbzUh60mxDXm1sbJhhxkQYnhS4h2fUZoRAWnf7lv8N27f8P7Xhnekjgpk+VKGOoQbsiY+hhhtF3YO7twIJ+ULvUGv+GQ2fQEvWxI/THNx5/p/BaspPAQYAqStgiSQwCDoAAAAASUVORK5CYII=' :
-			IMAGE_PATH + '/refresh.png', 38, 38);
-		var roundDrop = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RTgxRjYzRTU1MDRFMTFFNEExQ0VFNDQwNDhGNzg2RDkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RTgxRjYzRTY1MDRFMTFFNEExQ0VFNDQwNDhGNzg2RDkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFODFGNjNFMzUwNEUxMUU0QTFDRUU0NDA0OEY3ODZEOSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFODFGNjNFNDUwNEUxMUU0QTFDRUU0NDA0OEY3ODZEOSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuJ657wAAAE0SURBVHjaYvz//z8DPQATA50AC4zBuP4DLjXaQOwMxJZArAfE8lDxh0B8CYiPA/FeIL6KTfP/QAFUi7AABSBOAOJoIFbBIq8FxRFAfAeIlwLxAiB+gNdHaMABiIuB2IfIkAE5pB6IjYG4F4gPEBNHIEtaSLAEGfhA9ToQskgB6hNrCuLdGmqGAj6LEsj0CTafJeCySBsa8dQC0VAzMSxyxpG6yAUqUDMxLLKkQT61xGaRHg0s0sNmkTwNLJKne1mHbNFDGpj/EJtFl2hg0SVsFh2ngUXHsVm0F1oKUwvcgZqJYdFVaFFPLbAUuY5CT3Wg+mQLFSzZAjULZ6H6AFqfHKXAkqNQMx4Qqo9AlVYNmT7bAtV7gNga9gDURWfxVOXoEY+3KmeENbdo3ThhHHbtOoAAAwDmEETshQ0fBAAAAABJRU5ErkJggg==' :
-			IMAGE_PATH + '/round-drop.png', 26, 26);
-		
+
 		// Pre-fetches images (only needed for non data-uris)
 		if (!mxClient.IS_SVG)
 		{
-			new Image().src = connectHandle.src;
 			new Image().src = mainHandle.src;
 			new Image().src = fixedHandle.src;
 			new Image().src = secondaryHandle.src;
@@ -2775,19 +3542,18 @@ if (typeof mxVertexHandler != 'undefined')
 			new Image().src = roundDrop.src;
 		}
 		
-		mxConnectionHandler.prototype.connectImage = connectHandle;
 		mxVertexHandler.prototype.handleImage = mainHandle;
 		mxVertexHandler.prototype.secondaryHandleImage = secondaryHandle;
 		mxEdgeHandler.prototype.handleImage = mainHandle;
 		mxEdgeHandler.prototype.fixedHandleImage = fixedHandle;
 		mxEdgeHandler.prototype.labelHandleImage = secondaryHandle;
 		mxOutline.prototype.sizerImage = mainHandle;
-		Sidebar.prototype.triangleUp = triangleUp;
-		Sidebar.prototype.triangleRight = triangleRight;
-		Sidebar.prototype.triangleDown = triangleDown;
-		Sidebar.prototype.triangleLeft = triangleLeft;
-		Sidebar.prototype.refreshTarget = refreshTarget;
-		Sidebar.prototype.roundDrop = roundDrop;
+		Sidebar.prototype.triangleUp = HoverIcons.prototype.triangleUp;
+		Sidebar.prototype.triangleRight = HoverIcons.prototype.triangleRight;
+		Sidebar.prototype.triangleDown = HoverIcons.prototype.triangleDown;
+		Sidebar.prototype.triangleLeft = HoverIcons.prototype.triangleLeft;
+		Sidebar.prototype.refreshTarget = HoverIcons.prototype.refreshTarget;
+		Sidebar.prototype.roundDrop = HoverIcons.prototype.roundDrop;
 	
 		// Adds rotation handle and live preview
 		mxVertexHandler.prototype.rotationEnabled = true;
@@ -3008,54 +3774,6 @@ if (typeof mxVertexHandler != 'undefined')
 				mxVertexHandlerMouseDown.apply(this, arguments);
 			}
 		};
-		
-		// Handles single clicks on the connector img
-		var mxVertexHandlerMouseUp = mxVertexHandler.prototype.mouseUp;
-		mxVertexHandler.prototype.mouseUp = function(sender, me)
-		{
-			if (this.connectorImageMousePoint != null)
-			{
-				this.connectorImg.style.display = '';
-				var tol = this.graph.tolerance;
-				
-				// Handles single click
-				if (Math.abs(me.getGraphX() - this.connectorImageMousePoint.x) < tol &&
-					Math.abs(me.getGraphY() - this.connectorImageMousePoint.y) < tol)
-				{
-					this.graph.model.beginUpdate();
-					try
-					{
-						var dup = this.graph.duplicateCells([this.state.cell], false)[0];
-						this.graph.setSelectionCell(dup);
-						var layout = null;
-
-						// Never connects children in stack layouts
-						if (this.graph.layoutManager != null)
-						{
-							layout = this.graph.layoutManager.getLayout(this.graph.model.getParent(dup));
-						}
-						
-						if (!mxEvent.isShiftDown(me.getEvent()) && (layout == null || layout.constructor != mxStackLayout))
-						{
-							var geo = this.graph.getCellGeometry(dup);
-							geo.x = this.state.cell.geometry.x + this.state.cell.geometry.width + 80;
-							geo.y = this.state.cell.geometry.y;
-
-							var edge = this.graph.insertEdge(null, null, '', this.state.cell, dup, this.graph.createCurrentEdgeStyle());
-							this.graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [edge]));
-						}
-					}
-					finally
-					{
-						this.graph.model.endUpdate();
-					}
-					
-					me.consume();
-				}
-			}
-			
-			mxVertexHandlerMouseUp.apply(this, arguments);
-		};
 
 		// Shows rotation handle for edge labels.
 		mxVertexHandler.prototype.isRotationHandleVisible = function()
@@ -3077,16 +3795,6 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			if (this.graph.graphHandler.first != null)
 			{
-				if (this.linkHint != null)
-				{
-					this.linkHint.style.display = 'none';
-				}
-				
-				if (this.connectorImg != null)
-				{
-					this.connectorImg.style.display = 'none';
-				}
-				
 				if (this.rotationShape != null && this.rotationShape.node != null)
 				{
 					this.rotationShape.node.style.display = 'none';
@@ -3095,19 +3803,9 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		var vertexHandlerMouseUp = mxVertexHandler.prototype.mouseUp;
-		mxVertexHandler.prototype.mouseUp = function()
+		mxVertexHandler.prototype.mouseUp = function(sender, me)
 		{
 			vertexHandlerMouseUp.apply(this, arguments);
-			
-			if (this.connectorImg != null)
-			{
-				this.connectorImg.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
-			}
-			
-			if (this.linkHint != null)
-			{
-				this.linkHint.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
-			}
 			
 			// Shows rotation handle only if one vertex is selected
 			if (this.rotationShape != null && this.rotationShape.node != null)
@@ -3129,16 +3827,6 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			var update = mxUtils.bind(this, function()
 			{
-				if (this.connectorImg != null)
-				{
-					this.connectorImg.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
-				}
-				
-				if (this.linkHint != null)
-				{
-					this.linkHint.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
-				}
-	
 				// Shows rotation handle only if one vertex is selected
 				if (this.rotationShape != null && this.rotationShape.node != null)
 				{
@@ -3167,88 +3855,6 @@ if (typeof mxVertexHandler != 'undefined')
 			});
 			
 			this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
-	
-			if (this.graph.isEnabled() && (touchStyle || urlParams['connect'] == null || urlParams['connect'] == '2'))
-			{
-				// Only show connector image on one cell and do not show on containers
-				if (showConnectorImg && this.graph.isCellConnectable(this.state.cell))
-				{
-					// Workaround for event redirection via image tag in quirks and IE8
-					if (mxClient.IS_IE && !mxClient.IS_SVG)
-					{
-						// Workaround for PNG images in IE6
-						if (mxClient.IS_IE6 && document.compatMode != 'CSS1Compat')
-						{
-							this.connectorImg = document.createElement(mxClient.VML_PREFIX + ':image');
-							this.connectorImg.setAttribute('src', connectHandle.src);
-							this.connectorImg.style.borderStyle = 'none';
-						}
-						else
-						{
-							this.connectorImg = document.createElement('div');
-							this.connectorImg.style.backgroundImage = 'url(' + connectHandle.src + ')';
-							this.connectorImg.style.backgroundPosition = 'center';
-							this.connectorImg.style.backgroundRepeat = 'no-repeat';
-						}
-						
-						this.connectorImg.style.width = (connectHandle.width + 4) + 'px';
-						this.connectorImg.style.height = (connectHandle.height + 4) + 'px';
-						this.connectorImg.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
-					}
-					else
-					{
-						this.connectorImg = mxUtils.createImage(connectHandle.src);
-						
-						if (touchStyle)
-						{
-							this.connectorImg.style.width = '29px';
-							this.connectorImg.style.height = '29px';
-						}
-						else
-						{
-							this.connectorImg.style.width = connectHandle.width + 'px';
-							this.connectorImg.style.height = connectHandle.height + 'px';
-						}
-					}
-					
-					this.connectorImg.style.cursor = 'crosshair';
-					this.connectorImg.style.position = 'absolute';
-					this.connectorImg.setAttribute('title', mxResources.get('plusTooltip'));
-					
-					if (!(mxClient.IS_TOUCH || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0))
-					{
-						mxEvent.redirectMouseEvents(this.connectorImg, this.graph, this.state);
-					}
-					
-					this.connectorImageMousePoint = null;
-					
-					// Starts connecting on touch/mouse down. Single clicks are handled in mouseUp.
-					mxEvent.addGestureListeners(this.connectorImg, mxUtils.bind(this, function(evt)
-					{
-						// FIXME: Use native event in isForceRubberband, isForcePanningEvent
-						// Note: Even if control is a popup trigger in this case it should initiate a drag for copy on connect
-						if (mxEvent.isControlDown(evt) || (!mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt)))
-						{
-							this.graph.popupMenuHandler.hideMenu();
-							this.graph.stopEditing(false);
-							
-							mousePoint = mxUtils.convertPoint(this.graph.container,
-									mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-							this.graph.connectionHandler.start(this.state, mousePoint.x, mousePoint.y);
-							this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-							this.graph.isMouseDown = true;
-							this.connectorImageMousePoint = mousePoint;
-							this.connectorImg.style.display = 'none';
-							
-							mxEvent.consume(evt);
-						}
-					}), null, null);
-	
-					this.graph.container.appendChild(this.connectorImg);
-					redraw = true;
-				}
-			}
-			
 			var link = this.graph.getLinkForCell(this.state.cell);
 			this.updateLinkHint(link);
 			
@@ -3401,40 +4007,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxVertexHandler.prototype.redrawHandles = function()
 		{
 			vertexHandlerRedrawHandles.apply(this);
-	
-			if (this.state != null && this.connectorImg != null)
-			{
-				var pt = new mxPoint();
-				var s = this.state;
-				
-				// Top right for single-sizer
-				if (mxVertexHandler.prototype.singleSizer)
-				{
-					pt.x = s.x + s.width - this.connectorImg.offsetWidth / 2;
-					pt.y = s.y - this.connectorImg.offsetHeight / 2;
-				}
-				else
-				{
-					var dx = (this.handleImage != null) ? this.handleImage.width : mxConstants.HANDLE_SIZE;
-					pt.x = s.x + s.width + (dx + this.horizontalOffset + this.tolerance + this.connectorImg.offsetWidth) / 2;
-					pt.y = s.y + s.height / 2;
-				}
-				
-				var alpha = mxUtils.toRadians(mxUtils.getValue(s.style, mxConstants.STYLE_ROTATION, 0));
-				
-				if (alpha != 0)
-				{
-					var cos = Math.cos(alpha);
-					var sin = Math.sin(alpha);
-					
-					var ct = new mxPoint(s.getCenterX(), s.getCenterY());
-					pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
-				}
-				
-				this.connectorImg.style.left = Math.round(pt.x - this.connectorImg.offsetWidth / 2) + 'px';
-				this.connectorImg.style.top = Math.round(pt.y - this.connectorImg.offsetHeight / 2 + 1) + 'px';
-			}
-			
+
 			if (this.state != null && this.linkHint != null)
 			{
 				var c = new mxPoint(this.state.getCenterX(), this.state.getCenterY());
@@ -3452,22 +4025,7 @@ if (typeof mxVertexHandler != 'undefined')
 						6 + this.state.view.graph.tolerance) + 'px';
 			}
 		};
-		
-		var vertexHandlerSetHandlesVisible = mxVertexHandler.prototype.setHandlesVisible;
-		mxVertexHandler.prototype.setHandlesVisible = function(visible)
-		{
-			vertexHandlerSetHandlesVisible.apply(this, arguments);
-			
-			if (this.connectorImg != null)
-			{
-				this.connectorImg.style.visibility = (visible) ? '' : 'hidden';
-			}
-			
-			if (this.linkHint != null)
-			{
-				this.linkHint.style.visibility = (visible) ? '' : 'hidden';
-			}
-		};
+
 		
 		var vertexHandlerReset = mxVertexHandler.prototype.reset;
 		mxVertexHandler.prototype.reset = function()
@@ -3479,18 +4037,6 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				this.rotationShape.node.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
 			}
-			
-			if (this.connectorImg != null)
-			{
-				this.connectorImg.style.visibility = '';
-			}
-			
-			if (this.linkHint != null)
-			{
-				this.linkHint.style.visibility = '';
-			}
-			
-			this.connectorImageMousePoint != null;
 		};
 	
 		var vertexHandlerDestroy = mxVertexHandler.prototype.destroy;
@@ -3503,13 +4049,7 @@ if (typeof mxVertexHandler != 'undefined')
 				this.linkHint.parentNode.removeChild(this.linkHint);
 				this.linkHint = null;
 			}
-	
-			if (this.connectorImg != null)
-			{
-				this.connectorImg.parentNode.removeChild(this.connectorImg);
-				this.connectorImg = null;
-			}
-			
+
 			if (this.selectionHandler != null)
 			{
 				this.graph.getSelectionModel().removeListener(this.selectionHandler);

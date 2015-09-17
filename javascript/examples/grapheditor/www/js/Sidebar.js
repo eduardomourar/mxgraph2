@@ -2091,7 +2091,7 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 				geo.y = (state.y - view.translate.y) / view.scale;
 			}
 			
-			var length = Math.min(80, geo.height);
+			var length = graph.defaultEdgeLength;
 			
 			// Maintains edge length
 			if (graph.model.isEdge(target) && geo2.getTerminalPoint(true) != null && geo2.getTerminalPoint(false) != null)
@@ -2328,7 +2328,6 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	var styleTargetParent = null;
 	var roundSource = createArrow(this.roundDrop);
 	var roundTarget = createArrow(this.roundDrop);
-	var arrowSpacing = 4;
 	var direction = mxConstants.DIRECTION_NORTH;
 	var activeArrow = null;
 	
@@ -2437,8 +2436,6 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	};
 	
 	var startTime = new Date().getTime();
-	var connectorImgBounds = null;
-	var connectImgState = null;
 	var timeOnTarget = 0;
 	var prev = null;
 	
@@ -2500,26 +2497,6 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		else
 		{
 			timeOnTarget = new Date().getTime() - startTime;
-		}
-		
-		// Shows drop target icons on selection cell if connector handler is under the mouse
-		if (connectorImgBounds == null && currentStyleTarget == null && activeArrow == null && graph.getSelectionCount() == 1)
-		{
-			var handler = graph.selectionCellsHandler.getHandler(graph.getSelectionCell());
-			
-			if (handler != null && mxEvent.getSource(evt) == handler.connectorImg)
-			{
-				var s = handler.connectorImg.style;
-				connectorImgBounds = new mxRectangle(parseInt(s.left), parseInt(s.top), parseInt(s.width), parseInt(s.height));
-				connectorImgState = graph.view.getState(graph.getSelectionCell());
-			}
-		}
-	
-		if (connectorImgBounds != null && mxUtils.contains(connectorImgBounds, x, y) && connectorImgState != null)
-		{
-			timeOnTarget = this.dropTargetDelay + 10;
-			state = connectorImgState;
-			cell = state.cell;
 		}
 
 		// Shift means disabled, delayed on cells with children, shows after this.dropTargetDelay, hides after 2500ms
@@ -2597,15 +2574,44 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			}
 			else
 			{
+				var bds = mxRectangle.fromRectangle(currentTargetState);
+				
+				// Uses outer bounding box to take rotation into account
+				if (currentTargetState.shape != null && currentTargetState.shape.boundingBox != null)
+				{
+					bds = mxRectangle.fromRectangle(currentTargetState.shape.boundingBox);
+				}
+
+				bds.grow(this.graph.tolerance);
+				bds.grow(HoverIcons.prototype.arrowSpacing);
+				
+				var handler = this.graph.selectionCellsHandler.getHandler(currentTargetState.cell);
+				
+				if (handler != null)
+				{
+					bds.x -= handler.horizontalOffset / 2;
+					bds.y -= handler.verticalOffset / 2;
+					bds.width += handler.horizontalOffset;
+					bds.height += handler.verticalOffset;
+					
+					// Adds bounding box of rotation handle to avoid overlap
+					if (handler.rotationShape != null && handler.rotationShape.node != null &&
+						handler.rotationShape.node.style.visibility != 'hidden' &&
+						handler.rotationShape.node.style.display != 'none' &&
+						handler.rotationShape.boundingBox != null)
+					{
+						bds.add(handler.rotationShape.boundingBox);
+					}
+				}
+				
 				bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.getCenterX() - this.triangleUp.width / 2,
-					currentTargetState.y - this.triangleUp.height - arrowSpacing, this.triangleUp.width, this.triangleUp.height), arrowUp));
-				bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.x + currentTargetState.width + arrowSpacing,
+					bds.y - this.triangleUp.height, this.triangleUp.width, this.triangleUp.height), arrowUp));
+				bbox.add(checkArrow(x, y, new mxRectangle(bds.x + bds.width,
 					currentTargetState.getCenterY() - this.triangleRight.height / 2,
 					this.triangleRight.width, this.triangleRight.height), arrowRight));
 				bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.getCenterX() - this.triangleDown.width / 2,
-						currentTargetState.y + currentTargetState.height + arrowSpacing,
-						this.triangleDown.width, this.triangleDown.height), arrowDown));
-				bbox.add(checkArrow(x, y, new mxRectangle(currentTargetState.x - this.triangleLeft.width - arrowSpacing,
+						bds.y + bds.height, this.triangleDown.width, this.triangleDown.height), arrowDown));
+				bbox.add(checkArrow(x, y, new mxRectangle(bds.x - this.triangleLeft.width,
 						currentTargetState.getCenterY() - this.triangleLeft.height / 2,
 						this.triangleLeft.width, this.triangleLeft.height), arrowLeft));
 			}
@@ -2692,16 +2698,46 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				}
 				else
 				{
-					arrowUp.style.left = Math.floor(state.getCenterX() - this.triangleUp.width / 2) + 'px';
-					arrowUp.style.top = Math.floor(state.y - this.triangleUp.height - arrowSpacing) + 'px';
+					var bds = mxRectangle.fromRectangle(state);
 					
-					arrowRight.style.left = Math.floor(state.x + state.width + arrowSpacing) + 'px';
+					// Uses outer bounding box to take rotation into account
+					if (state.shape != null && state.shape.boundingBox != null)
+					{
+						bds = mxRectangle.fromRectangle(state.shape.boundingBox);
+					}
+
+					bds.grow(this.graph.tolerance);
+					bds.grow(HoverIcons.prototype.arrowSpacing);
+					
+					var handler = this.graph.selectionCellsHandler.getHandler(state.cell);
+					
+					if (handler != null)
+					{
+						bds.x -= handler.horizontalOffset / 2;
+						bds.y -= handler.verticalOffset / 2;
+						bds.width += handler.horizontalOffset;
+						bds.height += handler.verticalOffset;
+						
+						// Adds bounding box of rotation handle to avoid overlap
+						if (handler.rotationShape != null && handler.rotationShape.node != null &&
+							handler.rotationShape.node.style.visibility != 'hidden' &&
+							handler.rotationShape.node.style.display != 'none' &&
+							handler.rotationShape.boundingBox != null)
+						{
+							bds.add(handler.rotationShape.boundingBox);
+						}
+					}
+					
+					arrowUp.style.left = Math.floor(state.getCenterX() - this.triangleUp.width / 2) + 'px';
+					arrowUp.style.top = Math.floor(bds.y - this.triangleUp.height) + 'px';
+					
+					arrowRight.style.left = Math.floor(bds.x + bds.width) + 'px';
 					arrowRight.style.top = Math.floor(state.getCenterY() - this.triangleRight.height / 2) + 'px';
 					
 					arrowDown.style.left = arrowUp.style.left
-					arrowDown.style.top = Math.floor(state.y + state.height + arrowSpacing) + 'px';
+					arrowDown.style.top = Math.floor(bds.y + bds.height) + 'px';
 					
-					arrowLeft.style.left = Math.floor(state.x - this.triangleLeft.width - arrowSpacing) + 'px';
+					arrowLeft.style.left = Math.floor(bds.x - this.triangleLeft.width) + 'px';
 					arrowLeft.style.top = arrowRight.style.top;
 					
 					graph.container.appendChild(arrowUp);
@@ -2725,9 +2761,6 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			}
 			else
 			{
-				connectorImgBounds = null;
-				connectorImgState = null;
-				
 				var elts = [roundSource, roundTarget, arrowUp, arrowRight, arrowDown, arrowLeft];
 				
 				for (var i = 0; i < elts.length; i++)
