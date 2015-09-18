@@ -2333,14 +2333,17 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	
 	function checkArrow(x, y, bounds, arrow)
 	{
-		if (mxUtils.contains(bounds, x, y))
+		if (arrow.parentNode != null)
 		{
-			mxUtils.setOpacity(arrow, 100);
-			activeArrow = arrow;
-		}
-		else
-		{
-			mxUtils.setOpacity(arrow, (arrow == styleTarget) ? 30 : 20);
+			if (mxUtils.contains(bounds, x, y))
+			{
+				mxUtils.setOpacity(arrow, 100);
+				activeArrow = arrow;
+			}
+			else
+			{
+				mxUtils.setOpacity(arrow, (arrow == styleTarget) ? 30 : 20);
+			}
 		}
 		
 		return bounds;
@@ -2740,9 +2743,13 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 					arrowLeft.style.left = Math.floor(bds.x - this.triangleLeft.width) + 'px';
 					arrowLeft.style.top = arrowRight.style.top;
 					
-					graph.container.appendChild(arrowUp);
+					if (state.style['portConstraint'] != 'eastwest')
+					{
+						graph.container.appendChild(arrowUp);
+						graph.container.appendChild(arrowDown);
+					}
+
 					graph.container.appendChild(arrowRight);
-					graph.container.appendChild(arrowDown);
 					graph.container.appendChild(arrowLeft);
 				}
 				
