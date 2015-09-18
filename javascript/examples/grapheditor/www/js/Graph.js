@@ -1382,11 +1382,12 @@ HoverIcons.prototype.drag = function(evt, x, y)
 {
 	this.graph.popupMenuHandler.hideMenu();
 	this.graph.stopEditing(false);
-	
+
 	if (this.graph.model.isEdge(this.currentState.cell))
 	{
-		this.graph.setSelectionCell(this.currentState.cell);
-		var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
+		var cell = this.currentState.cell;
+		this.graph.setSelectionCell(cell);
+		var handler = this.graph.selectionCellsHandler.getHandler(cell);
 		
 		if (handler != null)
 		{
