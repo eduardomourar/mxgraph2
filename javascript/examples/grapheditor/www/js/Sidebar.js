@@ -2847,7 +2847,7 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 {
 	var graph = this.editorUi.editor.graph;
 	
-	if (mxEvent.isAltDown(evt))
+	if (mxEvent.isAltDown(evt) || mxEvent.isShiftDown(evt))
 	{
 		if (!graph.isSelectionEmpty())
 		{
