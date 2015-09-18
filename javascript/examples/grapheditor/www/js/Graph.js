@@ -1248,7 +1248,7 @@ HoverIcons.prototype.createArrow = function(img, tooltip)
 
 	mxEvent.addGestureListeners(arrow, mxUtils.bind(this, function(evt)
 	{
-		if (this.currentState != null && !mxEvent.isAltDown(evt))
+		if (this.currentState != null && !mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt))
 		{
 	    	if (this.activeArrow != null && this.activeArrow != arrow)
 	    	{
