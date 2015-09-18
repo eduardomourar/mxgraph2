@@ -1107,8 +1107,8 @@ EditorUi.prototype.initCanvas = function()
 	 */
 	graph.getPagePadding = function()
 	{
-		return new mxPoint(Math.max(0, Math.round(graph.container.offsetWidth - 34)),
-				Math.max(0, Math.round(graph.container.offsetHeight - 34)));
+		return new mxPoint(Math.max(0, Math.round((graph.container.offsetWidth - 34) / graph.view.scale)),
+				Math.max(0, Math.round((graph.container.offsetHeight - 34) / graph.view.scale)));
 	};
 	
 	/**
@@ -1162,6 +1162,14 @@ EditorUi.prototype.initCanvas = function()
 				this.scale * (this.translate.y + layout.y * page.height),
 				this.scale * layout.width * page.width,
 				this.scale * layout.height * page.height);
+	};
+
+	graph.getPreferredPageSize = function(bounds, width, height)
+	{
+		var pages = this.getPageLayout();
+		var size = this.getPageSize();
+		
+		return new mxRectangle(0, 0, pages.width * size.width, pages.height * size.height);
 	};
 	
 	// Scales pages/graph to fit available size
@@ -1224,17 +1232,7 @@ EditorUi.prototype.initCanvas = function()
 		{
 			resize(true);
 		}));
-	   	
-		// Workaround for clipping problem
-		graph.getPreferredPageSize = function(bounds, width, height)
-		{
-			var pages = this.getPageLayout();
-			var size = this.getPageSize();
-			var s = this.view.scale;
-			
-			return new mxRectangle(0, 0, pages.width * size.width * s, pages.height * size.height * s);
-		};
-		
+
 		// Adds zoom toolbar
 		var zoomInBtn = mxUtils.button('', function(evt)
 		{
@@ -1309,14 +1307,6 @@ EditorUi.prototype.initCanvas = function()
 	}
 	else if (this.editor.extendCanvas)
 	{
-		graph.getPreferredPageSize = function(bounds, width, height)
-		{
-			var pages = this.getPageLayout();
-			var size = this.getPageSize();
-			
-			return new mxRectangle(0, 0, pages.width * size.width, pages.height * size.height);
-		};
-		
 		/**
 		 * Guesses autoTranslate to avoid another repaint (see below).
 		 * Works if only the scale of the graph changes or if pages
@@ -1334,8 +1324,8 @@ EditorUi.prototype.initCanvas = function()
 				// if zoom method is always used to set the current scale on the graph.
 				var tx = this.translate.x;
 				var ty = this.translate.y;
-				this.translate.x = pad.x / this.scale - (this.x0 || 0) * size.width;
-				this.translate.y = pad.y / this.scale - (this.y0 || 0) * size.height;
+				this.translate.x = pad.x - (this.x0 || 0) * size.width;
+				this.translate.y = pad.y - (this.y0 || 0) * size.height;
 			}
 			
 			graphViewValidate.apply(this, arguments);
@@ -1351,8 +1341,8 @@ EditorUi.prototype.initCanvas = function()
 				var size = this.getPageSize();
 				
 				// Updates the minimum graph size
-				var minw = Math.ceil(2 * pad.x / this.view.scale + pages.width * size.width);
-				var minh = Math.ceil(2 * pad.y / this.view.scale + pages.height * size.height);
+				var minw = Math.ceil(2 * pad.x + pages.width * size.width);
+				var minh = Math.ceil(2 * pad.y + pages.height * size.height);
 				
 				var min = graph.minimumGraphSize;
 				
@@ -1364,8 +1354,8 @@ EditorUi.prototype.initCanvas = function()
 				}
 				
 				// Updates auto-translate to include padding and graph size
-				var dx = pad.x / this.view.scale - pages.x * size.width;
-				var dy = pad.y / this.view.scale - pages.y * size.height;
+				var dx = pad.x - pages.x * size.width;
+				var dy = pad.y - pages.y * size.height;
 				
 				if (!this.autoTranslate && (this.view.translate.x != dx || this.view.translate.y != dy))
 				{
