@@ -1357,7 +1357,7 @@ HoverIcons.prototype.removeNodes = function()
 };
 
 /**
- * 
+ *
  */
 HoverIcons.prototype.setDisplay = function(display)
 {
@@ -1368,7 +1368,7 @@ HoverIcons.prototype.setDisplay = function(display)
 };
 
 /**
- * 
+ *
  */
 HoverIcons.prototype.isActive = function()
 {
@@ -1376,39 +1376,36 @@ HoverIcons.prototype.isActive = function()
 };
 
 /**
- * 
+ *
  */
 HoverIcons.prototype.drag = function(evt, x, y)
 {
-	if (this.currentState != null)
+	this.graph.popupMenuHandler.hideMenu();
+	this.graph.stopEditing(false);
+
+	if (this.graph.model.isEdge(this.currentState.cell))
 	{
-		this.graph.popupMenuHandler.hideMenu();
-		this.graph.stopEditing(false);
-	
-		if (this.graph.model.isEdge(this.currentState.cell))
+		var cell = this.currentState.cell;
+		this.graph.setSelectionCell(cell);
+		var handler = this.graph.selectionCellsHandler.getHandler(cell);
+		
+		if (handler != null)
 		{
-			var cell = this.currentState.cell;
-			this.graph.setSelectionCell(cell);
-			var handler = this.graph.selectionCellsHandler.getHandler(cell);
-			
-			if (handler != null)
-			{
-				handler.start(x, y, (this.activeArrow == this.roundSource) ? 0 : handler.bends.length - 1);
-				this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-				this.graph.isMouseDown = true;
-			}
-		}
-		else
-		{
-			this.graph.connectionHandler.start(this.currentState, x, y);
+			handler.start(x, y, (this.activeArrow == this.roundSource) ? 0 : handler.bends.length - 1);
 			this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
 			this.graph.isMouseDown = true;
 		}
 	}
+	else
+	{
+		this.graph.connectionHandler.start(this.currentState, x, y);
+		this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+		this.graph.isMouseDown = true;
+	}
 };
 
 /**
- * 
+ *
  */
 HoverIcons.prototype.click = function(state, dir, evt, x, y)
 {
@@ -1609,7 +1606,8 @@ HoverIcons.prototype.update = function(state, x, y)
 	this.setDisplay('');
 
 	if (this.currentState != state && (this.bbox == null || x == null || y == null ||
-		(state != null && mxUtils.intersects(this.bbox, state)) ||
+		(state != null && this.currentState != null && mxUtils.intersects(this.bbox, state) &&
+		this.graph.model.isAncestor(this.currentState.cell, state.cell)) ||
 		!mxUtils.contains(this.bbox, x, y)))
 	{
 		if (state != null && this.graph.isEnabled())
