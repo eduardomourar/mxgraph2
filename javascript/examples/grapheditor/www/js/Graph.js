@@ -1602,7 +1602,9 @@ HoverIcons.prototype.update = function(state, x, y)
 {
 	this.setDisplay('');
 
-	if (this.currentState != state && (this.bbox == null || x == null || y == null || !mxUtils.contains(this.bbox, x, y)))
+	if (this.currentState != state && (this.bbox == null || x == null || y == null ||
+		(state != null && mxUtils.intersects(this.bbox, state)) ||
+		!mxUtils.contains(this.bbox, x, y)))
 	{
 		if (state != null && this.graph.isEnabled())
 		{
@@ -1634,16 +1636,7 @@ HoverIcons.prototype.setCurrentState = function(state)
 	}
 	else
 	{
-		// Checks layout to decide which arrows to show
-		var layout = null;
-		
-		// Never connects children in stack layouts
-		if (this.graph.layoutManager != null)
-		{
-			layout = this.graph.layoutManager.getLayout(this.graph.model.getParent(state.cell));
-		}
-		
-		if (layout == null || layout.constructor != mxStackLayout)
+		if (state.style['portConstraint'] != 'eastwest')
 		{
 			this.graph.container.appendChild(this.arrowUp);
 			this.graph.container.appendChild(this.arrowDown);
