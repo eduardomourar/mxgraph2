@@ -465,15 +465,6 @@ Graph.prototype.init = function()
 	mxGraph.prototype.init.apply(this, arguments);
 
 	this.initLayoutManager();
-	this.initHoverIcons();
-};
-
-/**
- * Adds hover connect mode.
- */
-Graph.prototype.initHoverIcons = function()
-{
-	this.hoverIcons = new HoverIcons(this);
 };
 
 /**
