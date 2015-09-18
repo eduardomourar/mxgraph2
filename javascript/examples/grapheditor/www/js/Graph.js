@@ -7,7 +7,6 @@
  * in turn will create the container for the graph. Hence, the container is
  * assigned later in EditorUi.
  */
-// Makes the shadow brighter
 /**
  * Defines graph class.
  */
@@ -547,7 +546,6 @@ Graph.prototype.sanitizeHtml = function(value)
 Graph.prototype.connectVertex = function(source, direction, length, evt)
 {
 	var pt = new mxPoint(source.geometry.x, source.geometry.y);
-	var duplicate = !mxEvent.isControlDown(evt);
 		
 	if (direction == mxConstants.DIRECTION_NORTH)
 	{
@@ -583,8 +581,8 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 	}
 
 	// Checks actual end point of edge for target cell
-	var target = (mxEvent.isShiftDown(evt)) ? null : this.getCellAt(dx + pt.x * s, dy + pt.y * s);
-	var duplicate = !mxEvent.isControlDown(evt);
+	var duplicate = !mxEvent.isShiftDown(evt);
+	var target = (duplicate) ? null : this.getCellAt(dx + pt.x * s, dy + pt.y * s);
 	
 	if (duplicate)
 	{
@@ -638,7 +636,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 			geo.y = pt.y - geo.height / 2;
 		}
 
-		var edge = (mxEvent.isShiftDown(evt) && duplicate) ? null :
+		var edge = (mxEvent.isControlDown(evt) && duplicate) ? null :
 			this.insertEdge(null, null, '', source, realTarget, this.createCurrentEdgeStyle());
 		
 		if (edge != null)
