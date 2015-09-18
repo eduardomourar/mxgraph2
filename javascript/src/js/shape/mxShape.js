@@ -1265,13 +1265,20 @@ mxShape.prototype.updateBoundingBox = function()
 	// LATER: Use getBoundingClientRect for fallback in VML
 	if (this.useSvgBoundingBox && this.node != null && this.node.ownerSVGElement != null)
 	{
-		var b = this.node.getBBox();
-
-		if (b.width > 0 && b.height > 0)
+		try
 		{
-			this.boundingBox = new mxRectangle(b.x, b.y, b.width, b.height);
-			
-			return;
+			var b = this.node.getBBox();
+	
+			if (b.width > 0 && b.height > 0)
+			{
+				this.boundingBox = new mxRectangle(b.x, b.y, b.width, b.height);
+				
+				return;
+			}
+		}
+		catch(e)
+		{
+			// fallback to code below
 		}
 	}
 
