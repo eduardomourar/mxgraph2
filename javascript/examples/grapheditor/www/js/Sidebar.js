@@ -2205,7 +2205,8 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 {
 	// Checks if the cells contain any vertices
-	var graph = this.editorUi.editor.graph;
+	var ui = this.editorUi;
+	var graph = ui.editor.graph;
 	var freeSourceEdge = null;
 	var firstVertex = null;
 	var sidebar = this;
@@ -2372,6 +2373,11 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 	dragSource.dragOver = function(graph, evt)
 	{
 		mxDragSource.prototype.dragOver.apply(this, arguments);
+		
+		if (ui.hoverIcons != null)
+		{
+			ui.hoverIcons.setDisplay('none');
+		}
 		
 		if (this.currentGuide != null && activeArrow != null)
 		{
