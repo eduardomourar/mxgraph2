@@ -1046,7 +1046,7 @@ HoverIcons.prototype.arrowSpacing = 6;
 /**
  * Up arrow.
  */
-HoverIcons.prototype.edgeHoverIcons = false;
+HoverIcons.prototype.edgeHoverIcons = true;
 
 /**
  * Up arrow.
@@ -1380,25 +1380,30 @@ HoverIcons.prototype.isActive = function()
  */
 HoverIcons.prototype.drag = function(evt, x, y)
 {
-	this.graph.popupMenuHandler.hideMenu();
-	this.graph.stopEditing(false);
-
-	if (this.graph.model.isEdge(this.currentState.cell))
+	if (this.currentState != null)
 	{
-		var cell = this.currentState.cell;
-		this.graph.setSelectionCell(cell);
-		var handler = this.graph.selectionCellsHandler.getHandler(cell);
-		
-		if (handler != null)
+		this.graph.popupMenuHandler.hideMenu();
+		this.graph.stopEditing(false);
+	
+		if (this.graph.model.isEdge(this.currentState.cell))
 		{
-			handler.start(x, y, (this.activeArrow == this.roundSource) ? 0 : handler.bends.length - 1);
+			var cell = this.currentState.cell;
+			this.graph.setSelectionCell(cell);
+			var handler = this.graph.selectionCellsHandler.getHandler(cell);
+			
+			if (handler != null)
+			{
+				handler.start(x, y, (this.activeArrow == this.roundSource) ? 0 : handler.bends.length - 1);
+				this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+				this.graph.isMouseDown = true;
+			}
 		}
-	}
-	else
-	{
-		this.graph.connectionHandler.start(this.currentState, x, y);
-		this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-		this.graph.isMouseDown = true;
+		else
+		{
+			this.graph.connectionHandler.start(this.currentState, x, y);
+			this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+			this.graph.isMouseDown = true;
+		}
 	}
 };
 
@@ -1631,8 +1636,15 @@ HoverIcons.prototype.setCurrentState = function(state)
 		
 		if (pts != null)
 		{
-			this.graph.container.appendChild(this.roundSource);
-			this.graph.container.appendChild(this.roundTarget);
+			if (this.graph.model.getTerminal(state.cell, true) == null)
+			{
+				this.graph.container.appendChild(this.roundSource);
+			}
+			
+			if (this.graph.model.getTerminal(state.cell, false) == null)
+			{
+				this.graph.container.appendChild(this.roundTarget);
+			}
 		}
 	}
 	else
