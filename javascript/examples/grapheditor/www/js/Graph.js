@@ -643,7 +643,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		}
 
 		var edge = (mxEvent.isControlDown(evt) && duplicate) ? null :
-			this.insertEdge(null, null, '', source, realTarget, this.createCurrentEdgeStyle());
+			this.insertEdge(this.model.getParent(source), null, '', source, realTarget, this.createCurrentEdgeStyle());
 		
 		if (edge != null)
 		{
