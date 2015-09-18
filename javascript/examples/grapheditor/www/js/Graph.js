@@ -581,8 +581,14 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 	}
 
 	// Checks actual end point of edge for target cell
+	var target = (mxEvent.isControlDown(evt)) ? null : this.getCellAt(dx + pt.x * s, dy + pt.y * s);
+	
+	if (this.model.isAncestor(target, source))
+	{
+		target = null;
+	}
+	
 	var duplicate = !mxEvent.isShiftDown(evt);
-	var target = (duplicate) ? null : this.getCellAt(dx + pt.x * s, dy + pt.y * s);
 	
 	if (duplicate)
 	{
@@ -1248,7 +1254,7 @@ HoverIcons.prototype.createArrow = function(img, tooltip)
 
 	mxEvent.addGestureListeners(arrow, mxUtils.bind(this, function(evt)
 	{
-		if (this.currentState != null && !mxEvent.isAltDown(evt) && !mxEvent.isPopupTrigger(evt))
+		if (this.currentState != null && !mxEvent.isAltDown(evt) && (!mxEvent.isPopupTrigger(evt) || mxEvent.isControlDown(evt)))
 		{
 	    	if (this.activeArrow != null && this.activeArrow != arrow)
 	    	{
