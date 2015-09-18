@@ -1407,12 +1407,15 @@ HoverIcons.prototype.click = function(state, dir, evt, x, y)
 	if (state != null)
 	{
 		var cells = this.graph.connectVertex(state.cell, dir, this.graph.defaultEdgeLength, evt);
-		this.graph.setSelectionCells(cells);
 		
-		// Special case shows hover icons on new target for touch events
-		if (mxEvent.isTouchEvent(evt) && cells.length == 2 && this.graph.model.isVertex(cells[1]))
+		// Selects only target vertex if one exists
+		if (cells.length == 2 && this.graph.model.isVertex(cells[1]))
 		{
-			this.update(this.graph.view.getState(cells[1]));
+			this.graph.setSelectionCell(cells[1]);
+		}
+		else
+		{
+			this.graph.setSelectionCells(cells);
 		}
 	}
 };
