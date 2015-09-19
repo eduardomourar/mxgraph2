@@ -2857,7 +2857,8 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 	{
 		if (!graph.isSelectionEmpty())
 		{
-			graph.setSelectionCells(this.updateShapes(cells[0], graph.getSelectionCells()));
+			this.updateShapes(cells[0], graph.getSelectionCells());
+			graph.scrollCellToVisible(graph.getSelectionCell());
 		}
 	}
 	else
