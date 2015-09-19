@@ -641,8 +641,16 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 			geo.x = pt.x - geo.width / 2;
 			geo.y = pt.y - geo.height / 2;
 		}
+		
+		var layout = null;
 
-		var edge = (mxEvent.isControlDown(evt) && duplicate) ? null :
+		// Never connects children in stack layouts
+		if (this.layoutManager != null)
+		{
+			layout = this.layoutManager.getLayout(this.model.getParent(source));
+		}
+		
+		var edge = ((mxEvent.isControlDown(evt) && duplicate) || (layout != null && layout.constructor == mxStackLayout)) ? null :
 			this.insertEdge(this.model.getParent(source), null, '', source, realTarget, this.createCurrentEdgeStyle());
 		
 		if (edge != null)
@@ -1104,22 +1112,6 @@ HoverIcons.prototype.init = function()
 	
 	this.elts = [this.roundSource, this.roundTarget, this.arrowUp, this.arrowRight, this.arrowDown, this.arrowLeft];
 
-//	this.graph.selectionModel.addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
-//	{
-//		if (this.graph.getSelectionCount() == 1 && this.graph.model.isVertex(this.graph.getSelectionCell()))
-//		{
-//			// Rotation handle is shown after this call when switching from multiple selected cells
-//			window.setTimeout(mxUtils.bind(this, function()
-//			{
-//    			this.update(this.getState(this.graph.view.getState(this.graph.getSelectionCell())));
-//			}), 0);
-//		}
-//		else
-//		{
-//			this.reset();
-//		}
-//	}));
-	
 	this.repaintHandler = mxUtils.bind(this, function()
 	{
 		this.repaint();
