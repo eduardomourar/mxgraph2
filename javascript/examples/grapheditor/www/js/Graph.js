@@ -1154,7 +1154,8 @@ HoverIcons.prototype.init = function()
 	    }),
 	    mouseMove: mxUtils.bind(this, function(sender, me)
 	    {
-	    	if (mxEvent.isAltDown(me.getEvent()) || mxEvent.isShiftDown(me.getEvent()))
+	    	if (mxEvent.isAltDown(me.getEvent()) || mxEvent.isShiftDown(me.getEvent()) ||
+	    		mxEvent.isMetaDown(me.getEvent()))
 	    	{
 	    		this.reset();
 	    	}
@@ -1185,7 +1186,7 @@ HoverIcons.prototype.init = function()
 	    		this.reset();
 	    	}
 	    	else if (!mxEvent.isAltDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()) &&
-	    		!mxEvent.isControlDown(me.getEvent()))
+	    		!mxEvent.isControlDown(me.getEvent()) && !mxEvent.isMetaDown(me.getEvent()))
 	    	{
 		    	this.setDisplay('');
 	    		this.repaint();
