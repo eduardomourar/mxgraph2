@@ -1407,7 +1407,7 @@ HoverIcons.prototype.click = function(state, dir, evt, x, y)
 {
 	var cell = this.graph.getCellAt(x, y);
 	
-	if (this.graph.model.isEdge(cell))
+	if (this.graph.model.isEdge(cell) && !mxEvent.isControlDown(evt))
 	{
 		this.graph.setSelectionCell(cell);
 	}
