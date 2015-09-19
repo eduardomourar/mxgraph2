@@ -2746,28 +2746,55 @@ EditorUi.prototype.createKeyHandler = function(editor)
 			}
 			else
 			{
-				var dx = 0;
-				var dy = 0;
-				
-				if (keyCode == 37)
+				// Moves vertices up/down in a stack layout
+				var cell = graph.getSelectionCell();
+				var parent = graph.model.getParent(cell);
+				var layout = null;
+
+				if (graph.getSelectionCount() == 1 && graph.model.isVertex(cell) && graph.layoutManager != null)
 				{
-					dx = -stepSize;
-				}
-				else if (keyCode == 38)
-				{
-					dy = -stepSize;
-				}
-				else if (keyCode == 39)
-				{
-					dx = stepSize;
-				}
-				else if (keyCode == 40)
-				{
-					dy = stepSize;
+					layout = graph.layoutManager.getLayout(parent);
 				}
 				
-				graph.moveCells(graph.getSelectionCells(), dx, dy);
-				graph.scrollCellToVisible(graph.getSelectionCell());
+				if (layout != null && layout.constructor == mxStackLayout)
+				{
+					var index = parent.getIndex(cell);
+					
+					if (keyCode == 37 || keyCode == 38)
+					{
+						graph.model.add(parent, cell, Math.max(0, index - 1));
+					}
+					else if (keyCode == 39 ||keyCode == 40)
+					{
+						graph.model.add(parent, cell, Math.min(graph.model.getChildCount(parent), index + 1));
+					}
+				}
+				else
+				{
+					var dx = 0;
+					var dy = 0;
+					
+					if (keyCode == 37)
+					{
+						dx = -stepSize;
+					}
+					else if (keyCode == 38)
+					{
+						dy = -stepSize;
+					}
+					else if (keyCode == 39)
+					{
+						dx = stepSize;
+					}
+					else if (keyCode == 40)
+					{
+						dy = stepSize;
+					}
+					
+					graph.moveCells(graph.getSelectionCells(), dx, dy);
+				}
+
+				graph.scrollCellToVisible(cell);
 			}
 		}
 	};
