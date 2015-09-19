@@ -1181,7 +1181,6 @@ HoverIcons.prototype.init = function()
 	    	var state = this.currentState;
 	    	var dir = this.getDirection();
 	    	var mp = this.mouseDownPoint;
-	    	this.setDisplay('');
 	    	
 	    	if (this.activeArrow != null)
 	    	{
@@ -1193,8 +1192,10 @@ HoverIcons.prototype.init = function()
 	    	{
 	    		this.reset();
 	    	}
-	    	else if (!mxEvent.isAltDown(me.getEvent()))
+	    	else if (!mxEvent.isAltDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()) &&
+	    		!mxEvent.isControlDown(me.getEvent()))
 	    	{
+		    	this.setDisplay('');
 	    		this.repaint();
 	    	}
 	    	
