@@ -1154,8 +1154,8 @@ HoverIcons.prototype.init = function()
 	    }),
 	    mouseMove: mxUtils.bind(this, function(sender, me)
 	    {
-	    	if (mxEvent.isAltDown(me.getEvent()) || mxEvent.isShiftDown(me.getEvent()) ||
-	    		mxEvent.isMetaDown(me.getEvent()))
+	    	if (mxEvent.isAltDown(me.getEvent()) || (!mxEvent.isControlDown(me.getEvent()) &&
+	    		(mxEvent.isShiftDown(me.getEvent()) || mxEvent.isMetaDown(me.getEvent()))))
 	    	{
 	    		this.reset();
 	    	}
@@ -1163,7 +1163,8 @@ HoverIcons.prototype.init = function()
 	    	{
 	    		this.setDisplay('none');
 	    	}
-	    	else if (!mxEvent.isControlDown(me.getEvent()))
+	    	else if (!mxEvent.isControlDown(me.getEvent()) || mxEvent.isShiftDown(me.getEvent()) ||
+	    		mxEvent.isMetaDown(me.getEvent()))
 	    	{
 	    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
 	    	}
