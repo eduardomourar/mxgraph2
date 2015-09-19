@@ -1104,21 +1104,21 @@ HoverIcons.prototype.init = function()
 	
 	this.elts = [this.roundSource, this.roundTarget, this.arrowUp, this.arrowRight, this.arrowDown, this.arrowLeft];
 
-	this.graph.selectionModel.addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
-	{
-		if (this.graph.getSelectionCount() == 1 && this.graph.model.isVertex(this.graph.getSelectionCell()))
-		{
-			// Rotation handle is shown after this call when switching from multiple selected cells
-			window.setTimeout(mxUtils.bind(this, function()
-			{
-    			this.update(this.getState(this.graph.view.getState(this.graph.getSelectionCell())));
-			}), 0);
-		}
-		else
-		{
-			this.reset();
-		}
-	}));
+//	this.graph.selectionModel.addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
+//	{
+//		if (this.graph.getSelectionCount() == 1 && this.graph.model.isVertex(this.graph.getSelectionCell()))
+//		{
+//			// Rotation handle is shown after this call when switching from multiple selected cells
+//			window.setTimeout(mxUtils.bind(this, function()
+//			{
+//    			this.update(this.getState(this.graph.view.getState(this.graph.getSelectionCell())));
+//			}), 0);
+//		}
+//		else
+//		{
+//			this.reset();
+//		}
+//	}));
 	
 	this.repaintHandler = mxUtils.bind(this, function()
 	{
@@ -1413,6 +1413,12 @@ HoverIcons.prototype.click = function(state, dir, evt, x, y)
 		if (cells.length == 2 && this.graph.model.isVertex(cells[1]))
 		{
 			this.graph.setSelectionCell(cells[1]);
+			
+			// Adds hover icons to new target vertex for touch devices
+			if (mxEvent.isTouchEvent(evt))
+			{
+				this.update(this.getState(this.graph.view.getState(cells[1])));
+			}
 		}
 		else
 		{
