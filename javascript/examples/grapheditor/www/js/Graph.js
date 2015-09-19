@@ -1162,7 +1162,7 @@ HoverIcons.prototype.init = function()
 	    }),
 	    mouseMove: mxUtils.bind(this, function(sender, me)
 	    {
-	    	if (mxEvent.isAltDown(me.getEvent()))
+	    	if (mxEvent.isAltDown(me.getEvent()) || mxEvent.isShiftDown(me.getEvent()))
 	    	{
 	    		this.reset();
 	    	}
@@ -1170,7 +1170,7 @@ HoverIcons.prototype.init = function()
 	    	{
 	    		this.setDisplay('none');
 	    	}
-	    	else if (!mxEvent.isShiftDown(me.getEvent()))
+	    	else if (!mxEvent.isControlDown(me.getEvent()))
 	    	{
 	    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
 	    	}
@@ -1405,7 +1405,13 @@ HoverIcons.prototype.drag = function(evt, x, y)
  */
 HoverIcons.prototype.click = function(state, dir, evt, x, y)
 {
-	if (state != null)
+	var cell = this.graph.getCellAt(x, y);
+	
+	if (this.graph.model.isEdge(cell))
+	{
+		this.graph.setSelectionCell(cell);
+	}
+	else if (state != null)
 	{
 		var cells = this.graph.connectVertex(state.cell, dir, this.graph.defaultEdgeLength, evt);
 		
