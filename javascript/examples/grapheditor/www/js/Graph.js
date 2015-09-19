@@ -642,9 +642,9 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 			geo.y = pt.y - geo.height / 2;
 		}
 		
+		// Never connects children in stack layouts
 		var layout = null;
 
-		// Never connects children in stack layouts
 		if (this.layoutManager != null)
 		{
 			layout = this.layoutManager.getLayout(this.model.getParent(source));
