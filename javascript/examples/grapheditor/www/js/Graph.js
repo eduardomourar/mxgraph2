@@ -1172,7 +1172,12 @@ HoverIcons.prototype.init = function()
 	    	if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
 	 	    	!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
 	    	{
-	    		this.update(this.getState(me.getState()));
+	    		var state = this.getState(me.getState());
+	    		
+	    		if (state != null)
+	    		{
+	    			this.update(state);
+	    		}
 	    	}
 
 	    	this.setDisplay('none');
