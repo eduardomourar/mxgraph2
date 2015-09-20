@@ -2246,6 +2246,11 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		{
 			dropHandler.apply(this, arguments);
 		}
+		
+		if (this.editorUi.hoverIcons != null)
+		{
+			this.editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
+		}
 	}),
 	preview, 0, 0, this.editorUi.editor.graph.autoscroll, true, true);
 	
@@ -2370,15 +2375,33 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		return elt;
 	};
 	
-	dragSource.dragOver = function(graph, evt)
+	// Shows/hides hover icons
+	var dragEnter = dragSource.dragEnter;
+	dragSource.dragEnter = function(graph, evt)
 	{
-		mxDragSource.prototype.dragOver.apply(this, arguments);
-		
 		if (ui.hoverIcons != null)
 		{
 			ui.hoverIcons.setDisplay('none');
 		}
 		
+		dragEnter.apply(this, arguments);
+	};
+	
+	var dragExit = dragSource.dragExit;
+	dragSource.dragExit = function(graph, evt)
+	{
+		if (ui.hoverIcons != null)
+		{
+			ui.hoverIcons.setDisplay('');
+		}
+		
+		dragExit.apply(this, arguments);
+	};
+	
+	dragSource.dragOver = function(graph, evt)
+	{
+		mxDragSource.prototype.dragOver.apply(this, arguments);
+
 		if (this.currentGuide != null && activeArrow != null)
 		{
 			this.currentGuide.hide();
@@ -2865,6 +2888,11 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 	{
 		var pt = graph.getInsertPoint();
 		ds.drop(graph, evt, null, pt.x, pt.y);
+		
+		if (this.editorUi.hoverIcons != null)
+		{
+			this.editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
+		}
 	}
 };
 

@@ -1047,6 +1047,11 @@ HoverIcons = function(graph)
 HoverIcons.prototype.arrowSpacing = 6;
 
 /**
+ * Delay for switch current state if another state is selected. Default is 500ms.
+ */
+HoverIcons.prototype.updateDelay = 500;
+
+/**
  * Up arrow.
  */
 HoverIcons.prototype.edgeHoverIcons = true;
@@ -1136,35 +1141,45 @@ HoverIcons.prototype.init = function()
 		// Workaround for IE11 firing mouseleave for touch in diagram
 		if (evt.relatedTarget != null && mxEvent.getSource(evt) == this.graph.container)
 		{
-			this.reset();
+			this.setDisplay('none');
 		}
 	}));
+	
+	// Resets current state after update of selection state for touch events
+	var graphClick = this.graph.click;
+	this.graph.click = mxUtils.bind(this, function(me)
+	{
+		graphClick.apply(this.graph, arguments);
+		
+		if (this.currentState != null && !this.graph.isCellSelected(this.currentState.cell) && mxEvent.isTouchEvent(me.getEvent()) && me.getState() == null)
+		{
+			this.reset();
+		}
+	});
 
 	// Implements a listener for hover and click handling
 	this.graph.addMouseListener(
 	{
 	    mouseDown: mxUtils.bind(this, function(sender, me)
 	    {
-	    	if (!this.isActive())
-	    	{
-	    		this.update(this.getState(me.getState()));
-	    	}
-	    	
 	    	this.setDisplay('none');
 	    }),
 	    mouseMove: mxUtils.bind(this, function(sender, me)
 	    {
-	    	if (mxEvent.isAltDown(me.getEvent()) || (!mxEvent.isControlDown(me.getEvent()) &&
-	    		(mxEvent.isShiftDown(me.getEvent()) || mxEvent.isMetaDown(me.getEvent()))))
+	    	var evt = me.getEvent();
+	    	
+	    	if (mxEvent.isAltDown(evt) || (!mxEvent.isControlDown(evt) &&
+	    		(mxEvent.isShiftDown(evt) || mxEvent.isMetaDown(evt))))
 	    	{
 	    		this.reset();
 	    	}
-	    	else if (this.graph.isMouseDown)
+	    	// Workaround for isMouseDown not being updated for first
+	    	// mousemove on container during drag and drop from sidebar 
+	    	else if (mxEvent.isLeftMouseButton(evt) || mxEvent.isTouchEvent(evt))
 	    	{
 	    		this.setDisplay('none');
 	    	}
-	    	else if (!mxEvent.isControlDown(me.getEvent()) || mxEvent.isShiftDown(me.getEvent()) ||
-	    		mxEvent.isMetaDown(me.getEvent()))
+	    	else if (!mxEvent.isControlDown(evt) || mxEvent.isShiftDown(evt) || mxEvent.isMetaDown(evt))
 	    	{
 	    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
 	    	}
@@ -1175,6 +1190,7 @@ HoverIcons.prototype.init = function()
 	    	var state = this.currentState;
 	    	var dir = this.getDirection();
 	    	var mp = this.mouseDownPoint;
+	    	var evt = me.getEvent();
 	    	
 	    	if (this.activeArrow != null)
 	    	{
@@ -1182,12 +1198,14 @@ HoverIcons.prototype.init = function()
 	    		this.activeArrow = null;
 	    	}
 	    	
-	    	if (this.currentState != null && !mxUtils.contains(this.currentState, me.getGraphX(), me.getGraphY()))
+	    	var nextState = this.getState(me.getState());
+	    	
+	    	if (!active && (nextState != null || !mxEvent.isTouchEvent(evt)))
 	    	{
-	    		this.reset();
+	    		this.update(nextState);
 	    	}
-	    	else if (!mxEvent.isAltDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()) &&
-	    		!mxEvent.isControlDown(me.getEvent()) && !mxEvent.isMetaDown(me.getEvent()))
+	    	else if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
+	    		!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
 	    	{
 		    	this.setDisplay('');
 	    		this.repaint();
@@ -1399,11 +1417,13 @@ HoverIcons.prototype.drag = function(evt, x, y)
  */
 HoverIcons.prototype.click = function(state, dir, evt, x, y)
 {
-	var cell = this.graph.getCellAt(x, y);
+	var tmp = this.graph.view.getState(this.graph.getCellAt(x, y));
 	
-	if (this.graph.model.isEdge(cell) && !mxEvent.isControlDown(evt))
+	if (tmp != null && this.graph.model.isEdge(tmp.cell) && !mxEvent.isControlDown(evt) &&
+		(tmp.getVisibleTerminalState(true) == state || tmp.getVisibleTerminalState(false) == state))
 	{
-		this.graph.setSelectionCell(cell);
+		this.graph.setSelectionCell(tmp.cell);
+		this.reset();
 	}
 	else if (state != null)
 	{
@@ -1419,6 +1439,8 @@ HoverIcons.prototype.click = function(state, dir, evt, x, y)
 			{
 				this.update(this.getState(this.graph.view.getState(cells[1])));
 			}
+			
+			this.graph.scrollCellToVisible(cells[1]);
 		}
 		else
 		{
@@ -1542,13 +1564,22 @@ HoverIcons.prototype.repaint = function()
  */
 HoverIcons.prototype.computeBoundingBox = function()
 {
-	var bbox = mxRectangle.fromRectangle(this.currentState);
+	var bbox = (!this.graph.model.isEdge(this.currentState.cell)) ? mxRectangle.fromRectangle(this.currentState) : null;
 	
 	this.visitNodes(function(elt)
 	{
 		if (elt.parentNode != null)
 		{
-			bbox.add(new mxRectangle(elt.offsetLeft, elt.offsetTop, elt.offsetWidth, elt.offsetHeight));
+			var tmp = new mxRectangle(elt.offsetLeft, elt.offsetTop, elt.offsetWidth, elt.offsetHeight);
+			
+			if (bbox == null)
+			{
+				bbox = tmp;
+			}
+			else
+			{
+				bbox.add(tmp);
+			}
 		}
 	});
 	
@@ -1563,20 +1594,9 @@ HoverIcons.prototype.getState = function(state)
 	if (state != null)
 	{
 		var cell = state.cell;
-		
-		if (cell != null && !this.graph.model.isEdge(cell) && this.graph.connectionHandler.constraintHandler.currentFocus != null)
-		{
-			cell = this.graph.connectionHandler.constraintHandler.currentFocus.cell;
-		}
-		
-		if (this.graph.model.isEdge(cell) && this.graph.isCellSelected(cell) &&
-			this.graph.getSelectionCount() == 1)
-		{
-			cell = null;
-		}
-		
-		// Uses connectable parent vertex if one exists
-		if (cell != null && !this.graph.isCellConnectable(cell))
+
+		// Uses connectable parent vertex if child is not connectable
+		if (this.graph.getModel().isVertex(cell) && !this.graph.isCellConnectable(cell))
 		{
 			var parent = this.graph.getModel().getParent(cell);
 			
@@ -1586,13 +1606,10 @@ HoverIcons.prototype.getState = function(state)
 			}
 		}
 		
-		// Ignores locked cells
-		if (this.graph.isCellLocked(cell))
-		{
-			cell = null;
-		}
-		
-		if (!this.edgeHoverIcons && this.graph.model.isEdge(cell))
+		// Ignores locked cells and selected edges, or all edges if edgeHoverIcons are disabled
+		if (this.graph.isCellLocked(cell) || (this.graph.model.isEdge(cell) &&
+			(!this.edgeHoverIcons || (this.graph.isCellSelected(cell) &&
+			this.graph.getSelectionCount() == 1))))
 		{
 			cell = null;
 		}
@@ -1608,18 +1625,55 @@ HoverIcons.prototype.getState = function(state)
  */
 HoverIcons.prototype.update = function(state, x, y)
 {
-	this.setDisplay('');
+	var timeOnTarget = null;
+	
+	// Time on target
+	if (this.prev != state || this.isActive())
+	{
+		this.startTime = new Date().getTime();
+		this.prev = state;
+		timeOnTarget = 0;
 
-	if (this.currentState != state && (this.bbox == null || x == null || y == null ||
-		(state != null && this.currentState != null && mxUtils.intersects(this.bbox, state) &&
-		this.graph.model.isAncestor(this.currentState.cell, state.cell)) ||
-		!mxUtils.contains(this.bbox, x, y)))
+		if (this.updateThread != null)
+		{
+			window.clearTimeout(this.updateThread);
+		}
+		
+		if (state != null)
+		{
+			this.updateThread = window.setTimeout(mxUtils.bind(this, function()
+			{
+				if (!this.isActive())
+				{
+					this.prev = state;
+					this.update(state, x, y);
+				}
+			}), this.updateDelay + 10);
+		}
+	}
+	else if (this.startTime != null)
+	{
+		timeOnTarget = new Date().getTime() - this.startTime;
+	}
+	
+	this.setDisplay('');
+	
+	if (this.currentState != state && (timeOnTarget > this.updateDelay ||
+		this.bbox == null || x == null || y == null || !mxUtils.contains(this.bbox, x, y) ||
+		(state != null && this.currentState != null && mxUtils.contains(this.currentState, state.x, state.y) &&
+		mxUtils.contains(this.currentState, state.x + state.width, state.y + state.height))))
 	{
 		if (state != null && this.graph.isEnabled())
 		{
 			this.removeNodes();
 			this.setCurrentState(state);
 			this.repaint();
+			
+			// Resets connection points on other focused cells
+			if (this.graph.connectionHandler.constraintHandler.currentFocus != state)
+			{
+				this.graph.connectionHandler.constraintHandler.reset();
+			}
 		}
 		else
 		{
