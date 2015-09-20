@@ -1162,6 +1162,14 @@ HoverIcons.prototype.init = function()
 	{
 	    mouseDown: mxUtils.bind(this, function(sender, me)
 	    {
+	    	var evt = me.getEvent();
+	    	
+	    	if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
+	 	    	!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
+	    	{
+	    		this.update(this.getState(me.getState()));
+	    	}
+
 	    	this.setDisplay('none');
 	    }),
 	    mouseMove: mxUtils.bind(this, function(sender, me)
@@ -1198,18 +1206,20 @@ HoverIcons.prototype.init = function()
 	    		this.activeArrow = null;
 	    	}
 	    	
-	    	var nextState = this.getState(me.getState());
+	    	// Keeps current state focused after move
+	    	var nextState = (this.currentState != null && mxUtils.contains(this.currentState, me.getGraphX(), me.getGraphY())) ?
+	    			this.currentState : this.getState(me.getState());
 	    	
-	    	 if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
+	    	if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
 	 	    	!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
 	    	{
-		    	if (!active && (nextState != null || !mxEvent.isTouchEvent(evt)))
-		    	{
-		    		this.update(nextState);
-		    	}
-		    	else
-		    	{
-			    	this.setDisplay('');
+	    		if (!active && (nextState != null || !mxEvent.isTouchEvent(evt)))
+	    		{
+	    			this.update(nextState);
+	    		}
+	    		else
+	    		{
+	    			this.setDisplay('');
 		    		this.repaint();
 		    	}
 	    	}
