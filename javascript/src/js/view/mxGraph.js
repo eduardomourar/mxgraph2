@@ -2949,7 +2949,7 @@ mxGraph.prototype.sizeDidChange = function()
 			}
 		}
 		
-		this.updatePageBreaks(this.pageBreaksVisible, width - 1, height - 1);
+		this.updatePageBreaks(this.pageBreaksVisible, width, height);
 	}
 
 	this.fireEvent(new mxEventObject(mxEvent.SIZE, 'bounds', bounds));
@@ -3018,6 +3018,8 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 	var ps = scale * this.pageScale;
 	var bounds = new mxRectangle(scale * tr.x, scale * tr.y,
 			fmt.width * ps, fmt.height * ps);
+	width /= scale;
+	height /= scale;
 	
 	// Does not show page breaks if the scale is too small
 	visible = visible && Math.min(bounds.width, bounds.height) > this.minPageBreakDist;
@@ -3028,8 +3030,8 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 	bounds.x = mxUtils.mod(bounds.x, bounds.width);
 	bounds.y = mxUtils.mod(bounds.y, bounds.height);
 	
-	var horizontalCount = (visible) ? Math.ceil((width - bounds.x) / bounds.width) : 0;
-	var verticalCount = (visible) ? Math.ceil((height - bounds.y) / bounds.height) : 0;
+	var horizontalCount = (visible) ? Math.round((width - bounds.x) / bounds.width) + 1 : 0;
+	var verticalCount = (visible) ? Math.round((height - bounds.y) / bounds.height) + 1 : 0;
 	var right = width;
 	var bottom = height;
 	
@@ -3038,76 +3040,54 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 		this.horizontalPageBreaks = [];
 	}
 
-	if (this.horizontalPageBreaks != null)
-	{
-		for (var i = 0; i <= horizontalCount; i++)
-		{
-			var pts = [new mxPoint(bounds.x + i * bounds.width, 1),
-			           new mxPoint(bounds.x + i * bounds.width, bottom)];
-			
-			if (this.horizontalPageBreaks[i] != null)
-			{
-				this.horizontalPageBreaks[i].points = pts;
-				this.horizontalPageBreaks[i].redraw();
-			}
-			else
-			{
-				var pageBreak = new mxPolyline(pts, this.pageBreakColor);
-				pageBreak.dialect = this.dialect;
-				pageBreak.pointerEvents = false;
-				pageBreak.isDashed = this.pageBreakDashed;
-				pageBreak.init(this.view.backgroundPane);
-				pageBreak.redraw();
-				
-				this.horizontalPageBreaks[i] = pageBreak;
-			}
-		}
-		
-		for (var i = horizontalCount; i < this.horizontalPageBreaks.length; i++)
-		{
-			this.horizontalPageBreaks[i].destroy();
-		}
-		
-		this.horizontalPageBreaks.splice(horizontalCount, this.horizontalPageBreaks.length - horizontalCount);
-	}
-	
 	if (this.verticalPageBreaks == null && verticalCount > 0)
 	{
 		this.verticalPageBreaks = [];
 	}
 	
-	if (this.verticalPageBreaks != null)
+	var drawPageBreaks = mxUtils.bind(this, function(breaks)
 	{
-		for (var i = 0; i <= verticalCount; i++)
+		if (breaks != null)
 		{
-			var pts = [new mxPoint(1, bounds.y + i * bounds.height),
-			           new mxPoint(right, bounds.y + i * bounds.height)];
+			var count = (breaks == this.horizontalPageBreaks) ? horizontalCount : verticalCount; 
 			
-			if (this.verticalPageBreaks[i] != null)
+			for (var i = 0; i <= count; i++)
 			{
-				this.verticalPageBreaks[i].points = pts;
-				this.verticalPageBreaks[i].redraw();
+				var pts = (breaks == this.horizontalPageBreaks) ?
+						[new mxPoint(bounds.x + i * bounds.width, 1),
+				         new mxPoint(bounds.x + i * bounds.width, bottom)] :
+				        [new mxPoint(1, bounds.y + i * bounds.height),
+				         new mxPoint(right, bounds.y + i * bounds.height)];
+
+				if (breaks[i] != null)
+				{
+					breaks[i].points = pts;
+					breaks[i].redraw();
+				}
+				else
+				{
+					var pageBreak = new mxPolyline(pts, this.pageBreakColor);
+					pageBreak.dialect = this.dialect;
+					pageBreak.pointerEvents = false;
+					pageBreak.isDashed = this.pageBreakDashed;
+					pageBreak.init(this.view.backgroundPane);
+					pageBreak.redraw();
+					
+					breaks[i] = pageBreak;
+				}
 			}
-			else
+			
+			for (var i = count; i < breaks.length; i++)
 			{
-				var pageBreak = new mxPolyline(pts, this.pageBreakColor);
-				pageBreak.dialect = this.dialect;
-				pageBreak.pointerEvents = false;
-				pageBreak.isDashed = this.pageBreakDashed;
-				pageBreak.init(this.view.backgroundPane);
-				pageBreak.redraw();
+				breaks[i].destroy();
+			}
+			
+			breaks.splice(count, breaks.length - count);
+		}
+	});
 	
-				this.verticalPageBreaks[i] = pageBreak;
-			}
-		}
-		
-		for (var i = verticalCount; i < this.verticalPageBreaks.length; i++)
-		{
-			this.verticalPageBreaks[i].destroy();
-		}
-		
-		this.verticalPageBreaks.splice(verticalCount, this.verticalPageBreaks.length - verticalCount);
-	}
+	drawPageBreaks(this.horizontalPageBreaks);
+	drawPageBreaks(this.verticalPageBreaks);
 };
 
 /**
