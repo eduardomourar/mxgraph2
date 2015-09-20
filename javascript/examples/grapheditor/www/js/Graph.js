@@ -1489,6 +1489,11 @@ HoverIcons.prototype.click = function(state, dir, evt, x, y)
  */
 HoverIcons.prototype.reset = function()
 {
+	if (this.updateThread != null)
+	{
+		window.clearTimeout(this.updateThread);
+	}
+	
 	this.mouseDownPoint = null;
 	this.currentState = null;
 	this.removeNodes();
