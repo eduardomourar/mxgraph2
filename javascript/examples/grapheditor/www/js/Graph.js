@@ -1047,7 +1047,7 @@ HoverIcons = function(graph)
 HoverIcons.prototype.arrowSpacing = 6;
 
 /**
- * Delay for switch current state if another state is selected. Default is 500ms.
+ * Delay to switch to another state of overlapping bbox. Default is 500ms.
  */
 HoverIcons.prototype.updateDelay = 500;
 
@@ -1658,10 +1658,11 @@ HoverIcons.prototype.update = function(state, x, y)
 	
 	this.setDisplay('');
 	
-	if (this.currentState != state && (timeOnTarget > this.updateDelay ||
-		this.bbox == null || x == null || y == null || !mxUtils.contains(this.bbox, x, y) ||
-		(state != null && this.currentState != null && mxUtils.contains(this.currentState, state.x, state.y) &&
-		mxUtils.contains(this.currentState, state.x + state.width, state.y + state.height))))
+	if (this.currentState != state && (timeOnTarget > this.updateDelay || this.bbox == null ||
+		x == null || y == null || !mxUtils.contains(this.bbox, x, y) || (state != null &&
+		this.currentState != null && mxUtils.contains(this.currentState, state.x, state.y) &&
+		mxUtils.contains(this.currentState, state.x + state.width, state.y + state.height) &&
+		timeOnTarget > this.updateDelay)))
 	{
 		if (state != null && this.graph.isEnabled())
 		{
