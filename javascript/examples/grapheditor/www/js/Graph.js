@@ -1200,15 +1200,18 @@ HoverIcons.prototype.init = function()
 	    	
 	    	var nextState = this.getState(me.getState());
 	    	
-	    	if (!active && (nextState != null || !mxEvent.isTouchEvent(evt)))
+	    	 if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
+	 	    	!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
 	    	{
-	    		this.update(nextState);
-	    	}
-	    	else if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
-	    		!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
-	    	{
-		    	this.setDisplay('');
-	    		this.repaint();
+		    	if (!active && (nextState != null || !mxEvent.isTouchEvent(evt)))
+		    	{
+		    		this.update(nextState);
+		    	}
+		    	else
+		    	{
+			    	this.setDisplay('');
+		    		this.repaint();
+		    	}
 	    	}
 	    	
 	    	if (active && mp != null && Math.abs(me.getGraphX() - mp.x) < this.graph.tolerance &&
