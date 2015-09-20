@@ -656,9 +656,9 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		if (edge != null)
 		{
 			// Uses elbow edges with vertical or horizontal direction
-			var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
-			edge.style = mxUtils.setStyle(edge.style, 'edgeStyle', 'elbowEdgeStyle');
-			edge.style = mxUtils.setStyle(edge.style, 'elbow', elbowValue);
+//			var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
+//			edge.style = mxUtils.setStyle(edge.style, 'edgeStyle', 'elbowEdgeStyle');
+//			edge.style = mxUtils.setStyle(edge.style, 'elbow', elbowValue);
 			
 			result.push(edge);
 		}
@@ -1430,14 +1430,14 @@ HoverIcons.prototype.drag = function(evt, x, y)
 		this.graph.isMouseDown = true;
 		
 		// Uses elbow edges with vertical or horizontal direction
-		var direction = this.getDirection();
-		var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
-		
-		var es = this.graph.connectionHandler.edgeState;
-		es.style['edgeStyle'] = 'elbowEdgeStyle';
-		es.style['elbow'] = elbowValue;
-		es.cell.style = mxUtils.setStyle(es.cell.style, 'edgeStyle', es.style['edgeStyle']);
-		es.cell.style = mxUtils.setStyle(es.cell.style, 'elbow', es.style['elbow']);
+//		var direction = this.getDirection();
+//		var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
+//		
+//		var es = this.graph.connectionHandler.edgeState;
+//		es.style['edgeStyle'] = 'elbowEdgeStyle';
+//		es.style['elbow'] = elbowValue;
+//		es.cell.style = mxUtils.setStyle(es.cell.style, 'edgeStyle', es.style['edgeStyle']);
+//		es.cell.style = mxUtils.setStyle(es.cell.style, 'elbow', es.style['elbow']);
 	}
 };
 
