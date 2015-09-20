@@ -655,6 +655,11 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		
 		if (edge != null)
 		{
+			// Uses elbow edges with vertical or horizontal direction
+			var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
+			edge.style = mxUtils.setStyle(edge.style, 'edgeStyle', 'elbowEdgeStyle');
+			edge.style = mxUtils.setStyle(edge.style, 'elbow', elbowValue);
+			
 			result.push(edge);
 		}
 		
@@ -1422,6 +1427,16 @@ HoverIcons.prototype.drag = function(evt, x, y)
 		this.graph.connectionHandler.start(this.currentState, x, y);
 		this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
 		this.graph.isMouseDown = true;
+		
+		// Uses elbow edges with vertical or horizontal direction
+		var direction = this.getDirection();
+		var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
+		
+		var es = this.graph.connectionHandler.edgeState;
+		es.style['edgeStyle'] = 'elbowEdgeStyle';
+		es.style['elbow'] = elbowValue;
+		es.cell.style = mxUtils.setStyle(es.cell.style, 'edgeStyle', es.style['edgeStyle']);
+		es.cell.style = mxUtils.setStyle(es.cell.style, 'elbow', es.style['elbow']);
 	}
 };
 
@@ -3137,6 +3152,43 @@ if (typeof mxVertexHandler != 'undefined')
 				this.textarea.style.outline = 'none';
 				this.textarea.style.border = '';
 			}
+			
+			// TODO: Fix paste from Word by removing 
+			mxEvent.addListener(this.textarea, 'paste', mxUtils.bind(this, function(evt)
+			{
+				window.setTimeout(mxUtils.bind(this, function()
+				{
+					console.log('text', this.textarea.innerHTML);
+					var xml = this.textarea.getElementsByTagName('xml');
+					
+					console.log('xml', xml);
+					
+					this.textarea.innerHTML = this.textarea.innerHTML.replace(/<!--[\s\S]*?-->/g, '');
+					
+					console.log('text1', this.textarea.innerHTML);
+//					console.log('this.text1', evt, this.textarea.innerHTML);
+//					
+//					var tmp = document.createElement("DIV");
+//					tmp.innerHTML = this.textarea.innerHTML;
+//					var newString = tmp.textContent||tmp.innerText;
+//					
+//					// this next piece converts line breaks into break tags
+//					// and removes the seemingly endless crap code
+//					newString  = newString.replace(/\n\n/g, "<br />").replace(/.*<!--.*-->/g,"");
+//					
+//					// this next piece removes any break tags (up to 10) at beginning
+//					for (var i = 0; i < 10; i++)
+//					{
+//						if (newString.substr(0,6)=="<br />")
+//						{
+//							newString = newString.replace("<br />", "");
+//						}
+//					}
+//					
+//					this.textarea.innerHTML = newString;
+//					console.log('this.text2', evt, this.textarea.innerHTML);
+				}), 0);
+			}));
 		};
 	
 		/**
