@@ -1156,7 +1156,8 @@ HoverIcons.prototype.init = function()
 	{
 		graphClick.apply(this.graph, arguments);
 		
-		if (this.currentState != null && !this.graph.isCellSelected(this.currentState.cell) && mxEvent.isTouchEvent(me.getEvent()) && me.getState() == null)
+		if (this.currentState != null && !this.graph.isCellSelected(this.currentState.cell) &&
+			mxEvent.isTouchEvent(me.getEvent()) && !this.graph.model.isVertex(me.getCell()))
 		{
 			this.reset();
 		}
