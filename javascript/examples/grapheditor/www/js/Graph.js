@@ -1212,13 +1212,14 @@ HoverIcons.prototype.init = function()
 	    	}
 	    	
 	    	// Keeps current state focused after move
-	    	var nextState = (this.currentState != null && mxUtils.contains(this.currentState, me.getGraphX(), me.getGraphY())) ?
-	    			this.currentState : this.getState(me.getState());
+	    	var nextState = (this.currentState != null &&
+	    		mxUtils.contains(this.currentState, me.getGraphX(), me.getGraphY())) ?
+	    		this.currentState : this.getState(me.getState());
 	    	
 	    	if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
 	 	    	!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
 	    	{
-	    		if (!active && (nextState != null || !mxEvent.isTouchEvent(evt)))
+	    		if (!active && nextState != this.currentState && (nextState != null || !mxEvent.isTouchEvent(evt)))
 	    		{
 	    			this.update(nextState);
 	    		}
