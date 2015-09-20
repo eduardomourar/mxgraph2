@@ -1646,7 +1646,7 @@ HoverIcons.prototype.update = function(state, x, y)
 		{
 			this.updateThread = window.setTimeout(mxUtils.bind(this, function()
 			{
-				if (!this.isActive())
+				if (!this.isActive() && !this.graph.isMouseDown)
 				{
 					this.prev = state;
 					this.update(state, x, y);
