@@ -1,3 +1,4 @@
+- Fixes mxEvent.isLeft/Middle/RightMouseButton, adds buttons property [JavaScript]
 - Fixes scale of preferred page size in mxGraph.sizeDidChange [JavaScript]
 - Fixes HTML entities in XHTML for SVG export in IE9/10 [JavaScript]
 - Fixes mxGraph.cellsRemoved for loops, terminals in groups [JavaScript]

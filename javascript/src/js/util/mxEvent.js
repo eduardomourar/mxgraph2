@@ -482,7 +482,20 @@ var mxEvent =
 	 */
 	isLeftMouseButton: function(evt)
 	{
-		return evt.button == ((mxClient.IS_IE && (typeof(document.documentMode) === 'undefined' || document.documentMode < 9)) ? 1 : 0);
+		if ('buttons' in evt)
+		{
+	        return event.buttons === 1;
+	    }
+		else if ('which' in evt)
+		{
+	        return event.which === 1;
+	    }
+		else
+		{
+	        return event.button === 1;
+	    }
+		
+		return false;
 	},
 	
 	/**
@@ -494,7 +507,20 @@ var mxEvent =
 	 */
 	isMiddleMouseButton: function(evt)
 	{
-		return evt.button == ((mxClient.IS_IE && (typeof(document.documentMode) === 'undefined' || document.documentMode < 9)) ? 4 : 1);
+		if ('buttons' in evt)
+		{
+	        return event.buttons === 4;
+	    }
+		else if ('which' in evt)
+		{
+	        return event.which === 2;
+	    }
+		else
+		{
+	        return event.button === 4;
+	    }
+		
+		return false;
 	},
 	
 	/**
@@ -506,7 +532,20 @@ var mxEvent =
 	 */
 	isRightMouseButton: function(evt)
 	{
-		return evt.button == 2;
+		if ('buttons' in evt)
+		{
+	        return event.buttons === 2;
+	    }
+		else if ('which' in evt)
+		{
+	        return event.which === 3;
+	    }
+		else
+		{
+	        return event.button === 2;
+	    }
+		
+		return false;
 	},
 
 	/**
