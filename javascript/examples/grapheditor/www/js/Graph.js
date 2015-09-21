@@ -2711,7 +2711,7 @@ if (typeof mxVertexHandler != 'undefined')
 			if (bgImg != null)
 			{
 				var tr = this.view.translate;
-				svgCanvas.image(tr.x, tr.y, bgImg.width * vs / scale, bgImg.height * vs / scale, bgImg.src, false);
+				svgCanvas.image(tr.x, tr.y, bgImg.width * vs / scale, bgImg.height * vs / scale, bgImg.src, true);
 			}
 			
 			imgExport.drawState(this.getView().getState(this.model.root), svgCanvas);
