@@ -248,6 +248,7 @@ search=Suchen
 selectAll=Alles markieren
 selectEdges=Kanten markieren
 selectFont=Schriftart wählen
+selectNone=Markierung aufheben
 selectVertices=Knoten markieren
 setAsDefaultStyle=Als Standardstyle festlegen
 shadow=Schatten

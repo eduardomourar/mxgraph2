@@ -248,6 +248,7 @@ search=Search
 selectAll=Select all
 selectEdges=Select edges
 selectFont=Select a font
+selectNone=Select none
 selectVertices=Select vertices
 setAsDefaultStyle=Set as default style
 shadow=Shadow

@@ -1913,6 +1913,7 @@ EditorUi.prototype.updateActionStates = function()
     this.actions.get('selectVertices').setEnabled(unlocked);
     this.actions.get('selectEdges').setEnabled(unlocked);
     this.actions.get('selectAll').setEnabled(unlocked);
+    this.actions.get('selectNone').setEnabled(unlocked);
     
     this.updatePasteActionStates();
 };
@@ -2898,7 +2899,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(107, true, 'zoomIn'); // Ctrl+Plus
 	keyHandler.bindAction(109, true, 'zoomOut'); // Ctrl+Minus
 	keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
-	keyHandler.bindAction(65, true, 'selectVertices', true); // Ctrl+Shift+A
+	keyHandler.bindAction(65, true, 'selectNone', true); // Ctrl+A
+	keyHandler.bindAction(81, true, 'selectVertices', true); // Ctrl+Shift+Q
 	keyHandler.bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
 	keyHandler.bindAction(69, true, 'editStyle'); // Ctrl+E
 	keyHandler.bindAction(66, true, 'bold'); // Ctrl+B
