@@ -3468,11 +3468,11 @@ if (typeof mxVertexHandler != 'undefined')
 			try
 			{
 				mxCellEditorApplyValue.apply(this, arguments);
-	
-				var parent = this.graph.getModel().getParent(state.cell);
-				var geo = this.graph.getCellGeometry(state.cell);
 				
-				if (mxUtils.trim(value || '') == '' && geo != null && this.graph.getModel().isEdge(parent) && geo.relative)
+				var stroke = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
+				var fill = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
+				
+				if (mxUtils.trim(value || '') == '' && stroke == mxConstants.NONE && fill == mxConstants.NONE)
 				{
 					this.graph.removeCells([state.cell], false);
 				}
