@@ -484,15 +484,15 @@ var mxEvent =
 	{
 		if ('buttons' in evt)
 		{
-	        return event.buttons === 1;
+	        return evt.buttons === 1;
 	    }
 		else if ('which' in evt)
 		{
-	        return event.which === 1;
+	        return evt.which === 1;
 	    }
 		else
 		{
-	        return event.button === 1;
+	        return evt.button === 1;
 	    }
 		
 		return false;
@@ -509,15 +509,15 @@ var mxEvent =
 	{
 		if ('buttons' in evt)
 		{
-	        return event.buttons === 4;
+	        return evt.buttons === 4;
 	    }
 		else if ('which' in evt)
 		{
-	        return event.which === 2;
+	        return evt.which === 2;
 	    }
 		else
 		{
-	        return event.button === 4;
+	        return evt.button === 4;
 	    }
 		
 		return false;
@@ -534,15 +534,15 @@ var mxEvent =
 	{
 		if ('buttons' in evt)
 		{
-	        return event.buttons === 2;
+	        return evt.buttons === 2;
 	    }
 		else if ('which' in evt)
 		{
-	        return event.which === 3;
+	        return evt.which === 3;
 	    }
 		else
 		{
-	        return event.button === 2;
+	        return evt.button === 2;
 	    }
 		
 		return false;
