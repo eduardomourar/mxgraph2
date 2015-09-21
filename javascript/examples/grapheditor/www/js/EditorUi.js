@@ -2900,7 +2900,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(109, true, 'zoomOut'); // Ctrl+Minus
 	keyHandler.bindAction(65, true, 'selectAll'); // Ctrl+A
 	keyHandler.bindAction(65, true, 'selectNone', true); // Ctrl+A
-	keyHandler.bindAction(81, true, 'selectVertices', true); // Ctrl+Shift+Q
+	keyHandler.bindAction(73, true, 'selectVertices', true); // Ctrl+Shift+I
 	keyHandler.bindAction(69, true, 'selectEdges', true); // Ctrl+Shift+E
 	keyHandler.bindAction(69, true, 'editStyle'); // Ctrl+E
 	keyHandler.bindAction(66, true, 'bold'); // Ctrl+B
