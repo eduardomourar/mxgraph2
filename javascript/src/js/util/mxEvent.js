@@ -482,11 +482,8 @@ var mxEvent =
 	 */
 	isLeftMouseButton: function(evt)
 	{
-		if ('buttons' in evt)
-		{
-	        return evt.buttons === 1;
-	    }
-		else if ('which' in evt)
+		// NOTE: Do not use evt.buttons as it's always 0 on mouse up
+		if ('which' in evt)
 		{
 	        return evt.which === 1;
 	    }
@@ -507,11 +504,8 @@ var mxEvent =
 	 */
 	isMiddleMouseButton: function(evt)
 	{
-		if ('buttons' in evt)
-		{
-	        return evt.buttons === 4;
-	    }
-		else if ('which' in evt)
+		// NOTE: Do not use evt.buttons as it's always 0 on mouse up
+		if ('which' in evt)
 		{
 	        return evt.which === 2;
 	    }
@@ -532,11 +526,8 @@ var mxEvent =
 	 */
 	isRightMouseButton: function(evt)
 	{
-		if ('buttons' in evt)
-		{
-	        return evt.buttons === 2;
-	    }
-		else if ('which' in evt)
+		// NOTE: Do not use evt.buttons as it's always 0 on mouse up
+		if ('which' in evt)
 		{
 	        return evt.which === 3;
 	    }
