@@ -1665,60 +1665,67 @@ HoverIcons.prototype.getState = function(state)
  */
 HoverIcons.prototype.update = function(state, x, y)
 {
-	var timeOnTarget = null;
-	
-	// Time on target
-	if (this.prev != state || this.isActive())
+	if (!this.graph.connectionHandler.isEnabled())
 	{
-		this.startTime = new Date().getTime();
-		this.prev = state;
-		timeOnTarget = 0;
-
-		if (this.updateThread != null)
-		{
-			window.clearTimeout(this.updateThread);
-		}
+		this.reset();
+	}
+	else
+	{
+		var timeOnTarget = null;
 		
-		if (state != null)
+		// Time on target
+		if (this.prev != state || this.isActive())
 		{
-			this.updateThread = window.setTimeout(mxUtils.bind(this, function()
+			this.startTime = new Date().getTime();
+			this.prev = state;
+			timeOnTarget = 0;
+	
+			if (this.updateThread != null)
 			{
-				if (!this.isActive() && !this.graph.isMouseDown)
-				{
-					this.prev = state;
-					this.update(state, x, y);
-				}
-			}), this.updateDelay + 10);
-		}
-	}
-	else if (this.startTime != null)
-	{
-		timeOnTarget = new Date().getTime() - this.startTime;
-	}
-	
-	this.setDisplay('');
-	
-	if (this.currentState != state && (timeOnTarget > this.updateDelay || this.bbox == null ||
-		x == null || y == null || !mxUtils.contains(this.bbox, x, y) || (state != null &&
-		this.currentState != null && mxUtils.contains(this.currentState, state.x, state.y) &&
-		mxUtils.contains(this.currentState, state.x + state.width, state.y + state.height) &&
-		timeOnTarget > this.updateDelay)))
-	{
-		if (state != null && this.graph.isEnabled())
-		{
-			this.removeNodes();
-			this.setCurrentState(state);
-			this.repaint();
+				window.clearTimeout(this.updateThread);
+			}
 			
-			// Resets connection points on other focused cells
-			if (this.graph.connectionHandler.constraintHandler.currentFocus != state)
+			if (state != null)
 			{
-				this.graph.connectionHandler.constraintHandler.reset();
+				this.updateThread = window.setTimeout(mxUtils.bind(this, function()
+				{
+					if (!this.isActive() && !this.graph.isMouseDown)
+					{
+						this.prev = state;
+						this.update(state, x, y);
+					}
+				}), this.updateDelay + 10);
 			}
 		}
-		else
+		else if (this.startTime != null)
 		{
-			this.reset();
+			timeOnTarget = new Date().getTime() - this.startTime;
+		}
+		
+		this.setDisplay('');
+		
+		if (this.currentState != state && (timeOnTarget > this.updateDelay || this.bbox == null ||
+			x == null || y == null || !mxUtils.contains(this.bbox, x, y) || (state != null &&
+			this.currentState != null && mxUtils.contains(this.currentState, state.x, state.y) &&
+			mxUtils.contains(this.currentState, state.x + state.width, state.y + state.height) &&
+			timeOnTarget > this.updateDelay)))
+		{
+			if (state != null && this.graph.isEnabled())
+			{
+				this.removeNodes();
+				this.setCurrentState(state);
+				this.repaint();
+				
+				// Resets connection points on other focused cells
+				if (this.graph.connectionHandler.constraintHandler.currentFocus != state)
+				{
+					this.graph.connectionHandler.constraintHandler.reset();
+				}
+			}
+			else
+			{
+				this.reset();
+			}
 		}
 	}
 };

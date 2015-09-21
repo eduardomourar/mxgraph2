@@ -4044,12 +4044,27 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 		}));
 	
 		// Connection points
-		div.appendChild(this.createOption(mxResources.get('connectionPoints'), function()
+		div.appendChild(this.createOption(mxResources.get('connect'), function()
 		{
 			return graph.connectionHandler.isEnabled();
 		}, function(checked)
 		{
-			graph.setConnectable(checked);
+			ui.actions.get('connect').funct();
+		},
+		{
+			install: function(apply)
+			{
+				this.listener = function()
+				{
+					apply(graph.connectionHandler.isEnabled());
+				};
+				
+				ui.addListener('connectChanged', this.listener);
+			},
+			destroy: function()
+			{
+				ui.removeListener(this.listener);
+			}
 		}));
 	}
 	

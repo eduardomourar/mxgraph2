@@ -625,9 +625,10 @@ Actions.prototype.init = function()
 			ui.setBackgroundColor(color);
 		});
 	}));
-	action = this.addAction('connectionPoints', function()
+	action = this.addAction('connect', function()
 	{
 		graph.setConnectable(!graph.connectionHandler.isEnabled());
+		ui.fireEvent(new mxEventObject('connectChanged'));
 	}, null, null, 'Ctrl+Q');
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.connectionHandler.isEnabled(); });
