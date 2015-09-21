@@ -88,14 +88,11 @@ Toolbar.prototype.init = function()
 		}
 	}));
 
-	var elts = this.addItems(['-', 'undo', 'redo', '-', 'delete', '-', 'toFront', 'toBack', '-', 'fillColor', 'strokeColor', '-', 'shadow']);
+	var elts = this.addItems(['-', 'undo', 'redo', '-', 'delete', '-', 'toFront', 'toBack', '-', 'fillColor', 'strokeColor', 'shadow', '-']);
 	elts[1].setAttribute('title', mxResources.get('undo') + ' (' + this.editorUi.actions.get('undo').shortcut + ')');
 	elts[2].setAttribute('title', mxResources.get('redo') + ' (' + this.editorUi.actions.get('redo').shortcut + ')');
 	elts[4].setAttribute('title', mxResources.get('delete') + ' (' + this.editorUi.actions.get('delete').shortcut + ')');
 
-	this.addItem('geSprite-rounded', 'toggleRounded').setAttribute('title', mxResources.get('rounded'));
-	this.addSeparator();
-	
 	this.edgeShapeMenu = this.addMenuFunction('', mxResources.get('connection'), false, mxUtils.bind(this, function(menu)
 	{
 		this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_SHAPE, 'width'], [null, null], 'geIcon geSprite geSprite-connection', null, true).setAttribute('title', mxResources.get('line'));
