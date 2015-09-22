@@ -1413,12 +1413,12 @@ HoverIcons.prototype.isActive = function()
  */
 HoverIcons.prototype.drag = function(evt, x, y)
 {
-	// TODO: This condition should not be needed. Check logs for NPE.
+	this.graph.popupMenuHandler.hideMenu();
+	this.graph.stopEditing(false);
+
+	// Checks if state was removed in call to stopEditing above
 	if (this.currentState != null)
 	{
-		this.graph.popupMenuHandler.hideMenu();
-		this.graph.stopEditing(false);
-	
 		if (this.graph.model.isEdge(this.currentState.cell))
 		{
 			this.graph.setSelectionCell(this.currentState.cell);
