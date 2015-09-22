@@ -533,7 +533,7 @@ Graph.prototype.initLayoutManager = function()
 Graph.prototype.sanitizeHtml = function(value)
 {
 	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
-	// TODO: Add MathML to whitelisted tags
+	// TODO: Add MathML to whitelisted tags, add data URIs for images
 	function urlX(url) { if(/^https?:\/\//.test(url)) { return url }}
     function idX(id) { return id }
 	
@@ -1413,37 +1413,40 @@ HoverIcons.prototype.isActive = function()
  */
 HoverIcons.prototype.drag = function(evt, x, y)
 {
-	this.graph.popupMenuHandler.hideMenu();
-	this.graph.stopEditing(false);
-
-	if (this.graph.model.isEdge(this.currentState.cell))
+	// TODO: This condition should not be needed. Check logs for NPE.
+	if (this.currentState != null)
 	{
-		var cell = this.currentState.cell;
-		this.graph.setSelectionCell(cell);
-		var handler = this.graph.selectionCellsHandler.getHandler(cell);
-		
-		if (handler != null)
+		this.graph.popupMenuHandler.hideMenu();
+		this.graph.stopEditing(false);
+	
+		if (this.graph.model.isEdge(this.currentState.cell))
 		{
-			handler.start(x, y, (this.activeArrow == this.roundSource) ? 0 : handler.bends.length - 1);
+			this.graph.setSelectionCell(this.currentState.cell);
+			var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
+			
+			if (handler != null)
+			{
+				handler.start(x, y, (this.activeArrow == this.roundSource) ? 0 : handler.bends.length - 1);
+				this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+				this.graph.isMouseDown = true;
+			}
+		}
+		else
+		{
+			this.graph.connectionHandler.start(this.currentState, x, y);
 			this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
 			this.graph.isMouseDown = true;
+			
+			// Uses elbow edges with vertical or horizontal direction
+	//		var direction = this.getDirection();
+	//		var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
+	//		
+	//		var es = this.graph.connectionHandler.edgeState;
+	//		es.style['edgeStyle'] = 'elbowEdgeStyle';
+	//		es.style['elbow'] = elbowValue;
+	//		es.cell.style = mxUtils.setStyle(es.cell.style, 'edgeStyle', es.style['edgeStyle']);
+	//		es.cell.style = mxUtils.setStyle(es.cell.style, 'elbow', es.style['elbow']);
 		}
-	}
-	else
-	{
-		this.graph.connectionHandler.start(this.currentState, x, y);
-		this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-		this.graph.isMouseDown = true;
-		
-		// Uses elbow edges with vertical or horizontal direction
-//		var direction = this.getDirection();
-//		var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
-//		
-//		var es = this.graph.connectionHandler.edgeState;
-//		es.style['edgeStyle'] = 'elbowEdgeStyle';
-//		es.style['elbow'] = elbowValue;
-//		es.cell.style = mxUtils.setStyle(es.cell.style, 'edgeStyle', es.style['edgeStyle']);
-//		es.cell.style = mxUtils.setStyle(es.cell.style, 'elbow', es.style['elbow']);
 	}
 };
 
@@ -2799,7 +2802,7 @@ if (typeof mxVertexHandler != 'undefined')
 		    {
 		        var originalRange = sel.createRange();
 		        originalRange.collapse(true);
-		        range = sel.createRange();
+		        var range = sel.createRange();
 		        range.setEndPoint('StartToStart', originalRange);
 		        range.select();
 		    }
@@ -3171,48 +3174,116 @@ if (typeof mxVertexHandler != 'undefined')
 				this.textarea.style.outline = 'none';
 				this.textarea.style.border = '';
 			}
-			
-			// TODO: Fix paste from Word by removing 
-			mxEvent.addListener(this.textarea, 'paste', mxUtils.bind(this, function(evt)
-			{
-				window.setTimeout(mxUtils.bind(this, function()
-				{
-					console.log('text', this.textarea.innerHTML);
-					var xml = this.textarea.getElementsByTagName('xml');
-					
-					console.log('xml', xml);
-					
-					this.textarea.innerHTML = this.textarea.innerHTML.replace(/<!--[\s\S]*?-->/g, '');
-					
-					console.log('text1', this.textarea.innerHTML);
-//					console.log('this.text1', evt, this.textarea.innerHTML);
-//					
-//					var tmp = document.createElement("DIV");
-//					tmp.innerHTML = this.textarea.innerHTML;
-//					var newString = tmp.textContent||tmp.innerText;
-//					
-//					// this next piece converts line breaks into break tags
-//					// and removes the seemingly endless crap code
-//					newString  = newString.replace(/\n\n/g, "<br />").replace(/.*<!--.*-->/g,"");
-//					
-//					// this next piece removes any break tags (up to 10) at beginning
-//					for (var i = 0; i < 10; i++)
-//					{
-//						if (newString.substr(0,6)=="<br />")
-//						{
-//							newString = newString.replace("<br />", "");
-//						}
-//					}
-//					
-//					this.textarea.innerHTML = newString;
-//					console.log('this.text2', evt, this.textarea.innerHTML);
-				}), 0);
-			}));
-		};
-	
+		}
+
 		/**
 		 * HTML in-place editor
 		 */
+		var cellEditorInstallListeners = mxCellEditor.prototype.installListeners;
+		mxCellEditor.prototype.installListeners = function(elt)
+		{
+			cellEditorInstallListeners.apply(this, arguments);
+
+			// Adds a reference from the clone to the original node, recursively
+			function reference(node, clone)
+			{
+				clone.originalNode = node;
+				
+				node = node.firstChild;
+				var child = clone.firstChild;
+				
+				while (node != null && child != null)
+				{
+					reference(node, child);
+					node = node.nextSibling;
+					child = child.nextSibling;
+				}
+				
+				return clone;
+			};
+			
+			// Checks the given node for new nodes, recursively
+			function checkNode(node, clone)
+			{
+				if (clone.originalNode != node)
+				{
+					cleanNode(node);
+				}
+				else
+				{
+					node = node.firstChild;
+					clone = clone.firstChild;
+					
+					while (node != null)
+					{
+						var nextNode = node.nextSibling;
+						
+						if (clone == null)
+						{
+							cleanNode(node);
+						}
+						else
+						{
+							checkNode(node, clone);
+							clone = clone.nextSibling;
+						}
+
+						node = nextNode;
+					}
+				}
+			};
+
+			// Removes unused DOM nodes and attributes, recursively
+			function cleanNode(node)
+			{
+				var child = node.firstChild;
+				
+				while (child != null)
+				{
+					var next = child.nextSibling;
+					cleanNode(child);
+					child = next;
+				}
+				
+				if ((node.nodeType != 1 || (node.nodeName !== 'BR' && node.firstChild == null)) &&
+					(node.nodeType != 3 || mxUtils.trim(mxUtils.getTextContent(node)).length == 0))
+				{
+					node.parentNode.removeChild(node);
+				}
+				else
+				{
+					// Removes linefeeds
+					if (node.nodeType == 3)
+					{
+						mxUtils.setTextContent(node, mxUtils.getTextContent(node).replace(/\n|\r/g, ''));
+					}
+
+					// Removes CSS classes and styles (for Word and Excel)
+					if (node.nodeType == 1)
+					{
+						node.removeAttribute('style');
+						node.removeAttribute('class');
+						node.removeAttribute('width');
+						node.removeAttribute('cellpadding');
+						node.removeAttribute('cellspacing');
+						node.removeAttribute('border');
+					}
+				}
+			};
+			
+			// Handles paste from Word, Excel etc by removing styles, classnames and unused nodes
+			// LATER: Fix undo/redo for paste
+			mxEvent.addListener(this.textarea, 'paste', mxUtils.bind(this, function(evt)
+			{
+				var clone = reference(this.textarea, this.textarea.cloneNode(true));
+
+				window.setTimeout(mxUtils.bind(this, function()
+				{
+					checkNode(this.textarea, clone);
+				}), 0);
+			}));
+		};
+		
 		mxCellEditor.prototype.toggleViewMode = function()
 		{
 			var state = this.graph.view.getState(this.editingCell);
