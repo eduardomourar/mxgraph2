@@ -3273,15 +3273,18 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			// Handles paste from Word, Excel etc by removing styles, classnames and unused nodes
 			// LATER: Fix undo/redo for paste
-			mxEvent.addListener(this.textarea, 'paste', mxUtils.bind(this, function(evt)
+			if (!mxClient.IS_QUIRKS && document.documentMode !== 7 && document.documentMode !== 8)
 			{
-				var clone = reference(this.textarea, this.textarea.cloneNode(true));
-
-				window.setTimeout(mxUtils.bind(this, function()
+				mxEvent.addListener(this.textarea, 'paste', mxUtils.bind(this, function(evt)
 				{
-					checkNode(this.textarea, clone);
-				}), 0);
-			}));
+					var clone = reference(this.textarea, this.textarea.cloneNode(true));
+	
+					window.setTimeout(mxUtils.bind(this, function()
+					{
+						checkNode(this.textarea, clone);
+					}), 0);
+				}));
+			}
 		};
 		
 		mxCellEditor.prototype.toggleViewMode = function()
