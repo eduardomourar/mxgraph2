@@ -1435,7 +1435,7 @@ HoverIcons.prototype.drag = function(evt, x, y)
 			this.graph.setSelectionCell(this.currentState.cell);
 			var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
 			
-			if (handler != null)
+			if (handler != null && handler.bends != null)
 			{
 				handler.start(x, y, (this.activeArrow == this.roundSource) ? 0 : handler.bends.length - 1);
 				this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
