@@ -1,3 +1,4 @@
+- Update (c) for draw.io files and core examples
 - Fix support for labelPadding, add support for borderWidth (for text)
 - Add container for HTML labels with no foreignObject (see iescrollbug.html, html-panes)
 - Add lineSpacing, jetty-size and source-/targetConstraint styles
