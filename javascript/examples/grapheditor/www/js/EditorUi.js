@@ -2710,7 +2710,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 					
 					for (var i = 0; i < cells.length; i++)
 					{
-						if (graph.getModel().isVertex(cells[i]))
+						if (graph.getModel().isVertex(cells[i]) && graph.isCellResizable(cells[i]))
 						{
 							var geo = graph.getCellGeometry(cells[i]);
 							
@@ -2752,7 +2752,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
 				var parent = graph.model.getParent(cell);
 				var layout = null;
 
-				if (graph.getSelectionCount() == 1 && graph.model.isVertex(cell) && graph.layoutManager != null)
+				if (graph.getSelectionCount() == 1 && graph.model.isVertex(cell) &&
+					graph.layoutManager != null && !graph.isCellLocked(cell))
 				{
 					layout = graph.layoutManager.getLayout(parent);
 				}
@@ -2792,7 +2793,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 						dy = stepSize;
 					}
 					
-					graph.moveCells(graph.getSelectionCells(), dx, dy);
+					graph.moveCells(graph.getMovableCells(graph.getSelectionCells()), dx, dy);
 				}
 
 				graph.scrollCellToVisible(cell);

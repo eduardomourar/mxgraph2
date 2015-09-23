@@ -128,25 +128,28 @@ Actions.prototype.init = function()
 	{
 		// Cancels interactive operations
 		graph.escape();
+		var cells = graph.getDeletableCells(graph.getSelectionCells());
 		
-		var cells = graph.getSelectionCells();
-		var parents = graph.model.getParents(cells);
-		graph.removeCells(cells, includeEdges);
-		
-		// Selects parents for easier editing of groups
-		if (parents != null)
+		if (cells != null && cells.length > 0)
 		{
-			var select = [];
+			var parents = graph.model.getParents(cells);
+			graph.removeCells(cells, includeEdges);
 			
-			for (var i = 0; i < parents.length; i++)
+			// Selects parents for easier editing of groups
+			if (parents != null)
 			{
-				if (graph.model.isVertex(parents[i]) || graph.model.isEdge(parents[i]))
+				var select = [];
+				
+				for (var i = 0; i < parents.length; i++)
 				{
-					select.push(parents[i]);
+					if (graph.model.isVertex(parents[i]) || graph.model.isEdge(parents[i]))
+					{
+						select.push(parents[i]);
+					}
 				}
+				
+				graph.setSelectionCells(select);
 			}
-			
-			graph.setSelectionCells(select);
 		}
 	};
 	
@@ -172,16 +175,21 @@ Actions.prototype.init = function()
 	this.addAction('selectNone', function() { graph.clearSelection(); }, null, null, 'Ctrl+Shift+A');
 	this.addAction('lockUnlock', function()
 	{
-		graph.getModel().beginUpdate();
-		try
+		if (!graph.isSelectionEmpty())
 		{
-			graph.toggleCellStyles(mxConstants.STYLE_RESIZABLE, 1);
-			graph.toggleCellStyles(mxConstants.STYLE_MOVABLE, 1);
-			graph.toggleCellStyles(mxConstants.STYLE_ROTATABLE, 1);
-		}
-		finally
-		{
-			graph.getModel().endUpdate();
+			graph.getModel().beginUpdate();
+			try
+			{
+				var defaultValue = graph.isCellMovable(graph.getSelectionCell()) ? 1 : 0;
+				graph.toggleCellStyles(mxConstants.STYLE_MOVABLE, defaultValue);
+				graph.toggleCellStyles(mxConstants.STYLE_RESIZABLE, defaultValue);
+				graph.toggleCellStyles(mxConstants.STYLE_ROTATABLE, defaultValue);
+				graph.toggleCellStyles(mxConstants.STYLE_DELETABLE, defaultValue);
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
 		}
 	}, null, null, 'Ctrl+L');
 
