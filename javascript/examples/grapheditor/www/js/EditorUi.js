@@ -365,9 +365,6 @@ EditorUi = function(editor, container)
 	var styles = ['rounded', 'shadow', 'glass', 'dashed', 'dashPattern'];
 	var connectStyles = ['shape', 'edgeStyle', 'curved', 'rounded', 'elbow'];
 	
-	// Sets the default edge style
-	var currentStyle = {};
-	
 	// Note: Everything that is not in styles is ignored (styles is augmented below)
 	this.setDefaultStyle = function(cell)
 	{
@@ -420,7 +417,7 @@ EditorUi = function(editor, container)
 			}
 			else
 			{
-				currentStyle = {}
+				graph.currentVertexStyle = {}
 			}
 
 			this.fireEvent(new mxEventObject('styleChanged', 'keys', keys, 'values', values, 'cells', [state.cell]));
@@ -430,7 +427,10 @@ EditorUi = function(editor, container)
 	this.clearDefaultStyle = function()
 	{
 		graph.currentEdgeStyle = graph.defaultEdgeStyle;
-		currentStyle = {};
+		graph.currentVertexStyle = {};
+		
+		// Updates UI
+		this.fireEvent(new mxEventObject('styleChanged', 'keys', [], 'values', [], 'cells', []));
 	};
 	
 	// Constructs the style for the initial edge type defined in the initial value for the currentEdgeStyle
@@ -533,7 +533,7 @@ EditorUi = function(editor, container)
 				// Applies the current style to the cell
 				var value = graph.convertValueToString(cell);
 				var edge = graph.getModel().isEdge(cell);
-				var current = (edge) ? graph.currentEdgeStyle : currentStyle;
+				var current = (edge) ? graph.currentEdgeStyle : graph.currentVertexStyle;
 				
 				for (var j = 0; j < appliedStyles.length; j++)
 				{
@@ -622,38 +622,66 @@ EditorUi = function(editor, container)
 			{
 				if (edge || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
 				{
-					graph.currentEdgeStyle[keys[i]] = values[i];
+					if (values[i] == null)
+					{
+						delete graph.currentEdgeStyle[keys[i]];
+					}
+					else
+					{
+						graph.currentEdgeStyle[keys[i]] = values[i];
+					}
 				}
 				// Uses style for vertex if defined in styles
 				else if (vertex && mxUtils.indexOf(styles, keys[i]) >= 0)
 				{
-					currentStyle[keys[i]] = values[i];
+					if (values[i] == null)
+					{
+						delete graph.currentVertexStyle[keys[i]];
+					}
+					else
+					{
+						graph.currentVertexStyle[keys[i]] = values[i];
+					}
 				}
 			}
 			else if (mxUtils.indexOf(styles, keys[i]) >= 0)
 			{
 				if (vertex || common)
 				{
-					currentStyle[keys[i]] = values[i];
+					if (values[i] == null)
+					{
+						delete graph.currentVertexStyle[keys[i]];
+					}
+					else
+					{
+						graph.currentVertexStyle[keys[i]] = values[i];
+					}
 				}
 				
 				if (edge || common || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
 				{
-					graph.currentEdgeStyle[keys[i]] = values[i];
+					if (values[i] == null)
+					{
+						delete graph.currentEdgeStyle[keys[i]];
+					}
+					else
+					{
+						graph.currentEdgeStyle[keys[i]] = values[i];
+					}
 				}
 			}
 		}
 		
 		if (this.toolbar != null)
 		{
-			this.toolbar.setFontName(currentStyle['fontFamily'] || Menus.prototype.defaultFont);
-			this.toolbar.setFontSize(currentStyle['fontSize'] || Menus.prototype.defaultFontSize);
+			this.toolbar.setFontName(graph.currentVertexStyle['fontFamily'] || Menus.prototype.defaultFont);
+			this.toolbar.setFontSize(graph.currentVertexStyle['fontSize'] || Menus.prototype.defaultFontSize);
 			
 			if (this.toolbar.edgeStyleMenu != null)
 			{
 				// Updates toolbar icon for edge style
 				var edgeStyleDiv = this.toolbar.edgeStyleMenu.getElementsByTagName('div')[0];
-				
+
 				if (graph.currentEdgeStyle['edgeStyle'] == 'orthogonalEdgeStyle' && graph.currentEdgeStyle['curved'] == '1')
 				{
 					edgeStyleDiv.className = 'geSprite geSprite-curved';
@@ -723,8 +751,8 @@ EditorUi = function(editor, container)
 	{
 		var update = mxUtils.bind(this, function()
 		{
-			var ff = currentStyle['fontFamily'] || 'Helvetica';
-			var fs = String(currentStyle['fontSize'] || '12');
+			var ff = graph.currentVertexStyle['fontFamily'] || 'Helvetica';
+			var fs = String(graph.currentVertexStyle['fontSize'] || '12');
 	    	var state = graph.getView().getState(graph.getSelectionCell());
 	    	
 	    	if (state != null)

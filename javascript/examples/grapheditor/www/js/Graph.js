@@ -925,6 +925,17 @@ Graph.prototype.isContainer = function(cell)
 };
 
 /**
+ * Adds a connectable style.
+ */
+Graph.prototype.isCellConnectable = function(cell)
+{
+	var state = this.view.getState(cell);
+	var style = (state != null) ? state.style : this.getCellStyle(cell);
+	
+	return mxGraph.prototype.isCellConnectable.apply(this, arguments) &&  style['connectable'] != '0';
+};
+
+/**
  * Function: selectAll
  * 
  * Selects all children of the given parent cell or the children of the
@@ -1812,15 +1823,20 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
-		 * Adapter function to redirect current edge style via graph for use in handlers.
+		 * Contains the default style for edges.
 		 */
 		Graph.prototype.defaultEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1'};
 		
 		/**
-		 * Adapter function to redirect current edge style via graph for use in handlers.
+		 * Contains the current style for edges.
 		 */
 		Graph.prototype.currentEdgeStyle = Graph.prototype.defaultEdgeStyle;
 		
+		/**
+		 * Contains the current style for vertices.
+		 */
+		Graph.prototype.currentVertexStyle = {};
+
 		/**
 		 * Returns the current edge style as a string.
 		 */
