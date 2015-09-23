@@ -710,8 +710,6 @@ mxOutline.prototype.mouseUp = function(sender, me)
 				// Applies the new zoom
 				var w = this.selectionBorder.bounds.width;
 				var scale = this.source.getView().scale;
-				console.log('scale2', Math.max(this.minScale, scale - (dx * scale) / w));
-				
 				this.source.zoomTo(Math.max(this.minScale, scale - (dx * scale) / w), false);
 			}
 
