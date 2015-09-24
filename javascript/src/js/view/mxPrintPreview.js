@@ -242,6 +242,13 @@ mxPrintPreview.prototype.printControls = false;
 mxPrintPreview.prototype.printBackgroundImage = false;
 
 /**
+ * Variable: backgroundColor
+ * 
+ * Holds the color value for the page background color. Default is #ffffff.
+ */
+mxPrintPreview.prototype.backgroundColor = '#ffffff';
+
+/**
  * Variable: borderColor
  * 
  * Holds the color value for the page border.
@@ -457,7 +464,7 @@ mxPrintPreview.prototype.open = function(css, targetWindow)
 				}
 			});
 			
-			function addPage(div, addBreak)
+			var addPage = mxUtils.bind(this, function(div, addBreak)
 			{
 				// Border of the DIV (aka page) inside the document
 				if (this.borderColor != null)
@@ -469,7 +476,7 @@ mxPrintPreview.prototype.open = function(css, targetWindow)
 				
 				// Needs to be assigned directly because IE doesn't support
 				// child selectors, eg. body > div { background: white; }
-				div.style.background = 'white';
+				div.style.background = this.backgroundColor;
 				
 				if (addBreak)
 				{
@@ -505,7 +512,7 @@ mxPrintPreview.prototype.open = function(css, targetWindow)
 					hr.className = 'mxPageBreak';
 					doc.body.appendChild(hr);
 				}
-			};
+			});
 			
 			var cov = this.getCoverPages(this.pageFormat.width, this.pageFormat.height);
 			
