@@ -932,7 +932,7 @@ Graph.prototype.isCellConnectable = function(cell)
 	var state = this.view.getState(cell);
 	var style = (state != null) ? state.style : this.getCellStyle(cell);
 	
-	return mxGraph.prototype.isCellConnectable.apply(this, arguments) &&  style['connectable'] != '0';
+	return (style['connectable'] != null) ? style['connectable']  != '0' : mxGraph.prototype.isCellConnectable.apply(this, arguments);
 };
 
 /**
