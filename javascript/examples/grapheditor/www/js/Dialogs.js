@@ -876,6 +876,15 @@ PrintDialog.createPrintPreview = function(graph, scale, pf, border, x0, y0, auto
 	preview.printBackgroundImage = true;
 	preview.autoOrigin = autoOrigin;
 	
+	var bg = graph.background;
+	
+	if (bg == null || bg == mxConstants.NONE)
+	{
+		bg = '#ffffff';
+	}
+	
+	preview.backgroundColor = bg;
+	
 	return preview;
 };
 
