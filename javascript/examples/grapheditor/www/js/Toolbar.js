@@ -76,7 +76,7 @@ Toolbar.prototype.init = function()
 	elts[1].setAttribute('title', mxResources.get('zoomOut') + ' (' + this.editorUi.actions.get('zoomOut').shortcut + ')');
 
 	// Updates the label if the scale changes
-	this.editorUi.editor.graph.view.addListener(mxEvent.EVENT_SCALE, mxUtils.bind(this, function()
+	var updateZoom = mxUtils.bind(this, function()
 	{
 		viewMenu.innerHTML = Math.round(this.editorUi.editor.graph.view.scale * 100) + '%' +
 			this.dropdownImageHtml;
@@ -86,7 +86,10 @@ Toolbar.prototype.init = function()
 			viewMenu.getElementsByTagName('img')[0].style.right = '1px';
 			viewMenu.getElementsByTagName('img')[0].style.top = '5px';
 		}
-	}));
+	});
+	
+	this.editorUi.editor.graph.view.addListener(mxEvent.EVENT_SCALE, updateZoom);
+	this.editorUi.editor.addListener('resetGraphView', updateZoom);
 
 	var elts = this.addItems(['-', 'undo', 'redo', '-', 'delete', '-', 'toFront', 'toBack', '-', 'fillColor', 'strokeColor', 'shadow', '-']);
 	elts[1].setAttribute('title', mxResources.get('undo') + ' (' + this.editorUi.actions.get('undo').shortcut + ')');
