@@ -4068,6 +4068,46 @@ mxGraph.prototype.updateGroupBounds = function(cells, border, moveGroup, topBord
 };
 
 /**
+ * Function: getBoundingBox
+ * 
+ * Returns the bounding box for the given array of <mxCells>. The bounding box for
+ * each cell and its descendants is computed using <mxGraphView.getBoundingBox>.
+ *
+ * Parameters:
+ *
+ * cells - Array of <mxCells> whose bounding box should be returned.
+ */
+mxGraph.prototype.getBoundingBox = function(cells)
+{
+	var result = null;
+	
+	if (cells != null && cells.length > 0)
+	{
+		for (var i = 0; i < cells.length; i++)
+		{
+			if (this.model.isVertex(cells[i]) || this.model.isEdge(cells[i]))
+			{
+				var bbox = this.view.getBoundingBox(this.view.getState(cells[i]), true);
+			
+				if (bbox != null)
+				{
+					if (result == null)
+					{
+						result = mxRectangle.fromRectangle(bbox);
+					}
+					else
+					{
+						result.add(bbox);
+					}
+				}
+			}
+		}
+	}
+	
+	return result;
+};
+
+/**
  * Group: Cell cloning, insertion and removal
  */
 

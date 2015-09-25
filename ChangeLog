@@ -1,4 +1,4 @@
-- Adds mxPrintPreview.backgroundColor [JavaScript]
+- Adds mxGraph.getBoundingBox, mxPrintPreview.backgroundColor [JavaScript]
 - Adds targetWindow argument in mxPrintPreview.open [JavaScript]
 - Fixes consumed mouse event in mxDragSource.mouseDown [JavaScript]
 - Fixes mxEvent.isLeft/Middle/RightMouseButton, adds buttons property [JavaScript]

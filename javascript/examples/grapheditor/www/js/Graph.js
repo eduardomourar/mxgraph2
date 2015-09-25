@@ -2658,7 +2658,7 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			var imgExport = new mxImageExport();
 			var bounds = (nocrop) ? this.view.getBackgroundPageBounds() : (ignoreSelection) ?
-					this.getGraphBounds() : this.view.getBounds(this.getSelectionCells());
+					this.getGraphBounds() : this.getBoundingBox(this.getSelectionCells());
 			var vs = this.view.scale;
 		
 			// Prepares SVG document that holds the output
