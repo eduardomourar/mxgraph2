@@ -350,10 +350,20 @@ Editor.prototype.setGraphXml = function(node)
 /**
  * Returns the XML node that represents the current diagram.
  */
-Editor.prototype.getGraphXml = function()
+Editor.prototype.getGraphXml = function(ignoreSelection)
 {
-	var enc = new mxCodec(mxUtils.createXmlDocument());
-	var node = enc.encode(this.graph.getModel());
+	ignoreSelection = (ignoreSelection != null) ? ignoreSelection : true;
+	var node = null;
+	
+	if (ignoreSelection)
+	{
+		var enc = new mxCodec(mxUtils.createXmlDocument());
+		node = enc.encode(this.graph.getModel());
+	}
+	else
+	{
+		node = this.graph.encodeCells(this.graph.getSelectionCells());
+	}
 
 	if (this.graph.view.translate.x != 0 || this.graph.view.translate.y != 0)
 	{

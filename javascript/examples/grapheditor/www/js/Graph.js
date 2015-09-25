@@ -2648,6 +2648,46 @@ if (typeof mxVertexHandler != 'undefined')
 		 * @param {number} dx X-coordinate of the translation.
 		 * @param {number} dy Y-coordinate of the translation.
 		 */
+		Graph.prototype.encodeCells = function(cells)
+		{
+			var clones = this.cloneCells(cells);
+			
+			// Checks for orphaned relative children and makes absolute
+			for (var i = 0; i < clones.length; i++)
+			{
+				var state = this.view.getState(cells[i]);
+				
+				if (state != null)
+				{
+					var geo = this.getCellGeometry(clones[i]);
+					
+					if (geo != null && geo.relative)
+					{
+						geo.relative = false;
+						geo.x = state.x / state.view.scale - state.view.translate.x;
+						geo.y = state.y / state.view.scale - state.view.translate.y;
+					}
+				}
+			}
+			
+			var codec = new mxCodec();
+			var model = new mxGraphModel();
+			var parent = model.getChildAt(model.getRoot(), 0);
+			
+			for (var i = 0; i < cells.length; i++)
+			{
+				model.add(parent, clones[i]);
+			}
+
+			return codec.encode(model);
+		};
+		
+		/**
+		 * Translates this point by the given vector.
+		 * 
+		 * @param {number} dx X-coordinate of the translation.
+		 * @param {number} dy Y-coordinate of the translation.
+		 */
 		Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp, ignoreSelection, showText)
 		{
 			scale = (scale != null) ? scale : 1;
@@ -2737,7 +2777,13 @@ if (typeof mxVertexHandler != 'undefined')
 			if (bgImg != null)
 			{
 				var tr = this.view.translate;
-				svgCanvas.image(tr.x, tr.y, bgImg.width * vs / scale, bgImg.height * vs / scale, bgImg.src, true);
+				var tmp = new mxRectangle(tr.x, tr.y, bgImg.width * vs / scale, bgImg.height * vs / scale);
+				
+				// Checks if visible
+				if (mxUtils.intersects(bounds, tmp))
+				{
+					svgCanvas.image(tmp.x, tmp.y, tmp.width, tmp.height, bgImg.src, true);
+				}
 			}
 			
 			imgExport.drawState(this.getView().getState(this.model.root), svgCanvas);
