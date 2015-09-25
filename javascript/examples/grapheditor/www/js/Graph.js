@@ -2729,8 +2729,9 @@ if (typeof mxVertexHandler != 'undefined')
 				root.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', mxConstants.NS_XLINK);
 			}
 			
-			root.setAttribute('width', (Math.ceil(bounds.width * scale / vs) + 2 * border) + 'px');
-			root.setAttribute('height', (Math.ceil(bounds.height * scale / vs) + 2 * border) + 'px');
+			var s = scale / vs;
+			root.setAttribute('width', (Math.ceil(bounds.width * s) + 2 * border) + 'px');
+			root.setAttribute('height', (Math.ceil(bounds.height * s) + 2 * border) + 'px');
 			root.setAttribute('version', '1.1');
 			
 		    // Adds group for anti-aliasing via transform
@@ -2753,7 +2754,24 @@ if (typeof mxVertexHandler != 'undefined')
 		    // Renders graph. Offset will be multiplied with state's scale when painting state.
 			var svgCanvas = new mxSvgCanvas2D(node);
 			svgCanvas.translate(Math.floor((border / scale - bounds.x) / vs), Math.floor((border / scale - bounds.y) / vs));
-			svgCanvas.scale(scale / vs);
+			
+			// Paints background image
+			var bgImg = this.backgroundImage;
+			
+			if (bgImg != null)
+			{
+				var s2 = vs / scale;
+				var tr = this.view.translate;
+				var tmp = new mxRectangle(tr.x * s2, tr.y * s2, bgImg.width * s2, bgImg.height * s2);
+				
+				// Checks if visible
+				if (mxUtils.intersects(bounds, tmp))
+				{
+					svgCanvas.image(tr.x, tr.y, bgImg.width, bgImg.height, bgImg.src, true);
+				}
+			}
+			
+			svgCanvas.scale(s);
 			svgCanvas.textEnabled = showText;
 			
 			// Adds hyperlinks (experimental)
@@ -2770,22 +2788,7 @@ if (typeof mxVertexHandler != 'undefined')
 					mxImageExport.prototype.drawCellState.apply(this, arguments);
 				}
 			};
-			
-			// Paints background image
-			var bgImg = this.backgroundImage;
-			
-			if (bgImg != null)
-			{
-				var tr = this.view.translate;
-				var tmp = new mxRectangle(tr.x, tr.y, bgImg.width * vs / scale, bgImg.height * vs / scale);
-				
-				// Checks if visible
-				if (mxUtils.intersects(bounds, tmp))
-				{
-					svgCanvas.image(tmp.x, tmp.y, tmp.width, tmp.height, bgImg.src, true);
-				}
-			}
-			
+
 			imgExport.drawState(this.getView().getState(this.model.root), svgCanvas);
 		
 			return root;
