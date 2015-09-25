@@ -219,7 +219,7 @@ Graph = function(container, model, renderHint, stylesheet)
 		var click = this.click;
 		this.click = function(me)
 		{
-			if (!this.isEnabled())
+			if (!this.isEnabled() && !me.isConsumed())
 			{
 				var cell = me.getCell();
 				
