@@ -878,7 +878,7 @@ PrintDialog.createPrintPreview = function(graph, scale, pf, border, x0, y0, auto
 	
 	var bg = graph.background;
 	
-	if (bg == null || bg == mxConstants.NONE)
+	if (bg == null || bg == '' || bg == mxConstants.NONE)
 	{
 		bg = '#ffffff';
 	}
