@@ -1,3 +1,4 @@
+- Adds stroke width for native bbox in mxShape.updateBoundingBox [JavaScript]
 - Adds mxGraph.getBoundingBox, mxPrintPreview.backgroundColor [JavaScript]
 - Adds targetWindow argument in mxPrintPreview.open [JavaScript]
 - Fixes consumed mouse event in mxDragSource.mouseDown [JavaScript]

@@ -1273,6 +1273,9 @@ mxShape.prototype.updateBoundingBox = function()
 			{
 				this.boundingBox = new mxRectangle(b.x, b.y, b.width, b.height);
 				
+				// Adds strokeWidth
+				this.boundingBox.grow(this.strokewidth * this.scale / 2);
+				
 				return;
 			}
 		}
