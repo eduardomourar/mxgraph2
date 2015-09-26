@@ -26,6 +26,87 @@ Graph = function(container, model, renderHint, stylesheet)
 		return style['html'] == '1' || style[mxConstants.STYLE_WHITE_SPACE] == 'wrap';
 	};
 	
+
+	// Implements a listener for hover and click handling
+	// EXPERIMENTAL CODE FOR ADDING EDGE POINTS ON CLICK
+	if (urlParams['edge'] == 'add')
+	{
+		this.addMouseListener(
+		{
+			startPoint: null,
+			triggerEvent: null,
+			currentState: null,
+			
+			// FIXME: Single click on edge should not create point
+		    mouseDown: mxUtils.bind(this, function(sender, me)
+		    {
+		    	var state = me.getState();
+	
+		    	if (state != null)
+		    	{
+		    		// Checks if state was removed in call to stopEditing above
+		    		if (this.model.isEdge(state.cell) && (state.visibleSourceState != null || state.visibleTargetState != null))
+		    		{
+		    			this.startPoint = new mxPoint(me.getGraphX(), me.getGraphY());
+		    			this.triggerEvent = me;
+			    		this.currentState = state;
+		    		}
+		    	}
+		    	
+		    }),
+		    mouseMove: mxUtils.bind(this, function(sender, me)
+		    {
+		    	if (this.startPoint != null && this.currentState != null && this.triggerEvent != null)
+		    	{
+		    		var tol = this.tolerance;
+		    		
+		    		// TODO: Set cursor
+		    		this.currentState.setCursor('cross');
+		    		
+		    		if (Math.abs(this.startPoint.x - me.getGraphX()) > tol ||
+		    			Math.abs(this.startPoint.y - me.getGraphY()) > tol)
+		    		{
+		    			var handler = this.selectionCellsHandler.getHandler(this.currentState.cell);
+		    			
+		    			if (handler != null)
+		    			{
+		    				var handle = handler.getHandleForEvent(this.triggerEvent);
+		    				
+		    				// Moves existing orthogonal segment
+		    				// FIXME Hover no longer needed, handles no longer needed when connected, ignore special handles
+		    				if (handle == null && handler.constructor == mxEdgeSegmentHandler)
+		    				{
+		    					handle = mxUtils.findNearestSegment(this.currentState, this.startPoint.x, this.startPoint.y) + 1;
+		    				}
+		    				
+		    				if (handle == null)
+		    				{
+		    					handler.addPoint(handler.state, this.triggerEvent.getEvent());
+		    					handle = handler.getHandleForEvent(this.triggerEvent);
+		    				}
+		    				
+		    				if (handle != null)
+		    				{
+		    					this.graphHandler.reset();
+		    					handler.start(me.getGraphX(), me.getGraphX(), handle);
+		    					this.startPoint = null;
+		    					this.triggerEvent = null;
+		    					this.currentState = null;
+		    					me.consume();
+		    				}
+		    			}
+		    		}
+		    	}
+		    }),
+		    mouseUp: mxUtils.bind(this, function(sender, me)
+		    {
+				this.startPoint = null;
+				this.triggerEvent = null;
+				this.currentState = null;
+		    })
+		});
+	}
+	
 	// HTML entities are displayed as plain text in wrapped plain text labels
 	this.cellRenderer.getLabelValue = function(state)
 	{
