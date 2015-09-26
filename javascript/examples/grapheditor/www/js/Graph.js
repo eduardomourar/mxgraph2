@@ -29,7 +29,7 @@ Graph = function(container, model, renderHint, stylesheet)
 
 	// Implements a listener for hover and click handling
 	// EXPERIMENTAL CODE FOR ADDING EDGE POINTS ON CLICK
-	if (urlParams['edge'] == 'add')
+	if (this.edgeMode)
 	{
 		this.addMouseListener(
 		{
@@ -536,6 +536,11 @@ Graph.prototype.linkTarget = '_blank';
  * Sets the default target for all links in cells.
  */
 Graph.prototype.defaultEdgeLength = 100;
+
+/**
+ * Allows all values in fit.
+ */
+Graph.prototype.edgeMode = false;
 
 /**
  * Installs child layout styles.
