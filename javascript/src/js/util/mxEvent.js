@@ -482,7 +482,13 @@ var mxEvent =
 	 */
 	isLeftMouseButton: function(evt)
 	{
-		if ('which' in evt)
+		// Special case for mousemove and mousedown we check the buttons
+		// if it exists because which is 0 even if no button is pressed
+		if ('buttons' in evt && (evt.type == 'mousedown' || evt.type == 'mousemove'))
+		{
+			return evt.buttons == 1;
+		}
+		else if ('which' in evt)
 		{
 	        return evt.which === 1;
 	    }
