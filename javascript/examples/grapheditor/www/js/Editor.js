@@ -187,6 +187,11 @@ Editor.prototype.autosave = true;
 Editor.prototype.initialTopSpacing = 0;
 
 /**
+ * 
+ */
+Editor.prototype.defaultGraphBackground = '#ffffff';
+
+/**
  * Specifies the app name. Default is document.title.
  */
 Editor.prototype.appName = document.title;
@@ -227,7 +232,7 @@ Editor.prototype.resetGraph = function()
 	this.graph.pageVisible = this.defaultPageVisible;
 	this.graph.pageBreaksVisible = this.graph.pageVisible; 
 	this.graph.preferPageSize = this.graph.pageBreaksVisible;
-	this.graph.background = null;
+	this.graph.background = this.defaultGraphBackground;
 	this.graph.pageScale = mxGraph.prototype.pageScale;
 	this.graph.pageFormat = mxGraph.prototype.pageFormat;
 	this.updateGraphComponents();
@@ -305,7 +310,7 @@ Editor.prototype.setGraphXml = function(node)
 				}
 				else
 				{
-					this.graph.background = null;
+					this.graph.background = this.defaultGraphBackground;
 				}
 		
 				this.updateGraphComponents();
