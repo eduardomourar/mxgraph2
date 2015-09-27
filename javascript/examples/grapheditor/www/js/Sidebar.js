@@ -2247,7 +2247,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			dropHandler.apply(this, arguments);
 		}
 		
-		if (this.editorUi.hoverIcons != null)
+		if (this.editorUi.hoverIcons != null && mxEvent.isTouchEvent(evt))
 		{
 			this.editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
 		}
@@ -2889,7 +2889,7 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 		var pt = graph.getInsertPoint();
 		ds.drop(graph, evt, null, pt.x, pt.y);
 		
-		if (this.editorUi.hoverIcons != null)
+		if (this.editorUi.hoverIcons != null && mxEvent.isTouchEvent(evt))
 		{
 			this.editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
 		}

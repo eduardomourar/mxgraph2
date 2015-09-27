@@ -37,7 +37,6 @@ Graph = function(container, model, renderHint, stylesheet)
 			triggerEvent: null,
 			currentState: null,
 			
-			// FIXME: Single click on edge should not create point
 		    mouseDown: mxUtils.bind(this, function(sender, me)
 		    {
 		    	var state = me.getState();
@@ -1223,7 +1222,8 @@ HoverIcons.prototype.init = function()
 	{
 		this.repaint();
 	});
-	
+
+	this.graph.selectionModel.addListener(mxEvent.CHANGE, this.repaintHandler);
 	this.graph.model.addListener(mxEvent.CHANGE, this.repaintHandler);
 	this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.repaintHandler);
 	this.graph.view.addListener(mxEvent.TRANSLATE, this.repaintHandler);
@@ -1259,7 +1259,7 @@ HoverIcons.prototype.init = function()
 			this.reset();
 		}
 	});
-
+	
 	// Implements a listener for hover and click handling
 	this.graph.addMouseListener(
 	{
@@ -1267,80 +1267,78 @@ HoverIcons.prototype.init = function()
 	    {
 	    	var evt = me.getEvent();
 	    	
-	    	if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
-	 	    	!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
+	    	if (this.isResetEvent(evt))
+	    	{
+	    		this.reset();
+	    	}
+	    	else if (!this.isActive())
 	    	{
 	    		var state = this.getState(me.getState());
 	    		
-	    		if (state != null)
+	    		if (state != null || !mxEvent.isTouchEvent(evt))
 	    		{
 	    			this.update(state);
 	    		}
 	    	}
-
+	    	
 	    	this.setDisplay('none');
 	    }),
 	    mouseMove: mxUtils.bind(this, function(sender, me)
 	    {
 	    	var evt = me.getEvent();
 	    	
-	    	if (mxEvent.isAltDown(evt) || (!mxEvent.isControlDown(evt) &&
-	    		(mxEvent.isShiftDown(evt) || mxEvent.isMetaDown(evt))))
+	    	if (this.isResetEvent(evt))
 	    	{
 	    		this.reset();
 	    	}
-	    	// Workaround for isMouseDown not being updated for first
-	    	// mousemove on container during drag and drop from sidebar 
-	    	else if (mxEvent.isLeftMouseButton(evt) || mxEvent.isTouchEvent(evt))
-	    	{
-	    		this.setDisplay('none');
-	    	}
-	    	else if (!mxEvent.isControlDown(evt) || mxEvent.isShiftDown(evt) || mxEvent.isMetaDown(evt))
+	    	else if (!this.graph.isMouseDown && !mxEvent.isTouchEvent(evt))
 	    	{
 	    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
 	    	}
 	    }),
 	    mouseUp: mxUtils.bind(this, function(sender, me)
 	    {
-	    	var active = this.isActive();
-	    	var state = this.currentState;
-	    	var dir = this.getDirection();
-	    	var mp = this.mouseDownPoint;
 	    	var evt = me.getEvent();
 	    	
-	    	if (this.activeArrow != null)
+	    	if (this.isResetEvent(evt))
 	    	{
-	    		mxUtils.setOpacity(this.activeArrow, 20);
-	    		this.activeArrow = null;
+	    		this.reset();
+	    	}
+	    	else if (this.isActive() && this.mouseDownPoint != null &&
+	    		Math.abs(me.getGraphX() - this.mouseDownPoint.x) < this.graph.tolerance &&
+		    	Math.abs(me.getGraphY() - this.mouseDownPoint.y) < this.graph.tolerance)
+	    	{
+	    		// Executes click event on highlighted arrow
+    			this.click(this.currentState, this.getDirection(), me);
+	    	}
+	    	else if (this.isActive())
+	    	{
+	    		// Selects target vertex after drag and clone
+    			this.update(this.getState(this.graph.view.getState(this.graph.getCellAt(me.getGraphX(), me.getGraphY()))));
+	    	}
+	    	else if (mxEvent.isTouchEvent(evt) || (this.bbox != null && mxUtils.contains(this.bbox, me.getGraphX(), me.getGraphY())))
+	    	{
+	    		// Shows existing hover icons if inside bounding box
+	    		this.setDisplay('');
+	    		this.repaint();
+	    	}
+	    	else if (!mxEvent.isTouchEvent(evt))
+	    	{
+	    		this.reset();
 	    	}
 	    	
-	    	// Keeps current state focused after move
-	    	var nextState = (this.currentState != null &&
-	    		mxUtils.contains(this.currentState, me.getGraphX(), me.getGraphY())) ?
-	    		this.currentState : this.getState(me.getState());
-	    	
-	    	if (!mxEvent.isAltDown(evt) && !mxEvent.isShiftDown(evt) &&
-	 	    	!mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
-	    	{
-	    		if (!active && nextState != this.currentState && (nextState != null || !mxEvent.isTouchEvent(evt)))
-	    		{
-	    			this.update(nextState);
-	    		}
-	    		else
-	    		{
-	    			this.setDisplay('');
-		    		this.repaint();
-		    	}
-	    	}
-	    	
-	    	if (active && mp != null && Math.abs(me.getGraphX() - mp.x) < this.graph.tolerance &&
-	    		Math.abs(me.getGraphY() - mp.y) < this.graph.tolerance)
-			{
-	    		this.click(state, dir, me.getEvent(), me.getGraphX(), me.getGraphY());
-	    		me.consume();
-			}
+	    	this.resetActiveArrow();
 	    })
 	});
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.isResetEvent = function(evt, allowShift)
+{
+	return mxEvent.isAltDown(evt) || (this.activeArrow == null && mxEvent.isShiftDown(evt)) ||
+		mxEvent.isMetaDown(evt) || (mxEvent.isPopupTrigger(evt) && !mxEvent.isControlDown(evt));
 };
 
 /**
@@ -1385,25 +1383,16 @@ HoverIcons.prototype.createArrow = function(img, tooltip)
 	
 	arrow.style.position = 'absolute';
 	arrow.style.cursor = 'crosshair';
-	mxUtils.setOpacity(arrow, 20);
 
 	mxEvent.addGestureListeners(arrow, mxUtils.bind(this, function(evt)
 	{
-		if (this.currentState != null && !mxEvent.isAltDown(evt) && (!mxEvent.isPopupTrigger(evt) || mxEvent.isControlDown(evt)))
+		if (this.currentState != null && !this.isResetEvent(evt))
 		{
-	    	if (this.activeArrow != null && this.activeArrow != arrow)
-	    	{
-	    		mxUtils.setOpacity(this.activeArrow, 20);
-	    	}
-	    	else
-	    	{
-	    		mxUtils.setOpacity(arrow, 100);	
-	    	}
-	    	
 			this.mouseDownPoint = mxUtils.convertPoint(this.graph.container,
-				mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+					mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 			this.drag(evt, this.mouseDownPoint.x, this.mouseDownPoint.y);
 			this.activeArrow = arrow;
+			this.setDisplay('none');
 			mxEvent.consume(evt);
 		}
 	}));
@@ -1414,8 +1403,13 @@ HoverIcons.prototype.createArrow = function(img, tooltip)
 	mxEvent.addListener(arrow, 'mouseenter', mxUtils.bind(this, function(evt)
 	{
 		// Workaround for Firefox firing mouseenter on touchend
-		if (mxEvent.isMouseEvent(evt) && !mxEvent.isAltDown(evt))
+		if (mxEvent.isMouseEvent(evt))
 		{
+	    	if (this.activeArrow != null && this.activeArrow != arrow)
+	    	{
+	    		mxUtils.setOpacity(this.activeArrow, 20);
+	    	}
+
 			this.graph.connectionHandler.constraintHandler.reset();
 			mxUtils.setOpacity(arrow, 100);
 			this.activeArrow = arrow;
@@ -1425,14 +1419,25 @@ HoverIcons.prototype.createArrow = function(img, tooltip)
 	mxEvent.addListener(arrow, 'mouseleave', mxUtils.bind(this, function(evt)
 	{
 		// Workaround for IE11 firing this event on touch
-		if (!this.graph.isMouseDown && this.activeArrow != null)
+		if (!this.graph.isMouseDown)
 		{
-			mxUtils.setOpacity(this.activeArrow, 20);
-			this.activeArrow = null;
+			this.resetActiveArrow();
 		}
 	}));
 	
 	return arrow;
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.resetActiveArrow = function()
+{
+	if (this.activeArrow != null)
+	{
+		mxUtils.setOpacity(this.activeArrow, 20);
+		this.activeArrow = null;
+	}
 };
 
 /**
@@ -1550,8 +1555,12 @@ HoverIcons.prototype.drag = function(evt, x, y)
 /**
  *
  */
-HoverIcons.prototype.click = function(state, dir, evt, x, y)
+HoverIcons.prototype.click = function(state, dir, me)
 {
+	var evt = me.getEvent();
+	var x = me.getGraphX();
+	var y = me.getGraphY();
+	
 	var tmp = this.graph.view.getState(this.graph.getCellAt(x, y));
 	
 	if (tmp != null && this.graph.model.isEdge(tmp.cell) && !mxEvent.isControlDown(evt) &&
@@ -1582,6 +1591,8 @@ HoverIcons.prototype.click = function(state, dir, evt, x, y)
 			this.graph.setSelectionCells(cells);
 		}
 	}
+	
+	me.consume();
 };
 
 /**
@@ -1593,9 +1604,10 @@ HoverIcons.prototype.reset = function()
 	{
 		window.clearTimeout(this.updateThread);
 	}
-	
+
 	this.mouseDownPoint = null;
 	this.currentState = null;
+	this.activeArrow = null;
 	this.removeNodes();
 	this.bbox = null;
 };
@@ -1629,9 +1641,11 @@ HoverIcons.prototype.repaint = function()
 					
 					this.roundSource.style.left = Math.round(p0.x - this.roundDrop.width / 2) + 'px';
 					this.roundSource.style.top = Math.round(p0.y - this.roundDrop.height / 2) + 'px';
+					mxUtils.setOpacity(this.roundSource, 20);
 					
 					this.roundTarget.style.left = Math.round(pe.x - this.roundDrop.width / 2) + 'px';
 					this.roundTarget.style.top = Math.round(pe.y - this.roundDrop.height / 2) + 'px';
+					mxUtils.setOpacity(this.roundTarget, 20);
 				}
 			}
 			else if (this.graph.model.isVertex(this.currentState.cell) &&
@@ -1669,15 +1683,19 @@ HoverIcons.prototype.repaint = function()
 				
 				this.arrowUp.style.left = Math.round(this.currentState.getCenterX() - this.triangleUp.width / 2) + 'px';
 				this.arrowUp.style.top = Math.round(bds.y - this.triangleUp.height) + 'px';
+				mxUtils.setOpacity(this.arrowUp, 20);
 				
 				this.arrowRight.style.left = Math.round(bds.x + bds.width) + 'px';
 				this.arrowRight.style.top = Math.round(this.currentState.getCenterY() - this.triangleRight.height / 2) + 'px';
+				mxUtils.setOpacity(this.arrowRight, 20);
 				
 				this.arrowDown.style.left = this.arrowUp.style.left
 				this.arrowDown.style.top = Math.round(bds.y + bds.height) + 'px';
+				mxUtils.setOpacity(this.arrowDown, 20);
 				
 				this.arrowLeft.style.left = Math.round(bds.x - this.triangleLeft.width) + 'px';
 				this.arrowLeft.style.top = this.arrowRight.style.top;
+				mxUtils.setOpacity(this.arrowLeft, 20);
 			}
 			else
 			{
@@ -1787,6 +1805,7 @@ HoverIcons.prototype.update = function(state, x, y)
 			
 			if (state != null)
 			{
+				// Starts timer to update current state with no mouse events
 				this.updateThread = window.setTimeout(mxUtils.bind(this, function()
 				{
 					if (!this.isActive() && !this.graph.isMouseDown)
@@ -1804,11 +1823,8 @@ HoverIcons.prototype.update = function(state, x, y)
 		
 		this.setDisplay('');
 		
-		if (this.currentState != state && (timeOnTarget > this.updateDelay || this.bbox == null ||
-			x == null || y == null || !mxUtils.contains(this.bbox, x, y) || (state != null &&
-			this.currentState != null && mxUtils.contains(this.currentState, state.x, state.y) &&
-			mxUtils.contains(this.currentState, state.x + state.width, state.y + state.height) &&
-			timeOnTarget > this.updateDelay)))
+		if (this.currentState != state && ((timeOnTarget > this.updateDelay && state != null) ||
+			this.bbox == null || x == null || y == null || !mxUtils.contains(this.bbox, x, y)))
 		{
 			if (state != null && this.graph.isEnabled())
 			{
