@@ -974,7 +974,7 @@ OpenFile.prototype.cancel = function(cancel)
 			
 			while (parent != null)
 			{
-				if (this.graph.isCellSelected(parent))
+				if (this.graph.isCellSelected(parent) && model.isVertex(parent))
 				{
 					result = true;
 					break;
