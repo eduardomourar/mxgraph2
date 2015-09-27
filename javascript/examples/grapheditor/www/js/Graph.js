@@ -27,8 +27,7 @@ Graph = function(container, model, renderHint, stylesheet)
 	};
 	
 
-	// Implements a listener for hover and click handling
-	// EXPERIMENTAL CODE FOR ADDING EDGE POINTS ON CLICK
+	// Implements a listener for hover and click handling on edges
 	if (this.edgeMode)
 	{
 		this.addMouseListener(
@@ -39,62 +38,122 @@ Graph = function(container, model, renderHint, stylesheet)
 			
 		    mouseDown: mxUtils.bind(this, function(sender, me)
 		    {
-		    	var state = me.getState();
-	
-		    	if (state != null)
+		    	if (!mxEvent.isShiftDown(me.getEvent()))
 		    	{
-		    		// Checks if state was removed in call to stopEditing above
-		    		if (this.model.isEdge(state.cell) && (state.visibleSourceState != null || state.visibleTargetState != null))
-		    		{
-		    			this.startPoint = new mxPoint(me.getGraphX(), me.getGraphY());
-		    			this.triggerEvent = me;
-			    		this.currentState = state;
-		    		}
+			    	var state = me.getState();
+		
+			    	if (state != null)
+			    	{
+			    		// Checks if state was removed in call to stopEditing above
+			    		if (this.model.isEdge(state.cell))
+			    		{
+			    			this.startPoint = new mxPoint(me.getGraphX(), me.getGraphY());
+			    			this.triggerEvent = me;
+				    		this.currentState = state;
+			    		}
+			    	}
 		    	}
-		    	
 		    }),
 		    mouseMove: mxUtils.bind(this, function(sender, me)
 		    {
-		    	if (this.startPoint != null && this.currentState != null && this.triggerEvent != null)
+		    	if (!mxEvent.isShiftDown(me.getEvent()))
 		    	{
 		    		var tol = this.tolerance;
-		    		
-		    		// TODO: Set cursor
-		    		this.currentState.setCursor('cross');
-		    		
-		    		if (Math.abs(this.startPoint.x - me.getGraphX()) > tol ||
-		    			Math.abs(this.startPoint.y - me.getGraphY()) > tol)
-		    		{
-		    			var handler = this.selectionCellsHandler.getHandler(this.currentState.cell);
-		    			
-		    			if (handler != null)
-		    			{
-		    				var handle = handler.getHandleForEvent(this.triggerEvent);
-		    				
-		    				// Moves existing orthogonal segment
-		    				// FIXME Hover no longer needed, handles no longer needed when connected, ignore special handles
-		    				if (handle == null && handler.constructor == mxEdgeSegmentHandler)
-		    				{
-		    					handle = mxUtils.findNearestSegment(this.currentState, this.startPoint.x, this.startPoint.y) + 1;
-		    				}
-		    				
-		    				if (handle == null)
-		    				{
-		    					handler.addPoint(handler.state, this.triggerEvent.getEvent());
-		    					handle = handler.getHandleForEvent(this.triggerEvent);
-		    				}
-		    				
-		    				if (handle != null)
-		    				{
-		    					this.graphHandler.reset();
-		    					handler.start(me.getGraphX(), me.getGraphX(), handle);
-		    					this.startPoint = null;
-		    					this.triggerEvent = null;
-		    					this.currentState = null;
-		    					me.consume();
-		    				}
-		    			}
-		    		}
+	
+			    	if (this.startPoint != null && this.currentState != null && this.triggerEvent != null)
+			    	{
+			    		if (Math.abs(this.startPoint.x - me.getGraphX()) > tol ||
+			    			Math.abs(this.startPoint.y - me.getGraphY()) > tol)
+			    		{
+			    			var handler = this.selectionCellsHandler.getHandler(this.currentState.cell);
+			    			
+			    			if (handler != null && handler.bends != null && handler.bends.length > 0)
+			    			{
+			    				var handle = handler.getHandleForEvent(this.triggerEvent);
+			    				
+			    				// Sourceor or target handle or connected for direct handle access
+			    				if (handle == 0 || this.currentState.visibleSourceState != null ||
+			    					handle == handler.bends.length - 1 || this.currentState.visibleTargetState != null)
+			    				{
+				    				// Moves existing orthogonal segment
+				    				if (handle == null && this.isOrthogonal(this.currentState))
+				    				{
+				    					handle = mxUtils.findNearestSegment(this.currentState, this.startPoint.x, this.startPoint.y) + 1;
+				    				}
+				    				
+				    				if (handle == null)
+				    				{
+				    					// LATER: Fix two undo steps for direct add and move point on edge
+				    					handler.addPoint(handler.state, this.triggerEvent.getEvent());
+				    					handle = handler.getHandleForEvent(this.triggerEvent);
+				    				}
+				    				
+				    				if (handle != null)
+				    				{
+				    					handler.start(me.getGraphX(), me.getGraphX(), handle);
+				    					this.startPoint = null;
+				    					this.triggerEvent = null;
+				    					this.currentState = null;
+				    					me.consume();
+	
+				    					// Removes preview rectangle in graph handler
+				    					this.graphHandler.reset();
+				    				}
+			    				}
+			    			}
+			    		}
+			    	}
+			    	else
+			    	{
+			    		// Updates cursor for unselected edges under the mouse
+				    	var state = me.getState();
+				    	
+				    	if (state != null)
+				    	{
+				    		// Checks if state was removed in call to stopEditing above
+				    		if (this.model.isEdge(state.cell))
+				    		{
+				    			var cursor = null;
+			    				var pts = state.absolutePoints;
+			    				
+			    				if (pts != null)
+			    				{
+			    					var box = new mxRectangle(me.getGraphX(), me.getGraphY());
+			    					box.grow(mxEdgeHandler.prototype.handleImage.width / 2);
+			    					
+			    					if (mxUtils.contains(box, pts[0].x, pts[0].y) || mxUtils.contains(box, pts[pts.length - 1].x, pts[pts.length - 1].y))
+			    					{
+			    						cursor = 'pointer';
+			    					}
+			    					else if (state.visibleSourceState != null || state.visibleTargetState != null)
+			    					{
+			    						cursor = 'crosshair';
+			    						
+			    						if (this.isOrthogonal(state))
+						    			{
+						    				var idx = mxUtils.findNearestSegment(state, me.getGraphX(), me.getGraphY());
+						    				
+						    				if (idx < pts.length - 1 && idx >= 0)
+						    				{
+					    						cursor = (Math.round(pts[idx].x - pts[idx + 1].x) == 0) ? 'col-resize' : 'row-resize';
+						    				}
+						    			}
+			    					}
+			    				}
+			    				
+			    				if (cursor != null)
+			    				{
+			    					state.setCursor(cursor);
+			    				}
+				    		}
+				    	}
+			    	}
+		    	}
+		    	else
+		    	{
+		    		this.startPoint = null;
+					this.triggerEvent = null;
+					this.currentState = null;
 		    	}
 		    }),
 		    mouseUp: mxUtils.bind(this, function(sender, me)
@@ -673,6 +732,18 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		target = null;
 	}
 	
+	// Checks if source and target intersect
+	if (target != null)
+	{
+		var sourceState = this.view.getState(source);
+		var targetState = this.view.getState(target);
+		
+		if (sourceState != null && targetState != null && mxUtils.intersects(sourceState, targetState))
+		{
+			target = null;
+		}
+	}
+	
 	var duplicate = !mxEvent.isShiftDown(evt);
 	
 	if (duplicate)
@@ -1155,11 +1226,6 @@ HoverIcons.prototype.updateDelay = 500;
 /**
  * Up arrow.
  */
-HoverIcons.prototype.edgeHoverIcons = true;
-
-/**
- * Up arrow.
- */
 HoverIcons.prototype.currentState = null;
 
 /**
@@ -1213,10 +1279,7 @@ HoverIcons.prototype.init = function()
 	this.arrowDown = this.createArrow(this.triangleDown, mxResources.get('plusTooltip'));
 	this.arrowLeft = this.createArrow(this.triangleLeft, mxResources.get('plusTooltip'));
 
-	this.roundSource = this.createArrow(this.roundDrop);
-	this.roundTarget = this.createArrow(this.roundDrop);
-	
-	this.elts = [this.roundSource, this.roundTarget, this.arrowUp, this.arrowRight, this.arrowDown, this.arrowLeft];
+	this.elts = [this.arrowUp, this.arrowRight, this.arrowDown, this.arrowLeft];
 
 	this.repaintHandler = mxUtils.bind(this, function()
 	{
@@ -1313,8 +1376,15 @@ HoverIcons.prototype.init = function()
 	    	}
 	    	else if (this.isActive())
 	    	{
-	    		// Selects target vertex after drag and clone
-    			this.update(this.getState(this.graph.view.getState(this.graph.getCellAt(me.getGraphX(), me.getGraphY()))));
+	    		// Selects target vertex after drag and clone if not only new edge was inserted
+	    		if (this.graph.getSelectionCount() != 1 || !this.graph.model.isEdge(this.graph.getSelectionCell()))
+	    		{
+	    			this.update(this.getState(this.graph.view.getState(this.graph.getCellAt(me.getGraphX(), me.getGraphY()))));
+	    		}
+	    		else
+	    		{
+	    			this.reset();
+	    		}
 	    	}
 	    	else if (mxEvent.isTouchEvent(evt) || (this.bbox != null && mxUtils.contains(this.bbox, me.getGraphX(), me.getGraphY())))
 	    	{
@@ -1521,34 +1591,27 @@ HoverIcons.prototype.drag = function(evt, x, y)
 	// Checks if state was removed in call to stopEditing above
 	if (this.currentState != null)
 	{
-		if (this.graph.model.isEdge(this.currentState.cell))
+		this.graph.connectionHandler.start(this.currentState, x, y);
+		this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+		this.graph.isMouseDown = true;
+		
+		// Hides handles for selection cell
+		var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
+		
+		if (handler != null)
 		{
-			this.graph.setSelectionCell(this.currentState.cell);
-			var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
-			
-			if (handler != null && handler.bends != null)
-			{
-				handler.start(x, y, (this.activeArrow == this.roundSource) ? 0 : handler.bends.length - 1);
-				this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-				this.graph.isMouseDown = true;
-			}
+			handler.setHandlesVisible(false);
 		}
-		else
-		{
-			this.graph.connectionHandler.start(this.currentState, x, y);
-			this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-			this.graph.isMouseDown = true;
-			
-			// Uses elbow edges with vertical or horizontal direction
-	//		var direction = this.getDirection();
-	//		var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
-	//		
-	//		var es = this.graph.connectionHandler.edgeState;
-	//		es.style['edgeStyle'] = 'elbowEdgeStyle';
-	//		es.style['elbow'] = elbowValue;
-	//		es.cell.style = mxUtils.setStyle(es.cell.style, 'edgeStyle', es.style['edgeStyle']);
-	//		es.cell.style = mxUtils.setStyle(es.cell.style, 'elbow', es.style['elbow']);
-		}
+		
+		// Uses elbow edges with vertical or horizontal direction
+//		var direction = this.getDirection();
+//		var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
+//		
+//		var es = this.graph.connectionHandler.edgeState;
+//		es.style['edgeStyle'] = 'elbowEdgeStyle';
+//		es.style['elbow'] = elbowValue;
+//		es.cell.style = mxUtils.setStyle(es.cell.style, 'edgeStyle', es.style['edgeStyle']);
+//		es.cell.style = mxUtils.setStyle(es.cell.style, 'elbow', es.style['elbow']);
 	}
 };
 
@@ -1582,6 +1645,11 @@ HoverIcons.prototype.click = function(state, dir, me)
 			if (mxEvent.isTouchEvent(evt))
 			{
 				this.update(this.getState(this.graph.view.getState(cells[1])));
+			}
+			else
+			{
+				// Hides hover icons after click with mouse
+				this.reset();
 			}
 			
 			this.graph.scrollCellToVisible(cells[1]);
@@ -1621,97 +1689,74 @@ HoverIcons.prototype.repaint = function()
 	
 	if (this.currentState != null)
 	{
+		// Checks if cell was deleted
 		this.currentState = this.getState(this.currentState);
 		
 		// Cell was deleted	
-		if (this.currentState == null)
+		if (this.currentState != null &&
+			this.graph.model.isVertex(this.currentState.cell) &&
+			this.graph.isCellConnectable(this.currentState.cell))
 		{
-			this.reset();
+			var bds = mxRectangle.fromRectangle(this.currentState);
+			
+			// Uses outer bounding box to take rotation into account
+			if (this.currentState.shape != null && this.currentState.shape.boundingBox != null)
+			{
+				bds = mxRectangle.fromRectangle(this.currentState.shape.boundingBox);
+			}
+
+			bds.grow(this.graph.tolerance);
+			bds.grow(this.arrowSpacing);
+			
+			var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
+			
+			if (handler != null)
+			{
+				bds.x -= handler.horizontalOffset / 2;
+				bds.y -= handler.verticalOffset / 2;
+				bds.width += handler.horizontalOffset;
+				bds.height += handler.verticalOffset;
+				
+				// Adds bounding box of rotation handle to avoid overlap
+				if (handler.rotationShape != null && handler.rotationShape.node != null &&
+					handler.rotationShape.node.style.visibility != 'hidden' &&
+					handler.rotationShape.node.style.display != 'none' &&
+					handler.rotationShape.boundingBox != null)
+				{
+					bds.add(handler.rotationShape.boundingBox);
+				}
+			}
+			
+			this.arrowUp.style.left = Math.round(this.currentState.getCenterX() - this.triangleUp.width / 2) + 'px';
+			this.arrowUp.style.top = Math.round(bds.y - this.triangleUp.height) + 'px';
+			mxUtils.setOpacity(this.arrowUp, 20);
+			
+			this.arrowRight.style.left = Math.round(bds.x + bds.width) + 'px';
+			this.arrowRight.style.top = Math.round(this.currentState.getCenterY() - this.triangleRight.height / 2) + 'px';
+			mxUtils.setOpacity(this.arrowRight, 20);
+			
+			this.arrowDown.style.left = this.arrowUp.style.left
+			this.arrowDown.style.top = Math.round(bds.y + bds.height) + 'px';
+			mxUtils.setOpacity(this.arrowDown, 20);
+			
+			this.arrowLeft.style.left = Math.round(bds.x - this.triangleLeft.width) + 'px';
+			this.arrowLeft.style.top = this.arrowRight.style.top;
+			mxUtils.setOpacity(this.arrowLeft, 20);
 		}
 		else
 		{
-			if (this.graph.model.isEdge(this.currentState.cell))
-			{
-				var pts = this.currentState.absolutePoints;
-				
-				if (pts != null)
-				{
-					var p0 = pts[0];
-					var pe = pts[pts.length - 1];
-					
-					this.roundSource.style.left = Math.round(p0.x - this.roundDrop.width / 2) + 'px';
-					this.roundSource.style.top = Math.round(p0.y - this.roundDrop.height / 2) + 'px';
-					mxUtils.setOpacity(this.roundSource, 20);
-					
-					this.roundTarget.style.left = Math.round(pe.x - this.roundDrop.width / 2) + 'px';
-					this.roundTarget.style.top = Math.round(pe.y - this.roundDrop.height / 2) + 'px';
-					mxUtils.setOpacity(this.roundTarget, 20);
-				}
-			}
-			else if (this.graph.model.isVertex(this.currentState.cell) &&
-				this.graph.isCellConnectable(this.currentState.cell))
-			{
-				var bds = mxRectangle.fromRectangle(this.currentState);
-				
-				// Uses outer bounding box to take rotation into account
-				if (this.currentState.shape != null && this.currentState.shape.boundingBox != null)
-				{
-					bds = mxRectangle.fromRectangle(this.currentState.shape.boundingBox);
-				}
-
-				bds.grow(this.graph.tolerance);
-				bds.grow(this.arrowSpacing);
-				
-				var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
-				
-				if (handler != null)
-				{
-					bds.x -= handler.horizontalOffset / 2;
-					bds.y -= handler.verticalOffset / 2;
-					bds.width += handler.horizontalOffset;
-					bds.height += handler.verticalOffset;
-					
-					// Adds bounding box of rotation handle to avoid overlap
-					if (handler.rotationShape != null && handler.rotationShape.node != null &&
-						handler.rotationShape.node.style.visibility != 'hidden' &&
-						handler.rotationShape.node.style.display != 'none' &&
-						handler.rotationShape.boundingBox != null)
-					{
-						bds.add(handler.rotationShape.boundingBox);
-					}
-				}
-				
-				this.arrowUp.style.left = Math.round(this.currentState.getCenterX() - this.triangleUp.width / 2) + 'px';
-				this.arrowUp.style.top = Math.round(bds.y - this.triangleUp.height) + 'px';
-				mxUtils.setOpacity(this.arrowUp, 20);
-				
-				this.arrowRight.style.left = Math.round(bds.x + bds.width) + 'px';
-				this.arrowRight.style.top = Math.round(this.currentState.getCenterY() - this.triangleRight.height / 2) + 'px';
-				mxUtils.setOpacity(this.arrowRight, 20);
-				
-				this.arrowDown.style.left = this.arrowUp.style.left
-				this.arrowDown.style.top = Math.round(bds.y + bds.height) + 'px';
-				mxUtils.setOpacity(this.arrowDown, 20);
-				
-				this.arrowLeft.style.left = Math.round(bds.x - this.triangleLeft.width) + 'px';
-				this.arrowLeft.style.top = this.arrowRight.style.top;
-				mxUtils.setOpacity(this.arrowLeft, 20);
-			}
-			else
-			{
-				this.reset();
-			}
+			this.reset();
+		}
+		
+		// Updates bounding box
+		if (this.currentState != null)
+		{
+			this.bbox = this.computeBoundingBox();
 			
-			// Updates bounding box
-			if (this.currentState != null)
+			// Adds tolerance for hover
+			if (this.bbox != null)
 			{
-				this.bbox = this.computeBoundingBox();
-				
-				// Adds tolerance for hover
-				if (this.bbox != null)
-				{
-					this.bbox.grow(10);
-				}
+				this.bbox.grow(10);
 			}
 		}
 	}
@@ -1764,10 +1809,8 @@ HoverIcons.prototype.getState = function(state)
 			}
 		}
 		
-		// Ignores locked cells and selected edges, or all edges if edgeHoverIcons are disabled
-		if (this.graph.isCellLocked(cell) || (this.graph.model.isEdge(cell) &&
-			(!this.edgeHoverIcons || (this.graph.isCellSelected(cell) &&
-			this.graph.getSelectionCount() == 1))))
+		// Ignores locked cells and edges
+		if (this.graph.isCellLocked(cell) || this.graph.model.isEdge(cell))
 		{
 			cell = null;
 		}
@@ -1851,35 +1894,14 @@ HoverIcons.prototype.update = function(state, x, y)
  */
 HoverIcons.prototype.setCurrentState = function(state)
 {
-	if (this.graph.model.isEdge(state.cell))
+	if (state.style['portConstraint'] != 'eastwest')
 	{
-		var pts = state.absolutePoints;
-		
-		if (pts != null)
-		{
-			if (this.graph.model.getTerminal(state.cell, true) == null)
-			{
-				this.graph.container.appendChild(this.roundSource);
-			}
-			
-			if (this.graph.model.getTerminal(state.cell, false) == null)
-			{
-				this.graph.container.appendChild(this.roundTarget);
-			}
-		}
-	}
-	else
-	{
-		if (state.style['portConstraint'] != 'eastwest')
-		{
-			this.graph.container.appendChild(this.arrowUp);
-			this.graph.container.appendChild(this.arrowDown);
-		}
-
-		this.graph.container.appendChild(this.arrowRight);
-		this.graph.container.appendChild(this.arrowLeft);
+		this.graph.container.appendChild(this.arrowUp);
+		this.graph.container.appendChild(this.arrowDown);
 	}
 
+	this.graph.container.appendChild(this.arrowRight);
+	this.graph.container.appendChild(this.arrowLeft);
 	this.currentState = state;
 };
 
