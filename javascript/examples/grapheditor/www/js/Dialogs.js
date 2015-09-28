@@ -1217,7 +1217,13 @@ var EditFileDialog = function(editorUi)
 	var newOption = document.createElement('option');
 	newOption.setAttribute('value', 'new');
 	mxUtils.write(newOption, mxResources.get('openInNewWindow'));
-	select.appendChild(newOption);
+	
+	var chromeApp = window.chrome != null && chrome.app != null && chrome.app.runtime != null;
+	
+	if (!chromeApp)
+	{
+		select.appendChild(newOption);
+	}
 
 	var importOption = document.createElement('option');
 	importOption.setAttribute('value', 'import');
