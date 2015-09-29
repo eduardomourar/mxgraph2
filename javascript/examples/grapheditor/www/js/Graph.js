@@ -35,10 +35,9 @@ Graph = function(container, model, renderHint, stylesheet)
 			startPoint: null,
 			triggerEvent: null,
 			currentState: null,
-			
-		    mouseDown: mxUtils.bind(this, function(sender, me)
+			mouseDown: mxUtils.bind(this, function(sender, me)
 		    {
-		    	if (!mxEvent.isShiftDown(me.getEvent()))
+		    	if (!mxEvent.isControlDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()))
 		    	{
 			    	var state = me.getState();
 		
@@ -48,78 +47,93 @@ Graph = function(container, model, renderHint, stylesheet)
 			    		if (this.model.isEdge(state.cell))
 			    		{
 			    			this.startPoint = new mxPoint(me.getGraphX(), me.getGraphY());
-			    			this.triggerEvent = me;
 				    		this.currentState = state;
+			    			this.triggerEvent = me;
 			    		}
 			    	}
 		    	}
 		    }),
 		    mouseMove: mxUtils.bind(this, function(sender, me)
 		    {
-		    	if (!mxEvent.isShiftDown(me.getEvent()))
+		    	if (!mxEvent.isControlDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()))
 		    	{
 		    		var tol = this.tolerance;
 	
 			    	if (this.startPoint != null && this.currentState != null && this.triggerEvent != null)
 			    	{
+			    		var state = this.currentState;
+			    		
 			    		if (Math.abs(this.startPoint.x - me.getGraphX()) > tol ||
 			    			Math.abs(this.startPoint.y - me.getGraphY()) > tol)
 			    		{
-			    			var handler = this.selectionCellsHandler.getHandler(this.currentState.cell);
+			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
 			    			
 			    			if (handler != null && handler.bends != null && handler.bends.length > 0)
 			    			{
 			    				var handle = handler.getHandleForEvent(this.triggerEvent);
-			    				var orth = this.isOrthogonal(this.currentState);
+			    				var entity = this.view.getEdgeStyle(state) == mxEdgeStyle.EntityRelation;
 			    				
-			    				// Source or target handle or connected for direct handle access or orthogonal line
-			    				// with just two points where the central handle is moved regardless of mouse position
-			    				if (handle == 0 || this.currentState.visibleSourceState != null ||
-			    					handle == handler.bends.length - 1 || this.currentState.visibleTargetState != null)
-			    				{
-		    						var pts = this.currentState.absolutePoints;
-
-			    					if (orth && pts != null)
-			    					{
-			    						// Checks if edge has no bends
-			    						var nobends = pts.length == 2
-			    						
-			    						if (pts.length == 3)
-			    						{
-			    							nobends = (Math.round(pts[0].x - pts[1].x) == 0 && Math.round(pts[1].x - pts[2].x) == 0) ||
-			    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0);
-			    						}
-			    						
-			    						if (handle == null || (handle > 0 && handle < handler.bends.length))
-			    						{
-					    					if (nobends)
-					    					{
-						    					// Moves central handle for straight orthogonal edges
-					    						handle = 2;
-					    					}
-					    					else
-						    				{
-							    				// Finds and moves vertical or horizontal segment
-						    					handle = mxUtils.findNearestSegment(this.currentState, this.startPoint.x, this.startPoint.y) + 1;
-						    				}
-			    						}
-			    					}
-					    			
-				    				// Creates a new waypoint and starts moving it
-				    				if (handle == null)
+	    						if (!entity || handle == 0 || handle == handler.bends.length - 1)
+	    						{
+				    				// Source or target handle or connected for direct handle access or orthogonal line
+				    				// with just two points where the central handle is moved regardless of mouse position
+				    				if (handle == 0 || state.visibleSourceState != null ||
+				    					handle == handler.bends.length - 1 || state.visibleTargetState != null)
 				    				{
-				    					handle = mxEvent.VIRTUAL_HANDLE;
+				    					if (!entity)
+				    					{
+						    				var orth = this.isOrthogonal(state);
+					    					var pts = state.absolutePoints;
+				    						
+					    					if (orth && pts != null)
+					    					{
+					    						// Checks if edge has no bends
+					    						var nobends = pts.length == 2
+					    						
+					    						if (pts.length == 3)
+					    						{
+					    							nobends = (Math.round(pts[0].x - pts[1].x) == 0 && Math.round(pts[1].x - pts[2].x) == 0) ||
+					    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0);
+					    						}
+					    						
+					    						if (handle == null || (handle > 0 && handle < handler.bends.length))
+					    						{
+							    					if (nobends)
+							    					{
+								    					// Moves central handle for straight orthogonal edges
+							    						handle = 2;
+							    					}
+							    					else
+								    				{
+									    				// Finds and moves vertical or horizontal segment
+								    					handle = mxUtils.findNearestSegment(state, this.startPoint.x, this.startPoint.y) + 1;
+								    				}
+					    						}
+					    					}
+							    			
+						    				// Creates a new waypoint and starts moving it
+						    				if (handle == null)
+						    				{
+						    					handle = mxEvent.VIRTUAL_HANDLE;
+						    				}
+				    					}
+					    				
+				    					handler.start(me.getGraphX(), me.getGraphX(), handle);
+				    					this.currentState = null;
+				    					this.triggerEvent = null;
+				    					this.startPoint = null;
+				    					me.consume();
+	
+				    					// Removes preview rectangle in graph handler
+				    					this.graphHandler.reset();
 				    				}
-				    				
-			    					handler.start(me.getGraphX(), me.getGraphX(), handle);
-			    					this.startPoint = null;
-			    					this.triggerEvent = null;
-			    					this.currentState = null;
-			    					me.consume();
-
-			    					// Removes preview rectangle in graph handler
+	    						}
+	    						else if (entity && (state.visibleSourceState != null || state.visibleTargetState != null))
+	    						{
+	    							// Disables moves on entity to make it consistent
 			    					this.graphHandler.reset();
-			    				}
+	    							me.consume();
+	    						}
 			    			}
 			    		}
 			    	}
@@ -152,7 +166,8 @@ Graph = function(container, model, renderHint, stylesheet)
 			    						
 			    						if (tmp == mxEdgeStyle.EntityRelation)
 			    						{
-			    							cursor = 'not-allowed';
+			    							// Moving is not allowed for entity relation
+			    							cursor = 'default';
 			    						}
 			    						else if (this.isOrthogonal(state))
 						    			{
@@ -174,18 +189,12 @@ Graph = function(container, model, renderHint, stylesheet)
 				    	}
 			    	}
 		    	}
-		    	else
-		    	{
-		    		this.startPoint = null;
-					this.triggerEvent = null;
-					this.currentState = null;
-		    	}
 		    }),
 		    mouseUp: mxUtils.bind(this, function(sender, me)
 		    {
-				this.startPoint = null;
-				this.triggerEvent = null;
 				this.currentState = null;
+				this.triggerEvent = null;
+				this.startPoint = null;
 		    })
 		});
 	}
