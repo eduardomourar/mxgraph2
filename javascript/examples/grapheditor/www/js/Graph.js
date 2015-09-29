@@ -70,13 +70,16 @@ Graph = function(container, model, renderHint, stylesheet)
 			    			if (handler != null && handler.bends != null && handler.bends.length > 0)
 			    			{
 			    				var handle = handler.getHandleForEvent(this.triggerEvent);
+			    				var orth = this.isOrthogonal(this.currentState);
 			    				
-			    				// Sourceor or target handle or connected for direct handle access
+			    				// Source or target handle or connected for direct handle access or orthogonal line
+			    				// with just two points where the central handle is moved regardless of mouse position
 			    				if (handle == 0 || this.currentState.visibleSourceState != null ||
-			    					handle == handler.bends.length - 1 || this.currentState.visibleTargetState != null)
+			    					handle == handler.bends.length - 1 || this.currentState.visibleTargetState != null ||
+			    					(!orth || this.currentState.absolutePoints.length > 2))
 			    				{
-				    				// Moves existing orthogonal segment
-				    				if (handle == null && this.isOrthogonal(this.currentState))
+				    				// Finds and moves vertical or horizontal segment
+				    				if (handle == null && orth)
 				    				{
 				    					handle = mxUtils.findNearestSegment(this.currentState, this.startPoint.x, this.startPoint.y) + 1;
 				    				}
@@ -123,9 +126,14 @@ Graph = function(container, model, renderHint, stylesheet)
 			    					}
 			    					else if (state.visibleSourceState != null || state.visibleTargetState != null)
 			    					{
+			    						var tmp = this.view.getEdgeStyle(state);
 			    						cursor = 'crosshair';
 			    						
-			    						if (this.isOrthogonal(state))
+			    						if (tmp == mxEdgeStyle.EntityRelation)
+			    						{
+			    							cursor = 'not-allowed';
+			    						}
+			    						else if (this.isOrthogonal(state))
 						    			{
 						    				var idx = mxUtils.findNearestSegment(state, me.getGraphX(), me.getGraphY());
 						    				
