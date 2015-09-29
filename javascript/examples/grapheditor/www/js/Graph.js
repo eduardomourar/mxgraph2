@@ -81,24 +81,20 @@ Graph = function(container, model, renderHint, stylesheet)
 				    					handle = mxUtils.findNearestSegment(this.currentState, this.startPoint.x, this.startPoint.y) + 1;
 				    				}
 				    				
+				    				// Creates a new waypoint and starts moving it
 				    				if (handle == null)
 				    				{
-				    					// LATER: Fix two undo steps for direct add and move point on edge
-				    					handler.addPoint(handler.state, this.triggerEvent.getEvent());
-				    					handle = handler.getHandleForEvent(this.triggerEvent);
+				    					handle = mxEvent.VIRTUAL_HANDLE;
 				    				}
 				    				
-				    				if (handle != null)
-				    				{
-				    					handler.start(me.getGraphX(), me.getGraphX(), handle);
-				    					this.startPoint = null;
-				    					this.triggerEvent = null;
-				    					this.currentState = null;
-				    					me.consume();
-	
-				    					// Removes preview rectangle in graph handler
-				    					this.graphHandler.reset();
-				    				}
+			    					handler.start(me.getGraphX(), me.getGraphX(), handle);
+			    					this.startPoint = null;
+			    					this.triggerEvent = null;
+			    					this.currentState = null;
+			    					me.consume();
+
+			    					// Removes preview rectangle in graph handler
+			    					this.graphHandler.reset();
 			    				}
 			    			}
 			    		}
