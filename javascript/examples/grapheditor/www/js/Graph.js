@@ -71,7 +71,8 @@ Graph = function(container, model, renderHint, stylesheet)
 			    			if (handler != null && handler.bends != null && handler.bends.length > 0)
 			    			{
 			    				var handle = handler.getHandleForEvent(this.triggerEvent);
-			    				var entity = this.view.getEdgeStyle(state) == mxEdgeStyle.EntityRelation;
+			    				var edgeStyle = this.view.getEdgeStyle(state);
+			    				var entity = edgeStyle == mxEdgeStyle.EntityRelation;
 			    				
 	    						if (!entity || handle == 0 || handle == handler.bends.length - 1)
 	    						{
@@ -82,7 +83,7 @@ Graph = function(container, model, renderHint, stylesheet)
 				    				{
 				    					if (!entity)
 				    					{
-						    				var orth = this.isOrthogonal(state);
+						    				var orth = edgeStyle == mxEdgeStyle.EntityRelation || edgeStyle == mxEdgeStyle.OrthConnector;
 					    					var pts = state.absolutePoints;
 				    						
 					    					if (orth && pts != null)
@@ -96,7 +97,7 @@ Graph = function(container, model, renderHint, stylesheet)
 					    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0);
 					    						}
 					    						
-					    						if (handle == null || (handle > 0 && handle < handler.bends.length))
+					    						if (handle == null || (handle > 0 && handle < handler.bends.length - 1))
 					    						{
 							    					if (nobends)
 							    					{
