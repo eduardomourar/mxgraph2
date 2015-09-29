@@ -75,15 +75,36 @@ Graph = function(container, model, renderHint, stylesheet)
 			    				// Source or target handle or connected for direct handle access or orthogonal line
 			    				// with just two points where the central handle is moved regardless of mouse position
 			    				if (handle == 0 || this.currentState.visibleSourceState != null ||
-			    					handle == handler.bends.length - 1 || this.currentState.visibleTargetState != null ||
-			    					(!orth || this.currentState.absolutePoints.length > 2))
+			    					handle == handler.bends.length - 1 || this.currentState.visibleTargetState != null)
 			    				{
-				    				// Finds and moves vertical or horizontal segment
-				    				if (handle == null && orth)
-				    				{
-				    					handle = mxUtils.findNearestSegment(this.currentState, this.startPoint.x, this.startPoint.y) + 1;
-				    				}
-				    				
+		    						var pts = this.currentState.absolutePoints;
+
+			    					if (orth && pts != null)
+			    					{
+			    						// Checks if edge has no bends
+			    						var nobends = pts.length == 2
+			    						
+			    						if (pts.length == 3)
+			    						{
+			    							nobends = (Math.round(pts[0].x - pts[1].x) == 0 && Math.round(pts[1].x - pts[2].x) == 0) ||
+			    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0);
+			    						}
+			    						
+			    						if (handle == null || (handle > 0 && handle < handler.bends.length))
+			    						{
+					    					if (nobends)
+					    					{
+						    					// Moves central handle for straight orthogonal edges
+					    						handle = 2;
+					    					}
+					    					else
+						    				{
+							    				// Finds and moves vertical or horizontal segment
+						    					handle = mxUtils.findNearestSegment(this.currentState, this.startPoint.x, this.startPoint.y) + 1;
+						    				}
+			    						}
+			    					}
+					    			
 				    				// Creates a new waypoint and starts moving it
 				    				if (handle == null)
 				    				{
