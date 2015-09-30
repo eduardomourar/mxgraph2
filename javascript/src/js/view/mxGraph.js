@@ -5613,13 +5613,32 @@ mxGraph.prototype.scaleCell = function(cell, dx, dy, recurse)
 {
 	var geo = this.model.getGeometry(cell);
 	
-	if (geo != null && this.isCellMovable(cell) && this.isCellResizable(cell))
+	if (geo != null)
 	{
 		var state = this.view.getState(cell);
 		var style = (state != null) ? state.style : this.getCellStyle(cell);
 		
 		geo = geo.clone();
+		
+		// Stores values for restoring based on style
+		var x = geo.x;
+		var y = geo.y
+		var w = geo.width;
+		var h = geo.height;
+		
 		geo.scale(dx, dy, style[mxConstants.STYLE_ASPECT] == 'fixed');
+		
+		if (!this.isCellMovable(cell))
+		{
+			geo.x = x;
+			geo.y = y;
+		}
+		
+		if (!this.isCellResizable(cell))
+		{
+			geo.width = w;
+			geo.height = h;
+		}
 		
 		if (this.model.isVertex(cell))
 		{
