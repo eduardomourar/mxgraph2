@@ -30,14 +30,21 @@ Graph = function(container, model, renderHint, stylesheet)
 	// Implements a listener for hover and click handling on edges
 	if (this.edgeMode)
 	{
-		this.addMouseListener(
+		var start = {
+			point: null,
+			event: null,
+			state: null,
+			handle: null
+		};
+		
+		// Uses this event to process mouseDown to check the selection state before it is changed
+		this.addListener(mxEvent.FIRE_MOUSE_EVENT, mxUtils.bind(this, function(sender, evt)
 		{
-			startPoint: null,
-			triggerEvent: null,
-			currentState: null,
-			mouseDown: mxUtils.bind(this, function(sender, me)
-		    {
-		    	if (!mxEvent.isControlDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()))
+			if (evt.getProperty('eventName') == 'mouseDown')
+			{
+				var me = evt.getProperty('event');
+				
+				if (!mxEvent.isControlDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()))
 		    	{
 			    	var state = me.getState();
 		
@@ -46,31 +53,43 @@ Graph = function(container, model, renderHint, stylesheet)
 			    		// Checks if state was removed in call to stopEditing above
 			    		if (this.model.isEdge(state.cell))
 			    		{
-			    			this.startPoint = new mxPoint(me.getGraphX(), me.getGraphY());
-				    		this.currentState = state;
-			    			this.triggerEvent = me;
+			    			start.point = new mxPoint(me.getGraphX(), me.getGraphY());
+			    			start.state = state;
+			    			start.event = me;
+			    			
+			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
+
+			    			if (handler != null && handler.bends != null && handler.bends.length > 0)
+			    			{
+			    				start.handle = handler.getHandleForEvent(me);
+			    			}
 			    		}
 			    	}
 		    	}
-		    }),
+			}
+		}));
+		
+		this.addMouseListener(
+		{
+			mouseDown: function() {},
 		    mouseMove: mxUtils.bind(this, function(sender, me)
 		    {
 		    	if (!mxEvent.isControlDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()))
 		    	{
 		    		var tol = this.tolerance;
 	
-			    	if (this.startPoint != null && this.currentState != null && this.triggerEvent != null)
+			    	if (start.point != null && start.state != null && start.event != null)
 			    	{
-			    		var state = this.currentState;
+			    		var state = start.state;
 			    		
-			    		if (Math.abs(this.startPoint.x - me.getGraphX()) > tol ||
-			    			Math.abs(this.startPoint.y - me.getGraphY()) > tol)
+			    		if (Math.abs(start.point.x - me.getGraphX()) > tol ||
+			    			Math.abs(start.point.y - me.getGraphY()) > tol)
 			    		{
 			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
 			    			
 			    			if (handler != null && handler.bends != null && handler.bends.length > 0)
 			    			{
-			    				var handle = handler.getHandleForEvent(this.triggerEvent);
+			    				var handle = handler.getHandleForEvent(start.event);
 			    				var edgeStyle = this.view.getEdgeStyle(state);
 			    				var entity = edgeStyle == mxEdgeStyle.EntityRelation;
 			    				
@@ -88,18 +107,17 @@ Graph = function(container, model, renderHint, stylesheet)
 				    						
 					    					if (orth && pts != null)
 					    					{
-					    						// Checks if edge has no bends
-					    						var nobends = pts.length == 2
-					    						
-					    						if (pts.length == 3)
+					    						// Does not use handles if they were not initially visible
+					    						handle = start.handle;
+
+					    						if (handle == null)
 					    						{
-					    							nobends = (Math.round(pts[0].x - pts[1].x) == 0 && Math.round(pts[1].x - pts[2].x) == 0) ||
-					    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0);
-					    						}
-					    						
-					    						if (handle == null || (handle > 0 && handle < handler.bends.length - 1))
-					    						{
-							    					if (nobends)
+						    						// Checks if edge has no bends
+						    						var nobends = pts.length == 2 || (pts.length == 3 &&
+						    								((Math.round(pts[0].x - pts[1].x) == 0 && Math.round(pts[1].x - pts[2].x) == 0) ||
+						    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0)));
+						    						
+					    							if (nobends)
 							    					{
 								    					// Moves central handle for straight orthogonal edges
 							    						handle = 2;
@@ -107,7 +125,7 @@ Graph = function(container, model, renderHint, stylesheet)
 							    					else
 								    				{
 									    				// Finds and moves vertical or horizontal segment
-								    					handle = mxUtils.findNearestSegment(state, this.startPoint.x, this.startPoint.y) + 1;
+								    					handle = mxUtils.findNearestSegment(state, start.point.x, start.point.y) + 1;
 								    				}
 					    						}
 					    					}
@@ -120,9 +138,10 @@ Graph = function(container, model, renderHint, stylesheet)
 				    					}
 					    				
 				    					handler.start(me.getGraphX(), me.getGraphX(), handle);
-				    					this.currentState = null;
-				    					this.triggerEvent = null;
-				    					this.startPoint = null;
+				    					start.state = null;
+				    					start.event = null;
+				    					start.point = null;
+				    					start.handle = null;
 				    					me.consume();
 	
 				    					// Removes preview rectangle in graph handler
@@ -193,9 +212,10 @@ Graph = function(container, model, renderHint, stylesheet)
 		    }),
 		    mouseUp: mxUtils.bind(this, function(sender, me)
 		    {
-				this.currentState = null;
-				this.triggerEvent = null;
-				this.startPoint = null;
+				start.state = null;
+				start.event = null;
+				start.point = null;
+				start.handle = null;
 		    })
 		});
 	}
