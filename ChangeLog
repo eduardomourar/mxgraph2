@@ -1,3 +1,4 @@
+- Adds mxConstants.STYLE_RESIZE_WIDTH/HEIGHT resize styles [JavaScript]
 - Fixes handling of movable and resizable in mxGraph.scaleCell [JavaScript]
 - Fixes in-place change for input in mxCellCodec.beforeDecode [JavaScript]
 - Fixes URL references for Chrome Apps in mxSvgCanvas [JavaScript]

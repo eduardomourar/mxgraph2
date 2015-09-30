@@ -5628,6 +5628,24 @@ mxGraph.prototype.scaleCell = function(cell, dx, dy, recurse)
 		
 		geo.scale(dx, dy, style[mxConstants.STYLE_ASPECT] == 'fixed');
 		
+		if (style[mxConstants.STYLE_RESIZE_WIDTH] == '1')
+		{
+			geo.width = w * dx;
+		}
+		else if (style[mxConstants.STYLE_RESIZE_WIDTH] == '0')
+		{
+			geo.width = w;
+		}
+		
+		if (style[mxConstants.STYLE_RESIZE_HEIGHT] == '1')
+		{
+			geo.height = h * dy;
+		}
+		else if (style[mxConstants.STYLE_RESIZE_HEIGHT] == '0')
+		{
+			geo.height = h;
+		}
+		
 		if (!this.isCellMovable(cell))
 		{
 			geo.x = x;
@@ -5639,7 +5657,7 @@ mxGraph.prototype.scaleCell = function(cell, dx, dy, recurse)
 			geo.width = w;
 			geo.height = h;
 		}
-		
+
 		if (this.model.isVertex(cell))
 		{
 			this.cellResized(cell, geo, true, recurse);
