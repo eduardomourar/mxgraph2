@@ -1183,8 +1183,9 @@ BaseFormatPanel.prototype.createRelativeOption = function(label, key, width)
 	{
 		var value = parseInt(input.value);
 		value = Math.min(100, Math.max(0, (isNaN(value)) ? 100 : value));
+		var state = graph.view.getState(graph.getSelectionCell());
 		
-		if (value != mxUtils.getValue(graph.view.getState(graph.getSelectionCell()).style, key, 100))
+		if (state != null && value != mxUtils.getValue(state.style, key, 100))
 		{
 			// Removes entry in style (assumes 100 is default for relative values)
 			if (value == 100)
