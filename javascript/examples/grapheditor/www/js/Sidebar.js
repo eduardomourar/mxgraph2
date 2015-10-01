@@ -3022,6 +3022,19 @@ Sidebar.prototype.addPalette = function(id, title, expanded, onInit)
 	
 	var div = document.createElement('div');
 	div.className = 'geSidebar';
+	
+	// Shows tooltip if mouse over background
+	mxEvent.addListener(div, 'mousemove', mxUtils.bind(this, function(evt)
+	{
+		if (mxEvent.getSource(evt) == div)
+		{
+			div.setAttribute('title', mxResources.get('sidebarTooltip'));
+		}
+		else
+		{
+			div.removeAttribute('title');
+		}
+	}));
 
 	if (expanded)
 	{
