@@ -181,15 +181,11 @@ Graph = function(container, model, renderHint, stylesheet)
 			    					}
 			    					else if (state.visibleSourceState != null || state.visibleTargetState != null)
 			    					{
+		    							// Moving is not allowed for entity relation but still indicate hover state
 			    						var tmp = this.view.getEdgeStyle(state);
 			    						cursor = 'crosshair';
 			    						
-			    						if (tmp == mxEdgeStyle.EntityRelation)
-			    						{
-			    							// Moving is not allowed for entity relation
-			    							cursor = 'default';
-			    						}
-			    						else if (this.isOrthogonal(state))
+			    						if (tmp != mxEdgeStyle.EntityRelation && this.isOrthogonal(state))
 						    			{
 						    				var idx = mxUtils.findNearestSegment(state, me.getGraphX(), me.getGraphY());
 						    				

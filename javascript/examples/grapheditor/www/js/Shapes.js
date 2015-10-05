@@ -2372,15 +2372,18 @@
 		mxVertexHandler.prototype.createCustomHandles = function()
 		{
 			// Not rotatable means locked
-			if (this.graph.isCellRotatable(this.state.cell))
-			// LATER: Make locked state independent of rotatable flag, fix toggle if default is false
-			//if (this.graph.isCellResizable(this.state.cell) || this.graph.isCellMovable(this.state.cell))
+			if (this.state.view.graph.getSelectionCount() == 1)
 			{
-				var fn = handleFactory[this.state.style['shape']];
-			
-				if (fn != null)
+				if (this.graph.isCellRotatable(this.state.cell))
+				// LATER: Make locked state independent of rotatable flag, fix toggle if default is false
+				//if (this.graph.isCellResizable(this.state.cell) || this.graph.isCellMovable(this.state.cell))
 				{
-					return fn(this.state);
+					var fn = handleFactory[this.state.style['shape']];
+				
+					if (fn != null)
+					{
+						return fn(this.state);
+					}
 				}
 			}
 			
@@ -2389,12 +2392,17 @@
 		
 		mxEdgeHandler.prototype.createCustomHandles = function()
 		{
-			var fn = handleFactory[this.state.style['shape']];
-			
-			if (fn != null)
+			if (this.state.view.graph.getSelectionCount() == 1)
 			{
-				return fn(this.state);
+				var fn = handleFactory[this.state.style['shape']];
+				
+				if (fn != null)
+				{
+					return fn(this.state);
+				}
 			}
+			
+			return null;
 		}
 	}
 
