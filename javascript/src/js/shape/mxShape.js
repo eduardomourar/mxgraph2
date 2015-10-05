@@ -209,9 +209,10 @@ mxShape.prototype.visible = true;
 /**
  * Variable: useSvgBoundingBox
  * 
- * Allows to use the SVG bounding box in SVG. Default is true.
+ * Allows to use the SVG bounding box in SVG. Default is false for performance
+ * reasons.
  */
-mxShape.prototype.useSvgBoundingBox = true;
+mxShape.prototype.useSvgBoundingBox = false;
 
 /**
  * Function: init
