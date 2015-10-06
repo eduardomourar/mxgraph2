@@ -555,7 +555,43 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 				graph.stopEditing(true);
 			}
 			
-			graph.setCellStyles(key, value, graph.getSelectionCells());
+			graph.getModel().beginUpdate();
+			try
+			{
+				graph.setCellStyles(key, value, graph.getSelectionCells());
+				
+				// Handles special case for fontSize where HTML labels are parsed and updated
+				if (key == mxConstants.STYLE_FONTSIZE)
+				{
+					var cells = graph.getSelectionCells();
+					
+					for (var i = 0; i < cells.length; i++)
+					{
+						var cell = cells[i];
+							
+						// Changes font tags inside HTML labels
+						if (graph.isHtmlLabel(cell))
+						{
+							var div = document.createElement('div');
+							div.innerHTML = graph.convertValueToString(cell);
+							var elts = div.getElementsByTagName('font');
+							
+							for (var i = 0; i < elts.length; i++)
+							{
+								elts[i].removeAttribute('size');
+								elts[i].style.fontSize = value + 'px';
+							}
+							
+							graph.cellLabelChanged(cell, div.innerHTML)
+						}
+					}
+				}
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+			
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [key],
 					'values', [value], 'cells', graph.getSelectionCells()));
 		}
@@ -2348,12 +2384,12 @@ TextFormatPanel.prototype.addFont = function(container)
 	var inputUpdate = this.installInputHandler(input, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize, 1, 999, ' pt',
 	function(fontsize)
 	{
-		// Creates an element with arbitrary size 7
+		// Creates an element with arbitrary size 7 and replaces the size below
 		document.execCommand('fontSize', false, '7');
 		
-		// Changes the css font size of the first font element inside the in-place editor with size 7
-		// hopefully the above element that we've just created. LATER: Check for new element using
-		// previous result of getElementsByTagName (see other actions)
+		// Changes the css font size of each font element inside the in-place editor with size 7.
+		// This is based on the assumption that font size="7" isn't used in the markup.
+		// LATER: If this assumption is invalid we can mark those elements when editing starts.
 		var elts = graph.cellEditor.textarea.getElementsByTagName('font');
 		
 		for (var i = 0; i < elts.length; i++)
@@ -2362,10 +2398,15 @@ TextFormatPanel.prototype.addFont = function(container)
 			{
 				elts[i].removeAttribute('size');
 				elts[i].style.fontSize = fontsize + 'px';
-				
-				break;
 			}
 		}
+		
+		// Overrides fontSize in input with the one just assigned as a workaround
+		// for potential fontSize values of parent elements that don't match
+		window.setTimeout(function()
+		{
+			input.value = fontsize + ' pt';
+		}, 0);
 	});
 	
 	var stepper = this.createStepper(input, inputUpdate, 1, 10, true);
