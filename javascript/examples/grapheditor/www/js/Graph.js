@@ -2818,6 +2818,16 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * Adds meta-drag an Mac.
+		 * @param evt
+		 * @returns
+		 */
+		Graph.prototype.isCloneEvent = function(evt)
+		{
+			return (mxClient.IS_MAC && mxEvent.isMetaDown(evt)) || mxEvent.isControlDown(evt);
+		};
+		
+		/**
 		 * Translates this point by the given vector.
 		 * 
 		 * @param {number} dx X-coordinate of the translation.
