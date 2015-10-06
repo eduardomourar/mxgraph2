@@ -1657,10 +1657,12 @@ var ExportDialog = function(editorUi)
 					editorUi.hideDialog();
 					var data = decodeURIComponent(param.substring(param.indexOf('=') + 1));
 					ExportDialog.saveRequest(data, name, format,
-						function(newTitle)
+						function(newTitle, base64)
 						{
-							return new mxXmlRequest(EXPORT_URL, 'filename=' + encodeURIComponent(newTitle) +
-								'&format=' + format + bg + '&w=' + w + '&h=' + h + '&border=' + b + '&' + param);
+							// Base64 not used in this example
+							return new mxXmlRequest(EXPORT_URL, 'format=' + format + '&base64=' + (base64 || '0') +
+								((newTitle != null) ? '&filename=' + encodeURIComponent(newTitle) : '') +
+								bg + '&w=' + w + '&h=' + h + '&border=' + b + '&' + param);
 						});
 				}
 				else
