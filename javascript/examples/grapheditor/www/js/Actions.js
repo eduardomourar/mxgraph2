@@ -185,6 +185,7 @@ Actions.prototype.init = function()
 				graph.toggleCellStyles(mxConstants.STYLE_RESIZABLE, defaultValue);
 				graph.toggleCellStyles(mxConstants.STYLE_ROTATABLE, defaultValue);
 				graph.toggleCellStyles(mxConstants.STYLE_DELETABLE, defaultValue);
+				graph.toggleCellStyles('connectable', defaultValue);
 			}
 			finally
 			{

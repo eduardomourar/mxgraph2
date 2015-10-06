@@ -783,6 +783,20 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		target = null;
 	}
 	
+	// Checks if target or ancestor is locked
+	var temp = target;
+	
+	while (temp != null)
+	{
+		if (this.isCellLocked(temp))
+		{
+			target = null;
+			break;
+		}
+		
+		temp = this.model.getParent(temp);
+	}
+	
 	// Checks if source and target intersect
 	if (target != null)
 	{
@@ -1139,7 +1153,8 @@ Graph.prototype.isCellConnectable = function(cell)
 	var state = this.view.getState(cell);
 	var style = (state != null) ? state.style : this.getCellStyle(cell);
 	
-	return (style['connectable'] != null) ? style['connectable']  != '0' : mxGraph.prototype.isCellConnectable.apply(this, arguments);
+	return (style['connectable'] != null) ? style['connectable']  != '0' :
+		mxGraph.prototype.isCellConnectable.apply(this, arguments);
 };
 
 /**
