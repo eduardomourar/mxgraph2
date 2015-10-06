@@ -4356,7 +4356,7 @@ if (typeof mxVertexHandler != 'undefined')
 	
 		mxVertexHandler.prototype.updateLinkHint = function(link)
 		{
-			if (link == null)
+			if (link == null || this.graph.getSelectionCount() > 1)
 			{
 				if (this.linkHint != null)
 				{
