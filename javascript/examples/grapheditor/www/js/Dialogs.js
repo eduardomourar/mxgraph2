@@ -739,6 +739,7 @@ var PrintDialog = function(editorUi)
 	function preview(print)
 	{
 		var printScale = parseInt(pageScaleInput.value) / 100;
+		var autoOrigin = pageCountCheckBox.checked;
 		
 		if (isNaN(printScale))
 		{
@@ -746,13 +747,13 @@ var PrintDialog = function(editorUi)
 			pageScaleInput.value = '100%';
 		}
 		
-		// Workaround to match available paper size
+		// Workaround to match available paper size in actual print output
 		printScale *= 0.75;
 
 		var pf = graph.pageFormat || mxConstants.PAGE_FORMAT_A4_PORTRAIT;
 		var scale = 1 / graph.pageScale;
 		
-		if (pageCountCheckBox.checked)
+		if (autoOrigin)
 		{
     		var pageCount = parseInt(pageCountInput.value);
 			
@@ -764,49 +765,26 @@ var PrintDialog = function(editorUi)
 
 		// Negative coordinates are cropped or shifted if page visible
 		var gb = graph.getGraphBounds();
-		var autoOrigin = pageCountCheckBox.checked;
 		var border = 0;
 		var x0 = 0;
 		var y0 = 0;
-		
-		// Computes unscaled, untranslated graph bounds
-		var x = (gb.width > 0) ? Math.ceil(gb.x / graph.view.scale - graph.view.translate.x) : 0;
-		var y = (gb.height > 0) ? Math.ceil(gb.y / graph.view.scale - graph.view.translate.y) : 0;
-
-		if (x < 0 || y < 0)
-		{
-			autoOrigin = true;
-			
-			if (graph.pageVisible)
-			{
-				var ps = graph.pageScale;
-				var pw = pf.width * ps;
-				var ph = pf.height * ps;
-
-				// FIXME: Offset for page layout with x/y != 0
-				x0 = (x > 0) ? x : pf.width * -Math.floor(Math.min(0, x) / pw) + Math.min(0, x) / graph.pageScale;
-				y0 = (y > 0) ? y : pf.height * -Math.floor(Math.min(0, y) / ph) + Math.min(0, y) / graph.pageScale;
-			}
-			else
-			{
-				x0 = 10;
-				y0 = 10;
-			}
-		}
 
 		// Applies print scale
 		pf = mxRectangle.fromRectangle(pf);
-		pf.width = Math.round(pf.width * printScale);
-		pf.height = Math.round(pf.height * printScale);
+		pf.width = Math.ceil(pf.width * printScale);
+		pf.height = Math.ceil(pf.height * printScale);
 		scale *= printScale;
 		
 		// Starts at first visible page
-		if (graph.pageVisible)
+		if (!autoOrigin && graph.pageVisible)
 		{
 			var layout = graph.getPageLayout();
-			
-			x0 -= Math.max(layout.x, 0) * pf.width;
-			y0 -= Math.max(layout.y, 0) * pf.height;
+			x0 -= layout.x * pf.width;
+			y0 -= layout.y * pf.height;
+		}
+		else
+		{
+			autoOrigin = true;
 		}
 		
 		return PrintDialog.showPreview(PrintDialog.createPrintPreview(graph, scale, pf, border, x0, y0, autoOrigin, print), print);
@@ -875,7 +853,6 @@ PrintDialog.createPrintPreview = function(graph, scale, pf, border, x0, y0, auto
 	preview.title = mxResources.get('preview');
 	preview.printBackgroundImage = true;
 	preview.autoOrigin = autoOrigin;
-	
 	var bg = graph.background;
 	
 	if (bg == null || bg == '' || bg == mxConstants.NONE)
