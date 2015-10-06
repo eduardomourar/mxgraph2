@@ -880,6 +880,32 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 	var translate = view.getTranslate();
 	view.translate = new mxPoint(dx, dy);
 	
+	// Renders only states that intersect the current clip for speeding up printing
+	var createState = view.createState;
+	var states = view.states;
+	var s = view.scale;
+	
+	// Gets the transformed clip for intersection check below
+	var tempClip = new mxRectangle((clip.x + translate.x) * s, (clip.y + translate.y) * s,
+			clip.width * s / scale, clip.height * s / scale);
+	
+	view.createState = function(cell)
+	{
+		var temp = states.get(cell);
+		
+		if (temp != null)
+		{
+			var bbox = this.getBoundingBox(temp, false);
+			
+			if (bbox != null && !mxUtils.intersects(tempClip, bbox))
+			{
+				return null;
+			}
+		}
+		
+		return createState.apply(this, arguments);
+	};
+	
 	var temp = null;
 	
 	try
@@ -940,6 +966,7 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 		// Restores the state of the view
 		this.graph.setEnabled(graphEnabled);
 		this.graph.container = previousContainer;
+		view.createState = createState;
 		view.canvas = canvas;
 		view.backgroundPane = backgroundPane;
 		view.drawPane = drawPane;

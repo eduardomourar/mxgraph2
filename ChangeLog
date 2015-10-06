@@ -1,3 +1,4 @@
+- Adds performance tuning in mxPrintPreview [JavaScript]
 - Limits use of getBBox in mxShape to mxArrow/Connector [JavaScript]
 
 01-OCT-2015: 3.4.0.1
