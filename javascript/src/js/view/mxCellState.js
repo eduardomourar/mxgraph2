@@ -149,6 +149,13 @@ mxCellState.prototype.shape = null;
 mxCellState.prototype.text = null;
 
 /**
+ * Variable: unscaledWidth
+ * 
+ * Holds the unscaled width of the state.
+ */
+mxCellState.prototype.unscaledWidth = null;
+
+/**
  * Function: getPerimeterBounds
  * 
  * Returns the <mxRectangle> that should be used as the perimeter of the

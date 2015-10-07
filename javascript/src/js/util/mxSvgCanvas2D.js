@@ -247,12 +247,12 @@ mxSvgCanvas2D.prototype.pointerEventsValue = 'all';
 mxSvgCanvas2D.prototype.fontMetricsPadding = 10;
 
 /**
- * Variable: cachedOffsetSize
+ * Variable: cacheOffsetSize
  * 
  * Specifies if offsetWidth and offsetHeight should be cached. Default is true.
  * This is used to speed up repaint of text in <updateText>.
  */
-mxSvgCanvas2D.prototype.cachedOffsetSize = true;
+mxSvgCanvas2D.prototype.cacheOffsetSize = true;
 
 /**
  * Function: format
@@ -1251,6 +1251,16 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 };
 
 /**
+ * Invalidates the cached offset size for the given node.
+ */
+mxSvgCanvas2D.prototype.invalidateCachedOffsetSize = function(node)
+{
+	delete node.firstChild.mxCachedOffsetWidth;
+	delete node.firstChild.mxCachedFinalOffsetWidth;
+	delete node.firstChild.mxCachedFinalOffsetHeight;
+};
+
+/**
  * Updates existing DOM nodes for text rendering. LATER: Merge common parts with text function below.
  */
 mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, node)
@@ -1311,8 +1321,7 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 			sizeDiv = sizeDiv.firstChild;
 		}
 		
-		var tmp = (sizeDiv.mxCachedOffsetWidth) ? sizeDiv.mxCachedOffsetWidth : sizeDiv.offsetWidth;
-
+		var tmp = (group.mxCachedOffsetWidth != null) ? group.mxCachedOffsetWidth : sizeDiv.offsetWidth;
 		ow = tmp + padX;
 
 		// Recomputes the height of the element for wrapped width
@@ -1326,9 +1335,9 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 			div.style.width = ow + 'px';
 		}
 		
-		ow = ((sizeDiv.mxCachedFinalOffsetWidth) ? sizeDiv.mxCachedFinalOffsetWidth :
+		ow = ((group.mxCachedFinalOffsetWidth != null) ? group.mxCachedFinalOffsetWidth :
 			sizeDiv.offsetWidth) + padX;
-		oh = ((sizeDiv.mxCachedFinalOffsetHeight) ? sizeDiv.mxCachedFinalOffsetHeight :
+		oh = ((group.mxCachedFinalOffsetHeight != null) ? group.mxCachedFinalOffsetHeight :
 			sizeDiv.offsetHeight) + 2;
 
 		if (clip)
@@ -1613,9 +1622,9 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				
 				var tmp = sizeDiv.offsetWidth;
 				
-				if (this.cachedOffsetSize)
+				if (this.cacheOffsetSize)
 				{
-					sizeDiv.mxCachedOffsetWidth = tmp;
+					group.mxCachedOffsetWidth = tmp;
 				}
 				
 				// For export, if no wrapping occurs, we add a large padding to make
@@ -1649,10 +1658,10 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				ow = sizeDiv.offsetWidth;
 				oh = sizeDiv.offsetHeight;
 				
-				if (this.cachedOffsetSize)
+				if (this.cacheOffsetSize)
 				{
-					sizeDiv.mxCachedFinalOffsetWidth = ow;
-					sizeDiv.mxCachedFinalOffsetHeight = oh;
+					group.mxCachedFinalOffsetWidth = ow;
+					group.mxCachedFinalOffsetHeight = oh;
 				}
 
 				ow += padX;
