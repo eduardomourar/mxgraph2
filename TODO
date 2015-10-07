@@ -1,5 +1,3 @@
-- Add caching for offsetWidth/-Height in SVG canvas
-
 - Add lineSpacing, jetty-size and source-/targetConstraint styles
 - Fix support for labelPadding, add support for borderWidth (for text)
 - Add mxClient.IS_CHROMEAPP, update (c) for draw.io files and core examples

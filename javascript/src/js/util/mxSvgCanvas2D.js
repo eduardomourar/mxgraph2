@@ -247,6 +247,14 @@ mxSvgCanvas2D.prototype.pointerEventsValue = 'all';
 mxSvgCanvas2D.prototype.fontMetricsPadding = 10;
 
 /**
+ * Variable: cachedOffsetSize
+ * 
+ * Specifies if offsetWidth and offsetHeight should be cached. Default is true.
+ * This is used to speed up repaint of text in <updateText>.
+ */
+mxSvgCanvas2D.prototype.cachedOffsetSize = true;
+
+/**
  * Function: format
  * 
  * Rounds all numbers to 2 decimal points.
@@ -1303,7 +1311,8 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 			sizeDiv = sizeDiv.firstChild;
 		}
 		
-		var tmp = sizeDiv.offsetWidth;
+		var tmp = (sizeDiv.mxCachedOffsetWidth) ? sizeDiv.mxCachedOffsetWidth : sizeDiv.offsetWidth;
+
 		ow = tmp + padX;
 
 		// Recomputes the height of the element for wrapped width
@@ -1316,9 +1325,11 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 			
 			div.style.width = ow + 'px';
 		}
-
-		ow = sizeDiv.offsetWidth + padX;
-		oh = sizeDiv.offsetHeight + 2;
+		
+		ow = ((sizeDiv.mxCachedFinalOffsetWidth) ? sizeDiv.mxCachedFinalOffsetWidth :
+			sizeDiv.offsetWidth) + padX;
+		oh = ((sizeDiv.mxCachedFinalOffsetHeight) ? sizeDiv.mxCachedFinalOffsetHeight :
+			sizeDiv.offsetHeight) + 2;
 
 		if (clip)
 		{
@@ -1602,6 +1613,11 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				
 				var tmp = sizeDiv.offsetWidth;
 				
+				if (this.cachedOffsetSize)
+				{
+					sizeDiv.mxCachedOffsetWidth = tmp;
+				}
+				
 				// For export, if no wrapping occurs, we add a large padding to make
 				// sure there is no wrapping even if the text metrics are different.
 				if (!clip && wrap && w > 0 && this.root.ownerDocument != document)
@@ -1630,9 +1646,18 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 					div.style.width = ow + 'px';
 				}
 
-				ow = sizeDiv.offsetWidth + padX;
-				oh = sizeDiv.offsetHeight + 2;
+				ow = sizeDiv.offsetWidth;
+				oh = sizeDiv.offsetHeight;
+				
+				if (this.cachedOffsetSize)
+				{
+					sizeDiv.mxCachedFinalOffsetWidth = ow;
+					sizeDiv.mxCachedFinalOffsetHeight = oh;
+				}
 
+				ow += padX;
+				oh += 2;
+				
 				if (div.parentNode != fo)
 				{
 					fo.appendChild(div);
