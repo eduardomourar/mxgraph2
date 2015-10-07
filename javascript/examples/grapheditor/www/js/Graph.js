@@ -783,10 +783,6 @@ Graph.prototype.getGlobalVariable = function(name)
 	{
 		val = new Date().toLocaleString();
 	}
-	else if (this.model.metadata != null)
-	{
-		val = this.model.metadata.getAttribute(name);
-	}
 
 	return val;
 };
