@@ -312,7 +312,20 @@ Editor.prototype.setGraphXml = function(node)
 				{
 					this.graph.background = this.defaultGraphBackground;
 				}
-		
+				
+				var meta = node.getElementsByTagName('meta');
+				
+				if (meta != null && meta.length > 0)
+				{
+					this.graph.model.metadata = meta[0];
+					meta[0].parentNode.removeChild(meta[0]);
+				}
+				else
+				{
+					meta = node.ownerDocument.createElement('meta');
+					this.graph.model.metadata = meta;
+				}
+				
 				this.updateGraphComponents();
 				dec.decode(node, this.graph.getModel());
 			}
@@ -364,6 +377,11 @@ Editor.prototype.getGraphXml = function(ignoreSelection)
 	{
 		var enc = new mxCodec(mxUtils.createXmlDocument());
 		node = enc.encode(this.graph.getModel());
+		
+		if (this.graph.model.metadata != null)
+		{
+			node.appendChild(this.graph.model.metadata);
+		}
 	}
 	else
 	{
@@ -951,7 +969,7 @@ OpenFile.prototype.cancel = function(cancel)
 		if (psel == null || (psel != cell && psel != parent))
 		{
 			while (!this.graph.isCellSelected(cell) && !this.graph.isCellSelected(parent) &&
-					model.isVertex(parent) && !this.graph.isValidRoot(parent))
+				model.isVertex(parent) && !this.graph.isValidRoot(parent))
 			{
 				cell = parent;
 				parent = this.graph.getModel().getParent(cell);
@@ -974,7 +992,8 @@ OpenFile.prototype.cancel = function(cancel)
 			
 			while (parent != null)
 			{
-				if (this.graph.isCellSelected(parent) && model.isVertex(parent))
+				if (this.graph.isCellSelected(parent) && model.isVertex(parent) &&
+					!this.graph.isSwimlane(parent))
 				{
 					result = true;
 					break;

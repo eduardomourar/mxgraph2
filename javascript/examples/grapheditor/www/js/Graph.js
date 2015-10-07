@@ -652,6 +652,11 @@ Graph.prototype.defaultEdgeLength = 100;
 Graph.prototype.edgeMode = false;
 
 /**
+ * Specifies the regular expression for matching placeholders.
+ */
+Graph.prototype.placeholderPattern = new RegExp('%[A-Za-z0-9_]+%', 'g');
+
+/**
  * Installs child layout styles.
  */
 Graph.prototype.init = function()
@@ -733,6 +738,108 @@ Graph.prototype.sanitizeHtml = function(value)
     function idX(id) { return id }
 	
 	return html_sanitize(value, urlX, idX);
+};
+
+/**
+ * Adds support for placeholders in labels.
+ */
+Graph.prototype.isReplacePlaceholders = function(cell)
+{
+	return cell.value != null && typeof(cell.value) == 'object' &&
+		cell.value.getAttribute('placeholders') == '1';
+};
+
+/**
+ * Adds support for placeholders in labels.
+ */
+Graph.prototype.getLabel = function(cell)
+{
+	var result = mxGraph.prototype.getLabel.apply(this, arguments);
+	
+	if (result != null && this.isReplacePlaceholders(cell))
+	{
+		result = this.replacePlaceholders(cell, result);
+	}
+	
+	return result;
+};
+
+/**
+ * Private helper method.
+ */
+Graph.prototype.getGlobalVariable = function(name)
+{
+	var val = null;
+	
+	if (name == 'date')
+	{
+		val = new Date().toLocaleDateString();
+	}
+	else if (name == 'time')
+	{
+		val = new Date().toLocaleTimeString();
+	}
+	else if (name == 'timestamp')
+	{
+		val = new Date().toLocaleString();
+	}
+	else if (this.model.metadata != null)
+	{
+		val = this.model.metadata.getAttribute(name);
+	}
+
+	return val;
+};
+
+/**
+ * Private helper method.
+ */
+Graph.prototype.replacePlaceholders = function(cell, str)
+{
+	var result = [];
+	var last = 0;
+	
+	while (match = this.placeholderPattern.exec(str))
+	{
+		var val = match[0];
+		
+		if (val.length > 2 && val != '%label%' && val != '%tooltip%')
+		{
+			var tmp = null;
+
+			if (match.index > last && str.charAt(match.index - 1) == '%')
+			{
+				tmp = val.substring(1);
+			}
+			else
+			{
+				var name = val.substring(1, val.length - 1);
+				var current = cell;
+				
+				while (tmp == null && current != null)
+				{
+					if (current.value != null && typeof(current.value) == 'object')
+					{
+						tmp = current.value.getAttribute(name);
+					}
+					
+					current = this.model.getParent(current);
+				}
+				
+				if (tmp == null)
+				{
+					tmp = this.getGlobalVariable(name);
+				}
+			}
+
+			result.push(str.substring(last, match.index) + (tmp || val));
+			last = match.index + val.length;
+		}
+	}
+	
+	result.push(str.substring(last));
+
+	return result.join('');
 };
 
 /**
@@ -2230,11 +2337,16 @@ if (typeof mxVertexHandler != 'undefined')
 				
 				if (tmp != null)
 				{
+					if (tmp != null && this.isReplacePlaceholders(cell))
+					{
+						tmp = this.replacePlaceholders(cell, tmp);
+					}
+					
 					tip = this.sanitizeHtml(tmp);
 				}
 				else
 				{
-					var ignored = ['label', 'tooltip'];
+					var ignored = ['label', 'tooltip', 'placeholders'];
 					var attrs = cell.value.attributes;
 					
 					// Hides links in edit mode

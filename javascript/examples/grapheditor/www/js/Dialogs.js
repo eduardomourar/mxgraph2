@@ -1834,7 +1834,7 @@ var MetadataDialog = function(ui, cell)
 
 	for (var i = 0; i < attrs.length; i++)
 	{
-		if (attrs[i].nodeName != 'label')
+		if (attrs[i].nodeName != 'label' && attrs[i].nodeName != 'placeholders')
 		{
 			addTextArea(count, attrs[i].nodeName, attrs[i].nodeValue);
 			count++;
@@ -1862,7 +1862,7 @@ var MetadataDialog = function(ui, cell)
 		{
 			var name = nameInput.value;
 			
-			if (name != null && name.length > 0 && name != 'label')
+			if (name != null && name.length > 0 && name != 'label' && name != 'placeholders')
 			{
 				try
 				{
@@ -1906,12 +1906,24 @@ var MetadataDialog = function(ui, cell)
 			mxUtils.alert(mxResources.get('invalidName'));
 		}
 	});
+	
+	this.init = function()
+	{
+		if (texts.length > 0)
+		{
+			texts[0].focus();
+		}
+		else
+		{
+			nameInput.focus();
+		}
+	};
+	
 	addBtn.setAttribute('disabled', 'disabled');
 	addBtn.style.marginLeft = '10px';
 	addBtn.style.width = '144px';
-	
 	newProp.appendChild(addBtn);
-	
+
 	var cancelBtn = mxUtils.button(mxResources.get('cancel'), function()
 	{
 		ui.hideDialog.apply(ui, arguments);
@@ -1938,6 +1950,9 @@ var MetadataDialog = function(ui, cell)
 					value.setAttribute(names[i], texts[i].value);
 				}
 			}
+			
+			// Invalidates all descendants cells for updating possible labels
+			ui.editor.graph.view.invalidate(cell, true);
 			
 			// Updates the value of the cell (undoable)
 			ui.editor.graph.getModel().setValue(cell, value);
@@ -1969,7 +1984,50 @@ var MetadataDialog = function(ui, cell)
 	var buttons = document.createElement('div');
 	buttons.style.marginTop = '18px';
 	buttons.style.textAlign = 'right';
-
+	
+	if (ui.editor.graph.getModel().isVertex(cell) || ui.editor.graph.getModel().isEdge(cell))
+	{
+		var replace = document.createElement('span');
+		replace.style.marginRight = '10px';
+		var input = document.createElement('input');
+		input.setAttribute('type', 'checkbox');
+		input.style.marginRight = '6px';
+		
+		if (value.getAttribute('placeholders') == '1')
+		{
+			input.setAttribute('checked', 'checked');
+			input.defaultChecked = true;
+		}
+	
+		mxEvent.addListener(input, 'click', function()
+		{
+			if (value.getAttribute('placeholders') == '1')
+			{
+				value.removeAttribute('placeholders');
+			}
+			else
+			{
+				value.setAttribute('placeholders', '1');
+			}
+		});
+		
+		replace.appendChild(input);
+		mxUtils.write(replace, mxResources.get('placeholders'));
+		
+		if (MetadataDialog.placeholderHelpLink != null)
+		{
+			var link = document.createElement('a');
+			link.setAttribute('href', MetadataDialog.placeholderHelpLink);
+			link.setAttribute('target', '_blank');
+			link.style.marginLeft = '6px';
+			mxUtils.write(link, '?');
+			
+			replace.appendChild(link);
+		}
+		
+		buttons.appendChild(replace);
+	}
+	
 	if (ui.editor.cancelFirst)
 	{
 		buttons.appendChild(cancelBtn);
@@ -1984,6 +2042,11 @@ var MetadataDialog = function(ui, cell)
 	div.appendChild(buttons);
 	this.container = div;
 };
+
+/**
+ * Optional help link.
+ */
+MetadataDialog.placeholderHelpLink = null;
 
 /**
  * Constructs a new link dialog.

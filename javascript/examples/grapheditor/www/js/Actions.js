@@ -214,7 +214,9 @@ Actions.prototype.init = function()
 		
 		if (cell != null)
 		{
-			ui.showDialog(new MetadataDialog(ui, cell).container, 320, 320, true, false);
+			var dlg = new MetadataDialog(ui, cell);
+			ui.showDialog(dlg.container, 320, 320, true, false);
+			dlg.init();
 		}
 	}, null, null, 'Ctrl+M');
 	this.addAction('editTooltip...', function()
