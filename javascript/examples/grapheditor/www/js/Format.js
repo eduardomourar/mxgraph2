@@ -1500,6 +1500,18 @@ ArrangePanel.prototype.addGroupOps = function(div)
 			mxUtils.br(div);
 		}
 		
+		btn = mxUtils.button(mxResources.get('editMetadata'), mxUtils.bind(this, function(evt)
+		{
+			this.editorUi.actions.get('editMetadata').funct();
+		}));
+		
+		btn.style.width = '202px';
+		btn.style.marginBottom = '2px';
+		div.appendChild(btn);
+		count++;
+
+		mxUtils.br(div);
+
 		btn = mxUtils.button(mxResources.get('editLink'), mxUtils.bind(this, function(evt)
 		{
 			this.editorUi.actions.get('editLink').funct();
@@ -4522,7 +4534,18 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
  */
 DiagramFormatPanel.prototype.addStyleOps = function(div)
 {
-	var btn = mxUtils.button(mxResources.get('clearDefaultStyle'), mxUtils.bind(this, function(evt)
+	var btn = mxUtils.button(mxResources.get('editMetadata'), mxUtils.bind(this, function(evt)
+	{
+		this.editorUi.actions.get('editMetadata').funct();
+	}));
+	
+	btn.style.width = '202px';
+	btn.style.marginBottom = '2px';
+	div.appendChild(btn);
+
+	mxUtils.br(div);
+	
+	btn = mxUtils.button(mxResources.get('clearDefaultStyle'), mxUtils.bind(this, function(evt)
 	{
 		this.editorUi.actions.get('clearDefaultStyle').funct();
 	}));
