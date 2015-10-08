@@ -576,10 +576,10 @@ BaseFormatPanel.prototype.installInputHandler = function(input, key, defaultValu
 							div.innerHTML = graph.convertValueToString(cell);
 							var elts = div.getElementsByTagName('font');
 							
-							for (var i = 0; i < elts.length; i++)
+							for (var j = 0; j < elts.length; j++)
 							{
-								elts[i].removeAttribute('size');
-								elts[i].style.fontSize = value + 'px';
+								elts[j].removeAttribute('size');
+								elts[j].style.fontSize = value + 'px';
 							}
 							
 							graph.cellLabelChanged(cell, div.innerHTML)
