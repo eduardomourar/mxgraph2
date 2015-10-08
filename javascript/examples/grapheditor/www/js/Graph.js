@@ -997,7 +997,10 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 			edge.geometry.setTerminalPoint(pt, false);
 		}
 		
-		this.fireEvent(new mxEventObject('cellsInserted', 'cells', result));
+		if (edge != null)
+		{
+			this.fireEvent(new mxEventObject('cellsInserted', 'cells', [edge]));
+		}
 	}
 	finally
 	{
