@@ -1706,7 +1706,7 @@ Sidebar.prototype.createThumb = function(cells, width, height, parent, title, sh
 /**
  * Creates and returns a new palette item for the given image.
  */
-Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, width, height)
+Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, width, height, allowCellsInserted)
 {
 	var elt = document.createElement('a');
 	elt.setAttribute('href', 'javascript:void(0);');
@@ -1729,7 +1729,7 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 	if (cells.length > 1 || cells[0].vertex)
 	{
 		var ds = this.createDragSource(elt, this.createDropHandler(cells, this.editorUi.editor.
-				graph.isSplitEnabled()), this.createDragPreview(width, height), cells);
+				graph.isSplitEnabled(), allowCellsInserted), this.createDragPreview(width, height), cells);
 		this.addClickHandler(elt, ds, cells);
 	
 		// Uses guides for vertices only if enabled in graph
@@ -1740,7 +1740,7 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 	}
 	else if (cells[0] != null && cells[0].edge)
 	{
-		var ds = this.createDragSource(elt, this.createDropHandler(cells, false),
+		var ds = this.createDragSource(elt, this.createDropHandler(cells, false, allowCellsInserted),
 			this.createDragPreview(width, height), cells);
 		this.addClickHandler(elt, ds, cells);
 	}
@@ -1837,8 +1837,12 @@ Sidebar.prototype.updateShapes = function(source, targets)
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createDropHandler = function(cells, allowSplit)
+Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInserted)
 {
+	console.trace();
+	console.log('drop handler', allowCellsInserted);
+	allowCellsInserted = (allowCellsInserted != null) ? allowCellsInserted : true;
+	
 	return mxUtils.bind(this, function(graph, evt, target, x, y)
 	{
 		if (graph.isEnabled())
@@ -1895,7 +1899,10 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit)
 							}
 						}
 	
-						graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
+						if (allowCellsInserted)
+						{
+							graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
+						}
 					}
 					finally
 					{
@@ -2947,39 +2954,39 @@ Sidebar.prototype.createVertexTemplateEntry = function(style, width, height, val
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createVertexTemplate = function(style, width, height, value, title, showLabel, showTitle)
+Sidebar.prototype.createVertexTemplate = function(style, width, height, value, title, showLabel, showTitle, allowCellsInserted)
 {
 	var cells = [new mxCell((value != null) ? value : '', new mxGeometry(0, 0, width, height), style)];
 	cells[0].vertex = true;
 	
-	return this.createVertexTemplateFromCells(cells, width, height, title, showLabel, showTitle);
+	return this.createVertexTemplateFromCells(cells, width, height, title, showLabel, showTitle, allowCellsInserted);
 };
 
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createVertexTemplateFromCells = function(cells, width, height, title, showLabel, showTitle)
+Sidebar.prototype.createVertexTemplateFromCells = function(cells, width, height, title, showLabel, showTitle, allowCellsInserted)
 {
-	return this.createItem(cells, title, showLabel, showTitle, width, height);
+	return this.createItem(cells, title, showLabel, showTitle, width, height, allowCellsInserted);
 };
 
 /**
  * 
  */
-Sidebar.prototype.createEdgeTemplateEntry = function(style, width, height, value, title, showLabel, tags)
+Sidebar.prototype.createEdgeTemplateEntry = function(style, width, height, value, title, showLabel, tags, allowCellsInserted)
 {
 	tags = (tags != null && tags.length > 0) ? tags : title.toLowerCase();
 	
  	return this.addEntry(tags, mxUtils.bind(this, function()
  	{
- 		return this.createEdgeTemplate(style, width, height, value, title, showLabel);
+ 		return this.createEdgeTemplate(style, width, height, value, title, showLabel, allowCellsInserted);
  	}));
 };
 
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createEdgeTemplate = function(style, width, height, value, title, showLabel)
+Sidebar.prototype.createEdgeTemplate = function(style, width, height, value, title, showLabel, allowCellsInserted)
 {
 	var cell = new mxCell((value != null) ? value : '', new mxGeometry(0, 0, width, height), style);
 	cell.geometry.setTerminalPoint(new mxPoint(0, height), true);
@@ -2987,15 +2994,15 @@ Sidebar.prototype.createEdgeTemplate = function(style, width, height, value, tit
 	cell.geometry.relative = true;
 	cell.edge = true;
 	
-	return this.createEdgeTemplateFromCells([cell], width, height, title, showLabel);
+	return this.createEdgeTemplateFromCells([cell], width, height, title, showLabel, allowCellsInserted);
 };
 
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createEdgeTemplateFromCells = function(cells, width, height, title, showLabel)
+Sidebar.prototype.createEdgeTemplateFromCells = function(cells, width, height, title, showLabel, allowCellsInserted)
 {	
-	return this.createItem(cells, title, showLabel, true, width, height);
+	return this.createItem(cells, title, showLabel, true, width, height, allowCellsInserted);
 };
 
 /**
