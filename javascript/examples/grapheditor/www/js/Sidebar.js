@@ -1839,8 +1839,6 @@ Sidebar.prototype.updateShapes = function(source, targets)
  */
 Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInserted)
 {
-	console.trace();
-	console.log('drop handler', allowCellsInserted);
 	allowCellsInserted = (allowCellsInserted != null) ? allowCellsInserted : true;
 	
 	return mxUtils.bind(this, function(graph, evt, target, x, y)
