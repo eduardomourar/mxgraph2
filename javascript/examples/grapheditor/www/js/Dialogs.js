@@ -1747,11 +1747,12 @@ ExportDialog.getExportParameter = function(ui, format)
 var MetadataDialog = function(ui, cell)
 {
 	var div = document.createElement('div');
+	var graph = ui.editor.graph;
 
 	div.style.height = '310px';
 	div.style.overflow = 'auto';
 	
-	var value = ui.editor.graph.getModel().getValue(cell);
+	var value = graph.getModel().getValue(cell);
 	
 	// Converts the value to an XML node
 	if (!mxUtils.isNode(value))
@@ -1951,11 +1952,22 @@ var MetadataDialog = function(ui, cell)
 				}
 			}
 			
-			// Invalidates all descendants cells for updating possible labels
-			ui.editor.graph.view.invalidate(cell, true);
+			// Invalidates all descendants with placeholders
+			var desc = graph.model.getDescendants(cell);
+			
+			if (desc.length > 0)
+			{
+				for (var i = 0; i < desc.length; i++)
+				{
+					if (graph.isReplacePlaceholders(desc[i]))
+					{
+						ui.editor.graph.view.invalidate(desc[i], false, false);
+					}
+				}
+			}
 			
 			// Updates the value of the cell (undoable)
-			ui.editor.graph.getModel().setValue(cell, value);
+			graph.getModel().setValue(cell, value);
 		}
 		catch (e)
 		{
