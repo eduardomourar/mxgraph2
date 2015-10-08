@@ -1,3 +1,4 @@
+- Fixes handling of escape for inactive mxVertexHandler [JavaScript]
 - Adds mxCellState.unscaledWidth for cache invalidation [JavaScript]
 - Adds mxSvgCanvas2D.cacheOffsetSize, invalidateCachedOffsetSize [JavaScript]
 - Adds clipping for faster mxPrintPreview [JavaScript]

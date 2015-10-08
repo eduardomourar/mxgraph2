@@ -27,7 +27,7 @@ function mxVertexHandler(state)
 		// Handles escape keystrokes
 		this.escapeHandler = mxUtils.bind(this, function(sender, evt)
 		{
-			if (this.livePreview)
+			if (this.livePreview && this.index != null)
 			{
 				// Redraws the live preview
 				this.state.view.graph.cellRenderer.redraw(this.state, true);
