@@ -1952,20 +1952,6 @@ var MetadataDialog = function(ui, cell)
 				}
 			}
 			
-			// Invalidates all descendants with placeholders
-			var desc = graph.model.getDescendants(cell);
-			
-			if (desc.length > 0)
-			{
-				for (var i = 0; i < desc.length; i++)
-				{
-					if (graph.isReplacePlaceholders(desc[i]))
-					{
-						ui.editor.graph.view.invalidate(desc[i], false, false);
-					}
-				}
-			}
-			
 			// Updates the value of the cell (undoable)
 			graph.getModel().setValue(cell, value);
 		}

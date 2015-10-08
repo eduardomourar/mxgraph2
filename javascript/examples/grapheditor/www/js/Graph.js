@@ -2532,6 +2532,33 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * Updates the child cells with placeholders if metadata of a cell has changed.
+		 */
+		Graph.prototype.processChange = function(change)
+		{
+			mxGraph.prototype.processChange.apply(this, arguments);
+			
+			if (change instanceof mxValueChange && change.cell.value != null &&
+				typeof(change.cell.value) == 'object')
+			{
+				// Invalidates all descendants with placeholders
+				var desc = this.model.getDescendants(change.cell);
+				
+				// LATER: Check if only label or tooltip have changed
+				if (desc.length > 0)
+				{
+					for (var i = 0; i < desc.length; i++)
+					{
+						if (this.isReplacePlaceholders(desc[i]))
+						{
+							this.view.invalidate(desc[i], false, false);
+						}
+					}
+				}
+			}
+		};
+		
+		/**
 		 * Handles label changes for XML user objects.
 		 */
 		Graph.prototype.cellLabelChanged = function(cell, value, autoSize)
