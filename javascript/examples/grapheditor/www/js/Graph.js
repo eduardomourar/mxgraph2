@@ -2736,6 +2736,7 @@ if (typeof mxVertexHandler != 'undefined')
 			try
 			{
 				this.addCells([label], (state != null) ? state.cell : null);
+				this.fireEvent(new mxEventObject('textInserted', 'cells', [label]));
 			}
 			finally
 			{
