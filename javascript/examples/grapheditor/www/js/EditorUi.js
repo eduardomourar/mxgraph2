@@ -2733,10 +2733,10 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	var isEventIgnored = keyHandler.isEventIgnored;
 	keyHandler.isEventIgnored = function(evt)
 	{
-		// Handles undo/redo via action and allows ctrl+b/u/i only if editing value is HTML
+		// Handles undo/redo via action and allows ctrl+b/u/i only if editing value is HTML (except for FF)
 		return (!this.isControlDown(evt) || mxEvent.isShiftDown(evt) || (evt.keyCode != 90 && evt.keyCode != 89)) &&
-			((evt.keyCode != 66 && evt.keyCode != 73 && evt.keyCode != 85) || !this.isControlDown(evt) || this.graph.cellEditor.isContentEditing()) &&
-			isEventIgnored.apply(this, arguments);
+			((evt.keyCode != 66 && evt.keyCode != 73 && evt.keyCode != 85) || !this.isControlDown(evt) ||
+			(this.graph.cellEditor.isContentEditing() && !mxClient.IS_FF)) && isEventIgnored.apply(this, arguments);
 	};
 	
 	// Routes command-key to control-key on Mac
