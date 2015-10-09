@@ -652,7 +652,7 @@ BaseFormatPanel.prototype.createTitle = function(title)
 /**
  * 
  */
-BaseFormatPanel.prototype.createStepper = function(input, update, step, height, disableFocus)
+BaseFormatPanel.prototype.createStepper = function(input, update, step, height, disableFocus, defaultValue)
 {
 	step = (step != null) ? step : 1;
 	height = (height != null) ? height : 8;
@@ -689,7 +689,7 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height, 
 	{
 		if (input.value == '')
 		{
-			input.value = '2';
+			input.value = defaultValue || '2';
 		}
 		
 		var val = parseInt(input.value);
@@ -711,7 +711,7 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height, 
 	{
 		if (input.value == '')
 		{
-			input.value = '0';
+			input.value = defaultValue || '0';
 		}
 		
 		var val = parseInt(input.value);
@@ -2421,7 +2421,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		}, 0);
 	});
 	
-	var stepper = this.createStepper(input, inputUpdate, 1, 10, true);
+	var stepper = this.createStepper(input, inputUpdate, 1, 10, true, Menus.prototype.defaultFontSize);
 	stepper.style.display = input.style.display;
 	stepper.style.marginTop = '4px';
 	
