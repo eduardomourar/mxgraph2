@@ -10,13 +10,7 @@ function mxEdgeSegmentHandler(state)
 /**
  * Extends mxEdgeHandler.
  */
-mxUtils.extend(mxEdgeSegmentHandler, mxEdgeHandler);
-
-/**
- * Extends mxEdgeHandler.
- */
-mxEdgeSegmentHandler.prototype = new mxElbowEdgeHandler();
-mxEdgeSegmentHandler.prototype.constructor = mxEdgeSegmentHandler;
+mxUtils.extend(mxEdgeSegmentHandler, mxElbowEdgeHandler);
 
 /**
  * Function: getCurrentPoints

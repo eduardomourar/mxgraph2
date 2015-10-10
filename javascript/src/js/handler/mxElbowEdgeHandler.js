@@ -29,12 +29,6 @@ function mxElbowEdgeHandler(state)
 mxUtils.extend(mxElbowEdgeHandler, mxEdgeHandler);
 
 /**
- * Extends mxEdgeHandler.
- */
-mxElbowEdgeHandler.prototype = new mxEdgeHandler();
-mxElbowEdgeHandler.prototype.constructor = mxElbowEdgeHandler;
-
-/**
  * Specifies if a double click on the middle handle should call
  * <mxGraph.flipEdge>. Default is true.
  */
