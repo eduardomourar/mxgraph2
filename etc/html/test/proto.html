@@ -10,7 +10,7 @@
 		}
 	</style>
 	<script type="text/javascript">
-		var editor = 'https://test.draw.io/?dev=1&embed=1&spin=1&modified=unsavedChanges&saveAndExit=1&ui=atlas&proto=json';
+		var editor = 'https://test.draw.io/?dev=1&embed=1&spin=1&ui=atlas&proto=json';
 		var temp = null;
 		
 		function edit(image)
@@ -48,8 +48,8 @@
 						}
 						else
 						{
-							iframe.contentWindow.postMessage(JSON.stringify({action: 'load',
-								autosave: 1, xmlpng: data}), '*');
+							iframe.contentWindow.postMessage(JSON.stringify({action: 'load', autosave: 1,
+								saveAndExit: '1', xmlpng: data, modified: 'unsavedChanges'}), '*');
 						}
 						
 						filetype.style.display = '';
