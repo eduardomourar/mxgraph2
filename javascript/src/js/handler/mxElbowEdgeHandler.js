@@ -57,7 +57,7 @@ mxElbowEdgeHandler.prototype.doubleClickOrientationResource =
 	// Source
 	var bend = this.createHandleShape(0);
 	this.initBend(bend);
-	bend.setCursor(mxConstants.CURSOR_BEND_HANDLE);
+	bend.setCursor(mxConstants.CURSOR_TERMINAL_HANDLE);
 	bends.push(bend);
 
 	// Virtual
@@ -74,7 +74,7 @@ mxElbowEdgeHandler.prototype.doubleClickOrientationResource =
 	// Target
 	bend = this.createHandleShape(2);
 	this.initBend(bend);
-	bend.setCursor(mxConstants.CURSOR_BEND_HANDLE);
+	bend.setCursor(mxConstants.CURSOR_TERMINAL_HANDLE);
 	bends.push(bend);
 	
 	return bends;

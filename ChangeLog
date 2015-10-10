@@ -1,3 +1,4 @@
+- Fixes cursor for terminal handle in mxEdgeSegment/ElbowEdgeHandler [JavaScript]
 - Fixes handling of escape for inactive mxVertexHandler [JavaScript]
 - Adds mxCellState.unscaledWidth for cache invalidation [JavaScript]
 - Adds mxSvgCanvas2D.cacheOffsetSize, invalidateCachedOffsetSize [JavaScript]

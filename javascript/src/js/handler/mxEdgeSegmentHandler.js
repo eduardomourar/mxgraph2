@@ -287,7 +287,7 @@ mxEdgeSegmentHandler.prototype.createBends = function()
 	// Source
 	var bend = this.createHandleShape(0);
 	this.initBend(bend);
-	bend.setCursor(mxConstants.CURSOR_BEND_HANDLE);
+	bend.setCursor(mxConstants.CURSOR_TERMINAL_HANDLE);
 	bends.push(bend);
 
 	var pts = this.getCurrentPoints();
@@ -320,7 +320,7 @@ mxEdgeSegmentHandler.prototype.createBends = function()
 	// Target
 	var bend = this.createHandleShape(pts.length);
 	this.initBend(bend);
-	bend.setCursor(mxConstants.CURSOR_BEND_HANDLE);
+	bend.setCursor(mxConstants.CURSOR_TERMINAL_HANDLE);
 	bends.push(bend);
 
 	return bends;
