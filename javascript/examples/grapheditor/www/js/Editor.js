@@ -974,8 +974,9 @@ OpenFile.prototype.cancel = function(cancel)
 			
 			while (parent != null)
 			{
-				if (this.graph.isCellSelected(parent) && model.isVertex(parent) &&
-					!this.graph.isSwimlane(parent))
+				// Inconsistency for unselected parent swimlane is intended for easier moving
+				// of stack layouts where the container title section is too far away
+				if (this.graph.isCellSelected(parent) && model.isVertex(parent))
 				{
 					result = true;
 					break;
