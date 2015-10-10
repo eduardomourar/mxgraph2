@@ -102,31 +102,47 @@ Graph = function(container, model, renderHint, stylesheet)
 				    				{
 				    					if (!entity)
 				    					{
-						    				var orth = edgeStyle == mxEdgeStyle.EntityRelation || edgeStyle == mxEdgeStyle.OrthConnector;
 					    					var pts = state.absolutePoints;
 				    						
-					    					if (orth && pts != null)
+					    					// Handles special case of orthogonal edge styles
+					    					if (edgeStyle == mxEdgeStyle.OrthConnector && pts != null)
 					    					{
 					    						// Does not use handles if they were not initially visible
 					    						handle = start.handle;
 
 					    						if (handle == null)
 					    						{
-						    						// Checks if edge has no bends
-						    						var nobends = pts.length == 2 || (pts.length == 3 &&
-						    								((Math.round(pts[0].x - pts[1].x) == 0 && Math.round(pts[1].x - pts[2].x) == 0) ||
-						    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0)));
-						    						
-					    							if (nobends)
-							    					{
-								    					// Moves central handle for straight orthogonal edges
-							    						handle = 2;
-							    					}
-							    					else
-								    				{
-									    				// Finds and moves vertical or horizontal segment
-								    					handle = mxUtils.findNearestSegment(state, start.point.x, start.point.y) + 1;
-								    				}
+							    					var box = new mxRectangle(start.point.x, start.point.y);
+							    					box.grow(mxEdgeHandler.prototype.handleImage.width / 2);
+							    					
+					    							if (mxUtils.contains(box, pts[0].x, pts[0].y))
+					    							{
+						    							// Moves source terminal handle
+					    								handle = 0;
+					    							}
+					    							else if (mxUtils.contains(box, pts[pts.length - 1].x, pts[pts.length - 1].y))
+					    							{
+					    								// Moves target terminal handle
+					    								handle = handler.bends.length - 1;
+					    							}
+					    							else
+					    							{
+							    						// Checks if edge has no bends
+							    						var nobends = pts.length == 2 || (pts.length == 3 &&
+							    								((Math.round(pts[0].x - pts[1].x) == 0 && Math.round(pts[1].x - pts[2].x) == 0) ||
+							    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0)));
+							    						
+						    							if (nobends)
+								    					{
+									    					// Moves central handle for straight orthogonal edges
+								    						handle = 2;
+								    					}
+								    					else
+									    				{
+										    				// Finds and moves vertical or horizontal segment
+									    					handle = mxUtils.findNearestSegment(state, start.point.x, start.point.y) + 1;
+									    				}
+					    							}
 					    						}
 					    					}
 							    			
@@ -175,7 +191,8 @@ Graph = function(container, model, renderHint, stylesheet)
 			    					var box = new mxRectangle(me.getGraphX(), me.getGraphY());
 			    					box.grow(mxEdgeHandler.prototype.handleImage.width / 2);
 			    					
-			    					if (mxUtils.contains(box, pts[0].x, pts[0].y) || mxUtils.contains(box, pts[pts.length - 1].x, pts[pts.length - 1].y))
+			    					if (mxUtils.contains(box, pts[0].x, pts[0].y) ||
+			    						mxUtils.contains(box, pts[pts.length - 1].x, pts[pts.length - 1].y))
 			    					{
 			    						cursor = 'pointer';
 			    					}
