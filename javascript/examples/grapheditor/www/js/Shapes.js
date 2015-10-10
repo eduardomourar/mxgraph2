@@ -948,7 +948,15 @@
 			size = mxUtils.getValue(vertex.style, 'size', size) * vertex.view.scale;
 		}
 		
-		return new mxPoint(bounds.getCenterX(), Math.min(bounds.y + bounds.height,
+		var sw = (parseFloat(vertex.style[mxConstants.STYLE_STROKEWIDTH]) * vertex.view.scale / 2) - 1;
+		
+		if (next.x < bounds.getCenterX())
+		{
+			sw += 1;
+			sw *= -1;
+		}
+		
+		return new mxPoint(bounds.getCenterX() + sw, Math.min(bounds.y + bounds.height,
 				Math.max(bounds.y + size, next.y)));
 	};
 	
@@ -963,6 +971,37 @@
 	
 	mxStyleRegistry.putValue('orthogonalPerimeter', mxPerimeter.OrthogonalPerimeter);
 
+	mxPerimeter.BackbonePerimeter = function (bounds, vertex, next, orthogonal)
+	{
+		var sw = (parseFloat(vertex.style[mxConstants.STYLE_STROKEWIDTH]) * vertex.view.scale / 2) - 1;
+		
+		if (vertex.style[mxConstants.STYLE_DIRECTION] == 'south' ||
+			vertex.style[mxConstants.STYLE_DIRECTION] == 'north')
+		{
+			if (next.x < bounds.getCenterX())
+			{
+				sw += 1;
+				sw *= -1;
+			}
+			
+			return new mxPoint(bounds.getCenterX() + sw, Math.min(bounds.y + bounds.height,
+					Math.max(bounds.y, next.y)));
+		}
+		else
+		{
+			if (next.y < bounds.getCenterY())
+			{
+				sw += 1;
+				sw *= -1;
+			}
+			
+			return new mxPoint(Math.min(bounds.x + bounds.width, Math.max(bounds.x, next.x)),
+				bounds.getCenterY() + sw);
+		}
+	};
+	
+	mxStyleRegistry.putValue('backbonePerimeter', mxPerimeter.BackbonePerimeter);
+	
 	// Lollipop Shape
 	function LollipopShape()
 	{
