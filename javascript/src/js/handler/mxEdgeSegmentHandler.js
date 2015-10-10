@@ -219,7 +219,7 @@ mxEdgeSegmentHandler.prototype.connect = function(edge, terminal, isSource, isCl
 			// might have been offset if the edge parent has changed after connect
 			var geoPts = geo.points;
 			
-			if (geoPts != null)
+			if (geoPts != null && geoPts.length == this.abspoints.length - 1)
 			{
 				geo = geo.clone();
 
