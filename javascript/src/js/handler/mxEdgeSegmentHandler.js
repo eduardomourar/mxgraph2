@@ -205,6 +205,27 @@ mxEdgeSegmentHandler.prototype.updatePreviewState = function(edge, point, termin
  */
 mxEdgeSegmentHandler.prototype.connect = function(edge, terminal, isSource, isClone, me)
 {
+	// Merges adjacent edge segments
+	var pts = this.abspoints;
+	var pt0 = pts[0];
+	var pt1 = pts[1];
+	var result = [];
+	
+	for (var i = 2; i < pts.length; i++)
+	{
+		var pt2 = pts[i];
+	
+		// Merges adjacent segments only if more than 2 to allow for straight edges
+		if ((Math.round(pt0.x - pt1.x) != 0 || Math.round(pt1.x - pt2.x) != 0) &&
+			(Math.round(pt0.y - pt1.y) != 0 || Math.round(pt1.y - pt2.y) != 0))
+		{
+			result.push(this.convertPoint(pt1.clone(), false));
+		}
+
+		pt0 = pt1;
+		pt1 = pt2;
+	}
+	
 	var model = this.graph.getModel();
 	
 	model.beginUpdate();
@@ -215,37 +236,10 @@ mxEdgeSegmentHandler.prototype.connect = function(edge, terminal, isSource, isCl
 		
 		if (geo != null)
 		{
-			// Merges adjacent edge segments in the new geometry since the points
-			// might have been offset if the edge parent has changed after connect
-			var geoPts = geo.points;
+			geo = geo.clone();
+			geo.points = result;
 			
-			if (geoPts != null && geoPts.length == this.abspoints.length - 1)
-			{
-				geo = geo.clone();
-
-				var pts = this.abspoints;
-				var pt0 = pts[0];
-				var pt1 = pts[1];
-				var result = [];
-				
-				for (var i = 2; i < pts.length; i++)
-				{
-					var pt2 = pts[i];
-				
-					// Merges adjacent segments only if more than 2 to allow for straight edges
-					if ((Math.round(pt0.x - pt1.x) != 0 || Math.round(pt1.x - pt2.x) != 0) &&
-						(Math.round(pt0.y - pt1.y) != 0 || Math.round(pt1.y - pt2.y) != 0))
-					{
-						result.push(geoPts[i - 2]);
-					}
-	
-					pt0 = pt1;
-					pt1 = pt2;
-				}
-				
-				geo.points = result;
-				model.setGeometry(edge, geo);
-			}
+			model.setGeometry(edge, geo);
 		}
 	}
 	finally

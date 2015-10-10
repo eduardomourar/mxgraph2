@@ -1,4 +1,3 @@
-- Fixes possible change of parent in mxEdgeSegmentHandler.connect [JavaScript]
 - Fixes tolerance for rounding errors in mxEdgeStyle.SegmentConnector [JavaScript]
 - Changes mxConstants.HANDLE_SIZE default value to 6 [JavaScript]
 - Fixes index for virtual handle in mxEdgeHandler.createHandleShape [JavaScript]
