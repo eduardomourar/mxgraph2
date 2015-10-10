@@ -635,7 +635,7 @@ mxEdgeHandler.prototype.validateConnection = function(source, target)
 				this.initBend(bend);
 				bend.setCursor(mxConstants.CURSOR_VIRTUAL_BEND_HANDLE);
 				bends.push(bend);
-			}))(this.createHandleShape(i));
+			}))(this.createHandleShape());
 		}
 	}
 
@@ -674,6 +674,7 @@ mxEdgeHandler.prototype.isHandleVisible = function(index)
  * null for special cases, such as when called from
  * <mxElbowEdgeHandler.createVirtualBend>. Only images and rectangles should be
  * returned if support for HTML labels with not foreign objects is required.
+ * Index if null for virtual handles.
  */
 mxEdgeHandler.prototype.createHandleShape = function(index)
 {
