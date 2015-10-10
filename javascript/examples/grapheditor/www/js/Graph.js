@@ -1110,7 +1110,6 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 //			var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
 //			edge.style = mxUtils.setStyle(edge.style, 'edgeStyle', 'elbowEdgeStyle');
 //			edge.style = mxUtils.setStyle(edge.style, 'elbow', elbowValue);
-			
 			result.push(edge);
 		}
 		
@@ -4447,10 +4446,12 @@ if (typeof mxVertexHandler != 'undefined')
 		mxEdgeHandler.prototype.createHandleShape = function(index, virtual)
 		{
 			var source = index != null && index == 0;
+			var terminalState = this.state.getVisibleTerminalState(source);
 			var c = (index != null && (index == 0 || index >= this.state.absolutePoints.length - 1)) ?
-				this.graph.getConnectionConstraint(this.state, this.state.getVisibleTerminalState(source), source) : null;
+				this.graph.getConnectionConstraint(this.state, terminalState, source) : null;
 			var pt = (c != null) ? this.graph.getConnectionPoint(this.state.getVisibleTerminalState(source), c) : null;
-			var img = (pt != null) ? this.fixedHandleImage : ((c != null) ? this.terminalHandleImage : this.handleImage);
+			var img = (pt != null) ? this.fixedHandleImage : ((c != null && terminalState != null) ?
+				this.terminalHandleImage : this.handleImage);
 			
 			if (img != null)
 			{
