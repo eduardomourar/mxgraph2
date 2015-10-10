@@ -216,7 +216,7 @@ mxElbowEdgeHandler.prototype.redrawInnerBends = function(p0, pe)
 	{
 		w = mxConstants.HANDLE_SIZE + 3;
 		h = mxConstants.HANDLE_SIZE + 3;
-		bounds = new mxRectangle(Math.round(pt.x - w / 2), Math.round(pt.y - h / 2), w, h);
+		bounds = new mxRectangle(Math.floor(pt.x - w / 2), Math.floor(pt.y - h / 2), w, h);
 	}
 
 	this.bends[1].bounds = bounds;

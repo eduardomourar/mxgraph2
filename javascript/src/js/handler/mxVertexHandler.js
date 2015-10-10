@@ -478,8 +478,8 @@ mxVertexHandler.prototype.moveSizerTo = function(shape, x, y)
 {
 	if (shape != null)
 	{
-		shape.bounds.x = Math.round(x - shape.bounds.width / 2);
-		shape.bounds.y = Math.round(y - shape.bounds.height / 2);
+		shape.bounds.x = Math.floor(x - shape.bounds.width / 2);
+		shape.bounds.y = Math.floor(y - shape.bounds.height / 2);
 		
 		// Fixes visible inactive handles in VML
 		if (shape.node != null && shape.node.style.display != 'none')
