@@ -1092,8 +1092,17 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 			layout = this.layoutManager.getLayout(this.model.getParent(source));
 		}
 		
-		var edge = ((mxEvent.isControlDown(evt) && duplicate) || (layout != null && layout.constructor == mxStackLayout)) ? null :
+		var edge = ((mxEvent.isControlDown(evt) && duplicate) || (target == null && layout != null && layout.constructor == mxStackLayout)) ? null :
 			this.insertEdge(this.model.getParent(source), null, '', source, realTarget, this.createCurrentEdgeStyle());
+		
+		// Special case: Click on west icon puts clone before cell
+		if (target == null && realTarget != null && layout != null &&
+			layout.constructor == mxStackLayout && direction == mxConstants.DIRECTION_WEST)
+		{
+			var parent = this.model.getParent(source);
+			var index = parent.getIndex(source);
+			parent.insert(realTarget, index);
+		}
 		
 		if (edge != null)
 		{
