@@ -1935,10 +1935,12 @@ EditorUi.prototype.updateActionStates = function()
 	this.actions.get('wordWrap').setEnabled(vertexSelected);
 	this.actions.get('autosize').setEnabled(vertexSelected);
 	this.actions.get('collapsible').setEnabled(vertexSelected);
-	this.actions.get('group').setEnabled(graph.getSelectionCount() > 1);
-   	this.actions.get('ungroup').setEnabled(graph.getSelectionCount() == 1 &&
-   			graph.getModel().getChildCount(graph.getSelectionCell()) > 0);
+	this.actions.get('group').setEnabled(graph.getSelectionCount() > 1 ||
+		(oneVertexSelected || !graph.isContainer(graph.getSelectionCell())));
    	var oneVertexSelected = vertexSelected && graph.getSelectionCount() == 1;
+	this.actions.get('ungroup').setEnabled(graph.getSelectionCount() == 1 &&
+		(graph.getModel().getChildCount(graph.getSelectionCell()) > 0 ||
+		(oneVertexSelected && graph.isContainer(graph.getSelectionCell()))));
    	this.actions.get('removeFromGroup').setEnabled(oneVertexSelected &&
    			graph.getModel().isVertex(graph.getModel().getParent(graph.getSelectionCell())));
 

@@ -204,8 +204,28 @@ Actions.prototype.init = function()
 	// Arrange actions
 	this.addAction('toFront', function() { graph.orderCells(false); }, null, null, 'Ctrl+Shift+F');
 	this.addAction('toBack', function() { graph.orderCells(true); }, null, null, 'Ctrl+Shift+B');
-	this.addAction('group', function() { graph.setSelectionCell(graph.groupCells(null, 0)); }, null, null, 'Ctrl+G');
-	this.addAction('ungroup', function() { graph.setSelectionCells(graph.ungroupCells()); }, null, null, 'Ctrl+Shift+U');
+	this.addAction('group', function()
+	{
+		if (graph.getSelectionCount() == 1)
+		{
+			graph.setCellStyles('container', '1');
+		}
+		else
+		{
+			graph.setSelectionCell(graph.groupCells(null, 0));
+		}
+	}, null, null, 'Ctrl+G');
+	this.addAction('ungroup', function()
+	{
+		if (graph.getSelectionCount() == 1 && graph.getModel().getChildCount(graph.getSelectionCell()) == 0)
+		{
+			graph.setCellStyles('container', '0');
+		}
+		else
+		{
+			graph.setSelectionCells(graph.ungroupCells());
+		}
+	}, null, null, 'Ctrl+Shift+U');
 	this.addAction('removeFromGroup', function() { graph.removeCellsFromParent(); });
 	// Adds action
 	this.addAction('editMetadata...', function()
