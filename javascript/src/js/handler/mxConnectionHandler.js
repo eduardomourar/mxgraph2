@@ -366,6 +366,14 @@ mxConnectionHandler.prototype.movePreviewAway = mxClient.IS_VML;
 mxConnectionHandler.prototype.outlineConnect = false;
 
 /**
+ * Variable: insertEdgeBeforeSource
+ * 
+ * Specifies if new edges should be inserted before the source vertex in the
+ * cell hierarchy. Default is false.
+ */
+mxConnectionHandler.prototype.insertEdgeBeforeSource = false;
+
+/**
  * Function: isEnabled
  * 
  * Returns true if events are handled. This implementation
@@ -1780,6 +1788,16 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 				if (this.edgeState != null)
 				{
 					model.setGeometry(edge, this.edgeState.cell.geometry);
+				}
+				
+				var parent = model.getParent(source);
+				
+				// Inserts edge before source
+				if (this.insertEdgeBeforeSource)
+				{
+					var index = parent.getIndex(source);
+					var parent = model.getParent(source);
+					parent.insert(edge, index);
 				}
 				
 				// Makes sure the edge has a non-null, relative geometry
