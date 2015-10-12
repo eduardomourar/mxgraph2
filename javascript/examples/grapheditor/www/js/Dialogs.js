@@ -214,7 +214,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 
 	var center = document.createElement('center');
 	
-	function addPresets(presets, rowLength)
+	function addPresets(presets, rowLength, defaultColor)
 	{
 		rowLength = (rowLength != null) ? rowLength : 12;
 		var table = document.createElement('table');
@@ -241,6 +241,11 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 					td.style.width = '16px';
 					td.style.height = '16px';
 					
+					if (clr == null)
+					{
+						clr = defaultColor;
+					}
+					
 					if (clr == 'none')
 					{
 						td.style.background = 'url(\'' + Dialog.prototype.noColorImage + '\')';
@@ -251,7 +256,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 					}
 					
 					tr.appendChild(td);
-						
+
 					if (clr != null)
 					{
 						td.style.cursor = 'pointer';
@@ -284,7 +289,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 	mxUtils.br(div);
 	
 	// Adds recent colors
-	var table = addPresets((ColorDialog.recentColors.length == 0) ? ['#ffffff'] : ColorDialog.recentColors, 12);
+	var table = addPresets((ColorDialog.recentColors.length == 0) ? ['FFFFFF'] : ColorDialog.recentColors, 12, 'FFFFFF');
 	table.style.marginBottom = '8px';
 		
 	// Adds presets
@@ -406,7 +411,7 @@ ColorDialog.recentColors = [];
  */
 ColorDialog.addRecentColor = function(color, max)
 {
-	if (color != null && color != mxConstants.NONE)
+	if (color != null)
 	{
 		mxUtils.remove(color, ColorDialog.recentColors);
 		ColorDialog.recentColors.splice(0, 0, color);
