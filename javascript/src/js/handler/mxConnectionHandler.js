@@ -1816,14 +1816,14 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 				{
 					var index = null;
 					var tmp = source;
-					
+
 					while (tmp.parent != null && tmp.geometry != null &&
-						!tmp.geometry.relative && tmp.parent != edge.parent)
+						tmp.geometry.relative && tmp.parent != edge.parent)
 					{
-						tmp = this.model.getParent(tmp);
+						tmp = this.graph.model.getParent(tmp);
 					}
-				
-					if (tmp.parent != null)
+
+					if (tmp != null && tmp.parent != null && tmp.parent == edge.parent)
 					{
 						var index = tmp.parent.getIndex(tmp);
 						tmp.parent.insert(edge, index);
