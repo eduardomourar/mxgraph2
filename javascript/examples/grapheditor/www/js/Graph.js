@@ -1024,7 +1024,8 @@ Graph.prototype.selectCellsForConnectVertex = function(cells, evt, hoverIcons)
  */
 Graph.prototype.connectVertex = function(source, direction, length, evt)
 {
-	var pt = new mxPoint(source.geometry.x, source.geometry.y);
+	var pt = (source.geometry.relative) ? new mxPoint(source.parent.geometry.width * source.geometry.x,
+			source.parent.geometry.height * source.geometry.y) : new mxPoint(source.geometry.x, source.geometry.y);
 		
 	if (direction == mxConstants.DIRECTION_NORTH)
 	{
@@ -1059,6 +1060,13 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		dy = parentState.y;
 	}
 
+	// Workaround for relative child cells
+	if (this.model.isVertex(source.parent) && source.geometry.relative)
+	{
+		pt.x += source.parent.geometry.x;
+		pt.y += source.parent.geometry.y;
+	}
+	
 	// Checks actual end point of edge for target cell
 	var target = (mxEvent.isControlDown(evt)) ? null : this.getCellAt(dx + pt.x * s, dy + pt.y * s);
 	
@@ -1140,8 +1148,8 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		
 		if (realTarget == null && duplicate)
 		{
-			realTarget = this.duplicateCells([source], false)[0];
-			
+			realTarget = this.addCell(this.connectionHandler.createTargetVertex(null, source));
+
 			var geo = this.getCellGeometry(realTarget);
 			geo.x = pt.x - geo.width / 2;
 			geo.y = pt.y - geo.height / 2;
