@@ -2928,10 +2928,10 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	});
 
 	var ui = this;
-	var keyHandleEscape = keyHandler.escape;
+	var keyHandlerEscape = keyHandler.escape;
 	keyHandler.escape = function(evt)
 	{
-		keyHandleEscape.apply(this, arguments);
+		keyHandlerEscape.apply(this, arguments);
 	};
 
 	// Ignores enter keystroke. Remove this line if you want the
