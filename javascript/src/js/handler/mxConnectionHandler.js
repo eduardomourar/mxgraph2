@@ -366,12 +366,12 @@ mxConnectionHandler.prototype.movePreviewAway = mxClient.IS_VML;
 mxConnectionHandler.prototype.outlineConnect = false;
 
 /**
- * Variable: insertEdgeBeforeSource
+ * Variable: insertBeforeSource
  * 
  * Specifies if new edges should be inserted before the source vertex in the
- * cell hierarchy. Default is false.
+ * cell hierarchy. Default is false for backwards compatibility.
  */
-mxConnectionHandler.prototype.insertEdgeBeforeSource = false;
+mxConnectionHandler.prototype.insertBeforeSource = false;
 
 /**
  * Function: isEnabled
@@ -400,6 +400,25 @@ mxConnectionHandler.prototype.setEnabled = function(enabled)
 };
 
 /**
+ * Function: isInsertBefore
+ * 
+ * Returns <insertBeforeSource>.
+ *
+ * Parameters:
+ * 
+ * edge - <mxCell> that represents the edge to be inserted.
+ * source - <mxCell> that represents the source terminal.
+ * target - <mxCell> that represents the target terminal.
+ * evt - Mousedown event of the connect gesture.
+ * dropTarget - <mxCell> that represents the cell under the mouse when it was
+ * released.
+ */
+mxConnectionHandler.prototype.isInsertBefore = function(edge, source, target, evt, dropTarget)
+{
+	return this.insertBeforeSource;
+};
+
+/**
  * Function: isCreateTarget
  * 
  * Returns <createTarget>.
@@ -412,7 +431,7 @@ mxConnectionHandler.prototype.isCreateTarget = function(evt)
 {
 	return this.createTarget;
 };
-	
+
 /**
  * Function: setCreateTarget
  * 
@@ -1793,7 +1812,7 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 				var parent = model.getParent(source);
 				
 				// Inserts edge before source
-				if (this.insertEdgeBeforeSource)
+				if (this.isInsertBefore(edge, source, target, evt, dropTarget))
 				{
 					var index = parent.getIndex(source);
 					var parent = model.getParent(source);
