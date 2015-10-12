@@ -988,6 +988,38 @@ Graph.prototype.replacePlaceholders = function(cell, str)
 };
 
 /**
+ * Selects cells for connect vertex return value.
+ */
+Graph.prototype.selectCellsForConnectVertex = function(cells, evt, hoverIcons)
+{
+	// Selects only target vertex if one exists
+	if (cells.length == 2 && this.model.isVertex(cells[1]))
+	{
+		this.setSelectionCell(cells[1]);
+		
+		if (hoverIcons != null)
+		{
+			// Adds hover icons to new target vertex for touch devices
+			if (mxEvent.isTouchEvent(evt))
+			{
+				hoverIcons.update(this.getState(this.view.getState(cells[1])));
+			}
+			else
+			{
+				// Hides hover icons after click with mouse
+				hoverIcons.reset();
+			}
+		}
+		
+		this.scrollCellToVisible(cells[1]);
+	}
+	else
+	{
+		this.setSelectionCells(cells);
+	}
+};
+
+/**
  * Adds a connection to the given vertex.
  */
 Graph.prototype.connectVertex = function(source, direction, length, evt)
@@ -1126,14 +1158,22 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		var edge = ((mxEvent.isControlDown(evt) && duplicate) || (target == null && layout != null && layout.constructor == mxStackLayout)) ? null :
 			this.insertEdge(this.model.getParent(source), null, '', source, realTarget, this.createCurrentEdgeStyle());
 
-		var parent = this.model.getParent(source);
-		
 		// Inserts edge before source
 		if (edge != null && this.connectionHandler.insertBeforeSource)
 		{
-			var index = parent.getIndex(source);
-			var parent = this.model.getParent(source);
-			parent.insert(edge, index);
+			var index = null;
+			var tmp = source;
+			
+			while (tmp.parent != null && tmp.parent != edge.parent)
+			{
+				tmp = this.model.getParent(tmp);
+			}
+		
+			if (tmp.parent != null)
+			{
+				var index = tmp.parent.getIndex(tmp);
+				tmp.parent.insert(edge, index);
+			}
 		}
 		
 		// Special case: Click on west icon puts clone before cell
@@ -1973,6 +2013,7 @@ HoverIcons.prototype.click = function(state, dir, me)
 	else if (state != null)
 	{
 		var cells = this.graph.connectVertex(state.cell, dir, this.graph.defaultEdgeLength, evt);
+		this.graph.selectCellsForConnectVertex(cells, evt, this);
 		
 		// Selects only target vertex if one exists
 		if (cells.length == 2 && this.graph.model.isVertex(cells[1]))

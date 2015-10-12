@@ -1814,9 +1814,19 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 				// Inserts edge before source
 				if (this.isInsertBefore(edge, source, target, evt, dropTarget))
 				{
-					var index = parent.getIndex(source);
-					var parent = model.getParent(source);
-					parent.insert(edge, index);
+					var index = null;
+					var tmp = source;
+					
+					while (tmp.parent != null && tmp.parent != edge.parent)
+					{
+						tmp = model.getParent(tmp);
+					}
+				
+					if (tmp.parent != null)
+					{
+						var index = tmp.parent.getIndex(tmp);
+						tmp.parent.insert(edge, index);
+					}
 				}
 				
 				// Makes sure the edge has a non-null, relative geometry
