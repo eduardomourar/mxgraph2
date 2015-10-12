@@ -1817,9 +1817,10 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 					var index = null;
 					var tmp = source;
 					
-					while (tmp.parent != null && tmp.parent != edge.parent)
+					while (tmp.parent != null && tmp.geometry != null &&
+						!tmp.geometry.relative && tmp.parent != edge.parent)
 					{
-						tmp = model.getParent(tmp);
+						tmp = this.model.getParent(tmp);
 					}
 				
 					if (tmp.parent != null)

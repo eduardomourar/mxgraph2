@@ -1172,7 +1172,8 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 			var index = null;
 			var tmp = source;
 			
-			while (tmp.parent != null && tmp.parent != edge.parent)
+			while (tmp.parent != null && tmp.geometry != null &&
+				!tmp.geometry.relative && tmp.parent != edge.parent)
 			{
 				tmp = this.model.getParent(tmp);
 			}
