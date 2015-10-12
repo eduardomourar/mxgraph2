@@ -1,4 +1,4 @@
-- Adds composite.html example [JavaScript]
+- Adds constituent.html example [JavaScript]
 - Adds mxResources.replacePlaceholders helper method [JavaScript]
 - Adds mxConnectionHandler.isInsertBefore, insertBeforeSource [JavaScript]
 - Fixes tolerance for rounding errors in mxEdgeStyle.SegmentConnector [JavaScript]
