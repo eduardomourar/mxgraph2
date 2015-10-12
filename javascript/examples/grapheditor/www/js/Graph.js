@@ -1002,7 +1002,7 @@ Graph.prototype.selectCellsForConnectVertex = function(cells, evt, hoverIcons)
 			// Adds hover icons to new target vertex for touch devices
 			if (mxEvent.isTouchEvent(evt))
 			{
-				hoverIcons.update(this.getState(this.view.getState(cells[1])));
+				hoverIcons.update(hoverIcons.getState(this.view.getState(cells[1])));
 			}
 			else
 			{
