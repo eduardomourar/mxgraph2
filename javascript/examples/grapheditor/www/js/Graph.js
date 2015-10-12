@@ -1148,8 +1148,32 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		
 		if (realTarget == null && duplicate)
 		{
-			realTarget = this.addCell(this.connectionHandler.createTargetVertex(null, source));
+			// Handles relative children
+			var cellToClone = source;
+			var geo = this.getCellGeometry(source);
+			
+			while (geo != null && geo.relative)
+			{
+				cellToClone = this.getModel().getParent(cellToClone);
+				geo = this.getCellGeometry(cellToClone);
+			}
+			
+			// Handle consistuents for cloning
+			var state = this.view.getState(cellToClone);
+			var style = (state != null) ? state.style : this.getCellStyle(cellToClone);
+	    	
+			if (mxUtils.getValue(style, 'part', false))
+			{
+		        var tmpParent = this.model.getParent(cellToClone);
 
+		        if (this.model.isVertex(tmpParent))
+		        {
+		        	cellToClone = tmpParent;
+		        }
+			}
+			
+			realTarget = this.duplicateCells([cellToClone], false)[0];
+			
 			var geo = this.getCellGeometry(realTarget);
 			geo.x = pt.x - geo.width / 2;
 			geo.y = pt.y - geo.height / 2;
@@ -1173,12 +1197,12 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 			var tmp = source;
 			
 			while (tmp.parent != null && tmp.geometry != null &&
-				!tmp.geometry.relative && tmp.parent != edge.parent)
+				tmp.geometry.relative && tmp.parent != edge.parent)
 			{
 				tmp = this.model.getParent(tmp);
 			}
 		
-			if (tmp.parent != null)
+			if (tmp != null && tmp.parent != null && tmp.parent == edge.parent)
 			{
 				var index = tmp.parent.getIndex(tmp);
 				tmp.parent.insert(edge, index);
