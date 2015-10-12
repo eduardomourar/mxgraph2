@@ -57,12 +57,20 @@ Graph = function(container, model, renderHint, stylesheet)
 			    			start.state = state;
 			    			start.event = me;
 			    			
-			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
-
-			    			if (handler != null && handler.bends != null && handler.bends.length > 0)
-			    			{
-			    				start.handle = handler.getHandleForEvent(me);
-			    			}
+	    					if (state.text != null && state.text.boundingBox != null &&
+	    						mxUtils.contains(state.text.boundingBox, me.getGraphX(), me.getGraphY()))
+	    					{
+	    						start.handle = mxEvent.LABEL_HANDLE;
+	    					}
+	    					else
+	    					{
+				    			var handler = this.selectionCellsHandler.getHandler(state.cell);
+	
+				    			if (handler != null && handler.bends != null && handler.bends.length > 0)
+				    			{
+				    				start.handle = handler.getHandleForEvent(me);
+				    			}
+	    					}
 			    		}
 			    	}
 		    	}
@@ -93,14 +101,14 @@ Graph = function(container, model, renderHint, stylesheet)
 			    				var edgeStyle = this.view.getEdgeStyle(state);
 			    				var entity = edgeStyle == mxEdgeStyle.EntityRelation;
 			    				
-	    						if (!entity || handle == 0 || handle == handler.bends.length - 1)
+	    						if (!entity || handle == 0 || handle == handler.bends.length - 1 || handle == mxEvent.LABEL_HANDLE)
 	    						{
 				    				// Source or target handle or connected for direct handle access or orthogonal line
 				    				// with just two points where the central handle is moved regardless of mouse position
-				    				if (handle == 0 || state.visibleSourceState != null ||
+				    				if (handle == mxEvent.LABEL_HANDLE || handle == 0 || state.visibleSourceState != null ||
 				    					handle == handler.bends.length - 1 || state.visibleTargetState != null)
 				    				{
-				    					if (!entity)
+				    					if (!entity && handle != mxEvent.LABEL_HANDLE)
 				    					{
 					    					var pts = state.absolutePoints;
 				    						
@@ -191,7 +199,12 @@ Graph = function(container, model, renderHint, stylesheet)
 			    					var box = new mxRectangle(me.getGraphX(), me.getGraphY());
 			    					box.grow(mxEdgeHandler.prototype.handleImage.width / 2);
 			    					
-			    					if (mxUtils.contains(box, pts[0].x, pts[0].y) ||
+			    					if (state.text != null && state.text.boundingBox != null &&
+			    						mxUtils.contains(state.text.boundingBox, me.getGraphX(), me.getGraphY()))
+			    					{
+			    						cursor = 'move';
+			    					}
+			    					else if (mxUtils.contains(box, pts[0].x, pts[0].y) ||
 			    						mxUtils.contains(box, pts[pts.length - 1].x, pts[pts.length - 1].y))
 			    					{
 			    						cursor = 'pointer';
@@ -272,6 +285,7 @@ Graph = function(container, model, renderHint, stylesheet)
 
 		// Disables cloning of connection sources by default
 		this.connectionHandler.setCreateTarget(false);
+		this.connectionHandler.insertBeforeSource = true;
 		
 		// Disables built-in connection starts
 		this.connectionHandler.isValidSource = function(cell, me)
@@ -1111,12 +1125,21 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		
 		var edge = ((mxEvent.isControlDown(evt) && duplicate) || (target == null && layout != null && layout.constructor == mxStackLayout)) ? null :
 			this.insertEdge(this.model.getParent(source), null, '', source, realTarget, this.createCurrentEdgeStyle());
+
+		var parent = this.model.getParent(source);
+		
+		// Inserts edge before source
+		if (edge != null && this.connectionHandler.insertBeforeSource)
+		{
+			var index = parent.getIndex(source);
+			var parent = this.model.getParent(source);
+			parent.insert(edge, index);
+		}
 		
 		// Special case: Click on west icon puts clone before cell
 		if (target == null && realTarget != null && layout != null &&
 			layout.constructor == mxStackLayout && direction == mxConstants.DIRECTION_WEST)
 		{
-			var parent = this.model.getParent(source);
 			var index = parent.getIndex(source);
 			parent.insert(realTarget, index);
 		}
