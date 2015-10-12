@@ -2407,7 +2407,7 @@ EditorUi.prototype.pickColor = function(color, apply)
 	{
 		graph.cellEditor.restoreSelection(selState);
 	});
-	this.showDialog(dlg.container, 220, 400, true, false);
+	this.showDialog(dlg.container, 220, 420, true, false);
 	dlg.init();
 };
 

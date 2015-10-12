@@ -251,19 +251,24 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 					}
 					
 					tr.appendChild(td);
-					
-					mxEvent.addListener(td, 'click', function()
+						
+					if (clr != null)
 					{
-						if (clr == 'none')
+						td.style.cursor = 'pointer';
+						
+						mxEvent.addListener(td, 'click', function()
 						{
-							picker.fromString('ffffff');
-							input.value = 'none';
-						}
-						else
-						{
-							picker.fromString(clr);
-						}
-					});
+							if (clr == 'none')
+							{
+								picker.fromString('ffffff');
+								input.value = 'none';
+							}
+							else
+							{
+								picker.fromString(clr);
+							}
+						});
+					}
 				})(presets[row * rowLength + i]);
 			}
 			
@@ -278,6 +283,10 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 	div.appendChild(input);
 	mxUtils.br(div);
 	
+	// Adds recent colors
+	var table = addPresets((ColorDialog.recentColors.length == 0) ? ['#ffffff'] : ColorDialog.recentColors, 12);
+	table.style.marginBottom = '8px';
+		
 	// Adds presets
 	var table = addPresets(['E6D0DE', 'CDA2BE', 'B5739D', 'E1D5E7', 'C3ABD0', 'A680B8', 'D4E1F5', 'A9C4EB', '7EA6E0', 'D5E8D4', '9AC7BF', '67AB9F', 'D5E8D4', 'B9E0A5', '97D077', 'FFF2CC', 'FFE599', 'FFD966', 'FFF4C3', 'FFCE9F', 'FFB570', 'F8CECC', 'F19C99', 'EA6B66'], 12);
 	table.style.marginBottom = '8px';
@@ -311,12 +320,13 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 	var applyBtn = mxUtils.button(mxResources.get('apply'), function()
 	{
 		var color = input.value;
+		ColorDialog.addRecentColor(color, 12);
 		
 		if (color != 'none')
 		{
 			color = '#' + color;
 		}
-		
+
 		applyFunction(color);
 		editorUi.hideDialog();
 	});
@@ -384,6 +394,28 @@ ColorDialog.prototype.createApplyFunction = function()
 			graph.getModel().endUpdate();
 		}
 	});
+};
+
+/**
+ * 
+ */
+ColorDialog.recentColors = [];
+
+/**
+ * Adds recent color for later use.
+ */
+ColorDialog.addRecentColor = function(color, max)
+{
+	if (color != null && color != mxConstants.NONE)
+	{
+		mxUtils.remove(color, ColorDialog.recentColors);
+		ColorDialog.recentColors.splice(0, 0, color);
+		
+		if (ColorDialog.recentColors.length > max)
+		{
+			ColorDialog.recentColors.pop();
+		}
+	}
 };
 
 /**

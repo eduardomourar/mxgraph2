@@ -830,6 +830,7 @@ Menus.prototype.pickColor = function(key, cmd, defaultValue)
 	
 	if (cmd != null && graph.cellEditor.isContentEditing())
 	{
+		// Saves and restores text selection for in-place editor
 		var selState = graph.cellEditor.saveSelection();
 		
 		var dlg = new ColorDialog(this.editorUi, defaultValue || '000000', mxUtils.bind(this, function(color)
@@ -840,7 +841,7 @@ Menus.prototype.pickColor = function(key, cmd, defaultValue)
 		{
 			graph.cellEditor.restoreSelection(selState);
 		});
-		this.editorUi.showDialog(dlg.container, 220, 400, true, true);
+		this.editorUi.showDialog(dlg.container, 220, 420, true, true);
 		dlg.init();
 	}
 	else
@@ -870,7 +871,7 @@ Menus.prototype.pickColor = function(key, cmd, defaultValue)
 			this.colorDialog.picker.fromString(color);
 		}
 	
-		this.editorUi.showDialog(this.colorDialog.container, 220, 400, true, true);
+		this.editorUi.showDialog(this.colorDialog.container, 220, 420, true, true);
 		this.colorDialog.init();
 	}
 };
