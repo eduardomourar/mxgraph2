@@ -1734,11 +1734,16 @@ HoverIcons.prototype.init = function()
 		}
 	});
 	
+	// Checks if connection handler was active in mouse move
+	// as workaround for possible double connection inserted
+	var connectionHandlerActive = false;
+	
 	// Implements a listener for hover and click handling
 	this.graph.addMouseListener(
 	{
 	    mouseDown: mxUtils.bind(this, function(sender, me)
 	    {
+	    	connectionHandlerActive = false;
 	    	var evt = me.getEvent();
 	    	
 	    	if (this.isResetEvent(evt))
@@ -1769,6 +1774,11 @@ HoverIcons.prototype.init = function()
 	    	{
 	    		this.update(this.getState(me.getState()), me.getGraphX(), me.getGraphY());
 	    	}
+	    	
+	    	if (this.graph.connectionHandler != null && this.graph.connectionHandler.shape != null)
+	    	{
+	    		connectionHandlerActive = true;
+	    	}
 	    }),
 	    mouseUp: mxUtils.bind(this, function(sender, me)
 	    {
@@ -1783,7 +1793,10 @@ HoverIcons.prototype.init = function()
 		    	Math.abs(me.getGraphY() - this.mouseDownPoint.y) < this.graph.tolerance)
 	    	{
 	    		// Executes click event on highlighted arrow
-    			this.click(this.currentState, this.getDirection(), me);
+	    		if (!connectionHandlerActive)
+	    		{
+	    			this.click(this.currentState, this.getDirection(), me);
+	    		}
 	    	}
 	    	else if (this.isActive())
 	    	{
@@ -1808,6 +1821,7 @@ HoverIcons.prototype.init = function()
 	    		this.reset();
 	    	}
 	    	
+	    	connectionHandlerActive = false;
 	    	this.resetActiveArrow();
 	    })
 	});
