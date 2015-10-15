@@ -938,7 +938,24 @@ Sidebar.prototype.addMiscPalette = function(expand)
 
 	 		return this.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Link');
 	 	})),
-        this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false, null, 'user person human'),
+	 	this.addEntry('timestamp date time text label', mxUtils.bind(this, function()
+	 	{
+	 		var cell = new mxCell('%date{ddd mmm dd yyyy HH:MM:ss}%', new mxGeometry(0, 0, 160, 20), 'text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;');
+	 		cell.vertex = true;
+	 		this.graph.setAttributeForCell(cell, 'placeholders', '1');
+
+	 		return this.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Timestamp');
+	 	})),
+	 	this.addEntry('variable placeholder metadata hello world text label', mxUtils.bind(this, function()
+	 	{
+	 		var cell = new mxCell('%name% Text', new mxGeometry(0, 0, 80, 20), 'text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;');
+	 		cell.vertex = true;
+	 		this.graph.setAttributeForCell(cell, 'placeholders', '1');
+	 		this.graph.setAttributeForCell(cell, 'name', 'Variable');
+
+	 		return this.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Variable');
+	 	})),
+	 	this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false, null, 'user person human'),
 	 	this.createVertexTemplateEntry('line;html=1;', 160, 10, '', 'Horizontal Line'),
 	 	this.createVertexTemplateEntry('line;direction=south;html=1;', 10, 160, '', 'Vertical Line'),
 	 	this.createVertexTemplateEntry('line;html=1;perimeter=backbonePerimeter;points=[];', 160, 10, '', 'Horizontal Backbone', false, null, 'network'),
