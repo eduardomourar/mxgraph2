@@ -1210,11 +1210,11 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		}
 		
 		// Special case: Click on west icon puts clone before cell
-		if (target == null && realTarget != null && layout != null &&
+		if (target == null && realTarget != null && layout != null && source.parent != null &&
 			layout.constructor == mxStackLayout && direction == mxConstants.DIRECTION_WEST)
 		{
-			var index = parent.getIndex(source);
-			parent.insert(realTarget, index);
+			var index = source.parent.getIndex(source);
+			source.parent.insert(realTarget, index);
 		}
 		
 		if (edge != null)
