@@ -231,7 +231,6 @@ mxEdgeSegmentHandler.prototype.connect = function(edge, terminal, isSource, isCl
 	model.beginUpdate();
 	try
 	{
-		var edge = mxEdgeHandler.prototype.connect.apply(this, arguments);
 		var geo = model.getGeometry(edge);
 		
 		if (geo != null)
@@ -241,6 +240,8 @@ mxEdgeSegmentHandler.prototype.connect = function(edge, terminal, isSource, isCl
 			
 			model.setGeometry(edge, geo);
 		}
+		
+		edge = mxEdgeHandler.prototype.connect.apply(this, arguments);
 	}
 	finally
 	{

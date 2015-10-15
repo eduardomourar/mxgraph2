@@ -1,3 +1,4 @@
+- Fixes mxEdgeSegmentHandler.connect for changed parent [JavaScript]
 - Adds constituent.html example [JavaScript]
 - Adds mxResources.replacePlaceholders helper method [JavaScript]
 - Adds mxConnectionHandler.isInsertBefore, insertBeforeSource [JavaScript]
