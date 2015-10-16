@@ -1,3 +1,4 @@
+- Fixes clipping for edges with hidden terminals in mxPrintPreview [JavaScript]
 - Fixes mxEdgeSegmentHandler.connect for changed parent [JavaScript]
 - Adds constituent.html example [JavaScript]
 - Adds mxResources.replacePlaceholders helper method [JavaScript]

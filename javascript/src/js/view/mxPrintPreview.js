@@ -880,8 +880,8 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 	var translate = view.getTranslate();
 	view.translate = new mxPoint(dx, dy);
 	
-	// Renders only states that intersect the current clip for speeding up printing
-	var createState = view.createState;
+	// Redraws only states that intersect the clip
+	var redraw = this.graph.cellRenderer.redraw;
 	var states = view.states;
 	var s = view.scale;
 	
@@ -889,21 +889,28 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 	var tempClip = new mxRectangle((clip.x + translate.x) * s, (clip.y + translate.y) * s,
 			clip.width * s / scale, clip.height * s / scale);
 	
-	view.createState = function(cell)
+	// Checks clipping rectangle for speedup
+	// Must create terminal states for edge clipping even if terminal outside of clip
+	this.graph.cellRenderer.redraw = function(state, force, rendering)
 	{
-		var temp = states.get(cell);
-		
-		if (temp != null)
+		if (state != null)
 		{
-			var bbox = this.getBoundingBox(temp, false);
+			// Gets original state from graph to find bounding box
+			var orig = states.get(state.cell);
 			
-			if (bbox != null && !mxUtils.intersects(tempClip, bbox))
+			if (orig != null)
 			{
-				return null;
+				var bbox = view.getBoundingBox(orig, false);
+				
+				// Steps rendering if outside clip for speedup
+				if (bbox != null && !mxUtils.intersects(tempClip, bbox))
+				{
+					return;
+				}
 			}
 		}
 		
-		return createState.apply(this, arguments);
+		redraw.apply(this, arguments);
 	};
 	
 	var temp = null;
@@ -914,6 +921,10 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 		// draws them onto the temporary DOM nodes in the view
 		var cells = [this.getRoot()];
 		temp = new mxTemporaryCellStates(view, scale, cells);
+	}
+	catch (e)
+	{
+		console.log('here', e);
 	}
 	finally
 	{
@@ -966,7 +977,7 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 		// Restores the state of the view
 		this.graph.setEnabled(graphEnabled);
 		this.graph.container = previousContainer;
-		view.createState = createState;
+		this.graph.cellRenderer.redraw = redraw;
 		view.canvas = canvas;
 		view.backgroundPane = backgroundPane;
 		view.drawPane = drawPane;
