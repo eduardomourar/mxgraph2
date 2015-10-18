@@ -26,7 +26,6 @@ Graph = function(container, model, renderHint, stylesheet)
 		return style['html'] == '1' || style[mxConstants.STYLE_WHITE_SPACE] == 'wrap';
 	};
 	
-
 	// Implements a listener for hover and click handling on edges
 	if (this.edgeMode)
 	{
@@ -691,11 +690,38 @@ Graph.prototype.placeholderPattern = new RegExp('%(date\{.*\}|[^%^\{^\}]+)%', 'g
 /**
  * Installs child layout styles.
  */
-Graph.prototype.init = function()
+Graph.prototype.init = function(container)
 {
 	mxGraph.prototype.init.apply(this, arguments);
 
 	this.initLayoutManager();
+	
+	// Intercepts links with no target attribute and opens in new window
+	this.cellRenderer.initializeLabel = function(state, shape)
+	{
+		mxCellRenderer.prototype.initializeLabel.apply(this, arguments);
+		
+		mxEvent.addListener(shape.node, 'click', function(evt)
+		{
+			var elt = mxEvent.getSource(evt)
+			
+			while (elt != null && elt != shape.node)
+			{
+				if (elt.nodeName == 'A')
+				{
+					if (elt.getAttribute('target') == null && elt.getAttribute('href') != null)
+					{
+						window.open(elt.getAttribute('href'));
+						mxEvent.consume(evt);
+					}
+
+					break;
+				}
+				
+				elt = elt.parentNode;
+			}
+		});
+	};
 };
 
 /**
