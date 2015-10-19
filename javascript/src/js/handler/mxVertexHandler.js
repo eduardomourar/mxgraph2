@@ -968,9 +968,7 @@ mxVertexHandler.prototype.updateLivePreview = function(me)
 	var tr = this.graph.view.translate;
 	
 	// Saves current state
-	var tmp = new mxRectangle(this.state.x, this.state.y, this.state.width, this.state.height);
-	var tmpWidth = this.state.unscaledWidth;
-	var orig = this.state.origin;
+	var tempState = this.state.clone();
 
 	// Temporarily changes size and origin
 	this.state.x = this.bounds.x;
@@ -978,6 +976,8 @@ mxVertexHandler.prototype.updateLivePreview = function(me)
 	this.state.origin = new mxPoint(this.state.x / scale - tr.x, this.state.y / scale - tr.y);
 	this.state.width = this.bounds.width;
 	this.state.height = this.bounds.height;
+	
+	// Needed to force update of text bounds
 	this.state.unscaledWidth = this.bounds.width / scale;
 	
 	// Redraws cell and handles
@@ -1012,13 +1012,7 @@ mxVertexHandler.prototype.updateLivePreview = function(me)
 	this.redrawHandles();
 	
 	// Restores current state
-	this.state.x = tmp.x;
-	this.state.y = tmp.y;
-	this.state.width = tmp.width;
-	this.state.unscaledWidth = tmpWidth;
-	this.state.height = tmp.height;
-	this.state.origin = orig;
-	this.state.absoluteOffset = off;
+	this.state.setState(tempState);
 };
 
 /**

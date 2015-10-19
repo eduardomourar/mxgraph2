@@ -350,13 +350,28 @@ mxCellState.prototype.updateCachedBounds = function()
 };
 
 /**
- * Destructor: destroy
+ * Destructor: setState
  * 
- * Destroys the state and all associated resources.
+ * Copies all fields from the given state to this state.
  */
-mxCellState.prototype.destroy = function()
+mxCellState.prototype.setState = function(state)
 {
-	this.view.graph.cellRenderer.destroy(this);
+	this.view = state.view;
+	this.cell = state.cell;
+	this.style = state.style;
+	this.absolutePoints = state.absolutePoints;
+	this.origin = state.origin;
+	this.absoluteOffset = state.absoluteOffset;
+	this.boundingBox = state.boundingBox;
+	this.terminalDistance = state.terminalDistance;
+	this.segments = state.segments;
+	this.length = state.length;
+	this.x = state.x;
+	this.y = state.y;
+	this.width = state.width;
+	this.height = state.height;
+	this.unscaledWidth = state.unscaledWidth;
+	this.unscaledHeight = state.unscaledHeight;
 };
 
 /**
@@ -401,6 +416,17 @@ mxCellState.prototype.clone = function()
 	clone.y = this.y;
 	clone.width = this.width;
 	clone.height = this.height;
+	clone.unscaledWidth = this.unscaledWidth;
 	
 	return clone;
+};
+
+/**
+ * Destructor: destroy
+ * 
+ * Destroys the state and all associated resources.
+ */
+mxCellState.prototype.destroy = function()
+{
+	this.view.graph.cellRenderer.destroy(this);
 };
