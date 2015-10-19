@@ -47,6 +47,13 @@ var mxClient =
 	IS_IE11: !!navigator.userAgent.match(/Trident\/7\./),
 
 	/**
+	 * Variable: IS_EDGE
+	 *
+	 * True if the current browser is Microsoft Edge.
+	 */
+	IS_EDGE: navigator.userAgent.match(/Edge\//),
+
+	/**
 	 * Variable: IS_QUIRKS
 	 *
 	 * True if the current browser is Internet Explorer and it is in quirks mode.
