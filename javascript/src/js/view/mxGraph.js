@@ -4543,10 +4543,7 @@ mxGraph.prototype.cellsAdded = function(cells, parent, index, source, target, ab
 /**
  * Function: autoSizeCell
  * 
- * Removes the given cells from the graph including all connected edges if
- * includeEdges is true. The change is carried out using <cellsRemoved>.
- * This method fires <mxEvent.REMOVE_CELLS> while the transaction is in
- * progress. The removed cells are returned as an array.
+ * Resizes the specified cell to just fit around the its label and/or children
  * 
  * Parameters:
  * 
