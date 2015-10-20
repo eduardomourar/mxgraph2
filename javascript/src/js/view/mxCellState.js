@@ -371,7 +371,6 @@ mxCellState.prototype.setState = function(state)
 	this.width = state.width;
 	this.height = state.height;
 	this.unscaledWidth = state.unscaledWidth;
-	this.unscaledHeight = state.unscaledHeight;
 };
 
 /**
