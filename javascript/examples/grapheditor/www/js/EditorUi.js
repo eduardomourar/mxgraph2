@@ -88,6 +88,12 @@ EditorUi = function(editor, container)
 		this.formatContainer.onmousedown = textEditing;
 		this.footerContainer.onselectstart = textEditing;
 		this.footerContainer.onmousedown = textEditing;
+		
+		if (this.tabContainer != null)
+		{
+			this.tabContainer.onselectstart = textEditing;
+			this.tabContainer.onmousedown = textEditing;
+		}
 	}
 	
 	// And uses built-in context menu while editing
@@ -2070,11 +2076,15 @@ EditorUi.prototype.refresh = function()
 	
 	this.diagramContainer.style.left = (this.hsplit.parentNode != null) ? (effHsplitPosition + this.splitSize) + 'px' : '0px';
 	this.diagramContainer.style.top = this.sidebarContainer.style.top;
-	this.diagramContainer.style.right = fw + 'px';
 	this.footerContainer.style.height = this.footerHeight + 'px';
 	this.hsplit.style.top = this.sidebarContainer.style.top;
 	this.hsplit.style.bottom = (this.footerHeight + off) + 'px';
 	this.hsplit.style.left = effHsplitPosition + 'px';
+	
+	if (this.tabContainer != null)
+	{
+		this.tabContainer.style.left = this.diagramContainer.style.left;
+	}
 	
 	if (quirks)
 	{
@@ -2084,9 +2094,17 @@ EditorUi.prototype.refresh = function()
 		this.sidebarContainer.style.height = (sidebarHeight - sidebarFooterHeight) + 'px';
 		this.formatContainer.style.height = sidebarHeight + 'px';
 		this.diagramContainer.style.width = (this.hsplit.parentNode != null) ? Math.max(0, w - effHsplitPosition - this.splitSize - fw) + 'px' : w + 'px';
-		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
-		this.diagramContainer.style.height = diagramHeight + 'px';
 		this.footerContainer.style.width = this.menubarContainer.style.width;
+		var diagramHeight = Math.max(0, h - this.footerHeight - this.menubarHeight - this.toolbarHeight);
+		
+		if (this.tabContainer != null)
+		{
+			this.tabContainer.style.width = this.diagramContainer.style.width;
+			this.tabContainer.style.bottom = (this.footerHeight + off) + 'px';
+			diagramHeight -= parseInt(this.tabContainer.style.height);
+		}
+		
+		this.diagramContainer.style.height = diagramHeight + 'px';
 		this.hsplit.style.height = diagramHeight + 'px';
 	}
 	else
@@ -2096,12 +2114,30 @@ EditorUi.prototype.refresh = function()
 			this.footerContainer.style.bottom = off + 'px';
 		}
 		
+		this.diagramContainer.style.right = fw + 'px';
+		var th = 0;
+		
+		if (this.tabContainer != null)
+		{
+			this.tabContainer.style.bottom = (this.footerHeight + off) + 'px';
+			this.tabContainer.style.right = this.diagramContainer.style.right;
+			th = this.tabContainer.clientHeight;
+		}
+		
 		this.sidebarContainer.style.bottom = (this.footerHeight + sidebarFooterHeight + off) + 'px';
 		this.formatContainer.style.bottom = (this.footerHeight + off) + 'px';
-		this.diagramContainer.style.bottom = (this.footerHeight + off) + 'px';
+		this.diagramContainer.style.bottom = (this.footerHeight + off + th) + 'px';
 	}
 	
 	this.editor.graph.sizeDidChange();
+};
+
+/**
+ * Creates the required containers.
+ */
+EditorUi.prototype.createTabContainer = function()
+{
+	return null;
 };
 
 /**
@@ -2145,6 +2181,8 @@ EditorUi.prototype.createDivs = function()
 	{
 		this.sidebarFooterContainer.style.left = '0px';
 	}
+	
+	this.tabContainer = this.createTabContainer();
 };
 
 /**
@@ -2217,6 +2255,11 @@ EditorUi.prototype.createUi = function()
 	}
 
 	this.container.appendChild(this.diagramContainer);
+
+	if (this.container != null && this.tabContainer != null)
+	{
+		this.container.appendChild(this.tabContainer);
+	}
 
 	// Creates toolbar
 	this.toolbar = (this.editor.chromeless) ? null : this.createToolbar(this.createDiv('geToolbar'));
