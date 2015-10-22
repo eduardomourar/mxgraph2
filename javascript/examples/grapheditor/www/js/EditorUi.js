@@ -91,8 +91,8 @@ EditorUi = function(editor, container)
 		
 		if (this.tabContainer != null)
 		{
+			// Mouse down is needed for drag and drop
 			this.tabContainer.onselectstart = textEditing;
-			this.tabContainer.onmousedown = textEditing;
 		}
 	}
 	
