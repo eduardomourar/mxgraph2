@@ -88,7 +88,7 @@ Format.prototype.initSelectionState = function()
 {
 	return {vertices: [], edges: [], x: null, y: null, width: null, height: null, style: {},
 		containsImage: false, containsLabel: false, fill: true, glass: true, rounded: true,
-		image: true, shadow: true};
+		autoSize: false, image: true, shadow: true};
 };
 
 /**
@@ -171,6 +171,7 @@ Format.prototype.updateSelectionStateForCell = function(result, cell, cells)
 	
 	if (state != null)
 	{
+		result.autoSize = result.autoSize || this.isAutoSizeState(state);
 		result.glass = result.glass && this.isGlassState(state);
 		result.rounded = result.rounded && this.isRoundedState(state);
 		result.image = result.image && this.isImageState(state);
@@ -233,6 +234,14 @@ Format.prototype.isRoundedState = function(state)
 			shape == 'rhombus' || shape == 'offPageConnector' || shape == 'loopLimit' || shape == 'hexagon' ||
 			shape == 'manualInput' || shape == 'curlyBracket' || shape == 'singleArrow' ||
 			shape == 'doubleArrow' || shape == 'flexArrow' || shape == 'card' || shape == 'umlLifeline');
+};
+
+/**
+ * Returns information about the current selection.
+ */
+Format.prototype.isAutoSizeState = function(state)
+{
+	return mxUtils.getValue(state.style, mxConstants.STYLE_AUTOSIZE, null) == '1';
 };
 
 /**
@@ -2511,7 +2520,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	wwOpt.style.fontWeight = 'bold';
 	
 	// Word wrap in edge labels only supported via labelWidth style
-	if (!ss.containsLabel && ss.edges.length == 0)
+	if (!ss.containsLabel && !ss.autoSize && ss.edges.length == 0)
 	{
 		extraPanel.appendChild(wwOpt);
 	}
