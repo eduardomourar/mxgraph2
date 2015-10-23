@@ -309,6 +309,8 @@ Graph = function(container, model, renderHint, stylesheet)
 			// Create virtual cell state for page centers
 			if (this.graph.pageVisible)
 			{
+				var guides = [];
+				
 				var pf = this.graph.pageFormat;
 				var ps = this.graph.pageScale;
 				var pw = pf.width * ps;
@@ -320,15 +322,18 @@ Graph = function(container, model, renderHint, stylesheet)
 				
 				for (var i = 0; i < layout.width; i++)
 				{
-					result.push(new mxRectangle(((layout.x + i) * pw + t.x) * s,
+					guides.push(new mxRectangle(((layout.x + i) * pw + t.x) * s,
 						(layout.y * ph + t.y) * s, pw * s, ph * s));
 				}
 				
 				for (var j = 0; j < layout.height; j++)
 				{
-					result.push(new mxRectangle((layout.x * pw + t.x) * s,
+					guides.push(new mxRectangle((layout.x * pw + t.x) * s,
 						((layout.y + j) * ph + t.y) * s, pw * s, ph * s));
 				}
+				
+				// Page center guides have predence over normal guides
+				result = guides.concat(result);
 			}
 			
 			return result;
