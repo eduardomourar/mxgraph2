@@ -300,6 +300,46 @@ Graph = function(container, model, renderHint, stylesheet)
 			this.loadStylesheet();
 		}
 		
+		// Adds page centers to the guides for moving cells
+		var graphHandlerGetGuideStates = this.graphHandler.getGuideStates;
+		this.graphHandler.getGuideStates = function()
+		{
+			var result = graphHandlerGetGuideStates.apply(this, arguments);
+			
+			// Create virtual cell state for page centers
+			if (this.graph.pageVisible)
+			{
+				var pf = this.graph.pageFormat;
+				var ps = this.graph.pageScale;
+				var pw = pf.width * ps;
+				var ph = pf.height * ps;
+				var t = this.graph.view.translate;
+				var s = this.graph.view.scale;
+
+				var layout = this.graph.getPageLayout();
+				
+				for (var i = 0; i < layout.width; i++)
+				{
+					result.push(new mxRectangle(((layout.x + i) * pw + t.x) * s,
+						(layout.y * ph + t.y) * s, pw * s, ph * s));
+				}
+				
+				for (var j = 0; j < layout.height; j++)
+				{
+					result.push(new mxRectangle((layout.x * pw + t.x) * s,
+						((layout.y + j) * ph + t.y) * s, pw * s, ph * s));
+				}
+			}
+			
+			return result;
+		};
+
+		// Overrdes color for virtual guides for page centers
+		mxGuide.prototype.getGuideColor = function(state, horizontal)
+		{
+			return (state.cell == null) ? '#ffa500' /* orange */ : mxConstants.GUIDE_COLOR;
+		};
+
 		// Changes color of move preview for black backgrounds
 		this.graphHandler.createPreviewShape = function(bounds)
 		{
