@@ -3020,6 +3020,8 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				this.addCells([label], (state != null) ? state.cell : null);
 				this.fireEvent(new mxEventObject('textInserted', 'cells', [label]));
+				// Updates size of text after possible change of style via event
+				this.autoSizeCell(label);
 			}
 			finally
 			{
