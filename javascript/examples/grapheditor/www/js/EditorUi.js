@@ -3037,8 +3037,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(8, true, 'deleteAll'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
 	keyHandler.bindAction(46, true, 'deleteAll'); // Ctrl+Delete
-	keyHandler.bindAction(48, true, 'actualSize'); // Ctrl+0
-	keyHandler.bindAction(96, true, 'actualSize'); // Ctrl+0 (Num)
+	keyHandler.bindAction(48, true, 'resetView'); // Ctrl+0
+	keyHandler.bindAction(96, true, 'resetView'); // Ctrl+0 (Num)
 	keyHandler.bindAction(49, true, 'fitWindow'); // Ctrl+1
 	keyHandler.bindAction(97, true, 'fitWindow'); // Ctrl+1 (Num)
 	keyHandler.bindAction(50, true, 'fitPageWidth'); // Ctrl+2
