@@ -880,15 +880,7 @@ EditorUi = function(editor, container)
 	 */
 	this.editor.addListener('resetGraphView', mxUtils.bind(this, function()
 	{
-		// Timeout is a workaround for delay needed in older browsers and IE
-		window.setTimeout(mxUtils.bind(this, function()
-		{
-			// Does not invoke callback if instance was destroyed
-			if (this.editor != null)
-			{
-				this.resetScrollbars();
-			}
-		}), 0);
+		this.resetScrollbars();
 	}));
 
    	// Resets UI, updates action and menu states

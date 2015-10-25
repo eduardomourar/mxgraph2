@@ -516,8 +516,8 @@ Actions.prototype.init = function()
 		if (mxUtils.hasScrollbars(graph.container))
 		{
 			var pad = graph.getPagePadding();
-			graph.container.scrollTop = pad.y;
-			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
+			graph.container.scrollTop = pad.y * graph.view.scale;
+			graph.container.scrollLeft = Math.min(pad.x * graph.view.scale, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
 	}), null, null, 'Ctrl+3');
 	this.addAction('fitTwoPages', mxUtils.bind(this, function()
@@ -559,7 +559,8 @@ Actions.prototype.init = function()
 		if (mxUtils.hasScrollbars(graph.container))
 		{
 			var pad = graph.getPagePadding();
-			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
+			graph.container.scrollLeft = Math.min(pad.x * graph.view.scale,
+				(graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
 	}), null, null, 'Ctrl+2');
 	this.put('customZoom', new Action(mxResources.get('custom') + '...', mxUtils.bind(this, function()

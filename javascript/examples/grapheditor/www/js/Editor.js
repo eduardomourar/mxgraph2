@@ -45,8 +45,9 @@ catch (e)
  * Sets global constants.
  */
 // Changes default colors
-mxConstants.SHADOWCOLOR = '#000000';
 mxConstants.SHADOW_OPACITY = 0.25;
+mxConstants.SHADOWCOLOR = '#000000';
+mxConstants.VML_SHADOWCOLOR = '#d0d0d0';
 mxGraph.prototype.pageBreakColor = '#c0c0c0';
 mxGraph.prototype.pageScale = 1;
 
