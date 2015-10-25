@@ -1,4 +1,4 @@
-- Adds mxGuide.getGuideColor hook [JavaScript]
+- Adds mxConstants.VML_SHADOWCOLOR, mxGuide.getGuideColor hook [JavaScript]
 - Adds mxClient.IS_EDGE, fixes mxPrintPreview for Edge [JavaScript]
 - Adds mxCellState.setState for restoring state [JavaScript]
 - Adds mxCellRenderer.redrawLabelShape hook [JavaScript]

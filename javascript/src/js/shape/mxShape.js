@@ -660,7 +660,7 @@ mxShape.prototype.updateHtmlFilters = function(node)
 		f += 'progid:DXImageTransform.Microsoft.dropShadow (' +
 			'OffX=\'' + Math.round(mxConstants.SHADOW_OFFSET_X * this.scale) + '\', ' +
 			'OffY=\'' + Math.round(mxConstants.SHADOW_OFFSET_Y * this.scale) + '\', ' +
-			'Color=\'' + mxConstants.SHADOWCOLOR + '\')';
+			'Color=\'' + mxConstants.VML_SHADOWCOLOR + '\')';
 	}
 	
 	if (this.fill != null && this.fill != mxConstants.NONE && this.gradient && this.gradient != mxConstants.NONE)
