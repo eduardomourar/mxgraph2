@@ -387,7 +387,6 @@ Editor.prototype.getGraphXml = function(ignoreSelection)
 	node.setAttribute('grid', (this.graph.isGridEnabled()) ? '1' : '0');
 	node.setAttribute('gridSize', this.graph.gridSize);
 	node.setAttribute('guides', (this.graph.graphHandler.guidesEnabled) ? '1' : '0');
-	node.setAttribute('guides', (this.graph.graphHandler.guidesEnabled) ? '1' : '0');
 	node.setAttribute('tooltips', (this.graph.tooltipHandler.isEnabled()) ? '1' : '0');
 	node.setAttribute('connect', (this.graph.connectionHandler.isEnabled()) ? '1' : '0');	
 	node.setAttribute('fold', (this.graph.foldingEnabled) ? '1' : '0');
