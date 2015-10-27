@@ -922,10 +922,6 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 		var cells = [this.getRoot()];
 		temp = new mxTemporaryCellStates(view, scale, cells);
 	}
-	catch (e)
-	{
-		console.log('here', e);
-	}
 	finally
 	{
 		// Removes overlay pane with selection handles
