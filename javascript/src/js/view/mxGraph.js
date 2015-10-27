@@ -1998,7 +1998,7 @@ mxGraph.prototype.processChange = function(change)
 	// the selection if the root changes.
 	if (change instanceof mxRootChange)
 	{
-		this.clearSelection();			
+		this.clearSelection();
 		this.removeStateForCell(change.previous);
 		
 		if (this.resetViewOnRootChange)
