@@ -484,6 +484,10 @@ Sidebar.prototype.searchEntries = function(searchTerms, count, page, success, er
 						}
 					}
 				}
+				else
+				{
+					results = [];
+				}
 				
 				dict = tmpDict;
 				index++;
