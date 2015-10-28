@@ -40,6 +40,10 @@ Format.prototype.init = function()
 	{
 		this.clearSelectionState();
 	}));
+	graph.addListener(mxEvent.ROOT, mxUtils.bind(this, function()
+	{
+		this.refresh();
+	}));
 	
 	this.refresh();
 };
