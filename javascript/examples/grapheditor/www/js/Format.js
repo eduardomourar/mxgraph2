@@ -4374,7 +4374,7 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 	heightInput.setAttribute('size', '6');
 	heightInput.setAttribute('value', graph.pageFormat.height);
 	customDiv.appendChild(heightInput);
-	mxUtils.write(customDiv, ' Pixel');
+	mxUtils.write(customDiv, ' pt');
 
 	formatDiv.style.display = 'none';
 	customDiv.style.display = 'none';

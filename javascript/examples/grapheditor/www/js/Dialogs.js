@@ -598,7 +598,7 @@ var PageSetupDialog = function(editorUi)
 	heightInput.setAttribute('size', '6');
 	heightInput.setAttribute('value', graph.pageFormat.height);
 	td.appendChild(heightInput);
-	mxUtils.write(td, ' Pixel');
+	mxUtils.write(td, ' pt');
 	
 	customRow.appendChild(td);
 	customRow.style.height = '60px';
