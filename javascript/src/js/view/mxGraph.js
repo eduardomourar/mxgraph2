@@ -4740,11 +4740,6 @@ mxGraph.prototype.splitEdge = function(edge, cells, newEdge, dx, dy)
 {
 	dx = dx || 0;
 	dy = dy || 0;
-	
-	if (newEdge == null)
-	{
-		newEdge = this.cloneCells([edge])[0];
-	}
 
 	var parent = this.model.getParent(edge);
 	var source = this.model.getTerminal(edge, true);
@@ -4752,6 +4747,33 @@ mxGraph.prototype.splitEdge = function(edge, cells, newEdge, dx, dy)
 	this.model.beginUpdate();
 	try
 	{
+		
+		if (newEdge == null)
+		{
+			newEdge = this.cloneCells([edge])[0];
+
+			// Removes waypoints before/after new cell
+			var state = this.view.getState(edge);
+			var geo = this.getCellGeometry(newEdge);
+			
+			if (geo != null && state != null)
+			{
+				var t = this.view.translate;
+				var s = this.view.scale;
+				var idx = mxUtils.findNearestSegment(state, (dx + t.x) * s, (dy + t.y) * s);
+				geo.points = geo.points.slice(0, idx);
+								
+				geo = this.getCellGeometry(edge);
+				
+				if (geo != null)
+				{
+					geo = geo.clone();
+					geo.points = geo.points.slice(idx);
+					this.model.setGeometry(edge, geo);
+				}
+			}
+		}
+		
 		this.cellsMoved(cells, dx, dy, false, false);
 		this.cellsAdded(cells, parent, this.model.getChildCount(parent), null, null,
 				true);

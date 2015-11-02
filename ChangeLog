@@ -1,3 +1,4 @@
+- Fixes handling of existing waypoints in mxGraph.splitEdge [JavaScript]
 - Adds mxConstants.VML_SHADOWCOLOR, mxGuide.getGuideColor hook [JavaScript]
 - Adds mxClient.IS_EDGE, fixes mxPrintPreview for Edge [JavaScript]
 - Adds mxCellState.setState for restoring state [JavaScript]
