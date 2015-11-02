@@ -1752,8 +1752,8 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 	
 	if (cells.length > 1 || cells[0].vertex)
 	{
-		var ds = this.createDragSource(elt, this.createDropHandler(cells, this.editorUi.editor.
-				graph.isSplitEnabled(), allowCellsInserted), this.createDragPreview(width, height), cells);
+		var ds = this.createDragSource(elt, this.createDropHandler(cells, true, allowCellsInserted,
+			bounds), this.createDragPreview(width, height), cells, bounds);
 		this.addClickHandler(elt, ds, cells);
 	
 		// Uses guides for vertices only if enabled in graph
@@ -1764,8 +1764,8 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 	}
 	else if (cells[0] != null && cells[0].edge)
 	{
-		var ds = this.createDragSource(elt, this.createDropHandler(cells, false, allowCellsInserted),
-			this.createDragPreview(width, height), cells);
+		var ds = this.createDragSource(elt, this.createDropHandler(cells, false, allowCellsInserted,
+			bounds), this.createDragPreview(width, height), cells, bounds);
 		this.addClickHandler(elt, ds, cells);
 	}
 	
@@ -1861,7 +1861,7 @@ Sidebar.prototype.updateShapes = function(source, targets)
 /**
  * Creates a drop handler for inserting the given cells.
  */
-Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInserted)
+Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInserted, bounds)
 {
 	allowCellsInserted = (allowCellsInserted != null) ? allowCellsInserted : true;
 	
@@ -1892,10 +1892,12 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInse
 						y = Math.round(y);
 						
 						// Splits the target edge or inserts into target group
-						if (allowSplit && graph.isSplitEnabled() && graph.isSplitTarget(target, cells, evt))
+						if (allowSplit && graph.isSplitTarget(target, cells, evt))
 						{
-							graph.splitEdge(target, cells, null, x, y);
-							select = cells;
+							var clones = graph.cloneCells(cells);
+							graph.splitEdge(target, clones, null,
+								x - bounds.width / 2, y - bounds.height / 2);
+							select = clones;
 						}
 						else if (cells.length > 0)
 						{
@@ -2232,7 +2234,7 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 /**
  * Creates a drag source for the given element.
  */
-Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
+Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, bounds)
 {
 	// Checks if the cells contain any vertices
 	var ui = this.editorUi;
@@ -2444,6 +2446,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 
 		if (this.previewElement != null)
 		{
+			var view = graph.view;
+			
 			if (currentStyleTarget != null && activeArrow == styleTarget)
 			{
 				this.previewElement.style.display = (graph.model.isEdge(currentStyleTarget.cell)) ? 'none' : '';
@@ -2455,7 +2459,6 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 			}
 			else if (currentTargetState != null && activeArrow != null)
 			{
-				var view = graph.view;
 				var index = (graph.model.isEdge(currentTargetState.cell) || freeSourceEdge == null) ? firstVertex : freeSourceEdge;
 				var geo = sidebar.getDropAndConnectGeometry(currentTargetState.cell, cells[index], direction, cells);
 				var geo2 = (!graph.model.isEdge(currentTargetState.cell)) ? graph.getCellGeometry(currentTargetState.cell) : null;
@@ -2473,7 +2476,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				
 				var dx2 = geo3.x;
 				var dy2 = geo3.y;
-				
+
 				// Ignores geometry of edges
 				if (graph.model.isEdge(cells[index]))
 				{
@@ -2492,6 +2495,15 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 				}
 				
 				this.previewElement.style.display = '';
+			}
+			else if (dragSource.currentHighlight.state != null &&
+				graph.model.isEdge(dragSource.currentHighlight.state.cell))
+			{
+				// Centers drop cells when splitting edges
+				this.previewElement.style.left = Math.round(parseInt(this.previewElement.style.left) -
+					bounds.width * view.scale / 2) + 'px';
+				this.previewElement.style.top = Math.round(parseInt(this.previewElement.style.top) -
+					bounds.height * view.scale / 2) + 'px';
 			}
 			else
 			{
@@ -2850,25 +2862,27 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells)
 		}
 		
 		// Handles drop target
-		var target = ((!mxEvent.isAltDown(evt) || mxEvent.isShiftDown(evt)) && !(currentStyleTarget != null && activeArrow == styleTarget)) ?
-				mxDragSource.prototype.getDropTarget.apply(this, arguments) : null;
-				
+		var target = ((!mxEvent.isAltDown(evt) || mxEvent.isShiftDown(evt)) &&
+			!(currentStyleTarget != null && activeArrow == styleTarget)) ?
+			mxDragSource.prototype.getDropTarget.apply(this, arguments) : null;
+		var model = graph.getModel();
+		
 		if (target != null)
 		{
-			// Selects parent group as drop target
-			var model = graph.getModel();
-
-			while (target != null && !graph.isValidDropTarget(target, cells, evt) && model.isVertex(model.getParent(target)))
+			if (activeArrow != null || !graph.isSplitTarget(target, cells, evt))
 			{
-				target = model.getParent(target);
-			}
-			
-			if (graph.view.currentRoot == target || (!graph.isValidRoot(target) &&
-				graph.getModel().getChildCount(target) == 0) ||
-				(graph.isCellLocked(target)) ||
-				(model.isEdge(target) && !graph.isSplitEnabled()))
-			{
-				target = null;
+				// Selects parent group as drop target
+				while (target != null && !graph.isValidDropTarget(target, cells, evt) && model.isVertex(model.getParent(target)))
+				{
+					target = model.getParent(target);
+				}
+				
+				if (graph.view.currentRoot == target || (!graph.isValidRoot(target) &&
+					graph.getModel().getChildCount(target) == 0) ||
+					graph.isCellLocked(target) || model.isEdge(target))
+				{
+					target = null;
+				}
 			}
 		}
 		

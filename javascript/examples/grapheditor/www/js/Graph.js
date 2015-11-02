@@ -601,9 +601,6 @@ Graph = function(container, model, renderHint, stylesheet)
 			
 			return graphHandlerShouldRemoveCellsFromParent.apply(this, arguments);
 		};
-		
-		// Splitting edges is disabled
-		this.setSplitEnabled(false);
 
 		// Unlocks all cells
 		this.isCellLocked = function(cell)
@@ -823,6 +820,14 @@ Graph.prototype.isReplacePlaceholders = function(cell)
 {
 	return cell.value != null && typeof(cell.value) == 'object' &&
 		cell.value.getAttribute('placeholders') == '1';
+};
+
+/**
+ * Adds support for placeholders in labels.
+ */
+Graph.prototype.isSplitTarget = function(target, cells, evt)
+{
+	return !mxEvent.isShiftDown(evt) && mxGraph.prototype.isSplitTarget.apply(this, arguments);
 };
 
 /**
