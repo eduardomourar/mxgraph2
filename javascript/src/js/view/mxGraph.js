@@ -4756,7 +4756,7 @@ mxGraph.prototype.splitEdge = function(edge, cells, newEdge, dx, dy)
 			var state = this.view.getState(edge);
 			var geo = this.getCellGeometry(newEdge);
 			
-			if (geo != null && state != null)
+			if (geo != null && geo.points != null && state != null)
 			{
 				var t = this.view.translate;
 				var s = this.view.scale;
@@ -4765,7 +4765,7 @@ mxGraph.prototype.splitEdge = function(edge, cells, newEdge, dx, dy)
 								
 				geo = this.getCellGeometry(edge);
 				
-				if (geo != null)
+				if (geo != null && geo.points != null)
 				{
 					geo = geo.clone();
 					geo.points = geo.points.slice(idx);
