@@ -1,3 +1,5 @@
+01-OCT-2015: 3.4.0.2
+
 - Fixes drawing of page breaks in mxGraph.updatePageBreaks [JavaScript]
 - Fixes firing of translate event in mxGraph.scrollCellToVisible [JavaScript]
 - Adds mxPrintPreview.marginTop and marginBottom [JavaScript]
