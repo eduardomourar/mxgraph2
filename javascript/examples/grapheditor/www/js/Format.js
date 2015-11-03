@@ -4111,28 +4111,31 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 		}));
 		
 		// Connect
-		div.appendChild(this.createOption(mxResources.get('connect'), function()
+		if (ui.hoverIcons != null)
 		{
-			return ui.hoverIcons.enabled;
-		}, function(checked)
-		{
-			ui.actions.get('connect').funct();
-		},
-		{
-			install: function(apply)
+			div.appendChild(this.createOption(mxResources.get('connect'), function()
 			{
-				this.listener = function()
-				{
-					apply(ui.hoverIcons.enabled);
-				};
-				
-				ui.addListener('connectChanged', this.listener);
+				return ui.hoverIcons.enabled;
+			}, function(checked)
+			{
+				ui.actions.get('connect').funct();
 			},
-			destroy: function()
 			{
-				ui.removeListener(this.listener);
-			}
-		}));
+				install: function(apply)
+				{
+					this.listener = function()
+					{
+						apply(ui.hoverIcons.enabled);
+					};
+					
+					ui.addListener('connectChanged', this.listener);
+				},
+				destroy: function()
+				{
+					ui.removeListener(this.listener);
+				}
+			}));
+		}
 		
 		// Connection points
 		div.appendChild(this.createOption(mxResources.get('connectionPoints'), function()
