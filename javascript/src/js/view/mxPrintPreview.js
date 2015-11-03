@@ -197,6 +197,20 @@ mxPrintPreview.prototype.scale = null;
 mxPrintPreview.prototype.border = 0;
 
 /**
+ * Variable: marginTop
+ * 
+ * The margin at the top of the page. Default is 0.
+ */
+mxPrintPreview.prototype.marginTop = 0;
+
+/**
+ * Variable: marginBottom
+ * 
+ * The margin at the bottom of the page. Default is 0.
+ */
+mxPrintPreview.prototype.marginBottom = 0;
+
+/**
  * Variable: x0
  * 
  * Holds the horizontal offset of the output.
@@ -420,16 +434,19 @@ mxPrintPreview.prototype.open = function(css, targetWindow)
 				bounds.y = 0;
 				this.border = 0;
 			}
-
-			// Compute the unscaled, untranslated bounds to find
-			// the number of vertical and horizontal pages
-			bounds.width /= sc;
-			bounds.height /= sc;
 			
 			// Store the available page area
 			var availableWidth = this.pageFormat.width - (this.border * 2);
 			var availableHeight = this.pageFormat.height - (this.border * 2);
 		
+			// Adds margins to page format
+			this.pageFormat.height += this.marginTop + this.marginBottom;
+
+			// Compute the unscaled, untranslated bounds to find
+			// the number of vertical and horizontal pages
+			bounds.width /= sc;
+			bounds.height /= sc;
+
 			var hpages = Math.max(1, Math.ceil((bounds.width + this.x0) / availableWidth));
 			var vpages = Math.max(1, Math.ceil((bounds.height + this.y0) / availableHeight));
 			this.pageCount = hpages * vpages;
@@ -543,7 +560,7 @@ mxPrintPreview.prototype.open = function(css, targetWindow)
 					var dx = j * availableWidth / this.scale - this.x0 / this.scale +
 							(bounds.x - tr.x * currentScale) / currentScale;
 					var pageNum = i * hpages + j + 1;
-					var clip = new mxRectangle(dx, dy, this.pageFormat.width, this.pageFormat.height);
+					var clip = new mxRectangle(dx, dy, availableWidth, availableHeight);
 					div = this.renderPage(this.pageFormat.width, this.pageFormat.height, 0, 0, mxUtils.bind(this, function(div)
 					{
 						this.addGraphFragment(-dx, -dy, this.scale, pageNum, div, clip);
@@ -929,6 +946,11 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 		if (mxClient.IS_IE)
 		{
 			view.overlayPane.innerHTML = '';
+			view.canvas.style.overflow = 'hidden';
+			view.canvas.style.position = 'relative';
+			view.canvas.style.top = this.marginTop + 'px';
+			view.canvas.style.width = clip.width + 'px';
+			view.canvas.style.height = clip.height + 'px';
 		}
 		else
 		{
@@ -940,11 +962,16 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 				var next = tmp.nextSibling;
 				var name = tmp.nodeName.toLowerCase();
 
-				// Note: Width and heigh are required in FF 11
+				// Note: Width and height are required in FF 11
 				if (name == 'svg')
 				{
-					tmp.setAttribute('width', parseInt(div.style.width));
-					tmp.setAttribute('height', parseInt(div.style.height));
+					tmp.style.overflow = 'hidden';
+					tmp.style.position = 'relative';
+					tmp.style.top = this.marginTop + 'px';
+					tmp.setAttribute('width', clip.width);
+					tmp.setAttribute('height', clip.height);
+					tmp.style.width = '';
+					tmp.style.height = '';
 				}
 				// Tries to fetch all text labels and only text labels
 				else if (tmp.style.cursor != 'default' && name != 'div')
