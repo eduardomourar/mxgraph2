@@ -1,3 +1,5 @@
+- Fixes drawing of page breaks in mxGraph.updatePageBreaks [JavaScript]
+- Fixes firing of translate event in mxGraph.scrollCellToVisible [JavaScript]
 - Adds mxPrintPreview.marginTop and marginBottom [JavaScript]
 - Fixes handling of existing waypoints in mxGraph.splitEdge [JavaScript]
 - Adds mxConstants.VML_SHADOWCOLOR, mxGuide.getGuideColor hook [JavaScript]

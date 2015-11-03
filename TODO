@@ -1,4 +1,5 @@
 - Add unscaled coordinates
+- Add caching for mxText with NO_FO
 - Add mxClient.IS_CHROMEAPP
 
 - Use getBoundingClientRect for VML in mxShape
