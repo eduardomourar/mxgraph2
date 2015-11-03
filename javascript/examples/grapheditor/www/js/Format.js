@@ -4109,11 +4109,11 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 				ui.removeListener(this.listener);
 			}
 		}));
-	
-		// Connection points
+		
+		// Connect
 		div.appendChild(this.createOption(mxResources.get('connect'), function()
 		{
-			return graph.connectionHandler.isEnabled();
+			return ui.hoverIcons.enabled;
 		}, function(checked)
 		{
 			ui.actions.get('connect').funct();
@@ -4123,10 +4123,34 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 			{
 				this.listener = function()
 				{
-					apply(graph.connectionHandler.isEnabled());
+					apply(ui.hoverIcons.enabled);
 				};
 				
 				ui.addListener('connectChanged', this.listener);
+			},
+			destroy: function()
+			{
+				ui.removeListener(this.listener);
+			}
+		}));
+		
+		// Connection points
+		div.appendChild(this.createOption(mxResources.get('connectionPoints'), function()
+		{
+			return graph.connectionHandler.isEnabled();
+		}, function(checked)
+		{
+			ui.actions.get('connectionPoints').funct();
+		},
+		{
+			install: function(apply)
+			{
+				this.listener = function()
+				{
+					apply(graph.connectionHandler.isEnabled());
+				};
+				
+				ui.addListener('connectionPointsChanged', this.listener);
 			},
 			destroy: function()
 			{

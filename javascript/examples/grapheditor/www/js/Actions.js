@@ -667,9 +667,16 @@ Actions.prototype.init = function()
 	}));
 	action = this.addAction('connect', function()
 	{
-		graph.setConnectable(!graph.connectionHandler.isEnabled());
+		ui.hoverIcons.enabled = !ui.hoverIcons.enabled;
 		ui.fireEvent(new mxEventObject('connectChanged'));
 	}, null, null, 'Ctrl+Q');
+	action.setToggleAction(true);
+	action.setSelectedCallback(function() { return ui.hoverIcons.enabled; });
+	action = this.addAction('connectionPoints', function()
+	{
+		graph.setConnectable(!graph.connectionHandler.isEnabled());
+		ui.fireEvent(new mxEventObject('connectionPointsChanged'));
+	}, null, null, 'Ctrl+Shift+Q');
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.connectionHandler.isEnabled(); });
 	action = this.addAction('copyConnect', function()

@@ -1676,6 +1676,11 @@ HoverIcons = function(graph)
 /**
  * Up arrow.
  */
+HoverIcons.prototype.enabled = true;
+
+/**
+ * Up arrow.
+ */
 HoverIcons.prototype.arrowSpacing = 6;
 
 /**
@@ -2301,7 +2306,7 @@ HoverIcons.prototype.getState = function(state)
  */
 HoverIcons.prototype.update = function(state, x, y)
 {
-	if (!this.graph.connectionHandler.isEnabled())
+	if (!this.enabled)
 	{
 		this.reset();
 	}
