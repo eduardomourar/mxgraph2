@@ -725,6 +725,11 @@ Graph.prototype.defaultEdgeLength = 100;
 Graph.prototype.edgeMode = false;
 
 /**
+ * Allows all values in fit.
+ */
+Graph.prototype.connectionArrowsEnabled = true;
+
+/**
  * Specifies the regular expression for matching placeholders.
  */
 Graph.prototype.placeholderPattern = new RegExp('%(date\{.*\}|[^%^\{^\}]+)%', 'g');
@@ -1676,11 +1681,6 @@ HoverIcons = function(graph)
 /**
  * Up arrow.
  */
-HoverIcons.prototype.enabled = true;
-
-/**
- * Up arrow.
- */
 HoverIcons.prototype.arrowSpacing = 6;
 
 /**
@@ -2306,7 +2306,7 @@ HoverIcons.prototype.getState = function(state)
  */
 HoverIcons.prototype.update = function(state, x, y)
 {
-	if (!this.enabled)
+	if (!this.graph.connectionArrowsEnabled)
 	{
 		this.reset();
 	}

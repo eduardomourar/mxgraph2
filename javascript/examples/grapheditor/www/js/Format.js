@@ -1494,7 +1494,11 @@ ArrangePanel.prototype.addGroupOps = function(div)
 	}
 	else if (ss.edges.length > 0)
 	{
-		mxUtils.br(div);
+		if (count > 0)
+		{
+			mxUtils.br(div);
+		}
+		
 		btn = mxUtils.button(mxResources.get('clearWaypoints'), mxUtils.bind(this, function(evt)
 		{
 			this.editorUi.actions.get('clearWaypoints').funct();
@@ -1503,6 +1507,7 @@ ArrangePanel.prototype.addGroupOps = function(div)
 		btn.style.width = '202px';
 		btn.style.marginBottom = '2px';
 		div.appendChild(btn);
+
 		count++;
 	}
 	
@@ -1513,24 +1518,23 @@ ArrangePanel.prototype.addGroupOps = function(div)
 			mxUtils.br(div);
 		}
 		
-		btn = mxUtils.button(mxResources.get('editMetadata'), mxUtils.bind(this, function(evt)
+		btn = mxUtils.button(mxResources.get('editData'), mxUtils.bind(this, function(evt)
 		{
-			this.editorUi.actions.get('editMetadata').funct();
+			this.editorUi.actions.get('editData').funct();
 		}));
 		
-		btn.style.width = '202px';
+		btn.style.width = '100px';
 		btn.style.marginBottom = '2px';
 		div.appendChild(btn);
 		count++;
-
-		mxUtils.br(div);
 
 		btn = mxUtils.button(mxResources.get('editLink'), mxUtils.bind(this, function(evt)
 		{
 			this.editorUi.actions.get('editLink').funct();
 		}));
 		
-		btn.style.width = '202px';
+		btn.style.width = '100px';
+		btn.style.marginLeft = '2px';
 		btn.style.marginBottom = '2px';
 		div.appendChild(btn);
 		count++;
@@ -4063,10 +4067,11 @@ DiagramFormatPanel.prototype.init = function()
 	var editor = ui.editor;
 	var graph = editor.graph;
 
-	this.container.appendChild(this.addOptions(this.createPanel()));
+	this.container.appendChild(this.addView(this.createPanel()));
 
 	if (graph.isEnabled())
 	{
+		this.container.appendChild(this.addOptions(this.createPanel()));
 		this.container.appendChild(this.addPaperSize(this.createPanel()));
 		this.container.appendChild(this.addStyleOps(this.createPanel()));
 	}
@@ -4075,18 +4080,20 @@ DiagramFormatPanel.prototype.init = function()
 /**
  * Adds the label menu items to the given menu and parent.
  */
-DiagramFormatPanel.prototype.addOptions = function(div)
+DiagramFormatPanel.prototype.addView = function(div)
 {
 	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
 	
-	div.appendChild(this.createTitle(mxResources.get('options')));	
+	div.appendChild(this.createTitle(mxResources.get('view')));
+	
+	// Grid
 	this.addGridOption(div);
 
-	// Guides
 	if (graph.isEnabled())
 	{
+		// Guides
 		div.appendChild(this.createOption(mxResources.get('guides'), function()
 		{
 			return graph.graphHandler.guidesEnabled;
@@ -4110,84 +4117,31 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 			}
 		}));
 		
-		// Connect
-		if (ui.hoverIcons != null)
+		// Page View
+		div.appendChild(this.createOption(mxResources.get('pageView'), function()
 		{
-			div.appendChild(this.createOption(mxResources.get('connect'), function()
-			{
-				return ui.hoverIcons.enabled;
-			}, function(checked)
-			{
-				ui.actions.get('connect').funct();
-			},
-			{
-				install: function(apply)
-				{
-					this.listener = function()
-					{
-						apply(ui.hoverIcons.enabled);
-					};
-					
-					ui.addListener('connectChanged', this.listener);
-				},
-				destroy: function()
-				{
-					ui.removeListener(this.listener);
-				}
-			}));
-		}
-		
-		// Connection points
-		div.appendChild(this.createOption(mxResources.get('connectionPoints'), function()
-		{
-			return graph.connectionHandler.isEnabled();
+			return graph.pageVisible;
 		}, function(checked)
 		{
-			ui.actions.get('connectionPoints').funct();
+			ui.actions.get('pageView').funct();
 		},
 		{
 			install: function(apply)
 			{
 				this.listener = function()
 				{
-					apply(graph.connectionHandler.isEnabled());
+					apply(graph.pageVisible);
 				};
 				
-				ui.addListener('connectionPointsChanged', this.listener);
+				ui.addListener('pageViewChanged', this.listener);
 			},
 			destroy: function()
 			{
 				ui.removeListener(this.listener);
 			}
 		}));
-	}
-	
-	div.appendChild(this.createOption(mxResources.get('pageView'), function()
-	{
-		return graph.pageVisible;
-	}, function(checked)
-	{
-		ui.actions.get('pageView').funct();
-	},
-	{
-		install: function(apply)
-		{
-			this.listener = function()
-			{
-				apply(graph.pageVisible);
-			};
-			
-			ui.addListener('pageViewChanged', this.listener);
-		},
-		destroy: function()
-		{
-			ui.removeListener(this.listener);
-		}
-	}));
-	
-	// Background
-	if (graph.isEnabled())
-	{
+		
+		// Background
 		var bg = this.createColorOption(mxResources.get('background'), function()
 		{
 			return graph.background;
@@ -4215,13 +4169,7 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 		{
 			var btn = mxUtils.button(mxResources.get('image'), function(evt)
 			{
-				var dlg = new BackgroundImageDialog(ui, function(image)
-				{
-					ui.setBackgroundImage(image);
-				});
-				ui.showDialog(dlg.container, 360, 200, true, true);
-				dlg.init();
-				
+				ui.showBackgroundImageDialog();
 				mxEvent.consume(evt);
 			})
 		
@@ -4239,6 +4187,71 @@ DiagramFormatPanel.prototype.addOptions = function(div)
 		div.appendChild(bg);
 	}
 	
+	return div;
+};
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+DiagramFormatPanel.prototype.addOptions = function(div)
+{
+	var ui = this.editorUi;
+	var editor = ui.editor;
+	var graph = editor.graph;
+	
+	div.appendChild(this.createTitle(mxResources.get('options')));	
+
+	if (graph.isEnabled())
+	{
+		// Connection arrows
+		div.appendChild(this.createOption(mxResources.get('connectionArrows'), function()
+		{
+			return graph.connectionArrowsEnabled;
+		}, function(checked)
+		{
+			ui.actions.get('connectionArrows').funct();
+		},
+		{
+			install: function(apply)
+			{
+				this.listener = function()
+				{
+					apply(graph.connectionArrowsEnabled);
+				};
+				
+				ui.addListener('connectionArrowsChanged', this.listener);
+			},
+			destroy: function()
+			{
+				ui.removeListener(this.listener);
+			}
+		}));
+		
+		// Connection points
+		div.appendChild(this.createOption(mxResources.get('connectionPoints'), function()
+		{
+			return graph.connectionHandler.isEnabled();
+		}, function(checked)
+		{
+			ui.actions.get('connectionPoints').funct();
+		},
+		{
+			install: function(apply)
+			{
+				this.listener = function()
+				{
+					apply(graph.connectionHandler.isEnabled());
+				};
+				
+				ui.addListener('connectionPointsChanged', this.listener);
+			},
+			destroy: function()
+			{
+				ui.removeListener(this.listener);
+			}
+		}));
+	}
+
 	return div;
 };
 
@@ -4574,9 +4587,9 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
  */
 DiagramFormatPanel.prototype.addStyleOps = function(div)
 {
-	var btn = mxUtils.button(mxResources.get('editMetadata'), mxUtils.bind(this, function(evt)
+	var btn = mxUtils.button(mxResources.get('editData'), mxUtils.bind(this, function(evt)
 	{
-		this.editorUi.actions.get('editMetadata').funct();
+		this.editorUi.actions.get('editData').funct();
 	}));
 	
 	btn.style.width = '202px';
