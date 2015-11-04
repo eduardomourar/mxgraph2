@@ -1023,6 +1023,11 @@ EditorUi.prototype.init = function()
 	this.updateActionStates();
 	this.initClipboard();
 	this.initCanvas();
+	
+	if (this.format != null)
+	{
+		this.format.init();
+	}
 };
 
 /**

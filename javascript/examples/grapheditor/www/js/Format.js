@@ -5,7 +5,6 @@ Format = function(editorUi, container)
 {
 	this.editorUi = editorUi;
 	this.container = container;
-	this.init();
 };
 
 /**

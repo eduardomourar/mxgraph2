@@ -1,4 +1,3 @@
-- Fix grapheditor example for hoverIcons NPE
 - Add unscaled coordinates
 - Add caching for mxText with NO_FO
 - Add mxClient.IS_CHROMEAPP
