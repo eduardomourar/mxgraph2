@@ -974,7 +974,12 @@
 	mxPerimeter.BackbonePerimeter = function (bounds, vertex, next, orthogonal)
 	{
 		var sw = (parseFloat(vertex.style[mxConstants.STYLE_STROKEWIDTH] || 1) * vertex.view.scale / 2) - 1;
-
+		
+		if (vertex.style['backboneSize'] != null)
+		{
+			sw += (parseFloat(vertex.style['backboneSize']) * vertex.view.scale / 2) - 1;
+		}
+		
 		if (vertex.style[mxConstants.STYLE_DIRECTION] == 'south' ||
 			vertex.style[mxConstants.STYLE_DIRECTION] == 'north')
 		{
