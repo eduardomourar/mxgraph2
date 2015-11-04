@@ -770,13 +770,21 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		
 		if (this.textarea != null)
 		{
-			// Prefers blinking cursor over no selected text if empty
-			this.textarea.focus();
-			
-			if (this.isSelectText() && this.textarea.innerHTML.length > 0 &&
-				(this.textarea.innerHTML != this.getEmptyLabelText() || !this.clearOnChange))
+			// Workaround for NS_ERROR_FAILURE in FF
+			try
 			{
-				document.execCommand('selectAll', false, null);
+				// Prefers blinking cursor over no selected text if empty
+				this.textarea.focus();
+				
+				if (this.isSelectText() && this.textarea.innerHTML.length > 0 &&
+					(this.textarea.innerHTML != this.getEmptyLabelText() || !this.clearOnChange))
+				{
+					document.execCommand('selectAll', false, null);
+				}
+			}
+			catch (e)
+			{
+				// ignore
 			}
 		}
 	}
