@@ -3343,12 +3343,18 @@ if (typeof mxVertexHandler != 'undefined')
 			crisp = (crisp != null) ? crisp : true;
 			ignoreSelection = (ignoreSelection != null) ? ignoreSelection : true;
 			showText = (showText != null) ? showText : true;
-			
-			var imgExport = new mxImageExport();
+
 			var bounds = (nocrop) ? this.view.getBackgroundPageBounds() : (ignoreSelection) ?
 					this.getGraphBounds() : this.getBoundingBox(this.getSelectionCells());
+
+			if (bounds == null || bounds.width == 0 || bounds.height == 0)
+			{
+				throw Error(mxResources.get('drawingEmpty'));	
+			}
+			
+			var imgExport = new mxImageExport();
 			var vs = this.view.scale;
-		
+			
 			// Prepares SVG document that holds the output
 			var svgDoc = mxUtils.createXmlDocument();
 			var root = (svgDoc.createElementNS != null) ?
