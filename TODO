@@ -1,6 +1,6 @@
 - Add unscaled coordinates
-- Add caching for mxText with NO_FO
 - Add mxClient.IS_CHROMEAPP
+- Add caching for text sizes with NO_FO
 
 - Use getBoundingClientRect for VML in mxShape
 - Add lineSpacing, jetty-size and source-/targetConstraint styles

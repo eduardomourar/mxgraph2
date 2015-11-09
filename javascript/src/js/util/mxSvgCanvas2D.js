@@ -1599,12 +1599,9 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			}
 			else
 			{
-				// Workaround for export and Firefox where sizes are not reported or updated correctly
-				// when inside a foreignObject (Opera has same bug but it cannot be fixed for all cases
-				// using this workaround so foreignObject is disabled).
-				if (this.root.ownerDocument != document || mxClient.IS_FF)
+				// Uses document for text measuring during export
+				if (this.root.ownerDocument != document)
 				{
-					// Getting size via local document for export
 					div.style.visibility = 'hidden';
 					document.body.appendChild(div);
 				}
@@ -1621,6 +1618,15 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				}
 				
 				var tmp = sizeDiv.offsetWidth;
+				
+				// Workaround for text measuring in hidden containers
+				if (tmp == 0 && div.parentNode == fo)
+				{
+					div.style.visibility = 'hidden';
+					document.body.appendChild(div);
+					
+					tmp = sizeDiv.offsetWidth;
+				}
 				
 				if (this.cacheOffsetSize)
 				{

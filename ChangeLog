@@ -1,3 +1,5 @@
+- Fixes text size for hidden containers in mxSvgCanvas2D [JavaScript]
+
 04-NOV-2015: 3.4.0.3
 
 - Fixes init sequence for format panel
