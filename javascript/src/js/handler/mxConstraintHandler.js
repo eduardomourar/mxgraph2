@@ -342,21 +342,23 @@ mxConstraintHandler.prototype.update = function(me, source, existingEdge)
 					minDistSq = tmp;
 					
 					var tmp = this.focusIcons[i].bounds.clone();
-					tmp.grow((mxClient.IS_IE) ? 3 : 2);
+					tmp.grow(mxConstants.HIGHLIGHT_SIZE);
 					
 					if (mxClient.IS_IE)
 					{
+						tmp.grow(1);
 						tmp.width -= 1;
 						tmp.height -= 1;
 					}
 					
 					if (this.focusHighlight == null)
 					{
-						var hl = new mxRectangleShape(tmp, null, this.highlightColor, 3);
-						hl.pointerEvents = false;
-						
+						var hl = this.createHighlightShape();
 						hl.dialect = (this.graph.dialect == mxConstants.DIALECT_SVG) ?
 								mxConstants.DIALECT_SVG : mxConstants.DIALECT_VML;
+						hl.pointerEvents = false;
+						hl.bounds = tmp;
+
 						hl.init(this.graph.getView().getOverlayPane());
 						this.focusHighlight = hl;
 						
@@ -387,6 +389,21 @@ mxConstraintHandler.prototype.update = function(me, source, existingEdge)
 		this.currentFocus = null;
 		this.currentPoint = null;
 	}
+};
+
+/**
+ * Function: createHighlightShape
+ * 
+ * Create the shape used to paint the highlight.
+ * 
+ * Returns true if the given icon intersects the given point.
+ */
+mxConstraintHandler.prototype.createHighlightShape = function()
+{
+	var hl = new mxRectangleShape(null, this.highlightColor, this.highlightColor, mxConstants.HIGHLIGHT_STROKEWIDTH);
+	hl.opacity = mxConstants.HIGHLIGHT_OPACITY;
+	
+	return hl;
 };
 
 /**

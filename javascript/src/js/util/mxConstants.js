@@ -275,6 +275,21 @@
 	 * Default is 3.
 	 */
 	HIGHLIGHT_STROKEWIDTH: 3,
+
+	/**
+	 * Variable: CONSTRAINT_HIGHLIGHT_SIZE
+	 * 
+	 * Size of the constraint highlight (in px). Default is 2.
+	 */
+	HIGHLIGHT_SIZE: 2,
+	
+	/**
+	 * Variable: HIGHLIGHT_OPACITY
+	 * 
+	 * Opacity (in %) used for the highlights (including outline).
+	 * Default is 100.
+	 */
+	HIGHLIGHT_OPACITY: 100,
 	
 	/**
 	 * Variable: CURSOR_MOVABLE_VERTEX
