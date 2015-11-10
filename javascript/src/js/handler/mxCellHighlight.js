@@ -24,6 +24,7 @@ function mxCellHighlight(graph, highlightColor, strokeWidth, dashed)
 		this.highlightColor = (highlightColor != null) ? highlightColor : mxConstants.DEFAULT_VALID_COLOR;
 		this.strokeWidth = (strokeWidth != null) ? strokeWidth : mxConstants.HIGHLIGHT_STROKEWIDTH;
 		this.dashed = (dashed != null) ? dashed : false;
+		this.opacity = mxConstants.HIGHLIGHT_OPACITY;
 
 		// Updates the marker if the graph changes
 		this.repaintHandler = mxUtils.bind(this, function()
@@ -151,6 +152,7 @@ mxCellHighlight.prototype.createShape = function()
 	shape.arrowStrokewidth = this.strokeWidth;
 	shape.stroke = this.highlightColor;
 	shape.isDashed = this.dashed;
+	shape.opacity = this.opacity;
 	shape.isShadow = false;
 	
 	shape.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
