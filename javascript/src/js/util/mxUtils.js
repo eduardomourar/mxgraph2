@@ -288,7 +288,7 @@ var mxUtils =
 					
 					if (idx2 > 0)
 					{
-						str = str.substring(idx1, idx2);
+						str = str.substring(0, idx2);
 					}
 				}
 			}
