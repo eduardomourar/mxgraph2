@@ -1,3 +1,4 @@
+- Fixes mxUtils.getFunctionName for normal strings [JavaScript]
 - Adds mxConstraintHandler.createHighlightShape hook [JavaScript]
 - Adds mxConstants.HIGHLIGHT_SIZE, HIGHLIGHT_OPACITY [JavaScript]
 - Fixes text size for hidden containers in mxSvgCanvas2D [JavaScript]

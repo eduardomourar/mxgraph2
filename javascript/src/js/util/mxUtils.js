@@ -279,16 +279,18 @@ var mxUtils =
 			}
 			else
 			{
-				var tmp = f.toString();
-				var idx1 = 9;
+				str = mxUtils.trim(f.toString());
 				
-				while (tmp.charAt(idx1) == ' ')
+				if (/^function\s/.test(str))
 				{
-					idx1++;
+					str = mxUtils.ltrim(str.substring(9));
+					var idx2 = str.indexOf('(');
+					
+					if (idx2 > 0)
+					{
+						str = str.substring(idx1, idx2);
+					}
 				}
-				
-				var idx2 = tmp.indexOf('(', idx1);
-				str = tmp.substring(idx1, idx2);
 			}
 		}
 		
