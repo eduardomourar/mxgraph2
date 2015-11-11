@@ -2404,7 +2404,8 @@ if (typeof mxVertexHandler != 'undefined')
 		mxConstants.DEFAULT_VALID_COLOR = '#00a8ff';
 		mxConstants.LABEL_HANDLE_FILLCOLOR = '#cee7ff';
 		mxConstants.GUIDE_COLOR = '#0088cf';
-		mxConstants.DEFAULT_HOTSPOT = 0.3;
+		mxConstants.HIGHLIGHT_OPACITY = 30;
+		mxConstants.HIGHLIGHT_SIZE = 8;
 		
 		//Enables snapping to off-grid terminals for edge waypoints
 		mxEdgeHandler.prototype.snapToTerminals = true;
@@ -2424,6 +2425,19 @@ if (typeof mxVertexHandler != 'undefined')
 		mxConnectionHandler.prototype.isCreateTarget = function(evt)
 		{
 			return mxEvent.isControlDown(evt) || mxConnectionHandlerCreateTarget.apply(this, arguments);
+		};
+		
+		/**
+		 * Function: createHighlightShape
+		 * 
+		 * Create the shape used to paint the highlight.
+		 */
+		mxConstraintHandler.prototype.createHighlightShape = function()
+		{
+			var hl = new mxEllipse(null, this.highlightColor, this.highlightColor, 0);
+			hl.opacity = mxConstants.HIGHLIGHT_OPACITY;
+			
+			return hl;
 		};
 		
 		/**
@@ -3347,7 +3361,7 @@ if (typeof mxVertexHandler != 'undefined')
 			var bounds = (nocrop) ? this.view.getBackgroundPageBounds() : (ignoreSelection) ?
 					this.getGraphBounds() : this.getBoundingBox(this.getSelectionCells());
 
-			if (bounds == null || bounds.width == 0 || bounds.height == 0)
+			if (bounds == null)
 			{
 				throw Error(mxResources.get('drawingEmpty'));	
 			}
