@@ -1151,7 +1151,7 @@ OpenFile.prototype.cancel = function(cancel)
 								{
 									if (window.console != null)
 									{
-										console.log('error in getStencil:', fname);
+										console.log('error in getStencil:', fname, e);
 									}
 								}
 							}

@@ -2412,6 +2412,10 @@
 			'trapezoid': createTrapezoidHandleFunction(0.5),
 			'parallelogram': createTrapezoidHandleFunction(1)
 		};
+		
+		// Exposes custom handles
+		EditorUi.createHandle = createHandle;
+		EditorUi.handleFactory = handleFactory;
 
 		mxVertexHandler.prototype.createCustomHandles = function()
 		{
