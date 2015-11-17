@@ -433,13 +433,13 @@ Graph = function(container, model, renderHint, stylesheet)
 	    	}
 	    };
 
-	    // Activates outline connect after 500ms or if alt is pressed
+	    // Activates outline connect after 1500ms with touch event or if alt is pressed inside the shape
 	    var connectionHandleIsOutlineConnectEvent = this.connectionHandler.isOutlineConnectEvent;
 	    
 	    this.connectionHandler.isOutlineConnectEvent = function(me)
 	    {
-	    	return timeOnTarget > 1500 || ((mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
-	    		connectionHandleIsOutlineConnectEvent.apply(this, arguments));
+	    	return (mxEvent.isTouchEvent(me.getEvent()) && this.currentState && me.getState() == this.currentState &&
+	    			timeOnTarget > 1500) || connectionHandleIsOutlineConnectEvent.apply(this, arguments);
 	    };
 	    
 	    // Adds shift+click to toggle selection state
@@ -848,6 +848,15 @@ Graph.prototype.getLabel = function(cell)
 	}
 	
 	return result;
+};
+
+/**
+ * Adds event if grid size is changed.
+ */
+mxGraph.prototype.setGridSize = function(value)
+{
+	this.gridSize = value;
+	this.fireEvent(new mxEventObject('gridSizeChanged'));
 };
 
 /**
@@ -1701,6 +1710,11 @@ HoverIcons.prototype.activeArrow = null;
 /**
  * Up arrow.
  */
+HoverIcons.prototype.inactiveOpacity = 15;
+
+/**
+ * Up arrow.
+ */
 HoverIcons.prototype.triangleUp = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDA3RjREMDM0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDA3RjREMDQ0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0MDdGNEQwMTQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0MDdGNEQwMjQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PpFdYkUAAAEsSURBVHjaYvz//z8DPQATA50AC+P6D6Tq0QViHiA+TpJFZDhuMhDzA7EhLYMuEIjtgdgAiJNJ0cjIsO49sWo5gfgqECtC+S+AWBWIv1DbR0VIloCABBA3UttHIENvQxMBMvgFxNpAfIdaPurFYgkIsAFxF7WCzgyIowgkEA9qWDSZSB8zU2JRMtRHhIAWEKeRmxh4oAlAgsh4fAdN7u9I9VEFCZaAgBAQt5DqIxVo5mQjseT4C8R6QHyNWB91kWEJAzRBTCA26JygSZZc4IpNPxMWF01moBxghAi6RWnQpEopAMVxPq7EIARNzkJUqlS/QJP7C3QftVDRElg+bEH3ESi4LhEqRsgEoJr4AhNSeUYLS0BgJqzNACrLRIH4Mo0sAtXM9ozDrl0HEGAAOt00sQRg5yAAAAAASUVORK5CYII=' :
 	IMAGE_PATH + '/triangle-up.png', 26, 26);
 
@@ -1956,7 +1970,7 @@ HoverIcons.prototype.createArrow = function(img, tooltip)
 		{
 	    	if (this.activeArrow != null && this.activeArrow != arrow)
 	    	{
-	    		mxUtils.setOpacity(this.activeArrow, 20);
+	    		mxUtils.setOpacity(this.activeArrow, this.inactiveOpacity);
 	    	}
 
 			this.graph.connectionHandler.constraintHandler.reset();
@@ -1984,7 +1998,7 @@ HoverIcons.prototype.resetActiveArrow = function()
 {
 	if (this.activeArrow != null)
 	{
-		mxUtils.setOpacity(this.activeArrow, 20);
+		mxUtils.setOpacity(this.activeArrow, this.inactiveOpacity);
 		this.activeArrow = null;
 	}
 };
@@ -2209,19 +2223,19 @@ HoverIcons.prototype.repaint = function()
 			
 			this.arrowUp.style.left = Math.round(this.currentState.getCenterX() - this.triangleUp.width / 2) + 'px';
 			this.arrowUp.style.top = Math.round(bds.y - this.triangleUp.height) + 'px';
-			mxUtils.setOpacity(this.arrowUp, 20);
+			mxUtils.setOpacity(this.arrowUp, this.inactiveOpacity);
 			
 			this.arrowRight.style.left = Math.round(bds.x + bds.width) + 'px';
 			this.arrowRight.style.top = Math.round(this.currentState.getCenterY() - this.triangleRight.height / 2) + 'px';
-			mxUtils.setOpacity(this.arrowRight, 20);
+			mxUtils.setOpacity(this.arrowRight, this.inactiveOpacity);
 			
 			this.arrowDown.style.left = this.arrowUp.style.left
 			this.arrowDown.style.top = Math.round(bds.y + bds.height) + 'px';
-			mxUtils.setOpacity(this.arrowDown, 20);
+			mxUtils.setOpacity(this.arrowDown, this.inactiveOpacity);
 			
 			this.arrowLeft.style.left = Math.round(bds.x - this.triangleLeft.width) + 'px';
 			this.arrowLeft.style.top = this.arrowRight.style.top;
-			mxUtils.setOpacity(this.arrowLeft, 20);
+			mxUtils.setOpacity(this.arrowLeft, this.inactiveOpacity);
 		}
 		else
 		{
@@ -2426,18 +2440,44 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			return mxEvent.isControlDown(evt) || mxConnectionHandlerCreateTarget.apply(this, arguments);
 		};
-		
-		/**
-		 * Function: createHighlightShape
-		 * 
-		 * Create the shape used to paint the highlight.
-		 */
+
+		// Overrides highlight shape for connection points
 		mxConstraintHandler.prototype.createHighlightShape = function()
 		{
 			var hl = new mxEllipse(null, this.highlightColor, this.highlightColor, 0);
 			hl.opacity = mxConstants.HIGHLIGHT_OPACITY;
 			
 			return hl;
+		};
+		
+		// Overrides edge preview to use current edge shape and default style
+		mxConnectionHandler.prototype.livePreview = true;
+		mxConnectionHandler.prototype.cursor = 'crosshair';
+		
+		mxConnectionHandler.prototype.updatePreview = function(valid)
+		{
+			this.shape.strokewidth = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKEWIDTH] || 1;
+			this.shape.isDashed = this.graph.currentEdgeStyle[mxConstants.STYLE_DASHED] == '1';
+			this.shape.stroke = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKECOLOR] || 'black';
+		};
+		
+		// Overrides connection handler to ignore edges instead of not allowing connections
+		var mxConnectionHandlerCreateMarker = mxConnectionHandler.prototype.createMarker;
+		mxConnectionHandler.prototype.createMarker = function()
+		{
+			var marker = mxConnectionHandlerCreateMarker.apply(this, arguments);
+		
+			var markerGetCell = marker.getCell;
+			marker.getCell = mxUtils.bind(this, function(me)
+			{
+				var result = markerGetCell.apply(this, arguments);
+			
+				this.error = null;
+				
+				return result;
+			});
+			
+			return marker;
 		};
 		
 		/**
@@ -4461,7 +4501,7 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 			
 			this.hint.style.left = Math.round(me.getGraphX() - this.hint.clientWidth / 2) + 'px';
-			this.hint.style.top = (me.getGraphY() + 12) + 'px';
+			this.hint.style.top = (Math.max(me.getGraphY(), point.y) + this.state.view.graph.gridSize) + 'px';
 			
 			if (this.hideEdgeHintThread != null)
 			{
@@ -4636,8 +4676,9 @@ if (typeof mxVertexHandler != 'undefined')
 		
 		mxEdgeHandler.prototype.isOutlineConnectEvent = function(me)
 		{
-			return timeOnTarget > 1500 || ((mxEvent.isAltDown(me.getEvent()) || timeOnTarget > 500) &&
-				mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments));
+			return (mxEvent.isTouchEvent(me.getEvent()) && this.currentTerminalState != null &&
+				me.getState() == this.currentTerminalState &&
+				timeOnTarget > 1500) || mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments);
 		};
 		
 		// Disables custom handles if shift is pressed
