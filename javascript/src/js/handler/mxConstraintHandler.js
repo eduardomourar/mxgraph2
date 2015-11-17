@@ -457,7 +457,7 @@ mxConstraintHandler.prototype.destroy = function()
 {
 	this.reset();
 	
-	if (this.mouseleaveHandler == null && this.graph.container != null)
+	if (this.mouseleaveHandler != null && this.graph.container != null)
 	{
 		mxEvent.removeListener(this.graph.container, 'mouseleave', this.mouseleaveHandler);
 		this.mouseleaveHandler = null;
