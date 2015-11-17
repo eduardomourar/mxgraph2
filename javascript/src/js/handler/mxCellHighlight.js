@@ -152,8 +152,8 @@ mxCellHighlight.prototype.createShape = function()
 	shape.strokewidth = this.strokeWidth / this.state.view.scale / this.state.view.scale;
 	shape.arrowStrokewidth = this.strokeWidth;
 	shape.stroke = this.highlightColor;
-	shape.isDashed = this.dashed;
 	shape.opacity = this.opacity;
+	shape.isDashed = this.dashed;
 	shape.isShadow = false;
 	
 	shape.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
@@ -198,7 +198,25 @@ mxCellHighlight.prototype.repaint = function()
 		{
 			this.shape.setCursor(this.state.shape.getCursor());
 		}
-
+		
+		// Workaround for event transparency in VML with transparent color
+		// is to use a non-transparent color with near zero opacity
+		if (mxClient.IS_QUIRKS || document.documentMode == 8)
+		{
+			if (this.shape.stroke == 'transparent')
+			{
+				// KNOWN: Quirks mode does not seem to catch events if
+				// we do not force an update of the DOM via a change such
+				// as mxLog.debug. Since IE6 is EOL we do not add a fix.
+				this.shape.stroke = 'white';
+				this.shape.opacity = 1;
+			}
+			else
+			{
+				this.shape.opacity = this.opacity;
+			}
+		}
+		
 		this.shape.redraw();
 	}
 };
@@ -246,10 +264,11 @@ mxCellHighlight.prototype.isHighlightAt = function(x, y)
 {
 	var hit = false;
 	
-	if (this.shape != null)
+	// Quirks mode is currently not supported as it used a different coordinate system
+	if (this.shape != null && document.elementFromPoint != null && !mxClient.IS_QUIRKS)
 	{
 		var elt = document.elementFromPoint(x, y);
-		
+
 		while (elt != null)
 		{
 			if (elt == this.shape.node)

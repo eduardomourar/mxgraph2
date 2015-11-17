@@ -1277,14 +1277,21 @@ mxEdgeHandler.prototype.isOutlineConnectEvent = function(me)
 	var offset = mxUtils.getOffset(this.graph.container);
 	var evt = me.getEvent();
 	
-	var gridX = this.currentPoint.x - this.graph.container.scrollLeft + offset.x;
-	var gridY = this.currentPoint.y - this.graph.container.scrollTop + offset.y;
+	var clientX = mxEvent.getClientX(evt);
+	var clientY = mxEvent.getClientY(evt);
 	
+	var doc = document.documentElement;
+	var left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+	var top = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+	
+	var gridX = this.currentPoint.x - this.graph.container.scrollLeft + offset.x - left;
+	var gridY = this.currentPoint.y - this.graph.container.scrollTop + offset.y - top;
+
 	return this.outlineConnect && !mxEvent.isShiftDown(me.getEvent()) &&
 		(me.isSource(this.marker.highlight.shape) ||
 		(mxEvent.isAltDown(me.getEvent()) && me.getState() != null) ||
-		this.marker.highlight.isHighlightAt(evt.pageX, evt.pageY) ||
-		((gridX != evt.pageX || gridY != evt.pageY) && me.getState() == null &&
+		this.marker.highlight.isHighlightAt(clientX, clientY) ||
+		((gridX != clientX || gridY != clientY) && me.getState() == null &&
 		this.marker.highlight.isHighlightAt(gridX, gridY)));
 };
 
@@ -1533,7 +1540,9 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 				}
 				
 				if (terminal == null && this.marker.hasValidState() && this.marker.highlight != null &&
-					this.marker.highlight.shape != null && this.marker.highlight.shape.stroke != 'transparent')
+					this.marker.highlight.shape != null &&
+					this.marker.highlight.shape.stroke != 'transparent' &&
+					this.marker.highlight.shape.stroke != 'white')
 				{
 					terminal = this.marker.validState.cell;
 				}
