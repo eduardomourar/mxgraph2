@@ -1,5 +1,6 @@
+- Fixes hit detection for grid, outline in mxConnectionHandler, mxEdgeHandler [JavaScript]
 - Uses graph tolerance, adds mxCellHighlight.isHighlightAt [JavaScript]
-- Adds mxConstraintHandler.setFocus [JavaScript]
+- Adds mxConnectionHandler.livePreview, cursor and mxConstraintHandler.setFocus [JavaScript]
 - Adds optional point argument in mxConstraintHandler.getCellForEvent [JavaScript]
 - Fixes mxUtils.getFunctionName for normal strings [JavaScript]
 - Adds mxConstraintHandler.createHighlightShape hook [JavaScript]
