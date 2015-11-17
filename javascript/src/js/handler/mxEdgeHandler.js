@@ -1339,7 +1339,8 @@ mxEdgeHandler.prototype.updatePreviewState = function(edge, point, terminalState
 		}
 		else if (this.marker.hasValidState())
 		{
-			this.marker.highlight.shape.stroke = mxConstants.DEFAULT_VALID_COLOR;
+			this.marker.highlight.shape.stroke = (this.marker.getValidState() == me.getState()) ?
+				mxConstants.DEFAULT_VALID_COLOR : 'transparent';
 			this.marker.highlight.shape.strokewidth = mxConstants.HIGHLIGHT_STROKEWIDTH / s / s;
 			this.marker.highlight.repaint();
 		}
