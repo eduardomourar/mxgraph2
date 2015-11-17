@@ -787,7 +787,7 @@ var PageSetupDialog = function(editorUi)
 		
 		if (graph.gridSize !== gridSizeInput.value)
 		{
-			graph.gridSize = parseFloat(gridSizeInput.value);
+			graph.setGridSize(parseFloat(gridSizeInput.value));
 		}
 	});
 	applyBtn.className = 'geBtn gePrimaryBtn';
