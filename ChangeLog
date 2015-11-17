@@ -1,3 +1,4 @@
+- Uses graph tolerance, adds mxCellHighlight.isHighlightAt [JavaScript]
 - Adds mxConstraintHandler.setFocus [JavaScript]
 - Adds optional point argument in mxConstraintHandler.getCellForEvent [JavaScript]
 - Fixes mxUtils.getFunctionName for normal strings [JavaScript]

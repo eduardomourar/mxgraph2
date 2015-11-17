@@ -144,6 +144,7 @@ mxCellHighlight.prototype.createShape = function()
 {
 	var shape = this.graph.cellRenderer.createShape(this.state);
 	
+	shape.svgStrokeTolerance = this.graph.tolerance;
 	shape.scale = this.state.view.scale;
 	shape.outline = true;
 	shape.points = this.state.absolutePoints;
@@ -234,6 +235,34 @@ mxCellHighlight.prototype.highlight = function(state)
 			this.drawHighlight();
 		}
 	}
+};
+
+/**
+ * Function: isHighlightAt
+ * 
+ * Returns true if this highlight is at the given position.
+ */
+mxCellHighlight.prototype.isHighlightAt = function(x, y)
+{
+	var hit = false;
+	
+	if (this.shape != null)
+	{
+		var elt = document.elementFromPoint(x, y);
+		
+		while (elt != null)
+		{
+			if (elt == this.shape.node)
+			{
+				hit = true;
+				break;
+			}
+			
+			elt = elt.parentNode;
+		}
+	}
+	
+	return hit;
 };
 
 /**
