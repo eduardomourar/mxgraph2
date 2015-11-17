@@ -1,3 +1,5 @@
+- Adds mxConstraintHandler.setFocus [JavaScript]
+- Adds optional point argument in mxConstraintHandler.getCellForEvent [JavaScript]
 - Fixes mxUtils.getFunctionName for normal strings [JavaScript]
 - Adds mxConstraintHandler.createHighlightShape hook [JavaScript]
 - Adds mxConstants.HIGHLIGHT_SIZE, HIGHLIGHT_OPACITY [JavaScript]
