@@ -77,6 +77,13 @@
 						{
 							iframe.contentWindow.postMessage(JSON.stringify({action: 'status',
 								messageKey: 'allChangesSaved', modified: false}), '*');
+// 							iframe.contentWindow.postMessage(JSON.stringify({action: 'spinner',
+// 								messageKey: 'saving'}), '*');
+// 							window.setTimeout(function()
+// 							{
+// 								iframe.contentWindow.postMessage(JSON.stringify({action: 'spinner', show: false}), '*');
+// 							}, 1500);
+							
 	// 						iframe.contentWindow.postMessage(JSON.stringify({action: 'dialog',
 	// 							titleKey: 'error', messageKey: 'fileNotFound',
 	// 							buttonKey: 'close'}), '*');
