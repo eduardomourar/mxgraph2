@@ -1347,9 +1347,15 @@ mxConnectionHandler.prototype.mouseMove = function(sender, me)
 				{
 					return;
 				}
-						
+
+				// Stores old point to reuse when creating edge
+				this.originalPoint = current.clone();
 				current.x -= dx * 4 / len;
 				current.y -= dy * 4 / len;
+			}
+			else
+			{
+				this.originalPoint = null;
 			}
 			
 			// Creates the preview shape (lazy)
@@ -1725,6 +1731,8 @@ mxConnectionHandler.prototype.reset = function()
 	this.destroyIcons();
 	this.marker.reset();
 	this.constraintHandler.reset();
+	this.originalPoint = null;
+	this.currentPoint = null;
 	this.edgeState = null;
 	this.previous = null;
 	this.error = null;
@@ -1944,7 +1952,9 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 				{
 					var t = this.graph.view.translate;
 					var s = this.graph.view.scale;
-					var pt = new mxPoint(this.currentPoint.x / s - t.x, this.currentPoint.y / s - t.y);
+					var pt = (this.originalPoint != null) ?
+							new mxPoint(this.originalPoint.x / s - t.x, this.originalPoint.y / s - t.y) :
+						new mxPoint(this.currentPoint.x / s - t.x, this.currentPoint.y / s - t.y);
 					pt.x -= this.graph.panDx / this.graph.view.scale;
 					pt.y -= this.graph.panDy / this.graph.view.scale;
 					geo.setTerminalPoint(pt, false);
