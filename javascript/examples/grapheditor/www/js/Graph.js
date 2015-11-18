@@ -92,6 +92,12 @@ Graph = function(container, model, renderHint, stylesheet)
 			    		if (Math.abs(start.point.x - me.getGraphX()) > tol ||
 			    			Math.abs(start.point.y - me.getGraphY()) > tol)
 			    		{
+			    			// Lazy selection for edges inside groups
+			    			if (!this.isCellSelected(state.cell))
+			    			{
+			    				this.setSelectionCell(state.cell);
+			    			}
+			    			
 			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
 			    			
 			    			if (handler != null && handler.bends != null && handler.bends.length > 0)
