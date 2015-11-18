@@ -23,6 +23,18 @@
 function mxConstraintHandler(graph)
 {
 	this.graph = graph;
+	
+	// Adds a graph model listener to update the current focus on changes
+	this.resetHandler = mxUtils.bind(this, function(sender, evt)
+	{
+		if (this.currentFocus != null && this.graph.view.getState(this.currentFocus.cell) == null)
+		{
+			this.reset();
+		}
+	});
+	
+	this.graph.model.addListener(mxEvent.CHANGE, this.resetHandler);
+	this.graph.addListener(mxEvent.ROOT, this.resetHandler);
 };
 
 /**
@@ -246,7 +258,7 @@ mxConstraintHandler.prototype.update = function(me, source, existingEdge, point)
 				this.reset();
 			});
 
-			mxEvent.addListener(this.graph.container, 'mouseleave', this.mouseleaveHandler);	
+			mxEvent.addListener(this.graph.container, 'mouseleave', this.resetHandler);	
 		}
 		
 		var tol = this.getTolerance(me);
@@ -456,6 +468,13 @@ mxConstraintHandler.prototype.intersects = function(icon, mouse, source, existin
 mxConstraintHandler.prototype.destroy = function()
 {
 	this.reset();
+	
+	if (this.resetHandler != null)
+	{
+		this.graph.model.removeListener(this.resetHandler);
+		this.graph.removeListener(this.resetHandler);
+		this.resetHandler = null;
+	}
 	
 	if (this.mouseleaveHandler != null && this.graph.container != null)
 	{
