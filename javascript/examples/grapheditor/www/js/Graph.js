@@ -1772,6 +1772,7 @@ HoverIcons.prototype.init = function()
 	this.graph.view.addListener(mxEvent.SCALE, this.repaintHandler);
 	this.graph.view.addListener(mxEvent.DOWN, this.repaintHandler);
 	this.graph.view.addListener(mxEvent.UP, this.repaintHandler);
+	this.graph.addListener(mxEvent.ROOT, this.repaintHandler);
 	
 	// Resets the mouse point on escape
 	this.graph.addListener(mxEvent.ESCAPE, mxUtils.bind(this, function()
