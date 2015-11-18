@@ -2457,6 +2457,7 @@ if (typeof mxVertexHandler != 'undefined')
 		
 		mxConnectionHandler.prototype.updatePreview = function(valid)
 		{
+			this.shape.scale = this.graph.view.scale;
 			this.shape.strokewidth = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKEWIDTH] || 1;
 			this.shape.isDashed = this.graph.currentEdgeStyle[mxConstants.STYLE_DASHED] == '1';
 			this.shape.stroke = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKECOLOR] || 'black';
