@@ -444,8 +444,8 @@ Graph = function(container, model, renderHint, stylesheet)
 	    
 	    this.connectionHandler.isOutlineConnectEvent = function(me)
 	    {
-	    	return (mxEvent.isTouchEvent(me.getEvent()) && this.currentState && me.getState() == this.currentState &&
-	    			timeOnTarget > 1500) || connectionHandleIsOutlineConnectEvent.apply(this, arguments);
+	    	return (this.currentState && me.getState() == this.currentState && timeOnTarget > 2000) ||
+	    		connectionHandleIsOutlineConnectEvent.apply(this, arguments);
 	    };
 	    
 	    // Adds shift+click to toggle selection state
@@ -4684,9 +4684,8 @@ if (typeof mxVertexHandler != 'undefined')
 		
 		mxEdgeHandler.prototype.isOutlineConnectEvent = function(me)
 		{
-			return (mxEvent.isTouchEvent(me.getEvent()) && this.currentTerminalState != null &&
-				me.getState() == this.currentTerminalState &&
-				timeOnTarget > 1500) || mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments);
+			return (this.currentTerminalState != null && me.getState() == this.currentTerminalState &&
+				timeOnTarget > 2000) || mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments);
 		};
 		
 		// Disables custom handles if shift is pressed
