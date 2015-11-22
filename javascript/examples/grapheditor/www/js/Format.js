@@ -980,7 +980,8 @@ BaseFormatPanel.prototype.createColorOption = function(label, getColorFn, setCol
 		if (!applying)
 		{
 			applying = true;
-			btn.innerHTML = '<div style="width:' + ((mxClient.IS_QUIRKS) ? '30' : '36') + 'px;height:12px;margin:3px;border:1px solid black;background-color:' +
+			btn.innerHTML = '<div style="width:' + ((mxClient.IS_QUIRKS) ? '30' : '36') +
+				'px;height:12px;margin:3px;border:1px solid black;background-color:' +
 				((color != null && color != mxConstants.NONE) ? color : defaultColor) + ';"></div>';
 			
 			// Fine-tuning in Firefox, quirks mode and IE8 standards
@@ -1009,17 +1010,14 @@ BaseFormatPanel.prototype.createColorOption = function(label, getColorFn, setCol
 				callbackFn(color);
 			}
 
-			if (!disableUpdate)
+			if (!disableUpdate && (hideCheckbox || value != color))
 			{
-				if (hideCheckbox || value != color)
+				value = color;
+				
+				// Checks if the color value needs to be updated in the model
+				if (hideCheckbox || getColorFn() != value)
 				{
-					value = color;
-					
-					// Checks if the color value needs to be updated in the model
-					if (hideCheckbox || getColorFn() != value)
-					{
-						setColorFn(value);
-					}
+					setColorFn(value);
 				}
 			}
 			
@@ -1064,7 +1062,7 @@ BaseFormatPanel.prototype.createColorOption = function(label, getColorFn, setCol
 	
 	if (listener != null)
 	{
-		listener.install((hideCheckbox) ? function(color) { apply(color, true) } : apply);
+		listener.install(apply);
 		this.listeners.push(listener);
 	}
 	
@@ -2475,7 +2473,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	
 	var panel = (graph.cellEditor.isContentEditing()) ? this.createColorOption(mxResources.get('fontColor'), function()
 	{
-		return currentFontColor
+		return currentFontColor;
 	}, function(color)
 	{
 		document.execCommand('forecolor', false, (color != mxConstants.NONE) ? color : 'transparent');
@@ -3048,7 +3046,7 @@ TextFormatPanel.prototype.addFont = function(container)
 							    });
 						
 						// Updates the color picker for the current font
-						if (fontColorApply != null && color.charAt(0) == '#')
+						if (fontColorApply != null)
 						{
 							if (color.charAt(0) == '#')
 							{
