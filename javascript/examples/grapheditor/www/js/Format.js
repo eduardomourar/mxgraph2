@@ -221,7 +221,8 @@ Format.prototype.isGlassState = function(state)
 	var shape = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
 	
 	return (shape == 'label' || shape == 'rectangle' || shape == 'internalStorage' ||
-			shape == 'ext' || shape == 'umlLifeline' || shape == 'swimlane');
+			shape == 'ext' || shape == 'umlLifeline' || shape == 'swimlane' ||
+			shape == 'process');
 };
 
 /**
