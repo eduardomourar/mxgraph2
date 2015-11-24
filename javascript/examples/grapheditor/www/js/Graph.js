@@ -2464,9 +2464,11 @@ if (typeof mxVertexHandler != 'undefined')
 		mxConnectionHandler.prototype.updatePreview = function(valid)
 		{
 			this.shape.scale = this.graph.view.scale;
+			this.shape.style = this.graph.currentEdgeStyle;
 			this.shape.strokewidth = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKEWIDTH] || 1;
 			this.shape.isDashed = this.graph.currentEdgeStyle[mxConstants.STYLE_DASHED] == '1';
 			this.shape.stroke = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKECOLOR] || 'black';
+			// TODO: Markers, perimeter spacings, marker sizes
 		};
 		
 		// Overrides connection handler to ignore edges instead of not allowing connections
@@ -4432,6 +4434,28 @@ if (typeof mxVertexHandler != 'undefined')
 				!mxEvent.isControlDown(me.getEvent()) && !this.graph.isCellCollapsed(state.cell) &&
 				mxUtils.getValue(state.style, 'recursiveResize', '1') == '1' &&
 				mxUtils.getValue(state.style, 'childLayout', null) == null;
+		};
+		
+		var vertexHandlerGetHandlePadding = mxVertexHandler.prototype.getHandlePadding;
+		mxVertexHandler.prototype.getHandlePadding = function()
+		{
+			var result = new mxPoint(0, 0);
+			var tol = this.tolerance;
+			
+			if (this.graph.cellEditor.getEditingCell() == this.state.cell && 
+				this.sizers != null && this.sizers.length > 0 && this.sizers[0] != null)
+			{
+				tol /= 2;
+				
+				result.x = this.sizers[0].bounds.width + tol;
+				result.y = this.sizers[0].bounds.height + tol;
+			}
+			else
+			{
+				result = vertexHandlerGetHandlePadding.apply(this, arguments);
+			}
+			
+			return result;
 		};
 	
 		/**
