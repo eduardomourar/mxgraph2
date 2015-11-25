@@ -89,8 +89,8 @@ Graph = function(container, model, renderHint, stylesheet)
 			    	{
 			    		var state = start.state;
 			    		
-			    		if (Math.abs(start.point.x - me.getGraphX()) > tol ||
-			    			Math.abs(start.point.y - me.getGraphY()) > tol)
+			    		if (Math.abs(start.point.x - me.getGraphX()) > tol * this.view.scale ||
+			    			Math.abs(start.point.y - me.getGraphY()) > tol * this.view.scale)
 			    		{
 			    			// Lazy selection for edges inside groups
 			    			if (!this.isCellSelected(state.cell))
