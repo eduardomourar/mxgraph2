@@ -117,8 +117,10 @@ Graph = function(container, model, renderHint, stylesheet)
 				    					{
 					    					var pts = state.absolutePoints;
 				    						
-					    					// Handles special case of orthogonal edge styles
-					    					if (edgeStyle == mxEdgeStyle.OrthConnector && pts != null)
+					    					// Default case where handles are at corner points handles
+					    					// drag of corner as drag of existing point
+					    					if (pts != null && ((edgeStyle == null && handle == null) ||
+					    						edgeStyle == mxEdgeStyle.OrthConnector))
 					    					{
 					    						// Does not use handles if they were not initially visible
 					    						handle = start.handle;
@@ -141,9 +143,9 @@ Graph = function(container, model, renderHint, stylesheet)
 					    							else
 					    							{
 							    						// Checks if edge has no bends
-							    						var nobends = pts.length == 2 || (pts.length == 3 &&
-							    								((Math.round(pts[0].x - pts[1].x) == 0 && Math.round(pts[1].x - pts[2].x) == 0) ||
-							    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0)));
+							    						var nobends = edgeStyle != null && (pts.length == 2 || (pts.length == 3 &&
+						    								((Math.round(pts[0].x - pts[1].x) == 0 && Math.round(pts[1].x - pts[2].x) == 0) ||
+						    								(Math.round(pts[0].y - pts[1].y) == 0 && Math.round(pts[1].y - pts[2].y) == 0))));
 							    						
 						    							if (nobends)
 								    					{
@@ -153,7 +155,18 @@ Graph = function(container, model, renderHint, stylesheet)
 								    					else
 									    				{
 										    				// Finds and moves vertical or horizontal segment
-									    					handle = mxUtils.findNearestSegment(state, start.point.x, start.point.y) + 1;
+									    					handle = mxUtils.findNearestSegment(state, start.point.x, start.point.y);
+									    					
+									    					// Converts segment to virtual handle index
+									    					if (edgeStyle == null)
+									    					{
+									    						handle = mxEvent.VIRTUAL_HANDLE - handle;
+									    					}
+									    					// Maps segment to handle
+									    					else
+									    					{
+									    						handle += 1;
+									    					}
 									    				}
 					    							}
 					    						}
