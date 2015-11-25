@@ -4901,6 +4901,15 @@ if (typeof mxVertexHandler != 'undefined')
 			});
 			
 			this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
+			
+			// Repaint needed when editing stops and no change event is fired
+			this.editingHandler = mxUtils.bind(this, function(sender, evt)
+			{
+				this.redrawHandles();
+			});
+			
+			this.graph.addListener(mxEvent.EDITING_STOPPED, this.editingHandler);
+
 			var link = this.graph.getLinkForCell(this.state.cell);
 			this.updateLinkHint(link);
 			
@@ -5106,6 +5115,12 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				this.graph.getModel().removeListener(this.changeHandler);
 				this.changeHandler = null;
+			}
+			
+			if  (this.editingHandler != null)
+			{
+				this.graph.removeListener(this.editingHandler);
+				this.editingHandler = null;
 			}
 		};
 		
