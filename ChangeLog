@@ -1,3 +1,4 @@
+- Fixes redraw and update of word wrapping during mouse event in mxHandle [JavaScript]
 - Fixes hit detection for grid, outline in mxConnectionHandler, mxEdgeHandler [JavaScript]
 - Uses graph tolerance, adds mxCellHighlight.isHighlightAt [JavaScript]
 - Adds mxConnectionHandler.livePreview, cursor and mxConstraintHandler.setFocus [JavaScript]
