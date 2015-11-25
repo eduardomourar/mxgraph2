@@ -1,5 +1,6 @@
 - Add unscaled coordinates
 - Add mxClient.IS_CHROMEAPP
+- Update Dotnet for latest Visual Studio community edition
 - Add caching for text sizes with NO_FO
 
 - Use getBoundingClientRect for VML in mxShape
