@@ -5083,10 +5083,9 @@ mxGraph.prototype.updateAlternateBounds = function(cell, geo, willCollapse)
  */
 mxGraph.prototype.addAllEdges = function(cells)
 {
-	var allCells = cells.slice(); // FIXME: Required?
-	allCells = allCells.concat(this.getAllEdges(cells));
+	var allCells = cells.slice();
 	
-	return allCells;
+	return mxUtils.removeDuplicates(allCells.concat(this.getAllEdges(cells)));
 };
 
 /**

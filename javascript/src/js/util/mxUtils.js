@@ -1659,6 +1659,28 @@ var mxUtils =
 	},
 	
 	/**
+	 * Function: removeDuplicates
+	 * 
+	 * Removes all duplicates from the given array.
+	 */
+	removeDuplicates: function(arr)
+	{
+		var dict = new mxDictionary();
+		var result = [];
+		
+		for (var i = 0; i < arr.length; i++)
+		{
+			if (!dict.get(arr[i]))
+			{
+				result.push(arr[i]);
+				dict.put(arr[i], true);
+			}
+		}
+
+		return result;
+	},
+	
+	/**
 	 * Function: isNaN
 	 *
 	 * Returns true if the given value is of type number and isNaN returns true.
