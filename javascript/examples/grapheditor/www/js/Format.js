@@ -3058,7 +3058,7 @@ TextFormatPanel.prototype.addFont = function(container)
 								currentFontColor = '#000000';
 							}
 							
-							fontColorApply(currentFontColor);
+							fontColorApply(currentFontColor, true);
 						}
 						
 						if (bgColorApply != null)
@@ -3072,7 +3072,7 @@ TextFormatPanel.prototype.addFont = function(container)
 								currentBgColor = null;
 							}
 							
-							bgColorApply(currentBgColor);
+							bgColorApply(currentBgColor, true);
 						}
 						
 						// Workaround for firstChild is null or not an object
