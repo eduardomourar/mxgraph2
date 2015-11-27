@@ -1,76 +1,75 @@
 - Add unscaled coordinates
 - Add mxClient.IS_CHROMEAPP
 - Update Dotnet for latest Visual Studio community edition
-- Add caching for text sizes with NO_FO
 
+- Add caching for text sizes with NO_FO
 - Use getBoundingClientRect for VML in mxShape
 - Add lineSpacing, jetty-size and source-/targetConstraint styles
 - Fix support for labelPadding, add support for borderWidth (for text)
-- Update (c) for draw.io files and core examples
 
+- Update (c) for draw.io files and core examples
 - Add container for HTML labels with no foreignObject (see iescrollbug.html, html-panes)
 - Fix duplicate text labels for print preview in IE
 - Fix mxPanningHandler.ignoreCell = true forces panning
-- Handle minResize in mxCellEditor.resize
 
+- Handle minResize in mxCellEditor.resize
 - Replace cellpath lookups with dictionary
 - Fallback to text if word wrap / formatting not needed
 - Fix center aligned oversize labels in IE8 standards mode
-- Block ctrl+u/i/b in core text editor for plain text values
 
+- Block ctrl+u/i/b in core text editor for plain text values
 - Fix missing cursor in quirks mode before space after oversize label
 - Check code for batched DOM changes, cssText instead of direct style changes
 - Merge common code in mxSvgCanvas2D.updateText and text
-- Check NPE for mxRefCount in mxShape.destroyCanvas
 
+- Check NPE for mxRefCount in mxShape.destroyCanvas
 - Fix middle/center in secondlabel.html example for wrap with no FO
 - Fix channels when scaled in segment edge style
 - Add live preview for edge handlers
-- Add borderlayout, splitlayout in grapheditor
 
+- Add borderlayout, splitlayout in grapheditor
 - Build WAR, grapheditor.min.js for grapheditor in build step
 - Add preview box for edge label moving
 - Add parent highlight for childs in mxEdgeHandler
-- Fix vertical container in-place editor position
 
+- Fix vertical container in-place editor position
 - Migrate changes in mxEdgeStyle to Java
 - Rotation on edges should only rotate label
 - Add single handle for multiple selected cells
-- Fix live preview for resize of rotated container with children (child offset)
 
+- Fix live preview for resize of rotated container with children (child offset)
 - Fix moving of relative children between parents (offset)
 - Move mxLayoutManager into validation process (resizeParent cycle)
 - Add image lookup in XML image export
-- Fix resize of rotated groups with layouts
 
+- Fix resize of rotated groups with layouts
 - Research alternative namespace solutions
 - Add support for touchCancel event, use requestAnimationFrame
 - Add live preview while moving, reconnect, rotate
-- Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)
 
+- Fix too many pages in print preview for IE10/11, bugs in IE8 (remove page-break-after CSS)
 - Check overflow=fill in quirks vs standards with no HTML labels (inconsistent rendering)
 - Fix missing labels for zoom > 4.3 in print preview for IE8 standards
 - Fix loops for fixed connection points
-- Fix arcToCurves for special cases (eg. mxgraph.flowchart.data)
 
+- Fix arcToCurves for special cases (eg. mxgraph.flowchart.data)
 - Add bridges for edge crossings
 - Invert loop order in mxGraph.removeCells
 - Add circular connector style https://github.com/jgraph/mxgraph/issues/15
-- Fix autoScroll when adding vertex via DnD from sidebar on Win8 with touch (scroll ignored?) (not new)
 
+- Fix autoScroll when adding vertex via DnD from sidebar on Win8 with touch (scroll ignored?) (not new)
 - Fix scaling of background page in editor for pinch
 - Fix IE10 on Win8 fires double click after double tap editing and click on background
 - Fix FF on Win8 fires two (should be one) click events and a double click for double tap on background
-- Fix constrainChild/expandParent for rotation
 
+- Fix constrainChild/expandParent for rotation
 - Fix ignored ancestors if maximumGraphBounds in constrainChild (see constrain.html)
 - Add workaround for touch support, guides stay visible on move in FF/Win8
 - Fix pinch (zoom) on Chromebook, Android and msPointerEvents (not new)
-- Fix hit detection on arrow shape in mxGraph.getCellAt
 
+- Fix hit detection on arrow shape in mxGraph.getCellAt
 - Fix edge styles for rotated edges, terminals
 - Cascaded rotation for edges (points)
-- Remove duplicates in mxGraph.removeCells
 - Add names (refs) for constraints/ports
 
 - Fix selectVertices to ignore relative children
