@@ -1,3 +1,4 @@
+- Adds jsondata.html example [JavaScript]
 - Removes duplicates in mxGraph.removeCells return value [JavaScript]
 - Adds mxUtils.removeDuplicates [JavaScript]
 - Fixes redraw and update of word wrapping during mouse event in mxHandle [JavaScript]
