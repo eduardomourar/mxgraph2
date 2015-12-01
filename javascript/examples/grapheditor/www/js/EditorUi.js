@@ -138,7 +138,7 @@ EditorUi = function(editor, container)
 	};
 	
 	// Creates hover icons
-	this.hoverIcons = new HoverIcons(graph);
+	this.hoverIcons = this.createHoverIcons();
 	
 	// Adds tooltip when mouse is over scrollbars to show space-drag panning option
 	mxEvent.addListener(this.diagramContainer, 'mousemove', mxUtils.bind(this, function(evt)
@@ -1622,6 +1622,14 @@ EditorUi.prototype.updateDocumentTitle = function()
 	}
 	
 	document.title = title;
+};
+
+/**
+ * Updates the document title.
+ */
+EditorUi.prototype.createHoverIcons = function()
+{
+	return new HoverIcons(this.editor.graph);
 };
 
 /**
