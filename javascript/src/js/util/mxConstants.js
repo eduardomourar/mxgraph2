@@ -790,8 +790,8 @@
 	 * 'fill' will use the vertex bounds and a value of 'width' will use the
 	 * the vertex width for the label. See <mxGraph.isLabelClipped>. Note that
 	 * the vertical alignment is ignored for overflow fill and for horizontal
-	 * alignment, left should be used to avoid pixel offsets in some versions
-	 * of Internet Explorer. Value is "overflow".
+	 * alignment, left should be used to avoid pixel offsets in Internet Explorer
+	 * 11 and earlier or if foreignObjects are disabled. Value is "overflow".
 	 */
 	STYLE_OVERFLOW: 'overflow',
 

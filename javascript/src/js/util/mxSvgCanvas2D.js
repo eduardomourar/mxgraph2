@@ -1287,8 +1287,8 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 		}
 		else if (overflow == 'fill')
 		{
-			div.style.width = Math.round(w) + 'px';
-			div.style.height = Math.round(h) + 'px';
+			div.style.width = Math.round(w + 1) + 'px';
+			div.style.height = Math.round(h + 1) + 'px';
 		}
 		else if (overflow == 'width')
 		{
@@ -1338,7 +1338,7 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 		ow = ((group.mxCachedFinalOffsetWidth != null) ? group.mxCachedFinalOffsetWidth :
 			sizeDiv.offsetWidth) + padX;
 		oh = ((group.mxCachedFinalOffsetHeight != null) ? group.mxCachedFinalOffsetHeight :
-			sizeDiv.offsetHeight) + 2;
+			sizeDiv.offsetHeight) - 2;
 
 		if (clip)
 		{
@@ -1346,17 +1346,12 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 			ow = Math.min(ow, w);
 		}
 
-		if (overflow == 'fill')
-		{
-			w = Math.max(w, ow);
-			h = Math.max(h, oh);
-		}
-		else if (overflow == 'width')
+		if (overflow == 'width')
 		{
 			w = Math.max(w, ow);
 			h = oh;
 		}
-		else
+		else if (overflow != 'fill')
 		{
 			w = ow;
 			h = oh;
@@ -1379,11 +1374,11 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 		// FIXME: LINE_HEIGHT not ideal for all text sizes, fix for export
 		if (valign == mxConstants.ALIGN_MIDDLE)
 		{
-			dy -= h / 2 - 2;
+			dy -= h / 2;
 		}
 		else if (valign == mxConstants.ALIGN_BOTTOM)
 		{
-			dy -= h - 3;
+			dy -= h;
 		}
 		
 		// Workaround for rendering offsets
@@ -1417,8 +1412,8 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 		}
 
 		group.setAttribute('transform', 'translate(' + Math.round(x) + ',' + Math.round(y) + ')' + tr);
-		fo.setAttribute('width', Math.round(Math.max(1, w)));
-		fo.setAttribute('height', Math.round(Math.max(1, h)));
+		fo.setAttribute('width', Math.round(Math.max(1, w - 1)));
+		fo.setAttribute('height', Math.round(Math.max(1, h - 1)));
 	}
 };
 
@@ -1450,7 +1445,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			}
 			else if (overflow == 'fill')
 			{
-				style += 'width:' + Math.round(w) + 'px;height:' + Math.round(h) + 'px;overflow:hidden;';
+				style += 'width:' + Math.round(w + 1) + 'px;height:' + Math.round(h + 1) + 'px;overflow:hidden;';
 			}
 			else if (overflow == 'width')
 			{
@@ -1648,7 +1643,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 					div.style.whiteSpace = ws;
 				}
 
-				ow = tmp + padX;
+				ow = tmp + padX - 1;
 
 				// Recomputes the height of the element for wrapped width
 				if (wrap && overflow != 'fill')
@@ -1670,8 +1665,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 					group.mxCachedFinalOffsetHeight = oh;
 				}
 
-				ow += padX;
-				oh += 2;
+				oh -= padY;
 				
 				if (div.parentNode != fo)
 				{
@@ -1686,17 +1680,12 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				ow = Math.min(ow, w);
 			}
 
-			if (overflow == 'fill')
-			{
-				w = Math.max(w, ow);
-				h = Math.max(h, oh);
-			}
-			else if (overflow == 'width')
+			if (overflow == 'width')
 			{
 				w = Math.max(w, ow);
 				h = oh;
 			}
-			else
+			else if (overflow != 'fill')
 			{
 				w = ow;
 				h = oh;
@@ -1724,11 +1713,11 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			// FIXME: LINE_HEIGHT not ideal for all text sizes, fix for export
 			if (valign == mxConstants.ALIGN_MIDDLE)
 			{
-				dy -= h / 2 - 2;
+				dy -= h / 2;
 			}
 			else if (valign == mxConstants.ALIGN_BOTTOM)
 			{
-				dy -= h - 3;
+				dy -= h;
 			}
 			
 			// Workaround for rendering offsets
@@ -1763,8 +1752,8 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			}
 
 			group.setAttribute('transform', 'translate(' + Math.round(x) + ',' + Math.round(y) + ')' + tr);
-			fo.setAttribute('width', Math.round(Math.max(1, w)));
-			fo.setAttribute('height', Math.round(Math.max(1, h)));
+			fo.setAttribute('width', Math.round(Math.max(1, w - 1)));
+			fo.setAttribute('height', Math.round(Math.max(1, h - 1)));
 			
 			// Adds alternate content if foreignObject not supported in viewer
 			if (this.root.ownerDocument != document)

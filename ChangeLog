@@ -1,3 +1,4 @@
+- Fixes label positions for some overflows and alignments [JavaScript] 
 - Moves call to stopEditing to end of mxGraph.fireMouseEvent [JavaScript] 
 - Fixes cached label width for vertical resize in mxVertexHandler [JavaScript]
 - Adds jsondata.html example [JavaScript]

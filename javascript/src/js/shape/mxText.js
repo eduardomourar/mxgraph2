@@ -676,57 +676,58 @@ mxText.prototype.updateHtmlTransform = function()
 			'translate(' + (dx * 100) + '%' + ',' + (dy * 100) + '%)');
 	}
 	
-	// Workaround for rendering offsets
-	var dy = 0;
+	// Workarounds for rendering offsets
+//	var dy = 0;
 	
 	if (this.overflow != 'fill')
 	{
-		if (document.documentMode >= 10 && this.valign != mxConstants.ALIGN_TOP)
-		{
-			dy += 1;
-		}
-		else if (document.documentMode == 9 && this.valign == mxConstants.ALIGN_BOTTOM)
-		{
-			dy += 1;
-		}
-		else if (mxClient.IS_MAC && !mxClient.IS_OP && mxClient.IS_GC)
-		{
-			if (mxClient.IS_MAC)
-			{
-				if (this.valign == mxConstants.ALIGN_BOTTOM)
-				{
-					dy += 2;
-				}
-				else
-				{
-					dy += 1;
-				}
-			}
-			else if (this.valign == mxConstants.ALIGN_BOTTOM)
-			{
-				dy += 1;
-			}
-		}
-		else if (mxClient.IS_MAC && mxClient.IS_FF)
-		{
-			if (this.valign == mxConstants.ALIGN_BOTTOM)
-			{
-				dy += 2;
-			}
-			else if (this.valign == mxConstants.ALIGN_MIDDLE)
-			{
-				dy += 1;
-			}
-		}
-		else if (!mxClient.IS_MAC && (mxClient.IS_GC || mxClient.IS_FF) &&
-				this.valign == mxConstants.ALIGN_BOTTOM) // includes Opera
-		{
-			dy += 1;
-		}
+		console.log('here', this.valign, dy);
+//		if (document.documentMode >= 10 && this.valign != mxConstants.ALIGN_TOP)
+//		{
+//			dy += 1;
+//		}
+//		else if (document.documentMode == 9 && this.valign == mxConstants.ALIGN_BOTTOM)
+//		{
+//			dy += 1;
+//		}
+//		else if (mxClient.IS_MAC && !mxClient.IS_OP && mxClient.IS_GC)
+//		{
+//			if (mxClient.IS_MAC)
+//			{
+//				if (this.valign == mxConstants.ALIGN_BOTTOM)
+//				{
+//					dy += 2;
+//				}
+//				else
+//				{
+//					dy += 1;
+//				}
+//			}
+//			else if (this.valign == mxConstants.ALIGN_BOTTOM)
+//			{
+//				dy += 1;
+//			}
+//		}
+//		else if (mxClient.IS_MAC && mxClient.IS_FF)
+//		{
+//			if (this.valign == mxConstants.ALIGN_BOTTOM)
+//			{
+//				dy += 2;
+//			}
+//			else if (this.valign == mxConstants.ALIGN_MIDDLE)
+//			{
+//				dy += 1;
+//			}
+//		}
+//		else if (!mxClient.IS_MAC && (mxClient.IS_GC || mxClient.IS_FF) &&
+//				this.valign == mxConstants.ALIGN_BOTTOM) // includes Opera
+//		{
+//			dy += 1;
+//		}
 	}
 
-	style.left = Math.round(this.bounds.x) + 'px';
-	style.top = Math.round(this.bounds.y + dy) + 'px';
+	style.left = Math.round(this.bounds.x - Math.ceil(dx * ((this.overflow != 'fill') ? 3 : 1))) + 'px';
+	style.top = Math.round(this.bounds.y - dy * ((this.overflow != 'fill') ? 3 : 1)) + 'px';
 	
 	if (this.opacity < 100)
 	{
@@ -1132,8 +1133,8 @@ mxText.prototype.updateSize = function(node, enableWrap)
 	else if (this.overflow == 'fill')
 	{
 		style.overflow = 'hidden';
-		style.width = w + 'px';
-		style.height = h + 'px';
+		style.width = (w + 1) + 'px';
+		style.height = (h + 1) + 'px';
 	}
 	else if (this.overflow == 'width')
 	{
