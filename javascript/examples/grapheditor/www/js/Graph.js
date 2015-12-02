@@ -1712,9 +1712,14 @@ HoverIcons = function(graph)
 HoverIcons.prototype.arrowSpacing = 6;
 
 /**
- * Delay to switch to another state of overlapping bbox. Default is 500ms.
+ * Delay to switch to another state for overlapping bbox. Default is 500ms.
  */
 HoverIcons.prototype.updateDelay = 500;
+
+/**
+ * Delay to switch between states. Default is 300ms.
+ */
+HoverIcons.prototype.activationDelay = 300;
 
 /**
  * Up arrow.
@@ -2180,9 +2185,11 @@ HoverIcons.prototype.click = function(state, dir, me)
 /**
  * 
  */
-HoverIcons.prototype.reset = function()
+HoverIcons.prototype.reset = function(clearTimeout)
 {
-	if (this.updateThread != null)
+	clearTimeout = (clearTimeout == null) ? true : clearTimeout;
+	
+	if (clearTimeout && this.updateThread != null)
 	{
 		window.clearTimeout(this.updateThread);
 	}
@@ -2380,24 +2387,32 @@ HoverIcons.prototype.update = function(state, x, y)
 		
 		this.setDisplay('');
 		
-		if (this.currentState != state && ((timeOnTarget > this.updateDelay && state != null) ||
-			this.bbox == null || x == null || y == null || !mxUtils.contains(this.bbox, x, y)))
+		if (this.currentState != null && this.currentState != state && timeOnTarget < this.activationDelay &&
+			this.bbox != null && !mxUtils.contains(this.bbox, x, y))
 		{
-			if (state != null && this.graph.isEnabled())
+			this.reset(false);
+		}
+		else if (this.currentState != null || timeOnTarget > this.activationDelay)
+		{
+			if (this.currentState != state && ((timeOnTarget > this.updateDelay && state != null) ||
+				this.bbox == null || x == null || y == null || !mxUtils.contains(this.bbox, x, y)))
 			{
-				this.removeNodes();
-				this.setCurrentState(state);
-				this.repaint();
-				
-				// Resets connection points on other focused cells
-				if (this.graph.connectionHandler.constraintHandler.currentFocus != state)
+				if (state != null && this.graph.isEnabled())
 				{
-					this.graph.connectionHandler.constraintHandler.reset();
+					this.removeNodes();
+					this.setCurrentState(state);
+					this.repaint();
+					
+					// Resets connection points on other focused cells
+					if (this.graph.connectionHandler.constraintHandler.currentFocus != state)
+					{
+						this.graph.connectionHandler.constraintHandler.reset();
+					}
 				}
-			}
-			else
-			{
-				this.reset();
+				else
+				{
+					this.reset();
+				}
 			}
 		}
 	}
