@@ -12334,12 +12334,6 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 	// Updates the graph coordinates in the event
 	me = this.updateMouseEvent(me, evtName);
 
-	// Stops editing for all events other than from cellEditor
-	if (evtName == mxEvent.MOUSE_DOWN && this.isEditing() && !this.cellEditor.isEventSource(me.getEvent()))
-	{
-		this.stopEditing(!this.isInvokesStopCellEditing());
-	}
-
 	// Detects and processes double taps for touch-based devices which do not have native double click events
 	// or where detection of double click is not always possible (quirks, IE10+). Note that this can only handle
 	// double clicks on cells because the sequence of events in IE prevents detection on the background, it fires
@@ -12519,7 +12513,13 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 				Math.abs(this.initialTouchX - me.getGraphX()) < this.tolerance &&
 				Math.abs(this.initialTouchY - me.getGraphY()) < this.tolerance;
 		}
-		
+
+		// Stops editing for all events other than from cellEditor
+		if (evtName == mxEvent.MOUSE_DOWN && this.isEditing() && !this.cellEditor.isEventSource(me.getEvent()))
+		{
+			this.stopEditing(!this.isInvokesStopCellEditing());
+		}
+
 		this.consumeMouseEvent(evtName, me, sender);
 	}
 };

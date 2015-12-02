@@ -1,3 +1,4 @@
+- Moves call to stopEditing to end of mxGraph.fireMouseEvent [JavaScript] 
 - Fixes cached label width for vertical resize in mxVertexHandler [JavaScript]
 - Adds jsondata.html example [JavaScript]
 - Removes duplicates in mxGraph.removeCells return value [JavaScript]
