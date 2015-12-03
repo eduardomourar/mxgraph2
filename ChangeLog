@@ -1,3 +1,4 @@
+- Adds mxKeyHandler.isEnabledForEvent hook [JavaScript]
 - Fixes inconsistent text rendering in quirks/IE8 [JavaScript]
 - Adds clipping for overflow=width style [JavaScript]
 - Fixes label positions for some overflows and alignments [JavaScript] 
