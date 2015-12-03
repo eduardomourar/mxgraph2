@@ -1292,7 +1292,7 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 		}
 		else if (overflow == 'width')
 		{
-			div.style.width = Math.round(w) + 'px';
+			div.style.width = Math.round(w + 1) + 'px';
 			
 			if (h > 0)
 			{
@@ -1302,7 +1302,7 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 
 		if (wrap && w > 0)
 		{
-			div.style.width = Math.round(w) + 'px';
+			div.style.width = Math.round(w + 1) + 'px';
 		}
 		
 		// Code that depends on the size which is computed after
@@ -1348,7 +1348,6 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 
 		if (overflow == 'width')
 		{
-			w = Math.max(w, ow);
 			h = oh;
 		}
 		else if (overflow != 'fill')
@@ -1449,17 +1448,17 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			}
 			else if (overflow == 'width')
 			{
-				style += 'width:' + Math.round(w) + 'px;';
+				style += 'width:' + Math.round(w + 1) + 'px;';
 				
 				if (h > 0)
 				{
-					style += 'max-height:' + Math.round(h) + 'px;';
+					style += 'max-height:' + Math.round(h) + 'px;overflow:hidden;';
 				}
 			}
 
 			if (wrap && w > 0)
 			{
-				style += 'width:' + Math.round(w) + 'px;white-space:normal;';
+				style += 'width:' + Math.round(w + 1) + 'px;white-space:normal;';
 			}
 			else
 			{
@@ -1619,7 +1618,8 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				}
 				
 				// Disables wrapping if text is not wrapped for given width
-				if (!clip && wrap && w > 0 && this.root.ownerDocument != document && overflow != 'fill')
+				if (!clip && wrap && w > 0 && this.root.ownerDocument != document &&
+					overflow != 'fill' && overflow != 'width')
 				{
 					var ws = div.style.whiteSpace;
 					div.style.whiteSpace = 'nowrap';
@@ -1633,7 +1633,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				ow = tmp + padX - 1;
 
 				// Recomputes the height of the element for wrapped width
-				if (wrap && overflow != 'fill')
+				if (wrap && overflow != 'fill' && overflow != 'width')
 				{
 					if (clip)
 					{
@@ -1669,7 +1669,6 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 
 			if (overflow == 'width')
 			{
-				w = Math.max(w, ow);
 				h = oh;
 			}
 			else if (overflow != 'fill')
