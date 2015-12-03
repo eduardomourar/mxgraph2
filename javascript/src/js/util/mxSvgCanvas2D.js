@@ -1412,8 +1412,8 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 		}
 
 		group.setAttribute('transform', 'translate(' + Math.round(x) + ',' + Math.round(y) + ')' + tr);
-		fo.setAttribute('width', Math.round(Math.max(1, w - 1)));
-		fo.setAttribute('height', Math.round(Math.max(1, h - 1)));
+		fo.setAttribute('width', Math.round(Math.max(1, w)));
+		fo.setAttribute('height', Math.round(Math.max(1, h)));
 	}
 };
 
@@ -1476,6 +1476,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			}
 
 			var fo = this.createElement('foreignObject');
+			fo.setAttribute('style', 'overflow:visible;');
 			fo.setAttribute('pointer-events', 'all');
 			
 			var div = this.createDiv(str, align, valign, style, overflow);
@@ -1538,28 +1539,17 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 					// For export, if no wrapping occurs, we add a large padding to make
 					// sure there is no wrapping even if the text metrics are different.
 					// This adds support for text metrics on different operating systems.
-					if (!clip && this.root.ownerDocument != document)
+					// Disables wrapping if text is not wrapped for given width
+					if (!clip && wrap && w > 0 && this.root.ownerDocument != document && overflow != 'fill')
 					{
 						var ws = clone.style.whiteSpace;
-						clone.style.whiteSpace = 'nowrap';
+						div.style.whiteSpace = 'nowrap';
 						
-						// Checks if wrapped width is equal to non-wrapped width (ie no wrapping)
-						if (tmp == div2.offsetWidth)
+						if (tmp < div2.offsetWidth)
 						{
-							padX += this.fontMetricsPadding;
+							clone.style.whiteSpace = ws;
 						}
-						else if (document.documentMode == 8 || document.documentMode == 9)
-						{
-							padDx = -2;
-						}
-						
-						// Restores the previous white space
-						// This is expensive!
-						clone.style.whiteSpace = ws;
 					}
-					
-					// Required to update the height of the text box after wrapping width is known
-					tmp = tmp + padX;
 					
 					if (clip)
 					{
@@ -1628,19 +1618,16 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 					group.mxCachedOffsetWidth = tmp;
 				}
 				
-				// For export, if no wrapping occurs, we add a large padding to make
-				// sure there is no wrapping even if the text metrics are different.
-				if (!clip && wrap && w > 0 && this.root.ownerDocument != document)
+				// Disables wrapping if text is not wrapped for given width
+				if (!clip && wrap && w > 0 && this.root.ownerDocument != document && overflow != 'fill')
 				{
 					var ws = div.style.whiteSpace;
 					div.style.whiteSpace = 'nowrap';
 					
-					if (tmp == sizeDiv.offsetWidth)
+					if (tmp < sizeDiv.offsetWidth)
 					{
-						padX += this.fontMetricsPadding;
+						div.style.whiteSpace = ws;
 					}
-					
-					div.style.whiteSpace = ws;
 				}
 
 				ow = tmp + padX - 1;
@@ -1752,8 +1739,8 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 			}
 
 			group.setAttribute('transform', 'translate(' + Math.round(x) + ',' + Math.round(y) + ')' + tr);
-			fo.setAttribute('width', Math.round(Math.max(1, w - 1)));
-			fo.setAttribute('height', Math.round(Math.max(1, h - 1)));
+			fo.setAttribute('width', Math.round(Math.max(1, w)));
+			fo.setAttribute('height', Math.round(Math.max(1, h)));
 			
 			// Adds alternate content if foreignObject not supported in viewer
 			if (this.root.ownerDocument != document)
