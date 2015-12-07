@@ -1113,7 +1113,7 @@ OpenFile.prototype.cancel = function(cancel)
 	{
 		var result = mxStencilRegistry.stencils[name];
 		
-		if (result == null)
+		if (result == null && mxCellRenderer.prototype.defaultShapes[name] == null)
 		{
 			var basename = mxStencilRegistry.getBasenameForStencil(name);
 			
