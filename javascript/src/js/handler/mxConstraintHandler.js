@@ -350,17 +350,17 @@ mxConstraintHandler.prototype.update = function(me, source, existingEdge, point)
 };
 
 /**
- * Function: createHighlightShape
+ * Function: setFocus
  * 
- * Create the shape used to paint the highlight.
- * 
- * Returns true if the given icon intersects the given point.
+ * Transfers the focus to the given state as a source or target terminal. If
+ * the handler is not enabled then the outline is painted, but the constraints
+ * are ignored.
  */
 mxConstraintHandler.prototype.setFocus = function(me, state, source)
 {
 	this.constraints = (state != null && !this.isStateIgnored(state, source) &&
-			this.graph.isCellConnectable(state.cell)) ?
-			this.graph.getAllConnectionConstraints(state, source) : null;
+		this.graph.isCellConnectable(state.cell)) ? ((this.isEnabled()) ?
+		this.graph.getAllConnectionConstraints(state, source) : []) : null;
 
 	// Only uses cells which have constraints
 	if (this.constraints != null)
