@@ -2489,14 +2489,22 @@ if (typeof mxVertexHandler != 'undefined')
 		mxConnectionHandler.prototype.livePreview = true;
 		mxConnectionHandler.prototype.cursor = 'crosshair';
 		
+		// Uses current edge style for connect preview
+		mxConnectionHandler.prototype.createEdgeState = function(me)
+		{
+			var style = this.graph.createCurrentEdgeStyle();
+			var edge = this.graph.createEdge(null, null, null, null, null, style);
+			
+			return new mxCellState(this.graph.view, edge, this.graph.getCellStyle(edge));
+		};
+		
 		mxConnectionHandler.prototype.updatePreview = function(valid)
 		{
 			this.shape.scale = this.graph.view.scale;
-			this.shape.style = this.graph.currentEdgeStyle;
+			this.shape.style = this.graph.getCellStyle(this.edgeState.cell);
 			this.shape.strokewidth = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKEWIDTH] || 1;
 			this.shape.isDashed = this.graph.currentEdgeStyle[mxConstants.STYLE_DASHED] == '1';
 			this.shape.stroke = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKECOLOR] || 'black';
-			// TODO: Markers, perimeter spacings, marker sizes
 		};
 		
 		// Overrides connection handler to ignore edges instead of not allowing connections

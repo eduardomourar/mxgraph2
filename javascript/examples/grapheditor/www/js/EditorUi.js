@@ -465,24 +465,7 @@ EditorUi = function(editor, container)
 		// Updates UI
 		this.fireEvent(new mxEventObject('styleChanged', 'keys', [], 'values', [], 'cells', []));
 	};
-	
-	// Constructs the style for the initial edge type defined in the initial value for the currentEdgeStyle
-	// This function is overridden below as soon as any style is set in the app.
-	var initialEdgeCellStyle = '';
-	
-	for (var key in graph.currentEdgeStyle)
-	{
-		initialEdgeCellStyle += key + '=' + graph.currentEdgeStyle[key] + ';';
-	}
-	
-	// Uses the default edge style for connect preview
-	graph.connectionHandler.createEdgeState = function(me)
-	{
-		var edge = graph.createEdge(null, null, null, null, null, initialEdgeCellStyle);
-		
-		return new mxCellState(graph.view, edge, graph.getCellStyle(edge));
-    };
-	
+
 	// Keys that should be ignored if the cell has a value (known: new default for all cells is html=1 so
     // for the html key this effecticely only works for edges inserted via the connection handler)
 	var valueStyles = ['fontFamily', 'fontSize', 'fontColor'];
@@ -631,16 +614,6 @@ EditorUi = function(editor, container)
 		insertHandler(cells);
 	});
 
-	// Uses current edge style for connect preview
-	// NOTE: Do not use "this" in here as it points to the UI
-	graph.connectionHandler.createEdgeState = mxUtils.bind(this, function(me)
-	{
-		var style = graph.createCurrentEdgeStyle();
-		var edge = graph.createEdge(null, null, null, null, null, style);
-		
-		return new mxCellState(graph.view, edge, graph.getCellStyle(edge));
-	});
-	
 	this.addListener('styleChanged', mxUtils.bind(this, function(sender, evt)
 	{
 		// Checks if edges and/or vertices were modified
