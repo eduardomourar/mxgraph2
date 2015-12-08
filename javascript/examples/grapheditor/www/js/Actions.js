@@ -1162,9 +1162,6 @@ Actions.prototype.init = function()
 	}), null, null, 'Ctrl+Shift+O');
 	
 	action.setToggleAction(true);
-	action.setSelectedCallback(function() { return graph.scrollbars; });
-	
-	action.setToggleAction(true);
 	action.setSelectedCallback(mxUtils.bind(this, function() { return this.outlineWindow != null && this.outlineWindow.window.isVisible(); }));
 };
 
