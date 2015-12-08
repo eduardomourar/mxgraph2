@@ -1737,6 +1737,12 @@ HoverIcons.prototype.activeArrow = null;
 HoverIcons.prototype.inactiveOpacity = 15;
 
 /**
+ * Whether to hide arrows that collide with vertices.
+ * LATER: Add keyboard override, touch support.
+ */
+HoverIcons.prototype.checkCollisions = true;
+
+/**
  * Up arrow.
  */
 HoverIcons.prototype.triangleUp = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDA3RjREMDM0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDA3RjREMDQ0NTVCMTFFNEIxOTZFRjE3NzRENjQ0RjIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0MDdGNEQwMTQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0MDdGNEQwMjQ1NUIxMUU0QjE5NkVGMTc3NEQ2NDRGMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PpFdYkUAAAEsSURBVHjaYvz//z8DPQATA50AC+P6D6Tq0QViHiA+TpJFZDhuMhDzA7EhLYMuEIjtgdgAiJNJ0cjIsO49sWo5gfgqECtC+S+AWBWIv1DbR0VIloCABBA3UttHIENvQxMBMvgFxNpAfIdaPurFYgkIsAFxF7WCzgyIowgkEA9qWDSZSB8zU2JRMtRHhIAWEKeRmxh4oAlAgsh4fAdN7u9I9VEFCZaAgBAQt5DqIxVo5mQjseT4C8R6QHyNWB91kWEJAzRBTCA26JygSZZc4IpNPxMWF01moBxghAi6RWnQpEopAMVxPq7EIARNzkJUqlS/QJP7C3QftVDRElg+bEH3ESi4LhEqRsgEoJr4AhNSeUYLS0BgJqzNACrLRIH4Mo0sAtXM9ozDrl0HEGAAOt00sQRg5yAAAAAASUVORK5CYII=' :
@@ -2263,6 +2269,65 @@ HoverIcons.prototype.repaint = function()
 			this.arrowLeft.style.left = Math.round(bds.x - this.triangleLeft.width) + 'px';
 			this.arrowLeft.style.top = this.arrowRight.style.top;
 			mxUtils.setOpacity(this.arrowLeft, this.inactiveOpacity);
+			
+			if (this.checkCollisions)
+			{
+				var tmp = this.graph.getCellAt(bds.x + bds.width +
+						this.triangleRight.width / 2, this.currentState.getCenterY());
+				
+				// Checks right arrow
+				if (tmp != null && !this.graph.isSwimlane(tmp))
+				{
+					this.arrowRight.style.visibility = 'hidden';
+				}
+				else
+				{
+					this.arrowRight.style.visibility = 'visible';
+				}
+
+				// Checks left arrow
+				tmp = this.graph.getCellAt(bds.x - this.triangleLeft.width / 2, this.currentState.getCenterY()); 
+				
+				if (tmp != null && !this.graph.isSwimlane(tmp))
+				{
+					this.arrowLeft.style.visibility = 'hidden';
+				}
+				else
+				{
+					this.arrowLeft.style.visibility = 'visible';
+				}
+
+				// Checks top arrow
+				tmp = this.graph.getCellAt(this.currentState.getCenterX(), bds.y - this.triangleUp.height / 2); 
+				
+				if (tmp != null && !this.graph.isSwimlane(tmp))
+				{
+					this.arrowUp.style.visibility = 'hidden';
+				}
+				else
+				{
+					this.arrowUp.style.visibility = 'visible';
+				}
+
+				// Checks bottom arrow
+				tmp = this.graph.getCellAt(this.currentState.getCenterX(), bds.y + bds.height + this.triangleDown.height / 2); 
+				
+				if (tmp != null && !this.graph.isSwimlane(tmp))
+				{
+					this.arrowDown.style.visibility = 'hidden';
+				}
+				else
+				{
+					this.arrowDown.style.visibility = 'visible';
+				}
+			}
+			else
+			{
+				this.arrowLeft.style.visibility = 'visible';
+				this.arrowRight.style.visibility = 'visible';
+				this.arrowUp.style.visibility = 'visible';
+				this.arrowDown.style.visibility = 'visible';
+			}
 		}
 		else
 		{
