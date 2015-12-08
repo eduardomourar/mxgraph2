@@ -1861,7 +1861,16 @@
 		{
 			c.begin();
 			c.moveTo(pt.x, pt.y);
-			c.lineTo(pt.x + unitY / 2 - unitX, pt.y - unitY - unitX / 2);
+			
+			if (source)
+			{
+				c.lineTo(pt.x - unitX - unitY / 2, pt.y - unitY + unitX / 2);
+			}
+			else
+			{
+				c.lineTo(pt.x + unitY / 2 - unitX, pt.y - unitY - unitX / 2);
+			}
+			
 			c.lineTo(pt.x - unitX, pt.y - unitY);
 			c.close();
 
