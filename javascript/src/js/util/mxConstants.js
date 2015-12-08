@@ -1875,11 +1875,25 @@
 	ARROW_CLASSIC: 'classic',
 
 	/**
+	 * Variable: ARROW_CLASSIC_THIN
+	 * 
+	 * Constant for thin classic arrow markers.
+	 */
+	ARROW_CLASSIC_THIN: 'classicThin',
+
+	/**
 	 * Variable: ARROW_BLOCK
 	 * 
 	 * Constant for block arrow markers.
 	 */
 	ARROW_BLOCK: 'block',
+
+	/**
+	 * Variable: ARROW_BLOCK_THIN
+	 * 
+	 * Constant for thin block arrow markers.
+	 */
+	ARROW_BLOCK_THIN: 'blockThin',
 
 	/**
 	 * Variable: ARROW_OPEN
@@ -1903,9 +1917,9 @@
 	ARROW_DIAMOND: 'diamond',
 
 	/**
-	 * Variable: ARROW_DIAMOND
+	 * Variable: ARROW_DIAMOND_THIN
 	 * 
-	 * Constant for diamond arrow markers.
+	 * Constant for thin diamond arrow markers.
 	 */
 	ARROW_DIAMOND_THIN: 'diamondThin',
 
