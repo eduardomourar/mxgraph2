@@ -1021,6 +1021,10 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
 		{
 			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'classic' : 'geSprite geSprite-' + prefix + 'classictrans';
 		}
+		else if (marker == mxConstants.ARROW_CLASSIC_THIN)
+		{
+			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'classicthin' : 'geSprite geSprite-' + prefix + 'classicthintrans';
+		}
 		else if (marker == mxConstants.ARROW_OPEN)
 		{
 			result = 'geSprite geSprite-' + prefix + 'open';
@@ -1028,6 +1032,10 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
 		else if (marker == mxConstants.ARROW_BLOCK)
 		{
 			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'block' : 'geSprite geSprite-' + prefix + 'blocktrans';
+		}
+		else if (marker == mxConstants.ARROW_BLOCK_THIN)
+		{
+			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'blockthin' : 'geSprite geSprite-' + prefix + 'blockthintrans';
 		}
 		else if (marker == mxConstants.ARROW_OVAL)
 		{
@@ -1040,6 +1048,42 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
 		else if (marker == mxConstants.ARROW_DIAMOND_THIN)
 		{
 			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'thindiamond' : 'geSprite geSprite-' + prefix + 'thindiamondtrans';
+		}
+		else if (marker == 'dash')
+		{
+			result = 'geSprite geSprite-' + prefix + 'dash';
+		}
+		else if (marker == 'async')
+		{
+			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'async' : 'geSprite geSprite-' + prefix + 'asynctrans';
+		}
+		else if (marker == 'circle' || marker == 'circlePlus')
+		{
+			result = (fill == '1' || marker == 'circle') ? 'geSprite geSprite-' + prefix + 'circle' : 'geSprite geSprite-' + prefix + 'circleplus';
+		}
+		else if (marker == 'ERone')
+		{
+			result = 'geSprite geSprite-' + prefix + 'erone';
+		}
+		else if (marker == 'ERmandOne')
+		{
+			result = 'geSprite geSprite-' + prefix + 'eronetoone';
+		}
+		else if (marker == 'ERmany')
+		{
+			result = 'geSprite geSprite-' + prefix + 'ermany';
+		}
+		else if (marker == 'ERoneToMany')
+		{
+			result = 'geSprite geSprite-' + prefix + 'eronetomany';
+		}
+		else if (marker == 'ERzeroToOne')
+		{
+			result = 'geSprite geSprite-' + prefix + 'eroneopt';
+		}
+		else if (marker == 'ERzeroToMany')
+		{
+			result = 'geSprite geSprite-' + prefix + 'ermanyopt';
 		}
 		else
 		{
