@@ -1029,6 +1029,10 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
 		{
 			result = 'geSprite geSprite-' + prefix + 'open';
 		}
+		else if (marker == mxConstants.ARROW_OPEN_THIN)
+		{
+			result = 'geSprite geSprite-' + prefix + 'openthin';
+		}
 		else if (marker == mxConstants.ARROW_BLOCK)
 		{
 			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'block' : 'geSprite geSprite-' + prefix + 'blocktrans';
@@ -1049,9 +1053,17 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
 		{
 			result = (fill == '1') ? 'geSprite geSprite-' + prefix + 'thindiamond' : 'geSprite geSprite-' + prefix + 'thindiamondtrans';
 		}
+		else if (marker == 'openAsync')
+		{
+			result = 'geSprite geSprite-' + prefix + 'openasync';
+		}
 		else if (marker == 'dash')
 		{
 			result = 'geSprite geSprite-' + prefix + 'dash';
+		}
+		else if (marker == 'cross')
+		{
+			result = 'geSprite geSprite-' + prefix + 'cross';
 		}
 		else if (marker == 'async')
 		{

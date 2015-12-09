@@ -1788,6 +1788,23 @@
 			c.stroke();
 		};
 	});
+
+	// Registers and defines the custom marker
+	mxMarker.addMarker('cross', function(c, shape, type, pe, unitX, unitY, size, source, sw, filled)
+	{
+		var nx = unitX * (size + sw + 1);
+		var ny = unitY * (size + sw + 1);
+
+		return function()
+		{
+			c.begin();
+			c.moveTo(pe.x - nx / 2 - ny / 2, pe.y - ny / 2 + nx / 2);
+			c.lineTo(pe.x + ny / 2 - 3 * nx / 2, pe.y - 3 * ny / 2 - nx / 2);
+			c.moveTo(pe.x - nx / 2 + ny / 2, pe.y - ny / 2 - nx / 2);
+			c.lineTo(pe.x - ny / 2 - 3 * nx / 2, pe.y - 3 * ny / 2 + nx / 2);
+			c.stroke();
+		};
+	});
 	
 	function circleMarker(c, shape, type, pe, unitX, unitY, size, source, sw, filled)
 	{
@@ -1884,6 +1901,38 @@
 			}
 		};
 	});
+	
+	function createOpenAsyncArrow(widthFactor)
+	{
+		widthFactor = (widthFactor != null) ? widthFactor : 2;
+		
+		return function(c, shape, type, pe, unitX, unitY, size, source, sw, filled)
+		{
+			unitX = unitX * (size + sw);
+			unitY = unitY * (size + sw);
+			
+			var pt = pe.clone();
+
+			return function()
+			{
+				c.begin();
+				c.moveTo(pt.x, pt.y);
+				
+				if (source)
+				{
+					c.lineTo(pt.x - unitX - unitY / widthFactor, pt.y - unitY + unitX / widthFactor);
+				}
+				else
+				{
+					c.lineTo(pt.x + unitY / widthFactor - unitX, pt.y - unitY - unitX / widthFactor);
+				}
+				
+				c.stroke();
+			};
+		}
+	};
+	
+	mxMarker.addMarker('openAsync', createOpenAsyncArrow(2));
 	
 	function arrow(canvas, shape, type, pe, unitX, unitY, size, source, sw, filled)
 	{
