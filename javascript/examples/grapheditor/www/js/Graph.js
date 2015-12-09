@@ -2567,6 +2567,11 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			this.shape.scale = this.graph.view.scale;
 			this.shape.style = this.graph.getCellStyle(this.edgeState.cell);
+			// Cell style contains only part of the current edge style
+			for (var key in this.graph.currentEdgeStyle)
+			{
+				this.shape.style[key] = this.graph.currentEdgeStyle[key];
+			}
 			this.shape.strokewidth = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKEWIDTH] || 1;
 			this.shape.isDashed = this.graph.currentEdgeStyle[mxConstants.STYLE_DASHED] == '1';
 			this.shape.stroke = this.graph.currentEdgeStyle[mxConstants.STYLE_STROKECOLOR] || 'black';
