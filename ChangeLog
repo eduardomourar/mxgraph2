@@ -1,4 +1,4 @@
-- Adds mxConstants.ARROW_BLOCK/CLASSIC_THIN and markers [JavaScript]
+- Adds mxConstants.ARROW_BLOCK/OPEN/CLASSIC_THIN and markers [JavaScript]
 - Fixes mxConstraintHandler.setFocus for disabled state [JavaScript]
 - Adds mxKeyHandler.isEnabledForEvent hook [JavaScript]
 - Fixes inconsistent text rendering in quirks/IE8 [JavaScript]

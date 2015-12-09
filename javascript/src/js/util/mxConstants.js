@@ -1903,6 +1903,13 @@
 	ARROW_OPEN: 'open',
 
 	/**
+	 * Variable: ARROW_OPEN_THIN
+	 * 
+	 * Constant for thin open arrow markers.
+	 */
+	ARROW_OPEN_THIN: 'openThin',
+
+	/**
 	 * Variable: ARROW_OVAL
 	 * 
 	 * Constant for oval arrow markers.
