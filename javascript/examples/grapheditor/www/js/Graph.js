@@ -2276,7 +2276,7 @@ HoverIcons.prototype.repaint = function()
 						this.triangleRight.width / 2, this.currentState.getCenterY());
 				
 				// Checks right arrow
-				if (tmp != null && !this.graph.isSwimlane(tmp))
+				if (tmp != null && !this.graph.model.isAncestor(tmp, this.currentState.cell))
 				{
 					this.arrowRight.style.visibility = 'hidden';
 				}
@@ -2288,7 +2288,7 @@ HoverIcons.prototype.repaint = function()
 				// Checks left arrow
 				tmp = this.graph.getCellAt(bds.x - this.triangleLeft.width / 2, this.currentState.getCenterY()); 
 				
-				if (tmp != null && !this.graph.isSwimlane(tmp))
+				if (tmp != null && !this.graph.model.isAncestor(tmp, this.currentState.cell))
 				{
 					this.arrowLeft.style.visibility = 'hidden';
 				}
@@ -2300,7 +2300,7 @@ HoverIcons.prototype.repaint = function()
 				// Checks top arrow
 				tmp = this.graph.getCellAt(this.currentState.getCenterX(), bds.y - this.triangleUp.height / 2); 
 				
-				if (tmp != null && !this.graph.isSwimlane(tmp))
+				if (tmp != null && !this.graph.model.isAncestor(tmp, this.currentState.cell))
 				{
 					this.arrowUp.style.visibility = 'hidden';
 				}
@@ -2312,7 +2312,7 @@ HoverIcons.prototype.repaint = function()
 				// Checks bottom arrow
 				tmp = this.graph.getCellAt(this.currentState.getCenterX(), bds.y + bds.height + this.triangleDown.height / 2); 
 				
-				if (tmp != null && !this.graph.isSwimlane(tmp))
+				if (tmp != null && !this.graph.model.isAncestor(tmp, this.currentState.cell))
 				{
 					this.arrowDown.style.visibility = 'hidden';
 				}
