@@ -815,6 +815,17 @@ EditorUi = function(editor, container)
 			graph.getModel().setVisible(parent, true);
 		}
 	});
+	
+	// Global handler to hide the current menu
+	this.gestureHandler = mxUtils.bind(this, function(evt)
+	{
+		if (this.currentMenu != null && mxEvent.getSource(evt) != this.currentMenu.div)
+		{
+			this.hideCurrentMenu();
+		}
+	});
+	
+	mxEvent.addGestureListeners(document, this.gestureHandler);
 
 	// Updates the editor UI after the window has been resized or the orientation changes
 	// Timeout is workaround for old IE versions which have a delay for DOM client sizes.
@@ -1636,6 +1647,36 @@ EditorUi.prototype.open = function()
 	// and the minimumGraphSize changes and CSS must be updated.
 	this.editor.graph.sizeDidChange();
 	this.editor.fireEvent(new mxEventObject('resetGraphView'));
+};
+
+/**
+ * Sets the current menu and element.
+ */
+EditorUi.prototype.setCurrentMenu = function(menu, elt)
+{
+	this.currentMenuElt = elt;
+	this.currentMenu = menu;
+};
+
+/**
+ * Resets the current menu and element.
+ */
+EditorUi.prototype.resetCurrentMenu = function()
+{
+	this.currentMenuElt = null;
+	this.currentMenu = null;
+};
+
+/**
+ * Hides and destroys the current menu.
+ */
+EditorUi.prototype.hideCurrentMenu = function(menu, elt)
+{
+	if (this.currentMenu != null)
+	{
+		this.currentMenu.hideMenu();
+		this.resetCurrentMenu();
+	}
 };
 
 /**
@@ -3228,6 +3269,12 @@ EditorUi.prototype.destroy = function()
 	{
 		mxEvent.removeListener(window, 'resize', this.resizeHandler);
 		this.resizeHandler = null;
+	}
+	
+	if (this.gestureHandler != null)
+	{
+		mxEvent.removeGestureListeners(document, this.gestureHandler);
+		this.gestureHandler = null;
 	}
 	
 	if (this.orientationChangeHandler != null)
