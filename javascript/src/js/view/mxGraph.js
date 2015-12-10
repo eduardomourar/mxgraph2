@@ -837,7 +837,7 @@ mxGraph.prototype.portsEnabled = true;
 /**
  * Variable: nativeDoubleClickEnabled
  * 
- * Specifies if native double click events should be deteced. Default is true.
+ * Specifies if native double click events should be detected. Default is true.
  */
 mxGraph.prototype.nativeDblClickEnabled = true;
 
