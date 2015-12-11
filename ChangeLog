@@ -1,3 +1,5 @@
+11-DEC-2015: 3.4.1.0
+
 - mxCellTracker.mouseUp no longer invokes reset [JavaScript]
 - Adds mxConstants.ARROW_BLOCK/OPEN/CLASSIC_THIN and markers [JavaScript]
 - Fixes mxConstraintHandler.setFocus for disabled state [JavaScript]
