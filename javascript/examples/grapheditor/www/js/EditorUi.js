@@ -471,10 +471,10 @@ EditorUi = function(editor, container)
 	var valueStyles = ['fontFamily', 'fontSize', 'fontColor'];
 	
 	// Keys that always update the current edge style regardless of selection
-	var alwaysEdgeStyles = ['edgeStyle', 'startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize'];
+	var alwaysEdgeStyles = ['edgeStyle', 'startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize', 'jettySize'];
 	
 	// Keys that are ignored together (if one appears all are ignored)
-	var keyGroups = [['startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize'],
+	var keyGroups = [['startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize', 'jettySize'],
 	                 ['strokeColor', 'strokeWidth'],
 	                 ['fillColor', 'gradientColor'],
 	                 valueStyles,
