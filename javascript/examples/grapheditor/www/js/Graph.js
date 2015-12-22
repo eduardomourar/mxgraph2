@@ -2608,7 +2608,8 @@ if (typeof mxVertexHandler != 'undefined')
 		/**
 		 * Contains the default style for edges.
 		 */
-		Graph.prototype.defaultEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1', 'jettySize': 20};
+		Graph.prototype.defaultEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1',
+			'jettySize': 'auto', 'orthogonalLoop': '1'};
 		
 		/**
 		 * Contains the current style for edges.
@@ -4448,12 +4449,15 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				mxCellEditorApplyValue.apply(this, arguments);
 				
-				var stroke = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
-				var fill = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
-				
-				if (mxUtils.trim(value || '') == '' && stroke == mxConstants.NONE && fill == mxConstants.NONE)
+				if (this.graph.isCellDeletable(state.cell))
 				{
-					this.graph.removeCells([state.cell], false);
+					var stroke = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
+					var fill = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
+					
+					if (mxUtils.trim(value || '') == '' && stroke == mxConstants.NONE && fill == mxConstants.NONE)
+					{
+						this.graph.removeCells([state.cell], false);
+					}
 				}
 			}
 			finally
