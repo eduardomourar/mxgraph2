@@ -1,4 +1,4 @@
-- Fixes preview for fixed connection points in mxConnectionHandler [JavaScript]
+- Fixes preview for fixed points in mxConnectionHandler, mxEdgeHandler [JavaScript]
 - Adds mxGraphView.isLoopStyleEnabled, mxEdgeStyle.getJettySize [JavaScript]
 - Adds mxConstants.STYLE_ORTHOGONAL_LOOP for orthogonal loop routing [JavaScript]
 - Adds mxConstants.STYLE_(SOURCE/TARGET_)JETTY_SIZE for orthogonal router [JavaScript]
