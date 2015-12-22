@@ -1,3 +1,4 @@
+- Adds mxGraphView.isLoopStyleEnabled, mxEdgeStyle.getJettySize [JavaScript]
 - Adds mxConstants.STYLE_ORTHOGONAL_LOOP for orthogonal loop routing [JavaScript]
 - Adds mxConstants.STYLE_(SOURCE/TARGET_)JETTY_SIZE for orthogonal router [JavaScript]
 
