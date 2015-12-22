@@ -471,10 +471,10 @@ EditorUi = function(editor, container)
 	var valueStyles = ['fontFamily', 'fontSize', 'fontColor'];
 	
 	// Keys that always update the current edge style regardless of selection
-	var alwaysEdgeStyles = ['edgeStyle', 'startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize', 'jettySize'];
+	var alwaysEdgeStyles = ['edgeStyle', 'startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize', 'jettySize', 'orthogonalLoop'];
 	
 	// Keys that are ignored together (if one appears all are ignored)
-	var keyGroups = [['startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize', 'jettySize'],
+	var keyGroups = [['startArrow', 'startFill', 'startSize', 'endArrow', 'endFill', 'endSize', 'jettySize', 'orthogonalLoop'],
 	                 ['strokeColor', 'strokeWidth'],
 	                 ['fillColor', 'gradientColor'],
 	                 valueStyles,
@@ -2176,7 +2176,7 @@ EditorUi.prototype.refresh = function()
 		{
 			this.tabContainer.style.width = this.diagramContainer.style.width;
 			this.tabContainer.style.bottom = (this.footerHeight + off) + 'px';
-			diagramHeight -= parseInt(this.tabContainer.style.height);
+			diagramHeight -= this.tabContainer.clientHeight;
 		}
 		
 		this.diagramContainer.style.height = diagramHeight + 'px';
