@@ -2609,7 +2609,19 @@ EditorUi.prototype.extractGraphModelFromHtml = function(data)
  */
 EditorUi.prototype.isCompatibleString = function(data)
 {
-	return data.substring(0, 13) == '<mxGraphModel';
+	try
+	{
+		var doc = mxUtils.parseXml(data);
+		var node = this.editor.extractGraphModel(doc.documentElement);
+		
+		return node != null;
+	}
+	catch (e)
+	{
+		// ignore
+	}
+	
+	return false;
 };
 
 /**
