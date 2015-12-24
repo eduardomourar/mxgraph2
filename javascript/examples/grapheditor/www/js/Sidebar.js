@@ -2288,7 +2288,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 			dropHandler.apply(this, arguments);
 		}
 		
-		if (this.editorUi.hoverIcons != null && mxEvent.isTouchEvent(evt))
+		if (this.editorUi.hoverIcons != null)
 		{
 			this.editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
 		}
