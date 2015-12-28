@@ -1545,7 +1545,8 @@ EditorUi.prototype.initCanvas = function()
 	
 	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up)
 	{
-		// Ctrl+wheel (or pinch on touchpad) is a native browser zoom event is OS X 
+		// Ctrl+wheel (or pinch on touchpad) is a native browser zoom event is OS X
+		// LATER: Add support for zoom via pinch on trackpad for Chrome in OS X
 		if ((mxEvent.isAltDown(evt) || (mxEvent.isControlDown(evt) && !mxClient.IS_MAC) ||
 			graph.panningHandler.isActive()) && (this.dialogs == null || this.dialogs.length == 0))
 		{
