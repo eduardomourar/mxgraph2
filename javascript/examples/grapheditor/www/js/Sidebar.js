@@ -558,15 +558,17 @@ Sidebar.prototype.addSearchPalette = function(expand)
 {
 	var elt = this.createTitle('');
 	this.container.appendChild(elt);
+	
+	// Workaround for important padding in Atlas UI
+	elt.style.cssText = 'padding:0px !important;';
 	elt.style.height = '0px';
-	elt.style.padding = '0px';
 	
 	var div = document.createElement('div');
 	div.className = 'geSidebar';
 	div.style.boxSizing = 'border-box';
 	div.style.overflow = 'hidden';
 	div.style.width = '100%';
-	div.style.padding = '8px';
+	div.style.padding = (uiTheme == 'atlas') ? '6px' : '8px';
 	div.style.paddingTop = '14px';
 	div.style.paddingBottom = '0px';
 
