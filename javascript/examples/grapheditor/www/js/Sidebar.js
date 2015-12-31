@@ -130,6 +130,11 @@ Sidebar.prototype.expandedImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/expanded.g
 Sidebar.prototype.tooltipImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/tooltip.png' : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAbCAMAAAB7jU7LAAAACVBMVEX///+ZmZn///9Y2COLAAAAA3RSTlP//wDXyg1BAAAAOElEQVR42mXQMQ4AMAgDsWv//+iutcJmIQSk+9dJpVKpVCqVSqVSqZTdncWzF8/NeP7FkxWenPEDOnUBiL3jWx0AAAAASUVORK5CYII=';
 
 /**
+ * 
+ */
+Sidebar.prototype.searchImage = (!mxClient.IS_SVG) ? IMAGE_PATH + '/search.png' : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAEaSURBVHjabNGxS5VxFIfxz71XaWuQUJCG/gCHhgTD9VpEETg4aMOlQRp0EoezObgcd220KQiXmpretTAHQRBdojlQEJyukPdt+b1ywfvAGc7wnHP4nlZd1yKijQW8xzNc4Su+ZOYfQ3T6/f4YNvEJYzjELXp4VVXVz263+7cR2niBxAFeZ2YPi3iHR/gYERPDwhpOsd6sz8x/mfkNG3iOlWFhFj8y89J9KvzGXER0GuEaD42mgwHqUtoljbcRsTBCeINpfM/MgZLKPpaxFxGbOCqDXmILN7hoJrTKH+axhxmcYRxP0MIDnOBDZv5q1XUNIuJxifJp+UNV7t7BFM6xeic0RMQ4Bpl5W/ol7GISx/eEUUTECrbx+f8A8xhiZht9zsgAAAAASUVORK5CYII=';
+
+/**
  * Specifies if tooltips should be visible. Default is true.
  */
 Sidebar.prototype.enableTooltips = true;
@@ -551,14 +556,19 @@ Sidebar.prototype.cloneCell = function(cell, value)
  */
 Sidebar.prototype.addSearchPalette = function(expand)
 {
-	var elt = this.createTitle(mxResources.get('search'));
+	var elt = this.createTitle('');
 	this.container.appendChild(elt);
+	elt.style.height = '0px';
+	elt.style.padding = '0px';
 	
 	var div = document.createElement('div');
 	div.className = 'geSidebar';
+	div.style.boxSizing = 'border-box';
 	div.style.overflow = 'hidden';
 	div.style.width = '100%';
-	div.style.padding = '0px';
+	div.style.padding = '8px';
+	div.style.paddingTop = '14px';
+	div.style.paddingBottom = '0px';
 
 	if (!expand)
 	{
@@ -566,92 +576,61 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	}
 	
 	var inner = document.createElement('div');
-	inner.style.backgroundColor = 'transparent';
-	inner.style.borderColor = 'transparent';
-	inner.style.padding = '4px';
-	inner.style.marginRight = '8px';
 	inner.style.whiteSpace = 'nowrap';
 	inner.style.textOverflow = 'clip';
+	inner.style.paddingBottom = '8px';
 	inner.style.cursor = 'default';
-	
-	if (!mxClient.IS_VML)
-	{
-		inner.style.paddingRight = '20px';
-	}
 
-	var searchResource = mxResources.get('search');
-	
 	var input = document.createElement('input');
-	input.setAttribute('placeholder', searchResource);
+	input.setAttribute('placeholder', mxResources.get('searchShapes'));
 	input.setAttribute('type', 'text');
+	input.style.fontSize = '12px';
+	input.style.overflow = 'hidden';
+	input.style.boxSizing = 'border-box';
 	input.style.border = 'solid 1px #d5d5d5';
+	input.style.borderRadius = '4px';
 	input.style.width = '100%';
 	input.style.outline = 'none';
-	input.style.padding = '4px';
-	input.style.backgroundImage = 'url(\'' + Dialog.prototype.clearImage + '\')';
-	input.style.backgroundRepeat = 'no-repeat';
-	input.style.backgroundPosition = '100% 50%';
-	input.style.paddingRight = '14px';
-	input.style.marginTop = '6px';
-	input.style.marginLeft = '2px';
-	input.style.marginBottom = '2px';
+	input.style.padding = '6px';
 	inner.appendChild(input);
 
-	var cross = document.createElement('div');
-	cross.setAttribute('title', mxResources.get('reset'));
+	var cross = document.createElement('img');
+	cross.setAttribute('src', Sidebar.prototype.searchImage);
 	cross.style.position = 'relative';
-	cross.style.left = '-14px';
-	cross.style.width = '14px';
-	cross.style.height = '18px';
-	cross.style.cursor = 'pointer';
-
-	// Workaround for inline-block not supported in IE
-	cross.style.display = (mxClient.IS_VML) ? 'inline' : 'inline-block';
-	cross.style.top = ((mxClient.IS_VML) ? 0 : 4) + 'px';
+	cross.style.left = '-18px';
 	
+	if (mxClient.IS_QUIRKS)
+	{
+		input.style.height = '28px';
+		cross.style.top = '-4px';
+	}
+	else
+	{
+		cross.style.top = '2px';
+	}
+
 	// Needed to block event transparency in IE
 	cross.style.background = 'url(\'' + this.editorUi.editor.transparentImage + '\')';
 	
 	var find;
 
-	mxEvent.addListener(cross, 'click', function()
-	{
-		input.value = '';
-		find();
-		input.focus();
-	});
-	
-	
-	if (document.documentMode == 8)
-	{
-		input.style.boxSizing = 'border-box';
-
-		// Workaround for no mouse events on cross in IE8 standards
-		mxEvent.addListener(input, 'click', function(evt)
-		{
-			var x = mxEvent.getClientX(evt);
-			
-			if (x > input.clientWidth - 8)
-			{
-				cross.click();
-			}
-		});
-	}
-
 	inner.appendChild(cross);
 	div.appendChild(inner);
 
 	var center = document.createElement('center');
-	var button = mxUtils.button(searchResource, function()
+	var button = mxUtils.button(mxResources.get('moreResults'), function()
 	{
 		find();
 	});
-	button.setAttribute('disabled', 'true');
+	button.style.display = 'none';
+	
 	// Workaround for inherited line-height in quirks mode
 	button.style.lineHeight = 'normal';
-	center.style.paddingTop = '8px';
-	center.style.paddingBottom = '14px';
-
+	button.style.marginTop = '4px';
+	button.style.marginBottom = '8px';
+	center.style.paddingTop = '4px';
+	center.style.paddingBottom = '8px';
+	
 	center.appendChild(button);
 	div.appendChild(center);
 	
@@ -689,7 +668,8 @@ Sidebar.prototype.addSearchPalette = function(expand)
 		count = 4 * Math.max(1, Math.floor(this.container.clientWidth / (this.thumbWidth + 10)));
 		this.hideTooltip();
 		
-		if (button.getAttribute('disabled') != 'true')
+		//if (button.style.display != 'none')
+		//if (input.value != searchTerm)
 		{
 			if (input.value != '' && !complete)
 			{
@@ -706,6 +686,8 @@ Sidebar.prototype.addSearchPalette = function(expand)
 					
 					if (!active)
 					{
+						button.setAttribute('disabled', 'true');
+						button.style.display = '';
 						button.style.cursor = 'wait';
 						button.innerHTML = mxResources.get('loading') + '...';
 						active = true;
@@ -737,11 +719,13 @@ Sidebar.prototype.addSearchPalette = function(expand)
 								
 								if (more)
 								{
+									button.removeAttribute('disabled');
 									button.innerHTML = mxResources.get('moreResults');
 								}
 								else
 								{
 									button.innerHTML = mxResources.get('reset');
+									button.style.display = 'none';
 									complete = true;
 								}
 								
@@ -780,8 +764,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 				input.value = '';
 				searchTerm = '';
 				hash = new Object();
-				button.innerHTML = searchResource;
-				button.setAttribute('disabled', 'true');
+				button.style.display = 'none';
 				complete = false;
 				input.focus();
 			}
@@ -796,33 +779,53 @@ Sidebar.prototype.addSearchPalette = function(expand)
 		}
 	}));
 	
+	mxEvent.addListener(input, 'focus', function()
+	{
+		input.style.paddingRight = '';
+		cross.style.display = 'none';
+	});
+	
+	mxEvent.addListener(input, 'blur', function()
+	{
+		input.style.paddingRight = '20px';
+		cross.style.display = '';
+	});
+
+	input.style.paddingRight = '20px';
+	
 	mxEvent.addListener(input, 'keyup', mxUtils.bind(this, function(evt)
 	{
 		if (input.value == '')
 		{
 			complete = true;
-			find();
-			complete = false;
-			button.setAttribute('disabled', 'true');
+			button.style.display = 'none';
 		}
 		else if (input.value != searchTerm)
 		{
-			button.removeAttribute('disabled');
-			button.innerHTML = searchResource;
+			button.style.display = 'none';
 			complete = false;
 		}
 		else if (!active)
 		{
 			if (complete)
 			{
-				button.removeAttribute('disabled');
-				button.innerHTML = mxResources.get('reset');
+				button.style.display = 'none';
 			}
 			else
 			{
-				button.removeAttribute('disabled');
-				button.innerHTML = mxResources.get('moreResults');
+				button.style.display = '';
 			}
+		}
+		
+		if (!complete || input.value == '')
+		{
+			cross.setAttribute('title', mxResources.get('search'));
+			cross.setAttribute('src', Sidebar.prototype.searchImage);
+		}
+		else
+		{
+			cross.setAttribute('title', mxResources.get('reset'));
+			cross.setAttribute('src', Dialog.prototype.clearImage);
 		}
 	}));
 
