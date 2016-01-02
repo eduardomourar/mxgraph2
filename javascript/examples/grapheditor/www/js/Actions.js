@@ -574,7 +574,7 @@ Actions.prototype.init = function()
 			{
 				graph.zoomTo(val / 100);
 			}
-		}), mxResources.get('enterValue') + ' (%)');
+		}), mxResources.get('zoom') + ' (%)');
 		this.editorUi.showDialog(dlg.container, 300, 80, true, true);
 		dlg.init();
 	}), null, null, 'Ctrl+5'));
