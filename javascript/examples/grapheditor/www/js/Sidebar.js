@@ -670,106 +670,102 @@ Sidebar.prototype.addSearchPalette = function(expand)
 		count = 4 * Math.max(1, Math.floor(this.container.clientWidth / (this.thumbWidth + 10)));
 		this.hideTooltip();
 		
-		//if (button.style.display != 'none')
-		//if (input.value != searchTerm)
+		if (input.value != '' && !complete)
 		{
-			if (input.value != '' && !complete)
+			if (center.parentNode != null)
 			{
-				if (center.parentNode != null)
+				if (searchTerm != input.value)
 				{
-					if (searchTerm != input.value)
-					{
-						clearDiv();
-						searchTerm = input.value;
-						hash = new Object();
-						complete = false;
-						page = 0;
-					}
+					clearDiv();
+					searchTerm = input.value;
+					hash = new Object();
+					complete = false;
+					page = 0;
+				}
+				
+				if (!active)
+				{
+					button.setAttribute('disabled', 'true');
+					button.style.display = '';
+					button.style.cursor = 'wait';
+					button.innerHTML = mxResources.get('loading') + '...';
+					active = true;
 					
-					if (!active)
+					// Ignores old results
+					var current = new Object();
+					this.currentSearch = current;
+					
+					this.searchEntries(searchTerm, count, page, mxUtils.bind(this, function(results, len, more)
 					{
-						button.setAttribute('disabled', 'true');
-						button.style.display = '';
-						button.style.cursor = 'wait';
-						button.innerHTML = mxResources.get('loading') + '...';
-						active = true;
-						
-						// Ignores old results
-						var current = new Object();
-						this.currentSearch = current;
-						
-						this.searchEntries(searchTerm, count, page, mxUtils.bind(this, function(results, len, more)
+						if (this.currentSearch == current)
 						{
-							if (this.currentSearch == current)
+							results = (results != null) ? results : [];
+							active = false;
+							page++;
+							center.parentNode.removeChild(center);
+							
+							for (var i = 0; i < results.length; i++)
 							{
-								results = (results != null) ? results : [];
-								active = false;
-								page++;
-								center.parentNode.removeChild(center);
+								var elt = results[i]();
 								
-								for (var i = 0; i < results.length; i++)
+								// Avoids duplicates in results
+								if (hash[elt.innerHTML] == null)
 								{
-									var elt = results[i]();
-									
-									// Avoids duplicates in results
-									if (hash[elt.innerHTML] == null)
-									{
-										hash[elt.innerHTML] = '1';
-										div.appendChild(results[i]());
-									}
+									hash[elt.innerHTML] = '1';
+									div.appendChild(results[i]());
 								}
-								
-								if (more)
-								{
-									button.removeAttribute('disabled');
-									button.innerHTML = mxResources.get('moreResults');
-								}
-								else
-								{
-									button.innerHTML = mxResources.get('reset');
-									button.style.display = 'none';
-									complete = true;
-								}
-								
-								button.style.cursor = '';
-								
-								if (results.length == 0 && page == 1)
-								{
-									var err = document.createElement('div');
-									err.className = 'geTitle';
-									err.style.backgroundColor = 'transparent';
-									err.style.borderColor = 'transparent';
-									err.style.color = 'gray';
-									err.style.padding = '0px';
-									err.style.margin = '0px 8px 0px 8px';
-									err.style.paddingTop = '6px';
-									err.style.textAlign = 'center';
-									err.style.cursor = 'default';
-									
-									mxUtils.write(err, mxResources.get('noResultsFor', [searchTerm]));
-									div.appendChild(err);
-								}
-								
-								div.appendChild(center);
 							}
-						}), mxUtils.bind(this, function()
-						{
-							// TODO: Error handling
+							
+							if (more)
+							{
+								button.removeAttribute('disabled');
+								button.innerHTML = mxResources.get('moreResults');
+							}
+							else
+							{
+								button.innerHTML = mxResources.get('reset');
+								button.style.display = 'none';
+								complete = true;
+							}
+							
 							button.style.cursor = '';
-						}));
-					}
+							
+							if (results.length == 0 && page == 1)
+							{
+								var err = document.createElement('div');
+								err.className = 'geTitle';
+								err.style.backgroundColor = 'transparent';
+								err.style.borderColor = 'transparent';
+								err.style.color = 'gray';
+								err.style.padding = '0px';
+								err.style.margin = '0px 8px 0px 8px';
+								err.style.paddingTop = '6px';
+								err.style.textAlign = 'center';
+								err.style.cursor = 'default';
+								
+								mxUtils.write(err, mxResources.get('noResultsFor', [searchTerm]));
+								div.appendChild(err);
+							}
+							
+							div.appendChild(center);
+						}
+					}), mxUtils.bind(this, function()
+					{
+						// TODO: Error handling
+						button.style.cursor = '';
+					}));
 				}
 			}
-			else
-			{
-				clearDiv();
-				input.value = '';
-				searchTerm = '';
-				hash = new Object();
-				button.style.display = 'none';
-				complete = false;
-				input.focus();
-			}
+		}
+		else
+		{
+			clearDiv();
+			input.value = '';
+			searchTerm = '';
+			hash = new Object();
+			button.style.display = 'none';
+			complete = false;
+			input.focus();
 		}
 	});
 	
@@ -3172,6 +3168,38 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 		
 		mxEvent.consume(evt);
 	}));
+};
+
+/**
+ * Translates this point by the given vector.
+ * 
+ * @param {number} dx X-coordinate of the translation.
+ * @param {number} dy Y-coordinate of the translation.
+ */
+Sidebar.prototype.isPaletteVisible = function(id, visible)
+{
+	var elts = this.palettes[id];
+	
+	return (elts != null && elts.length > 0) ? elts[0].style.display != 'none' : true;
+};
+
+/**
+ * Translates this point by the given vector.
+ * 
+ * @param {number} dx X-coordinate of the translation.
+ * @param {number} dy Y-coordinate of the translation.
+ */
+Sidebar.prototype.setPaletteVisible = function(id, visible)
+{
+	var elts = this.palettes[id];
+	
+	if (elts != null)
+	{
+		for (var i = 0; i < elts.length; i++)
+		{
+			elts[i].style.display = (visible) ? '' : 'none';
+		}
+	}
 };
 
 /**
