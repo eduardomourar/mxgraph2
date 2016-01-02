@@ -3171,38 +3171,6 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 };
 
 /**
- * Translates this point by the given vector.
- * 
- * @param {number} dx X-coordinate of the translation.
- * @param {number} dy Y-coordinate of the translation.
- */
-Sidebar.prototype.isPaletteVisible = function(id, visible)
-{
-	var elts = this.palettes[id];
-	
-	return (elts != null && elts.length > 0) ? elts[0].style.display != 'none' : true;
-};
-
-/**
- * Translates this point by the given vector.
- * 
- * @param {number} dx X-coordinate of the translation.
- * @param {number} dy Y-coordinate of the translation.
- */
-Sidebar.prototype.setPaletteVisible = function(id, visible)
-{
-	var elts = this.palettes[id];
-	
-	if (elts != null)
-	{
-		for (var i = 0; i < elts.length; i++)
-		{
-			elts[i].style.display = (visible) ? '' : 'none';
-		}
-	}
-};
-
-/**
  * Removes the palette for the given ID.
  */
 Sidebar.prototype.removePalette = function(id)
