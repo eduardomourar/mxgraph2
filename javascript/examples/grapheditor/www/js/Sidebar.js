@@ -960,7 +960,7 @@ Sidebar.prototype.addMiscPalette = function(expand)
 
 	 		return this.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Variable');
 	 	})),
-	 	this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false, null, 'user person human'),
+	 	this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false, null, 'user person human stickman'),
 	 	this.createVertexTemplateEntry('line;html=1;', 160, 10, '', 'Horizontal Line'),
 	 	this.createVertexTemplateEntry('line;direction=south;html=1;', 10, 160, '', 'Vertical Line'),
 	 	this.createVertexTemplateEntry('line;html=1;perimeter=backbonePerimeter;points=[];', 160, 10, '', 'Horizontal Backbone', false, null, 'network'),
