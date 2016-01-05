@@ -1020,7 +1020,7 @@ var mxEdgeStyle =
 		}
 
 		if (tooShort || (mxEdgeStyle.orthPointsFallback && (points != null &&
-			points.length > 0) || (sourceEdge) || (targetEdge)))
+			points.length > 0)) || sourceEdge || targetEdge)
 		{
 			mxEdgeStyle.SegmentConnector(state, source, target, points, result);
 			
@@ -1065,7 +1065,7 @@ var mxEdgeStyle =
 			}
 		}
 
-		// Avoids floating point number errrors
+		// Avoids floating point number errors
 		sourceX = Math.round(sourceX * 10) / 10;
 		sourceY = Math.round(sourceY * 10) / 10;
 		sourceWidth = Math.round(sourceWidth * 10) / 10;
