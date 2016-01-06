@@ -1088,8 +1088,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	
 	var fns = [
    		this.createVertexTemplateEntry('html=1;', 110, 50, 'Object', 'Object', null, null, dt + 'object instance'),
-   		this.createVertexTemplateEntry('html=1;', 110, 50, '&laquo;interface&raquo;<br><b>Name</b>', 'Interface', null, null, dt + 'interface'),
-   		this.createVertexTemplateEntry('html=1;spacingTop=-14;', 110, 50, '&laquo;Annotation&raquo;<br><b>Description</b>', 'Annotated Object', null, null, dt + 'object instance annotated annotation'),
+   		this.createVertexTemplateEntry('html=1;spacingTop=-14;', 110, 50, '&laquo;interface&raquo;<br><b>Name</b>', 'Interface', null, null, dt + 'interface object instance annotated annotation'),
 	 	this.addEntry(dt + 'object instance', function()
 		{
 			var cell = new mxCell('Classname', new mxGeometry(0, 0, 160, 90),
@@ -1127,6 +1126,13 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		this.addEntry(dt + 'divider hline line separator', function()
 		{
 			return sb.createVertexTemplateFromCells([divider.clone()], divider.geometry.width, divider.geometry.height, 'Divider');
+		}),
+		this.addEntry(dt + 'spacer space gap separator', function()
+		{
+			var cell = new mxCell('', new mxGeometry(0, 0, 20, 14), 'text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=4;spacingRight=4;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;');
+			cell.vertex = true;
+			
+			return sb.createVertexTemplateFromCells([cell.clone()], cell.geometry.width, cell.geometry.height, 'Spacer');
 		}),
 		this.createVertexTemplateEntry('text;html=1;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;',
 			80, 26, 'Title', 'Title', null, null, dt + 'title label'),
