@@ -1088,7 +1088,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	
 	var fns = [
    		this.createVertexTemplateEntry('html=1;', 110, 50, 'Object', 'Object', null, null, dt + 'object instance'),
-   		this.createVertexTemplateEntry('html=1;spacingTop=-14;', 110, 50, '<i>&laquo;Interface&raquo;<br>Interfacename</i>', 'Interface', null, null, dt + 'interface'),
+   		this.createVertexTemplateEntry('html=1;', 110, 50, '&laquo;interface&raquo;<br><b>Name</b>', 'Interface', null, null, dt + 'interface'),
    		this.createVertexTemplateEntry('html=1;spacingTop=-14;', 110, 50, '&laquo;Annotation&raquo;<br><b>Description</b>', 'Annotated Object', null, null, dt + 'object instance annotated annotation'),
 	 	this.addEntry(dt + 'object instance', function()
 		{
