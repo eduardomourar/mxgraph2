@@ -168,6 +168,8 @@
 3.0 - Add mxImageAlias for changing image paths
 
 Major API changes (long-term):
+1.0 - Move update of terminal points into routing algorithms (control flow)
+1.0 - How to handle numeric attributes (avoid conversion of string "01")
 1.0 - Avoid repaint after move only (check style, size, position) 
 1.0 - Add dictionary for cell style in cell.style (replace string, add visible, collpsed etc as style)
 1.0 - Add zIndex layering (sort by cell path and zindex, see mm java), decouple validation/repaint
