@@ -1,3 +1,4 @@
+- Osgify the JGraphX lib using the maven-bundle-plugin [Java]
 - Adds mxObjectCodec.isAttributeIgnored hook [JavaScript]
 
 08-JAN-2016: 3.4.1.2
