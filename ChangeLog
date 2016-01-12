@@ -1,3 +1,5 @@
+- Adds mxObjectCodec.isAttributeIgnored hook [JavaScript]
+
 08-JAN-2016: 3.4.1.2
 
 - Fixes inconsistent loop routing for fixed connection points [JavaScript]
