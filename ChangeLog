@@ -1,3 +1,4 @@
+- Sets currentFocus in mxConstraintHandler.setFocus w/o constraints [JavaScript]
 - Osgify the JGraphX lib using the maven-bundle-plugin [Java]
 - Adds mxObjectCodec.isAttributeIgnored hook [JavaScript]
 
