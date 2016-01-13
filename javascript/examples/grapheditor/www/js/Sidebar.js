@@ -568,7 +568,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	div.style.boxSizing = 'border-box';
 	div.style.overflow = 'hidden';
 	div.style.width = '100%';
-	div.style.padding = (uiTheme == 'atlas') ? '6px' : '8px';
+	div.style.padding = '8px';
 	div.style.paddingTop = '14px';
 	div.style.paddingBottom = '0px';
 
