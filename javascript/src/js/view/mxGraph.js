@@ -2847,13 +2847,17 @@ mxGraph.prototype.getBorderSizes = function()
 		return result;
 	}
 	
-	var style = mxUtils.getCurrentStyle(this.container);
 	var result = new mxRectangle();
-	result.x = parseBorder(style.borderLeftWidth) + parseInt(style.paddingLeft || 0);
-	result.y = parseBorder(style.borderTopWidth) + parseInt(style.paddingTop || 0);
-	result.width = parseBorder(style.borderRightWidth) + parseInt(style.paddingRight || 0);
-	result.height = parseBorder(style.borderBottomWidth) + parseInt(style.paddingBottom || 0);
-
+	var style = mxUtils.getCurrentStyle(this.container);
+	
+	if (style != null)
+	{
+		result.x = parseBorder(style.borderLeftWidth) + parseInt(style.paddingLeft || 0);
+		result.y = parseBorder(style.borderTopWidth) + parseInt(style.paddingTop || 0);
+		result.width = parseBorder(style.borderRightWidth) + parseInt(style.paddingRight || 0);
+		result.height = parseBorder(style.borderBottomWidth) + parseInt(style.paddingBottom || 0);
+	}
+	
 	return result;
 };
 
