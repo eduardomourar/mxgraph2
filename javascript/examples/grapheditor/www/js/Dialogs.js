@@ -327,7 +327,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 		var color = input.value;
 		ColorDialog.addRecentColor(color, 12);
 		
-		if (color != 'none')
+		if (color != 'none' && color.charAt(0) != '#')
 		{
 			color = '#' + color;
 		}
