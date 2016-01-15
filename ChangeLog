@@ -1,3 +1,4 @@
+- Adds mxGraph.translateToScrollPosition switch [JavaScript]
 - Fixes possible NPE in mxGraph.getBorderSizes [JavaScript]
 - Fixes undefined uiTheme in grapheditor example
 - Sets currentFocus in mxConstraintHandler.setFocus w/o constraints [JavaScript]
