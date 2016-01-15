@@ -1220,7 +1220,7 @@ EditorUi.prototype.initCanvas = function()
 
 	// Initial page layout view, scrollBuffer and timer-based scrolling
 	var graph = this.editor.graph;
-	graph.preferPanningManager = true;
+	graph.timerAutoScroll = true;
 	
 	/**
 	 * Specifies the size of the size for "tiles" to be used for a graph with

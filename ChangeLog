@@ -1,4 +1,3 @@
-- Renames mxGraph.timerAutoScroll to preferPanningManager [JavaScript]
 - Adds mxGraph.translateToScrollPosition switch [JavaScript]
 - Fixes possible NPE in mxGraph.getBorderSizes [JavaScript]
 - Fixes undefined uiTheme in grapheditor example

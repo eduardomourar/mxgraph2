@@ -1255,7 +1255,7 @@ mxGraph.prototype.ignoreScrollbars = false;
 mxGraph.prototype.translateToScrollPosition = false;
 
 /**
- * Variable: preferPanningManager
+ * Variable: timerAutoScroll
  * 
  * Specifies if autoscrolling should be carried out via mxPanningManager even
  * if the container has scrollbars. This disables <scrollPointToVisible> and
@@ -1263,13 +1263,15 @@ mxGraph.prototype.translateToScrollPosition = false;
  * disabled. It should only be used with a scroll buffer or when scollbars
  * are visible and scrollable in all directions. Default is false.
  */
-mxGraph.prototype.preferPanningManager = false;
+mxGraph.prototype.timerAutoScroll = false;
 
 /**
  * Variable: allowAutoPanning
  * 
  * Specifies if panning via <panGraph> should be allowed to implement autoscroll
- * if no scrollbars are available in <scrollPointToVisible>. Default is false.
+ * if no scrollbars are available in <scrollPointToVisible>. To enable panning
+ * inside the container, near the edge, set <mxPanningManager.border> to a
+ * positive value. Default is false.
  */
 mxGraph.prototype.allowAutoPanning = false;
 
@@ -2711,7 +2713,7 @@ mxGraph.prototype.tapAndHold = function(me)
  */
 mxGraph.prototype.scrollPointToVisible = function(x, y, extend, border)
 {
-	if (!this.preferPanningManager && (this.ignoreScrollbars || mxUtils.hasScrollbars(this.container)))
+	if (!this.timerAutoScroll && (this.ignoreScrollbars || mxUtils.hasScrollbars(this.container)))
 	{
 		var c = this.container;
 		border = (border != null) ? border : 20;
