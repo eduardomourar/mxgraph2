@@ -1733,8 +1733,16 @@ Graph.prototype.getTooltipForCell = function(cell)
 			{
 				if (mxUtils.indexOf(ignored, attrs[i].nodeName) < 0 && attrs[i].nodeValue.length > 0)
 				{
-					var key = attrs[i].nodeName.substring(0, 1).toUpperCase() + attrs[i].nodeName.substring(1);
-					tip += key + ': ' + mxUtils.htmlEntities(attrs[i].nodeValue) + '\n';
+					// Hides link key in read mode
+					if (attrs[i].nodeName == 'link')
+					{
+						tip += mxUtils.htmlEntities(attrs[i].nodeValue) + '\n';
+					}
+					else
+					{
+						var key = attrs[i].nodeName.substring(0, 1).toUpperCase() + attrs[i].nodeName.substring(1);
+						tip += key + ': ' + mxUtils.htmlEntities(attrs[i].nodeValue) + '\n';
+					}
 				}
 			}
 			
