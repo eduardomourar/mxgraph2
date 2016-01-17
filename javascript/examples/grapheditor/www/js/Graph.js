@@ -1699,6 +1699,56 @@ Graph.prototype.zoom = function(factor, center)
 };
 
 /**
+ * Overrides tooltips to show custom tooltip or metadata.
+ */
+Graph.prototype.getTooltipForCell = function(cell)
+{
+	var tip = '';
+	
+	if (mxUtils.isNode(cell.value))
+	{
+		var tmp = cell.value.getAttribute('tooltip');
+		
+		if (tmp != null)
+		{
+			if (tmp != null && this.isReplacePlaceholders(cell))
+			{
+				tmp = this.replacePlaceholders(cell, tmp);
+			}
+			
+			tip = this.sanitizeHtml(tmp);
+		}
+		else
+		{
+			var ignored = ['label', 'tooltip', 'placeholders'];
+			var attrs = cell.value.attributes;
+			
+			// Hides links in edit mode
+			if (this.isEnabled())
+			{
+				ignored.push('link');
+			}
+			
+			for (var i = 0; i < attrs.length; i++)
+			{
+				if (mxUtils.indexOf(ignored, attrs[i].nodeName) < 0 && attrs[i].nodeValue.length > 0)
+				{
+					var key = attrs[i].nodeName.substring(0, 1).toUpperCase() + attrs[i].nodeName.substring(1);
+					tip += key + ': ' + mxUtils.htmlEntities(attrs[i].nodeValue) + '\n';
+				}
+			}
+			
+			if (tip.length > 0)
+			{
+				tip = tip.substring(0, tip.length - 1);
+			}
+		}
+	}
+	
+	return tip;
+};
+
+/**
  * Hover icons are used for hover, vertex handler and drag from sidebar.
  */
 HoverIcons = function(graph)
@@ -2811,57 +2861,7 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			return result;
 		};
-	
-		/**
-		 * Overrides tooltips to show custom tooltip or metadata.
-		 */
-		Graph.prototype.getTooltipForCell = function(cell)
-		{
-			var tip = '';
-			
-			if (mxUtils.isNode(cell.value))
-			{
-				var tmp = cell.value.getAttribute('tooltip');
-				
-				if (tmp != null)
-				{
-					if (tmp != null && this.isReplacePlaceholders(cell))
-					{
-						tmp = this.replacePlaceholders(cell, tmp);
-					}
-					
-					tip = this.sanitizeHtml(tmp);
-				}
-				else
-				{
-					var ignored = ['label', 'tooltip', 'placeholders'];
-					var attrs = cell.value.attributes;
-					
-					// Hides links in edit mode
-					if (this.isEnabled())
-					{
-						ignored.push('link');
-					}
-					
-					for (var i = 0; i < attrs.length; i++)
-					{
-						if (mxUtils.indexOf(ignored, attrs[i].nodeName) < 0 && attrs[i].nodeValue.length > 0)
-						{
-							var key = attrs[i].nodeName.substring(0, 1).toUpperCase() + attrs[i].nodeName.substring(1);
-							tip += key + ': ' + mxUtils.htmlEntities(attrs[i].nodeValue) + '\n';
-						}
-					}
-					
-					if (tip.length > 0)
-					{
-						tip = tip.substring(0, tip.length - 1);
-					}
-				}
-			}
-			
-			return tip;
-		};
-		
+
 		/**
 		 * Overrides autosize to add a border.
 		 */
