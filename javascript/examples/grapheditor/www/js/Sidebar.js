@@ -556,7 +556,7 @@ Sidebar.prototype.cloneCell = function(cell, value)
  */
 Sidebar.prototype.addSearchPalette = function(expand)
 {
-	var elt = this.createTitle('');
+	var elt = document.createElement('div');
 	this.container.appendChild(elt);
 	
 	// Workaround for important padding in Atlas UI
@@ -838,12 +838,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
     	
     	evt.cancelBubble = true;
     });
-    
-	this.addFoldingHandler(elt, div, function()
-	{
-		// not lazy
-	}, false);
-    
+
 	var outer = document.createElement('div');
     outer.appendChild(div);
     this.container.appendChild(outer);
