@@ -590,7 +590,7 @@ mxHierarchicalLayout.prototype.filterDescendants = function(cell, result)
 {
 	var model = this.graph.model;
 
-	if (model.isVertex(cell) && cell != this.parent && this.graph.isCellVisible(cell))
+	if (model.isVertex(cell) && cell != this.parent && this.graph.view.getState(cell) != null)
 	{
 		result[mxObjectIdentity.get(cell)] = cell;
 	}
