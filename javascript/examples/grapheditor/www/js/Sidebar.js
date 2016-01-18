@@ -598,6 +598,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 
 	var cross = document.createElement('img');
 	cross.setAttribute('src', Sidebar.prototype.searchImage);
+	cross.setAttribute('title', mxResources.get('search'));
 	cross.style.position = 'relative';
 	cross.style.left = '-18px';
 	
@@ -670,7 +671,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 		count = 4 * Math.max(1, Math.floor(this.container.clientWidth / (this.thumbWidth + 10)));
 		this.hideTooltip();
 		
-		if (input.value != '' && !complete)
+		if (input.value != '')
 		{
 			if (center.parentNode != null)
 			{
@@ -683,7 +684,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 					page = 0;
 				}
 				
-				if (!active)
+				if (!active && !complete)
 				{
 					button.setAttribute('disabled', 'true');
 					button.style.display = '';
@@ -813,17 +814,6 @@ Sidebar.prototype.addSearchPalette = function(expand)
 			{
 				button.style.display = '';
 			}
-		}
-		
-		if (!complete || input.value == '')
-		{
-			cross.setAttribute('title', mxResources.get('search'));
-			cross.setAttribute('src', Sidebar.prototype.searchImage);
-		}
-		else
-		{
-			cross.setAttribute('title', mxResources.get('reset'));
-			cross.setAttribute('src', Dialog.prototype.clearImage);
 		}
 	}));
 
