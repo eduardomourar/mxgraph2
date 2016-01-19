@@ -3159,6 +3159,14 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 						title.innerHTML = prev;
 					}, 0);
 				}
+				else
+				{
+					content.style.display = 'block';
+				}
+			}
+			else
+			{
+				content.style.display = 'block';
 			}
 			
 			title.style.backgroundImage = 'url(\'' + this.expandedImage + '\')';
