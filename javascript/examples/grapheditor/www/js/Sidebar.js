@@ -24,9 +24,15 @@ function Sidebar(editorUi, container)
 	this.graph.container.style.visibility = 'hidden';
 	this.graph.container.style.position = 'absolute';
 	this.graph.container.style.overflow = 'hidden';
-	this.graph.container.style.display = 'none';
 	this.graph.container.style.height = '1px';
 	this.graph.container.style.width = '1px';
+	
+	// Workaround for blank output in IE11-
+	if (!mxClient.IS_IE && !mxClient.IS_IE11)
+	{
+		this.graph.container.style.display = 'none';
+	}
+
 	document.body.appendChild(this.graph.container);
 	
 	this.pointerUpHandler = mxUtils.bind(this, function()
