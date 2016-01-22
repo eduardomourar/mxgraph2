@@ -23,6 +23,16 @@ function Sidebar(editorUi, container)
 	// Container must be in the DOM for correct HTML rendering
 	this.graph.container.style.visibility = 'hidden';
 	this.graph.container.style.position = 'absolute';
+	this.graph.container.style.overflow = 'hidden';
+	this.graph.container.style.height = '1px';
+	this.graph.container.style.width = '1px';
+	
+	// Workaround for blank output in IE11-
+	if (!mxClient.IS_IE && !mxClient.IS_IE11)
+	{
+		this.graph.container.style.display = 'none';
+	}
+
 	document.body.appendChild(this.graph.container);
 	
 	this.pointerUpHandler = mxUtils.bind(this, function()
@@ -557,12 +567,9 @@ Sidebar.prototype.cloneCell = function(cell, value)
 Sidebar.prototype.addSearchPalette = function(expand)
 {
 	var elt = document.createElement('div');
+	elt.style.visibility = 'hidden';
 	this.container.appendChild(elt);
-	
-	// Workaround for important padding in Atlas UI
-	elt.style.cssText = 'padding:0px !important;';
-	elt.style.height = '0px';
-	
+		
 	var div = document.createElement('div');
 	div.className = 'geSidebar';
 	div.style.boxSizing = 'border-box';
@@ -1647,16 +1654,28 @@ Sidebar.prototype.createTitle = function(label)
 /**
  * Creates a thumbnail for the given cells.
  */
-Sidebar.prototype.createThumb = function(cells, width, height, parent, title, showLabel, showTitle)
+Sidebar.prototype.createThumb = function(cells, width, height, parent, title, showLabel, showTitle, realWidth, realHeight)
 {
 	this.graph.labelsVisible = (showLabel == null || showLabel);
-	this.graph.view.scaleAndTranslate(1, 0, 0);
-	this.graph.addCells(cells);
-	var bounds = this.graph.getGraphBounds();
-	var s = Math.floor(Math.min((width - 2 * this.thumbBorder) / bounds.width, (height - 2 * this.thumbBorder)
-		/ bounds.height) * 100) / 100;
-	this.graph.view.scaleAndTranslate(s, Math.floor((width - bounds.width * s) / 2 / s - bounds.x),
-			Math.floor((height - bounds.height * s) / 2 / s - bounds.y));
+	
+	// Paints faster by using the known width and height
+	if (false && realWidth != null && realHeight != null)
+	{
+		var s = Math.floor(Math.min((width - 2 * this.thumbBorder) / realWidth, (height - 2 * this.thumbBorder) / realHeight) * 100) / 100;
+		this.graph.view.scaleAndTranslate(s, Math.floor((width - realWidth * s) / 2 / s), Math.floor((height - realHeight * s) / 2 / s));
+		this.graph.addCells(cells);
+	}
+	else
+	{
+		this.graph.view.scaleAndTranslate(1, 0, 0);
+		this.graph.addCells(cells);
+		var bounds = this.graph.getGraphBounds();
+		var s = Math.floor(Math.min((width - 2 * this.thumbBorder) / bounds.width, (height - 2 * this.thumbBorder)
+			/ bounds.height) * 100) / 100;
+		this.graph.view.scaleAndTranslate(s, Math.floor((width - bounds.width * s) / 2 / s - bounds.x),
+				Math.floor((height - bounds.height * s) / 2 / s - bounds.y));
+	}
+	
 	var node = null;
 	
 	// For supporting HTML labels in IE9 standards mode the container is cloned instead
@@ -1737,7 +1756,7 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 		mxEvent.consume(evt);
 	});
 
-	this.createThumb(cells, this.thumbWidth, this.thumbHeight, elt, title, showLabel, showTitle);
+	this.createThumb(cells, this.thumbWidth, this.thumbHeight, elt, title, showLabel, showTitle, width, height);
 	var bounds = new mxRectangle(0, 0, width, height);
 	
 	if (cells.length > 1 || cells[0].vertex)
@@ -3127,7 +3146,6 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 				
 				if (funct != null)
 				{
-
 					// Wait cursor does not show up on Mac
 					title.style.cursor = 'wait';
 					var prev = title.innerHTML;
@@ -3136,14 +3154,22 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 					window.setTimeout(function()
 					{
 						funct(content);
+						content.style.display = 'block';
 						title.style.cursor = '';
 						title.innerHTML = prev;
 					}, 0);
 				}
+				else
+				{
+					content.style.display = 'block';
+				}
+			}
+			else
+			{
+				content.style.display = 'block';
 			}
 			
 			title.style.backgroundImage = 'url(\'' + this.expandedImage + '\')';
-			content.style.display = 'block';
 		}
 		else
 		{
