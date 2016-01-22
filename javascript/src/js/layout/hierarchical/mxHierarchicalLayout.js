@@ -62,7 +62,7 @@ mxHierarchicalLayout.prototype.resizeParent = false;
  * top, left corner stays the same before and after execution of
  * the layout. Default is false for backwards compatibility.
  */
-mxCompactTreeLayout.prototype.maintainParentLocation = false;
+mxHierarchicalLayout.prototype.maintainParentLocation = false;
 
 /**
  * Variable: moveParent
@@ -590,7 +590,7 @@ mxHierarchicalLayout.prototype.filterDescendants = function(cell, result)
 {
 	var model = this.graph.model;
 
-	if (model.isVertex(cell) && cell != this.parent && this.graph.view.getState(cell) != null)
+	if (model.isVertex(cell) && cell != this.parent && this.graph.isCellVisible(cell))
 	{
 		result[mxObjectIdentity.get(cell)] = cell;
 	}
