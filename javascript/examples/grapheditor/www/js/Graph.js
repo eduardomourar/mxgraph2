@@ -3074,6 +3074,37 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * Overrides ungroup to check if group should be removed.
+		 */
+		Graph.prototype.removeCellsAfterUngroup = function(cells)
+		{
+			var cellsToRemove = [];
+			
+			for (var i = 0; i < cells.length; i++)
+			{
+				if (this.isCellDeletable(cells[i]))
+				{
+					var state = this.view.getState(cells[i]);
+					
+					if (state != null)
+					{
+						var stroke = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
+						var fill = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
+						
+						if (stroke == mxConstants.NONE && fill == mxConstants.NONE)
+						{
+							cellsToRemove.push(cells[i]);
+						}
+					}
+				}
+			}
+			
+			cells = cellsToRemove;
+			
+			mxGraph.prototype.removeCellsAfterUngroup.apply(this, arguments);
+		};
+		
+		/**
 		 * Sets the link for the given cell.
 		 */
 		Graph.prototype.setLinkForCell = function(cell, link)
