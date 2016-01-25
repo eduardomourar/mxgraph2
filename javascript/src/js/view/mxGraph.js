@@ -2639,7 +2639,8 @@ mxGraph.prototype.click = function(me)
  * graph.addListener(mxEvent.DOUBLE_CLICK, function(sender, evt)
  * {
  *   var cell = evt.getProperty('cell');
- *   // do something with the cell...
+ *   // do something with the cell and consume the
+ *   // event to prevent in-place editing from start
  * });
  * (end) 
  * 
