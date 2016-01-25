@@ -3949,7 +3949,7 @@ mxGraph.prototype.ungroupCells = function(cells)
 				}
 			}
 
-			this.cellsRemoved(this.addAllEdges(cells));
+			this.removeCellsAfterUngroup(cells);
 			this.fireEvent(new mxEventObject(mxEvent.UNGROUP_CELLS, 'cells', cells));
 		}
 		finally
@@ -3959,6 +3959,20 @@ mxGraph.prototype.ungroupCells = function(cells)
 	}
 	
 	return result;
+};
+
+/**
+ * Function: removeCellsAfterUngroup
+ * 
+ * Hook to remove the groups after <ungroupCells>.
+ * 
+ * Parameters:
+ * 
+ * cells - Array of <mxCells> that were ungrouped.
+ */
+mxGraph.prototype.removeCellsAfterUngroup = function(cells)
+{
+	this.cellsRemoved(this.addAllEdges(cells));
 };
 
 /**
