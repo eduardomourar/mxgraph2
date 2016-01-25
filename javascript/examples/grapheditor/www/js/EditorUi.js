@@ -2444,7 +2444,7 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 	// Disables built-in pan and zoom in IE10 and later
 	if (mxClient.IS_POINTER)
 	{
-		elt.style.msTouchAction = 'none';
+		elt.style.touchAction = 'none';
 	}
 	
 	var getValue = mxUtils.bind(this, function()

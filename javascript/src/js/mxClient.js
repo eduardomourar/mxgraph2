@@ -218,9 +218,9 @@ var mxClient =
 	/**
 	 * Variable: IS_POINTER
 	 * 
-	 * True if this device supports MS pointer events.
+	 * True if this device supports Microsoft pointer events.
 	 */
-  	IS_POINTER: (window.navigator.msPointerEnabled != null) ? window.navigator.msPointerEnabled : false,
+  	IS_POINTER: (window.navigator.pointerEnabled != null) ? window.navigator.pointerEnabled : false,
 
 	/**
 	 * Variable: IS_LOCAL

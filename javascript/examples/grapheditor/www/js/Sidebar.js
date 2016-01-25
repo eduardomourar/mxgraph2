@@ -40,7 +40,7 @@ function Sidebar(editorUi, container)
 		this.showTooltips = true;
 	});
 
-	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerUp' : 'mouseup', this.pointerUpHandler);
+	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'pointerup' : 'mouseup', this.pointerUpHandler);
 
 	this.pointerDownHandler = mxUtils.bind(this, function()
 	{
@@ -48,7 +48,7 @@ function Sidebar(editorUi, container)
 		this.hideTooltip();
 	});
 	
-	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerDown' : 'mousedown', this.pointerDownHandler);
+	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown', this.pointerDownHandler);
 	
 	this.pointerMoveHandler = mxUtils.bind(this, function(evt)
 	{
@@ -67,7 +67,7 @@ function Sidebar(editorUi, container)
 		this.hideTooltip();
 	});
 
-	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerMove' : 'mousemove', this.pointerMoveHandler);
+	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'pointermove' : 'mousemove', this.pointerMoveHandler);
 
 	// Handles mouse leaving the window
 	this.pointerOutHandler = mxUtils.bind(this, function(evt)
@@ -78,7 +78,7 @@ function Sidebar(editorUi, container)
 		}
 	});
 	
-	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'MSPointerOut' : 'mouseout', this.pointerOutHandler);
+	mxEvent.addListener(document, (mxClient.IS_POINTER) ? 'pointerout' : 'mouseout', this.pointerOutHandler);
 
 	// Enables tooltips after scroll
 	mxEvent.addListener(container, 'scroll', mxUtils.bind(this, function()
@@ -3081,6 +3081,12 @@ Sidebar.prototype.addPalette = function(id, title, expanded, onInit)
 	var div = document.createElement('div');
 	div.className = 'geSidebar';
 	
+	// Disables built-in pan and zoom in IE10 and later
+	if (mxClient.IS_POINTER)
+	{
+		div.style.touchAction = 'none';
+	}
+	
 	// Shows tooltip if mouse over background
 	mxEvent.addListener(div, 'mousemove', mxUtils.bind(this, function(evt)
 	{
@@ -3328,25 +3334,25 @@ Sidebar.prototype.destroy = function()
 	
 	if (this.pointerUpHandler != null)
 	{
-		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'MSPointerUp' : 'mouseup', this.pointerUpHandler);
+		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'pointerup' : 'mouseup', this.pointerUpHandler);
 		this.pointerUpHandler = null;
 	}
 
 	if (this.pointerDownHandler != null)
 	{
-		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'MSPointerDown' : 'mousedown', this.pointerDownHandler);
+		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown', this.pointerDownHandler);
 		this.pointerDownHandler = null;
 	}
 	
 	if (this.pointerMoveHandler != null)
 	{
-		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'MSPointerMove' : 'mousemove', this.pointerMoveHandler);
+		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'pointermove' : 'mousemove', this.pointerMoveHandler);
 		this.pointerMoveHandler = null;
 	}
 	
 	if (this.pointerOutHandler != null)
 	{
-		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'MSPointerOut' : 'mouseout', this.pointerOutHandler);
+		mxEvent.removeListener(document, (mxClient.IS_POINTER) ? 'pointerout' : 'mouseout', this.pointerOutHandler);
 		this.pointerOutHandler = null;
 	}
 };
