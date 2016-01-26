@@ -7525,8 +7525,8 @@ mxGraph.prototype.center = function(horizontal, vertical, cx, cy)
 	
 	if (!hasScrollbars)
 	{
-		this.view.setTranslate((horizontal) ? Math.floor(t.x - bounds.x / s + dx * cx * s) : t.x,
-				(vertical) ? Math.floor(t.y - bounds.y / s + dy * cy * s) : t.y);
+		this.view.setTranslate((horizontal) ? Math.floor(t.x - bounds.x * s + dx * cx / s) : t.x,
+			(vertical) ? Math.floor(t.y - bounds.y * s + dy * cy / s) : t.y);
 	}
 	else
 	{
@@ -7729,17 +7729,36 @@ mxGraph.prototype.zoomToRect = function(rect)
  * graph.refresh();
  * (end)
  * 
+ * To fit and center the graph, the following code can be used.
+ * 
+ * (code)
+ * var margin = 2;
+ * 
+ * var bounds = graph.getGraphBounds();
+ * var cw = graph.container.clientWidth - margin;
+ * var ch = graph.container.clientHeight - margin;
+ * var w = bounds.width + bounds.x;
+ * var h = bounds.height + bounds.y;
+ * var s = Math.min(cw / w, ch / h);
+ * 
+ * graph.view.scaleAndTranslate(s, (margin + cw - w * s) / (2 * s), (margin + ch - h * s) / (2 * s));
+ * (end)
+ * 
  * Parameters:
  * 
  * border - Optional number that specifies the border. Default is 0.
  * keepOrigin - Optional boolean that specifies if the translate should be
  * changed. Default is false.
  * margin - Optional margin in pixels. Default is 1.
+ * enabled - Optional boolean that specifies if the scale should be set or
+ * just returned. Default is true.
  */
-mxGraph.prototype.fit = function(border, keepOrigin, margin)
+mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled)
 {
 	if (this.container != null)
 	{
+		enabled = (enabled != null) ? enabled : true;
+		
 		border = (border != null) ? border : 0;
 		keepOrigin = (keepOrigin != null) ? keepOrigin : false;
 		margin = (margin != null) ? margin : 1;
@@ -7785,34 +7804,41 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin)
 				s2 = Math.min(s2, this.maxFitScale);
 			}
 	
-			if (!keepOrigin)
+			if (enabled)
 			{
-				if (!mxUtils.hasScrollbars(this.container))
+				if (!keepOrigin)
 				{
-					var x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border / s2 + margin / 2) : border;
-					var y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border / s2 + margin / 2) : border;
-	
-					this.view.scaleAndTranslate(s2, x0, y0);
+					if (!mxUtils.hasScrollbars(this.container))
+					{
+						var x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border / s2 + margin / 2) : border;
+						var y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border / s2 + margin / 2) : border;
+		
+						this.view.scaleAndTranslate(s2, x0, y0);
+					}
+					else
+					{
+						this.view.setScale(s2);
+						var b2 = this.getGraphBounds();
+						
+						if (b2.x != null)
+						{
+							this.container.scrollLeft = b2.x;
+						}
+						
+						if (b2.y != null)
+						{
+							this.container.scrollTop = b2.y;
+						}
+					}
 				}
-				else
+				else if (this.view.scale != s2)
 				{
 					this.view.setScale(s2);
-					var b2 = this.getGraphBounds();
-					
-					if (b2.x != null)
-					{
-						this.container.scrollLeft = b2.x;
-					}
-					
-					if (b2.y != null)
-					{
-						this.container.scrollTop = b2.y;
-					}
 				}
 			}
-			else if (this.view.scale != s2)
+			else
 			{
-				this.view.setScale(s2);
+				return s2;
 			}
 		}
 	}

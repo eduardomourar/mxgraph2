@@ -1,3 +1,5 @@
+- Adds enabled parameter in mxGraph.fit [JavaScript]
+- Fixes mxGraph.center for scales other than 1 [JavaScript]
 - Removes vendor prefix for MS pointer events [JavaScript]
 - Adds mxGraph.removeCellsAfterUngroup hook [JavaScript]
 - Fixes autopanning acceleration in mxPanningManager [JavaScript]
