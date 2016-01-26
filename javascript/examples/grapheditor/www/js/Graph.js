@@ -839,6 +839,31 @@ Graph.prototype.sanitizeHtml = function(value)
 };
 
 /**
+ * Revalidates all cells with placeholders in the current graph model.
+ */
+Graph.prototype.updatePlaceholders = function()
+{
+	var model = this.model;
+	var validate = false;
+	
+	for (var key in this.model.cells)
+	{
+		var cell = this.model.cells[key];
+		
+		if (this.isReplacePlaceholders(cell))
+		{
+			this.view.invalidate(cell, false, false);
+			validate = true;
+		}
+	}
+	
+	if (validate)
+	{
+		this.view.validate();
+	}
+};
+
+/**
  * Adds support for placeholders in labels.
  */
 Graph.prototype.isReplacePlaceholders = function(cell)
