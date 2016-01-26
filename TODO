@@ -1,3 +1,6 @@
+- Fix reconnect preview during remove change
+- Fix move of terminal during connect preview
+
 - Add orthogonal routing in loop router
 - Add unscaled coordinates
 - Add mxClient.IS_CHROMEAPP
