@@ -7733,15 +7733,18 @@ mxGraph.prototype.zoomToRect = function(rect)
  * 
  * (code)
  * var margin = 2;
+ * var max = 3;
  * 
  * var bounds = graph.getGraphBounds();
  * var cw = graph.container.clientWidth - margin;
  * var ch = graph.container.clientHeight - margin;
- * var w = bounds.width + bounds.x;
- * var h = bounds.height + bounds.y;
- * var s = Math.min(cw / w, ch / h);
+ * var w = bounds.width / graph.view.scale;
+ * var h = bounds.height / graph.view.scale;
+ * var s = Math.min(max, Math.min(cw / w, ch / h));
  * 
- * graph.view.scaleAndTranslate(s, (margin + cw - w * s) / (2 * s), (margin + ch - h * s) / (2 * s));
+ * graph.view.scaleAndTranslate(s,
+ *   (margin + cw - w * s) / (2 * s) - bounds.x / graph.view.scale,
+ *   (margin + ch - h * s) / (2 * s) - bounds.y / graph.view.scale);
  * (end)
  * 
  * Parameters:
