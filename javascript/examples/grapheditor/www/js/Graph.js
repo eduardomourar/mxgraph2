@@ -1801,9 +1801,9 @@ HoverIcons.prototype.arrowSpacing = 6;
 HoverIcons.prototype.updateDelay = 500;
 
 /**
- * Delay to switch between states. Default is 200ms.
+ * Delay to switch between states. Default is 140ms.
  */
-HoverIcons.prototype.activationDelay = 200;
+HoverIcons.prototype.activationDelay = 140;
 
 /**
  * Up arrow.
