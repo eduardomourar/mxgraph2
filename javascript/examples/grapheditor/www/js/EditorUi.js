@@ -2932,6 +2932,11 @@ EditorUi.prototype.createOutline = function(wnd)
 	{
 		outline.update();
 	});
+	
+	this.addListener('pageFormatChanged', function()
+	{
+		outline.update();
+	});
 
 	return outline;
 };
