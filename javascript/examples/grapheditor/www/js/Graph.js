@@ -4620,6 +4620,19 @@ if (typeof mxVertexHandler != 'undefined')
 				mxUtils.getValue(state.style, 'childLayout', null) == null;
 		};
 		
+		/**
+		 * Enables centered resize events.
+		 */
+		mxVertexHandler.prototype.isCenteredEvent = function(state, me)
+		{
+			return (!(!this.graph.isSwimlane(state.cell) && this.graph.model.getChildCount(state.cell) > 0 &&
+					!this.graph.isCellCollapsed(state.cell) &&
+					mxUtils.getValue(state.style, 'recursiveResize', '1') == '1' &&
+					mxUtils.getValue(state.style, 'childLayout', null) == null) &&
+					mxEvent.isControlDown(me.getEvent())) ||
+				mxEvent.isMetaDown(me.getEvent());
+		};
+		
 		var vertexHandlerGetHandlePadding = mxVertexHandler.prototype.getHandlePadding;
 		mxVertexHandler.prototype.getHandlePadding = function()
 		{
