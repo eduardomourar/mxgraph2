@@ -1542,7 +1542,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 					if (!clip && wrap && w > 0 && this.root.ownerDocument != document && overflow != 'fill')
 					{
 						var ws = clone.style.whiteSpace;
-						div.style.whiteSpace = 'nowrap';
+						div2.style.whiteSpace = 'nowrap';
 						
 						if (tmp < div2.offsetWidth)
 						{
