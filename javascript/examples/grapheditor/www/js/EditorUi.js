@@ -1497,11 +1497,12 @@ EditorUi.prototype.initCanvas = function()
 					// SHOULD MOVE TRANSLATE/SCALE TO VIEW.
 					var tx = graph.view.translate.x;
 					var ty = graph.view.translate.y;
-
 					graph.view.setTranslate(dx, dy);
-					graph.container.scrollLeft += (dx - tx) * graph.view.scale;
-					graph.container.scrollTop += (dy - ty) * graph.view.scale;
-
+					
+					// LATER: Fix rounding errors for small zoom
+					graph.container.scrollLeft += Math.round((dx - tx) * graph.view.scale);
+					graph.container.scrollTop += Math.round((dy - ty) * graph.view.scale);
+					
 					this.autoTranslate = false;
 					return;
 				}
