@@ -51,7 +51,7 @@ var mxClient =
 	 *
 	 * True if the current browser is Microsoft Edge.
 	 */
-	IS_EDGE: navigator.userAgent.match(/Edge\//),
+	IS_EDGE: !!navigator.userAgent.match(/Edge\//),
 
 	/**
 	 * Variable: IS_QUIRKS

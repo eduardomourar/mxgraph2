@@ -1,3 +1,4 @@
+- Changes type of mxClient.IS_EDGE to boolean [JavaScript]
 - Adds mxVertexHandler.isCenteredEvent hook [JavaScript]
 - Adds enabled parameter in mxGraph.fit [JavaScript]
 - Fixes mxGraph.center for scales other than 1 [JavaScript]
