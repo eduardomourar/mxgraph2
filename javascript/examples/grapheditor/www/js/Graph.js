@@ -81,7 +81,8 @@ Graph = function(container, model, renderHint, stylesheet)
 			mouseDown: function() {},
 		    mouseMove: mxUtils.bind(this, function(sender, me)
 		    {
-		    	if (!mxEvent.isControlDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()))
+		    	if (!this.panningHandler.isActive() && !mxEvent.isControlDown(me.getEvent()) &&
+		    		!mxEvent.isShiftDown(me.getEvent()))
 		    	{
 		    		var tol = this.tolerance;
 	
