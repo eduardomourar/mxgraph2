@@ -1657,6 +1657,8 @@ Sidebar.prototype.createTitle = function(label)
 Sidebar.prototype.createThumb = function(cells, width, height, parent, title, showLabel, showTitle, realWidth, realHeight)
 {
 	this.graph.labelsVisible = (showLabel == null || showLabel);
+	var fo = mxClient.NO_FO;
+	mxClient.NO_FO = Editor.prototype.originalNoForeignObject;
 	
 	// Paints faster by using the known width and height
 	if (false && realWidth != null && realHeight != null)
@@ -1691,6 +1693,7 @@ Sidebar.prototype.createThumb = function(cells, width, height, parent, title, sh
 	}
 	
 	this.graph.getModel().clear();
+	mxClient.NO_FO = fo;
 	
 	// Catch-all event handling
 	if (mxClient.IS_IE6)
@@ -3159,7 +3162,10 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 					
 					window.setTimeout(function()
 					{
+						var fo = mxClient.NO_FO;
+						mxClient.NO_FO = Editor.prototype.originalNoForeignObject;
 						funct(content);
+						mxClient.NO_FO = fo;
 						content.style.display = 'block';
 						title.style.cursor = '';
 						title.innerHTML = prev;
