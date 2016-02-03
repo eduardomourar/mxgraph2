@@ -8,7 +8,7 @@
 - Add mxClient.IS_CHROMEAPP
 - Update Dotnet for latest Visual Studio community edition
 
-- Add caching for text sizes with NO_FO
+- Add caching for text sizes with NO_FO, replace foreignObject for simple text
 - Use getBoundingClientRect for VML in mxShape
 - Add lineSpacing, jetty-size and source-/targetConstraint styles
 - Fix support for labelPadding, add support for borderWidth (for text)
