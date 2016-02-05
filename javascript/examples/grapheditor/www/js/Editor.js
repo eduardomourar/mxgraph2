@@ -69,28 +69,39 @@ function fetchUrlsAndStart(urls, callback, onerror)
 	var remain = urls.length;
 	var result = [];
 	var errors = 0;
+	var err = function()
+	{
+		if (errors == 0 && onerror != null)
+		{
+			onerror();
+		}
+
+		errors++;
+	};
 	
 	for (var i = 0; i < urls.length; i++)
 	{
 		(function(url, index)
 		{
-			// TODO: Add error handling
 			mxUtils.get(url, function(req)
 			{
-				result[index] = req;
-				remain--;
+				var status = req.getStatus();
 				
-				if (remain == 0)
+				if (status < 200 || status > 299)
 				{
-					callback(result);			
+					err();
 				}
-			}, function()
-			{
-				if (errors == 0 && onerror != null)
+				else
 				{
-					onerror();
+					result[index] = req;
+					remain--;
+					
+					if (remain == 0)
+					{
+						callback(result);
+					}
 				}
-			});
+			}, err);
 		})(urls[i], i);
 	}
 	
