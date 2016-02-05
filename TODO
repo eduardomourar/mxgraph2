@@ -1,5 +1,3 @@
-- Add async option, event for resources
-
 - Fix reconnect preview during remove change
 - Fix move of terminal during connect preview
 - Add dx/dy for absolute offsets in stencil XML
