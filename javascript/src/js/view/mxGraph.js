@@ -1666,8 +1666,8 @@ mxGraph.prototype.collapseExpandResource = (mxClient.language != 'none') ? 'coll
  * 
  * container - DOM node that will contain the graph display.
  */
- mxGraph.prototype.init = function(container)
- {
+mxGraph.prototype.init = function(container)
+{
 	this.container = container;
 	
 	// Initializes the in-place editor
