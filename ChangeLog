@@ -1,3 +1,4 @@
+- Adds mxResources.loadResources, callback argument in add [JavaScript]
 - Changes type of mxClient.IS_EDGE to boolean [JavaScript]
 - Adds mxVertexHandler.isCenteredEvent hook [JavaScript]
 - Adds enabled parameter in mxGraph.fit [JavaScript]
