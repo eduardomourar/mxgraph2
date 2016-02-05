@@ -1,3 +1,4 @@
+- Adds asynchronous loading for resources in grapheditor [JavaScript]
 - Adds mxResources.loadResources, callback argument in add [JavaScript]
 - Changes type of mxClient.IS_EDGE to boolean [JavaScript]
 - Adds mxVertexHandler.isCenteredEvent hook [JavaScript]

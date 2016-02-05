@@ -10,9 +10,10 @@
 /**
  * Defines graph class.
  */
-Graph = function(container, model, renderHint, stylesheet)
+Graph = function(container, model, renderHint, stylesheet, themes)
 {
 	mxGraph.call(this, container, model, renderHint, stylesheet);
+	this.themes = themes;
 
     // Adds support for HTML labels via style. Note: Currently, only the Java
     // backend supports HTML labels but CSS support is limited to the following:
@@ -2759,7 +2760,7 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.loadStylesheet = function()
 		{
-		    var node = mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
+			var node = this.themes['default'];
 			var dec = new mxCodec(node.ownerDocument);
 			dec.decode(node, this.getStylesheet());
 		};

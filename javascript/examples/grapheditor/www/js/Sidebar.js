@@ -3292,7 +3292,7 @@ Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ig
 					Math.round(w * scale), Math.round(h * scale), '', stencilName.replace(/_/g, ' '), null, null,
 					this.filterTags(tmp.join(' '))));
 			}
-		}), true);
+		}), true, true);
 
 		this.addPaletteFunctions(id, title, false, fns);
 	}

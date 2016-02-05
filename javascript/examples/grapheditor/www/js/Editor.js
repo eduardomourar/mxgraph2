@@ -61,21 +61,55 @@ if (mxClient.IS_IE6)
 	mxClient.link('stylesheet', CSS_PATH + '/grapheditor-ie6.css');
 }
 
-//Adds required resources (disables loading of fallback properties, this can only
-//be used if we know that all keys are defined in the language specific file)
-mxResources.loadDefaultBundle = false;
-mxResources.add(RESOURCE_BASE);
+/**
+ * 
+ */
+function fetchUrlsAndStart(urls, callback, onerror)
+{
+	var remain = urls.length;
+	var result = [];
+	var errors = 0;
+	
+	for (var i = 0; i < urls.length; i++)
+	{
+		(function(url, index)
+		{
+			// TODO: Add error handling
+			mxUtils.get(url, function(req)
+			{
+				result[index] = req;
+				remain--;
+				
+				if (remain == 0)
+				{
+					callback(result);			
+				}
+			}, function()
+			{
+				if (errors == 0 && onerror != null)
+				{
+					onerror();
+				}
+			});
+		})(urls[i], i);
+	}
+	
+	if (remain == 0)
+	{
+		callback();			
+	}
+};
 
 /**
  * Editor constructor executed on page load.
  */
-Editor = function(chromeless)
+Editor = function(chromeless, themes)
 {
 	mxEventSource.call(this);
 	this.chromeless = (chromeless != null) ? chromeless : this.chromeless;
 	this.init();
 	this.initStencilRegistry();
-	this.graph = this.createGraph();
+	this.graph = this.createGraph(themes);
 	this.undoManager = this.createUndoManager();
 	this.status = '';
 
@@ -214,9 +248,9 @@ Editor.prototype.setAutosave = function(value)
 /**
  * Sets the XML node for the current diagram.
  */
-Editor.prototype.createGraph = function()
+Editor.prototype.createGraph = function(themes)
 {
-	return new Graph();
+	return new Graph(null, null, null, null, themes);
 };
 
 /**
@@ -1204,7 +1238,7 @@ OpenFile.prototype.cancel = function(cancel)
 	};
 
 	// Loads the given stencil set
-	mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force)
+	mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force, async)
 	{
 		force = (force != null) ? force : false;
 		
@@ -1219,10 +1253,28 @@ OpenFile.prototype.cancel = function(cancel)
 			{
 				try
 				{
-					var req = mxUtils.load(stencilFile);
-					xmlDoc = req.getXml();
-					mxStencilRegistry.packages[stencilFile] = xmlDoc;
-					install = true;
+					if (async)
+					{
+						var req = mxUtils.get(stencilFile, mxUtils.bind(this, function(req)
+						{
+							xmlDoc = req.getXml();
+							mxStencilRegistry.packages[stencilFile] = xmlDoc;
+							
+							if (xmlDoc != null && xmlDoc.documentElement != null)
+							{
+								mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
+							}
+						}));
+					
+						return;
+					}
+					else
+					{
+						var req = mxUtils.load(stencilFile);
+						xmlDoc = req.getXml();
+						mxStencilRegistry.packages[stencilFile] = xmlDoc;
+						install = true;
+					}
 				}
 				catch (e)
 				{
