@@ -115,13 +115,14 @@
 				mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage);
 
 			// Fixes possible asynchronous requests
-			fetchUrlsAndStart([bundle, STYLE_PATH + '/default.xml'], function(xhr)
+			mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function(xhr)
 			{
 				// Adds bundle text to resources
 				mxResources.parse(xhr[0].getText());
 				
 				// Main
-				new EditorUi(new Editor(urlParams['chrome'] == '0', {'default': xhr[1].getDocumentElement()}));	
+				new EditorUi(new Editor(urlParams['chrome'] == '0',
+					{Graph.prototype.defaultThemeName: xhr[1].getDocumentElement()}));	
 			}, function()
 			{
 				document.body.innerHTML = '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';

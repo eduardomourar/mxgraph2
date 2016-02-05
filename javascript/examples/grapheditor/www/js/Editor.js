@@ -62,56 +62,6 @@ if (mxClient.IS_IE6)
 }
 
 /**
- * 
- */
-function fetchUrlsAndStart(urls, callback, onerror)
-{
-	var remain = urls.length;
-	var result = [];
-	var errors = 0;
-	var err = function()
-	{
-		if (errors == 0 && onerror != null)
-		{
-			onerror();
-		}
-
-		errors++;
-	};
-	
-	for (var i = 0; i < urls.length; i++)
-	{
-		(function(url, index)
-		{
-			mxUtils.get(url, function(req)
-			{
-				var status = req.getStatus();
-				
-				if (status < 200 || status > 299)
-				{
-					err();
-				}
-				else
-				{
-					result[index] = req;
-					remain--;
-					
-					if (remain == 0)
-					{
-						callback(result);
-					}
-				}
-			}, err);
-		})(urls[i], i);
-	}
-	
-	if (remain == 0)
-	{
-		callback();			
-	}
-};
-
-/**
  * Editor constructor executed on page load.
  */
 Editor = function(chromeless, themes)

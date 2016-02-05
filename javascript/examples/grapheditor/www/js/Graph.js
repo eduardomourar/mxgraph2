@@ -757,6 +757,11 @@ Graph.prototype.connectionArrowsEnabled = true;
 Graph.prototype.placeholderPattern = new RegExp('%(date\{.*\}|[^%^\{^\}]+)%', 'g');
 
 /**
+ * Specifies the default name for the theme. Default is 'default'.
+ */
+Graph.prototype.defaultThemeName = 'default';
+
+/**
  * Installs child layout styles.
  */
 Graph.prototype.init = function(container)
@@ -2760,9 +2765,15 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.loadStylesheet = function()
 		{
-			var node = this.themes['default'];
-			var dec = new mxCodec(node.ownerDocument);
-			dec.decode(node, this.getStylesheet());
+			var node = (this.themes != null) ?
+				this.themes[this.defaultThemeName] :
+				mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
+			
+			if (node != null)
+			{
+				var dec = new mxCodec(node.ownerDocument);
+				dec.decode(node, this.getStylesheet());
+			}
 		};
 		
 		/**
