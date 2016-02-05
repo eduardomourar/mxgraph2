@@ -1389,7 +1389,7 @@ var mxUtils =
 	 * 
 	 * Loads the URLs in the given array *asynchronously* and invokes the given function
 	 * if all requests returned with a valid 2xx status. The error handler is invoked
-	 * once on the first error.
+	 * once on the first error or invalid response.
 	 *
 	 * Parameters:
 	 * 
