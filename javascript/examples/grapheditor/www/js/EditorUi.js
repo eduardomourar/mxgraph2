@@ -3153,7 +3153,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	};
 
 	// Ignores enter keystroke. Remove this line if you want the
-	// enter keystroke to stop editing.
+	// enter keystroke to stop editing. N, W, T are reserved.
 	keyHandler.enter = function() {};
 	keyHandler.bindControlKey(36, function() { graph.foldCells(true); }); // Ctrl+Home
 	keyHandler.bindControlKey(35, function() { graph.foldCells(false); }); // Ctrl+End
@@ -3185,18 +3185,11 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(8, true, 'deleteAll'); // Backspace
 	keyHandler.bindAction(46, false, 'delete'); // Delete
 	keyHandler.bindAction(46, true, 'deleteAll'); // Ctrl+Delete
-	keyHandler.bindAction(48, true, 'resetView'); // Ctrl+0
-	keyHandler.bindAction(96, true, 'resetView'); // Ctrl+0 (Num)
-	keyHandler.bindAction(49, true, 'fitWindow'); // Ctrl+1
-	keyHandler.bindAction(97, true, 'fitWindow'); // Ctrl+1 (Num)
-	keyHandler.bindAction(50, true, 'fitPageWidth'); // Ctrl+2
-	keyHandler.bindAction(98, true, 'fitPageWidth'); // Ctrl+2 (Num)
-	keyHandler.bindAction(51, true, 'fitPage'); // Ctrl+3
-	keyHandler.bindAction(99, true, 'fitPage'); // Ctrl+3 (Num)
-	keyHandler.bindAction(52, true, 'fitTwoPages'); // Ctrl+4
-	keyHandler.bindAction(100, true, 'fitTwoPages'); // Ctrl+4 (Num)
-	keyHandler.bindAction(53, true, 'customZoom'); // Ctrl+5
-	keyHandler.bindAction(101, true, 'customZoom'); // Ctrl+5 (Num)
+	keyHandler.bindAction(72, true, 'resetView'); // Ctrl+H
+	keyHandler.bindAction(72, true, 'fitWindow', true); // Ctrl+Shift+H
+	keyHandler.bindAction(74, true, 'fitPageWidth'); // Ctrl+J
+	keyHandler.bindAction(74, true, 'fitPage', true); // Ctrl+Shift+J
+	keyHandler.bindAction(48, true, 'customZoom'); // Ctrl+0
 	keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
 	keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
 	keyHandler.bindAction(83, true, 'save'); // Ctrl+S

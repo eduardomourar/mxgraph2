@@ -496,10 +496,10 @@ Actions.prototype.init = function()
 	{
 		graph.zoomTo(1);
 		ui.resetScrollbars();
-	}, null, null, 'Ctrl+0');
+	}, null, null, 'Ctrl+H');
 	this.addAction('zoomIn', function(evt) { graph.zoomIn(); }, null, null, 'Ctrl + / Alt+Mousewheel');
 	this.addAction('zoomOut', function(evt) { graph.zoomOut(); }, null, null, 'Ctrl - / Alt+Mousewheel');
-	this.addAction('fitWindow', function() { graph.fit(); }, null, null, 'Ctrl+1');
+	this.addAction('fitWindow', function() { graph.fit(); }, null, null, 'Ctrl+Shift+H');
 	this.addAction('fitPage', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
@@ -520,7 +520,7 @@ Actions.prototype.init = function()
 			graph.container.scrollTop = pad.y * graph.view.scale;
 			graph.container.scrollLeft = Math.min(pad.x * graph.view.scale, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}), null, null, 'Ctrl+3');
+	}), null, null, 'Ctrl+Shift+J');
 	this.addAction('fitTwoPages', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
@@ -542,7 +542,7 @@ Actions.prototype.init = function()
 			graph.container.scrollTop = Math.min(pad.y, (graph.container.scrollHeight - graph.container.clientHeight) / 2);
 			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}), null, null, 'Ctrl+4');
+	}));
 	this.addAction('fitPageWidth', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
@@ -563,7 +563,7 @@ Actions.prototype.init = function()
 			graph.container.scrollLeft = Math.min(pad.x * graph.view.scale,
 				(graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}), null, null, 'Ctrl+2');
+	}), null, null, 'Ctrl+J');
 	this.put('customZoom', new Action(mxResources.get('custom') + '...', mxUtils.bind(this, function()
 	{
 		var dlg = new FilenameDialog(this.editorUi, parseInt(graph.getView().getScale() * 100), mxResources.get('apply'), mxUtils.bind(this, function(newValue)
@@ -577,7 +577,7 @@ Actions.prototype.init = function()
 		}), mxResources.get('zoom') + ' (%)');
 		this.editorUi.showDialog(dlg.container, 300, 80, true, true);
 		dlg.init();
-	}), null, null, 'Ctrl+5'));
+	}), null, null, 'Ctrl+0'));
 	
 	// Option actions
 	var action = null;
