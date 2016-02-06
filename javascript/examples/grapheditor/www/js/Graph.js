@@ -681,7 +681,6 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 				else if (tapAndHoldSelection != null)
 				{
 					this.addSelectionCells(tapAndHoldSelection);
-					tapAndHoldSelection = null;
 				}
 				else if (this.getSelectionCount() > 1 && this.isCellSelected(cell))
 				{
@@ -689,6 +688,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 				}
 				
 				// Blocks further processing of the event
+				tapAndHoldSelection = null;
 				evt.consume();
 			}
 		}));
