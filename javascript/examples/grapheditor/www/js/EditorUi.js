@@ -159,13 +159,20 @@ EditorUi = function(editor, container)
    	// Escape key hides dialogs, adds space+drag panning
 	var spaceKeyPressed = false;
 	
+	// Overrides hovericons to disable while space key is pressed
+	var hoverIconsIsResetEvent = this.hoverIcons.isResetEvent;
+	
+	this.hoverIcons.isResetEvent = function(evt, allowShift)
+	{
+		return spaceKeyPressed || hoverIconsIsResetEvent.apply(this, arguments);
+	};
+	
 	this.keydownHandler = mxUtils.bind(this, function(evt)
 	{
 		if (evt.which == 32 /* Space */)
 		{
-			this.hoverIcons.setEnabled(false);
-			this.hoverIcons.reset();
 			spaceKeyPressed = true;
+			this.hoverIcons.reset();
 			graph.container.style.cursor = 'move';
 			
 			// Disables scroll after space keystroke with scrollbars
@@ -185,7 +192,6 @@ EditorUi = function(editor, container)
 	this.keyupHandler = mxUtils.bind(this, function(evt)
 	{
 		graph.container.style.cursor = '';
-		this.hoverIcons.setEnabled(true);
 		spaceKeyPressed = false;
 	});
 
