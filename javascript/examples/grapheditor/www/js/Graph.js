@@ -642,6 +642,27 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			return false;
 		};
 		
+		var tapAndHoldSelection = null;
+		
+		// Uses this event to process mouseDown to check the selection state before it is changed
+		this.addListener(mxEvent.FIRE_MOUSE_EVENT, mxUtils.bind(this, function(sender, evt)
+		{
+			if (evt.getProperty('eventName') == 'mouseDown')
+			{
+				var me = evt.getProperty('event');
+				var state = me.getState();
+				
+				if (state != null && !this.isSelectionEmpty() && !this.isCellSelected(state.cell))
+				{
+					tapAndHoldSelection = this.getSelectionCells();
+				}
+				else
+				{
+					tapAndHoldSelection = null;
+				}
+			}
+		}));
+		
 		// Tap and hold on background starts rubberband for multiple selected
 		// cells the cell associated with the event is deselected
 		this.addListener(mxEvent.TAP_AND_HOLD, mxUtils.bind(this, function(sender, evt)
@@ -656,6 +677,11 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 					var pt = mxUtils.convertPoint(this.container,
 							mxEvent.getClientX(me), mxEvent.getClientY(me));
 					rubberband.start(pt.x, pt.y);
+				}
+				else if (tapAndHoldSelection != null)
+				{
+					this.addSelectionCells(tapAndHoldSelection);
+					tapAndHoldSelection = null;
 				}
 				else if (this.getSelectionCount() > 1 && this.isCellSelected(cell))
 				{
