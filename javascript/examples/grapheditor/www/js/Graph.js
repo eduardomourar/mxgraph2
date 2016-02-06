@@ -1834,6 +1834,11 @@ HoverIcons.prototype.inactiveOpacity = 15;
 HoverIcons.prototype.checkCollisions = true;
 
 /**
+ * Specifies if this handler is enabled. Defauls is true.
+ */
+HoverIcons.prototype.enabled = true;
+
+/**
  * Up arrow.
  */
 HoverIcons.prototype.triangleUp = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAOCAYAAAAxDQxDAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6N0ZBN0E3M0U5NjZGMTFFNTg5NTRDNzQwMTgwNDlEQzQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6N0ZBN0E3M0Y5NjZGMTFFNTg5NTRDNzQwMTgwNDlEQzQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo3RkE3QTczQzk2NkYxMUU1ODk1NEM3NDAxODA0OURDNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo3RkE3QTczRDk2NkYxMUU1ODk1NEM3NDAxODA0OURDNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pj625P8AAACySURBVHjaYmRY956BROABxF+A+AgpmpjIsGQjEO8CYidaWeQHtYQNiDmBeAspljGRYMlqqCUwALPMg1oWhWCxBNmyjVCHUGQRyJKlOCyBATaoQ/zItSgciFcQsATdshBSLYqC+oSZhMTCBnVYFLEWgRQuItESGGCG6o0iZFECBZagW5aAyyKQxBwKLUG2bD4Qp6FblAyVoIYlyGAmzDIWKGMmA+0AyGw2RjIKVbIAQIABAFJRHSSk2rPoAAAAAElFTkSuQmCC' :
@@ -2015,6 +2020,22 @@ HoverIcons.prototype.init = function()
 	    	this.resetActiveArrow();
 	    })
 	});
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.isEnabled = function()
+{
+	return this.enabled;
+};
+
+/**
+ * 
+ */
+HoverIcons.prototype.setEnabled = function(value)
+{
+	this.enabled = value;
 };
 
 /**
@@ -2503,7 +2524,7 @@ HoverIcons.prototype.getState = function(state)
  */
 HoverIcons.prototype.update = function(state, x, y)
 {
-	if (!this.graph.connectionArrowsEnabled)
+	if (!this.isEnabled() || !this.graph.connectionArrowsEnabled)
 	{
 		this.reset();
 	}

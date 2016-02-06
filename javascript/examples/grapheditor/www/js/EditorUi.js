@@ -163,6 +163,8 @@ EditorUi = function(editor, container)
 	{
 		if (evt.which == 32 /* Space */)
 		{
+			this.hoverIcons.setEnabled(false);
+			this.hoverIcons.reset();
 			spaceKeyPressed = true;
 			graph.container.style.cursor = 'move';
 			
@@ -183,6 +185,7 @@ EditorUi = function(editor, container)
 	this.keyupHandler = mxUtils.bind(this, function(evt)
 	{
 		graph.container.style.cursor = '';
+		this.hoverIcons.setEnabled(true);
 		spaceKeyPressed = false;
 	});
 
