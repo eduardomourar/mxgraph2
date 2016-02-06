@@ -520,7 +520,7 @@ Actions.prototype.init = function()
 			graph.container.scrollTop = pad.y * graph.view.scale;
 			graph.container.scrollLeft = Math.min(pad.x * graph.view.scale, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}), null, null, 'Ctrl+Shift+J');
+	}), null, null, 'Ctrl+J');
 	this.addAction('fitTwoPages', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
@@ -542,7 +542,7 @@ Actions.prototype.init = function()
 			graph.container.scrollTop = Math.min(pad.y, (graph.container.scrollHeight - graph.container.clientHeight) / 2);
 			graph.container.scrollLeft = Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}));
+	}), null, null, 'Ctrl+Shift+J');
 	this.addAction('fitPageWidth', mxUtils.bind(this, function()
 	{
 		if (!graph.pageVisible)
@@ -563,7 +563,7 @@ Actions.prototype.init = function()
 			graph.container.scrollLeft = Math.min(pad.x * graph.view.scale,
 				(graph.container.scrollWidth - graph.container.clientWidth) / 2);
 		}
-	}), null, null, 'Ctrl+J');
+	}));
 	this.put('customZoom', new Action(mxResources.get('custom') + '...', mxUtils.bind(this, function()
 	{
 		var dlg = new FilenameDialog(this.editorUi, parseInt(graph.getView().getScale() * 100), mxResources.get('apply'), mxUtils.bind(this, function(newValue)

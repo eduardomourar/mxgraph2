@@ -3196,8 +3196,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(46, true, 'deleteAll'); // Ctrl+Delete
 	keyHandler.bindAction(72, true, 'resetView'); // Ctrl+H
 	keyHandler.bindAction(72, true, 'fitWindow', true); // Ctrl+Shift+H
-	keyHandler.bindAction(74, true, 'fitPageWidth'); // Ctrl+J
-	keyHandler.bindAction(74, true, 'fitPage', true); // Ctrl+Shift+J
+	keyHandler.bindAction(74, true, 'fitPage'); // Ctrl+J
+	keyHandler.bindAction(74, true, 'fitTwoPages', true); // Ctrl+Shift+J
 	keyHandler.bindAction(48, true, 'customZoom'); // Ctrl+0
 	keyHandler.bindAction(82, true, 'turn'); // Ctrl+R
 	keyHandler.bindAction(82, true, 'clearDefaultStyle', true); // Ctrl+Shift+R
