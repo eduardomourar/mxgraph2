@@ -2059,14 +2059,14 @@ EditorUi.prototype.updateActionStates = function()
 	this.actions.get('wordWrap').setEnabled(vertexSelected);
 	this.actions.get('autosize').setEnabled(vertexSelected);
 	this.actions.get('collapsible').setEnabled(vertexSelected);
-	this.actions.get('group').setEnabled(graph.getSelectionCount() > 1 ||
-		(oneVertexSelected || !graph.isContainer(graph.getSelectionCell())));
    	var oneVertexSelected = vertexSelected && graph.getSelectionCount() == 1;
+	this.actions.get('group').setEnabled(graph.getSelectionCount() > 1 ||
+		(oneVertexSelected && !graph.isContainer(graph.getSelectionCell())));
 	this.actions.get('ungroup').setEnabled(graph.getSelectionCount() == 1 &&
 		(graph.getModel().getChildCount(graph.getSelectionCell()) > 0 ||
 		(oneVertexSelected && graph.isContainer(graph.getSelectionCell()))));
    	this.actions.get('removeFromGroup').setEnabled(oneVertexSelected &&
-   			graph.getModel().isVertex(graph.getModel().getParent(graph.getSelectionCell())));
+   		graph.getModel().isVertex(graph.getModel().getParent(graph.getSelectionCell())));
 
 	// Updates menu states
    	var state = graph.view.getState(graph.getSelectionCell());
@@ -2081,13 +2081,16 @@ EditorUi.prototype.updateActionStates = function()
     this.actions.get('collapse').setEnabled(foldable);
     this.actions.get('editLink').setEnabled(graph.getSelectionCount() == 1);
     this.actions.get('openLink').setEnabled(graph.getSelectionCount() == 1 &&
-    		graph.getLinkForCell(graph.getSelectionCell()) != null);
+    	graph.getLinkForCell(graph.getSelectionCell()) != null);
     this.actions.get('guides').setEnabled(graph.isEnabled());
     this.actions.get('grid').setEnabled(graph.isEnabled());
 
     var unlocked = graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent());
     this.menus.get('layout').setEnabled(unlocked);
     this.menus.get('insert').setEnabled(unlocked);
+    this.menus.get('direction').setEnabled(unlocked && vertexSelected);
+    this.menus.get('align').setEnabled(unlocked && vertexSelected && graph.getSelectionCount() > 1);
+    this.menus.get('distribute').setEnabled(unlocked && vertexSelected && graph.getSelectionCount() > 1);
     this.actions.get('selectVertices').setEnabled(unlocked);
     this.actions.get('selectEdges').setEnabled(unlocked);
     this.actions.get('selectAll').setEnabled(unlocked);
