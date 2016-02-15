@@ -1,3 +1,4 @@
+- Fixes label rendering for schema example in IE10/11 [JavaScript]
 - Adds mxUtils.getAll asynchronous request barrier [JavaScript]
 - Adds asynchronous loading for resources in grapheditor [JavaScript]
 - Adds mxResources.loadResources, callback argument in add [JavaScript]
