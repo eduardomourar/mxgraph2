@@ -1,3 +1,4 @@
+- Fixes bounding box for special cases of empty strings [JavaScript]
 - Fixes label rendering for schema example in IE10/11 [JavaScript]
 - Adds mxUtils.getAll asynchronous request barrier [JavaScript]
 - Adds asynchronous loading for resources in grapheditor [JavaScript]

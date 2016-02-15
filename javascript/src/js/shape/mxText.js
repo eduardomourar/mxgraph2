@@ -434,11 +434,15 @@ mxText.prototype.updateBoundingBox = function()
 					// Workaround for bounding box of empty string
 					if (typeof(this.value) == 'string' && mxUtils.trim(this.value) == 0)
 					{
+						this.boundingBox = null;
+						
 						return;
 					}
 					
 					if (b.width == 0 && b.height == 0)
 					{
+						this.boundingBox = null;
+						
 						return;
 					}
 					
