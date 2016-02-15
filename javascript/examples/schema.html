@@ -409,61 +409,7 @@
 					}
 				});
 
-				// Defines a new export action
-				editor.addAction('createGears', function(editor, cell)
-				{
-					var sql = createSql(graph);
-					
-					if (sql.length > 0)
-					{
-						loadGoogleGears();
-	
-						try
-						{					
-							var db = google.gears.factory.create('beta.database', '1.0');
-							var name = mxUtils.prompt('Enter name of new database', 'MyDatabase');
-							
-							if (name != null)
-							{						
-								db.open(name);
-		
-								// Checks if database is empty
-								var rs = db.execute('SELECT * FROM sqlite_master');
-								
-								if (rs.isValidRow())
-								{
-									if (mxUtils.confirm(name+' exists. Do you want to continue? This will replace existing tables.') == 0)
-									{
-										return;
-									}
-								}
-	
-								try
-								{
-									db.execute(sql);
-									mxUtils.alert(name+' successfully created');
-								}
-								catch (e)
-								{
-									mxUtils.alert('SQL Error: '+e.message);
-								}
-							}
-						}
-						catch (e)
-						{
-							mxUtils.alert('Google Gears is not available: '+e.message);
-						}
-					}
-					else
-					{
-						mxUtils.alert('Schema is empty');
-					}
-				});
-
 				addToolbarButton(editor, toolbar, 'showSql', 'Show SQL', 'images/export1.png');
-				addToolbarButton(editor, toolbar, 'createGears', 'Create in Google Gears', 'images/export1.png');
-
-				toolbar.appendChild(spacer.cloneNode(true));
 
 				// Defines export XML action
 				editor.addAction('export', function(editor, cell)
