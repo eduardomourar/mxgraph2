@@ -1065,7 +1065,7 @@ PrintDialog.createPrintPreview = function(graph, scale, pf, border, x0, y0, auto
 /**
  * Constructs a new filename dialog.
  */
-var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content)
+var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content, helpLink)
 {
 	var row, td;
 	
@@ -1194,6 +1194,17 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	if (editorUi.editor.cancelFirst)
 	{
 		td.appendChild(cancelBtn);
+	}
+	
+	if (!editorUi.isOffline() && helpLink != null)
+	{
+		var helpBtn = mxUtils.button(mxResources.get('help'), function()
+		{
+			window.open(helpLink);
+		});
+		
+		helpBtn.className = 'geBtn';	
+		td.appendChild(helpBtn);
 	}
 
 	mxEvent.addListener(nameInput, 'keypress', function(e)
