@@ -199,14 +199,14 @@ mxPrintPreview.prototype.border = 0;
 /**
  * Variable: marginTop
  * 
- * The margin at the top of the page. Default is 0.
+ * The margin at the top of the page (number). Default is 0.
  */
 mxPrintPreview.prototype.marginTop = 0;
 
 /**
  * Variable: marginBottom
  * 
- * The margin at the bottom of the page. Default is 0.
+ * The margin at the bottom of the page (number). Default is 0.
  */
 mxPrintPreview.prototype.marginBottom = 0;
 
