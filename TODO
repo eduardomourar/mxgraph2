@@ -1,14 +1,17 @@
+- Add mxClient.IS_CHROMEAPP
+- Add selection for objects underneath current selection
+
+- Add fallback for foreignObject switch text
 - Fix reconnect preview during remove change
 - Fix move of terminal during connect preview
+- Add orthogonal routing in loop router
+
+- Add unscaled coordinates
 - Add dx/dy for absolute offsets in stencil XML
 - Add exitDx/Dy and entryDx/Dy styles for absolute offsets in ports
-
-- Add orthogonal routing in loop router
-- Add unscaled coordinates
-- Add mxClient.IS_CHROMEAPP
 - Update Dotnet for latest Visual Studio community edition
 
-- Add caching for text sizes with NO_FO, replace foreignObject for simple text
+- Add caching for text sizes with NO_FO
 - Use getBoundingClientRect for VML in mxShape
 - Add lineSpacing, jetty-size and source-/targetConstraint styles
 - Fix support for labelPadding, add support for borderWidth (for text)
