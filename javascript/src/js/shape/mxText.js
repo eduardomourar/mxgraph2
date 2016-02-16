@@ -1124,7 +1124,20 @@ mxText.prototype.updateSize = function(node, enableWrap)
 				sizeDiv = sizeDiv.firstChild;
 			}
 			
-			var tmp = sizeDiv.offsetWidth + 3;
+			var tmp = sizeDiv.offsetWidth;
+			
+			// Workaround for text measuring in hidden containers
+			if (tmp == 0)
+			{
+				var prev = node.parentNode;
+				node.style.visibility = 'hidden';
+				document.body.appendChild(node);
+				tmp = sizeDiv.offsetWidth;
+				node.style.visibility = '';
+				prev.appendChild(node);
+			}
+
+			tmp += 3;
 			
 			if (this.clipped)
 			{

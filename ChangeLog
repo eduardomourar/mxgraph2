@@ -1,3 +1,4 @@
+- Fixes text size for hidden containers in mxText [JavaScript]
 - Fixes valid data URIs in mxGraph.postProcessCellStyle [JavaScript]
 - Fixes bounding box for special cases of empty strings [JavaScript]
 - Fixes label rendering for schema example in IE10/11 [JavaScript]
