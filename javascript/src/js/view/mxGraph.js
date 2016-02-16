@@ -3191,7 +3191,8 @@ mxGraph.prototype.postProcessCellStyle = function(style)
 			{
 				var comma = image.indexOf(',');
 				
-				if (comma > 0)
+				// Adds base64 encoding prefix if needed
+				if (comma > 0 && image.substring(comma - 7, comma + 1) != ';base64,')
 				{
 					image = image.substring(0, comma) + ';base64,'
 						+ image.substring(comma + 1);
