@@ -2429,13 +2429,13 @@ var mxUtils =
 			offsetLeft += offset.x;
 			offsetTop += offset.y;
 		}
-
-		while (container.offsetParent)
+		
+		var r = container.getBoundingClientRect();
+		
+		if (r != null)
 		{
-			offsetLeft += container.offsetLeft;
-			offsetTop += container.offsetTop;
-			
-			container = container.offsetParent;
+			offsetLeft += r.left;
+			offsetTop += r.top;
 		}
 		
 		return new mxPoint(offsetLeft, offsetTop);
