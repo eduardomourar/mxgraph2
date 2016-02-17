@@ -1,3 +1,5 @@
+- Add style for start-/endArrow fill color
+
 - Add selection for objects underneath current selection
 - Add fallback for foreignObject switch text
 - Fix reconnect preview during remove change
