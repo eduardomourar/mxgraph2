@@ -135,6 +135,13 @@ var mxClient =
 	 */
   	IS_GC: navigator.userAgent.indexOf('Chrome/') >= 0 &&
 		navigator.userAgent.indexOf('Edge/') < 0,
+	
+	/**
+	 * Variable: IS_CHROMEAPP
+	 *
+	 * True if the this is running inside a Chrome App.
+	 */
+  	IS_CHROMEAPP: window.chrome != null && chrome.app != null && chrome.app.runtime != null,
 		
 	/**
 	 * Variable: IS_FF

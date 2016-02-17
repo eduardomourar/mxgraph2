@@ -1,10 +1,7 @@
-- Add mxClient.IS_CHROMEAPP
 - Add selection for objects underneath current selection
-
 - Add fallback for foreignObject switch text
 - Fix reconnect preview during remove change
 - Fix move of terminal during connect preview
-- Add orthogonal routing in loop router
 
 - Add unscaled coordinates
 - Add dx/dy for absolute offsets in stencil XML
