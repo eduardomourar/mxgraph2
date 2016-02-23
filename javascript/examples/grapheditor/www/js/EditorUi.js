@@ -967,13 +967,13 @@ EditorUi.prototype.init = function()
 	mxEvent.addListener(graph.container, 'keypress', mxUtils.bind(this, function(evt)
 	{
 		// KNOWN: Focus does not work if label is empty in quirks mode
-		if (!graph.isEditing() && !graph.isSelectionEmpty() && evt.which !== 0 &&
+		if (this.isImmediateEditingEvent(evt) && !graph.isEditing() && !graph.isSelectionEmpty() && evt.which !== 0 &&
 			!mxEvent.isAltDown(evt) && !mxEvent.isControlDown(evt) && !mxEvent.isMetaDown(evt))
 		{
 			graph.escape();
 			graph.startEditing();
 
-			// Workaround for FF where char is lost of cursor is placed before char
+			// Workaround for FF where char is lost if cursor is placed before char
 			if (mxClient.IS_FF)
 			{
 				var ce = graph.cellEditor;
@@ -1025,6 +1025,14 @@ EditorUi.prototype.init = function()
 	{
 		this.format.init();
 	}
+};
+
+/**
+ * Returns true if the given event should start editing. This implementation returns true.
+ */
+EditorUi.prototype.isImmediateEditingEvent = function(evt)
+{
+	return true;
 };
 
 /**
