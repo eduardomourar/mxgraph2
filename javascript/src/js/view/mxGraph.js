@@ -4156,8 +4156,9 @@ mxGraph.prototype.getBoundingBox = function(cells)
  * cells - Array of <mxCells> to be cloned.
  * allowInvalidEdges - Optional boolean that specifies if invalid edges
  * should be cloned. Default is true.
+ * mapping - Optional mapping for existing clones.
  */
-mxGraph.prototype.cloneCells = function(cells, allowInvalidEdges)
+mxGraph.prototype.cloneCells = function(cells, allowInvalidEdges, mapping)
 {
 	allowInvalidEdges = (allowInvalidEdges != null) ? allowInvalidEdges : true;
 	var clones = null;
@@ -4178,7 +4179,7 @@ mxGraph.prototype.cloneCells = function(cells, allowInvalidEdges)
 		{
 			var scale = this.view.scale;
 			var trans = this.view.translate;
-			clones = this.model.cloneCells(cells, true);
+			clones = this.model.cloneCells(cells, true, mapping);
 		
 			for (var i = 0; i < cells.length; i++)
 			{
@@ -5766,10 +5767,19 @@ mxGraph.prototype.extendParent = function(cell)
  * Clones and inserts the given cells into the graph using the move
  * method and returns the inserted cells. This shortcut is used if
  * cells are inserted via datatransfer.
+ * 
+ * Parameters:
+ * 
+ * cells - Array of <mxCells> to be imported.
+ * dx - Integer that specifies the x-coordinate of the vector. Default is 0.
+ * dy - Integer that specifies the y-coordinate of the vector. Default is 0.
+ * target - <mxCell> that represents the new parent of the cells.
+ * evt - Mouseevent that triggered the invocation.
+ * mapping - Optional mapping for existing clones.
  */
-mxGraph.prototype.importCells = function(cells, dx, dy, target, evt)
+mxGraph.prototype.importCells = function(cells, dx, dy, target, evt, mapping)
 {	
-	return this.moveCells(cells, dx, dy, true, target, evt);
+	return this.moveCells(cells, dx, dy, true, target, evt, mapping);
 };
 
 /**
@@ -5795,8 +5805,9 @@ mxGraph.prototype.importCells = function(cells, dx, dy, target, evt)
  * clone - Boolean indicating if the cells should be cloned. Default is false.
  * target - <mxCell> that represents the new parent of the cells.
  * evt - Mouseevent that triggered the invocation.
+ * mapping - Optional mapping for existing clones.
  */
-mxGraph.prototype.moveCells = function(cells, dx, dy, clone, target, evt)
+mxGraph.prototype.moveCells = function(cells, dx, dy, clone, target, evt, mapping)
 {
 	dx = (dx != null) ? dx : 0;
 	dy = (dy != null) ? dy : 0;
@@ -5854,7 +5865,7 @@ mxGraph.prototype.moveCells = function(cells, dx, dy, clone, target, evt)
 			
 			if (clone)
 			{
-				cells = this.cloneCells(cells, this.isCloneInvalidEdges());
+				cells = this.cloneCells(cells, this.isCloneInvalidEdges(), mapping);
 
 				if (target == null)
 				{
