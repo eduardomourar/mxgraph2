@@ -51,9 +51,16 @@ mxConstants.VML_SHADOWCOLOR = '#d0d0d0';
 mxGraph.prototype.pageBreakColor = '#c0c0c0';
 mxGraph.prototype.pageScale = 1;
 
-//Matches label positions of mxGraph 1.x
+// Matches label positions of mxGraph 1.x
 mxText.prototype.baseSpacingTop = 5;
 mxText.prototype.baseSpacingBottom = 1;
+
+// Defines grid properties
+mxGraphView.prototype.gridImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
+	IMAGE_PATH + '/grid.gif';
+mxGraphView.prototype.gridSteps = 4;
+mxGraphView.prototype.gridColor = urlParams['gridcolor'] || '#e0e0e0';
+mxGraphView.prototype.minGridSize = 4;
 
 //Adds stylesheet for IE6
 if (mxClient.IS_IE6)
@@ -556,19 +563,6 @@ OpenFile.prototype.cancel = function(cancel)
  */
 (function()
 {
-	// Steps for large grid lines (times small grid lines)
-	mxGraphView.prototype.gridSteps = 4;
-	
-	// Steps for large grid lines (times small grid lines)
-	mxGraphView.prototype.gridColor = urlParams['gridcolor'] || '#eaeaea';
-	
-	// Minimum grid line distance
-	mxGraphView.prototype.minGridSize = 4;
-	
-	// Grid image is not currently used in SVG
-	mxGraphView.prototype.gridImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
-		IMAGE_PATH + '/grid.gif';
-	
 	// Uses HTML for background pages (to support grid background image)
 	mxGraphView.prototype.validateBackgroundPage = function()
 	{
