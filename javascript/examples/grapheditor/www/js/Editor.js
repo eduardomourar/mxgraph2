@@ -268,6 +268,17 @@ Editor.prototype.readGraphState = function(node)
 		this.graph.pageScale = mxGraph.prototype.pageScale;
 	}
 	
+	var gc = node.getAttribute('gridColor');
+	
+	if (gc != null)
+	{
+		this.graph.view.gridColor = gc;
+	}
+	else
+	{
+		this.graph.view.gridColor = mxGraphView.prototype.gridColor;
+	}
+	
 	var pv = node.getAttribute('page');
 	
 	if (pv != null)
@@ -662,7 +673,7 @@ OpenFile.prototype.cancel = function(cancel)
 	{
 		var graph = this.graph;
 		var color = (graph.background == null || graph.background == mxConstants.NONE) ? '#ffffff' : graph.background;
-		var gridColor = (this.gridColor != color) ? this.gridColor : '#ffffff';
+		var gridColor = (this.gridColor.toLowerCase() != color.toLowerCase()) ? this.gridColor : '#ffffff';
 		var image = 'none';
 		var position = '';
 		
