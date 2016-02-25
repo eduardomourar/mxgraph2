@@ -349,21 +349,6 @@ EditorUi = function(editor, container)
     // Enables scrollbars and sets cursor style for the container
 	graph.container.setAttribute('tabindex', '0');
    	graph.container.style.cursor = 'default';
-    graph.container.style.backgroundImage = 'url(' + editor.gridImage + ')';
-    graph.container.style.backgroundPosition = '-1px -1px';
-
-	var noBackground = (mxClient.IS_IE && document.documentMode >= 9) ? 'url(' + this.editor.transparentImage + ')' : 'none';
-	graph.container.style.backgroundImage = noBackground;
-	var bgImg = (!graph.pageVisible && graph.isGridEnabled()) ? 'url(' + this.editor.gridImage + ')' : noBackground;
-	
-	if (graph.view.canvas.ownerSVGElement != null)
-	{
-		graph.view.canvas.ownerSVGElement.style.backgroundImage = bgImg;
-	}
-	else
-	{
-		graph.view.canvas.style.backgroundImage = bgImg;
-	}
     
 	// Workaround for page scroll if embedded via iframe
 	if (window.self === window.top)
@@ -878,6 +863,30 @@ EditorUi = function(editor, container)
 	this.editor.addListener('resetGraphView', mxUtils.bind(this, function()
 	{
 		this.resetScrollbars();
+	}));
+	
+	/**
+	 * Repaints the grid.
+	 */
+	this.addListener('gridEnabledChanged', mxUtils.bind(this, function()
+	{
+		graph.view.validateBackground();
+	}));
+	
+	this.addListener('backgroundColorChanged', mxUtils.bind(this, function()
+	{
+		graph.view.validateBackground();
+	}));
+
+	/**
+	 * Repaints the grid.
+	 */
+	graph.addListener('gridSizeChanged', mxUtils.bind(this, function()
+	{
+		if (graph.isGridEnabled())
+		{
+			graph.view.validateBackground();
+		}
 	}));
 
    	// Resets UI, updates action and menu states
@@ -1932,7 +1941,7 @@ EditorUi.prototype.resetScrollbars = function()
 EditorUi.prototype.setBackgroundColor = function(value)
 {
 	this.editor.graph.background = value;
-	this.editor.updateGraphComponents();
+	this.editor.graph.view.validateBackground();
 
 	this.fireEvent(new mxEventObject('backgroundColorChanged'));
 };
@@ -1961,7 +1970,6 @@ EditorUi.prototype.setPageFormat = function(value)
 	}
 	else
 	{
-		this.editor.updateGraphComponents();
 		this.editor.graph.view.validateBackground();
 		this.editor.graph.sizeDidChange();
 	}

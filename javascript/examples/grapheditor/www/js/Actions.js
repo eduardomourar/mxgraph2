@@ -584,7 +584,6 @@ Actions.prototype.init = function()
 	action = this.addAction('grid', function()
 	{
 		graph.setGridEnabled(!graph.isGridEnabled());
-		editor.updateGraphComponents();
 		ui.fireEvent(new mxEventObject('gridEnabledChanged'));
 	}, null, null, 'Ctrl+Shift+G');
 	action.setToggleAction(true);
@@ -635,7 +634,7 @@ Actions.prototype.init = function()
 		graph.pageVisible = !graph.pageVisible;
 		graph.pageBreaksVisible = graph.pageVisible; 
 		graph.preferPageSize = graph.pageBreaksVisible;
-		editor.updateGraphComponents();
+		graph.view.validateBackground();
 
 		// Removes background page
 		graph.refresh();

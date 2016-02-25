@@ -304,6 +304,12 @@ div.mxWindow .geButton {
 	box-shadow:none !important;
 	filter:none !important;
 }
+.geDiagramBackdrop {
+	background-color: #ebebeb;
+	border-style: solid;
+	border-color: #e5e5e5;
+	border-width: 1px 0px 0px 1px;
+}
 .geSidebarContainer {
 	background:#ffffff;
 	overflow:hidden;

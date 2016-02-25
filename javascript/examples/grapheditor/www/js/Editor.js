@@ -116,12 +116,6 @@ Editor = function(chromeless, themes)
 mxUtils.extend(Editor, mxEventSource);
 
 /**
- * Specifies the image URL to be used for the grid.
- */
-Editor.prototype.gridImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
-	IMAGE_PATH + '/grid.gif';
-
-/**
  * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
  * cannot be detected in Firefox, see above).
  */
@@ -219,7 +213,7 @@ Editor.prototype.createGraph = function(themes)
  */
 Editor.prototype.resetGraph = function()
 {
-	this.graph.gridEnabled = true;
+	this.graph.gridEnabled = !this.chromeless || urlParams['grid'] == '1';
 	this.graph.graphHandler.guidesEnabled = true;
 	this.graph.setTooltips(true);
 	this.graph.setConnectable(true);
@@ -240,7 +234,7 @@ Editor.prototype.resetGraph = function()
  */
 Editor.prototype.readGraphState = function(node)
 {
-	this.graph.gridEnabled = node.getAttribute('grid') != '0';
+	this.graph.gridEnabled = node.getAttribute('grid') != '0' && (!this.chromeless || urlParams['grid'] == '1');
 	this.graph.gridSize = parseFloat(node.getAttribute('gridSize')) || mxGraph.prototype.gridSize;
 	this.graph.graphHandler.guidesEnabled = node.getAttribute('guides') != '0';
 	this.graph.setTooltips(node.getAttribute('tooltips') != '0');
@@ -409,58 +403,7 @@ Editor.prototype.updateGraphComponents = function()
 	
 	if (graph.container != null)
 	{
-		var bg = (graph.background == null || graph.background == 'none') ? '#ffffff' : graph.background;
-		
-		if (graph.view.backgroundPageShape != null)
-		{
-			graph.view.backgroundPageShape.fill = bg;
-			graph.view.backgroundPageShape.redraw();
-		}
-
-		// Transparent.gif is a workaround for focus repaint problems in IE and clipping issues in webkit
-		var noBackground = 'url(' + this.transparentImage + ')';
-		var bgImg = (!graph.pageVisible && graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : noBackground;
-		
-		// Needed to align background position for grid
-		if (graph.isGridEnabled())
-		{
-			graph.view.validateBackground();
-		}
-
-		if (graph.view.canvas.ownerSVGElement != null)
-		{
-			// FIXME: Initial background clipping bug if page view disabled in webkit
-			graph.view.canvas.ownerSVGElement.style.backgroundImage = bgImg;
-		}
-		else
-		{
-			graph.view.canvas.style.backgroundImage = bgImg;
-		}
-		
-		graph.container.style.backgroundImage = noBackground;
-				
-		if (graph.view.backgroundPageShape != null)
-		{
-			graph.view.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ? 'url(' + this.gridImage + ')' : 'none';
-		}
-		
-		graph.container.style.backgroundColor = bg;
-
-		if (graph.pageVisible)
-		{
-			graph.container.style.backgroundColor = '#ebebeb';
-			graph.container.style.borderStyle = 'solid';
-			graph.container.style.borderColor = '#e5e5e5';
-			graph.container.style.borderTopWidth = '1px';
-			graph.container.style.borderLeftWidth = '1px';
-			graph.container.style.borderRightWidth = '0px';
-			graph.container.style.borderBottomWidth = '0px';
-		}
-		else
-		{
-			graph.container.style.border = '';
-		}
-
+		graph.view.validateBackground();
 		graph.container.style.overflow = (graph.scrollbars) ? 'auto' : 'hidden';
 		
 		this.fireEvent(new mxEventObject('updateGraphComponents'));
@@ -613,123 +556,223 @@ OpenFile.prototype.cancel = function(cancel)
  */
 (function()
 {
+	// Steps for large grid lines (times small grid lines)
+	mxGraphView.prototype.gridSteps = 4;
+	
+	// Minimum grid line distance
+	mxGraphView.prototype.minGridSize = 4;
+	
+	// Grid image is not currently used in SVG
+	mxGraphView.prototype.gridImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
+		IMAGE_PATH + '/grid.gif';
+	
 	// Uses HTML for background pages (to support grid background image)
-	mxGraphView.prototype.validateBackground = function()
+	mxGraphView.prototype.validateBackgroundPage = function()
 	{
-		var bg = this.graph.getBackgroundImage();
+		var graph = this.graph;
 		
-		if (bg != null)
+		if (graph.container != null)
 		{
-			if (this.backgroundImage == null || this.backgroundImage.image != bg.src)
+			if (graph.pageVisible)
 			{
-				if (this.backgroundImage != null)
+				var bounds = this.getBackgroundPageBounds();
+				
+				if (this.backgroundPageShape == null)
 				{
-					this.backgroundImage.destroy();
+					// Finds first element in graph container
+					var firstChild = graph.container.firstChild;
+					
+					while (firstChild != null && firstChild.nodeType != mxConstants.NODETYPE_ELEMENT)
+					{
+						firstChild = firstChild.nextSibling;
+					}
+					
+					if (firstChild != null)
+					{
+						this.backgroundPageShape = this.createBackgroundPageShape(bounds);
+						this.backgroundPageShape.scale = 1;
+						
+						// Shadow filter causes problems in outline window in quirks mode. IE8 standards
+						// also has known rendering issues inside mxWindow but not using shadow is worse.
+						this.backgroundPageShape.isShadow = !mxClient.IS_QUIRKS;
+						this.backgroundPageShape.dialect = mxConstants.DIALECT_STRICTHTML;
+						this.backgroundPageShape.init(graph.container);
+	
+						// Required for the browser to render the background page in correct order
+						firstChild.style.position = 'absolute';
+						graph.container.insertBefore(this.backgroundPageShape.node, firstChild);
+						this.backgroundPageShape.redraw();
+						
+						this.backgroundPageShape.node.className = 'geBackgroundPage';
+						
+						// Adds listener for double click handling on background
+						mxEvent.addListener(this.backgroundPageShape.node, 'dblclick',
+							mxUtils.bind(this, function(evt)
+							{
+								graph.dblClick(evt);
+							})
+						);
+						
+						// Adds basic listeners for graph event dispatching outside of the
+						// container and finishing the handling of a single gesture
+						mxEvent.addGestureListeners(this.backgroundPageShape.node,
+							mxUtils.bind(this, function(evt)
+							{
+								graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt));
+							}),
+							mxUtils.bind(this, function(evt)
+							{
+								// Hides the tooltip if mouse is outside container
+								if (graph.tooltipHandler != null && graph.tooltipHandler.isHideOnHover())
+								{
+									graph.tooltipHandler.hide();
+								}
+								
+								if (graph.isMouseDown && !mxEvent.isConsumed(evt))
+								{
+									graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt));
+								}
+							}),
+							mxUtils.bind(this, function(evt)
+							{
+								graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));
+							})
+						);
+					}
 				}
-				
-				var bounds = new mxRectangle(0, 0, 1, 1);
-				
-				this.backgroundImage = new mxImageShape(bounds, bg.src);
-				this.backgroundImage.dialect = this.graph.dialect;
-				this.backgroundImage.init(this.backgroundPane);
-				this.backgroundImage.redraw();
+				else
+				{
+					this.backgroundPageShape.scale = 1;
+					this.backgroundPageShape.bounds = bounds;
+					this.backgroundPageShape.redraw();
+				}
+			}
+			else if (this.backgroundPageShape != null)
+			{
+				this.backgroundPageShape.destroy();
+				this.backgroundPageShape = null;
 			}
 			
-			this.redrawBackgroundImage(this.backgroundImage, bg);
+			this.validateBackgroundStyles();
 		}
-		else if (this.backgroundImage != null)
-		{
-			this.backgroundImage.destroy();
-			this.backgroundImage = null;
-		}
+	};
+
+	// Updates the CSS of the background to draw the grid
+	mxGraphView.prototype.validateBackgroundStyles = function()
+	{
+		var graph = this.graph;
+		var color = (graph.background == null || graph.background == mxConstants.NONE) ? '#ffffff' : graph.background;
+		var image = 'none';
+		var position = '';
 		
-		if (this.graph.pageVisible && this.graph.container != null)
+		if (graph.isGridEnabled())
 		{
-			var bounds = this.getBackgroundPageBounds();
-
-			if (this.backgroundPageShape == null)
+			var phase = 10;
+			
+			if (mxClient.IS_SVG)
 			{
-				// Finds first child of type element
-				var firstChild = this.graph.container.firstChild;
-				
-				while (firstChild != null && firstChild.nodeType != mxConstants.NODETYPE_ELEMENT)
-				{
-					firstChild = firstChild.nextSibling;
-				}
-				
-				if (firstChild != null)
-				{
-					this.backgroundPageShape = this.createBackgroundPageShape(bounds);
-					this.backgroundPageShape.scale = 1;
-					
-					// Shadow filter causes problems in outline window in quirks mode. IE8 standards
-					// also has known rendering issues inside mxWindow but not using shadow is worse.
-					this.backgroundPageShape.isShadow = !mxClient.IS_QUIRKS;
-					this.backgroundPageShape.dialect = mxConstants.DIALECT_STRICTHTML;
-					this.backgroundPageShape.init(this.graph.container);
-
-					// Required for the browser to render the background page in correct order
-					firstChild.style.position = 'absolute';
-					this.graph.container.insertBefore(this.backgroundPageShape.node, firstChild);
-					this.backgroundPageShape.redraw();
-					
-					this.backgroundPageShape.node.className = 'geBackgroundPage';
-					
-					// Adds listener for double click handling on background
-					mxEvent.addListener(this.backgroundPageShape.node, 'dblclick',
-						mxUtils.bind(this, function(evt)
-						{
-							this.graph.dblClick(evt);
-						})
-					);
-					
-					// Adds basic listeners for graph event dispatching outside of the
-					// container and finishing the handling of a single gesture
-					mxEvent.addGestureListeners(this.backgroundPageShape.node,
-						mxUtils.bind(this, function(evt)
-						{
-							this.graph.fireMouseEvent(mxEvent.MOUSE_DOWN, new mxMouseEvent(evt));
-						}),
-						mxUtils.bind(this, function(evt)
-						{
-							// Hides the tooltip if mouse is outside container
-							if (this.graph.tooltipHandler != null && this.graph.tooltipHandler.isHideOnHover())
-							{
-								this.graph.tooltipHandler.hide();
-							}
-							
-							if (this.graph.isMouseDown && !mxEvent.isConsumed(evt))
-							{
-								this.graph.fireMouseEvent(mxEvent.MOUSE_MOVE, new mxMouseEvent(evt));
-							}
-						}),
-						mxUtils.bind(this, function(evt)
-						{
-							this.graph.fireMouseEvent(mxEvent.MOUSE_UP, new mxMouseEvent(evt));
-						})
-					);
-				}
+				// Generates the SVG required for drawing the dynamic grid
+				image = unescape(encodeURIComponent(this.createSvgGrid()));
+				image = (window.btoa) ? btoa(image) : Base64.encode(image, true);
+				image = 'url(' + 'data:image/svg+xml;base64,' + image + ')'
+				phase = graph.gridSize * this.scale * this.gridSteps;
 			}
 			else
 			{
-				this.backgroundPageShape.scale = 1;
-				this.backgroundPageShape.bounds = bounds;
-				this.backgroundPageShape.redraw();
-				
-				var bds = this.getBackgroundPageBounds();
-				var gs = this.graph.gridSize * this.graph.view.scale;
-				var tx = -1 + (gs - mxUtils.mod(bds.x / this.graph.view.scale - this.translate.x, gs) * this.graph.view.scale);
-				var ty = -1 + (gs - mxUtils.mod(bds.y / this.graph.view.scale - this.translate.y, gs) * this.graph.view.scale);
-				this.backgroundPageShape.node.style.backgroundPosition = Math.round(tx) + 'px ' + Math.round(ty) + 'px';
+				// Fallback to grid wallpaper with fixed size
+				image = 'url(' + this.gridImage + ')';
 			}
 			
-			this.backgroundPageShape.node.style.backgroundImage = (this.graph.isGridEnabled()) ?
-					'url(' + Editor.prototype.gridImage + ')' : 'none';
+			var x0 = 0;
+			var y0 = 0;
+			
+			if (graph.view.backgroundPageShape != null)
+			{
+				var bds = this.getBackgroundPageBounds();
+				
+				x0 = 1 + bds.x;
+				y0 = 1 + bds.y;
+			}
+			
+			// Computes the offset to maintain origin for grid
+			position = -Math.round(phase - mxUtils.mod(this.translate.x * this.scale - x0, phase)) + 'px ' +
+				-Math.round(phase - mxUtils.mod(this.translate.y * this.scale - y0, phase)) + 'px';
 		}
-		else if (this.backgroundPageShape != null)
+		
+		var canvas = graph.view.canvas;
+		
+		if (canvas.ownerSVGElement != null)
 		{
-			this.backgroundPageShape.destroy();
-			this.backgroundPageShape = null;
+			canvas = canvas.ownerSVGElement;
+		}
+		
+		if (graph.view.backgroundPageShape != null)
+		{
+			graph.view.backgroundPageShape.node.style.backgroundPosition = position;
+			graph.view.backgroundPageShape.node.style.backgroundImage = image;
+			graph.container.className = 'geDiagramContainer geDiagramBackdrop';
+			canvas.style.backgroundImage = 'none';
+		}
+		else
+		{
+			graph.container.className = 'geDiagramContainer';
+			canvas.style.backgroundPosition = position;
+			canvas.style.backgroundImage = image;
+		}
+	};
+	
+	// Returns the SVG required for painting the background grid.
+	mxGraphView.prototype.createSvgGrid = function()
+	{
+		var tmp = this.graph.gridSize * this.scale;
+		
+		while (tmp < this.minGridSize)
+		{
+			tmp *= 2;
+		}
+		
+		var tmp2 = this.gridSteps * tmp;
+		
+		// Small grid lines
+		var d = [];
+		
+		for (var i = 1; i < this.gridSteps; i++)
+		{
+			var tmp3 = i * tmp;
+			d.push('M 0 ' + tmp3 + ' L ' + tmp2 + ' ' + tmp3 + ' M ' + tmp3 + ' 0 L ' + tmp3 + ' ' + tmp2);
+		}
+		
+		// KNOWN: Rounding errors for certain scales (eg. 144%, 121% in Chrome, FF and Safari). Workaround
+		// in Chrome is to use 100% for the svg size, but this results in blurred grid for large diagrams.
+		var size = tmp2;
+		var svg =  '<svg width="' + size + '" height="' + size + '" xmlns="' + mxConstants.NS_SVG + '">' +
+		    '<defs><pattern id="grid" width="' + tmp2 + '" height="' + tmp2 + '" patternUnits="userSpaceOnUse">' +
+		    '<path d="' + d.join(' ') + '" fill="none" stroke="#e0e0e0" opacity="0.2" stroke-width="1"/>' +
+		    '<path d="M ' + tmp2 + ' 0 L 0 0 0 ' + tmp2 + '" fill="none" stroke="#e0e0e0" stroke-width="1"/>' +
+		    '</pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>';
+
+		return svg;
+	};
+
+	// Adds panning for the grid with no page view and disabled scrollbars
+	var mxGraphPanGraph = mxGraph.prototype.panGraph;
+	mxGraph.prototype.panGraph = function(dx, dy)
+	{
+		mxGraphPanGraph.apply(this, arguments);
+		
+		if (this.shiftPreview1 != null)
+		{
+			var canvas = this.view.canvas;
+			
+			if (canvas.ownerSVGElement != null)
+			{
+				canvas = canvas.ownerSVGElement;
+			}
+			
+			var phase = this.gridSize * this.view.scale * this.view.gridSteps;
+			var position = -Math.round(phase - mxUtils.mod(this.view.translate.x * this.view.scale + dx, phase)) + 'px ' +
+				-Math.round(phase - mxUtils.mod(this.view.translate.y * this.view.scale + dy, phase)) + 'px';
+			canvas.style.backgroundPosition = position;
 		}
 	};
 	

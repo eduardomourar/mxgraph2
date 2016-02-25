@@ -16,6 +16,7 @@ function Sidebar(editorUi, container)
 	this.graph.resetViewOnRootChange = false;
 	this.graph.foldingEnabled = false;
 	this.graph.setConnectable(false);
+	this.graph.gridEnabled = false;
 	this.graph.autoScroll = false;
 	this.graph.setTooltips(false);
 	this.graph.setEnabled(false);
@@ -248,6 +249,7 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel)
 					this.graph2 = new Graph(this.tooltip, null, null, this.editorUi.editor.graph.getStylesheet());
 					this.graph2.resetViewOnRootChange = false;
 					this.graph2.foldingEnabled = false;
+					this.graph2.gridEnabled = false;
 					this.graph2.autoScroll = false;
 					this.graph2.setTooltips(false);
 					this.graph2.setConnectable(false);

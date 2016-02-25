@@ -4406,7 +4406,6 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 	}, function(checked)
 	{
 		graph.setGridEnabled(checked);
-		ui.editor.updateGraphComponents();
 		ui.fireEvent(new mxEventObject('gridEnabledChanged'));
 	},
 	{
