@@ -59,7 +59,7 @@ mxText.prototype.baseSpacingBottom = 1;
 mxGraphView.prototype.gridImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
 	IMAGE_PATH + '/grid.gif';
 mxGraphView.prototype.gridSteps = 4;
-mxGraphView.prototype.gridColor = urlParams['gridcolor'] || '#e0e0e0';
+mxGraphView.prototype.gridColor = (urlParams['gridcolor'] || '#e0e0e0').toLowerCase();
 mxGraphView.prototype.minGridSize = 4;
 
 //Adds stylesheet for IE6
@@ -272,7 +272,7 @@ Editor.prototype.readGraphState = function(node)
 	
 	if (gc != null)
 	{
-		this.graph.view.gridColor = gc;
+		this.graph.view.gridColor = gc.toLowerCase();
 	}
 	else
 	{
@@ -407,6 +407,11 @@ Editor.prototype.getGraphXml = function(ignoreSelection)
 	node.setAttribute('pageWidth', this.graph.pageFormat.width);
 	node.setAttribute('pageHeight', this.graph.pageFormat.height);
 
+	if (this.graph.view.gridColor != mxGraphView.prototype.gridColor)
+	{
+		node.setAttribute('gridColor', this.graph.view.gridColor);
+	}
+	
 	if (this.graph.background != null)
 	{
 		node.setAttribute('background', this.graph.background);
@@ -673,7 +678,7 @@ OpenFile.prototype.cancel = function(cancel)
 	{
 		var graph = this.graph;
 		var color = (graph.background == null || graph.background == mxConstants.NONE) ? '#ffffff' : graph.background;
-		var gridColor = (this.gridColor.toLowerCase() != color.toLowerCase()) ? this.gridColor : '#ffffff';
+		var gridColor = (this.gridColor != color.toLowerCase()) ? this.gridColor : '#ffffff';
 		var image = 'none';
 		var position = '';
 		
