@@ -213,7 +213,7 @@ Editor.prototype.createGraph = function(themes)
  */
 Editor.prototype.resetGraph = function()
 {
-	this.graph.gridEnabled = !this.chromeless || urlParams['grid'] == '1';
+	this.graph.eEnabled = !this.chromeless || urlParams['grid'] == '1';
 	this.graph.graphHandler.guidesEnabled = true;
 	this.graph.setTooltips(true);
 	this.graph.setConnectable(true);
@@ -559,6 +559,9 @@ OpenFile.prototype.cancel = function(cancel)
 	// Steps for large grid lines (times small grid lines)
 	mxGraphView.prototype.gridSteps = 4;
 	
+	// Steps for large grid lines (times small grid lines)
+	mxGraphView.prototype.gridColor = urlParams['gridcolor'] || '#eaeaea';
+	
 	// Minimum grid line distance
 	mxGraphView.prototype.minGridSize = 4;
 	
@@ -747,8 +750,8 @@ OpenFile.prototype.cancel = function(cancel)
 		var size = tmp2;
 		var svg =  '<svg width="' + size + '" height="' + size + '" xmlns="' + mxConstants.NS_SVG + '">' +
 		    '<defs><pattern id="grid" width="' + tmp2 + '" height="' + tmp2 + '" patternUnits="userSpaceOnUse">' +
-		    '<path d="' + d.join(' ') + '" fill="none" stroke="#e0e0e0" opacity="0.2" stroke-width="1"/>' +
-		    '<path d="M ' + tmp2 + ' 0 L 0 0 0 ' + tmp2 + '" fill="none" stroke="#e0e0e0" stroke-width="1"/>' +
+		    '<path d="' + d.join(' ') + '" fill="none" stroke="' + this.gridColor + '" opacity="0.2" stroke-width="1"/>' +
+		    '<path d="M ' + tmp2 + ' 0 L 0 0 0 ' + tmp2 + '" fill="none" stroke="' + this.gridColor + '" stroke-width="1"/>' +
 		    '</pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>';
 
 		return svg;
