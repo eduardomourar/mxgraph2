@@ -360,7 +360,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			return result;
 		};
 
-		// Overrdes color for virtual guides for page centers
+		// Overrides color for virtual guides for page centers
 		mxGuide.prototype.getGuideColor = function(state, horizontal)
 		{
 			return (state.cell == null) ? '#ffa500' /* orange */ : mxConstants.GUIDE_COLOR;
@@ -369,7 +369,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 		// Changes color of move preview for black backgrounds
 		this.graphHandler.createPreviewShape = function(bounds)
 		{
-			this.previewColor = (this.graph.background == '#000000') ? 'white' : mxGraphHandler.prototype.previewColor;
+			this.previewColor = (this.graph.background == '#000000') ? '#ffffff' : mxGraphHandler.prototype.previewColor;
 			
 			return mxGraphHandler.prototype.createPreviewShape.apply(this, arguments);
 		};
@@ -761,6 +761,11 @@ Graph.prototype.maxFitScale = null;
  * Sets the default target for all links in cells.
  */
 Graph.prototype.linkTarget = '_blank';
+
+/**
+ * Overrides the background color and paints a transparent background.
+ */
+Graph.prototype.transparentBackground = true;
 
 /**
  * Sets the default target for all links in cells.

@@ -212,7 +212,10 @@ Editor.prototype.setAutosave = function(value)
  */
 Editor.prototype.createGraph = function(themes)
 {
-	return new Graph(null, null, null, null, themes);
+	var graph = new Graph(null, null, null, null, themes);
+	graph.transparentBackground = false;
+	
+	return graph;
 };
 
 /**
@@ -568,7 +571,7 @@ OpenFile.prototype.cancel = function(cancel)
 	{
 		var graph = this.graph;
 		
-		if (graph.container != null)
+		if (graph.container != null && !graph.transparentBackground)
 		{
 			if (graph.pageVisible)
 			{
@@ -659,6 +662,7 @@ OpenFile.prototype.cancel = function(cancel)
 	{
 		var graph = this.graph;
 		var color = (graph.background == null || graph.background == mxConstants.NONE) ? '#ffffff' : graph.background;
+		var gridColor = (this.gridColor != color) ? this.gridColor : '#ffffff';
 		var image = 'none';
 		var position = '';
 		
@@ -669,7 +673,7 @@ OpenFile.prototype.cancel = function(cancel)
 			if (mxClient.IS_SVG)
 			{
 				// Generates the SVG required for drawing the dynamic grid
-				image = unescape(encodeURIComponent(this.createSvgGrid()));
+				image = unescape(encodeURIComponent(this.createSvgGrid(gridColor)));
 				image = (window.btoa) ? btoa(image) : Base64.encode(image, true);
 				image = 'url(' + 'data:image/svg+xml;base64,' + image + ')'
 				phase = graph.gridSize * this.scale * this.gridSteps;
@@ -707,19 +711,22 @@ OpenFile.prototype.cancel = function(cancel)
 		{
 			graph.view.backgroundPageShape.node.style.backgroundPosition = position;
 			graph.view.backgroundPageShape.node.style.backgroundImage = image;
+			graph.view.backgroundPageShape.node.style.backgroundColor = color;
 			graph.container.className = 'geDiagramContainer geDiagramBackdrop';
 			canvas.style.backgroundImage = 'none';
+			canvas.style.backgroundColor = '';
 		}
 		else
 		{
 			graph.container.className = 'geDiagramContainer';
 			canvas.style.backgroundPosition = position;
+			canvas.style.backgroundColor = color;
 			canvas.style.backgroundImage = image;
 		}
 	};
 	
 	// Returns the SVG required for painting the background grid.
-	mxGraphView.prototype.createSvgGrid = function()
+	mxGraphView.prototype.createSvgGrid = function(color)
 	{
 		var tmp = this.graph.gridSize * this.scale;
 		
@@ -744,8 +751,8 @@ OpenFile.prototype.cancel = function(cancel)
 		var size = tmp2;
 		var svg =  '<svg width="' + size + '" height="' + size + '" xmlns="' + mxConstants.NS_SVG + '">' +
 		    '<defs><pattern id="grid" width="' + tmp2 + '" height="' + tmp2 + '" patternUnits="userSpaceOnUse">' +
-		    '<path d="' + d.join(' ') + '" fill="none" stroke="' + this.gridColor + '" opacity="0.2" stroke-width="1"/>' +
-		    '<path d="M ' + tmp2 + ' 0 L 0 0 0 ' + tmp2 + '" fill="none" stroke="' + this.gridColor + '" stroke-width="1"/>' +
+		    '<path d="' + d.join(' ') + '" fill="none" stroke="' + color + '" opacity="0.2" stroke-width="1"/>' +
+		    '<path d="M ' + tmp2 + ' 0 L 0 0 0 ' + tmp2 + '" fill="none" stroke="' + color + '" stroke-width="1"/>' +
 		    '</pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>';
 
 		return svg;
@@ -911,12 +918,10 @@ OpenFile.prototype.cancel = function(cancel)
 		return marker;
 	};
 
-	// Changes border color of background page shape
+	// Creates background page shape
 	mxGraphView.prototype.createBackgroundPageShape = function(bounds)
 	{
-		var bg = (this.graph.background == null || this.graph.background == 'none') ? '#ffffff' : this.graph.background;
-		
-		return new mxRectangleShape(bounds, bg, '#cacaca');
+		return new mxRectangleShape(bounds, '#ffffff', '#cacaca');
 	};
 
 	// Fits the number of background pages to the graph
@@ -1087,10 +1092,7 @@ OpenFile.prototype.cancel = function(cancel)
 		
 		return cell;
 	};
-})();
 
-(function()
-{
 	/**
 	 * Adds custom stencils defined via shape=stencil(value) style. The value is a base64 encoded, compressed and
 	 * URL encoded XML definition of the shape according to the stencil definition language of mxGraph.

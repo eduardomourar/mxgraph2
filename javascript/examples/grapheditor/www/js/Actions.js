@@ -636,9 +636,6 @@ Actions.prototype.init = function()
 		graph.preferPageSize = graph.pageBreaksVisible;
 		graph.view.validateBackground();
 
-		// Removes background page
-		graph.refresh();
-		
 		// Workaround for possible handle offset
 		if (hasScrollbars)
 		{
