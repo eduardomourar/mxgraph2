@@ -2998,8 +2998,13 @@ var LayersWindow = function(editorUi, x, y, w, h)
 
 			mxEvent.addListener(ldiv, 'dblclick', function(evt)
 			{
-				renameLayer(child);
-				mxEvent.consume(evt);
+				var nodeName = mxEvent.getSource(evt).nodeName;
+				
+				if (nodeName != 'INPUT' && nodeName != 'IMG')
+				{
+					renameLayer(child);
+					mxEvent.consume(evt);
+				}
 			});
 
 			if (graph.getDefaultParent() == child)
