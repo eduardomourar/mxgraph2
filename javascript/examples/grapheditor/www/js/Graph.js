@@ -3701,6 +3701,49 @@ if (typeof mxVertexHandler != 'undefined')
 			svgCanvas.foOffset = (crisp) ? -0.5 : 0;
 			svgCanvas.textOffset = (crisp) ? -0.5 : 0;
 			svgCanvas.translate(Math.floor((border / scale - bounds.x) / vs), Math.floor((border / scale - bounds.y) / vs));
+
+			// Adds simple text fallback for viewers with no support for foreignObjects
+			var createAlternateContent = svgCanvas.createAlternateContent;
+			svgCanvas.createAlternateContent = function(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation)
+			{
+				var s = this.state;
+				
+				// Assumes a max character width of 0.2em
+				if (this.foAltText != null && (w == 0 ||( s.fontSize != 0 && str.length < (w * 5) / s.fontSize)))
+				{
+					var alt = this.createElement('text');
+					alt.setAttribute('x', Math.round(w / 2));
+					alt.setAttribute('y', Math.round((h + s.fontSize) / 2));
+					alt.setAttribute('fill', s.fontColor || 'black');
+					alt.setAttribute('text-anchor', 'middle');
+					alt.setAttribute('font-size', Math.round(s.fontSize) + 'px');
+					alt.setAttribute('font-family', s.fontFamily);
+					
+					if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
+					{
+						alt.setAttribute('font-weight', 'bold');
+					}
+					
+					if ((s.fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC)
+					{
+						alt.setAttribute('font-style', 'italic');
+					}
+					
+					if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
+					{
+						alt.setAttribute('text-decoration', 'underline');
+					}
+					
+					mxUtils.write(alt, str);
+					
+					return alt;
+				}
+				else
+				{
+					return createAlternateContent.apply(this, arguments);
+				}
+			};
+			
 			
 			// Paints background image
 			var bgImg = this.backgroundImage;
