@@ -228,7 +228,7 @@ Editor.prototype.createGraph = function(themes)
  */
 Editor.prototype.resetGraph = function()
 {
-	this.graph.eEnabled = !this.chromeless || urlParams['grid'] == '1';
+	this.graph.gridEnabled = !this.chromeless || urlParams['grid'] == '1';
 	this.graph.graphHandler.guidesEnabled = true;
 	this.graph.setTooltips(true);
 	this.graph.setConnectable(true);
