@@ -123,6 +123,11 @@ Editor = function(chromeless, themes)
 mxUtils.extend(Editor, mxEventSource);
 
 /**
+ * Stores initial state of mxClient.NO_FO.
+ */
+Editor.prototype.originalNoForeignObject = mxClient.NO_FO;
+
+/**
  * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
  * cannot be detected in Firefox, see above).
  */
