@@ -5001,8 +5001,8 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				x0 = this.first.x;
 				y0 = this.first.y;
-				dx = this.currentX - x0;
-				dy = this.currentY - y0;
+				dx = (this.currentX - x0) / this.graph.view.scale;
+				dy = (this.currentY - y0) / this.graph.view.scale;
 
 				if (!mxEvent.isAltDown(me.getEvent()))
 				{
