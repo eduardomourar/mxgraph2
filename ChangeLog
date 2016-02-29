@@ -1,3 +1,4 @@
+- Ctrl+Shift+Drag added for create/remove space in grapheditor [JavaScript]
 - Adds mxPrintPreview.writePostfix hook [JavaScript]
 - Adds mxSvgCanvas2D.foOffset, textOffset [JavaScript]
 - Adds mapping argument for mxGraph.importCells, moveCells, cloneCells [JavaScript]
