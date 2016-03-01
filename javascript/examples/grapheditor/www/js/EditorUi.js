@@ -1554,16 +1554,38 @@ EditorUi.prototype.initCanvas = function()
 			window.clearTimeout(this.updateZoomTimeout);
 		}
 
+		// Switches to 1% zoom steps below 15%
+		// Lower bound depdends on rounding below
 		if (zoomIn)
 		{
-			this.cumulativeZoomFactor *= this.zoomFactor;
+			if (this.view.scale * this.cumulativeZoomFactor < 0.15)
+			{
+				this.cumulativeZoomFactor = (this.view.scale + 0.01) / this.view.scale;
+			}
+			else
+			{
+				// Uses to 5% zoom steps for better grid rendering in webkit
+				// and to avoid rounding errors for zoom steps
+				this.cumulativeZoomFactor *= this.zoomFactor;
+				this.cumulativeZoomFactor = Math.round(this.view.scale * this.cumulativeZoomFactor * 20) / 20 / this.view.scale;
+			}
 		}
 		else
 		{
-			this.cumulativeZoomFactor /= this.zoomFactor;
+			if (this.view.scale * this.cumulativeZoomFactor <= 0.15)
+			{
+				this.cumulativeZoomFactor = (this.view.scale - 0.01) / this.view.scale;
+			}
+			else
+			{
+				// Uses to 5% zoom steps for better grid rendering in webkit
+				// and to avoid rounding errors for zoom steps
+				this.cumulativeZoomFactor /= this.zoomFactor;
+				this.cumulativeZoomFactor = Math.round(this.view.scale * this.cumulativeZoomFactor * 20) / 20 / this.view.scale;
+			}
 		}
 		
-		this.cumulativeZoomFactor = Math.round(this.view.scale * this.cumulativeZoomFactor * 100) / 100 / this.view.scale;
+		this.cumulativeZoomFactor = Math.max(0.01, Math.min(this.view.scale * this.cumulativeZoomFactor, 160) / this.view.scale);
 		
 		this.updateZoomTimeout = window.setTimeout(mxUtils.bind(this, function()
 		{

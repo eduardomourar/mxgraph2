@@ -1752,13 +1752,53 @@ Graph.prototype.reset = function()
 };
 
 /**
- * Overridden to limit zoom to 160x.
+ * Overridden to limit zoom to 1% - 16.000%.
  */
 Graph.prototype.zoom = function(factor, center)
 {
-	factor = Math.min(this.view.scale * factor, 160) / this.view.scale;
+	factor = Math.max(0.01, Math.min(this.view.scale * factor, 160)) / this.view.scale;
 	
 	mxGraph.prototype.zoom.apply(this, arguments);
+};
+
+/**
+ * Function: zoomIn
+ * 
+ * Zooms into the graph by <zoomFactor>.
+ */
+Graph.prototype.zoomIn = function()
+{
+	// Switches to 1% zoom steps below 15%
+	if (this.view.scale < 0.15)
+	{
+		this.zoom((this.view.scale + 0.01) / this.view.scale);
+	}
+	else
+	{
+		// Uses to 5% zoom steps for better grid rendering in webkit
+		// and to avoid rounding errors for zoom steps
+		this.zoom((Math.round(this.view.scale * this.zoomFactor * 20) / 20) / this.view.scale);
+	}
+};
+
+/**
+ * Function: zoomOut
+ * 
+ * Zooms out of the graph by <zoomFactor>.
+ */
+Graph.prototype.zoomOut = function()
+{
+	// Switches to 1% zoom steps below 15%
+	if (this.view.scale <= 0.15)
+	{
+		this.zoom((this.view.scale - 0.01) / this.view.scale);
+	}
+	else
+	{
+		// Uses to 5% zoom steps for better grid rendering in webkit
+		// and to avoid rounding errors for zoom steps
+		this.zoom((Math.round(this.view.scale * (1 / this.zoomFactor) * 20) / 20) / this.view.scale);
+	}
 };
 
 /**
