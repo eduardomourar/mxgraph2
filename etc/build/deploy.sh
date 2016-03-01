@@ -115,5 +115,5 @@ rm -rf tmp-$date
 
 echo
 echo "Deployed from $BUILD to $WEBROOT"
-echo "Changelog is at http://www.jgraph.com/mxgraphlog.html"
+echo "Changelog is at https://www.jgraph.com/mxchangelog.html"
 echo "Done."
