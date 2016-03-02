@@ -943,9 +943,10 @@ EditorUi.prototype.footerHeight = 28;
 EditorUi.prototype.sidebarFooterHeight = 34;
 
 /**
- * Specifies the height of the horizontal split bar. Default is 204.
+ * Specifies the position of the horizontal split bar. Default is 204 or 120 for
+ * screen widths <= 500px.
  */
-EditorUi.prototype.hsplitPosition = 204;
+EditorUi.prototype.hsplitPosition = (screen.width <= 500) ? 116 : 204;
 
 /**
  * Specifies if animations are allowed in <executeLayout>. Default is true.
@@ -2303,6 +2304,7 @@ EditorUi.prototype.createDivs = function()
 	this.toolbarContainer.style.right = '0px';
 	this.sidebarContainer.style.left = '0px';
 	this.formatContainer.style.right = '0px';
+	this.formatContainer.style.zIndex = '1';
 	this.diagramContainer.style.right = ((this.format != null) ? this.formatWidth : 0) + 'px';
 	this.footerContainer.style.left = '0px';
 	this.footerContainer.style.right = '0px';
