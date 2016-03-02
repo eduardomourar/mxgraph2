@@ -56,6 +56,9 @@ Toolbar.prototype.init = function()
 {
 	var sw = screen.width;
 	
+	// Takes into account initial compact mode
+	sw -= (screen.height > 740) ? 56 : 0;
+	
 	if (sw >= 700)
 	{
 		var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels', null, true);
