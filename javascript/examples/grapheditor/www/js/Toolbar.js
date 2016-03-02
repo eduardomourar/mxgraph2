@@ -56,7 +56,7 @@ Toolbar.prototype.init = function()
 {
 	var sw = screen.width;
 	
-	if (sw >= 760)
+	if (sw >= 700)
 	{
 		var formatMenu = this.addMenu('', mxResources.get('view') + ' (' + mxResources.get('panTooltip') + ')', true, 'viewPanels', null, true);
 		this.addDropDownArrow(formatMenu, 'geSprite-formatpanel', 38, 50, -4, -3, 36, -8);
@@ -78,7 +78,7 @@ Toolbar.prototype.init = function()
 		viewMenu.style.width = (mxClient.IS_QUIRKS) ? '62px' : '36px';
 	}
 	
-	if (sw >= 375)
+	if (sw >= 420)
 	{
 		this.addSeparator();
 		var elts = this.addItems(['zoomIn', 'zoomOut']);
@@ -102,22 +102,27 @@ Toolbar.prototype.init = function()
 	this.editorUi.editor.graph.view.addListener(mxEvent.EVENT_SCALE, updateZoom);
 	this.editorUi.editor.addListener('resetGraphView', updateZoom);
 
-	var elts = this.addItems(['-', 'undo', 'redo', '-', 'delete']);
+	var elts = this.addItems(['-', 'undo', 'redo']);
 	elts[1].setAttribute('title', mxResources.get('undo') + ' (' + this.editorUi.actions.get('undo').shortcut + ')');
 	elts[2].setAttribute('title', mxResources.get('redo') + ' (' + this.editorUi.actions.get('redo').shortcut + ')');
-	elts[4].setAttribute('title', mxResources.get('delete') + ' (' + this.editorUi.actions.get('delete').shortcut + ')');
 	
-	if (sw >= 600)
+	if (sw >= 470)
+	{
+		var elts = this.addItems(['-', 'delete']);
+		elts[1].setAttribute('title', mxResources.get('delete') + ' (' + this.editorUi.actions.get('delete').shortcut + ')');
+	}
+	
+	if (sw >= 550)
 	{
 		this.addItems(['-', 'toFront', 'toBack']);
 	}
 
-	if (sw >= 700)
+	if (sw >= 640)
 	{
 		this.addItems(['-', 'fillColor', 'strokeColor', 'shadow']);
 	}
 	
-	if (sw >= 520)
+	if (sw >= 320)
 	{
 		this.addSeparator();
 		
