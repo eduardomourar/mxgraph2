@@ -202,6 +202,13 @@ mxSvgCanvas2D.prototype.foEnabled = true;
 mxSvgCanvas2D.prototype.foAltText = '[Object]';
 
 /**
+ * Variable: foOffset
+ * 
+ * Offset to be applied for foreignObjects.
+ */
+mxSvgCanvas2D.prototype.foOffset = 0;
+
+/**
  * Variable: strokeTolerance
  * 
  * Adds transparent paths for strokes.
@@ -1737,7 +1744,8 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				tr += 'rotate(' + (rotation) + ',' + (-dx) + ',' + (-dy) + ')';
 			}
 
-			group.setAttribute('transform', 'translate(' + Math.round(x) + ',' + Math.round(y) + ')' + tr);
+			group.setAttribute('transform', 'translate(' + (Math.round(x) + this.foOffset) + ',' +
+				(Math.round(y) + this.foOffset) + ')' + tr);
 			fo.setAttribute('width', Math.round(Math.max(1, w)));
 			fo.setAttribute('height', Math.round(Math.max(1, h)));
 			
