@@ -123,6 +123,11 @@ Editor = function(chromeless, themes)
 mxUtils.extend(Editor, mxEventSource);
 
 /**
+ * Stores initial state of mxClient.NO_FO.
+ */
+Editor.prototype.originalNoForeignObject = mxClient.NO_FO;
+
+/**
  * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
  * cannot be detected in Firefox, see above).
  */
@@ -223,7 +228,7 @@ Editor.prototype.createGraph = function(themes)
  */
 Editor.prototype.resetGraph = function()
 {
-	this.graph.eEnabled = !this.chromeless || urlParams['grid'] == '1';
+	this.graph.gridEnabled = !this.chromeless || urlParams['grid'] == '1';
 	this.graph.graphHandler.guidesEnabled = true;
 	this.graph.setTooltips(true);
 	this.graph.setConnectable(true);

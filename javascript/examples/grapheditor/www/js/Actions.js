@@ -511,7 +511,7 @@ Actions.prototype.init = function()
 		var ps = graph.pageScale;
 		var cw = graph.container.clientWidth - 10;
 		var ch = graph.container.clientHeight - 10;
-		var scale = Math.floor(100 * Math.min(cw / fmt.width / ps, ch / fmt.height / ps)) / 100;
+		var scale = Math.floor(20 * Math.min(cw / fmt.width / ps, ch / fmt.height / ps)) / 20;
 		graph.zoomTo(scale);
 		
 		if (mxUtils.hasScrollbars(graph.container))
@@ -533,7 +533,7 @@ Actions.prototype.init = function()
 		var cw = graph.container.clientWidth - 10;
 		var ch = graph.container.clientHeight - 10;
 		
-		var scale = Math.floor(100 * Math.min(cw / (2 * fmt.width) / ps, ch / fmt.height / ps)) / 100;
+		var scale = Math.floor(20 * Math.min(cw / (2 * fmt.width) / ps, ch / fmt.height / ps)) / 20;
 		graph.zoomTo(scale);
 		
 		if (mxUtils.hasScrollbars(graph.container))
@@ -554,7 +554,7 @@ Actions.prototype.init = function()
 		var ps = graph.pageScale;
 		var cw = graph.container.clientWidth - 10;
 
-		var scale = Math.floor(100 * cw / fmt.width / ps) / 100;
+		var scale = Math.floor(20 * cw / fmt.width / ps) / 20;
 		graph.zoomTo(scale);
 		
 		if (mxUtils.hasScrollbars(graph.container))

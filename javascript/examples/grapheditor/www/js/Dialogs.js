@@ -3073,6 +3073,9 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	this.window.setClosable(true);
 	this.window.setVisible(true);
 	
+	// Make refresh available via instance
+	this.refreshLayers = refresh;
+	
 	this.window.setLocation = function(x, y)
 	{
 		x = Math.max(0, x);

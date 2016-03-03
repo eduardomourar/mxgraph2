@@ -1752,13 +1752,53 @@ Graph.prototype.reset = function()
 };
 
 /**
- * Overridden to limit zoom to 160x.
+ * Overridden to limit zoom to 1% - 16.000%.
  */
 Graph.prototype.zoom = function(factor, center)
 {
-	factor = Math.min(this.view.scale * factor, 160) / this.view.scale;
+	factor = Math.max(0.01, Math.min(this.view.scale * factor, 160)) / this.view.scale;
 	
 	mxGraph.prototype.zoom.apply(this, arguments);
+};
+
+/**
+ * Function: zoomIn
+ * 
+ * Zooms into the graph by <zoomFactor>.
+ */
+Graph.prototype.zoomIn = function()
+{
+	// Switches to 1% zoom steps below 15%
+	if (this.view.scale < 0.15)
+	{
+		this.zoom((this.view.scale + 0.01) / this.view.scale);
+	}
+	else
+	{
+		// Uses to 5% zoom steps for better grid rendering in webkit
+		// and to avoid rounding errors for zoom steps
+		this.zoom((Math.round(this.view.scale * this.zoomFactor * 20) / 20) / this.view.scale);
+	}
+};
+
+/**
+ * Function: zoomOut
+ * 
+ * Zooms out of the graph by <zoomFactor>.
+ */
+Graph.prototype.zoomOut = function()
+{
+	// Switches to 1% zoom steps below 15%
+	if (this.view.scale <= 0.15)
+	{
+		this.zoom((this.view.scale - 0.01) / this.view.scale);
+	}
+	else
+	{
+		// Uses to 5% zoom steps for better grid rendering in webkit
+		// and to avoid rounding errors for zoom steps
+		this.zoom((Math.round(this.view.scale * (1 / this.zoomFactor) * 20) / 20) / this.view.scale);
+	}
 };
 
 /**
@@ -3701,6 +3741,49 @@ if (typeof mxVertexHandler != 'undefined')
 			svgCanvas.foOffset = (crisp) ? -0.5 : 0;
 			svgCanvas.textOffset = (crisp) ? -0.5 : 0;
 			svgCanvas.translate(Math.floor((border / scale - bounds.x) / vs), Math.floor((border / scale - bounds.y) / vs));
+
+			// Adds simple text fallback for viewers with no support for foreignObjects
+			var createAlternateContent = svgCanvas.createAlternateContent;
+			svgCanvas.createAlternateContent = function(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation)
+			{
+				var s = this.state;
+				
+				// Assumes a max character width of 0.2em
+				if (this.foAltText != null && (w == 0 ||( s.fontSize != 0 && str.length < (w * 5) / s.fontSize)))
+				{
+					var alt = this.createElement('text');
+					alt.setAttribute('x', Math.round(w / 2));
+					alt.setAttribute('y', Math.round((h + s.fontSize) / 2));
+					alt.setAttribute('fill', s.fontColor || 'black');
+					alt.setAttribute('text-anchor', 'middle');
+					alt.setAttribute('font-size', Math.round(s.fontSize) + 'px');
+					alt.setAttribute('font-family', s.fontFamily);
+					
+					if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
+					{
+						alt.setAttribute('font-weight', 'bold');
+					}
+					
+					if ((s.fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC)
+					{
+						alt.setAttribute('font-style', 'italic');
+					}
+					
+					if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
+					{
+						alt.setAttribute('text-decoration', 'underline');
+					}
+					
+					mxUtils.write(alt, str);
+					
+					return alt;
+				}
+				else
+				{
+					return createAlternateContent.apply(this, arguments);
+				}
+			};
+			
 			
 			// Paints background image
 			var bgImg = this.backgroundImage;
@@ -4924,6 +5007,214 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			};
 		}
+		else
+		{
+			// Removes ctrl+shift as panning trigger for space splitting
+			mxPanningHandler.prototype.isPanningTrigger = function(me)
+			{
+				var evt = me.getEvent();
+				
+				return (this.useLeftButtonForPanning && me.getState() == null &&
+						mxEvent.isLeftMouseButton(evt)) || (mxEvent.isControlDown(evt) &&
+						!mxEvent.isShiftDown(evt)) || (this.usePopupTrigger && mxEvent.isPopupTrigger(evt));
+			};
+		}
+
+		// Overrides/extends rubberband for space handling with Ctrl+Shift(+Alt) drag
+		mxRubberband.prototype.isSpaceEvent = function(me)
+		{
+			return this.graph.isEnabled() && !this.graph.isCellLocked(this.graph.getDefaultParent()) &&
+				mxEvent.isControlDown(me.getEvent()) && mxEvent.isShiftDown(me.getEvent());
+		};
+		
+		// Handles moving of cells in both half panes
+		mxRubberband.prototype.mouseUp = function(sender, me)
+		{
+			var execute = this.div != null && this.div.style.display != 'none';
+
+			var x0 = null;
+			var y0 = null;
+			var dx = null;
+			var dy = null;
+
+			if (this.first != null && this.currentX != null && this.currentY != null)
+			{
+				x0 = this.first.x;
+				y0 = this.first.y;
+				dx = (this.currentX - x0) / this.graph.view.scale;
+				dy = (this.currentY - y0) / this.graph.view.scale;
+
+				if (!mxEvent.isAltDown(me.getEvent()))
+				{
+					dx = this.graph.snap(dx);
+					dy = this.graph.snap(dy);
+				}
+			}
+			
+			this.reset();
+			
+			if (execute)
+			{
+				if (this.isSpaceEvent(me))
+				{
+					this.graph.model.beginUpdate();
+					try
+					{
+						var right = this.graph.getCellsBeyond(x0, y0, this.graph.getDefaultParent(), true, false);
+						var bottom = this.graph.getCellsBeyond(x0, y0, this.graph.getDefaultParent(), false, true);
+						
+						for (var i = 0; i < right.length; i++)
+						{
+							if (this.graph.isCellMovable(right[i]))
+							{
+								var tmp = this.graph.view.getState(right[i]);
+								var geo = this.graph.getCellGeometry(right[i]);
+								
+								if (tmp != null && geo != null)
+								{
+									geo = geo.clone();
+									geo.translate(dx, 0);
+									this.graph.model.setGeometry(right[i], geo);
+								}
+							}
+						}
+						
+						for (var i = 0; i < bottom.length; i++)
+						{
+							if (this.graph.isCellMovable(bottom[i]))
+							{
+								var tmp = this.graph.view.getState(bottom[i]);
+								var geo = this.graph.getCellGeometry(bottom[i]);
+								
+								if (tmp != null && geo != null)
+								{
+									geo = geo.clone();
+									geo.translate(0, dy);
+									this.graph.model.setGeometry(bottom[i], geo);
+								}
+							}
+						}
+					}
+					catch (e)
+					{
+						console.log(e);
+					}
+					finally
+					{
+						this.graph.model.endUpdate();
+					}
+				}
+				else
+				{
+					var rect = new mxRectangle(this.x, this.y, this.width, this.height);
+					this.graph.selectRegion(rect, me.getEvent());
+				}
+				
+				me.consume();
+			}
+		};
+		
+		// Handles preview for creating/removing space in diagram
+		mxRubberband.prototype.mouseMove = function(sender, me)
+		{
+			if (!me.isConsumed() && this.first != null)
+			{
+				var origin = mxUtils.getScrollOrigin(this.graph.container);
+				var offset = mxUtils.getOffset(this.graph.container);
+				origin.x -= offset.x;
+				origin.y -= offset.y;
+				var x = me.getX() + origin.x;
+				var y = me.getY() + origin.y;
+				var dx = this.first.x - x;
+				var dy = this.first.y - y;
+				var tol = this.graph.tolerance;
+				
+				if (this.div != null || Math.abs(dx) > tol ||  Math.abs(dy) > tol)
+				{
+					if (this.div == null)
+					{
+						this.div = this.createShape();
+					}
+					
+					// Clears selection while rubberbanding. This is required because
+					// the event is not consumed in mouseDown.
+					mxUtils.clearSelection();
+					this.update(x, y);
+					
+					if (this.isSpaceEvent(me))
+					{
+						// TODO: Check locked state
+						var right = this.x + this.width;
+						var bottom = this.y + this.height;
+						var scale = this.graph.view.scale;
+						
+						if (!mxEvent.isAltDown(me.getEvent()))
+						{
+							this.width = this.graph.snap(this.width / scale) * scale;
+							this.height = this.graph.snap(this.height / scale) * scale;
+							
+							if (this.x < this.first.x)
+							{
+								this.x = right - this.width;
+							}
+							
+							if (this.y < this.first.y)
+							{
+								this.y = bottom - this.height;
+							}
+						}
+						
+						this.div.style.left = this.x + 'px';
+						this.div.style.top = (origin.y + offset.y) + 'px';
+						this.div.style.width = Math.max(1, this.width) + 'px';
+						this.div.style.height = Math.max(1, this.graph.container.clientHeight) + 'px';
+						this.div.style.backgroundColor = 'white';
+						this.div.style.borderWidth = '0px 1px 0px 1px';
+						this.div.style.borderStyle = 'dashed';
+						
+						if (this.secondDiv == null)
+						{
+							this.secondDiv = this.div.cloneNode(true);
+							this.div.parentNode.appendChild(this.secondDiv);
+						}
+						
+						this.secondDiv.style.left = (origin.x + offset.x) + 'px';
+						this.secondDiv.style.top = this.y + 'px';
+						this.secondDiv.style.width = Math.max(1, this.graph.container.clientWidth) + 'px';
+						this.secondDiv.style.height = Math.max(1, this.height) + 'px';
+						this.secondDiv.style.borderWidth = '1px 0px 1px 0px';
+					}
+					else
+					{
+						// Hides second div and restores style
+						this.div.style.backgroundColor = '';
+						this.div.style.borderWidth = '';
+						this.div.style.borderStyle = '';
+						
+						if (this.secondDiv != null)
+						{
+							this.secondDiv.parentNode.removeChild(this.secondDiv);
+							this.secondDiv = null;
+						}
+					}
+
+					me.consume();
+				}
+			}
+		};
+		
+		// Removes preview
+		var mxRubberbandReset = mxRubberband.prototype.reset;
+		mxRubberband.prototype.reset = function()
+		{
+			if (this.secondDiv != null)
+			{
+				this.secondDiv.parentNode.removeChild(this.secondDiv);
+				this.secondDiv = null;
+			}
+			
+			mxRubberbandReset.apply(this, arguments);
+		};
 		
 	    // Timer-based activation of outline connect in connection handler
 	    var startTime = new Date().getTime();

@@ -645,56 +645,60 @@ EditorUi = function(editor, container)
 		{
 			var common = mxUtils.indexOf(valueStyles, keys[i]) >= 0;
 			
-			// Special case: Edge style and shape
-			if (mxUtils.indexOf(connectStyles, keys[i]) >= 0)
+			// Ignores transparent stroke colors
+			if (keys[i] != 'strokeColor' || (values[i] != null && values[i] != 'none'))
 			{
-				if (edge || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
+				// Special case: Edge style and shape
+				if (mxUtils.indexOf(connectStyles, keys[i]) >= 0)
 				{
-					if (values[i] == null)
+					if (edge || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
 					{
-						delete graph.currentEdgeStyle[keys[i]];
+						if (values[i] == null)
+						{
+							delete graph.currentEdgeStyle[keys[i]];
+						}
+						else
+						{
+							graph.currentEdgeStyle[keys[i]] = values[i];
+						}
 					}
-					else
+					// Uses style for vertex if defined in styles
+					else if (vertex && mxUtils.indexOf(styles, keys[i]) >= 0)
 					{
-						graph.currentEdgeStyle[keys[i]] = values[i];
+						if (values[i] == null)
+						{
+							delete graph.currentVertexStyle[keys[i]];
+						}
+						else
+						{
+							graph.currentVertexStyle[keys[i]] = values[i];
+						}
 					}
 				}
-				// Uses style for vertex if defined in styles
-				else if (vertex && mxUtils.indexOf(styles, keys[i]) >= 0)
+				else if (mxUtils.indexOf(styles, keys[i]) >= 0)
 				{
-					if (values[i] == null)
+					if (vertex || common)
 					{
-						delete graph.currentVertexStyle[keys[i]];
+						if (values[i] == null)
+						{
+							delete graph.currentVertexStyle[keys[i]];
+						}
+						else
+						{
+							graph.currentVertexStyle[keys[i]] = values[i];
+						}
 					}
-					else
+					
+					if (edge || common || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
 					{
-						graph.currentVertexStyle[keys[i]] = values[i];
-					}
-				}
-			}
-			else if (mxUtils.indexOf(styles, keys[i]) >= 0)
-			{
-				if (vertex || common)
-				{
-					if (values[i] == null)
-					{
-						delete graph.currentVertexStyle[keys[i]];
-					}
-					else
-					{
-						graph.currentVertexStyle[keys[i]] = values[i];
-					}
-				}
-				
-				if (edge || common || mxUtils.indexOf(alwaysEdgeStyles, keys[i]) >= 0)
-				{
-					if (values[i] == null)
-					{
-						delete graph.currentEdgeStyle[keys[i]];
-					}
-					else
-					{
-						graph.currentEdgeStyle[keys[i]] = values[i];
+						if (values[i] == null)
+						{
+							delete graph.currentEdgeStyle[keys[i]];
+						}
+						else
+						{
+							graph.currentEdgeStyle[keys[i]] = values[i];
+						}
 					}
 				}
 			}
@@ -939,9 +943,10 @@ EditorUi.prototype.footerHeight = 28;
 EditorUi.prototype.sidebarFooterHeight = 34;
 
 /**
- * Specifies the height of the horizontal split bar. Default is 204.
+ * Specifies the position of the horizontal split bar. Default is 204 or 120 for
+ * screen widths <= 500px.
  */
-EditorUi.prototype.hsplitPosition = 204;
+EditorUi.prototype.hsplitPosition = (screen.width <= 500) ? 116 : 204;
 
 /**
  * Specifies if animations are allowed in <executeLayout>. Default is true.
@@ -1550,16 +1555,38 @@ EditorUi.prototype.initCanvas = function()
 			window.clearTimeout(this.updateZoomTimeout);
 		}
 
+		// Switches to 1% zoom steps below 15%
+		// Lower bound depdends on rounding below
 		if (zoomIn)
 		{
-			this.cumulativeZoomFactor *= this.zoomFactor;
+			if (this.view.scale * this.cumulativeZoomFactor < 0.15)
+			{
+				this.cumulativeZoomFactor = (this.view.scale + 0.01) / this.view.scale;
+			}
+			else
+			{
+				// Uses to 5% zoom steps for better grid rendering in webkit
+				// and to avoid rounding errors for zoom steps
+				this.cumulativeZoomFactor *= this.zoomFactor;
+				this.cumulativeZoomFactor = Math.round(this.view.scale * this.cumulativeZoomFactor * 20) / 20 / this.view.scale;
+			}
 		}
 		else
 		{
-			this.cumulativeZoomFactor /= this.zoomFactor;
+			if (this.view.scale * this.cumulativeZoomFactor <= 0.15)
+			{
+				this.cumulativeZoomFactor = (this.view.scale - 0.01) / this.view.scale;
+			}
+			else
+			{
+				// Uses to 5% zoom steps for better grid rendering in webkit
+				// and to avoid rounding errors for zoom steps
+				this.cumulativeZoomFactor /= this.zoomFactor;
+				this.cumulativeZoomFactor = Math.round(this.view.scale * this.cumulativeZoomFactor * 20) / 20 / this.view.scale;
+			}
 		}
 		
-		this.cumulativeZoomFactor = Math.round(this.view.scale * this.cumulativeZoomFactor * 100) / 100 / this.view.scale;
+		this.cumulativeZoomFactor = Math.max(0.01, Math.min(this.view.scale * this.cumulativeZoomFactor, 160) / this.view.scale);
 		
 		this.updateZoomTimeout = window.setTimeout(mxUtils.bind(this, function()
 		{
@@ -2277,6 +2304,7 @@ EditorUi.prototype.createDivs = function()
 	this.toolbarContainer.style.right = '0px';
 	this.sidebarContainer.style.left = '0px';
 	this.formatContainer.style.right = '0px';
+	this.formatContainer.style.zIndex = '1';
 	this.diagramContainer.style.right = ((this.format != null) ? this.formatWidth : 0) + 'px';
 	this.footerContainer.style.left = '0px';
 	this.footerContainer.style.right = '0px';
