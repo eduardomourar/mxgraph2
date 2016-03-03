@@ -204,9 +204,16 @@ mxSvgCanvas2D.prototype.foAltText = '[Object]';
 /**
  * Variable: foOffset
  * 
- * Offset to be applied for foreignObjects.
+ * Offset to be used for foreignObjects.
  */
 mxSvgCanvas2D.prototype.foOffset = 0;
+
+/**
+ * Variable: textOffset
+ * 
+ * Offset to be used for text elements.
+ */
+mxSvgCanvas2D.prototype.textOffset = 0;
 
 /**
  * Variable: strokeTolerance
@@ -1951,8 +1958,8 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 		{
 			var text = this.createElement('text');
 			// LATER: Match horizontal HTML alignment
-			text.setAttribute('x', this.format(x * s.scale));
-			text.setAttribute('y', this.format(cy * s.scale));
+			text.setAttribute('x', this.format(x * s.scale) + this.textOffset);
+			text.setAttribute('y', this.format(cy * s.scale) + this.textOffset);
 			
 			mxUtils.write(text, lines[i]);
 			node.appendChild(text);

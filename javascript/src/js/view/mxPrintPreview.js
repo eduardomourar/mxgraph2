@@ -588,6 +588,7 @@ mxPrintPreview.prototype.open = function(css, targetWindow)
 
 			if (targetWindow == null)
 			{
+				this.writePostfix(doc);
 				doc.writeln('</body>');
 				doc.writeln('</html>');
 				doc.close();
@@ -665,6 +666,16 @@ mxPrintPreview.prototype.writeHead = function(doc, css)
 	}
 	
 	doc.writeln('</style>');
+};
+
+/**
+ * Function: writePostfix
+ * 
+ * Called before closing the body of the page. This implementation is empty.
+ */
+mxPrintPreview.prototype.writePostfix = function(doc)
+{
+	// empty
 };
 
 /**

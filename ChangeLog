@@ -1,4 +1,5 @@
-- Adds mxSvgCanvas2D.prototype.foOffset [JavaScript]
+- Adds mxPrintPreview.writePostfix hook [JavaScript]
+- Adds mxSvgCanvas2D.foOffset, textOffset [JavaScript]
 - Adds mapping argument for mxGraph.importCells, moveCells, cloneCells [JavaScript]
 - Adds mxClient.IS_CHROMEAPP [JavaScript]
 - Uses getBoundingClientRect in mxUtils.getOffset [JavaScript]
