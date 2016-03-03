@@ -635,16 +635,16 @@ mxSvgCanvas2D.prototype.updateFill = function()
 {
 	var s = this.state;
 	
-	if (s.alpha < 1)
+	if (s.alpha < 1 || s.fillAlpha < 1)
 	{
-		this.node.setAttribute('fill-opacity', s.alpha);
+		this.node.setAttribute('fill-opacity', s.alpha * s.fillAlpha);
 	}
 	
 	if (s.fillColor != null)
 	{
 		if (s.gradientColor != null)
 		{
-			var id = this.getSvgGradient(s.fillColor, s.gradientColor, s.fillAlpha, s.gradientAlpha, s.gradientDirection);
+			var id = this.getSvgGradient(s.fillColor, s.gradientColor, s.gradientFillAlpha, s.gradientAlpha, s.gradientDirection);
 			var chromeApp = window.chrome != null && chrome.app != null && chrome.app.runtime != null;
 			
 			if (!chromeApp && !mxClient.IS_IE && this.root.ownerDocument == document)
@@ -686,9 +686,9 @@ mxSvgCanvas2D.prototype.updateStroke = function()
 
 	this.node.setAttribute('stroke', s.strokeColor.toLowerCase());
 	
-	if (s.alpha < 1)
+	if (s.alpha < 1 || s.strokeAlpha < 1)
 	{
-		this.node.setAttribute('stroke-opacity', s.alpha);
+		this.node.setAttribute('stroke-opacity', s.alpha * s.strokeAlpha);
 	}
 	
 	var sw = this.getCurrentStrokeWidth();
@@ -1015,9 +1015,9 @@ mxSvgCanvas2D.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
 		node.setAttribute('preserveAspectRatio', 'none');
 	}
 
-	if (s.alpha < 1)
+	if (s.alpha < 1 || s.fillAlpha < 1)
 	{
-		node.setAttribute('opacity', s.alpha);
+		node.setAttribute('opacity', s.alpha * s.fillAlpha);
 	}
 	
 	var tr = this.state.transform || '';

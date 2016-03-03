@@ -474,6 +474,30 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 	/**
 	 * 
 	 */
+	public void setFillAlpha(double value)
+	{
+		if (state.fillAlpha != value)
+		{
+			state.g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) (value)));
+			state.fillAlpha = value;
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void setStrokeAlpha(double value)
+	{
+		if (state.strokeAlpha != value)
+		{
+			state.g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) (value)));
+			state.strokeAlpha = value;
+		}
+	}
+
+	/**
+	 * 
+	 */
 	public void setFillColor(String value)
 	{
 		if (state.fillColorValue == null || !state.fillColorValue.equals(value))
@@ -1501,6 +1525,16 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 		 * 
 		 */
 		protected double alpha = 1;
+
+		/**
+		 * 
+		 */
+		protected double fillAlpha = 1;
+		
+		/**
+		 * 
+		 */
+		protected double strokeAlpha = 1;
 
 		/**
 		 * 

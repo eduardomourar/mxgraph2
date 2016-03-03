@@ -760,6 +760,22 @@
 	STYLE_OPACITY: 'opacity',
 
 	/**
+	 * Variable: STYLE_FILL_OPACITY
+	 * 
+	 * Defines the key for the fill opacity style. The type of the value is 
+	 * numeric and the possible range is 0-100. Value is "fillOpacity".
+	 */
+	STYLE_FILL_OPACITY: 'fillOpacity',
+
+	/**
+	 * Variable: STYLE_STROKE_OPACITY
+	 * 
+	 * Defines the key for the stroke opacity style. The type of the value is 
+	 * numeric and the possible range is 0-100. Value is "strokeOpacity".
+	 */
+	STYLE_STROKE_OPACITY: 'strokeOpacity',
+
+	/**
 	 * Variable: STYLE_TEXT_OPACITY
 	 * 
 	 * Defines the key for the text opacity style. The type of the value is 

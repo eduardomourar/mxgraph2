@@ -228,6 +228,22 @@ public class mxSaxOutputHandler extends DefaultHandler
 			}
 		});
 
+		handlers.put("fillAlpha", new IElementHandler()
+		{
+			public void parseElement(Attributes atts)
+			{
+				canvas.setFillAlpha(Double.parseDouble(atts.getValue("alpha")));
+			}
+		});
+		
+		handlers.put("strokeAlpha", new IElementHandler()
+		{
+			public void parseElement(Attributes atts)
+			{
+				canvas.setStrokeAlpha(Double.parseDouble(atts.getValue("alpha")));
+			}
+		});
+
 		handlers.put("fillcolor", new IElementHandler()
 		{
 			public void parseElement(Attributes atts)

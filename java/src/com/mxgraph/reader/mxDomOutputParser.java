@@ -257,6 +257,22 @@ public class mxDomOutputParser
 			}
 		});
 
+		handlers.put("fillAlpha", new IElementHandler()
+		{
+			public void parseElement(Element elt)
+			{
+				canvas.setFillAlpha(Double.parseDouble(elt.getAttribute("alpha")));
+			}
+		});
+		
+		handlers.put("strokeAlpha", new IElementHandler()
+		{
+			public void parseElement(Element elt)
+			{
+				canvas.setStrokeAlpha(Double.parseDouble(elt.getAttribute("alpha")));
+			}
+		});
+
 		handlers.put("fillcolor", new IElementHandler()
 		{
 			public void parseElement(Element elt)
