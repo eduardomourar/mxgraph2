@@ -3065,85 +3065,88 @@ TextFormatPanel.prototype.addFont = function(container)
 					{
 						var css = mxUtils.getCurrentStyle(node);
 						
-						setSelected(fontStyleItems[0], css.fontWeight == 'bold' || graph.getParentByName(node, 'B', graph.cellEditor.textarea) != null);
-						setSelected(fontStyleItems[1], css.fontStyle == 'italic' || graph.getParentByName(node, 'I', graph.cellEditor.textarea) != null);
-						setSelected(fontStyleItems[2], graph.getParentByName(node, 'U', graph.cellEditor.textarea) != null);
-						setSelected(left, css.textAlign == 'left');
-						setSelected(center, css.textAlign == 'center');
-						setSelected(right, css.textAlign == 'right');
-						setSelected(full, css.textAlign == 'justify');
-						setSelected(sup, graph.getParentByName(node, 'SUP', graph.cellEditor.textarea) != null);
-						setSelected(sub, graph.getParentByName(node, 'SUB', graph.cellEditor.textarea) != null);
-						
-						currentTable = graph.getParentByName(node, 'TABLE', graph.cellEditor.textarea);
-						tableRow = (currentTable == null) ? null : graph.getParentByName(node, 'TR', currentTable);
-						tableCell = (currentTable == null) ? null : graph.getParentByName(node, 'TD', currentTable);
-						tableWrapper.style.display = (currentTable != null) ? '' : 'none';
-						
-						if (document.activeElement != input)
+						if (css != null)
 						{
-							input.value = parseInt(css.fontSize) + ' pt';
-						}
-						
-						// Converts rgb(r,g,b) values
-						var color = css.color.replace(
-							    /\brgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/g,
-							    function($0, $1, $2, $3) {
-							        return "#" + ("0"+Number($1).toString(16)).substr(-2) + ("0"+Number($2).toString(16)).substr(-2) + ("0"+Number($3).toString(16)).substr(-2);
-							    });
-						var color2 = css.backgroundColor.replace(
-							    /\brgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/g,
-							    function($0, $1, $2, $3) {
-							        return "#" + ("0"+Number($1).toString(16)).substr(-2) + ("0"+Number($2).toString(16)).substr(-2) + ("0"+Number($3).toString(16)).substr(-2);
-							    });
-						
-						// Updates the color picker for the current font
-						if (fontColorApply != null)
-						{
-							if (color.charAt(0) == '#')
+							setSelected(fontStyleItems[0], css.fontWeight == 'bold' || graph.getParentByName(node, 'B', graph.cellEditor.textarea) != null);
+							setSelected(fontStyleItems[1], css.fontStyle == 'italic' || graph.getParentByName(node, 'I', graph.cellEditor.textarea) != null);
+							setSelected(fontStyleItems[2], graph.getParentByName(node, 'U', graph.cellEditor.textarea) != null);
+							setSelected(left, css.textAlign == 'left');
+							setSelected(center, css.textAlign == 'center');
+							setSelected(right, css.textAlign == 'right');
+							setSelected(full, css.textAlign == 'justify');
+							setSelected(sup, graph.getParentByName(node, 'SUP', graph.cellEditor.textarea) != null);
+							setSelected(sub, graph.getParentByName(node, 'SUB', graph.cellEditor.textarea) != null);
+							
+							currentTable = graph.getParentByName(node, 'TABLE', graph.cellEditor.textarea);
+							tableRow = (currentTable == null) ? null : graph.getParentByName(node, 'TR', currentTable);
+							tableCell = (currentTable == null) ? null : graph.getParentByName(node, 'TD', currentTable);
+							tableWrapper.style.display = (currentTable != null) ? '' : 'none';
+							
+							if (document.activeElement != input)
 							{
-								currentFontColor = color;
-							}
-							else
-							{
-								currentFontColor = '#000000';
+								input.value = parseInt(css.fontSize) + ' pt';
 							}
 							
-							fontColorApply(currentFontColor, true);
-						}
-						
-						if (bgColorApply != null)
-						{
-							if (color2.charAt(0) == '#')
-							{
-								currentBgColor = color2;
-							}
-							else
-							{
-								currentBgColor = null;
-							}
+							// Converts rgb(r,g,b) values
+							var color = css.color.replace(
+								    /\brgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/g,
+								    function($0, $1, $2, $3) {
+								        return "#" + ("0"+Number($1).toString(16)).substr(-2) + ("0"+Number($2).toString(16)).substr(-2) + ("0"+Number($3).toString(16)).substr(-2);
+								    });
+							var color2 = css.backgroundColor.replace(
+								    /\brgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/g,
+								    function($0, $1, $2, $3) {
+								        return "#" + ("0"+Number($1).toString(16)).substr(-2) + ("0"+Number($2).toString(16)).substr(-2) + ("0"+Number($3).toString(16)).substr(-2);
+								    });
 							
-							bgColorApply(currentBgColor, true);
-						}
-						
-						// Workaround for firstChild is null or not an object
-						// in the log which seems to be IE8- only / 29.01.15
-						if (fontMenu.firstChild != null)
-						{
-							// Strips leading and trailing quotes
-							var ff = css.fontFamily;
-							
-							if (ff.charAt(0) == '\'')
+							// Updates the color picker for the current font
+							if (fontColorApply != null)
 							{
-								ff = ff.substring(1);
+								if (color.charAt(0) == '#')
+								{
+									currentFontColor = color;
+								}
+								else
+								{
+									currentFontColor = '#000000';
+								}
+								
+								fontColorApply(currentFontColor, true);
 							}
 							
-							if (ff.charAt(ff.length - 1) == '\'')
+							if (bgColorApply != null)
 							{
-								ff = ff.substring(0, ff.length - 1);
+								if (color2.charAt(0) == '#')
+								{
+									currentBgColor = color2;
+								}
+								else
+								{
+									currentBgColor = null;
+								}
+								
+								bgColorApply(currentBgColor, true);
 							}
 							
-							fontMenu.firstChild.nodeValue = ff;
+							// Workaround for firstChild is null or not an object
+							// in the log which seems to be IE8- only / 29.01.15
+							if (fontMenu.firstChild != null)
+							{
+								// Strips leading and trailing quotes
+								var ff = css.fontFamily;
+								
+								if (ff.charAt(0) == '\'')
+								{
+									ff = ff.substring(1);
+								}
+								
+								if (ff.charAt(ff.length - 1) == '\'')
+								{
+									ff = ff.substring(0, ff.length - 1);
+								}
+								
+								fontMenu.firstChild.nodeValue = ff;
+							}
 						}
 					}
 					
