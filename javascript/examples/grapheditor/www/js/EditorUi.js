@@ -943,6 +943,11 @@ EditorUi.prototype.footerHeight = 28;
 EditorUi.prototype.sidebarFooterHeight = 34;
 
 /**
+ * Specifies the link for the edit button in chromeless mode.
+ */
+EditorUi.prototype.editButtonLink = null;
+
+/**
  * Specifies the position of the horizontal split bar. Default is 204 or 120 for
  * screen widths <= 500px.
  */
@@ -1432,6 +1437,18 @@ EditorUi.prototype.initCanvas = function()
 		zoomActualBtn.style.border = 'none';
 		zoomActualBtn.style.margin = '2px';
 		
+		var editBtn = mxUtils.button('', mxUtils.bind(this, function(evt)
+		{
+			window.open(this.editButtonLink, 'editWindow');
+			mxEvent.consume(evt);
+		}));
+		editBtn.className = 'geSprite geSprite-duplicate';
+		editBtn.setAttribute('title', mxResources.get('edit'));
+		editBtn.style.cursor = 'pointer';
+		editBtn.style.outline = 'none';
+		editBtn.style.border = 'none';
+		editBtn.style.margin = '2px';
+		
 		this.chromelessToolbar = document.createElement('div');
 		this.chromelessToolbar.className = 'geToolbarContainer geNoPrint';
 		this.chromelessToolbar.style.borderRight = '1px solid #e0e0e0';
@@ -1442,6 +1459,11 @@ EditorUi.prototype.initCanvas = function()
 		this.chromelessToolbar.appendChild(zoomInBtn);
 		this.chromelessToolbar.appendChild(zoomOutBtn);
 		this.chromelessToolbar.appendChild(zoomActualBtn);
+		
+		if (this.editButtonLink != null)
+		{
+			this.chromelessToolbar.appendChild(editBtn);
+		}
 		
 		graph.container.parentNode.appendChild(this.chromelessToolbar);
 		
