@@ -304,9 +304,7 @@ EditorUi = function(editor, container)
 						{
 							var css = mxUtils.getCurrentStyle(node);
 	
-							// Workaround for firstChild is null or not an object
-							// in the log which seems to be IE8- only / 29.01.15
-							if (ui.toolbar != null)
+							if (css != null && ui.toolbar != null)
 							{
 								// Strips leading and trailing quotes
 								var ff = css.fontFamily;
