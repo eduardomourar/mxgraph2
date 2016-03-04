@@ -1,3 +1,4 @@
+- Adds export for strokeAlpha and fillAlpha in .NET backend [Dotnet]
 - Fixes export of strokeAlpha and fillAlpha in Java backend [Java]
 
 01-MAR-2016: 3.5.0.0

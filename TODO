@@ -1,3 +1,4 @@
+- Build separate core and layout JS files
 - Add style for start-/endArrow fill color
 
 - Add selection for objects underneath current selection
