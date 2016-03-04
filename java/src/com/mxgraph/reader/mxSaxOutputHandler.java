@@ -228,7 +228,7 @@ public class mxSaxOutputHandler extends DefaultHandler
 			}
 		});
 
-		handlers.put("fillAlpha", new IElementHandler()
+		handlers.put("fillalpha", new IElementHandler()
 		{
 			public void parseElement(Attributes atts)
 			{
@@ -236,7 +236,7 @@ public class mxSaxOutputHandler extends DefaultHandler
 			}
 		});
 		
-		handlers.put("strokeAlpha", new IElementHandler()
+		handlers.put("strokealpha", new IElementHandler()
 		{
 			public void parseElement(Attributes atts)
 			{

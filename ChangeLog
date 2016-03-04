@@ -1,3 +1,5 @@
+- Fixes export of strokeAlpha and fillAlpha in Java backend [Java]
+
 01-MAR-2016: 3.5.0.0
 
 - Ctrl+Shift+Drag added for create/remove space in grapheditor [JavaScript]

@@ -257,7 +257,7 @@ public class mxDomOutputParser
 			}
 		});
 
-		handlers.put("fillAlpha", new IElementHandler()
+		handlers.put("fillalpha", new IElementHandler()
 		{
 			public void parseElement(Element elt)
 			{
@@ -265,7 +265,7 @@ public class mxDomOutputParser
 			}
 		});
 		
-		handlers.put("strokeAlpha", new IElementHandler()
+		handlers.put("strokealpha", new IElementHandler()
 		{
 			public void parseElement(Element elt)
 			{

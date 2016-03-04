@@ -478,8 +478,8 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 	{
 		if (state.fillAlpha != value)
 		{
-			state.g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) (value)));
 			state.fillAlpha = value;
+			state.fillColor = null;
 		}
 	}
 
@@ -490,8 +490,8 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 	{
 		if (state.strokeAlpha != value)
 		{
-			state.g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) (value)));
 			state.strokeAlpha = value;
+			state.strokeColor = null;
 		}
 	}
 
@@ -566,16 +566,24 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 	 */
 	protected Color parseColor(String hex)
 	{
+		return parseColor(hex, 1);
+	};
+	
+	/**
+	 * Helper method that uses {@link mxUtils#parseColor(String)}.
+	 */
+	protected Color parseColor(String hex, double alpha)
+	{
 		Color result = colorCache.get(hex);
 
 		if (result == null)
 		{
-			result = mxUtils.parseColor(hex);
-			colorCache.put(hex, result);
+			result = mxUtils.parseColor(hex, alpha);
+			colorCache.put(hex + "-" + (int) (alpha * 255), result);
 		}
 
 		return result;
-	}
+	};
 
 	/**
 	 *
@@ -1269,7 +1277,7 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 			{
 				if (state.strokeColor == null)
 				{
-					state.strokeColor = parseColor(state.strokeColorValue);
+					state.strokeColor = parseColor(state.strokeColorValue, state.strokeAlpha);
 				}
 
 				if (state.strokeColor != null)
@@ -1282,7 +1290,7 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 			{
 				if (state.gradientPaint == null && state.fillColor == null)
 				{
-					state.fillColor = parseColor(state.fillColorValue);
+					state.fillColor = parseColor(state.fillColorValue, state.fillAlpha);
 				}
 			}
 
@@ -1300,11 +1308,6 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 				}
 				else
 				{
-					if (state.fillColor == null)
-					{
-						state.fillColor = parseColor(state.fillColorValue);
-					}
-
 					if (state.fillColor != null)
 					{
 						state.g.setColor(state.fillColor);
