@@ -4382,7 +4382,7 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 	function update(evt)
 	{
 		var value = parseInt(input.value);
-		value = Math.max(0, (isNaN(value)) ? 10 : value);
+		value = Math.max(1, (isNaN(value)) ? 10 : value);
 		
 		if (value != graph.getGridSize())
 		{
