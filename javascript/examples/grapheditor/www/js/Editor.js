@@ -71,13 +71,13 @@ if (mxClient.IS_IE6)
 /**
  * Editor constructor executed on page load.
  */
-Editor = function(chromeless, themes)
+Editor = function(chromeless, themes, model)
 {
 	mxEventSource.call(this);
 	this.chromeless = (chromeless != null) ? chromeless : this.chromeless;
 	this.init();
 	this.initStencilRegistry();
-	this.graph = this.createGraph(themes);
+	this.graph = this.createGraph(themes, model);
 	this.undoManager = this.createUndoManager();
 	this.status = '';
 
@@ -215,9 +215,9 @@ Editor.prototype.setAutosave = function(value)
 /**
  * Sets the XML node for the current diagram.
  */
-Editor.prototype.createGraph = function(themes)
+Editor.prototype.createGraph = function(themes, model)
 {
-	var graph = new Graph(null, null, null, null, themes);
+	var graph = new Graph(null, model, null, null, themes);
 	graph.transparentBackground = false;
 	
 	return graph;
