@@ -2084,7 +2084,12 @@ mxGraph.prototype.processChange = function(change)
 	else if (change instanceof mxStyleChange)
 	{
 		this.view.invalidate(change.cell, true, true);
-		this.view.removeState(change.cell);
+		var state = this.view.getState(change.cell);
+		
+		if (state != null)
+		{	
+			state.style = null;
+		}
 	}
 	
 	// Removes the state from the cache by default

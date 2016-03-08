@@ -1,3 +1,7 @@
+- mxCellRenderer.redrawShape creates new shape if needed [JavaScript]
+- mxStyleChange no longer requires a new mxCellState [JavaScript]
+- Avoids unnecessary text repaints in mxCellRenderer [JavaScript]
+- Adds mxShape.initStyles, resetStyles. mxText.resetStyles [JavaScript]
 - Fixes mxUtils.equalEntries for new properties in second argument [JavaScript]
 - Adds export for strokeAlpha and fillAlpha in .NET backend [Dotnet]
 - Fixes export of strokeAlpha and fillAlpha in Java backend [Java]
