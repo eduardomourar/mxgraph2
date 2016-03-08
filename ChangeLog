@@ -1,3 +1,4 @@
+- Fixes mxUtils.equalEntries for new properties in second argument [JavaScript]
 - Adds export for strokeAlpha and fillAlpha in .NET backend [Dotnet]
 - Fixes export of strokeAlpha and fillAlpha in Java backend [Java]
 
