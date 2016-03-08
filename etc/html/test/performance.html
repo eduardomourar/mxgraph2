@@ -87,6 +87,23 @@
 			{
 				graph.fit();
 			}));
+			document.body.appendChild(mxUtils.button('Style', function()
+			{
+				var model = graph.model;
+				
+				model.beginUpdate();
+	            try
+	            {
+	            	for (var key in model.cells)
+	            	{
+	            		model.setStyle(model.cells[key], (Math.random() < 0.5) ? 'fillColor=red;' : 'fillColor=blue;');
+	            	}
+	            }
+	            finally
+	            {
+	                model.endUpdate();
+	            }
+			}));
 		};
 	</script>
 </head>
