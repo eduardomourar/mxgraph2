@@ -63,15 +63,7 @@
 function mxShape(stencil)
 {
 	this.stencil = stencil;
-	
-	// Sets some defaults
-	this.strokewidth = 1;
-	this.rotation = 0;
-	this.opacity = 100;
-	this.fillOpacity = 100;
-	this.strokeOpacity = 100;
-	this.flipH = false;
-	this.flipV = false;
+	this.initStyles();
 };
 
 /**
@@ -237,6 +229,22 @@ mxShape.prototype.init = function(container)
 			container.appendChild(this.node);
 		}
 	}
+};
+
+/**
+ * Function: initStyles
+ *
+ * Sets the styles to their default values.
+ */
+mxShape.prototype.initStyles = function(container)
+{
+	this.strokewidth = 1;
+	this.rotation = 0;
+	this.opacity = 100;
+	this.fillOpacity = 100;
+	this.strokeOpacity = 100;
+	this.flipH = false;
+	this.flipV = false;
 };
 
 /**
@@ -1128,6 +1136,31 @@ mxShape.prototype.addPoints = function(c, pts, rounded, arcSize, close)
 	{
 		c.lineTo(pe.x, pe.y);	
 	}
+};
+
+/**
+ * Function: resetStyles
+ * 
+ * Resets all styles.
+ */
+mxShape.prototype.resetStyles = function()
+{
+	this.initStyles();
+	
+	delete this.fill;
+	delete this.gradient;
+	delete this.gradientDirection;
+	delete this.stroke;
+	delete this.spacing;
+	delete this.startSize;
+	delete this.endSize;
+	delete this.startArrow;
+	delete this.endArrow;
+	delete this.direction;
+	delete this.isShadow;
+	delete this.isDashed;
+	delete this.isRounded;
+	delete this.glass;
 };
 
 /**
