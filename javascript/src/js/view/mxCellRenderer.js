@@ -1386,6 +1386,13 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 {
 	var model = state.view.graph.model;
 	var shapeChanged = false;
+
+	// Forces creation of new shape if shape style has changed
+	if (state.shape != null && state.shape.style[mxConstants.STYLE_SHAPE] != state.style[mxConstants.STYLE_SHAPE])
+	{
+		state.shape.destroy();
+		state.shape = null;
+	}
 	
 	if (state.shape == null && state.view.graph.container != null &&
 		state.cell != state.view.currentRoot &&
@@ -1397,6 +1404,9 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 		{
 			state.shape.antiAlias = this.antiAlias;
 		}
+
+		// Forces a refresh of the handler of one exists
+		state.view.graph.selectionCellsHandler.updateHandler(state);
 	}
 
 	if (state.shape != null)
