@@ -1,3 +1,4 @@
+- Fixes chart.js output in jquery.html example [JavaScript]
 - mxCellRenderer.redrawShape creates new shape if needed [JavaScript]
 - mxStyleChange no longer requires a new mxCellState [JavaScript]
 - Avoids unnecessary text repaints in mxCellRenderer [JavaScript]
