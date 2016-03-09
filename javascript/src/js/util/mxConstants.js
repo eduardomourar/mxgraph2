@@ -642,10 +642,9 @@
 	/**
 	 * Variable: ARROW_SPACING
 	 * 
-	 * Defines the spacing between the arrow shape and its terminals. Default
-	 * is 10.
+	 * Defines the spacing between the arrow shape and its terminals. Default is 0.
 	 */
-	ARROW_SPACING: 10,
+	ARROW_SPACING: 0,
 
 	/**
 	 * Variable: ARROW_WIDTH
