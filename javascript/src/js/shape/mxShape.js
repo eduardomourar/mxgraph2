@@ -1146,12 +1146,13 @@ mxShape.prototype.addPoints = function(c, pts, rounded, arcSize, close)
 mxShape.prototype.resetStyles = function()
 {
 	this.initStyles();
+
+	this.spacing = 0;
 	
 	delete this.fill;
 	delete this.gradient;
 	delete this.gradientDirection;
 	delete this.stroke;
-	delete this.spacing;
 	delete this.startSize;
 	delete this.endSize;
 	delete this.startArrow;
