@@ -964,8 +964,6 @@ mxGraphView.prototype.validateCellState = function(cell, recurse)
 
 			if (recurse)
 			{
-				state.updateCachedBounds();
-				
 				// Updates order in DOM if recursively traversing
 				if (state.shape != null)
 				{
@@ -1073,6 +1071,8 @@ mxGraphView.prototype.updateCellState = function(state)
 			}
 		}
 	}
+
+	state.updateCachedBounds();
 };
 
 /**

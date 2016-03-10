@@ -1404,31 +1404,26 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 		{
 			state.shape.antiAlias = this.antiAlias;
 		}
-
+		
+		this.createIndicatorShape(state);
+		this.initializeShape(state);
+		this.createCellOverlays(state);
+		this.installListeners(state);
+		
 		// Forces a refresh of the handler of one exists
 		state.view.graph.selectionCellsHandler.updateHandler(state);
+	}
+	else if (state.shape != null && !mxUtils.equalEntries(state.shape.style, state.style))
+	{
+		state.shape.resetStyles();
+		this.configureShape(state);
+		force = true;
 	}
 
 	if (state.shape != null)
 	{
-		// Lazy initialization
-		if (state.shape.node == null)
-		{
-			this.createIndicatorShape(state);
-			this.initializeShape(state);
-			this.createCellOverlays(state);
-			this.installListeners(state);
-		}
-		
 		// Handles changes of the collapse icon
 		this.createControl(state);
-
-		if (!mxUtils.equalEntries(state.shape.style, state.style))
-		{
-			state.shape.resetStyles();
-			this.configureShape(state);
-			force = true;
-		}
 		
 		// Redraws the cell if required, ignores changes to bounds if points are
 		// defined as the bounds are updated for the given points inside the shape
