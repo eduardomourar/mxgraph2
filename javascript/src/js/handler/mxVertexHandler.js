@@ -1830,8 +1830,12 @@ mxVertexHandler.prototype.destroy = function()
 		this.parentHighlight = null;
 	}
 	
-	this.selectionBorder.destroy();
-	this.selectionBorder = null;
+	if (this.selectionBorder != null)
+	{
+		this.selectionBorder.destroy();
+		this.selectionBorder = null;
+	}
+	
 	this.labelShape = null;
 	this.removeHint();
 

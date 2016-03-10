@@ -1388,7 +1388,8 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 	var shapeChanged = false;
 
 	// Forces creation of new shape if shape style has changed
-	if (state.shape != null && state.shape.style[mxConstants.STYLE_SHAPE] != state.style[mxConstants.STYLE_SHAPE])
+	if (state.shape != null && state.shape.style != null && state.style != null &&
+		state.shape.style[mxConstants.STYLE_SHAPE] != state.style[mxConstants.STYLE_SHAPE])
 	{
 		state.shape.destroy();
 		state.shape = null;
@@ -1403,15 +1404,15 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 		if (state.shape != null)
 		{
 			state.shape.antiAlias = this.antiAlias;
+	
+			this.createIndicatorShape(state);
+			this.initializeShape(state);
+			this.createCellOverlays(state);
+			this.installListeners(state);
+			
+			// Forces a refresh of the handler of one exists
+			state.view.graph.selectionCellsHandler.updateHandler(state);
 		}
-		
-		this.createIndicatorShape(state);
-		this.initializeShape(state);
-		this.createCellOverlays(state);
-		this.installListeners(state);
-		
-		// Forces a refresh of the handler of one exists
-		state.view.graph.selectionCellsHandler.updateHandler(state);
 	}
 	else if (state.shape != null && !mxUtils.equalEntries(state.shape.style, state.style))
 	{

@@ -200,12 +200,11 @@ mxSelectionCellsHandler.prototype.refresh = function()
  */
 mxSelectionCellsHandler.prototype.updateHandler = function(state)
 {
-	var handler = this.getHandler(state.cell);
+	var handler = this.handlers.remove(state.cell);
 	
 	if (handler != null)
 	{
 		handler.destroy();
-		
 		handler = this.graph.createHandler(state);
 		
 		if (handler != null)
