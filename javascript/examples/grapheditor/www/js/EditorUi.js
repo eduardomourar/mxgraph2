@@ -1439,19 +1439,7 @@ EditorUi.prototype.initCanvas = function()
 		{
 			if (this.editButtonLink == '_blank')
 			{
-				var wnd = null;
-				
-				var receive = mxUtils.bind(this, function(evt)
-				{
-					if (evt.data == 'ready' && evt.source == wnd)
-					{
-						wnd.postMessage(mxUtils.getXml(this.editor.getGraphXml()), '*');
-						window.removeEventListener('message', receive);
-					}
-				});
-				
-				window.addEventListener('message', receive);
-				wnd = window.open('https://www.draw.io/?client=1');
+				this.editAsNew(this.getEditBlankXml());
 			}
 			else
 			{
@@ -1664,6 +1652,39 @@ EditorUi.prototype.initCanvas = function()
 			}
 		}
 	}));
+};
+
+/**
+ * 
+ */
+EditorUi.prototype.editBlankUrl = 'https://test.draw.io/?dev=1&client=1';
+
+/**
+ * 
+ */
+EditorUi.prototype.getEditBlankXml = function()
+{
+	return mxUtils.getXml(this.editor.getGraphXml());
+};
+
+/**
+ * 
+ */
+EditorUi.prototype.editAsNew = function(xml)
+{
+	var wnd = null;
+	
+	var receive = mxUtils.bind(this, function(evt)
+	{
+		if (evt.data == 'ready' && evt.source == wnd)
+		{
+			wnd.postMessage(xml, '*');
+			window.removeEventListener('message', receive);
+		}
+	});
+	
+	window.addEventListener('message', receive);
+	wnd = window.open(this.editBlankUrl);
 };
 
 /**
