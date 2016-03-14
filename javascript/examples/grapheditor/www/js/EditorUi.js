@@ -1657,7 +1657,12 @@ EditorUi.prototype.initCanvas = function()
 /**
  * 
  */
-EditorUi.prototype.editBlankUrl = 'https://www.draw.io/?client=1';
+EditorUi.prototype.editBlankUrl = window.location.protocol + '//' + window.location.host + '/?client=1';
+
+/**
+ * 
+ */
+EditorUi.prototype.editBlankFallbackUrl = window.location.protocol + '//' + window.location.host + '/?create=drawdata&splash=0';
 
 /**
  * 
@@ -1672,19 +1677,28 @@ EditorUi.prototype.getEditBlankXml = function()
  */
 EditorUi.prototype.editAsNew = function(xml)
 {
-	var wnd = null;
-	
-	var receive = mxUtils.bind(this, function(evt)
+	if (fileSupport)
 	{
-		if (evt.data == 'ready' && evt.source == wnd)
+		var wnd = null;
+		
+		var receive = mxUtils.bind(this, function(evt)
 		{
-			wnd.postMessage(xml, '*');
-			window.removeEventListener('message', receive);
-		}
-	});
-	
-	window.addEventListener('message', receive);
-	wnd = window.open(this.editBlankUrl);
+			if (evt.data == 'ready' && evt.source == wnd)
+			{
+				wnd.postMessage(xml, '*');
+				window.removeEventListener('message', receive);
+			}
+		});
+		
+		window.addEventListener('message', receive);
+		wnd = window.open(this.editBlankUrl);
+	}
+	else
+	{
+		// Data is pulled from global variable after tab loads
+		window.drawdata = xml;
+		window.open(this.editBlankFallbackUrl);
+	}
 };
 
 /**
