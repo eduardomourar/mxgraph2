@@ -1437,7 +1437,27 @@ EditorUi.prototype.initCanvas = function()
 		
 		var editBtn = mxUtils.button('', mxUtils.bind(this, function(evt)
 		{
-			window.open(this.editButtonLink, 'editWindow');
+			if (this.editButtonLink == '_blank')
+			{
+				var wnd = null;
+				
+				var receive = mxUtils.bind(this, function(evt)
+				{
+					if (evt.data == 'ready' && evt.source == wnd)
+					{
+						wnd.postMessage(mxUtils.getXml(this.editor.getGraphXml()), '*');
+						window.removeEventListener('message', receive);
+					}
+				});
+				
+				window.addEventListener('message', receive);
+				wnd = window.open('https://www.draw.io/?client=1');
+			}
+			else
+			{
+				window.open(this.editButtonLink, 'editWindow');
+			}
+			
 			mxEvent.consume(evt);
 		}));
 		editBtn.className = 'geSprite geSprite-duplicate';
