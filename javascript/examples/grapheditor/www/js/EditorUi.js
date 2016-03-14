@@ -1657,7 +1657,7 @@ EditorUi.prototype.initCanvas = function()
 /**
  * 
  */
-EditorUi.prototype.editBlankUrl = 'https://test.draw.io/?dev=1&client=1';
+EditorUi.prototype.editBlankUrl = 'https://www.draw.io/?client=1';
 
 /**
  * 
