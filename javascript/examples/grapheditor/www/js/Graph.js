@@ -3747,9 +3747,9 @@ if (typeof mxVertexHandler != 'undefined')
 			svgCanvas.createAlternateContent = function(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation)
 			{
 				var s = this.state;
-				
+
 				// Assumes a max character width of 0.2em
-				if (this.foAltText != null && (w == 0 ||( s.fontSize != 0 && str.length < (w * 5) / s.fontSize)))
+				if (this.foAltText != null && (w == 0 || (s.fontSize != 0 && str.length < (w * 5) / s.fontSize)))
 				{
 					var alt = this.createElement('text');
 					alt.setAttribute('x', Math.round(w / 2));
