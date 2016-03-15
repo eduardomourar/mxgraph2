@@ -1677,7 +1677,7 @@ EditorUi.prototype.getEditBlankXml = function()
  */
 EditorUi.prototype.editAsNew = function(xml)
 {
-	if (fileSupport)
+	if (window.postMessage)
 	{
 		var wnd = null;
 		
