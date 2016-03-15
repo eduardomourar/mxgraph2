@@ -1675,8 +1675,10 @@ EditorUi.prototype.getEditBlankXml = function()
 /**
  * 
  */
-EditorUi.prototype.editAsNew = function(xml)
+EditorUi.prototype.editAsNew = function(xml, title)
 {
+	var p = (title != null) ? '&title=' + encodeURIComponent(title) : '';
+	
 	if (window.postMessage)
 	{
 		var wnd = null;
@@ -1691,13 +1693,13 @@ EditorUi.prototype.editAsNew = function(xml)
 		});
 		
 		window.addEventListener('message', receive);
-		wnd = window.open(this.editBlankUrl);
+		wnd = window.open(this.editBlankUrl + p);
 	}
 	else
 	{
 		// Data is pulled from global variable after tab loads
 		window.drawdata = xml;
-		window.open(this.editBlankFallbackUrl);
+		window.open(this.editBlankFallbackUrl + p);
 	}
 };
 
