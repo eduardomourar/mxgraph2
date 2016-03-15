@@ -62,6 +62,9 @@ mxGraphView.prototype.gridSteps = 4;
 mxGraphView.prototype.gridColor = (urlParams['gridcolor'] || '#e0e0e0').toLowerCase();
 mxGraphView.prototype.minGridSize = 4;
 
+// Alternative text for unsupported foreignObjects
+mxSvgCanvas2D.prototype.foAltText = '[Not supported by viewer]';
+
 //Adds stylesheet for IE6
 if (mxClient.IS_IE6)
 {
