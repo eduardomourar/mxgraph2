@@ -1191,11 +1191,6 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	});
 	cancelBtn.className = 'geBtn';
 	
-	if (editorUi.editor.cancelFirst)
-	{
-		td.appendChild(cancelBtn);
-	}
-	
 	if (!editorUi.isOffline() && helpLink != null)
 	{
 		var helpBtn = mxUtils.button(mxResources.get('help'), function()
@@ -1205,6 +1200,11 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 		
 		helpBtn.className = 'geBtn';	
 		td.appendChild(helpBtn);
+	}
+
+	if (editorUi.editor.cancelFirst)
+	{
+		td.appendChild(cancelBtn);
 	}
 
 	mxEvent.addListener(nameInput, 'keypress', function(e)
