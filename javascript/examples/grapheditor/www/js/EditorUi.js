@@ -2759,7 +2759,7 @@ EditorUi.prototype.isCompatibleString = function(data)
 		var doc = mxUtils.parseXml(data);
 		var node = this.editor.extractGraphModel(doc.documentElement);
 		
-		return node != null;
+		return node != null && node.getElementsByTagName('parsererror').length == 0;
 	}
 	catch (e)
 	{
