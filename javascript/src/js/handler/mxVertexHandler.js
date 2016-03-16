@@ -339,9 +339,7 @@ mxVertexHandler.prototype.updateMinBounds = function()
  */
 mxVertexHandler.prototype.getSelectionBounds = function(state)
 {
-	return new mxRectangle(Math.round(state.x + state.absoluteOffset.x),
-		Math.round(state.y + state.absoluteOffset.y),
-		Math.round(state.width), Math.round(state.height));
+	return new mxRectangle(Math.round(state.x), Math.round(state.y), Math.round(state.width), Math.round(state.height));
 };
 
 /**

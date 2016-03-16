@@ -1644,9 +1644,9 @@
 	 * Variable: STYLE_RESIZE_WIDTH
 	 * 
 	 * Defines the key for the resizeWidth style. This specifies if a cell's
-	 * width is resized if the parent is resized. If this is 1 then the width
+	 * width if resize if the parent is resized. If this is 1 then the width
 	 * will be resized even if the cell's geometry is relative. If this is 0
-	 * then the cell's width will not be resized. Default is undefined. Value
+	 * then the cell's width will not be resized. Default is not defined. Value
 	 * is "resizeWidth".
 	 */
 	STYLE_RESIZE_WIDTH: 'resizeWidth',
@@ -1655,9 +1655,9 @@
 	 * Variable: STYLE_RESIZE_WIDTH
 	 * 
 	 * Defines the key for the resizeHeight style. This specifies if a cell's
-	 * height is resized if the parent is resized. If this is 1 then the height
+	 * height if resize if the parent is resized. If this is 1 then the height
 	 * will be resized even if the cell's geometry is relative. If this is 0
-	 * then the cell's height will not be resized. Default is undefined. Value
+	 * then the cell's height will not be resized. Default is not defined. Value
 	 * is "resizeHeight".
 	 */
 	STYLE_RESIZE_HEIGHT: 'resizeHeight',

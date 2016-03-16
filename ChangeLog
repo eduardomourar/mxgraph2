@@ -1,4 +1,3 @@
-- Fixes ignored offset in mxVertexHandler.getSelectionBounds [JavaScript]
 - Adds mxSelectionCellsHandler.updateHandler [JavaScript]
 - Changes default for mxConstants.ARROW_SPACING to 0 [JavaScript]
 - Fixes chart.js output in jquery.html example [JavaScript]
