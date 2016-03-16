@@ -2663,6 +2663,43 @@ HoverIcons.prototype.setCurrentState = function(state)
 };
 
 /**
+ * Adds custom stencils defined via shape=stencil(value) style. The value is a base64 encoded, compressed and
+ * URL encoded XML definition of the shape according to the stencil definition language of mxGraph.
+ * 
+ * Needs to be in this file to make sure its part of the embed client code. Also the check for ZLib is
+ * different than for the Editor code.
+ */
+var mxCellRendererCreateShape = mxCellRenderer.prototype.createShape;
+mxCellRenderer.prototype.createShape = function(state)
+{
+	if (state.style != null && typeof(RawDeflate) !== 'undefined' && typeof RawDeflate.inflate === 'function')
+	{
+    	var shape = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
+
+    	// Extracts and decodes stencil XML if shape has the form shape=stencil(value)
+    	if (shape != null && shape.substring(0, 8) == 'stencil(')
+    	{
+    		try
+    		{
+    			var stencil = shape.substring(8, shape.length - 1);
+    			var doc = mxUtils.parseXml(decodeURIComponent(RawDeflate.inflate((window.atob) ? atob(stencil) : Base64.decode(stencil, true))));
+    			
+    			return new mxShape(new mxStencil(doc.documentElement));
+    		}
+    		catch (e)
+    		{
+    			if (window.console != null)
+    			{
+    				console.log('Error in shape: ' + e);
+    			}
+    		}
+    	}
+	}
+	
+	return mxCellRendererCreateShape.apply(this, arguments);
+};
+
+/**
  * These overrides are only added if mxVertexHandler is defined (ie. not in embedded graph)
  */
 if (typeof mxVertexHandler != 'undefined')
