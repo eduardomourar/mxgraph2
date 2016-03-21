@@ -452,9 +452,14 @@
 				segs = 5;
 				variation /= 3;
 			}
+			
+			function sign(x)
+			{
+			    return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
+			}
 	
-			var stepX = Math.sign(endX - this.lastX) * dx / segs;
-			var stepY = Math.sign(endY - this.lastY) * dy / segs;
+			var stepX = sign(endX - this.lastX) * dx / segs;
+			var stepY = sign(endY - this.lastY) * dy / segs;
 	
 			var fx = dx / dist;
 			var fy = dy / dist;
