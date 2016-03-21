@@ -1097,6 +1097,14 @@ Actions.prototype.init = function()
 			}, graph.cellEditor.isContentEditing());
 		}
 	}).isEnabled = isGraphEnabled;
+	this.addAction('insertImage...', function()
+	{
+		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
+		{
+			graph.clearSelection();
+			ui.actions.get('image').funct();
+		}
+	}).isEnabled = isGraphEnabled;
 	action = this.addAction('layers', mxUtils.bind(this, function()
 	{
 		if (this.layersWindow == null)
