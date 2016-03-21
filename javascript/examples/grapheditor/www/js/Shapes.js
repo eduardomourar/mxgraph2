@@ -386,6 +386,197 @@
 
 	mxCellRenderer.prototype.defaultShapes['parallelMarker'] = ParallelMarkerShape;
 
+	/**
+	 * Adds handJiggle style (jiggle=n sets jiggle)
+	 */
+	function HandJiggle(canvas, defaultVariation)
+	{
+		this.canvas = canvas;
+		
+		// Avoids "spikes" in the output
+		this.canvas.setLineJoin('round');
+		this.canvas.setLineCap('round');
+		
+		this.defaultVariation = defaultVariation;
+		this.originalLineTo = this.canvas.lineTo;
+		this.canvas.lineTo = mxUtils.bind(this, HandJiggle.prototype.lineTo);
+		this.originalMoveTo = this.canvas.moveTo;
+		this.canvas.moveTo = mxUtils.bind(this, HandJiggle.prototype.moveTo);
+		this.originalClose = this.canvas.close;
+		this.canvas.close = mxUtils.bind(this, HandJiggle.prototype.close);
+	};
+	
+	HandJiggle.prototype.moveTo = function(endX, endY)
+	{
+		this.originalMoveTo.apply(this.canvas, arguments);
+		this.lastX = endX;
+		this.lastY = endY;
+		this.firstX = endX;
+		this.firstY = endY;
+	};
+	
+	HandJiggle.prototype.close = function()
+	{
+		if (this.firstX != null && this.firstY != null)
+		{
+			this.lineTo(this.firstX, this.firstY);
+			this.originalClose.apply(this.canvas, arguments);
+		}
+		
+		this.originalClose.apply(this.canvas, arguments);
+	};
+	
+	HandJiggle.prototype.lineTo = function(endX, endY)
+	{
+		// LATER: Check why this.canvas.lastX cannot be used
+		if (this.lastX != null && this.lastY != null)
+		{
+			var dx = Math.abs(endX - this.lastX);
+			var dy = Math.abs(endY - this.lastY);
+			var dist = Math.sqrt(dx * dx + dy * dy);
+			
+			if (dist < 2)
+			{
+				this.originalLineTo.apply(this.canvas, arguments);
+				this.lastX = endX;
+				this.lastY = endY;
+				
+				return;
+			}
+	
+			var segs = Math.round(dist / 10);
+			var variation = this.defaultVariation;
+			
+			if (segs < 5)
+			{
+				segs = 5;
+				variation /= 3;
+			}
+	
+			var stepX = Math.sign(endX - this.lastX) * dx / segs;
+			var stepY = Math.sign(endY - this.lastY) * dy / segs;
+	
+			var fx = dx / dist;
+			var fy = dy / dist;
+	
+			for (var s = 0; s < segs; s++)
+			{
+				var x = stepX * s + this.lastX;
+				var y = stepY * s + this.lastY;
+	
+				var offset = (Math.random() - 0.5) * variation;
+				this.originalLineTo.call(this.canvas, x - offset * fy, y - offset * fx);
+			}
+			
+			this.originalLineTo.call(this.canvas, endX, endY);
+			this.lastX = endX;
+			this.lastY = endY;
+		}
+		else
+		{
+			this.originalLineTo.apply(this.canvas, arguments);
+			this.lastX = endX;
+			this.lastY = endY;
+		}
+	};
+	
+	HandJiggle.prototype.destroy = function()
+	{
+		 this.canvas.lineTo = this.originalLineTo;
+		 this.canvas.moveTo = this.originalMoveTo;
+		 this.canvas.close = this.originalClose;
+	};
+	
+	// Installs hand jiggle in all shapes
+	var mxShapePaint0 = mxShape.prototype.paint;
+	mxShape.prototype.defaultJiggle = 1.5;
+	mxShape.prototype.paint = function(c)
+	{
+		if (this.style != null && mxUtils.getValue(this.style, 'comic', false) &&
+			!this.isRounded && c.handHiggle == null)
+		{
+			c.handJiggle = new HandJiggle(c, mxUtils.getValue(this.style, 'jiggle', this.defaultJiggle));
+		}
+		
+		mxShapePaint0.apply(this, arguments);
+		
+		if (c.handJiggle != null)
+		{
+			c.handJiggle.destroy();
+			delete c.handJiggle;
+		}
+	};
+	
+	// Sets default jiggle for diamond
+	mxRhombus.prototype.defaultJiggle = 3;
+
+	/**
+	 * Overrides to avoid call to rect
+	 */
+	var mxRectangleShapePaintBackground0 = mxRectangleShape.prototype.paintBackground;
+	mxRectangleShape.prototype.paintBackground = function(c, x, y, w, h)
+	{
+		if (c.handJiggle == null)
+		{
+			mxRectangleShapePaintBackground0.apply(this, arguments);
+		}
+		else
+		{
+			var events = true;
+			
+			if (this.style != null)
+			{
+				events = mxUtils.getValue(this.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1';		
+			}
+			
+			if (events || (this.fill != null && this.fill != mxConstants.NONE) ||
+				(this.stroke != null && this.stroke != mxConstants.NONE))
+			{
+				if (!events && (this.fill == null || this.fill == mxConstants.NONE))
+				{
+					c.pointerEvents = false;
+				}
+				
+				if (this.isRounded)
+				{
+					var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE,
+						mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
+					var r = Math.min(w * f, h * f);
+					// TODO: Add support for rounded rectangles in HandJiggle
+					c.roundrect(x, y, w, h, r, r);
+				}
+				else
+				{
+					c.begin();
+					c.moveTo(x, y);
+					c.lineTo(x + w, y);
+					c.lineTo(x + w, y + h);
+					c.lineTo(x, y + h);
+					c.lineTo(x, y);
+					// LATER: Check if close is needed here
+					c.close();
+					c.end();
+				}
+					
+				c.fillAndStroke();
+			}			
+		}
+	};
+
+	/**
+	 * Disables glass effect with hand jiggle.
+	 */
+	var mxRectangleShapePaintForeground0 = mxRectangleShape.prototype.paintForeground;
+	mxRectangleShape.prototype.paintForeground = function(c, x, y, w, h)
+	{
+		if (c.handJiggle == null)
+		{
+			mxRectangleShapePaintForeground0.apply(this, arguments);
+		}
+	};
+
+	// End of hand jiggle integration
+	
 	// Process Shape
 	function ProcessShape()
 	{

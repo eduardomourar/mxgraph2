@@ -955,6 +955,10 @@ Sidebar.prototype.addMiscPalette = function(expand)
 	 		return this.createVertexTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Variable');
 	 	})),
 	 	this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false, null, 'user person human stickman'),
+	 	this.createVertexTemplateEntry('html=1;whiteSpace=wrap;rounded=0;comic=1;strokeWidth=2;fontFamily=Comic Sans MS;fontStyle=1;', 120, 60, 'COMIC RECTANGLE', 'Comic Rectangle', true, null, 'rect comic rectangle box text retro'),
+	 	this.createVertexTemplateEntry('rhombus;html=1;whiteSpace=wrap;rounded=0;comic=1;strokeWidth=2;fontFamily=Comic Sans MS;fontStyle=1;', 100, 100, 'COMIC DIAMOND', 'Comic Diamond', true, null, 'diamond rhombus if condition decision conditional question test retro comic'),
+	 	this.createEdgeTemplateEntry('edgeStyle=segmentEdgeStyle;rounded=0;comic=1;strokeWidth=2;endArrow=blockThin;html=1;fontFamily=Comic Sans MS;fontStyle=1;', 50, 50, '', 'Comic Arrow 1'),
+	 	this.createEdgeTemplateEntry('edgeStyle=straightEdgeStyle;rounded=0;comic=1;strokeWidth=2;endArrow=blockThin;html=1;fontFamily=Comic Sans MS;fontStyle=1;', 50, 50, '', 'Comic Arrow 2'),
 	 	this.createVertexTemplateEntry('line;html=1;', 160, 10, '', 'Horizontal Line'),
 	 	this.createVertexTemplateEntry('line;direction=south;html=1;', 10, 160, '', 'Vertical Line'),
 	 	this.createVertexTemplateEntry('line;html=1;perimeter=backbonePerimeter;points=[];outlineConnect=0;', 160, 10, '', 'Horizontal Backbone', false, null, 'network'),

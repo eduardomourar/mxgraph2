@@ -1,3 +1,4 @@
+- Adds comic style and shapes in grapheditor [JavaScript]
 - Fixes 1 pixel offset for move preview [JavaScript]
 - Adds mxSelectionCellsHandler.updateHandler [JavaScript]
 - Changes default for mxConstants.ARROW_SPACING to 0 [JavaScript]
