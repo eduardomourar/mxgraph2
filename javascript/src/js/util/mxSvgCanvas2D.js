@@ -659,9 +659,9 @@ mxSvgCanvas2D.prototype.updateFill = function()
 		if (s.gradientColor != null)
 		{
 			var id = this.getSvgGradient(s.fillColor, s.gradientColor, s.gradientFillAlpha, s.gradientAlpha, s.gradientDirection);
-			var chromeApp = window.chrome != null && chrome.app != null && chrome.app.runtime != null;
 			
-			if (!chromeApp && !mxClient.IS_IE && this.root.ownerDocument == document)
+			if (!mxClient.IS_CHROME_APP && !mxClient.IS_IE && !mxClient.IS_IE11 &&
+				!mxClient.IS_EDGE && this.root.ownerDocument == document)
 			{
 				// Workaround for potential base tag and brackets must be escaped
 				var base = this.getBaseUrl().replace(/([\(\)])/g, '\\$1');
@@ -1880,9 +1880,8 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 			this.root.appendChild(c);
 		}
 		
-		var chromeApp = window.chrome != null && chrome.app != null && chrome.app.runtime != null;
-		
-		if (!chromeApp && !mxClient.IS_IE && this.root.ownerDocument == document)
+		if (!mxClient.IS_CHROME_APP && !mxClient.IS_IE && !mxClient.IS_IE11 &&
+			!mxClient.IS_EDGE && this.root.ownerDocument == document)
 		{
 			// Workaround for potential base tag
 			var base = this.getBaseUrl().replace(/([\(\)])/g, '\\$1');

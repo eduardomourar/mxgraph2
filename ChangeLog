@@ -1,3 +1,4 @@
+- Fixes gradients for certain URLs in IE11/Edge [JavaScript]
 - Adds comic style and shapes in grapheditor [JavaScript]
 - Fixes 1 pixel offset for move preview [JavaScript]
 - Adds mxSelectionCellsHandler.updateHandler [JavaScript]
