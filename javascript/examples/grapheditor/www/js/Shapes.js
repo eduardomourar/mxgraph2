@@ -553,6 +553,13 @@
 	/**
 	 * Overrides to avoid call to rect
 	 */
+	var mxRectangleShapeIsHtmlAllowed0 = mxRectangleShape.prototype.isHtmlAllowed;
+	mxRectangleShape.prototype.isHtmlAllowed = function()
+	{
+		return (this.style == null || !mxUtils.getValue(this.style, 'comic', false)) &&
+			mxRectangleShapeIsHtmlAllowed0.apply(this, arguments);
+	};
+	
 	var mxRectangleShapePaintBackground0 = mxRectangleShape.prototype.paintBackground;
 	mxRectangleShape.prototype.paintBackground = function(c, x, y, w, h)
 	{
