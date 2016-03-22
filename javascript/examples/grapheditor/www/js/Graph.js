@@ -1105,16 +1105,21 @@ Graph.prototype.replacePlaceholders = function(cell, str)
 			else
 			{
 				var name = val.substring(1, val.length - 1);
-				var current = cell;
 				
-				while (tmp == null && current != null)
+				// Workaround for invalid char for getting attribute in older versions of IE
+				if (name.indexOf('{') < 0)
 				{
-					if (current.value != null && typeof(current.value) == 'object')
-					{
-						tmp = current.value.getAttribute(name);
-					}
+					var current = cell;
 					
-					current = this.model.getParent(current);
+					while (tmp == null && current != null)
+					{
+						if (current.value != null && typeof(current.value) == 'object')
+						{
+							tmp = current.value.getAttribute(name);
+						}
+						
+						current = this.model.getParent(current);
+					}
 				}
 				
 				if (tmp == null)
