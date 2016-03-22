@@ -398,12 +398,24 @@
 		this.canvas.setLineCap('round');
 		
 		this.defaultVariation = defaultVariation;
+		
 		this.originalLineTo = this.canvas.lineTo;
 		this.canvas.lineTo = mxUtils.bind(this, HandJiggle.prototype.lineTo);
+		
 		this.originalMoveTo = this.canvas.moveTo;
 		this.canvas.moveTo = mxUtils.bind(this, HandJiggle.prototype.moveTo);
+		
 		this.originalClose = this.canvas.close;
 		this.canvas.close = mxUtils.bind(this, HandJiggle.prototype.close);
+		
+		this.originalQuadTo = this.canvas.quadTo;
+		this.canvas.quadTo = mxUtils.bind(this, HandJiggle.prototype.quadTo);
+		
+		this.originalCurveTo = this.canvas.curveTo;
+		this.canvas.curveTo = mxUtils.bind(this, HandJiggle.prototype.curveTo);
+		
+		this.originalArcTo = this.canvas.arcTo;
+		this.canvas.arcTo = mxUtils.bind(this, HandJiggle.prototype.arcTo);
 	};
 	
 	HandJiggle.prototype.moveTo = function(endX, endY)
@@ -426,6 +438,27 @@
 		this.originalClose.apply(this.canvas, arguments);
 	};
 	
+	HandJiggle.prototype.quadTo = function(x1, y1, x2, y2)
+	{
+		this.originalQuadTo.apply(this.canvas, arguments);
+		this.lastX = x2;
+		this.lastY = y2;
+	};
+	
+	HandJiggle.prototype.curveTo = function(x1, y1, x2, y2, x3, y3)
+	{
+		this.originalCurveTo.apply(this.canvas, arguments);
+		this.lastX = x3;
+		this.lastY = y3;
+	};
+	
+	HandJiggle.prototype.arcTo = function(rx, ry, angle, largeArcFlag, sweepFlag, x, y)
+	{
+		this.originalArcTo.apply(this.canvas, arguments);
+		this.lastX = x;
+		this.lastY = y;
+	};
+
 	HandJiggle.prototype.lineTo = function(endX, endY)
 	{
 		// LATER: Check why this.canvas.lastX cannot be used
@@ -490,6 +523,9 @@
 		 this.canvas.lineTo = this.originalLineTo;
 		 this.canvas.moveTo = this.originalMoveTo;
 		 this.canvas.close = this.originalClose;
+		 this.canvas.quadTo = this.originalQuadTo;
+		 this.canvas.curveTo = this.originalCurveTo;
+		 this.canvas.arcTo = this.originalArcTo;
 	};
 	
 	// Installs hand jiggle in all shapes
@@ -497,8 +533,7 @@
 	mxShape.prototype.defaultJiggle = 1.5;
 	mxShape.prototype.paint = function(c)
 	{
-		if (this.style != null && mxUtils.getValue(this.style, 'comic', false) &&
-			!this.isRounded && c.handHiggle == null)
+		if (this.style != null && mxUtils.getValue(this.style, 'comic', false) && c.handHiggle == null)
 		{
 			c.handJiggle = new HandJiggle(c, mxUtils.getValue(this.style, 'jiggle', this.defaultJiggle));
 		}
@@ -542,27 +577,37 @@
 					c.pointerEvents = false;
 				}
 				
+				c.begin();
+				
 				if (this.isRounded)
 				{
 					var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE,
 						mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
 					var r = Math.min(w * f, h * f);
-					// TODO: Add support for rounded rectangles in HandJiggle
-					c.roundrect(x, y, w, h, r, r);
+					c.moveTo(x + r, y);
+					c.lineTo(x + w - r, y);
+					c.quadTo(x + w, y, x + w, y + r);
+					c.lineTo(x + w, y + h - r);
+					c.quadTo(x + w, y + h, x + w - r, y + h);
+					c.lineTo(x + r, y + h);
+					c.quadTo(x, y + h, x, y + h - r);
+					c.lineTo(x, y + r);
+					c.quadTo(x, y, x + r, y);
 				}
 				else
 				{
-					c.begin();
+					
 					c.moveTo(x, y);
 					c.lineTo(x + w, y);
 					c.lineTo(x + w, y + h);
 					c.lineTo(x, y + h);
 					c.lineTo(x, y);
-					// LATER: Check if close is needed here
-					c.close();
-					c.end();
 				}
-					
+				
+				// LATER: Check if close is needed here
+				c.close();
+				c.end();
+				
 				c.fillAndStroke();
 			}			
 		}
