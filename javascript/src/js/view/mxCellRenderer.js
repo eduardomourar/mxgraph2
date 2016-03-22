@@ -866,6 +866,7 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 				state.text.lastValue = null;
 			}
 			
+			state.text.resetStyles();
 			state.text.apply(state);
 		}
 		
