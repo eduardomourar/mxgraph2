@@ -360,7 +360,6 @@ mxText.prototype.resetStyles = function()
 	this.family = mxConstants.DEFAULT_FONTFAMILY;
 	this.size = mxConstants.DEFAULT_FONTSIZE;
 	this.fontStyle = mxConstants.DEFAULT_FONTSTYLE;
-	this.spacing = 2;
 	this.spacingTop = this.spacing;
 	this.spacingRight = this.spacing;
 	this.spacingBottom = this.spacing;
@@ -368,12 +367,7 @@ mxText.prototype.resetStyles = function()
 	this.horizontal = true;
 	delete this.background;
 	delete this.border;
-	this.wrap = false;
-	this.clipped = false;
-	this.overflow = 'visible';
-	this.labelPadding = 0;
 	this.textDirection = mxConstants.DEFAULT_TEXT_DIRECTION;
-	this.rotation = 0;
 	delete this.margin;
 };
 
