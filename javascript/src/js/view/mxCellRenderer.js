@@ -885,8 +885,8 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 			state.text.value = value;
 			state.text.bounds = bounds;
 			state.text.scale = this.getTextScale(state);
-			state.text.isWrapping = wrapping;
-			state.text.isClipping = clipping;
+			state.text.wrap = wrapping;
+			state.text.clipped = clipping;
 			this.redrawLabelShape(state.text);
 		}
 	}
