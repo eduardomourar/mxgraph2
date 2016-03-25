@@ -1094,7 +1094,7 @@ Actions.prototype.init = function()
 			        	}
 					}
 	    		}
-			}, graph.cellEditor.isContentEditing());
+			}, graph.cellEditor.isContentEditing(), !graph.cellEditor.isContentEditing());
 		}
 	}).isEnabled = isGraphEnabled;
 	this.addAction('insertImage...', function()

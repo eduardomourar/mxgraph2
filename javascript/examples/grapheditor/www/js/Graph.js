@@ -869,8 +869,9 @@ Graph.prototype.initLayoutManager = function()
 Graph.prototype.sanitizeHtml = function(value)
 {
 	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
-	// TODO: Add MathML to whitelisted tags, add data URIs for images
-	function urlX(url) { if(/^https?:\/\//.test(url)) { return url }}
+	// NOTE: Original minimized sanitizer was modified to support data URIs for images
+	// TODO: Add MathML to whitelisted tags
+	function urlX(url) { if(/(^https?:|^mailto:\/\/|^data:image\/)/.test(url)) { return url }}
     function idX(id) { return id }
 	
 	return html_sanitize(value, urlX, idX);
