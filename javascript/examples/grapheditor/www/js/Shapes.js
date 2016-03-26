@@ -548,7 +548,7 @@
 	};
 	
 	// Sets default jiggle for diamond
-	mxRhombus.prototype.defaultJiggle = 3;
+	mxRhombus.prototype.defaultJiggle = 2;
 
 	/**
 	 * Overrides to avoid call to rect
