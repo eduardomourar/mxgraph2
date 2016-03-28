@@ -877,9 +877,12 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 		var dialect = (isForceHtml) ? mxConstants.DIALECT_STRICTHTML : state.view.graph.dialect;
 
 		// Text is a special case where change of dialect is possible at runtime
+		var overflow = state.style[mxConstants.STYLE_OVERFLOW] || 'visible';
+		
 		if (forced || state.text.value != value || state.text.isWrapping != wrapping ||
-			state.text.isClipping != clipping || state.text.scale != this.getTextScale(state) ||
-			state.text.dialect != dialect || !state.text.bounds.equals(bounds))
+			state.text.overflow != overflow || state.text.isClipping != clipping ||
+			state.text.scale != this.getTextScale(state) || state.text.dialect != dialect ||
+			!state.text.bounds.equals(bounds))
 		{
 			state.text.dialect = dialect;
 			state.text.value = value;
@@ -887,6 +890,7 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 			state.text.scale = this.getTextScale(state);
 			state.text.wrap = wrapping;
 			state.text.clipped = clipping;
+			state.text.overflow = overflow;
 			this.redrawLabelShape(state.text);
 		}
 	}
