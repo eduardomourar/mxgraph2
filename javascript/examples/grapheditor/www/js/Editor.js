@@ -131,17 +131,6 @@ mxUtils.extend(Editor, mxEventSource);
 Editor.prototype.originalNoForeignObject = mxClient.NO_FO;
 
 /**
- * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
- * cannot be detected in Firefox, see above).
- */
-Editor.prototype.defaultScrollbars = !mxClient.IS_IOS;
-
-/**
- * Specifies if the page should be visible for new files. Default is true.
- */
-Editor.prototype.defaultPageVisible = true;
-
-/**
  * Specifies the image URL to be used for the transparent background.
  */
 Editor.prototype.transparentImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhMAAwAIAAAP///wAAACH5BAEAAAAALAAAAAAwADAAAAIxhI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8egpAAA7' :
@@ -192,11 +181,6 @@ Editor.prototype.autosave = true;
 Editor.prototype.initialTopSpacing = 0;
 
 /**
- * 
- */
-Editor.prototype.defaultGraphBackground = '#ffffff';
-
-/**
  * Specifies the app name. Default is document.title.
  */
 Editor.prototype.appName = document.title;
@@ -236,11 +220,11 @@ Editor.prototype.resetGraph = function()
 	this.graph.setTooltips(true);
 	this.graph.setConnectable(true);
 	this.graph.foldingEnabled = true;
-	this.graph.scrollbars = this.defaultScrollbars;
-	this.graph.pageVisible = this.defaultPageVisible;
+	this.graph.scrollbars = this.graph.defaultScrollbars;
+	this.graph.pageVisible = this.graph.defaultPageVisible;
 	this.graph.pageBreaksVisible = this.graph.pageVisible; 
 	this.graph.preferPageSize = this.graph.pageBreaksVisible;
-	this.graph.background = this.defaultGraphBackground;
+	this.graph.background = this.graph.defaultGraphBackground;
 	this.graph.pageScale = mxGraph.prototype.pageScale;
 	this.graph.pageFormat = mxGraph.prototype.pageFormat;
 	this.updateGraphComponents();
@@ -318,7 +302,7 @@ Editor.prototype.readGraphState = function(node)
 	}
 	else
 	{
-		this.graph.background = this.defaultGraphBackground;
+		this.graph.background = this.graph.defaultGraphBackground;
 	}
 };
 

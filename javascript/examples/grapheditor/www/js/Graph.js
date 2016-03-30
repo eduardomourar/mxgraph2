@@ -763,6 +763,22 @@ Graph.prototype.maxFitScale = null;
 Graph.prototype.linkTarget = '_blank';
 
 /**
+ * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
+ * cannot be detected in Firefox, see above).
+ */
+Graph.prototype.defaultScrollbars = !mxClient.IS_IOS;
+
+/**
+ * Specifies if the page should be visible for new files. Default is true.
+ */
+Graph.prototype.defaultPageVisible = true;
+
+/**
+ * 
+ */
+Graph.prototype.defaultGraphBackground = '#ffffff';
+
+/**
  * Overrides the background color and paints a transparent background.
  */
 Graph.prototype.transparentBackground = true;
