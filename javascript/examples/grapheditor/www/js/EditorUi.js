@@ -1477,9 +1477,35 @@ EditorUi.prototype.initCanvas = function()
 		// Changes toolbar opacity on hover
 		if (!mxClient.IS_TOUCH)
 		{
+			var fadeThread = null;
+			
+			mxEvent.addListener(graph.container, 'mousemove', mxUtils.bind(this, function(evt)
+			{
+				if (fadeThread != null)
+				{
+					window.clearTimeout(fadeThread);
+				}
+				
+				fadeThread = window.setTimeout(mxUtils.bind(this, function()
+				{
+				 	mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'transition', 'all 1200ms ease-in-out');
+				 	mxUtils.setOpacity(this.chromelessToolbar, 0);
+					fadeThread = null;
+				}), 1000);
+				
+				mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'transition', null);
+				mxUtils.setOpacity(this.chromelessToolbar, 20);
+			}));
+			
 			mxEvent.addListener(this.chromelessToolbar, 'mouseenter', mxUtils.bind(this, function(evt)
 			{
 				mxUtils.setOpacity(this.chromelessToolbar, 100);
+				
+				if (fadeThread != null)
+				{
+					window.clearTimeout(fadeThread);
+					fadeThread = null;
+				}
 			}));
 			
 			mxEvent.addListener(this.chromelessToolbar, 'mouseleave',  mxUtils.bind(this, function(evt)
