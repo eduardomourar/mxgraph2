@@ -1423,6 +1423,7 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 	{
 		state.shape.resetStyles();
 		this.configureShape(state);
+		// LATER: Ignore update for realtime to fix reset of current gesture
 		state.view.graph.selectionCellsHandler.updateHandler(state);
 		force = true;
 	}
