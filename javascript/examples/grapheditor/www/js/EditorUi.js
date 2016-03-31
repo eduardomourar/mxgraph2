@@ -1377,6 +1377,9 @@ EditorUi.prototype.initCanvas = function()
 				graph.container.scrollLeft = sl * ns/ s;
 			}
 	   	});
+		
+		// Hack to make function available to subclassers
+		this.chromelessResize = resize;
 
 		// Removable resize listener
 		var autoscaleResize = mxUtils.bind(this, function()

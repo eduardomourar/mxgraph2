@@ -272,15 +272,16 @@ Editor.prototype.readGraphState = function(node)
 	}
 	
 	var pv = node.getAttribute('page');
-	
+
 	if (pv != null)
 	{
-		this.graph.pageVisible = (pv == '1');
+		this.graph.pageVisible = (pv != '0');
 	}
 	else
 	{
-		this.graph.pageVisible = this.defaultPageVisible;
+		this.graph.pageVisible = this.graph.defaultPageVisible;
 	}
+
 	
 	this.graph.pageBreaksVisible = this.graph.pageVisible; 
 	this.graph.preferPageSize = this.graph.pageBreaksVisible;
