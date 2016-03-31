@@ -1,3 +1,4 @@
+- Updates handler after style change of cell [JavaScript]
 - Resets text shape state before using new style [JavaScript]
 - Fixes gradients for certain URLs in IE11/Edge [JavaScript]
 - Adds comic style and shapes in grapheditor [JavaScript]

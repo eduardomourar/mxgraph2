@@ -1423,6 +1423,7 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 	{
 		state.shape.resetStyles();
 		this.configureShape(state);
+		state.view.graph.selectionCellsHandler.updateHandler(state);
 		force = true;
 	}
 
