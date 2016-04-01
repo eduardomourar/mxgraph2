@@ -3066,7 +3066,7 @@
 	 	if (edgeStyle == mxEdgeStyle.IsometricConnector)
 	 	{
 	 		var handler = new mxElbowEdgeHandler(state);
-	 		// FIXME: Disable snapping
+	 		handler.snapToTerminals = false;
 	 		
 	 		return handler;
 	 	}
