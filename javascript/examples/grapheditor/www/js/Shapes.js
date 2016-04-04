@@ -2914,8 +2914,11 @@
 		};
 		
 		// Exposes custom handles
-		EditorUi.createHandle = createHandle;
-		EditorUi.handleFactory = handleFactory;
+		if (window.EditorUi != null)
+		{
+			EditorUi.createHandle = createHandle;
+			EditorUi.handleFactory = handleFactory;
+		}
 
 		mxVertexHandler.prototype.createCustomHandles = function()
 		{
