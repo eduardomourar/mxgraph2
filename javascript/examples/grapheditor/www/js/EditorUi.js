@@ -1593,6 +1593,7 @@ EditorUi.prototype.initCanvas = function()
 					graph.container.scrollTop += Math.round((dy - ty) * graph.view.scale);
 					
 					this.autoTranslate = false;
+					
 					return;
 				}
 
@@ -3332,6 +3333,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(107, true, 'zoomIn'); // Ctrl+Plus
 	keyHandler.bindAction(109, true, 'zoomOut'); // Ctrl+Minus
 	keyHandler.bindAction(80, true, 'print'); // Ctrl+P
+	keyHandler.bindAction(79, true, 'outline', true); // Ctrl+Shift+O
 	keyHandler.bindAction(112, false, 'about'); // F1
 
 	if (!this.editor.chromeless)
@@ -3394,7 +3396,6 @@ EditorUi.prototype.createKeyHandler = function(editor)
 		keyHandler.bindAction(73, true, 'italic'); // Ctrl+I
 		keyHandler.bindAction(76, true, 'lockUnlock'); // Ctrl+L
 		keyHandler.bindAction(76, true, 'layers', true); // Ctrl+Shift+L
-		keyHandler.bindAction(79, true, 'outline', true); // Ctrl+Shift+O
 		keyHandler.bindAction(80, true, 'formatPanel', true); // Ctrl+Shift+P
 		keyHandler.bindAction(85, true, 'underline'); // Ctrl+U
 		keyHandler.bindAction(85, true, 'ungroup', true); // Ctrl+Shift+U

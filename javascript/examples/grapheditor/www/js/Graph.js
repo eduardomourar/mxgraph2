@@ -951,6 +951,20 @@ Graph.prototype.getLabel = function(cell)
 };
 
 /**
+ * Adds labelMovable style.
+ */
+Graph.prototype.isLabelMovable = function(cell)
+{
+	var state = this.view.getState(cell);
+	var style = (state != null) ? state.style : this.getCellStyle(cell);
+	
+	return !this.isCellLocked(cell) &&
+		((this.model.isEdge(cell) && this.edgeLabelsMovable) ||
+		(this.model.isVertex(cell) && (this.vertexLabelsMovable ||
+		mxUtils.getValue(style, 'labelMovable', '0') == '1')));
+};
+
+/**
  * Adds event if grid size is changed.
  */
 mxGraph.prototype.setGridSize = function(value)
@@ -5355,6 +5369,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxVertexHandler.prototype.createSizerShape = function(bounds, index, fillColor)
 		{
 			this.handleImage = (index == mxEvent.ROTATION_HANDLE) ? rotationHandle : (index == mxEvent.LABEL_HANDLE) ? this.secondaryHandleImage : this.handleImage;
+			
 			return vertexHandlerCreateSizerShape.apply(this, arguments);
 		};
 		
