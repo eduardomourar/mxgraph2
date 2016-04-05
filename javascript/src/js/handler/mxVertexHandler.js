@@ -653,6 +653,10 @@ mxVertexHandler.prototype.start = function(x, y, index)
 		{
 			this.rotationShape.node.style.display = '';
 		}
+		else if (index == mxEvent.LABEL_HANDLE)
+		{
+			this.labelShape.node.style.display = '';
+		}
 		else if (this.sizers != null && this.sizers[index] != null)
 		{
 			this.sizers[index].node.style.display = '';
@@ -831,7 +835,8 @@ mxVertexHandler.prototype.moveLabel = function(me)
 		point.y = (this.graph.snap(point.y / scale - tr.y) + tr.y) * scale;
 	}
 
-	this.moveSizerTo(this.sizers[this.sizers.length - 1], point.x, point.y);
+	var index = (this.rotationShape != null) ? this.sizers.length - 2 : this.sizers.length - 1;
+	this.moveSizerTo(this.sizers[index], point.x, point.y);
 };
 
 /**

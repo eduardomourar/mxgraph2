@@ -1,3 +1,4 @@
+- Fixes vertex label moving with live preview [JavaScript]
 - Adds argument in mxGraph.createEdgeHandler [JavaScript]
 - Updates handler after style change of cell [JavaScript]
 - Resets text shape state before using new style [JavaScript]
