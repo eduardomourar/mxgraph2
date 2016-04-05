@@ -5337,7 +5337,8 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			var source = index != null && index == 0;
 			var terminalState = this.state.getVisibleTerminalState(source);
-			var c = (index != null && (index == 0 || index >= this.state.absolutePoints.length - 1)) ?
+			var c = (index != null && (index == 0 || index >= this.state.absolutePoints.length - 1 ||
+				(this.constructor == mxElbowEdgeHandler && index == 2))) ?
 				this.graph.getConnectionConstraint(this.state, terminalState, source) : null;
 			var pt = (c != null) ? this.graph.getConnectionPoint(this.state.getVisibleTerminalState(source), c) : null;
 			var img = (pt != null) ? this.fixedHandleImage : ((c != null && terminalState != null) ?
