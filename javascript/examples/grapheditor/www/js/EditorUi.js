@@ -391,7 +391,7 @@ EditorUi = function(editor, container)
 	};
 	
 	// Stores the current style and assigns it to new cells
-	var styles = ['rounded', 'shadow', 'glass', 'dashed', 'dashPattern'];
+	var styles = ['rounded', 'shadow', 'glass', 'dashed', 'dashPattern', 'comic', 'labelBackgroundColor'];
 	var connectStyles = ['shape', 'edgeStyle', 'curved', 'rounded', 'elbow'];
 	
 	// Note: Everything that is not in styles is ignored (styles is augmented below)
