@@ -3446,7 +3446,7 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			if (state != null)
 			{
-				label.style += ';align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;'
+				label.style += 'align=center;verticalAlign=middle;labelBackgroundColor=#ffffff;'
 				label.geometry.relative = true;
 				label.connectable = false;
 				
