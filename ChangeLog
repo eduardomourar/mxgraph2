@@ -1,3 +1,5 @@
+06-APR-2016: 3.5.1.0
+
 - Fixes vertex label moving with live preview [JavaScript]
 - Adds argument in mxGraph.createEdgeHandler [JavaScript]
 - Updates handler after style change of cell [JavaScript]
@@ -11,7 +13,7 @@
 - mxCellRenderer.redrawShape creates new shape if needed [JavaScript]
 - mxStyleChange no longer requires a new mxCellState [JavaScript]
 - Avoids unnecessary text repaints in mxCellRenderer [JavaScript]
-- Adds mxShape.initStyles, resetStyles. mxText.resetStyles [JavaScript]
+- Adds mxShape.initStyles, resetStyles, mxText.resetStyles [JavaScript]
 - Fixes mxUtils.equalEntries for new properties in second argument [JavaScript]
 - Adds export for strokeAlpha and fillAlpha in .NET backend [Dotnet]
 - Fixes export of strokeAlpha and fillAlpha in Java backend [Java]
