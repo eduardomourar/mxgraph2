@@ -1,3 +1,5 @@
+- Fixes delayed selection of non-movable child cells [JavaScript]
+
 06-APR-2016: 3.5.1.0
 
 - Fixes vertex label moving with live preview [JavaScript]
