@@ -584,6 +584,10 @@ mxText.prototype.updateBoundingBox = function()
 				this.boundingBox.height = bbox.height;
 			}
 		}
+		else
+		{
+			this.unrotatedBoundingBox = null;
+		}
 	}
 };
 
