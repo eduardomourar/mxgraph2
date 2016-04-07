@@ -59,8 +59,6 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			    			start.state = state;
 			    			start.event = me;
 			    			
-			    			console.log('check123', mxUtils.contains(state.text.boundingBox, me.getGraphX(), me.getGraphY()));
-			    			
 	    					if (state.text != null && state.text.boundingBox != null &&
 	    						mxUtils.contains(state.text.boundingBox, me.getGraphX(), me.getGraphY()))
 	    					{
