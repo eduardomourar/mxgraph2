@@ -34,7 +34,8 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			point: null,
 			event: null,
 			state: null,
-			handle: null
+			handle: null,
+			selected: false
 		};
 		
 		// Uses this event to process mouseDown to check the selection state before it is changed
@@ -54,8 +55,11 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			    		if (this.model.isEdge(state.cell))
 			    		{
 			    			start.point = new mxPoint(me.getGraphX(), me.getGraphY());
+			    			start.selected = this.isCellSelected(state.cell);
 			    			start.state = state;
 			    			start.event = me;
+			    			
+			    			console.log('check123', mxUtils.contains(state.text.boundingBox, me.getGraphX(), me.getGraphY()));
 			    			
 	    					if (state.text != null && state.text.boundingBox != null &&
 	    						mxUtils.contains(state.text.boundingBox, me.getGraphX(), me.getGraphY()))
@@ -77,13 +81,15 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			}
 		}));
 		
+		var mouseDown = null;
+		
 		this.addMouseListener(
 		{
-			mouseDown: function() {},
+			mouseDown: function(sender, me) {},
 		    mouseMove: mxUtils.bind(this, function(sender, me)
 		    {
 		    	if (!this.panningHandler.isActive() && !mxEvent.isControlDown(me.getEvent()) &&
-		    		!mxEvent.isShiftDown(me.getEvent()))
+		    		!mxEvent.isShiftDown(me.getEvent()) && !mxEvent.isAltDown(me.getEvent()))
 		    	{
 		    		var tol = this.tolerance;
 	
@@ -107,6 +113,13 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			    				var handle = handler.getHandleForEvent(start.event);
 			    				var edgeStyle = this.view.getEdgeStyle(state);
 			    				var entity = edgeStyle == mxEdgeStyle.EntityRelation;
+			    				
+			    				// Handles special case where label was clicked on unselected edge in which
+			    				// case the label will be moved regardless of the handle that is returned
+			    				if (!start.selected && start.handle == mxEvent.LABEL_HANDLE)
+			    				{
+			    					handle = start.handle;
+			    				}
 			    				
 	    						if (!entity || handle == 0 || handle == handler.bends.length - 1 || handle == mxEvent.LABEL_HANDLE)
 	    						{
@@ -186,6 +199,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 				    					start.event = null;
 				    					start.point = null;
 				    					start.handle = null;
+				    					start.selected = false;
 				    					me.consume();
 	
 				    					// Removes preview rectangle in graph handler
