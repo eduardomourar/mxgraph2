@@ -1,3 +1,4 @@
+- Adds mxGraphModel.ignoreRelativeEdgeParent switch [JavaScript]
 - Fixes reset of mxText.unrotatedBoundingBox [JavaScript]
 - Fixes delayed selection of non-movable child cells [JavaScript]
 
