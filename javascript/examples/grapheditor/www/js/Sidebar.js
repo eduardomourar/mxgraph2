@@ -354,8 +354,8 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel)
 				}
 				
 				this.tooltip.style.height = height + 'px';
-				var x0 = -Math.min(0, Math.round(bounds.x - this.tooltipBorder));
-				var y0 = -Math.min(0, Math.round(bounds.y - this.tooltipBorder));
+				var x0 = -Math.round(bounds.x - this.tooltipBorder);
+				var y0 = -Math.round(bounds.y - this.tooltipBorder);
 				
 				var left = this.container.clientWidth + this.editorUi.splitSize + 3 + this.editorUi.container.offsetLeft;
 				var top = Math.max(0, (this.editorUi.container.offsetTop + this.container.offsetTop + elt.offsetTop - this.container.scrollTop - height / 2 + 16));
