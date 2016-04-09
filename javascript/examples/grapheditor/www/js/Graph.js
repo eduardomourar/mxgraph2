@@ -798,7 +798,7 @@ Graph.prototype.transparentBackground = true;
 /**
  * Sets the default target for all links in cells.
  */
-Graph.prototype.defaultEdgeLength = 100;
+Graph.prototype.defaultEdgeLength = 80;
 
 /**
  * Allows all values in fit.
@@ -899,7 +899,7 @@ Graph.prototype.sanitizeHtml = function(value)
 	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
 	// NOTE: Original minimized sanitizer was modified to support data URIs for images
 	// TODO: Add MathML to whitelisted tags
-	function urlX(url) { if(/(^https?:|^mailto:\/\/|^data:image\/)/.test(url)) { return url }}
+	function urlX(url) { if(/(^https?:|^mailto:\/\/|^data:image\/|^#)/.test(url)) { return url }}
     function idX(id) { return id }
 	
 	return html_sanitize(value, urlX, idX);
