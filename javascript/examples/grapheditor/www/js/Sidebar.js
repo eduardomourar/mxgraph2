@@ -2947,7 +2947,32 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 {
 	var graph = this.editorUi.editor.graph;
 	
-	if (mxEvent.isAltDown(evt) || mxEvent.isShiftDown(evt))
+	// Alt+Click inserts and connects
+	if (mxEvent.isAltDown(evt))
+	{
+		if (graph.getSelectionCount() == 1 && graph.model.isVertex(graph.getSelectionCell()))
+		{
+			var firstVertex = null;
+			
+			for (var i = 0; i < cells.length && firstVertex == null; i++)
+			{
+				if (graph.model.isVertex(cells[i]))
+				{
+					firstVertex = i;
+				}
+			}
+			
+			if (firstVertex != null)
+			{
+				this.dropAndConnect(graph.getSelectionCell(), cells, (mxEvent.isMetaDown(evt) || mxEvent.isControlDown(evt)) ?
+					(mxEvent.isShiftDown(evt) ? mxConstants.DIRECTION_WEST : mxConstants.DIRECTION_NORTH) : 
+					(mxEvent.isShiftDown(evt) ? mxConstants.DIRECTION_EAST : mxConstants.DIRECTION_SOUTH), firstVertex);
+				graph.scrollCellToVisible(graph.getSelectionCell());
+			}
+		}
+	}
+	// Shift+Click updates shape
+	else if (mxEvent.isShiftDown(evt))
 	{
 		if (!graph.isSelectionEmpty())
 		{
