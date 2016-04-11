@@ -341,7 +341,15 @@ mxText.prototype.redraw = function()
 	else
 	{
 		mxShape.prototype.redraw.apply(this, arguments);
-		this.lastValue = this.value;
+		
+		if (mxUtils.isNode(this.value) || this.dialect == mxConstants.DIALECT_STRICTHTML)
+		{
+			this.lastValue = this.value;
+		}
+		else
+		{
+			this.lastValue = null;
+		}
 	}
 };
 

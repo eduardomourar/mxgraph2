@@ -1,3 +1,4 @@
+- Fixes cache invalidation for plain text labels [JavaScript]
 - Fixes textOpacity not updated after change [JavaScript]
 - Fixes spacing in mxText shape, reset of spacing [JavaScript]
 - Fixes compile errors in Dotnet project [Dotnet]
