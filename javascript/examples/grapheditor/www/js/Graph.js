@@ -898,7 +898,7 @@ Graph.prototype.sanitizeHtml = function(value)
 {
 	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
 	// NOTE: Original minimized sanitizer was modified to support data URIs for images
-	// TODO: Add MathML to whitelisted tags
+	// LATER: Add MathML to whitelisted tags
 	function urlX(url) { if(/(^https?:|^mailto:\/\/|^data:image\/|^#)/.test(url)) { return url }}
     function idX(id) { return id }
 	
@@ -5468,7 +5468,9 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		var vertexHandlerMouseMove = mxVertexHandler.prototype.mouseMove;
-		mxVertexHandler.prototype.mouseMove = function()
+	
+		// Workaround for "isConsumed not defined" in MS Edge is to use arguments
+		mxVertexHandler.prototype.mouseMove = function(sender, me)
 		{
 			vertexHandlerMouseMove.apply(this, arguments);
 			
@@ -5728,7 +5730,7 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 	
 		var vertexHandlerDestroy = mxVertexHandler.prototype.destroy;
-		mxVertexHandler.prototype.destroy = function(sender, me)
+		mxVertexHandler.prototype.destroy = function()
 		{
 			vertexHandlerDestroy.apply(this, arguments);
 			
@@ -5794,7 +5796,7 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		var edgeHandlerDestroy = 	mxEdgeHandler.prototype.destroy;
-		mxEdgeHandler.prototype.destroy = function(sender, me)
+		mxEdgeHandler.prototype.destroy = function()
 		{
 			edgeHandlerDestroy.apply(this, arguments);
 			
