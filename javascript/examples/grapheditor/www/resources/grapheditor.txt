@@ -175,6 +175,7 @@ leftToRight=Left to Right
 line=Line
 link=Link
 lineend=Line End
+lineheight=Line Height
 linestart=Line Start
 linewidth=Linewidth
 loading=Loading

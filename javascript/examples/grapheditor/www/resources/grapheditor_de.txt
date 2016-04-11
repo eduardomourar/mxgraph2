@@ -175,6 +175,7 @@ leftToRight=Von links nach rechts
 line=Linie
 link=Link
 lineend=Linienende
+lineheight=Zeilenhöhe
 linestart=Linienanfang
 linewidth=Linienbreite
 loading=Wird geladen
