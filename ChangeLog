@@ -1,3 +1,4 @@
+- Fixes textOpacity not updated after change [JavaScript]
 - Fixes spacing in mxText shape, reset of spacing [JavaScript]
 - Fixes compile errors in Dotnet project [Dotnet]
 - Adds mxGraphModel.ignoreRelativeEdgeParent switch [JavaScript]
