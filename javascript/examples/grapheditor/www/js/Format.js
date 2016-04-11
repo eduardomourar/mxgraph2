@@ -2430,76 +2430,38 @@ TextFormatPanel.prototype.addFont = function(container)
 	input.style.width = '46px';
 	input.style.height = (mxClient.IS_QUIRKS) ? '21px' : '17px';
 	stylePanel2.appendChild(input);
-	var currentFontSize = null;
+	
+	// Workaround for font size 4 if no text is selected is update font size below
+	// after first character was entered (as the font element is lazy created)
+	var pendingFontSize = null;
 
 	var inputUpdate = this.installInputHandler(input, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize, 1, 999, ' pt',
 	function(fontsize)
 	{
-		currentFontSize = fontsize;
+		pendingFontSize = fontsize;
+
+		// Workaround for can't set font size in px is to change font size afterwards
+		document.execCommand('fontSize', false, '4');
+		var elts = graph.cellEditor.textarea.getElementsByTagName('font');
 		
-		// Creates an element with arbitrary size 7 and replaces the size below
-		document.execCommand('fontSize', false, '7');
-		
-		// Changes the css font size of each font element inside the in-place editor with size 7.
-		// This is based on the assumption that font size="7" isn't used in the markup.
-		// LATER: If this assumption is invalid we can mark those elements when editing starts.
-		var replaceSize = mxUtils.bind(this, function()
+		for (var i = 0; i < elts.length; i++)
 		{
-			var elts = graph.cellEditor.textarea.getElementsByTagName('font');
-			var found = false;
-			
-			for (var i = 0; i < elts.length; i++)
+			if (elts[i].getAttribute('size') == '4')
 			{
-				if (elts[i].getAttribute('size') == '7')
+				elts[i].removeAttribute('size');
+				elts[i].style.fontSize = pendingFontSize + 'px';
+	
+				// Overrides fontSize in input with the one just assigned as a workaround
+				// for potential fontSize values of parent elements that don't match
+				window.setTimeout(function()
 				{
-					elts[i].removeAttribute('size');
-					elts[i].style.fontSize = currentFontSize + 'px';
-					found = true;
-				}
+					input.value = pendingFontSize + ' pt';
+					pendingFontSize = null;
+				}, 0);
+				
+				break;
 			}
-			
-			// Overrides fontSize in input with the one just assigned as a workaround
-			// for potential fontSize values of parent elements that don't match
-			window.setTimeout(function()
-			{
-				input.value = currentFontSize + ' pt';
-			}, 0);
-			
-			//console.log('replaceSize', graph.cellEditor.textarea.innerHTML, found);
-			
-			return found;
-		});
-		
-		// Workaround for no selection in which case the font element is inserted
-		// after the first character insertion so we need to listen to this and
-		// execute the above action again, until we found the font element.
-		replaceSize();
-		
-//		if (!replaceSize() && this.replaceSizeWrapper == null)
-//		{
-//			// TODO: Fix DRAW-133
-//			console.log('not replaced');
-//			
-//			this.replaceSizeWrapper = mxUtils.bind(this, function()
-//			{
-//				window.setTimeout(mxUtils.bind(this, function()
-//				{
-//					if (replaceSize())
-//					{
-//						console.log('removing listener');
-//						
-//						mxEvent.removeListener(graph.cellEditor.textarea, 'DOMNodeInserted', this.replaceSizeWrapper);
-//						this.replaceSizeWrapper = null;
-//					}
-//				}), 0);
-//			});
-//			
-//			mxEvent.addListener(graph.cellEditor.textarea, 'DOMNodeInserted', this.replaceSizeWrapper);
-//		}
-//		else
-//		{
-//			console.log('listener already installed');
-//		}
+		}
 	});
 	
 	var stepper = this.createStepper(input, inputUpdate, 1, 10, true, Menus.prototype.defaultFontSize);
@@ -3099,7 +3061,17 @@ TextFormatPanel.prototype.addFont = function(container)
 							
 							if (document.activeElement != input)
 							{
-								input.value = parseInt(css.fontSize) + ' pt';
+								if (node.nodeName == 'FONT' && node.getAttribute('size') == '4' &&
+									pendingFontSize != null)
+								{
+									node.removeAttribute('size');
+									node.style.fontSize = pendingFontSize + 'px';
+									pendingFontSize = null;
+								}
+								else
+								{
+									input.value = parseInt(css.fontSize) + ' pt';
+								}
 							}
 							
 							// Converts rgb(r,g,b) values
