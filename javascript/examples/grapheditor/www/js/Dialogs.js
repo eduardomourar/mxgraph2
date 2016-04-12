@@ -1009,7 +1009,7 @@ var PrintDialog = function(editorUi)
 		td.appendChild(previewBtn);
 	}
 	
-	var printBtn = mxUtils.button(mxResources.get('print'), function()
+	var printBtn = mxUtils.button(mxResources.get((mxClient.IS_CHROMEAPP) ? 'ok' : 'print'), function()
 	{
 		editorUi.hideDialog();
 		preview(true);
