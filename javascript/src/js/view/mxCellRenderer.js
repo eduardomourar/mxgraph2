@@ -894,7 +894,11 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 			state.text.wrap = wrapping;
 			state.text.clipped = clipping;
 			state.text.overflow = overflow;
+			
+			// Preserves visible state
+			var vis = state.text.node.style.visibility;
 			this.redrawLabelShape(state.text);
+			state.text.node.style.visibility = vis;
 		}
 	}
 };
