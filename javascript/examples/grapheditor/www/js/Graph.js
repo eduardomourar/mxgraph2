@@ -3756,6 +3756,25 @@ if (typeof mxVertexHandler != 'undefined')
 		 * @param {number} dx X-coordinate of the translation.
 		 * @param {number} dy Y-coordinate of the translation.
 		 */
+		Graph.prototype.createSvgImageExport = function()
+		{
+			var exp = new mxImageExport();
+			
+			// Adds hyperlinks (experimental)
+			exp.getLinkForCellState = mxUtils.bind(this, function(state, canvas)
+			{
+				return this.getLinkForCell(state.cell);
+			});
+
+			return exp;
+		};
+		
+		/**
+		 * Translates this point by the given vector.
+		 * 
+		 * @param {number} dx X-coordinate of the translation.
+		 * @param {number} dy Y-coordinate of the translation.
+		 */
 		Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp, ignoreSelection, showText)
 		{
 			scale = (scale != null) ? scale : 1;
@@ -3772,7 +3791,18 @@ if (typeof mxVertexHandler != 'undefined')
 				throw Error(mxResources.get('drawingEmpty'));	
 			}
 			
-			var imgExport = new mxImageExport();
+			var imgExport = this.createSvgImageExport();
+			var imgExportDrawCellState = imgExport.drawCellState;
+			
+			// Implements ignoreSelection flag
+			imgExport.drawCellState = function(state, canvas)
+			{
+				if (ignoreSelection || state.view.graph.isCellSelected(state.cell))
+				{
+					imgExportDrawCellState.apply(this, arguments);
+				}
+			};
+
 			var vs = this.view.scale;
 			
 			// Prepares SVG document that holds the output
@@ -3874,7 +3904,6 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			};
 			
-			
 			// Paints background image
 			var bgImg = this.backgroundImage;
 			
@@ -3893,21 +3922,6 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			svgCanvas.scale(s);
 			svgCanvas.textEnabled = showText;
-			
-			// Adds hyperlinks (experimental)
-			imgExport.getLinkForCellState = mxUtils.bind(this, function(state, canvas)
-			{
-				return this.getLinkForCell(state.cell);
-			});
-			
-			// Implements ignoreSelection flag
-			imgExport.drawCellState = function(state, canvas)
-			{
-				if (ignoreSelection || state.view.graph.isCellSelected(state.cell))
-				{
-					mxImageExport.prototype.drawCellState.apply(this, arguments);
-				}
-			};
 
 			imgExport.drawState(this.getView().getState(this.model.root), svgCanvas);
 		
