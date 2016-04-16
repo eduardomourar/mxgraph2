@@ -1180,6 +1180,51 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			'<table style="width:100%;font-size:1em;" cellpadding="2" cellspacing="0">' +
 			'<tr><td>PK</td><td>uniqueId</td></tr><tr><td>FK1</td><td>' +
 			'foreignKey</td></tr><tr><td></td><td>fieldname</td></tr></table>', 'Entity', null, null, 'er entity table'),
+		this.addEntry(dt + 'object instance', function()
+		{
+		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
+	    			'<b>Class</b></p>' +
+					'<hr size="1"/><div style="height:2px;"></div>', new mxGeometry(0, 0, 140, 60),
+					'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
+		    cell.vertex = true;
+			
+			return sb.createVertexTemplateFromCells([cell.clone()], cell.geometry.width, cell.geometry.height, 'Class 3');
+		}),
+		this.addEntry(dt + 'object instance', function()
+		{
+		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
+	    			'<b>Class</b></p>' +
+					'<hr size="1"/><div style="height:2px;"></div><hr size="1"/><div style="height:2px;"></div>', new mxGeometry(0, 0, 140, 60),
+					'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
+		    cell.vertex = true;
+			
+			return sb.createVertexTemplateFromCells([cell.clone()], cell.geometry.width, cell.geometry.height, 'Class 4');
+		}),
+		this.addEntry(dt + 'object instance', function()
+		{
+		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
+	    			'<b>Class</b></p>' +
+					'<hr size="1"/><p style="margin:0px;margin-left:4px;">+ field: Type</p><hr size="1"/>' +
+					'<p style="margin:0px;margin-left:4px;">+ method(): Type</p>', new mxGeometry(0, 0, 160, 90),
+					'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
+		    cell.vertex = true;
+			
+			return sb.createVertexTemplateFromCells([cell.clone()], cell.geometry.width, cell.geometry.height, 'Class 5');
+		}),
+		this.addEntry(dt + 'object instance', function()
+		{
+		    var cell = new mxCell('<p style="margin:0px;margin-top:4px;text-align:center;">' +
+	    			'<i>&lt;&lt;Interface&gt;&gt;</i><br/><b>Interface</b></p>' +
+					'<hr size="1"/><p style="margin:0px;margin-left:4px;">+ field1: Type<br/>' +
+					'+ field2: Type</p>' +
+					'<hr size="1"/><p style="margin:0px;margin-left:4px;">' +
+					'+ method1(Type): Type<br/>' +
+					'+ method2(Type, Type): Type</p>', new mxGeometry(0, 0, 190, 140),
+					'verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;');
+		    cell.vertex = true;
+			
+			return sb.createVertexTemplateFromCells([cell.clone()], cell.geometry.width, cell.geometry.height, 'Interface 2');
+		}),
 		this.createVertexTemplateEntry('shape=lollipop;direction=south;html=1;', 30, 10, '', 'Provided Interface', null, null, dt + 'provided interface'),
 		this.createVertexTemplateEntry('shape=requires;direction=north;html=1;', 30, 20, '', 'Required Interface', null, null, dt + 'required interface'),
 		this.createVertexTemplateEntry('shape=umlBoundary;whiteSpace=wrap;html=1;', 100, 80, 'Boundary Object', 'Boundary Object', null, null, 'uml boundary object'),
