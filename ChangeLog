@@ -1,3 +1,8 @@
+- Remove stylesheet for IE6 in grapheditor [JavaScript]
+- Removes tapAndHoldStartsConnection, showConnectorImg in grapheditor [JavaScript]
+- Moves useLocalStorage, counter to Editor in grapheditor [JavaScript]
+- Moves fileSupport, touchStyle to Graph in grapheditor [JavaScript]
+
 15-APR-2016: 3.5.1.2
 
 - Fixes lazy shape loading in grapheditor [JavaScript]

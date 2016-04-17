@@ -1,45 +1,6 @@
 /**
  * Copyright (c) 2006-2012, JGraph Ltd
  */
-// Specifies if local storage should be used (eg. on the iPad which has no filesystem)
-var useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
-var fileSupport = window.File != null && window.FileReader != null && window.FileList != null && urlParams['filesupport'] != '0';
-
-// Specifies if the touch UI should be used (cannot detect touch in FF so always on for Windows/Linux)
-var touchStyle = mxClient.IS_TOUCH || (mxClient.IS_FF && mxClient.IS_WIN) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
-
-// Counts open editor tabs (must be global for cross-window access)
-var counter = 0;
-
-// Cross-domain window access is not allowed in FF, so if we
-// were opened from another domain then this will fail. 
-try
-{
-	var op = window;
-	
-	while (op.opener != null && !isNaN(op.opener.counter))
-	{
-		op = op.opener;
-	}
-	
-	// Increments the counter in the first opener in the chain
-	if (op != null)
-	{
-		op.counter++;
-		counter = op.counter;
-	}
-}
-catch (e)
-{
-	// ignore
-}
-
-//Adds stylesheet for IE6
-if (mxClient.IS_IE6)
-{
-	mxClient.link('stylesheet', CSS_PATH + '/grapheditor-ie6.css');
-}
-
 /**
  * Editor constructor executed on page load.
  */
@@ -55,7 +16,7 @@ Editor = function(chromeless, themes, model)
 
 	this.getOrCreateFilename = function()
 	{
-		return this.filename || mxResources.get('drawing', [counter]) + '.xml';
+		return this.filename || mxResources.get('drawing', [Editor.pageCounter]) + '.xml';
 	};
 	
 	this.getFilename = function()
@@ -90,6 +51,43 @@ Editor = function(chromeless, themes, model)
 	// Sets persistent graph state defaults
 	this.graph.resetViewOnRootChange = false;
 };
+
+/**
+ * Counts open editor tabs (must be global for cross-window access)
+ */
+Editor.pageCounter = 0;
+
+// Cross-domain window access is not allowed in FF, so if we
+// were opened from another domain then this will fail.
+(function()
+{
+	try
+	{
+		var op = window;
+		
+		while (op.opener != null && typeof op.opener.Editor !== 'undefined' &&
+			!isNaN(op.opener.Editor.pageCounter))
+		{
+			op = op.opener;
+		}
+		
+		// Increments the counter in the first opener in the chain
+		if (op != null)
+		{
+			op.Editor.pageCounter++;
+			Editor.pageCounter = op.Editor.pageCounter;
+		}
+	}
+	catch (e)
+	{
+		// ignore
+	}
+})();
+
+/**
+ * Specifies if local storage should be used (eg. on the iPad which has no filesystem)
+ */
+Editor.useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
 
 // Editor inherits from mxEventSource
 mxUtils.extend(Editor, mxEventSource);
@@ -1071,218 +1069,4 @@ OpenFile.prototype.cancel = function(cancel)
 		return cell;
 	};
 
-	/**
-	 * Overrides stencil registry for dynamic loading of stencils.
-	 */
-	/**
-	 * Maps from library names to an array of Javascript filenames,
-	 * which are synchronously loaded. Currently only stencil files
-	 * (.xml) and JS files (.js) are supported.
-	 * IMPORTANT: For embedded diagrams to work entries must also
-	 * be added in EmbedServlet.java.
-	 */
-	mxStencilRegistry.libraries = {};
-
-	/**
-	 * Stores all package names that have been dynamically loaded.
-	 * Each package is only loaded once.
-	 */
-	mxStencilRegistry.packages = [];
-	
-	// Extends the default stencil registry to add dynamic loading
-	mxStencilRegistry.getStencil = function(name)
-	{
-		var result = mxStencilRegistry.stencils[name];
-		
-		if (result == null && mxCellRenderer.prototype.defaultShapes[name] == null)
-		{
-			var basename = mxStencilRegistry.getBasenameForStencil(name);
-			
-			// Loads stencil files and tries again
-			if (basename != null)
-			{
-				var libs = mxStencilRegistry.libraries[basename];
-
-				if (libs != null)
-				{
-					if (mxStencilRegistry.packages[basename] == null)
-					{
-						mxStencilRegistry.packages[basename] = 1;
-						
-						for (var i = 0; i < libs.length; i++)
-						{
-							var fname = libs[i];
-							
-							if (fname.toLowerCase().substring(fname.length - 4, fname.length) == '.xml')
-							{
-								mxStencilRegistry.loadStencilSet(fname, null);
-							}
-							else if (fname.toLowerCase().substring(fname.length - 3, fname.length) == '.js')
-							{
-								try
-								{
-									var req = mxUtils.load(fname);
-									
-									if (req != null)
-									{
-										eval.call(window, req.getText());
-									}
-								}
-								catch (e)
-								{
-									if (window.console != null)
-									{
-										console.log('error in getStencil:', fname, e);
-									}
-								}
-							}
-							else
-							{
-								// FIXME: This does not yet work as the loading is triggered after
-								// the shape was used in the graph, at which point the keys have
-								// typically been translated in the calling method.
-								//mxResources.add(fname);
-							}
-						}
-					}
-				}
-				else
-				{
-					// Replaces '_-_' with '_'
-					basename = basename.replace('_-_', '_');
-					mxStencilRegistry.loadStencilSet(STENCIL_PATH + '/' + basename + '.xml', null);
-				}
-				
-				result = mxStencilRegistry.stencils[name];
-			}
-		}
-		
-		return result;
-	};
-	
-	// Returns the basename for the given stencil or null if no file must be
-	// loaded to render the given stencil.
-	mxStencilRegistry.getBasenameForStencil = function(name)
-	{
-		var tmp = null;
-		
-		if (name != null)
-		{
-			var parts = name.split('.');
-			
-			if (parts.length > 0 && parts[0] == 'mxgraph')
-			{
-				tmp = parts[1];
-				
-				for (var i = 2; i < parts.length - 1; i++)
-				{
-					tmp += '/' + parts[i];
-				}
-			}
-		}
-
-		return tmp;
-	};
-
-	// Loads the given stencil set
-	mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force, async)
-	{
-		force = (force != null) ? force : false;
-		
-		// Uses additional cache for detecting previous load attempts
-		var xmlDoc = mxStencilRegistry.packages[stencilFile];
-		
-		if (force || xmlDoc == null)
-		{
-			var install = false;
-			
-			if (xmlDoc == null)
-			{
-				try
-				{
-					if (async)
-					{
-						var req = mxUtils.get(stencilFile, mxUtils.bind(this, function(req)
-						{
-							xmlDoc = req.getXml();
-							mxStencilRegistry.packages[stencilFile] = xmlDoc;
-							install = true;
-							
-							if (xmlDoc != null && xmlDoc.documentElement != null)
-							{
-								mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
-							}
-						}));
-					
-						return;
-					}
-					else
-					{
-						var req = mxUtils.load(stencilFile);
-						xmlDoc = req.getXml();
-						mxStencilRegistry.packages[stencilFile] = xmlDoc;
-						install = true;
-					}
-				}
-				catch (e)
-				{
-					if (window.console != null)
-					{
-						console.log('error in loadStencilSet:', stencilFile);
-					}
-				}
-			}
-		
-			if (xmlDoc != null && xmlDoc.documentElement != null)
-			{
-				mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
-			}
-		}
-	};
-	
-	// Parses the given stencil set
-	mxStencilRegistry.parseStencilSet = function(root, postStencilLoad, install)
-	{
-		install = (install != null) ? install : true;
-		var shape = root.firstChild;
-		var packageName = '';
-		var name = root.getAttribute('name');
-		
-		if (name != null)
-		{
-			packageName = name + '.';
-		}
-		
-		while (shape != null)
-		{
-			if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
-			{
-				name = shape.getAttribute('name');
-				
-				if (name != null)
-				{
-					packageName = packageName.toLowerCase();
-					var stencilName = name.replace(/ /g,"_");
-						
-					if (install)
-					{
-						mxStencilRegistry.addStencil(packageName + stencilName.toLowerCase(), new mxStencil(shape));
-					}
-	
-					if (postStencilLoad != null)
-					{
-						var w = shape.getAttribute('w');
-						var h = shape.getAttribute('h');
-						
-						w = (w == null) ? 80 : parseInt(w, 10);
-						h = (h == null) ? 80 : parseInt(h, 10);
-
-						postStencilLoad(packageName, stencilName, name, w, h);
-					}
-				}
-			}
-			
-			shape = shape.nextSibling;
-		}
-	};
 })();

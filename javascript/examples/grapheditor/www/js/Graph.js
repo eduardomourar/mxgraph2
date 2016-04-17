@@ -775,7 +775,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 		}));
 		
 		// Initializes touch interface
-		if (touchStyle)
+		if (Graph.touchStyle)
 		{
 			this.initTouch();
 		}
@@ -797,6 +797,17 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 		};
 	}
 };
+
+/**
+ * Specifies if the touch UI should be used (cannot detect touch in FF so always on for Windows/Linux)
+ */
+Graph.touchStyle = mxClient.IS_TOUCH || (mxClient.IS_FF && mxClient.IS_WIN) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
+
+/**
+ * Shortcut for capability check.
+ */
+Graph.fileSupport = window.File != null && window.FileReader != null &&
+	window.FileList != null && urlParams['filesupport'] != '0';
 
 // Graph inherits from mxGraph
 mxUtils.extend(Graph, mxGraph);
@@ -5114,7 +5125,7 @@ if (typeof mxVertexHandler != 'undefined')
 		/**
 		 * Implements touch style
 		 */
-		if (touchStyle)
+		if (Graph.touchStyle)
 		{
 			// Larger tolerance for real touch devices
 			if (mxClient.IS_TOUCH || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0)

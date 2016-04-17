@@ -23,10 +23,6 @@
 		var CSS_PATH = 'styles';
 		var OPEN_FORM = 'open.html';
 	
-		// Specifies connection mode for touch devices (at least one should be true)
-		var tapAndHoldStartsConnection = false;
-		var showConnectorImg = true;
-
 		// Parses URL parameters. Supported parameters are:
 		// - lang=xy: Specifies the language of the user interface.
 		// - touch=1: Enables a touch-style user interface.
@@ -62,10 +58,10 @@
 		// files (the special bundle and the default bundle) is disabled to
 		// save a GET request. This requires that all resources be present in
 		// each properties file since only one file is loaded.
-		mxLoadResources = false;
-		mxBasePath = '../../../src';
-		mxLanguage = urlParams['lang'];
-		mxLanguages = ['de'];
+		var mxLoadResources = false;
+		var mxBasePath = '../../../src';
+		var mxLanguage = urlParams['lang'];
+		var mxLanguages = ['de'];
 	</script>
 	<script type="text/javascript" src="jscolor/jscolor.js"></script>
 	<script type="text/javascript" src="sanitizer/sanitizer.min.js"></script>
@@ -94,13 +90,13 @@
 				this.actions.get('export').setEnabled(false);
 
 				// Updates action states which require a backend
-				if (!useLocalStorage)
+				if (!Editor.useLocalStorage)
 				{
 					mxUtils.post(OPEN_URL, '', mxUtils.bind(this, function(req)
 					{
 						var enabled = req.getStatus() != 404;
-						this.actions.get('open').setEnabled(enabled || fileSupport);
-						this.actions.get('import').setEnabled(enabled || fileSupport);
+						this.actions.get('open').setEnabled(enabled || Graph.fileSupport);
+						this.actions.get('import').setEnabled(enabled || Graph.fileSupport);
 						this.actions.get('save').setEnabled(enabled);
 						this.actions.get('saveAs').setEnabled(enabled);
 						this.actions.get('export').setEnabled(enabled);
