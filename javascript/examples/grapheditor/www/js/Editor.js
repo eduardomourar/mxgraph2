@@ -5,13 +5,6 @@
 var useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
 var fileSupport = window.File != null && window.FileReader != null && window.FileList != null && urlParams['filesupport'] != '0';
 
-// Workaround for allowing target="_blank" in HTML sanitizer
-// see https://code.google.com/p/google-caja/issues/detail?can=2&q=&colspec=ID%20Type%20Status%20Priority%20Owner%20Summary&groupby=&sort=&id=1296
-if (typeof html4 !== 'undefined')
-{
-	html4.ATTRIBS["a::target"] = 0;
-}
-
 // Specifies if the touch UI should be used (cannot detect touch in FF so always on for Windows/Linux)
 var touchStyle = mxClient.IS_TOUCH || (mxClient.IS_FF && mxClient.IS_WIN) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
 
@@ -40,33 +33,6 @@ catch (e)
 {
 	// ignore
 }
-
-/**
- * Sets global constants.
- */
-// Changes default colors
-mxConstants.SHADOW_OPACITY = 0.25;
-mxConstants.SHADOWCOLOR = '#000000';
-mxConstants.VML_SHADOWCOLOR = '#d0d0d0';
-mxGraph.prototype.pageBreakColor = '#c0c0c0';
-mxGraph.prototype.pageScale = 1;
-
-// Matches label positions of mxGraph 1.x
-mxText.prototype.baseSpacingTop = 5;
-mxText.prototype.baseSpacingBottom = 1;
-
-// Keeps edges between relative child cells inside parent
-mxGraphModel.prototype.ignoreRelativeEdgeParent = false;
-
-// Defines grid properties
-mxGraphView.prototype.gridImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
-	IMAGE_PATH + '/grid.gif';
-mxGraphView.prototype.gridSteps = 4;
-mxGraphView.prototype.gridColor = (urlParams['gridcolor'] || '#e0e0e0').toLowerCase();
-mxGraphView.prototype.minGridSize = 4;
-
-// Alternative text for unsupported foreignObjects
-mxSvgCanvas2D.prototype.foAltText = '[Not supported by viewer]';
 
 //Adds stylesheet for IE6
 if (mxClient.IS_IE6)
