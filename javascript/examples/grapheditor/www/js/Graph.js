@@ -9,6 +9,14 @@ if (typeof html4 !== 'undefined')
 }
 
 /**
+ * urlParams is null when used for embedding.
+ */
+if (typeof urlParams === 'undefined')
+{
+	urlParams = {};
+}
+
+/**
  * Sets global constants.
  */
 // Changes default colors
