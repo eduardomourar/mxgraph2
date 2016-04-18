@@ -3235,7 +3235,7 @@
 				{
 					if (window.console != null)
 					{
-						console.log('error in loadStencilSet:', stencilFile);
+						console.log('error in loadStencilSet:', stencilFile, e);
 					}
 				}
 			}
