@@ -7784,8 +7784,13 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled)
 		margin = (margin != null) ? margin : 1;
 		
 		var sb = (document.documentMode >= 9) ? 4 : 0;
-		var w1 = this.container.clientWidth - sb;
-		var h1 = this.container.clientHeight - sb;
+		
+		// Adds spacing and border from css
+		var css = mxUtils.getCurrentStyle(this.container);
+		var w1 = this.container.offsetWidth - sb - parseInt(css.paddingLeft) - parseInt(css.paddingRight) -
+			parseInt(css.borderLeftWidth) - parseInt(css.borderRightWidth) + 2 * margin;
+		var h1 = this.container.offsetHeight - sb - parseInt(css.paddingTop) - parseInt(css.paddingBottom) -
+			parseInt(css.borderTopWidth) - parseInt(css.borderBottomWidth) + 2 * margin;
 
 		var bounds = this.view.getGraphBounds();
 		
@@ -7832,7 +7837,6 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled)
 					{
 						var x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border / s2 + margin / 2) : border;
 						var y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border / s2 + margin / 2) : border;
-		
 						this.view.scaleAndTranslate(s2, x0, y0);
 					}
 					else
