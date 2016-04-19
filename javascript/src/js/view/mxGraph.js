@@ -7772,25 +7772,31 @@ mxGraph.prototype.zoomToRect = function(rect)
  * margin - Optional margin in pixels. Default is 1.
  * enabled - Optional boolean that specifies if the scale should be set or
  * just returned. Default is true.
+ * ignoreWidth - Optional boolean that specifies if the width should be
+ * ignored. Default is false.
+ * ignoreHeight - Optional boolean that specifies if the height should be
+ * ignored. Default is false.
  */
-mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled)
+mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled, ignoreWidth, ignoreHeight)
 {
 	if (this.container != null)
 	{
-		enabled = (enabled != null) ? enabled : true;
-		
 		border = (border != null) ? border : 0;
 		keepOrigin = (keepOrigin != null) ? keepOrigin : false;
 		margin = (margin != null) ? margin : 1;
+		enabled = (enabled != null) ? enabled : true;
+		ignoreWidth = (ignoreWidth != null) ? ignoreWidth : false;
+		ignoreHeight = (ignoreHeight != null) ? ignoreHeight : false;
 		
 		var sb = (document.documentMode >= 9) ? 4 : 0;
 		
 		// Adds spacing and border from css
 		var css = mxUtils.getCurrentStyle(this.container);
+		var bs = css.boxSizing;
 		var w1 = this.container.offsetWidth - sb - parseInt(css.paddingLeft) - parseInt(css.paddingRight) -
-			parseInt(css.borderLeftWidth) - parseInt(css.borderRightWidth) + 2 * margin;
-		var h1 = this.container.offsetHeight - sb - parseInt(css.paddingTop) - parseInt(css.paddingBottom) -
-			parseInt(css.borderTopWidth) - parseInt(css.borderBottomWidth) + 2 * margin;
+			parseInt(css.borderLeftWidth) - parseInt(css.borderRightWidth) + ((bs != 'border-box') ? 0 : 0);
+		var h1 = this.container.offsetHeight - sb- parseInt(css.paddingTop) - parseInt(css.paddingBottom) -
+			parseInt(css.borderTopWidth) - parseInt(css.borderBottomWidth) + ((bs != 'border-box') ? 0 : 0);
 
 		var bounds = this.view.getGraphBounds();
 		
@@ -7817,7 +7823,9 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled)
 			}
 			
 			var b = ((keepOrigin) ? border : 2 * border) + margin;
-			var s2 = Math.floor(Math.min(w1 / (w2 + b), h1 / (h2 + b)) * 100) / 100;
+			var s2 = Math.floor((((ignoreWidth) ? h1 / (h2 + b) :
+				(ignoreHeight) ? w1 / (w2 + b) :
+				Math.min(w1 / (w2 + b), h1 / (h2 + b)))) * 100) / 100;
 			
 			if (this.minFitScale != null)
 			{
