@@ -4,13 +4,13 @@
 /**
  * Editor constructor executed on page load.
  */
-Editor = function(chromeless, themes, model)
+Editor = function(chromeless, themes, model, graph)
 {
 	mxEventSource.call(this);
 	this.chromeless = (chromeless != null) ? chromeless : this.chromeless;
 	this.init();
 	this.initStencilRegistry();
-	this.graph = this.createGraph(themes, model);
+	this.graph = graph || this.createGraph(themes, model);
 	this.undoManager = this.createUndoManager();
 	this.status = '';
 
@@ -88,6 +88,51 @@ Editor.pageCounter = 0;
  * Specifies if local storage should be used (eg. on the iPad which has no filesystem)
  */
 Editor.useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
+
+/**
+ * Images below are for lightbox and embedding toolbars.
+ */
+Editor.maximizeImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAMAAACeyVWkAAAAUVBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABcqRVCAAAAGnRSTlMAf3hgQhAJM/nv49GyraGWkntMIwwGvmpbPmMHykIAAABrSURBVBjTtY9ZDoAgDAULirgrm8u7/0E1QuECOF+TSdq0VIVOqY7dKxWiCcByPYEm143HllzlCuxRZ2B9a+o91/6iQssbbvofN+koiywH6BHTZw1gLOXfRhd1A4ZSddJw5NoKwV94IyTV4AFDhgSdVww+TQAAAABJRU5ErkJggg==';
+
+/**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.zoomOutImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVBAMAAABbObilAAAAElBMVEUAAAAAAAAsLCxxcXEhISFgYGChjTUxAAAAAXRSTlMAQObYZgAAAEdJREFUCNdjIAMwCQrB2YKCggJQJqMwA7MglK1owMBgqABVApITgLJZXFxgbIQ4Qj3CHIT5ggoIe5kgNkM1KSDYKBKqxPkDAPo5BAZBE54hAAAAAElFTkSuQmCC';
+
+/**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.zoomInImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVBAMAAABbObilAAAAElBMVEUAAAAAAAAsLCwhISFxcXFgYGBavKaoAAAAAXRSTlMAQObYZgAAAElJREFUCNdjIAMwCQrB2YKCggJQJqMIA4sglK3owMzgqABVwsDMwCgAZTMbG8PYCHGEeoQ5CPMFFRD2MkFshmpSQLBRJFSJ8wcAEqcEM2uhl2MAAAAASUVORK5CYII=';
+
+/**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.zoomFitImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVBAMAAABbObilAAAAD1BMVEUAAAAAAAAsLCwaGhoHBwfu3L4PAAAAAXRSTlMAQObYZgAAAENJREFUCNdjwAUYBRE0I6MgBDCiijMIgFhQWoBRECikgMQWRrAFBQ0Q4iJo6hHmYLIZsbOZBIUQ4o4OCDYzRA1R7gcAYIEFODqjX9wAAAAASUVORK5CYII=';
+
+/**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.zoomOutLargeImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAilBMVEUAAAD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////2N2iNAAAALXRSTlMA+vTcKMM96GRBHwXxi0YaX1HLrKWhiHpWEOnOr52Vb2xKSDcT19PKv5l/Ngdk8+viAAABJklEQVQ4y4WT2XaDMAxEvWD2nSSUNEnTJN3r//+9Sj7ILAY6L0ijC4ONYVZRpo6cByrz2YKSUGorGTpz71lPVHvT+avoB5wIkU/mxk8veceSuNoLg44IzziXjvpih72wKQnm8yc2UoiP/LAd8jQfe2Xf4Pq+2EyYIvv9wbzHHCgwxDdlBtWZOdqDfTCVgqpygQpsZaojVAVc9UjQxnAJDIBhiQv84tq3gMQCAVTxVoSibXJf8tMuc7e1TB/DCmejBNg/w1Y3c+AM5vv4w7xM59/oXamrHaLVqPQ+OTCnmMZxgz0SdL5zji0/ld6j88qGa5KIiBB6WeJGKfUKwSMKLuXgvl1TW0tm5R9UQL/efSDYsnzxD8CinhBsTTdugJatKpJwf8v+ADb8QmvW7AeAAAAAAElFTkSuQmCC';
+
+/**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.zoomInLargeImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAilBMVEUAAAD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////2N2iNAAAALXRSTlMA+vTcKMM96GRBHwXxi0YaX1HLrKWhiHpWEOnOr52Vb2xKSDcT19PKv5l/Ngdk8+viAAABKElEQVQ4y4WT6WKCMBCENwkBwn2oFKvWqr3L+79es4EkQIDOH2d3Pxk2ABiJlB8JCXjqw4LikHVGLHTm3nM3UeVN5690GBBN0GwyV/3kkrUQR+WeKnREeKpzaXWd77CmJiXGfPIEI4V4yQ9TIW/ntlcMBe731Vts9w5TWG8F5j3mQI4hvrKpdGeYA7CX9qAcl650gVJartxRuhyHVghF8idQAIbFLvCLu28BsQEC6aKtCK6Pyb3JT7PmbmtNH8Ny56CotD/2qOs5cJbuffxgXmCib+xddVU5RNOhkvvkhTlFehzVWCOh3++MYElOhfdovaImnRYVmqDdsuhNp1QrBBE6uGC2+3ZNjGdg5B94oD+9uyVgWT79BwAxEBTWdOu3bWBVgsn/N/AHUD9IC01Oe40AAAAASUVORK5CYII=';
+
+/**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.actualSizeLargeImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAilBMVEUAAAD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////2N2iNAAAALXRSTlMA+vTcKMM96GRBHwXxi0YaX1HLrKWhiHpWEOnOr52Vb2xKSDcT19PKv5l/Ngdk8+viAAABIUlEQVQ4y4WT2XqDIBCFBxDc9yTWNEnTJN3r+79eGT4BEbXnaubMr8dBBaM450dCQp4LWFAascGIRd48eB4cNYE7f6XjgGiCFs5c+dml6CFN6j1V6IQIlHPpdV/usKcmJcV88gQTRXjLD9Mhb+fWq8YG9/uCmTCFjeeDeY85UGKIUGUuqzN42kv7oCouq9oHamlzVR1lVfpAIu1QVRiW+sAv7r4FpAYIZZVsRXB9TP5Dfpo1d1trCgzz1iiptH/sUbdz4CzN9+mLeXHn3+hdddd4RDegsrvzwZwSs2GLPRJidAqCLTlVwaMPqpYMWjTWBB2WRW86pVkhSKyDK2bdt2tmagZG4sBD/evdLQHLEvQfAOKRoLCmG1FAB6uKmby+gz+REDn7O5+EwQAAAABJRU5ErkJggg==';
+
+/**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.closeLargeImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAUVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////8IN+deAAAAGnRSTlMAuvAIg/dDM/QlOeuFhj0S5s4vKgzjxJRQNiLSey0AAADNSURBVDjLfZLbEoMgDEQjRRRs1XqX///QNmOHJSnjPkHOGR7IEmeoGtJZstnwjqbRfIsmgEdtPCqe9Ynz7ZSc07rE2QiSc+qv8TvjRXA2PDUm3dpe82iJhOEUfxJJo3aCv+jKmRmH4lcCjCjeh9GWOdL/GZZkXH3PYYDrHBnfc4D/RVZf5sjoC1was+Y6HQxwaUxFvq/a0Pv343VCTxfBSRiB+ab3M3eiQZXmMNBJ3Y8pGRZtYQ7DgHMXJEdPLTaN/qBjzJOBc3nmNcbsA16bMR0oLqf+AAAAAElFTkSuQmCC';
+
+/**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.editLargeImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgAgMAAAAOFJJnAAAACVBMVEUAAAD///////9zeKVjAAAAAnRSTlMAgJsrThgAAABcSURBVBjThc6xDcAgDATAd8MQTEPW8TRUmYCGnzLRYyOlIV+dZFtvkICTFGqiJEzAG0/Uje9oL+e5Vu4F5yUYJxxqGKhQZ0eBvmgwYQLQaARKD1hbiPyDR0QOeAC31EyNe5X/kAAAAABJRU5ErkJggg==';
 
 // Editor inherits from mxEventSource
 mxUtils.extend(Editor, mxEventSource);
@@ -238,17 +283,23 @@ Editor.prototype.readGraphState = function(node)
 		this.graph.view.gridColor = mxGraphView.prototype.gridColor;
 	}
 	
-	var pv = node.getAttribute('page');
-
-	if (pv != null)
+	if (!this.graph.lightbox)
 	{
-		this.graph.pageVisible = (pv != '0');
+		var pv = node.getAttribute('page');
+	
+		if (pv != null)
+		{
+			this.graph.pageVisible = (pv != '0');
+		}
+		else
+		{
+			this.graph.pageVisible = this.graph.defaultPageVisible;
+		}
 	}
 	else
 	{
-		this.graph.pageVisible = this.graph.defaultPageVisible;
+		this.graph.pageVisible = false;
 	}
-
 	
 	this.graph.pageBreaksVisible = this.graph.pageVisible; 
 	this.graph.preferPageSize = this.graph.pageBreaksVisible;

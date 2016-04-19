@@ -83,7 +83,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 		// Uses this event to process mouseDown to check the selection state before it is changed
 		this.addListener(mxEvent.FIRE_MOUSE_EVENT, mxUtils.bind(this, function(sender, evt)
 		{
-			if (evt.getProperty('eventName') == 'mouseDown')
+			if (evt.getProperty('eventName') == 'mouseDown' && this.isEnabled())
 			{
 				var me = evt.getProperty('event');
 				
@@ -128,7 +128,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			mouseDown: function(sender, me) {},
 		    mouseMove: mxUtils.bind(this, function(sender, me)
 		    {
-		    	if (!this.panningHandler.isActive() && !mxEvent.isControlDown(me.getEvent()) &&
+		    	if (this.isEnabled() && !this.panningHandler.isActive() && !mxEvent.isControlDown(me.getEvent()) &&
 		    		!mxEvent.isShiftDown(me.getEvent()) && !mxEvent.isAltDown(me.getEvent()))
 		    	{
 		    		var tol = this.tolerance;
@@ -541,13 +541,19 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 	    
 		this.panningHandler.addListener(mxEvent.PAN_START, mxUtils.bind(this, function()
 		{
-			prevCursor = this.container.style.cursor;
-			this.container.style.cursor = 'move';
+			if (this.isEnabled())
+			{
+				prevCursor = this.container.style.cursor;
+				this.container.style.cursor = 'move';
+			}
 		}));
 			
 		this.panningHandler.addListener(mxEvent.PAN_END, mxUtils.bind(this, function()
 		{
-			this.container.style.cursor = prevCursor;
+			if (this.isEnabled())
+			{
+				this.container.style.cursor = prevCursor;
+			}
 		}));
 
 		this.popupMenuHandler.autoExpand = true;
@@ -837,6 +843,12 @@ Graph.prototype.defaultScrollbars = !mxClient.IS_IOS;
  * Specifies if the page should be visible for new files. Default is true.
  */
 Graph.prototype.defaultPageVisible = true;
+
+/**
+ * Specifies if the app should run in chromeless mode. Default is false.
+ * This default is only used if the contructor argument is null.
+ */
+Graph.prototype.lightbox = false;
 
 /**
  * 
@@ -2798,6 +2810,238 @@ mxCellRenderer.prototype.createShape = function(state)
 	}
 	
 	return mxCellRendererCreateShape.apply(this, arguments);
+};
+
+/**
+ * Overrides stencil registry for dynamic loading of stencils.
+ */
+/**
+ * Maps from library names to an array of Javascript filenames,
+ * which are synchronously loaded. Currently only stencil files
+ * (.xml) and JS files (.js) are supported.
+ * IMPORTANT: For embedded diagrams to work entries must also
+ * be added in EmbedServlet.java.
+ */
+mxStencilRegistry.libraries = {};
+
+/**
+ * Stores all package names that have been dynamically loaded.
+ * Each package is only loaded once.
+ */
+mxStencilRegistry.packages = [];
+
+// Extends the default stencil registry to add dynamic loading
+mxStencilRegistry.getStencil = function(name)
+{
+	var result = mxStencilRegistry.stencils[name];
+	
+	if (result == null && mxCellRenderer.prototype.defaultShapes[name] == null)
+	{
+		var basename = mxStencilRegistry.getBasenameForStencil(name);
+		
+		// Loads stencil files and tries again
+		if (basename != null)
+		{
+			var libs = mxStencilRegistry.libraries[basename];
+
+			if (libs != null)
+			{
+				if (mxStencilRegistry.packages[basename] == null)
+				{
+					mxStencilRegistry.packages[basename] = 1;
+					
+					for (var i = 0; i < libs.length; i++)
+					{
+						var fname = libs[i];
+						
+						if (fname.toLowerCase().substring(fname.length - 4, fname.length) == '.xml')
+						{
+							mxStencilRegistry.loadStencilSet(fname, null);
+						}
+						else if (fname.toLowerCase().substring(fname.length - 3, fname.length) == '.js')
+						{
+							try
+							{
+								var req = mxUtils.load(fname);
+								
+								if (req != null)
+								{
+									eval.call(window, req.getText());
+								}
+							}
+							catch (e)
+							{
+								if (window.console != null)
+								{
+									console.log('error in getStencil:', fname, e);
+								}
+							}
+						}
+						else
+						{
+							// FIXME: This does not yet work as the loading is triggered after
+							// the shape was used in the graph, at which point the keys have
+							// typically been translated in the calling method.
+							//mxResources.add(fname);
+						}
+					}
+				}
+			}
+			else
+			{
+				// Replaces '_-_' with '_'
+				basename = basename.replace('_-_', '_');
+				mxStencilRegistry.loadStencilSet(STENCIL_PATH + '/' + basename + '.xml', null);
+			}
+			
+			result = mxStencilRegistry.stencils[name];
+		}
+	}
+	
+	return result;
+};
+
+// Returns the basename for the given stencil or null if no file must be
+// loaded to render the given stencil.
+mxStencilRegistry.getBasenameForStencil = function(name)
+{
+	var tmp = null;
+	
+	if (name != null)
+	{
+		var parts = name.split('.');
+		
+		if (parts.length > 0 && parts[0] == 'mxgraph')
+		{
+			tmp = parts[1];
+			
+			for (var i = 2; i < parts.length - 1; i++)
+			{
+				tmp += '/' + parts[i];
+			}
+		}
+	}
+
+	return tmp;
+};
+
+// Loads the given stencil set
+mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force, async)
+{
+	force = (force != null) ? force : false;
+	
+	// Uses additional cache for detecting previous load attempts
+	var xmlDoc = mxStencilRegistry.packages[stencilFile];
+	
+	if (force || xmlDoc == null)
+	{
+		var install = false;
+		
+		if (xmlDoc == null)
+		{
+			try
+			{
+				if (async)
+				{
+					var req = mxUtils.get(stencilFile, mxUtils.bind(this, function(req)
+					{
+						xmlDoc = req.getXml();
+						mxStencilRegistry.packages[stencilFile] = xmlDoc;
+						install = true;
+						
+						if (xmlDoc != null && xmlDoc.documentElement != null)
+						{
+							mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
+						}
+					}));
+				
+					return;
+				}
+				else
+				{
+					var req = mxUtils.load(stencilFile);
+					xmlDoc = req.getXml();
+					mxStencilRegistry.packages[stencilFile] = xmlDoc;
+					install = true;
+				}
+			}
+			catch (e)
+			{
+				if (window.console != null)
+				{
+					console.log('error in loadStencilSet:', stencilFile, e);
+				}
+			}
+		}
+	
+		if (xmlDoc != null && xmlDoc.documentElement != null)
+		{
+			mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
+		}
+	}
+};
+
+// Parses the given stencil set
+mxStencilRegistry.parseStencilSet = function(root, postStencilLoad, install)
+{
+	if (root.nodeName == 'stencils')
+	{
+		var shapes = root.firstChild;
+		
+		while (shapes != null)
+		{
+			if (shapes.nodeName == 'shapes')
+			{
+				mxStencilRegistry.parseStencilSet(shapes, postStencilLoad, install);
+			}
+			
+			shapes = shapes.nextSibling;
+		}
+	}
+	else
+	{
+		install = (install != null) ? install : true;
+		var shape = root.firstChild;
+		var packageName = '';
+		var name = root.getAttribute('name');
+		
+		if (name != null)
+		{
+			packageName = name + '.';
+		}
+		
+		while (shape != null)
+		{
+			if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
+			{
+				name = shape.getAttribute('name');
+				
+				if (name != null)
+				{
+					packageName = packageName.toLowerCase();
+					var stencilName = name.replace(/ /g,"_");
+						
+					if (install)
+					{
+						mxStencilRegistry.addStencil(packageName + stencilName.toLowerCase(), new mxStencil(shape));
+					}
+	
+					if (postStencilLoad != null)
+					{
+						var w = shape.getAttribute('w');
+						var h = shape.getAttribute('h');
+						
+						w = (w == null) ? 80 : parseInt(w, 10);
+						h = (h == null) ? 80 : parseInt(h, 10);
+	
+						postStencilLoad(packageName, stencilName, name, w, h);
+					}
+				}
+			}
+			
+			shape = shape.nextSibling;
+		}
+	}
 };
 
 /**

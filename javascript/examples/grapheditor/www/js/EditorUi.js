@@ -4,7 +4,7 @@
 /**
  * Constructs a new graph editor
  */
-EditorUi = function(editor, container)
+EditorUi = function(editor, container, lightbox)
 {
 	mxEventSource.call(this);
 	this.destroyFunctions = [];
@@ -12,6 +12,7 @@ EditorUi = function(editor, container)
 	this.editor = editor || new Editor();
 	this.container = container || document.body;
 	var graph = this.editor.graph;
+	graph.lightbox = lightbox;
 
 	// Pre-fetches submenu image or replaces with embedded image if supported
 	if (mxClient.IS_SVG)
@@ -957,6 +958,16 @@ EditorUi.prototype.hsplitPosition = (screen.width <= 500) ? 116 : 204;
 EditorUi.prototype.allowAnimation = true;
 
 /**
+ * 
+ */
+EditorUi.prototype.editBlankUrl = window.location.protocol + '//' + window.location.host + '/?client=1';
+
+/**
+ * 
+ */
+EditorUi.prototype.editBlankFallbackUrl = window.location.protocol + '//' + window.location.host + '/?create=drawdata&splash=0';
+
+/**
  * Installs the listeners to update the action states.
  */
 EditorUi.prototype.init = function()
@@ -1401,82 +1412,116 @@ EditorUi.prototype.initCanvas = function()
 
 		this.actions.get('zoomIn').funct = function(evt) { graph.zoomIn(); resize(false); };
 		this.actions.get('zoomOut').funct = function(evt) { graph.zoomOut(); resize(false); };
-
-		// Adds zoom toolbar
-		var zoomInBtn = mxUtils.button('', mxUtils.bind(this, function(evt)
-		{
-			this.actions.get('zoomIn').funct();
-			mxEvent.consume(evt);
-		}));
-		zoomInBtn.className = 'geSprite geSprite-zoomin';
-		zoomInBtn.setAttribute('title', mxResources.get('zoomIn') + ' (Alt+Mousewheel)');
-		zoomInBtn.style.cursor = 'pointer';
-		zoomInBtn.style.outline = 'none';
-		zoomInBtn.style.border = 'none';
-		zoomInBtn.style.margin = '2px';
 		
-		var zoomOutBtn = mxUtils.button('', mxUtils.bind(this, function(evt)
+		// Creates toolbar for viewer - do not use CSS here
+		// as this may be used in a viewer that has no CSS
+		this.chromelessToolbar = document.createElement('div');
+		this.chromelessToolbar.className = 'noPrint';
+		this.chromelessToolbar.style.position = 'fixed';
+		this.chromelessToolbar.style.overflow = 'hidden';
+		this.chromelessToolbar.style.boxSizing = 'border-box';
+		this.chromelessToolbar.style.whiteSpace = 'nowrap';
+		this.chromelessToolbar.style.backgroundColor = '#000000';
+		this.chromelessToolbar.style.padding = '10px 10px 8px 10px';
+		this.chromelessToolbar.style.bottom = '50px';
+		this.chromelessToolbar.style.left = '50%';
+		
+		mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'borderRadius', '20px');
+		var btnCount = 0;
+
+		var addButton = mxUtils.bind(this, function(fn, imgSrc, tip)
+		{
+			btnCount++;
+			
+			var a = document.createElement('a');
+			a.setAttribute('href', 'javascript:void(0);');
+			a.style.paddingLeft = '8px';
+			a.style.paddingRight = '8px';
+			mxEvent.addListener(a, 'click', fn);
+			
+			if (tip != null)
+			{
+				a.setAttribute('title', tip);
+			}
+			
+			var img = document.createElement('img');
+			img.setAttribute('src', imgSrc);
+			
+			a.appendChild(img);
+			this.chromelessToolbar.appendChild(a);
+		});
+
+		addButton(mxUtils.bind(this, function(evt)
 		{
 			this.actions.get('zoomOut').funct();
 			mxEvent.consume(evt);
-		}));
-		zoomOutBtn.className = 'geSprite geSprite-zoomout';
-		zoomOutBtn.setAttribute('title', mxResources.get('zoomOut') + ' (Alt+Mousewheel)');
-		zoomOutBtn.style.cursor = 'pointer';
-		zoomOutBtn.style.outline = 'none';
-		zoomOutBtn.style.border = 'none';
-		zoomOutBtn.style.margin = '2px';
+		}), Editor.zoomOutLargeImage, (mxResources.get('zoomIn') || 'Zoom In') + ' (Alt+Mousewheel)');
 		
-		var zoomActualBtn = mxUtils.button('', function(evt)
+		addButton(mxUtils.bind(this, function(evt)
 		{
-			resize(true);
+			this.actions.get('zoomIn').funct();
 			mxEvent.consume(evt);
-		});
-		zoomActualBtn.className = 'geSprite geSprite-actualsize';
-		zoomActualBtn.setAttribute('title', mxResources.get('actualSize'));
-		zoomActualBtn.style.cursor = 'pointer';
-		zoomActualBtn.style.outline = 'none';
-		zoomActualBtn.style.border = 'none';
-		zoomActualBtn.style.margin = '2px';
+		}), Editor.zoomInLargeImage, (mxResources.get('zoomOut') || 'Zoom Out') + ' (Alt+Mousewheel)');
 		
-		var editBtn = mxUtils.button('', mxUtils.bind(this, function(evt)
+		addButton(mxUtils.bind(this, function(evt)
 		{
-			if (this.editButtonLink == '_blank')
+			if (graph.lightbox)
 			{
-				this.editAsNew(this.getEditBlankXml());
+				if (graph.view.scale == 1)
+				{
+					this.lightboxFit();
+				}
+				else
+				{
+					graph.zoomTo(1);
+				}
+				
+				resize(false);
 			}
 			else
 			{
-				window.open(this.editButtonLink, 'editWindow');
+				resize(true);
 			}
 			
 			mxEvent.consume(evt);
-		}));
-		editBtn.className = 'geSprite geSprite-duplicate';
-		editBtn.setAttribute('title', mxResources.get('edit'));
-		editBtn.style.cursor = 'pointer';
-		editBtn.style.outline = 'none';
-		editBtn.style.border = 'none';
-		editBtn.style.margin = '2px';
-		
-		this.chromelessToolbar = document.createElement('div');
-		this.chromelessToolbar.className = 'geToolbarContainer geNoPrint';
-		this.chromelessToolbar.style.borderRight = '1px solid #e0e0e0';
-		this.chromelessToolbar.style.padding = '2px';
-		this.chromelessToolbar.style.left = (graph.container.offsetLeft + 2) + 'px';
-		this.chromelessToolbar.style.top = (graph.container.offsetTop + 2) + 'px';
-		
-		this.chromelessToolbar.appendChild(zoomInBtn);
-		this.chromelessToolbar.appendChild(zoomOutBtn);
-		this.chromelessToolbar.appendChild(zoomActualBtn);
-		
+		}), Editor.actualSizeLargeImage, mxResources.get('fit') || 'Fit');
+
 		if (this.editButtonLink != null)
 		{
-			this.chromelessToolbar.appendChild(editBtn);
+			addButton(mxUtils.bind(this, function(evt)
+			{
+				if (this.editButtonLink == '_blank')
+				{
+					this.editAsNew(this.getEditBlankXml(), null, true);
+				}
+				else
+				{
+					window.open(this.editButtonLink, 'editWindow');
+				}
+				
+				mxEvent.consume(evt);
+			}), Editor.editLargeImage, (mxResources.get('edit') || 'Edit') + ' (Escape)');
 		}
 		
-		graph.container.parentNode.appendChild(this.chromelessToolbar);
+		if (urlParams['close'] == '1' || (graph.lightbox && this.container != document.body))
+		{
+			addButton(mxUtils.bind(this, function(evt)
+			{
+				if (urlParams['close'] == '1')
+				{
+					window.close();
+				}
+				else
+				{
+					this.destroy();
+					mxEvent.consume(evt);
+				}
+			}), Editor.closeLargeImage, mxResources.get('close') || 'Close');
+		}
 		
+		graph.container.appendChild(this.chromelessToolbar);
+		this.chromelessToolbar.style.marginLeft = -(btnCount * 24 + 10) + 'px';
+
 		// Changes toolbar opacity on hover
 		if (!mxClient.IS_TOUCH)
 		{
@@ -1491,13 +1536,13 @@ EditorUi.prototype.initCanvas = function()
 				
 				fadeThread = window.setTimeout(mxUtils.bind(this, function()
 				{
-				 	mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'transition', 'all 1200ms ease-in-out');
+				 	mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'transition', 'all 1000ms ease-in-out');
 				 	mxUtils.setOpacity(this.chromelessToolbar, 0);
 					fadeThread = null;
-				}), 1000);
+				}), 200);
 				
 				mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'transition', null);
-				mxUtils.setOpacity(this.chromelessToolbar, 20);
+				mxUtils.setOpacity(this.chromelessToolbar, 30);
 			}));
 			
 			mxEvent.addListener(this.chromelessToolbar, 'mouseenter', mxUtils.bind(this, function(evt)
@@ -1510,16 +1555,23 @@ EditorUi.prototype.initCanvas = function()
 					fadeThread = null;
 				}
 			}));
-			
+	
+			mxEvent.addListener(this.chromelessToolbar, 'mousemove',  mxUtils.bind(this, function(evt)
+			{
+				mxUtils.setOpacity(this.chromelessToolbar, 100);
+				mxEvent.consume(evt);
+			}));
+	
 			mxEvent.addListener(this.chromelessToolbar, 'mouseleave',  mxUtils.bind(this, function(evt)
 			{
-				mxUtils.setOpacity(this.chromelessToolbar, 20);
+				mxUtils.setOpacity(this.chromelessToolbar, 30);
 			}));
 			
-			mxUtils.setOpacity(this.chromelessToolbar, 20);
+			mxUtils.setOpacity(this.chromelessToolbar, 30);
 		}
 		else
 		{
+			// TODO: Show/hide on touch
 			mxUtils.setOpacity(this.chromelessToolbar, 50);
 		}
 	}
@@ -1688,19 +1740,20 @@ EditorUi.prototype.initCanvas = function()
 /**
  * 
  */
-EditorUi.prototype.editBlankUrl = window.location.protocol + '//' + window.location.host + '/?client=1';
-
-/**
- * 
- */
-EditorUi.prototype.editBlankFallbackUrl = window.location.protocol + '//' + window.location.host + '/?create=drawdata&splash=0';
-
-/**
- * 
- */
 EditorUi.prototype.getEditBlankXml = function()
 {
 	return mxUtils.getXml(this.editor.getGraphXml());
+};
+
+/**
+ * Adds support for placeholders in labels.
+ */
+EditorUi.prototype.lightboxFit = function()
+{
+	// LATER: Use initial graph bounds to avoid rounding errors
+	this.editor.graph.maxFitScale = 2;
+	this.editor.graph.fit(20);
+	this.editor.graph.maxFitScale = null;
 };
 
 /**
