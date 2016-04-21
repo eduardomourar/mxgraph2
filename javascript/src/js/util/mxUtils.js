@@ -102,6 +102,37 @@ var mxUtils =
 			};
 		}
 	}(),
+	
+	/**
+	 * Function: parseCssNumber
+	 * 
+	 * Parses the given CSS numeric value adding handling for the values thin,
+	 * medium and thick (2, 4 and 6).
+	 */
+	parseCssNumber: function(value)
+	{
+		if (value == 'thin')
+		{
+			value = '2';
+		}
+		else if (value == 'medium')
+		{
+			value = '4';
+		}
+		else if (value == 'thick')
+		{
+			value = '6';
+		}
+		
+		value = parseFloat(value);
+		
+		if (isNaN(value))
+		{
+			value = 0;
+		}
+		
+		return value;
+	},
 
 	/**
 	 * Function: setPrefixedStyle

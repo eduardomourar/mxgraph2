@@ -2838,50 +2838,17 @@ mxGraph.prototype.createPanningManager = function()
  */
 mxGraph.prototype.getBorderSizes = function()
 {
-	// Helper function to handle string values for border widths (approx)
-	function parseBorder(value)
-	{
-		var result = 0;
-		
-		if (value == 'thin')
-		{
-			result = 2;
-		}
-		else if (value == 'medium')
-		{
-			result = 4;
-		}
-		else if (value == 'thick')
-		{
-			result = 6;
-		}
-		else
-		{
-			result = parseInt(value);
-		}
-		
-		if (isNaN(result))
-		{
-			result = 0;
-		}
-		
-		return result;
-	}
+	var css = mxUtils.getCurrentStyle(this.container);
 	
-	var result = new mxRectangle();
-	var style = mxUtils.getCurrentStyle(this.container);
-	
-	if (style != null)
-	{
-		result.x = parseBorder(style.borderLeftWidth) + parseInt(style.paddingLeft || 0);
-		result.y = parseBorder(style.borderTopWidth) + parseInt(style.paddingTop || 0);
-		result.width = parseBorder(style.borderRightWidth) + parseInt(style.paddingRight || 0);
-		result.height = parseBorder(style.borderBottomWidth) + parseInt(style.paddingBottom || 0);
-	}
-	
-	return result;
+	return new mxRectangle(mxUtils.parseCssNumber(css.paddingLeft) +
+			((css.borderLeftStyle != 'none') ? mxUtils.parseCssNumber(css.borderLeftWidth) : 0),
+		mxUtils.parseCssNumber(css.paddingTop) +
+			((css.borderTopStyle != 'none') ? mxUtils.parseCssNumber(css.borderTopWidth) : 0),
+		mxUtils.parseCssNumber(css.paddingRight) +
+			((css.borderRightStyle != 'none') ? mxUtils.parseCssNumber(css.borderRightWidth) : 0),
+		mxUtils.parseCssNumber(css.paddingBottom) +
+			((css.borderBottomStyle != 'none') ? mxUtils.parseCssNumber(css.borderBottomWidth) : 0));
 };
-
 
 /**
  * Function: getPreferredPageSize
@@ -7788,16 +7755,10 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled, ignoreWidt
 		ignoreWidth = (ignoreWidth != null) ? ignoreWidth : false;
 		ignoreHeight = (ignoreHeight != null) ? ignoreHeight : false;
 		
-		var sb = (document.documentMode >= 9) ? 4 : 0;
-		
 		// Adds spacing and border from css
-		var css = mxUtils.getCurrentStyle(this.container);
-		var bs = css.boxSizing;
-		var w1 = this.container.offsetWidth - sb - parseInt(css.paddingLeft) - parseInt(css.paddingRight) -
-			parseInt(css.borderLeftWidth) - parseInt(css.borderRightWidth) + ((bs != 'border-box') ? 0 : 0);
-		var h1 = this.container.offsetHeight - sb- parseInt(css.paddingTop) - parseInt(css.paddingBottom) -
-			parseInt(css.borderTopWidth) - parseInt(css.borderBottomWidth) + ((bs != 'border-box') ? 0 : 0);
-
+		var cssBorder = this.getBorderSizes();
+		var w1 = this.container.offsetWidth - cssBorder.x - cssBorder.width;
+		var h1 = this.container.offsetHeight - cssBorder.y - cssBorder.height;
 		var bounds = this.view.getGraphBounds();
 		
 		if (bounds.width > 0 && bounds.height > 0)
