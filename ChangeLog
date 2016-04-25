@@ -1,3 +1,5 @@
+- Fixes drawing of edges connected to hidden layers [JavaScript]
+- Sets state invalid in mxGraphView.removeState [JavaScript]
 - Adds mxUtils.parseCssNumber, fixes mxGraph.getBorderSizes for quirks [JavaScript]
 - Adds ignoreWidth/-Height arguments in mxGraph.fit [JavaScript]
 - Adds padding, border and margin in mxGraph.fit [JavaScript]
