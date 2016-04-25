@@ -2087,7 +2087,7 @@ mxGraph.prototype.processChange = function(change)
 		var state = this.view.getState(change.cell);
 		
 		if (state != null)
-		{	
+		{
 			state.style = null;
 		}
 	}
