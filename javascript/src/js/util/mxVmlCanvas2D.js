@@ -730,7 +730,19 @@ mxVmlCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 					div.style.width = Math.round(w) + 'px';
 				}
 				
+				div.style.wordWrap = mxConstants.WORD_WRAP;
 				div.style.whiteSpace = 'normal';
+				
+				// LATER: Check if other cases need to be handled
+				if (div.style.wordWrap == 'break-word')
+				{
+					var tmp = div;
+					
+					if (tmp.firstChild != null && tmp.firstChild.nodeName == 'DIV')
+					{
+						tmp.firstChild.style.width = '100%';
+					}
+				}
 			}
 			else
 			{

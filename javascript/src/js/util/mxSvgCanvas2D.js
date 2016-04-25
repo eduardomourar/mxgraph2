@@ -1472,7 +1472,8 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 
 			if (wrap && w > 0)
 			{
-				style += 'width:' + Math.round(w + 1) + 'px;white-space:normal;';
+				style += 'width:' + Math.round(w + 1) + 'px;white-space:normal;word-wrap:' +
+					mxConstants.WORD_WRAP + ';';
 			}
 			else
 			{
@@ -1530,6 +1531,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				// Inner DIV is needed for text measuring
 				var div2 = document.createElement('div');
 				div2.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+				div2.style.wordWrap = mxConstants.WORD_WRAP;
 				div2.innerHTML = (mxUtils.isNode(str)) ? str.outerHTML : str;
 				clone.appendChild(div2);
 
@@ -1613,6 +1615,11 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV')
 				{
 					sizeDiv = sizeDiv.firstChild;
+					
+					if (wrap && div.style.wordWrap == 'break-word')
+					{
+						sizeDiv.style.width = '100%';
+					}
 				}
 				
 				var tmp = sizeDiv.offsetWidth;
