@@ -9,14 +9,6 @@ if (typeof html4 !== 'undefined')
 }
 
 /**
- * urlParams is null when used for embedding.
- */
-if (typeof urlParams === 'undefined')
-{
-	urlParams = {};
-}
-
-/**
  * Sets global constants.
  */
 // Changes default colors
@@ -37,8 +29,10 @@ mxGraphModel.prototype.ignoreRelativeEdgeParent = false;
 mxGraphView.prototype.gridImage = (mxClient.IS_SVG) ? 'data:image/gif;base64,R0lGODlhCgAKAJEAAAAAAP///8zMzP///yH5BAEAAAMALAAAAAAKAAoAAAIJ1I6py+0Po2wFADs=' :
 	IMAGE_PATH + '/grid.gif';
 mxGraphView.prototype.gridSteps = 4;
-mxGraphView.prototype.gridColor = (urlParams['gridcolor'] || '#e0e0e0').toLowerCase();
 mxGraphView.prototype.minGridSize = 4;
+
+// UrlParams is null in embed mode
+mxGraphView.prototype.gridColor = (urlParams['gridcolor'] || '#e0e0e0').toLowerCase();
 
 // Alternative text for unsupported foreignObjects
 mxSvgCanvas2D.prototype.foAltText = '[Not supported by viewer]';
@@ -55,7 +49,8 @@ mxSvgCanvas2D.prototype.foAltText = '[Not supported by viewer]';
 Graph = function(container, model, renderHint, stylesheet, themes)
 {
 	mxGraph.call(this, container, model, renderHint, stylesheet);
-	this.themes = themes;
+	
+	this.themes = themes || this.defaultThemes;
 
     // Adds support for HTML labels via style. Note: Currently, only the Java
     // backend supports HTML labels but CSS support is limited to the following:
@@ -807,13 +802,14 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 /**
  * Specifies if the touch UI should be used (cannot detect touch in FF so always on for Windows/Linux)
  */
-Graph.touchStyle = mxClient.IS_TOUCH || (mxClient.IS_FF && mxClient.IS_WIN) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || urlParams['touch'] == '1';
+Graph.touchStyle = mxClient.IS_TOUCH || (mxClient.IS_FF && mxClient.IS_WIN) || navigator.maxTouchPoints > 0 ||
+	navigator.msMaxTouchPoints > 0 || window.urlParams == null || urlParams['touch'] == '1';
 
 /**
  * Shortcut for capability check.
  */
-Graph.fileSupport = window.File != null && window.FileReader != null &&
-	window.FileList != null && urlParams['filesupport'] != '0';
+Graph.fileSupport = window.File != null && window.FileReader != null && window.FileList != null &&
+	(window.urlParams == null || urlParams['filesupport'] != '0');
 
 // Graph inherits from mxGraph
 mxUtils.extend(Graph, mxGraph);
@@ -884,6 +880,11 @@ Graph.prototype.placeholderPattern = new RegExp('%(date\{.*\}|[^%^\{^\}]+)%', 'g
  * Specifies the default name for the theme. Default is 'default'.
  */
 Graph.prototype.defaultThemeName = 'default';
+
+/**
+ * Specifies the default name for the theme. Default is 'default'.
+ */
+Graph.prototype.defaultThemes = {};
 
 /**
  * Installs child layout styles.
@@ -1973,6 +1974,28 @@ Graph.prototype.getTooltipForCell = function(cell)
 };
 
 /**
+ * Removes all illegal control characters with ASCII code <32 except TAB, LF
+ * and CR.
+ */
+Graph.prototype.zapGremlins = function(text)
+{
+	var checked = [];
+	
+	for (var i = 0; i < text.length; i++)
+	{
+		var code = text.charCodeAt(i);
+		
+		// Removes all control chars except TAB, LF and CR
+		if (code >= 32 || code == 9 || code == 10 || code == 13)
+		{
+			checked.push(text.charAt(i));
+		}
+	}
+	
+	return checked.join('');
+};
+
+/**
  * Hover icons are used for hover, vertex handler and drag from sidebar.
  */
 HoverIcons = function(graph)
@@ -2825,6 +2848,11 @@ mxCellRenderer.prototype.createShape = function(state)
 mxStencilRegistry.libraries = {};
 
 /**
+ * Global switch to disable dynamic loading.
+ */
+mxStencilRegistry.dynamicLoading = true;
+
+/**
  * Stores all package names that have been dynamically loaded.
  * Each package is only loaded once.
  */
@@ -2835,7 +2863,7 @@ mxStencilRegistry.getStencil = function(name)
 {
 	var result = mxStencilRegistry.stencils[name];
 	
-	if (result == null && mxCellRenderer.prototype.defaultShapes[name] == null)
+	if (result == null && mxCellRenderer.prototype.defaultShapes[name] == null && mxStencilRegistry.dynamicLoading)
 	{
 		var basename = mxStencilRegistry.getBasenameForStencil(name);
 		
@@ -2864,7 +2892,7 @@ mxStencilRegistry.getStencil = function(name)
 							{
 								var req = mxUtils.load(fname);
 								
-								if (req != null)
+								if (req != null && req.getStatus() == 200)
 								{
 									eval.call(window, req.getText());
 								}
@@ -2945,13 +2973,16 @@ mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force,
 				{
 					var req = mxUtils.get(stencilFile, mxUtils.bind(this, function(req)
 					{
-						xmlDoc = req.getXml();
-						mxStencilRegistry.packages[stencilFile] = xmlDoc;
-						install = true;
-						
-						if (xmlDoc != null && xmlDoc.documentElement != null)
+						if (req.getStatus() == 200)
 						{
-							mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
+							xmlDoc = req.getXml();
+							mxStencilRegistry.packages[stencilFile] = xmlDoc;
+							install = true;
+							
+							if (xmlDoc != null && xmlDoc.documentElement != null)
+							{
+								mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
+							}
 						}
 					}));
 				
@@ -2978,6 +3009,15 @@ mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force,
 		{
 			mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
 		}
+	}
+};
+
+// Takes array of strings
+mxStencilRegistry.parseStencilSets = function(stencils)
+{
+	for (var i = 0; i < stencils.length; i++)
+	{
+		mxStencilRegistry.parseStencilSet(mxUtils.parseXml(stencils[i]).documentElement);
 	}
 };
 
@@ -3224,8 +3264,8 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.loadStylesheet = function()
 		{
-			var node = (this.themes != null) ?
-				this.themes[this.defaultThemeName] :
+			var node = (this.themes != null) ? this.themes[this.defaultThemeName] :
+				(!mxStyleRegistry.dynamicLoading) ? null :
 				mxUtils.load(STYLE_PATH + '/default.xml').getDocumentElement();
 			
 			if (node != null)
@@ -3389,29 +3429,7 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			return result;
 		}
-		
-		/**
-		 * Removes all illegal control characters with ASCII code <32 except TAB, LF
-		 * and CR.
-		 */
-		Graph.prototype.zapGremlins = function(text)
-		{
-			var checked = [];
-			
-			for (var i = 0; i < text.length; i++)
-			{
-				var code = text.charCodeAt(i);
-				
-				// Removes all control chars except TAB, LF and CR
-				if (code >= 32 || code == 9 || code == 10 || code == 13)
-				{
-					checked.push(text.charAt(i));
-				}
-			}
-			
-			return checked.join('');
-		};
-		
+
 		/**
 		 * Turns the given cells and returns the changed cells.
 		 */

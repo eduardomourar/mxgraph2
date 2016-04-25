@@ -92,7 +92,7 @@ Editor.useLocalStorage = typeof(Storage) != 'undefined' && mxClient.IS_IOS;
 /**
  * Images below are for lightbox and embedding toolbars.
  */
-Editor.maximizeImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAMAAACeyVWkAAAAUVBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABcqRVCAAAAGnRSTlMAf3hgQhAJM/nv49GyraGWkntMIwwGvmpbPmMHykIAAABrSURBVBjTtY9ZDoAgDAULirgrm8u7/0E1QuECOF+TSdq0VIVOqY7dKxWiCcByPYEm143HllzlCuxRZ2B9a+o91/6iQssbbvofN+koiywH6BHTZw1gLOXfRhd1A4ZSddJw5NoKwV94IyTV4AFDhgSdVww+TQAAAABJRU5ErkJggg==';
+Editor.maximizeImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVBAMAAABbObilAAAAElBMVEUAAAAAAAAAAAAAAAAAAAAAAADgKxmiAAAABXRSTlMA758vX1Pw3BoAAABJSURBVAjXY8AJQkODGBhUQ0MhbAUGBiYY24CBgRnGFmZgMISwgwwDGRhEhVVBbAVmEQYGRwMmBjIAQi/CTIRd6G5AuA3dzYQBAHj0EFdHkvV4AAAAAElFTkSuQmCC';
 
 /**
  * Specifies the image URL to be used for the transparent background.
@@ -107,7 +107,12 @@ Editor.zoomInImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVBAMA
 /**
  * Specifies the image URL to be used for the transparent background.
  */
-Editor.zoomFitImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVBAMAAABbObilAAAAD1BMVEUAAAAAAAAsLCwaGhoHBwfu3L4PAAAAAXRSTlMAQObYZgAAAENJREFUCNdjwAUYBRE0I6MgBDCiijMIgFhQWoBRECikgMQWRrAFBQ0Q4iJo6hHmYLIZsbOZBIUQ4o4OCDYzRA1R7gcAYIEFODqjX9wAAAAASUVORK5CYII=';
+Editor.zoomFitImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVBAMAAABbObilAAAAD1BMVEUAAAAAAAAwMDBwcHBgYGC1xl09AAAAAXRSTlMAQObYZgAAAEFJREFUCNdjIAMwCQrB2YKCggJQJqMwA7MglK1owMBgqABVApITwMdGqEeYgzBfUAFhLxPEZqgmBQQbRUKFOH8AAK5OA3lA+FFOAAAAAElFTkSuQmCC';
+
+/**
+ * Specifies the image URL to be used for the transparent background.
+ */
+Editor.layersImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAMAAACeyVWkAAAAaVBMVEUAAAAgICAICAgdHR0PDw8WFhYICAgLCwsXFxcvLy8ODg4uLi4iIiIqKiokJCQYGBgKCgonJycFBQUCAgIqKiocHBwcHBwODg4eHh4cHBwnJycJCQkUFBQqKiojIyMuLi4ZGRkgICAEBATOWYXAAAAAGnRSTlMAD7+fnz8/H7/ff18/77+vr5+fn39/b28fH2xSoKsAAACQSURBVBjTrYxJEsMgDARZZMAY73sgCcn/HxnhKtnk7j6oRq0psfuoyndZ/SuODkHPLzfVT6KeyPePnJ7KrnkRjWMXTn4SMnN8mXe2SSM3ts8L/ZUxxrbAULSYJJULE0Iw9pjpenoICcgcX61mGgTgtCv9Be99pzCoDhNQWQnchD1mup5++CYGcoQexajZbfwAj/0MD8ZOaUgAAAAASUVORK5CYII=';
 
 /**
  * Specifies the image URL to be used for the transparent background.
@@ -198,6 +203,16 @@ Editor.prototype.initialTopSpacing = 0;
 Editor.prototype.appName = document.title;
 
 /**
+ * 
+ */
+Editor.prototype.editBlankUrl = window.location.protocol + '//' + window.location.host + '/?client=1';
+
+/**
+ * 
+ */
+Editor.prototype.editBlankFallbackUrl = window.location.protocol + '//' + window.location.host + '/?create=drawdata&splash=0';
+
+/**
  * Initializes the environment.
  */
 Editor.prototype.init = function() { };
@@ -209,6 +224,45 @@ Editor.prototype.setAutosave = function(value)
 {
 	this.autosave = value;
 	this.fireEvent(new mxEventObject('autosaveChanged'));
+};
+
+/**
+ * 
+ */
+Editor.prototype.getEditBlankXml = function()
+{
+	return mxUtils.getXml(this.getGraphXml());
+};
+
+/**
+ * 
+ */
+Editor.prototype.editAsNew = function(xml, title)
+{
+	var p = (title != null) ? '&title=' + encodeURIComponent(title) : '';
+	
+	if (window.postMessage)
+	{
+		var wnd = null;
+		
+		var receive = mxUtils.bind(this, function(evt)
+		{
+			if (evt.data == 'ready' && evt.source == wnd)
+			{
+				wnd.postMessage(xml, '*');
+				window.removeEventListener('message', receive);
+			}
+		});
+		
+		window.addEventListener('message', receive);
+		wnd = window.open(this.editBlankUrl + p);
+	}
+	else
+	{
+		// Data is pulled from global variable after tab loads
+		window.drawdata = xml;
+		window.open(this.editBlankFallbackUrl + p);
+	}
 };
 
 /**

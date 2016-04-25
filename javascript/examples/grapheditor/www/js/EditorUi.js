@@ -53,7 +53,7 @@ EditorUi = function(editor, container, lightbox)
 	
     // Creates the user interface
 	this.actions = new Actions(this);
-	this.menus = new Menus(this);
+	this.menus = (window.Menus != null) ? new Menus(this) : null;
 	this.createDivs();
 	this.createUi();
 	this.refresh();
@@ -958,16 +958,6 @@ EditorUi.prototype.hsplitPosition = (screen.width <= 500) ? 116 : 204;
 EditorUi.prototype.allowAnimation = true;
 
 /**
- * 
- */
-EditorUi.prototype.editBlankUrl = window.location.protocol + '//' + window.location.host + '/?client=1';
-
-/**
- * 
- */
-EditorUi.prototype.editBlankFallbackUrl = window.location.protocol + '//' + window.location.host + '/?create=drawdata&splash=0';
-
-/**
  * Installs the listeners to update the action states.
  */
 EditorUi.prototype.init = function()
@@ -1416,7 +1406,6 @@ EditorUi.prototype.initCanvas = function()
 		// Creates toolbar for viewer - do not use CSS here
 		// as this may be used in a viewer that has no CSS
 		this.chromelessToolbar = document.createElement('div');
-		this.chromelessToolbar.className = 'noPrint';
 		this.chromelessToolbar.style.position = 'fixed';
 		this.chromelessToolbar.style.overflow = 'hidden';
 		this.chromelessToolbar.style.boxSizing = 'border-box';
@@ -1445,6 +1434,7 @@ EditorUi.prototype.initCanvas = function()
 			}
 			
 			var img = document.createElement('img');
+			img.setAttribute('border', '0');
 			img.setAttribute('src', imgSrc);
 			
 			a.appendChild(img);
@@ -1455,13 +1445,13 @@ EditorUi.prototype.initCanvas = function()
 		{
 			this.actions.get('zoomOut').funct();
 			mxEvent.consume(evt);
-		}), Editor.zoomOutLargeImage, (mxResources.get('zoomIn') || 'Zoom In') + ' (Alt+Mousewheel)');
+		}), Editor.zoomOutLargeImage, (mxResources.get('zoomOut') || 'Zoom Out') + ' (Alt+Mousewheel)');
 		
 		addButton(mxUtils.bind(this, function(evt)
 		{
 			this.actions.get('zoomIn').funct();
 			mxEvent.consume(evt);
-		}), Editor.zoomInLargeImage, (mxResources.get('zoomOut') || 'Zoom Out') + ' (Alt+Mousewheel)');
+		}), Editor.zoomInLargeImage, (mxResources.get('zoomIn') || 'Zoom In') + ' (Alt+Mousewheel)');
 		
 		addButton(mxUtils.bind(this, function(evt)
 		{
@@ -1486,21 +1476,21 @@ EditorUi.prototype.initCanvas = function()
 			mxEvent.consume(evt);
 		}), Editor.actualSizeLargeImage, mxResources.get('fit') || 'Fit');
 
-		if (this.editButtonLink != null)
+		if (this.editor.editButtonLink != null)
 		{
 			addButton(mxUtils.bind(this, function(evt)
 			{
-				if (this.editButtonLink == '_blank')
+				if (this.editor.editButtonLink == '_blank')
 				{
-					this.editAsNew(this.getEditBlankXml(), null, true);
+					this.editor.editAsNew(this.editor.getEditBlankXml(), null, true);
 				}
 				else
 				{
-					window.open(this.editButtonLink, 'editWindow');
+					window.open(this.editor.editButtonLink, 'editWindow');
 				}
 				
 				mxEvent.consume(evt);
-			}), Editor.editLargeImage, (mxResources.get('edit') || 'Edit') + ' (Escape)');
+			}), Editor.editLargeImage, mxResources.get('openInNewWindow') || 'Open in New Window');
 		}
 		
 		if (urlParams['close'] == '1' || (graph.lightbox && this.container != document.body))
@@ -1516,7 +1506,7 @@ EditorUi.prototype.initCanvas = function()
 					this.destroy();
 					mxEvent.consume(evt);
 				}
-			}), Editor.closeLargeImage, mxResources.get('close') || 'Close');
+			}), Editor.closeLargeImage, (mxResources.get('close') || 'Close') + ' (Escape)');
 		}
 		
 		graph.container.appendChild(this.chromelessToolbar);
@@ -1738,14 +1728,6 @@ EditorUi.prototype.initCanvas = function()
 };
 
 /**
- * 
- */
-EditorUi.prototype.getEditBlankXml = function()
-{
-	return mxUtils.getXml(this.editor.getGraphXml());
-};
-
-/**
  * Adds support for placeholders in labels.
  */
 EditorUi.prototype.lightboxFit = function()
@@ -1754,37 +1736,6 @@ EditorUi.prototype.lightboxFit = function()
 	this.editor.graph.maxFitScale = 2;
 	this.editor.graph.fit(20);
 	this.editor.graph.maxFitScale = null;
-};
-
-/**
- * 
- */
-EditorUi.prototype.editAsNew = function(xml, title)
-{
-	var p = (title != null) ? '&title=' + encodeURIComponent(title) : '';
-	
-	if (window.postMessage)
-	{
-		var wnd = null;
-		
-		var receive = mxUtils.bind(this, function(evt)
-		{
-			if (evt.data == 'ready' && evt.source == wnd)
-			{
-				wnd.postMessage(xml, '*');
-				window.removeEventListener('message', receive);
-			}
-		});
-		
-		window.addEventListener('message', receive);
-		wnd = window.open(this.editBlankUrl + p);
-	}
-	else
-	{
-		// Data is pulled from global variable after tab loads
-		window.drawdata = xml;
-		window.open(this.editBlankFallbackUrl + p);
-	}
 };
 
 /**
