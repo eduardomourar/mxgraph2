@@ -1,3 +1,4 @@
+- Changes type of mxStencilRegistry.stencils from array to object [JavaScript]
 - Fixes drawing of edges connected to hidden layers [JavaScript]
 - Sets state invalid in mxGraphView.removeState [JavaScript]
 - Adds mxUtils.parseCssNumber, fixes mxGraph.getBorderSizes for quirks [JavaScript]
