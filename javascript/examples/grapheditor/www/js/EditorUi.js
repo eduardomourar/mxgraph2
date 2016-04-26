@@ -53,7 +53,7 @@ EditorUi = function(editor, container, lightbox)
 	
     // Creates the user interface
 	this.actions = new Actions(this);
-	this.menus = (window.Menus != null) ? new Menus(this) : null;
+	this.menus = this.createMenus();
 	this.createDivs();
 	this.createUi();
 	this.refresh();
@@ -1154,6 +1154,14 @@ EditorUi.prototype.getCssClassForMarker = function(prefix, shape, marker, fill)
 	}
 
 	return result;
+};
+
+/**
+ * Overridden in Menus.js
+ */
+EditorUi.prototype.createMenus = function()
+{
+	return null;
 };
 
 /**
