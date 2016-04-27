@@ -4478,7 +4478,7 @@ if (typeof mxVertexHandler != 'undefined')
 					}
 				}
 				
-				if (me.getState() == null)
+				if (me.getState() == null && this.isEnabled())
 				{
 					this.container.style.cursor = 'default';
 				}
