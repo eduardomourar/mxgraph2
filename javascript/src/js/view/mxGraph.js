@@ -2915,8 +2915,8 @@ mxGraph.prototype.sizeDidChange = function()
 			height = Math.max(height, this.minimumGraphSize.height * this.view.scale);
 		}
 
-		width = Math.ceil(width - 1);
-		height = Math.ceil(height - 1);
+		width = Math.floor(width - 1);
+		height = Math.floor(height - 1);
 
 		if (this.dialect == mxConstants.DIALECT_SVG)
 		{
@@ -7757,8 +7757,8 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled, ignoreWidt
 		
 		// Adds spacing and border from css
 		var cssBorder = this.getBorderSizes();
-		var w1 = this.container.offsetWidth - cssBorder.x - cssBorder.width;
-		var h1 = this.container.offsetHeight - cssBorder.y - cssBorder.height;
+		var w1 = this.container.offsetWidth - cssBorder.x - cssBorder.width - border / 2;
+		var h1 = this.container.offsetHeight - cssBorder.y - cssBorder.height - border / 2;
 		var bounds = this.view.getGraphBounds();
 		
 		if (bounds.width > 0 && bounds.height > 0)
