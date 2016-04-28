@@ -1742,7 +1742,7 @@ mxConnectionHandler.prototype.reset = function()
 	}
 	
 	// Resets the cursor on the container
-	if (this.cursor != null)
+	if (this.cursor != null && this.graph.container != null)
 	{
 		this.graph.container.style.cursor = '';
 	}
