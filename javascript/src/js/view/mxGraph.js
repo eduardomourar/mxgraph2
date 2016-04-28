@@ -7807,8 +7807,6 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled, ignoreWidt
 						var x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border / s2 + margin / 2) : border;
 						var y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border / s2 + margin / 2) : border;
 						this.view.scaleAndTranslate(s2, x0, y0);
-						
-						console.trace('ow', w1, w2 + b, s2, border, margin, x0, y0, this.view.canvas.ownerSVGElement.style.minWidth);
 					}
 					else
 					{
