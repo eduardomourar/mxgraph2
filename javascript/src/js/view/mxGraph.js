@@ -2884,8 +2884,8 @@ mxGraph.prototype.sizeDidChange = function()
 	{
 		var border = this.getBorder();
 		
-		var width = Math.max(0, bounds.x + bounds.width + 1 + border);
-		var height = Math.max(0, bounds.y + bounds.height + 1 + border);
+		var width = Math.max(0, bounds.x + bounds.width + Math.floor(border * this.view.scale));
+		var height = Math.max(0, bounds.y + bounds.height + Math.floor(border * this.view.scale));
 		
 		if (this.minimumContainerSize != null)
 		{
@@ -2895,7 +2895,7 @@ mxGraph.prototype.sizeDidChange = function()
 
 		if (this.resizeContainer)
 		{
-			this.doResizeContainer(width, height);
+			this.doResizeContainer(width + 1, height + 1);
 		}
 
 		if (this.preferPageSize || (!mxClient.IS_IE && this.pageVisible))
@@ -7736,7 +7736,7 @@ mxGraph.prototype.zoomToRect = function(rect)
  * border - Optional number that specifies the border. Default is 0.
  * keepOrigin - Optional boolean that specifies if the translate should be
  * changed. Default is false.
- * margin - Optional margin in pixels. Default is 1.
+ * margin - Optional margin in pixels. Default is 0.
  * enabled - Optional boolean that specifies if the scale should be set or
  * just returned. Default is true.
  * ignoreWidth - Optional boolean that specifies if the width should be
@@ -7750,15 +7750,15 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled, ignoreWidt
 	{
 		border = (border != null) ? border : 0;
 		keepOrigin = (keepOrigin != null) ? keepOrigin : false;
-		margin = (margin != null) ? margin : 1;
+		margin = (margin != null) ? margin : 0;
 		enabled = (enabled != null) ? enabled : true;
 		ignoreWidth = (ignoreWidth != null) ? ignoreWidth : false;
 		ignoreHeight = (ignoreHeight != null) ? ignoreHeight : false;
 		
 		// Adds spacing and border from css
 		var cssBorder = this.getBorderSizes();
-		var w1 = this.container.offsetWidth - cssBorder.x - cssBorder.width - border / 2;
-		var h1 = this.container.offsetHeight - cssBorder.y - cssBorder.height - border / 2;
+		var w1 = this.container.offsetWidth - cssBorder.x - cssBorder.width;
+		var h1 = this.container.offsetHeight - cssBorder.y - cssBorder.height;
 		var bounds = this.view.getGraphBounds();
 		
 		if (bounds.width > 0 && bounds.height > 0)
@@ -7807,6 +7807,8 @@ mxGraph.prototype.fit = function(border, keepOrigin, margin, enabled, ignoreWidt
 						var x0 = (bounds.x != null) ? Math.floor(this.view.translate.x - bounds.x / s + border / s2 + margin / 2) : border;
 						var y0 = (bounds.y != null) ? Math.floor(this.view.translate.y - bounds.y / s + border / s2 + margin / 2) : border;
 						this.view.scaleAndTranslate(s2, x0, y0);
+						
+						console.trace('ow', w1, w2 + b, s2, border, margin, x0, y0, this.view.canvas.ownerSVGElement.style.minWidth);
 					}
 					else
 					{

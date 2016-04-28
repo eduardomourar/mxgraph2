@@ -1,3 +1,6 @@
+- Fixes ignored scaled for border in mxGraph.sizeDidChange [JavaScript]
+- Changes default for margin in mxGraph.fit to 0 [JavaScript]
+- Fixes possible NPE in mxConnectionHandler.reset [JavaScript]
 - Adds mxConstants.WORD_WRAP global switch for word wrapping [JavaScript]
 - Changes type of mxStencilRegistry.stencils from array to object [JavaScript]
 - Fixes drawing of edges connected to hidden layers [JavaScript]
