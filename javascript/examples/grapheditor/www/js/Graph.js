@@ -2570,11 +2570,23 @@ HoverIcons.prototype.repaint = function()
 			
 			if (this.checkCollisions)
 			{
-				var tmp = this.graph.getCellAt(bds.x + bds.width +
+				var right = this.graph.getCellAt(bds.x + bds.width +
 						this.triangleRight.width / 2, this.currentState.getCenterY());
+				var left = this.graph.getCellAt(bds.x - this.triangleLeft.width / 2, this.currentState.getCenterY()); 
+				var top = this.graph.getCellAt(this.currentState.getCenterX(), bds.y - this.triangleUp.height / 2); 
+				var bottom = this.graph.getCellAt(this.currentState.getCenterX(), bds.y + bds.height + this.triangleDown.height / 2); 
+
+				// Shows hover icons large cell is behind all directions of current cell
+				if (right != null && right == left && left == top && top == bottom)
+				{
+					right = null;
+					left = null;
+					top = null;
+					bottom = null;
+				}
 				
 				// Checks right arrow
-				if (tmp != null && !this.graph.model.isAncestor(tmp, this.currentState.cell))
+				if (right != null && !this.graph.model.isAncestor(right, this.currentState.cell))
 				{
 					this.arrowRight.style.visibility = 'hidden';
 				}
@@ -2584,9 +2596,7 @@ HoverIcons.prototype.repaint = function()
 				}
 
 				// Checks left arrow
-				tmp = this.graph.getCellAt(bds.x - this.triangleLeft.width / 2, this.currentState.getCenterY()); 
-				
-				if (tmp != null && !this.graph.model.isAncestor(tmp, this.currentState.cell))
+				if (left != null && !this.graph.model.isAncestor(left, this.currentState.cell))
 				{
 					this.arrowLeft.style.visibility = 'hidden';
 				}
@@ -2596,9 +2606,7 @@ HoverIcons.prototype.repaint = function()
 				}
 
 				// Checks top arrow
-				tmp = this.graph.getCellAt(this.currentState.getCenterX(), bds.y - this.triangleUp.height / 2); 
-				
-				if (tmp != null && !this.graph.model.isAncestor(tmp, this.currentState.cell))
+				if (top != null && !this.graph.model.isAncestor(top, this.currentState.cell))
 				{
 					this.arrowUp.style.visibility = 'hidden';
 				}
@@ -2608,9 +2616,7 @@ HoverIcons.prototype.repaint = function()
 				}
 
 				// Checks bottom arrow
-				tmp = this.graph.getCellAt(this.currentState.getCenterX(), bds.y + bds.height + this.triangleDown.height / 2); 
-				
-				if (tmp != null && !this.graph.model.isAncestor(tmp, this.currentState.cell))
+				if (bottom != null && !this.graph.model.isAncestor(bottom, this.currentState.cell))
 				{
 					this.arrowDown.style.visibility = 'hidden';
 				}
@@ -4514,8 +4520,9 @@ if (typeof mxVertexHandler != 'undefined')
 			// selecting parent for selected children in groups before this check can be made.
 			this.popupMenuHandler.mouseUp = mxUtils.bind(this, function(sender, me)
 			{
-				this.popupMenuHandler.popupTrigger = !this.isEditing() && (this.popupMenuHandler.popupTrigger ||
-					(!menuShowing && !mxEvent.isMouseEvent(me.getEvent()) &&
+				this.popupMenuHandler.popupTrigger = !this.isEditing() && this.isEnabled() &&
+					(me.getState() == null || !me.isSource(me.getState().control)) &&
+					(this.popupMenuHandler.popupTrigger || (!menuShowing && !mxEvent.isMouseEvent(me.getEvent()) &&
 					((selectionEmpty && me.getCell() == null && this.isSelectionEmpty()) ||
 					(cellSelected && this.isCellSelected(me.getCell())))));
 				mxPopupMenuHandler.prototype.mouseUp.apply(this.popupMenuHandler, arguments);
