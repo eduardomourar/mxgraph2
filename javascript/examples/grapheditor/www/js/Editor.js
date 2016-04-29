@@ -313,6 +313,7 @@ Editor.prototype.readGraphState = function(node)
 	if (this.chromeless && this.graph.foldingEnabled)
 	{
 		this.graph.foldingEnabled = urlParams['nav'] == '1';
+		this.graph.cellRenderer.forceControlClickHandler = this.graph.foldingEnabled;
 	}
 	
 	var ps = node.getAttribute('pageScale');
