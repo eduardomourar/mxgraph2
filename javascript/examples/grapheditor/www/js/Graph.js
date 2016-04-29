@@ -32,7 +32,7 @@ mxGraphView.prototype.gridSteps = 4;
 mxGraphView.prototype.minGridSize = 4;
 
 // UrlParams is null in embed mode
-mxGraphView.prototype.gridColor = (urlParams['gridcolor'] || '#e0e0e0').toLowerCase();
+mxGraphView.prototype.gridColor = '#e0e0e0';
 
 // Alternative text for unsupported foreignObjects
 mxSvgCanvas2D.prototype.foAltText = '[Not supported by viewer]';

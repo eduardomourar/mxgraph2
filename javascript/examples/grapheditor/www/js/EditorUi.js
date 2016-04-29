@@ -2198,6 +2198,15 @@ EditorUi.prototype.setPageFormat = function(value)
 	this.fireEvent(new mxEventObject('pageFormatChanged'));
 };
 
+/**
+ * Loads the stylesheet for this graph.
+ */
+EditorUi.prototype.setGridColor = function(value)
+{
+	this.editor.graph.view.gridColor = value;
+	this.editor.graph.view.validateBackground();
+	this.fireEvent(new mxEventObject('gridColorChanged'));
+};
 
 /**
  * Updates the states of the given undo/redo items.

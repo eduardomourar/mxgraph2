@@ -326,18 +326,7 @@ Editor.prototype.readGraphState = function(node)
 	{
 		this.graph.pageScale = mxGraph.prototype.pageScale;
 	}
-	
-	var gc = node.getAttribute('gridColor');
-	
-	if (gc != null)
-	{
-		this.graph.view.gridColor = gc.toLowerCase();
-	}
-	else
-	{
-		this.graph.view.gridColor = mxGraphView.prototype.gridColor;
-	}
-	
+
 	if (!this.graph.lightbox)
 	{
 		var pv = node.getAttribute('page');
@@ -473,11 +462,6 @@ Editor.prototype.getGraphXml = function(ignoreSelection)
 	node.setAttribute('pageWidth', this.graph.pageFormat.width);
 	node.setAttribute('pageHeight', this.graph.pageFormat.height);
 
-	if (this.graph.view.gridColor != mxGraphView.prototype.gridColor)
-	{
-		node.setAttribute('gridColor', this.graph.view.gridColor);
-	}
-	
 	if (this.graph.background != null)
 	{
 		node.setAttribute('background', this.graph.background);
