@@ -36,19 +36,6 @@ EditorUi = function(editor, container, lightbox)
 		this.footerHeight = 0;
 		graph.isEnabled = function() { return false; };
 		graph.panningHandler.isForcePanningEvent = function() { return true; };
-
-		// Overrides click handler to ignore graph enabled state
-		graph.cellRenderer.createControlClickHandler = function(state)
-		{
-			var graph = state.view.graph;
-			
-			return function (evt)
-			{
-				var collapse = !graph.isCellCollapsed(state.cell);
-				graph.foldCells(collapse, false, [state.cell], null, evt);
-				mxEvent.consume(evt);
-			};
-		};
 	}
 	
     // Creates the user interface
@@ -98,14 +85,17 @@ EditorUi = function(editor, container, lightbox)
 	}
 	
 	// And uses built-in context menu while editing
-	if (mxClient.IS_IE && (typeof(document.documentMode) === 'undefined' || document.documentMode < 9))
+	if (!lightbox)
 	{
-		mxEvent.addListener(this.diagramContainer, 'contextmenu', textEditing);
-	}
-	else
-	{
-		// Allows browser context menu outside of diagram and sidebar
-		this.diagramContainer.oncontextmenu = textEditing;
+		if (mxClient.IS_IE && (typeof(document.documentMode) === 'undefined' || document.documentMode < 9))
+		{
+			mxEvent.addListener(this.diagramContainer, 'contextmenu', textEditing);
+		}
+		else
+		{
+			// Allows browser context menu outside of diagram and sidebar
+			this.diagramContainer.oncontextmenu = textEditing;
+		}
 	}
 
 	// Contains the main graph instance inside the given panel
@@ -371,10 +361,13 @@ EditorUi = function(editor, container, lightbox)
 	graph.popupMenuHandler.autoExpand = true;
 
     // Installs context menu
-	graph.popupMenuHandler.factoryMethod = mxUtils.bind(this, function(menu, cell, evt)
+	if (this.menus != null)
 	{
-		this.menus.createPopupMenu(menu, cell, evt);
-	});
+		graph.popupMenuHandler.factoryMethod = mxUtils.bind(this, function(menu, cell, evt)
+		{
+			this.menus.createPopupMenu(menu, cell, evt);
+		});
+	}
 	
 	// Hides context menu
 	mxEvent.addGestureListeners(document, mxUtils.bind(this, function(evt)
@@ -1420,10 +1413,20 @@ EditorUi.prototype.initCanvas = function()
 		this.chromelessToolbar.style.whiteSpace = 'nowrap';
 		this.chromelessToolbar.style.backgroundColor = '#000000';
 		this.chromelessToolbar.style.padding = '10px 10px 8px 10px';
-		this.chromelessToolbar.style.bottom = '50px';
 		this.chromelessToolbar.style.left = '50%';
-		
 		mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'borderRadius', '20px');
+		mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'transition', 'opacity 600ms ease-in-out');
+		
+		var updateChromelessToolbarPosition = mxUtils.bind(this, function()
+		{
+			var css = mxUtils.getCurrentStyle(graph.container);
+		 	this.chromelessToolbar.style.bottom = ((css != null) ? parseInt(css['margin-bottom'] || 0) : 0) +
+		 		((this.tabContainer != null) ? (20 + parseInt(this.tabContainer.style.height)) : 20) + 'px';
+		});
+		
+		this.editor.addListener('resetGraphView', updateChromelessToolbarPosition);
+		updateChromelessToolbarPosition();
+		
 		var btnCount = 0;
 
 		var addButton = mxUtils.bind(this, function(fn, imgSrc, tip)
@@ -1516,62 +1519,133 @@ EditorUi.prototype.initCanvas = function()
 				}
 			}), Editor.closeLargeImage, (mxResources.get('close') || 'Close') + ' (Escape)');
 		}
-		
+
+		// Initial state invisible
+		this.chromelessToolbar.style.display = 'none';
 		graph.container.appendChild(this.chromelessToolbar);
 		this.chromelessToolbar.style.marginLeft = -(btnCount * 24 + 10) + 'px';
 
 		// Changes toolbar opacity on hover
-		if (!mxClient.IS_TOUCH)
+		var fadeThread = null;
+		var fadeThread2 = null;
+		
+		var fadeOut = mxUtils.bind(this, function(delay)
 		{
-			var fadeThread = null;
+			if (fadeThread != null)
+			{
+				window.clearTimeout(fadeThread);
+				fadeThead = null;
+			}
 			
-			mxEvent.addListener(graph.container, 'mousemove', mxUtils.bind(this, function(evt)
+			if (fadeThread2 != null)
 			{
-				if (fadeThread != null)
-				{
-					window.clearTimeout(fadeThread);
-				}
-				
-				fadeThread = window.setTimeout(mxUtils.bind(this, function()
-				{
-				 	mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'transition', 'all 1000ms ease-in-out');
-				 	mxUtils.setOpacity(this.chromelessToolbar, 0);
-					fadeThread = null;
-				}), 200);
-				
-				mxUtils.setPrefixedStyle(this.chromelessToolbar.style, 'transition', null);
-				mxUtils.setOpacity(this.chromelessToolbar, 30);
-			}));
+				window.clearTimeout(fadeThread2);
+				fadeThead2 = null;
+			}
 			
-			mxEvent.addListener(this.chromelessToolbar, 'mouseenter', mxUtils.bind(this, function(evt)
+			fadeThread = window.setTimeout(mxUtils.bind(this, function()
 			{
-				mxUtils.setOpacity(this.chromelessToolbar, 100);
-				
-				if (fadeThread != null)
+			 	mxUtils.setOpacity(this.chromelessToolbar, 0);
+				fadeThread = null;
+			 	
+				fadeThread2 = window.setTimeout(mxUtils.bind(this, function()
 				{
-					window.clearTimeout(fadeThread);
-					fadeThread = null;
-				}
-			}));
-	
-			mxEvent.addListener(this.chromelessToolbar, 'mousemove',  mxUtils.bind(this, function(evt)
-			{
-				mxUtils.setOpacity(this.chromelessToolbar, 100);
-				mxEvent.consume(evt);
-			}));
-	
-			mxEvent.addListener(this.chromelessToolbar, 'mouseleave',  mxUtils.bind(this, function(evt)
-			{
-				mxUtils.setOpacity(this.chromelessToolbar, 30);
-			}));
-			
-			mxUtils.setOpacity(this.chromelessToolbar, 30);
-		}
-		else
+					this.chromelessToolbar.style.display = 'none';
+					fadeThread2 = null;
+				}), 600);
+			}), delay || 200);
+		});
+		
+		var fadeIn = mxUtils.bind(this, function(opacity)
 		{
-			// TODO: Show/hide on touch
-			mxUtils.setOpacity(this.chromelessToolbar, 50);
-		}
+			if (fadeThread != null)
+			{
+				window.clearTimeout(fadeThread);
+				fadeThead = null;
+			}
+			
+			if (fadeThread2 != null)
+			{
+				window.clearTimeout(fadeThread2);
+				fadeThead2 = null;
+			}
+			
+			this.chromelessToolbar.style.display = '';
+			mxUtils.setOpacity(this.chromelessToolbar, opacity || 30);
+		});
+		
+		mxEvent.addListener(graph.container, (mxClient.IS_POINTER) ? 'pointermove' : 'mousemove', mxUtils.bind(this, function(evt)
+		{
+			if (!mxEvent.isTouchEvent(evt))
+			{
+				fadeIn(30);
+				fadeOut();
+			}
+		}));
+		
+		mxEvent.addListener(this.chromelessToolbar, (mxClient.IS_POINTER) ? 'pointermove' : 'mousemove', function(evt)
+		{
+			mxEvent.consume(evt);
+		});
+		
+		mxEvent.addListener(this.chromelessToolbar, 'mouseenter', mxUtils.bind(this, function(evt)
+		{
+			fadeIn(100);
+		}));
+
+		mxEvent.addListener(this.chromelessToolbar, 'mousemove',  mxUtils.bind(this, function(evt)
+		{
+			fadeIn(100);
+			mxEvent.consume(evt);
+		}));
+
+		mxEvent.addListener(this.chromelessToolbar, 'mouseleave',  mxUtils.bind(this, function(evt)
+		{
+			if (!mxEvent.isTouchEvent(evt))
+			{
+				fadeIn(30);
+			}
+		}));
+
+		// Shows/hides toolbar for touch devices
+		var tol = graph.getTolerance();
+		var ui = this;
+
+		graph.addMouseListener(
+		{
+		    startX: 0,
+		    startY: 0,
+		    scrollLeft: 0,
+		    scrollTop: 0,
+		    mouseDown: function(sender, me)
+		    {
+		    	this.startX = me.getGraphX();
+		    	this.startY = me.getGraphY();
+			    this.scrollLeft = graph.container.scrollLeft;
+			    this.scrollTop = graph.container.scrollTop;
+		    },
+		    mouseMove: function(sender, me) {},
+		    mouseUp: function(sender, me)
+		    {
+		    	if (mxEvent.isTouchEvent(me.getEvent()))
+		    	{
+			    	if ((Math.abs(this.scrollLeft - graph.container.scrollLeft) < tol &&
+			    		Math.abs(this.scrollTop - graph.container.scrollTop) < tol) &&
+			    		(Math.abs(this.startX - me.getGraphX()) < tol &&
+			    		Math.abs(this.startY - me.getGraphY()) < tol))
+			    	{
+			    		if (parseFloat(ui.chromelessToolbar.style.opacity || 0) > 0)
+			    		{
+			    			fadeOut();
+			    		}
+			    		else
+			    		{
+			    			fadeIn(30);
+			    		}
+					}
+		    	}
+		    }
+		});
 	}
 	else if (this.editor.extendCanvas)
 	{
