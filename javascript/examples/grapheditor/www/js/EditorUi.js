@@ -1433,10 +1433,10 @@ EditorUi.prototype.initCanvas = function()
 		{
 			btnCount++;
 			
-			var a = document.createElement('a');
-			a.setAttribute('href', 'javascript:void(0);');
+			var a = document.createElement('span');
 			a.style.paddingLeft = '8px';
 			a.style.paddingRight = '8px';
+			a.style.cursor = 'pointer';
 			mxEvent.addListener(a, 'click', fn);
 			
 			if (tip != null)
