@@ -1200,6 +1200,52 @@ Graph.prototype.formatDate = function(date, mask, utc)
 };
 
 /**
+ * 
+ */
+Graph.prototype.createLayersDialog = function()
+{
+	var div = document.createElement('div');
+	div.style.position = 'absolute';
+	
+	var model = this.getModel();
+	var childCount = model.getChildCount(model.root);
+	
+	for (var i = 0; i < childCount; i++)
+	{
+		(function(layer)
+		{
+			var span = document.createElement('div');
+			span.style.overflow = 'hidden';
+			span.style.textOverflow = 'ellipsis';
+			span.style.padding = '2px';
+			span.style.whiteSpace = 'nowrap';
+
+			var cb = document.createElement('input');
+			cb.setAttribute('type', 'checkbox');
+			
+			if (model.isVisible(layer))
+			{
+				cb.setAttribute('checked', 'checked');
+				cb.defaultChecked = true;
+			}
+			
+			span.appendChild(cb);
+			var title = layer.value || (mxResources.get('background') || 'Background');
+			span.setAttribute('title', title);
+			mxUtils.write(span, title);
+			div.appendChild(span);
+			
+			mxEvent.addListener(cb, 'change', function()
+			{
+				model.setVisible(layer, !model.isVisible(layer));
+			});
+		}(model.getChildAt(model.root, i)));
+	}
+	
+	return div;
+};
+
+/**
  * Private helper method.
  */
 Graph.prototype.replacePlaceholders = function(cell, str)
@@ -5452,9 +5498,10 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				var evt = me.getEvent();
 				
-				return (this.useLeftButtonForPanning && me.getState() == null &&
-						mxEvent.isLeftMouseButton(evt)) || (mxEvent.isControlDown(evt) &&
-						!mxEvent.isShiftDown(evt)) || (this.usePopupTrigger && mxEvent.isPopupTrigger(evt));
+				return (mxEvent.isLeftMouseButton(evt) && ((this.useLeftButtonForPanning &&
+						me.getState() == null) || (mxEvent.isControlDown(evt) &&
+						!mxEvent.isShiftDown(evt)))) || (this.usePopupTrigger &&
+						mxEvent.isPopupTrigger(evt));
 			};
 		}
 

@@ -35,7 +35,10 @@ EditorUi = function(editor, container, lightbox)
 	{
 		this.footerHeight = 0;
 		graph.isEnabled = function() { return false; };
-		graph.panningHandler.isForcePanningEvent = function() { return true; };
+		graph.panningHandler.isForcePanningEvent = function(me)
+		{
+			return !mxEvent.isPopupTrigger(me.getEvent());
+		};
 	}
 	
     // Creates the user interface
@@ -85,7 +88,7 @@ EditorUi = function(editor, container, lightbox)
 	}
 	
 	// And uses built-in context menu while editing
-	if (!lightbox)
+	if (!this.editor.chromeless)
 	{
 		if (mxClient.IS_IE && (typeof(document.documentMode) === 'undefined' || document.documentMode < 9))
 		{
@@ -96,6 +99,10 @@ EditorUi = function(editor, container, lightbox)
 			// Allows browser context menu outside of diagram and sidebar
 			this.diagramContainer.oncontextmenu = textEditing;
 		}
+	}
+	else
+	{
+		graph.panningHandler.usePopupTrigger = false;
 	}
 
 	// Contains the main graph instance inside the given panel
@@ -195,6 +202,7 @@ EditorUi = function(editor, container, lightbox)
 		// Ctrl+left button is reported as right button in FF on Mac
 		return panningHandlerIsForcePanningEvent.apply(this, arguments) ||
 			spaceKeyPressed || (mxEvent.isMouseEvent(me.getEvent()) &&
+			(this.usePopupTrigger || !mxEvent.isPopupTrigger(me.getEvent())) &&
 			((!mxEvent.isControlDown(me.getEvent()) &&
 			mxEvent.isRightMouseButton(me.getEvent())) ||
 			mxEvent.isMiddleMouseButton(me.getEvent())));
@@ -1450,6 +1458,8 @@ EditorUi.prototype.initCanvas = function()
 			
 			a.appendChild(img);
 			this.chromelessToolbar.appendChild(a);
+			
+			return a;
 		});
 
 		addButton(mxUtils.bind(this, function(evt)
@@ -1486,44 +1496,6 @@ EditorUi.prototype.initCanvas = function()
 			
 			mxEvent.consume(evt);
 		}), Editor.actualSizeLargeImage, mxResources.get('fit') || 'Fit');
-
-		if (this.editor.editButtonLink != null)
-		{
-			addButton(mxUtils.bind(this, function(evt)
-			{
-				if (this.editor.editButtonLink == '_blank')
-				{
-					this.editor.editAsNew(this.editor.getEditBlankXml(), null, true);
-				}
-				else
-				{
-					window.open(this.editor.editButtonLink, 'editWindow');
-				}
-				
-				mxEvent.consume(evt);
-			}), Editor.editLargeImage, mxResources.get('openInNewWindow') || 'Open in New Window');
-		}
-		
-		if (urlParams['close'] == '1' || (graph.lightbox && this.container != document.body))
-		{
-			addButton(mxUtils.bind(this, function(evt)
-			{
-				if (urlParams['close'] == '1')
-				{
-					window.close();
-				}
-				else
-				{
-					this.destroy();
-					mxEvent.consume(evt);
-				}
-			}), Editor.closeLargeImage, (mxResources.get('close') || 'Close') + ' (Escape)');
-		}
-
-		// Initial state invisible
-		this.chromelessToolbar.style.display = 'none';
-		graph.container.appendChild(this.chromelessToolbar);
-		this.chromelessToolbar.style.marginLeft = -(btnCount * 24 + 10) + 'px';
 
 		// Changes toolbar opacity on hover
 		var fadeThread = null;
@@ -1574,6 +1546,85 @@ EditorUi.prototype.initCanvas = function()
 			mxUtils.setOpacity(this.chromelessToolbar, opacity || 30);
 		});
 		
+		var model = graph.getModel();
+		
+		if (urlParams['layers'] == '1' && model.getChildCount(model.root) > 0)
+		{
+			var layersDialog = null;
+			
+			var layersButton = addButton(mxUtils.bind(this, function(evt)
+			{
+				if (layersDialog != null)
+				{
+					layersDialog.parentNode.removeChild(layersDialog);
+					layersDialog = null;
+				}
+				else
+				{
+					layersDialog = graph.createLayersDialog();
+					
+					mxEvent.addListener(layersDialog, 'mouseleave', function()
+					{
+						layersDialog.parentNode.removeChild(layersDialog);
+						layersDialog = null;
+					});
+					
+					var r = layersButton.getBoundingClientRect();
+					
+					mxUtils.setPrefixedStyle(layersDialog.style, 'borderRadius', '5px');
+					layersDialog.style.backgroundColor = '#000000';
+					layersDialog.style.width = '160px';
+					layersDialog.style.padding = '4px 2px 4px 2px';
+					layersDialog.style.color = '#ffffff';
+					layersDialog.style.left = r.left + 'px';
+					layersDialog.style.bottom = parseInt(this.chromelessToolbar.style.bottom) +
+						this.chromelessToolbar.offsetHeight + 4 + 'px';
+					
+					document.body.appendChild(layersDialog);
+				}
+				
+				mxEvent.consume(evt);
+			}), Editor.layersLargeImage, mxResources.get('layers') || 'Layers');
+		}
+
+		if (this.editor.editButtonLink != null)
+		{
+			addButton(mxUtils.bind(this, function(evt)
+			{
+				if (this.editor.editButtonLink == '_blank')
+				{
+					this.editor.editAsNew(this.editor.getEditBlankXml(), null, true);
+				}
+				else
+				{
+					window.open(this.editor.editButtonLink, 'editWindow');
+				}
+				
+				mxEvent.consume(evt);
+			}), Editor.editLargeImage, mxResources.get('openInNewWindow') || 'Open in New Window');
+		}
+		
+		if (graph.lightbox && this.container != document.body)
+		{
+			addButton(mxUtils.bind(this, function(evt)
+			{
+				if (urlParams['close'] == '1')
+				{
+					window.close();
+				}
+				else
+				{
+					this.destroy();
+					mxEvent.consume(evt);
+				}
+			}), Editor.closeLargeImage, (mxResources.get('close') || 'Close') + ' (Escape)');
+		}
+
+		// Initial state invisible
+		this.chromelessToolbar.style.display = 'none';
+		graph.container.appendChild(this.chromelessToolbar);
+		this.chromelessToolbar.style.marginLeft = -(btnCount * 24 + 10) + 'px';
+
 		mxEvent.addListener(graph.container, (mxClient.IS_POINTER) ? 'pointermove' : 'mousemove', mxUtils.bind(this, function(evt)
 		{
 			if (!mxEvent.isTouchEvent(evt))

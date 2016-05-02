@@ -1,3 +1,4 @@
+- Moves Editor.init hook to after c'tor in grapheditor [JavaScript]
 - Adds mxGraph.isIgnoreTerminalEvent hook [JavaScript]
 - Add mxCellRenderer.forceControlClickHandler switch [JavaScript]
 - Fires mouseup event for click on folding icon, fixes blurred rendering [JavaScript]
