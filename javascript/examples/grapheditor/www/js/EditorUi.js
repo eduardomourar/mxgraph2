@@ -1556,18 +1556,18 @@ EditorUi.prototype.initCanvas = function()
 			{
 				if (this.layersDialog != null)
 				{
-					this.layersDialog.parentNode.removeChild(layersDialog);
+					this.layersDialog.parentNode.removeChild(this.layersDialog);
 					this.layersDialog = null;
 				}
 				else
 				{
 					this.layersDialog = graph.createLayersDialog();
 					
-					mxEvent.addListener(this.layersDialog, 'mouseleave', function()
+					mxEvent.addListener(this.layersDialog, 'mouseleave', mxUtils.bind(this, function()
 					{
-						layersDialog.parentNode.removeChild(layersDialog);
-						layersDialog = null;
-					});
+						this.layersDialog.parentNode.removeChild(this.layersDialog);
+						this.layersDialog = null;
+					}));
 					
 					var r = layersButton.getBoundingClientRect();
 					
