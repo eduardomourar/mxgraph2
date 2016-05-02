@@ -1550,20 +1550,20 @@ EditorUi.prototype.initCanvas = function()
 		
 		if (urlParams['layers'] == '1' && model.getChildCount(model.root) > 0)
 		{
-			var layersDialog = null;
+			this.layersDialog = null;
 			
 			var layersButton = addButton(mxUtils.bind(this, function(evt)
 			{
-				if (layersDialog != null)
+				if (this.layersDialog != null)
 				{
-					layersDialog.parentNode.removeChild(layersDialog);
-					layersDialog = null;
+					this.layersDialog.parentNode.removeChild(layersDialog);
+					this.layersDialog = null;
 				}
 				else
 				{
-					layersDialog = graph.createLayersDialog();
+					this.layersDialog = graph.createLayersDialog();
 					
-					mxEvent.addListener(layersDialog, 'mouseleave', function()
+					mxEvent.addListener(this.layersDialog, 'mouseleave', function()
 					{
 						layersDialog.parentNode.removeChild(layersDialog);
 						layersDialog = null;
@@ -1571,16 +1571,17 @@ EditorUi.prototype.initCanvas = function()
 					
 					var r = layersButton.getBoundingClientRect();
 					
-					mxUtils.setPrefixedStyle(layersDialog.style, 'borderRadius', '5px');
-					layersDialog.style.backgroundColor = '#000000';
-					layersDialog.style.width = '160px';
-					layersDialog.style.padding = '4px 2px 4px 2px';
-					layersDialog.style.color = '#ffffff';
-					layersDialog.style.left = r.left + 'px';
-					layersDialog.style.bottom = parseInt(this.chromelessToolbar.style.bottom) +
+					mxUtils.setPrefixedStyle(this.layersDialog.style, 'borderRadius', '5px');
+					this.layersDialog.style.position = 'fixed';
+					this.layersDialog.style.backgroundColor = '#000000';
+					this.layersDialog.style.width = '160px';
+					this.layersDialog.style.padding = '4px 2px 4px 2px';
+					this.layersDialog.style.color = '#ffffff';
+					this.layersDialog.style.left = r.left + 'px';
+					this.layersDialog.style.bottom = parseInt(this.chromelessToolbar.style.bottom) +
 						this.chromelessToolbar.offsetHeight + 4 + 'px';
 					
-					document.body.appendChild(layersDialog);
+					document.body.appendChild(this.layersDialog);
 				}
 				
 				mxEvent.consume(evt);
@@ -3645,7 +3646,8 @@ EditorUi.prototype.destroy = function()
 	
 	var c = [this.menubarContainer, this.toolbarContainer, this.sidebarContainer,
 	         this.formatContainer, this.diagramContainer, this.footerContainer,
-	         this.chromelessToolbar, this.hsplit, this.sidebarFooterContainer];
+	         this.chromelessToolbar, this.hsplit, this.sidebarFooterContainer,
+	         this.layersDialog];
 	
 	for (var i = 0; i < c.length; i++)
 	{
