@@ -8170,6 +8170,17 @@ mxGraph.prototype.isConstrainedEvent = function(evt)
 };
 
 /**
+ * Function: isIgnoreTerminalEvent
+ * 
+ * Returns true if the given mouse event should not allow any connections to be
+ * made. This implementation returns false.
+ */
+mxGraph.prototype.isIgnoreTerminalEvent = function(evt)
+{
+	return false;
+};
+
+/**
  * Group: Validation
  */
 

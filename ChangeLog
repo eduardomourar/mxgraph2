@@ -1,3 +1,4 @@
+- Adds mxGraph.isIgnoreTerminalEvent hook [JavaScript]
 - Add mxCellRenderer.forceControlClickHandler switch [JavaScript]
 - Fires mouseup event for click on folding icon, fixes blurred rendering [JavaScript]
 - Fixes ignored scaled for border in mxGraph.sizeDidChange [JavaScript]

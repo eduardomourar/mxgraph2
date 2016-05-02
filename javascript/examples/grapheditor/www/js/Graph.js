@@ -1006,6 +1006,14 @@ Graph.prototype.isReplacePlaceholders = function(cell)
 };
 
 /**
+ * Adds ctrl+shift+connect to disable connections.
+ */
+Graph.prototype.isIgnoreTerminalEvent = function(evt)
+{
+	return mxEvent.isShiftDown(evt) && mxEvent.isControlDown(evt);
+};
+
+/**
  * Adds support for placeholders in labels.
  */
 Graph.prototype.isSplitTarget = function(target, cells, evt)
