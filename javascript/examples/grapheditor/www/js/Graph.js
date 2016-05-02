@@ -1235,9 +1235,18 @@ Graph.prototype.createLayersDialog = function()
 			mxUtils.write(span, title);
 			div.appendChild(span);
 			
-			mxEvent.addListener(cb, 'change', function()
+			mxEvent.addListener(cb, 'click', function()
 			{
-				model.setVisible(layer, !model.isVisible(layer));
+				if (cb.getAttribute('checked') != null)
+				{
+					cb.removeAttribute('checked');
+				}
+				else
+				{
+					cb.setAttribute('checked', 'checked');
+				}
+				
+				model.setVisible(layer, cb.checked);
 			});
 		}(model.getChildAt(model.root, i)));
 	}
