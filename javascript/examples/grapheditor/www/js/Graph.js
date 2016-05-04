@@ -5591,7 +5591,10 @@ if (typeof mxVertexHandler != 'undefined')
 					}
 					catch (e)
 					{
-						console.log(e);
+		    			if (window.console != null)
+		    			{
+		    				console.log('Error in rubberband: ' + e);
+		    			}
 					}
 					finally
 					{
