@@ -1,3 +1,4 @@
+- Adds updateContainerStyle in mxGraphView for older browsers [JavaScript]
 - Moves Editor.init hook to after c'tor in grapheditor [JavaScript]
 - Adds mxGraph.isIgnoreTerminalEvent hook [JavaScript]
 - Add mxCellRenderer.forceControlClickHandler switch [JavaScript]

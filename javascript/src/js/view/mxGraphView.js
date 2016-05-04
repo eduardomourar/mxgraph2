@@ -2651,6 +2651,7 @@ mxGraphView.prototype.createHtml = function()
 		this.canvas.appendChild(this.decoratorPane);
 
 		container.appendChild(this.canvas);
+		this.updateContainerStyle(container);
 		
 		// Implements minWidth/minHeight in quirks mode
 		if (mxClient.IS_QUIRKS)
