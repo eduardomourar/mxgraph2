@@ -636,8 +636,6 @@ mxCellRenderer.prototype.createControlClickHandler = function(state)
 	
 	return mxUtils.bind(this, function (evt)
 	{
-		console.log('control clicked');
-		
 		if (this.forceControlClickHandler || graph.isEnabled())
 		{
 			var collapse = !graph.isCellCollapsed(state.cell);
