@@ -223,6 +223,16 @@ Sidebar.prototype.maxTooltipHeight = 400;
 Sidebar.prototype.addStencilsToIndex = true;
 
 /**
+ * Specifies the width for clipart images. Default is 80.
+ */
+Sidebar.prototype.defaultImageWidth = 80;
+
+/**
+ * Specifies the height for clipart images. Default is 80.
+ */
+Sidebar.prototype.defaultImageHeight = 80;
+
+/**
  * Adds all palettes to the sidebar.
  */
 Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel)
@@ -3314,8 +3324,8 @@ Sidebar.prototype.addImagePalette = function(id, title, prefix, postfix, items, 
 				tmpTags = item.substring((slash >= 0) ? slash + 1 : 0, (dot >= 0) ? dot : item.length).replace(/[-_]/g, ' ');
 			}
 			
-			fns.push(this.createVertexTemplateEntry('image;html=1;labelBackgroundColor=#ffffff;image=' + prefix + item + postfix, 80, 80,
-				'', title, title != null, null, this.filterTags(tmpTags)));
+			fns.push(this.createVertexTemplateEntry('image;html=1;labelBackgroundColor=#ffffff;image=' + prefix + item + postfix,
+				this.defaultImageWidth, this.defaultImageHeight, '', title, title != null, null, this.filterTags(tmpTags)));
 		}))(items[i], (titles != null) ? titles[i] : null, (tags != null) ? tags[items[i]] : null);
 	}
 
