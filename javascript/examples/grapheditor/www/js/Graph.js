@@ -1651,6 +1651,14 @@ Graph.prototype.updateAlternateBounds = function(cell, geo, willCollapse)
 /**
  * Adds Shift+collapse/expand and size management for folding inside stack
  */
+Graph.prototype.isMoveCellsEvent = function(evt)
+{
+	return mxEvent.isShiftDown(evt);
+};
+
+/**
+ * Adds Shift+collapse/expand and size management for folding inside stack
+ */
 Graph.prototype.foldCells = function(collapse, recurse, cells, checkFoldable, evt)
 {
 	recurse = (recurse != null) ? recurse : false;
@@ -1689,7 +1697,7 @@ Graph.prototype.foldCells = function(collapse, recurse, cells, checkFoldable, ev
 							if (layout == null)
 							{
 								// Moves cells to the right and down after collapse/expand
-								if (evt != null && mxEvent.isShiftDown(evt))
+								if (evt != null && this.isMoveCellsEvent(evt))
 								{
 									this.moveSiblings(state, parent, dx, dy);
 								} 
