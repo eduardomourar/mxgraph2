@@ -628,12 +628,12 @@ mxVmlCanvas2D.prototype.createDiv = function(str, align, valign, overflow)
 	
 	var style = div.style;
 
-	style.fontSize = Math.round(state.fontSize / this.vmlScale) + 'px';
+	style.fontSize = (state.fontSize / this.vmlScale) + 'px';
 	style.fontFamily = state.fontFamily;
 	style.color = state.fontColor;
 	style.verticalAlign = 'top';
 	style.textAlign = align || 'left';
-	style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(state.fontSize * mxConstants.LINE_HEIGHT / this.vmlScale) + 'px' : mxConstants.LINE_HEIGHT;
+	style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (state.fontSize * mxConstants.LINE_HEIGHT / this.vmlScale) + 'px' : mxConstants.LINE_HEIGHT;
 
 	if ((state.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
 	{
@@ -1015,7 +1015,7 @@ mxVmlCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 	tp.on = 'true';
 	
 	// Scale via fontsize instead of node.style.zoom for correct offsets in IE8
-	var size = Math.round(s.fontSize * s.scale / this.vmlScale);
+	var size = s.fontSize * s.scale / this.vmlScale;
 	tp.style.fontSize = size + 'px';
 	
 	// Bold

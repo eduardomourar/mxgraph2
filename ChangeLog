@@ -1,3 +1,4 @@
+- Enables floating point numbers for font sizes, removes rounding [JavaScript]
 - Fixes inconsistent results in mxGraph.fit, doResizeContainer [JavaScript]
 - Changes default border for mxGraph.fit to this.border [JavaScript]
 - Adds updateContainerStyle in mxGraphView for older browsers [JavaScript]
