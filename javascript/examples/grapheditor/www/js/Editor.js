@@ -246,7 +246,7 @@ Editor.prototype.editAsNew = function(xml, title)
 {
 	var p = (title != null) ? '&title=' + encodeURIComponent(title) : '';
 	
-	if (window.postMessage)
+	if (typeof window.postMessage !== 'undefined' && (document.documentMode == null || document.documentMode >= 10))
 	{
 		var wnd = null;
 		
@@ -255,11 +255,11 @@ Editor.prototype.editAsNew = function(xml, title)
 			if (evt.data == 'ready' && evt.source == wnd)
 			{
 				wnd.postMessage(xml, '*');
-				window.removeEventListener('message', receive);
+				mxEvent.removeListener(window, 'message', receive);
 			}
 		});
 		
-		window.addEventListener('message', receive);
+		mxEvent.addListener(window, 'message', receive);
 		wnd = window.open(this.editBlankUrl + p);
 	}
 	else
