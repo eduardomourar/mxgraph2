@@ -348,7 +348,7 @@ EditorUi = function(editor, container, lightbox)
    	graph.container.style.cursor = 'default';
     
 	// Workaround for page scroll if embedded via iframe
-	if (window.self === window.top)
+	if (window.self === window.top && graph.container.parentNode != null)
 	{
 		graph.container.focus();
 	}
