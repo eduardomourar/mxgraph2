@@ -1592,7 +1592,15 @@ Graph.prototype.getLinkForCell = function(cell)
 {
 	if (cell.value != null && typeof(cell.value) == 'object')
 	{
-		return cell.value.getAttribute('link');
+		var link = cell.value.getAttribute('link');
+		
+		// Removes links with leading javascript: protocol
+		if (link != null && link.toLowerCase().substring(0, 11) == 'javascript:')
+		{
+			link = link.substring(11);
+		}
+		
+		return link;
 	}
 	
 	return null;
