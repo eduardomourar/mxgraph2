@@ -1,10 +1,12 @@
+09-MAY-2016: 3.5.1.3
+
 - Enables floating point numbers for font sizes, removes rounding [JavaScript]
 - Fixes inconsistent results in mxGraph.fit, doResizeContainer [JavaScript]
 - Changes default border for mxGraph.fit to this.border [JavaScript]
 - Adds updateContainerStyle in mxGraphView for older browsers [JavaScript]
 - Moves Editor.init hook to after c'tor in grapheditor [JavaScript]
 - Adds mxGraph.isIgnoreTerminalEvent hook [JavaScript]
-- Add mxCellRenderer.forceControlClickHandler switch [JavaScript]
+- Adds mxCellRenderer.forceControlClickHandler switch [JavaScript]
 - Fires mouseup event for click on folding icon, fixes blurred rendering [JavaScript]
 - Fixes ignored scaled for border in mxGraph.sizeDidChange [JavaScript]
 - Changes default for margin in mxGraph.fit to 0 [JavaScript]
