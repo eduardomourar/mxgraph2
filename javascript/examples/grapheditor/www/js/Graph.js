@@ -1595,6 +1595,7 @@ Graph.prototype.getLinkForCell = function(cell)
 		var link = cell.value.getAttribute('link');
 		
 		// Removes links with leading javascript: protocol
+		// TODO: Check more possible attack vectors
 		if (link != null && link.toLowerCase().substring(0, 11) == 'javascript:')
 		{
 			link = link.substring(11);
