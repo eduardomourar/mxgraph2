@@ -1577,6 +1577,7 @@ EditorUi.prototype.initCanvas = function()
 					this.layersDialog.style.width = '160px';
 					this.layersDialog.style.padding = '4px 2px 4px 2px';
 					this.layersDialog.style.color = '#ffffff';
+					mxUtils.setOpacity(this.layersDialog, 70);
 					this.layersDialog.style.left = r.left + 'px';
 					this.layersDialog.style.bottom = parseInt(this.chromelessToolbar.style.bottom) +
 						this.chromelessToolbar.offsetHeight + 4 + 'px';
