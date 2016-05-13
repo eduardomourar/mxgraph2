@@ -1626,12 +1626,27 @@ EditorUi.prototype.initCanvas = function()
 		this.chromelessToolbar.style.display = 'none';
 		graph.container.appendChild(this.chromelessToolbar);
 		this.chromelessToolbar.style.marginLeft = -(btnCount * 24 + 10) + 'px';
-
+		
+		// Installs handling of hightligh and handling links to relative links and anchors
+		var hl = urlParams['highlight'];
+		
+		// Adds leading # for highlight color code
+		if (hl != null && hl.length > 0)
+		{
+			hl = '#' + hl;
+		}
+		
+		graph.addClickHandler(hl);
+		
 		mxEvent.addListener(graph.container, (mxClient.IS_POINTER) ? 'pointermove' : 'mousemove', mxUtils.bind(this, function(evt)
 		{
 			if (!mxEvent.isTouchEvent(evt))
 			{
-				fadeIn(30);
+				if (!mxEvent.isShiftDown(evt))
+				{
+					fadeIn(30);
+				}
+				
 				fadeOut();
 			}
 		}));
@@ -1643,12 +1658,27 @@ EditorUi.prototype.initCanvas = function()
 		
 		mxEvent.addListener(this.chromelessToolbar, 'mouseenter', mxUtils.bind(this, function(evt)
 		{
-			fadeIn(100);
+			if (!mxEvent.isShiftDown(evt))
+			{
+				fadeIn(100);
+			}
+			else
+			{
+				fadeOut();
+			}
 		}));
 
 		mxEvent.addListener(this.chromelessToolbar, 'mousemove',  mxUtils.bind(this, function(evt)
 		{
-			fadeIn(100);
+			if (!mxEvent.isShiftDown(evt))
+			{
+				fadeIn(100);
+			}
+			else
+			{
+				fadeOut();
+			}
+			
 			mxEvent.consume(evt);
 		}));
 
