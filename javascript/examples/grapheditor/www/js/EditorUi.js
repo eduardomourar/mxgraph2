@@ -1628,15 +1628,7 @@ EditorUi.prototype.initCanvas = function()
 		this.chromelessToolbar.style.marginLeft = -(btnCount * 24 + 10) + 'px';
 		
 		// Installs handling of hightligh and handling links to relative links and anchors
-		var hl = urlParams['highlight'];
-		
-		// Adds leading # for highlight color code
-		if (hl != null && hl.length > 0)
-		{
-			hl = '#' + hl;
-		}
-		
-		graph.addClickHandler(hl);
+		this.addChromelessClickHandler();
 		
 		mxEvent.addListener(graph.container, (mxClient.IS_POINTER) ? 'pointermove' : 'mousemove', mxUtils.bind(this, function(evt)
 		{
@@ -1890,6 +1882,22 @@ EditorUi.prototype.initCanvas = function()
 			}
 		}
 	}));
+};
+
+/**
+ * 
+ */
+EditorUi.prototype.addChromelessClickHandler = function()
+{
+	var hl = urlParams['highlight'];
+	
+	// Adds leading # for highlight color code
+	if (hl != null && hl.length > 0)
+	{
+		hl = '#' + hl;
+	}
+
+	this.editor.graph.addClickHandler(hl);
 };
 
 /**

@@ -4174,7 +4174,11 @@ if (typeof mxVertexHandler != 'undefined')
 			    },
 			    clear: function()
 			    {
-			    	graph.container.style.cursor = cursor;
+			    	if (graph.container != null)
+			    	{
+			    		graph.container.style.cursor = cursor;
+			    	}
+			    	
 			    	this.currentState = null;
 			    	this.currentLink = null;
 			    	
