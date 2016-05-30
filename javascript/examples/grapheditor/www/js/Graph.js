@@ -4038,6 +4038,25 @@ if (typeof mxVertexHandler != 'undefined')
 			    startY: 0,
 			    scrollLeft: 0,
 			    scrollTop: 0,
+			    updateCurrentState: function(me)
+			    {
+			    	var tmp = graph.view.getState(me.getCell());
+					
+			      	if (tmp != this.currentState)
+			      	{
+			        	if (this.currentState != null)
+			        	{
+			          		this.clear();
+			        	}
+			        
+		        		this.currentState = tmp;
+			        
+			        	if (this.currentState != null)
+			        	{
+			          		this.activate(this.currentState);
+			        	}
+			      	}
+			    },
 			    mouseDown: function(sender, me)
 			    {
 			    	this.startX = me.getGraphX();
@@ -4049,6 +4068,8 @@ if (typeof mxVertexHandler != 'undefined')
 		    		{
 		    			graph.container.style.cursor = 'move';
 		    		}
+		    		
+		    		this.updateCurrentState(me);
 			    },
 			    mouseMove: function(sender, me)
 			    {
@@ -4079,22 +4100,7 @@ if (typeof mxVertexHandler != 'undefined')
 				    			return;
 					    	}
 					    	
-							var tmp = graph.view.getState(me.getCell());
-			
-					      	if (tmp != this.currentState)
-					      	{
-					        	if (this.currentState != null)
-					        	{
-					          		this.clear();
-					        	}
-					        
-				        		this.currentState = tmp;
-					        
-					        	if (this.currentState != null)
-					        	{
-					          		this.activate(this.currentState);
-					        	}
-					      	}
+					    	this.updateCurrentState(me);
 			    		}
 			    	}
 			    },
@@ -4107,7 +4113,7 @@ if (typeof mxVertexHandler != 'undefined')
 			    	// Ignores clicks on links and collapse/expand icon
 			    	if (source.nodeName.toLowerCase() != 'a' && !me.isConsumed() &&
 			    		(me.getState() == null || !me.isSource(me.getState().control)) &&
-			    		mxEvent.isLeftMouseButton(me.getEvent()))
+			    		(mxEvent.isLeftMouseButton(me.getEvent()) || mxEvent.isTouchEvent(me.getEvent())))
 			    	{
 				    	if (tmp != null) 
 				    	{
