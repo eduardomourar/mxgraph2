@@ -1545,10 +1545,8 @@ EditorUi.prototype.initCanvas = function()
 			this.chromelessToolbar.style.display = '';
 			mxUtils.setOpacity(this.chromelessToolbar, opacity || 30);
 		});
-		
-		var model = graph.getModel();
-		
-		if (urlParams['layers'] == '1' && model.getChildCount(model.root) > 0)
+
+		if (urlParams['layers'] == '1')
 		{
 			this.layersDialog = null;
 			
@@ -1587,6 +1585,14 @@ EditorUi.prototype.initCanvas = function()
 				
 				mxEvent.consume(evt);
 			}), Editor.layersLargeImage, mxResources.get('layers') || 'Layers');
+			
+			// Shows/hides layers button depending on content
+			var model = graph.getModel();
+
+			model.addListener(mxEvent.CHANGE, function()
+			{
+				 layersButton.style.display = (model.getChildCount(model.root) > 1) ? '' : 'none';
+			});
 		}
 
 		if (this.editor.editButtonLink != null)
