@@ -993,7 +993,7 @@ Graph.prototype.sanitizeHtml = function(value)
 	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
 	// NOTE: Original minimized sanitizer was modified to support data URIs for images
 	// LATER: Add MathML to whitelisted tags
-	function urlX(url) { if(/(^https?:|^mailto:\/\/|^data:image\/|^#)/.test(url)) { return url }}
+	function urlX(url) { if(/(^https?:|^mailto:|^data:image\/|^#)/.test(url)) { return url }}
     function idX(id) { return id }
 	
 	return html_sanitize(value, urlX, idX);
@@ -3973,7 +3973,8 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.isRelativeUrl = function(url)
 		{
-			return url.substring(0, 2) != '//' && url.substring(0, 7) != 'http://' && url.substring(0, 8) != 'https://' && url.substring(0, 10) != 'data:image';
+			return !(new RegExp('^(?:[a-z]+:)?//', 'i').test(url)) && url.substring(0, 10) != 'data:image' &&
+				url.substring(0, 7) != 'mailto:';
 		};
 
 		/**
