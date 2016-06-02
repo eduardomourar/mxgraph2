@@ -13,7 +13,7 @@
 - Fixes ignored scaled for border in mxGraph.sizeDidChange [JavaScript]
 - Changes default for margin in mxGraph.fit to 0 [JavaScript]
 - Fixes possible NPE in mxConnectionHandler.reset [JavaScript]
-- Adds mxConstants.WORD_WRAP global switch for word wrapping [JavaScript]
+- Adds mxConstants.WORD_WRAP global switch for word wrapping [JavaScript]
 - Changes type of mxStencilRegistry.stencils from array to object [JavaScript]
 - Fixes drawing of edges connected to hidden layers [JavaScript]
 - Sets state invalid in mxGraphView.removeState [JavaScript]
@@ -70,7 +70,7 @@
 - Adds mapping argument for mxGraph.importCells, moveCells, cloneCells [JavaScript]
 - Adds mxClient.IS_CHROMEAPP [JavaScript]
 - Uses getBoundingClientRect in mxUtils.getOffset [JavaScript]
-- Fixes text size for hidden containers in mxText [JavaScript]
+- Fixes text size for hidden containers in mxText [JavaScript]
 - Fixes valid data URIs in mxGraph.postProcessCellStyle [JavaScript]
 - Fixes bounding box for special cases of empty strings [JavaScript]
 - Fixes label rendering for schema example in IE10/11 [JavaScript]
@@ -127,7 +127,7 @@
 - Fixes mxUtils.getFunctionName for normal strings [JavaScript]
 - Adds mxConstraintHandler.createHighlightShape hook [JavaScript]
 - Adds mxConstants.HIGHLIGHT_SIZE, HIGHLIGHT_OPACITY [JavaScript]
-- Fixes text size for hidden containers in mxSvgCanvas2D [JavaScript]
+- Fixes text size for hidden containers in mxSvgCanvas2D [JavaScript]
 
 04-NOV-2015: 3.4.0.3
 
