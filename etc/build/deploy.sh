@@ -6,7 +6,7 @@
 # this file please contact info (at) jgraph (dot) com.
 #
 BUILD=`dirname $0`
-WEBROOT=/var/www
+WEBROOT=/var/www/www.jgraph.com
 VERSION=`cat $BUILD/version.txt | sed "s/\./_/g"`
 DOTVERSION=`cat $BUILD/version.txt`
 cd $BUILD
