@@ -4438,14 +4438,16 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 {
 	var ui = this.editorUi;
 	var graph = ui.editor.graph;
-
+	
 	var input = document.createElement('input');
 	input.style.position = 'absolute';
 	input.style.textAlign = 'right';
-	input.style.marginTop = '2px';
-	input.style.right = '32px';
-	input.style.width = '46px';
+	input.style.width = '38px';
 	input.value = graph.getGridSize() + ' pt';
+	
+	var stepper = this.createStepper(input, update);
+	input.style.display = (graph.isGridEnabled()) ? '' : 'none';
+	stepper.style.display = input.style.display;
 
 	mxEvent.addListener(input, 'keydown', function(e)
 	{
@@ -4462,8 +4464,6 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 		}
 	});
 	
-	container.appendChild(input);
-
 	function update(evt)
 	{
 		var value = parseInt(input.value);
@@ -4481,39 +4481,98 @@ DiagramFormatPanel.prototype.addGridOption = function(container)
 	mxEvent.addListener(input, 'blur', update);
 	mxEvent.addListener(input, 'change', update);
 	
-	var stepper = this.createStepper(input, update);
-	input.style.display = (graph.isGridEnabled()) ? '' : 'none';
-	stepper.style.display = input.style.display;
-	stepper.style.marginTop = '2px';
-	stepper.style.right = '20px';
-	container.appendChild(stepper);
+	if (mxClient.IS_SVG)
+	{
+		input.style.marginTop = '-2px';
+		input.style.right = '84px';
+		stepper.style.marginTop = '-16px';
+		stepper.style.right = '72px';
 	
-	container.appendChild(this.createOption(mxResources.get('grid'), function()
-	{
-		return graph.isGridEnabled();
-	}, function(checked)
-	{
-		graph.setGridEnabled(checked);
-		ui.fireEvent(new mxEventObject('gridEnabledChanged'));
-	},
-	{
-		install: function(apply)
+		var panel = this.createColorOption(mxResources.get('grid'), function()
 		{
-			this.listener = function()
+			var color = graph.view.gridColor;
+
+			return (graph.isGridEnabled()) ? color : null;
+		}, function(color)
+		{
+			if (color == mxConstants.NONE)
 			{
-				input.style.display = (graph.isGridEnabled()) ? '' : 'none';
-				stepper.style.display = input.style.display;
-				
-				apply(graph.isGridEnabled());
-			};
-			
-			ui.addListener('gridEnabledChanged', this.listener);
-		},
-		destroy: function()
+				graph.setGridEnabled(false);
+				ui.fireEvent(new mxEventObject('gridEnabledChanged'));
+			}
+			else
+			{
+				graph.setGridEnabled(true);
+				ui.setGridColor(color);
+			}
+
+			input.style.display = (graph.isGridEnabled()) ? '' : 'none';
+			stepper.style.display = input.style.display;
+		}, '#e0e0e0',
 		{
-			ui.removeListener(this.listener);
-		}
-	}));
+			install: function(apply)
+			{
+				this.listener = function()
+				{
+					apply((graph.isGridEnabled()) ? graph.view.gridColor : null);
+				};
+				
+				ui.addListener('gridColorChanged', this.listener);
+				ui.addListener('gridEnabledChanged', this.listener);
+			},
+			destroy: function()
+			{
+				ui.removeListener(this.listener);
+			}
+		});
+
+		panel.appendChild(input);
+		panel.appendChild(stepper);
+		container.appendChild(panel);
+	}
+	else
+	{
+		input.style.marginTop = '2px';
+		input.style.right = '32px';
+		stepper.style.marginTop = '2px';
+		stepper.style.right = '20px';
+		
+		container.appendChild(input);
+		container.appendChild(stepper);
+		
+		container.appendChild(this.createOption(mxResources.get('grid'), function()
+		{
+			return graph.isGridEnabled();
+		}, function(checked)
+		{
+			graph.setGridEnabled(checked);
+			
+			if (graph.isGridEnabled())
+			{
+				graph.view.gridColor = '#e0e0e0';
+			}
+			
+			ui.fireEvent(new mxEventObject('gridEnabledChanged'));
+		},
+		{
+			install: function(apply)
+			{
+				this.listener = function()
+				{
+					input.style.display = (graph.isGridEnabled()) ? '' : 'none';
+					stepper.style.display = input.style.display;
+					
+					apply(graph.isGridEnabled());
+				};
+				
+				ui.addListener('gridEnabledChanged', this.listener);
+			},
+			destroy: function()
+			{
+				ui.removeListener(this.listener);
+			}
+		}));
+	}
 };
 
 /**
