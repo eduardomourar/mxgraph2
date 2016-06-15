@@ -824,6 +824,14 @@ PageSetupDialog.getFormats = function()
  */
 var PrintDialog = function(editorUi)
 {
+	this.create(editorUi);
+};
+
+/**
+ * Constructs a new print dialog.
+ */
+PrintDialog.prototype.create = function(editorUi)
+{
 	var graph = editorUi.editor.graph;
 	var row, td;
 	
