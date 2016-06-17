@@ -1580,6 +1580,10 @@ EditorUi.prototype.initCanvas = function()
 					this.layersDialog.style.bottom = parseInt(this.chromelessToolbar.style.bottom) +
 						this.chromelessToolbar.offsetHeight + 4 + 'px';
 					
+					// Puts the dialog on top of the container z-index
+					var style = mxUtils.getCurrentStyle(this.editor.graph.container);
+					this.layersDialog.style.zIndex = style.zIndex;
+					
 					document.body.appendChild(this.layersDialog);
 				}
 				
