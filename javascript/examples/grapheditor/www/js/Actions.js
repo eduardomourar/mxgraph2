@@ -19,7 +19,10 @@ Actions.prototype.init = function()
 	var ui = this.editorUi;
 	var editor = ui.editor;
 	var graph = editor.graph;
-	var isGraphEnabled = mxUtils.bind(graph, graph.isEnabled);
+	var isGraphEnabled = function()
+	{
+		return Action.prototype.isEnabled.apply(this, arguments) && graph.isEnabled();
+	};
 
 	// File actions
 	this.addAction('new...', function() { window.open(ui.getUrl()); });
