@@ -2254,7 +2254,13 @@ var EditDataDialog = function(ui, cell)
 			link.setAttribute('target', '_blank');
 			link.style.marginLeft = '10px';
 			link.style.cursor = 'pointer';
-			mxUtils.write(link, '?');
+			
+			var icon = document.createElement('img');
+			icon.setAttribute('border', '0');
+			icon.setAttribute('valign', 'middle');
+			icon.style.marginTop = '-4px';
+			icon.setAttribute('src', Editor.helpImage);
+			link.appendChild(icon);
 			
 			replace.appendChild(link);
 		}
