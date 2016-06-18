@@ -902,7 +902,20 @@ Actions.prototype.init = function()
 			graph.getModel().endUpdate();
 		}
 	});
-	this.addAction('collapsible', function() { ui.menus.toggleStyle('collapsible', '1'); });
+	this.addAction('collapsible', function()
+	{
+		var state = graph.view.getState(graph.getSelectionCell());
+		var value = '1';
+		
+		if (state != null && graph.getFoldingImage(state) != null)
+		{
+			value = '0';	
+		}
+		
+		graph.setCellStyles('collapsible', value);
+		ui.fireEvent(new mxEventObject('styleChanged', 'keys', ['collapsible'],
+				'values', [value], 'cells', graph.getSelectionCells()));
+	});
 	this.addAction('editStyle...', mxUtils.bind(this, function()
 	{
 		var cells = graph.getSelectionCells();
