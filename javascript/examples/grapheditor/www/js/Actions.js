@@ -295,6 +295,48 @@ Actions.prototype.init = function()
 			});
 		}
 	});
+	this.addAction('insertLink', function()
+	{
+		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
+		{
+			var dlg = new LinkDialog(ui, '', mxResources.get('insert'), function(link, docs)
+			{
+				link = mxUtils.trim(link);
+				
+				if (link.length > 0)
+				{
+					var title = link.substring(link.lastIndexOf('/') + 1);
+					var icon = null;
+					
+					if (docs != null && docs.length > 0)
+					{
+						icon = docs[0].iconUrl;
+						title = docs[0].name || docs[0].type;
+						title = title.charAt(0).toUpperCase() + title.substring(1);
+						
+						if (title.length > 30)
+						{
+							title = title.substring(0, 30) + '...';
+						}
+					}
+					
+					var pt = graph.getInsertPoint();
+            		var linkCell = new mxCell(title, new mxGeometry(pt.x, pt.y, 100, 40),
+            	    	'fontColor=#0000EE;fontStyle=4;rounded=1;overflow=hidden;' + ((icon != null) ?
+            	    	'shape=label;imageWidth=16;imageHeight=16;spacingLeft=26;align=left;image=' + icon :
+            	    	'spacing=10;'));
+            	    linkCell.vertex = true;
+
+            	    graph.setLinkForCell(linkCell, link);
+            	    graph.cellSizeUpdated(linkCell, true);
+            	    graph.setSelectionCell(graph.addCell(linkCell));
+				}
+			});
+			
+			ui.showDialog(dlg.container, 420, 90, true, true);
+			dlg.init();
+		}
+	}).isEnabled = isGraphEnabled;
 	this.addAction('link...', mxUtils.bind(this, function()
 	{
 		var graph = ui.editor.graph;
@@ -972,48 +1014,6 @@ Actions.prototype.init = function()
 			}
 		}
 	});
-	this.addAction('insertLink', function()
-	{
-		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
-		{
-			var dlg = new LinkDialog(ui, '', mxResources.get('insert'), function(link, docs)
-			{
-				link = mxUtils.trim(link);
-				
-				if (link.length > 0)
-				{
-					var title = link.substring(link.lastIndexOf('/') + 1);
-					var icon = null;
-					
-					if (docs != null && docs.length > 0)
-					{
-						icon = docs[0].iconUrl;
-						title = docs[0].name || docs[0].type;
-						title = title.charAt(0).toUpperCase() + title.substring(1);
-						
-						if (title.length > 30)
-						{
-							title = title.substring(0, 30) + '...';
-						}
-					}
-					
-					var pt = graph.getInsertPoint();
-            		var linkCell = new mxCell(title, new mxGeometry(pt.x, pt.y, 100, 40),
-            	    	'fontColor=#0000EE;fontStyle=4;rounded=1;overflow=hidden;' + ((icon != null) ?
-            	    	'shape=label;imageWidth=16;imageHeight=16;spacingLeft=26;align=left;image=' + icon :
-            	    	'spacing=10;'));
-            	    linkCell.vertex = true;
-
-            	    graph.setLinkForCell(linkCell, link);
-            	    graph.cellSizeUpdated(linkCell, true);
-            	    graph.setSelectionCell(graph.addCell(linkCell));
-				}
-			});
-			
-			ui.showDialog(dlg.container, 420, 90, true, true);
-			dlg.init();
-		}
-	}).isEnabled = isGraphEnabled;
 	this.addAction('image...', function()
 	{
 		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
