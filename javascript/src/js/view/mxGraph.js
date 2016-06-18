@@ -3751,8 +3751,8 @@ mxGraph.prototype.getImageFromBundles = function(key)
  * cells - Array of <mxCells> to move to the background. If null is
  * specified then the selection cells are used.
  */
- mxGraph.prototype.orderCells = function(back, cells)
- {
+mxGraph.prototype.orderCells = function(back, cells)
+{
 	if (cells == null)
 	{
 		cells = mxUtils.sortCells(this.getSelectionCells(), true);
@@ -3771,7 +3771,7 @@ mxGraph.prototype.getImageFromBundles = function(key)
 	}
 
 	return cells;
- };
+};
 
 /**
  * Function: cellsOrdered
@@ -3784,8 +3784,8 @@ mxGraph.prototype.getImageFromBundles = function(key)
  * cells - Array of <mxCells> whose order should be changed.
  * back - Boolean that specifies if the cells should be moved to back.
  */
- mxGraph.prototype.cellsOrdered = function(cells, back)
- {
+mxGraph.prototype.cellsOrdered = function(cells, back)
+{
 	if (cells != null)
 	{
 		this.model.beginUpdate();
