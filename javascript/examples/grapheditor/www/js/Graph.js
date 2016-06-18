@@ -2061,7 +2061,7 @@ Graph.prototype.getTooltipForCell = function(cell)
 					// Hides link key in read mode
 					if (attrs[i].nodeName == 'link')
 					{
-						tip += mxUtils.htmlEntities(attrs[i].nodeValue) + '\n';
+						tip += mxUtils.htmlEntities(this.getLinkUrl(attrs[i].nodeValue)) + '\n';
 					}
 					else
 					{
@@ -3934,7 +3934,16 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			return label;
 		};
-		
+
+		/**
+		 * Returns the link to be used for the given URL when clicking on a cell
+		 * where the the link is not a blank link and the diagram is not inside
+		 * and iframe.
+		 */
+		Graph.prototype.getLinkUrl = function(url)
+		{
+			return url;
+		};
 
 		/**
 		 * 
@@ -4167,7 +4176,7 @@ if (typeof mxVertexHandler != 'undefined')
 			    },
 			    activate: function(state)
 			    {
-			    	this.currentLink = graph.getLinkForCell(state.cell);
+			    	this.currentLink = graph.getLinkUrl(graph.getLinkForCell(state.cell));
 			    	
 			    	if (this.currentLink != null)
 			    	{
