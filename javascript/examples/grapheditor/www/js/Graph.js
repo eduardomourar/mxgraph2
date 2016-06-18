@@ -6322,7 +6322,7 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 				
 				var a = document.createElement('a');
-				a.setAttribute('href', link);
+				a.setAttribute('href', this.graph.getLinkUrl(link));
 				a.setAttribute('title', link);
 				
 				if (this.graph.linkTarget != null)
