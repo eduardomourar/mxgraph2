@@ -39,6 +39,10 @@
 					
 					if (msg.event == 'init')
 					{
+						// Shows template dialog in editor
+// 						iframe.contentWindow.postMessage(JSON.stringify({action: 'template',
+// 							autosave: 1}), '*');
+						
 						var data = image.getAttribute('src');
 						
 						if (data.indexOf('data:image/svg+xml;') == 0)
