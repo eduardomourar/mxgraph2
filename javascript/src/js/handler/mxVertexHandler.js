@@ -432,7 +432,7 @@ mxVertexHandler.prototype.createSizer = function(cursor, index, size, fillColor)
 	
 	if (!this.isSizerVisible(index))
 	{
-		sizer.node.style.visibility = 'hidden';
+		sizer.visible = false;
 	}
 	
 	return sizer;

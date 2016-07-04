@@ -1,3 +1,4 @@
+- Fixes overriden mxVertexHandler.isSizerVisible
 - Fixes horizontal/vertical flip in mxText
 - Fixes mxSvgCanvas2D state after addNode with no shape
 - Fixes folding icon in tree.html example
