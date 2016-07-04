@@ -4237,9 +4237,10 @@ mxGraph.prototype.getBoundingBox = function(cells)
 /**
  * Function: cloneCells
  * 
- * Returns the clones for the given cells. If the terminal of an edge is
- * not in the given array, then the respective end is assigned a terminal
- * point and the terminal is removed.
+ * Returns the clones for the given cells. The clones are created recursively
+ * using <mxGraphModel.cloneCells>. If the terminal of an edge is not in the
+ * given array, then the respective end is assigned a terminal point and the
+ * terminal is removed.
  * 
  * Parameters:
  * 
