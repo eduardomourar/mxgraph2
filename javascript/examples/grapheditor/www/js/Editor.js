@@ -1077,7 +1077,7 @@ OpenFile.prototype.cancel = function(cancel)
 		if (psel == null || (psel != cell && psel != parent))
 		{
 			while (!this.graph.isCellSelected(cell) && !this.graph.isCellSelected(parent) &&
-				model.isVertex(parent) && !this.graph.isValidRoot(parent))
+				model.isVertex(parent) && !this.graph.isContainer(parent))
 			{
 				cell = parent;
 				parent = this.graph.getModel().getParent(cell);
@@ -1157,7 +1157,7 @@ OpenFile.prototype.cancel = function(cancel)
 		var model = this.graph.getModel();
 		var parent = model.getParent(cell);
 		
-		while (model.isVertex(parent) && !this.graph.isValidRoot(parent))
+		while (model.isVertex(parent) && !this.graph.isContainer(parent))
 		{
 			if (this.graph.isCellSelected(parent))
 			{

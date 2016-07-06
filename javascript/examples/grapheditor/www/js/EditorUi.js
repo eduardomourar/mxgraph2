@@ -2434,7 +2434,7 @@ EditorUi.prototype.updateActionStates = function()
     	(graph.isContainer(graph.getSelectionCell()) || graph.model.getChildCount(graph.getSelectionCell()) > 0));
     this.actions.get('home').setEnabled(graph.view.currentRoot != null);
     this.actions.get('exitGroup').setEnabled(graph.view.currentRoot != null);
-    this.actions.get('enterGroup').setEnabled(graph.getSelectionCount() == 1 && graph.canEnterGroup(graph.getSelectionCell()));
+    this.actions.get('enterGroup').setEnabled(graph.getSelectionCount() == 1 && graph.isValidRoot(graph.getSelectionCell()));
     var foldable = graph.getSelectionCount() == 1 && graph.isCellFoldable(graph.getSelectionCell())
     this.actions.get('expand').setEnabled(foldable);
     this.actions.get('collapse').setEnabled(foldable);

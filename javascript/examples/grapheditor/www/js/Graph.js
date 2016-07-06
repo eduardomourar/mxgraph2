@@ -3463,11 +3463,11 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			}
 		};
-		
+
 		/**
 		 * Disables drill-down for non-swimlanes.
 		 */
-		Graph.prototype.canEnterGroup = function(cell)
+		Graph.prototype.isValidRoot = function(cell)
 		{
 			// Counts non-relative children
 			var childCount = this.model.getChildCount(cell);
@@ -3488,15 +3488,7 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			}
 			
-			return realChildCount > 0 || this.isValidRoot(cell);
-		};
-		
-		/**
-		 * Disables drill-down for non-swimlanes.
-		 */
-		Graph.prototype.isValidRoot = function(cell)
-		{
-			return this.isContainer(cell);
+			return realChildCount > 0 || this.isContainer(cell);
 		};
 		
 		/**
