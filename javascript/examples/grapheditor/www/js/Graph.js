@@ -3469,7 +3469,26 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.isValidRoot = function(cell)
 		{
-			return this.isContainer(cell);
+			// Counts non-relative children
+			var childCount = this.model.getChildCount(cell);
+			var realChildCount = 0;
+			
+			for (var i = 0; i < childCount; i++)
+			{
+				var child = this.model.getChildAt(cell, i);
+				
+				if (this.model.isVertex(child))
+				{
+					var geometry = this.getCellGeometry(child);
+					
+					if (geometry != null && !geometry.relative)
+					{
+						realChildCount++;
+					}
+				}
+			}
+			
+			return this.isContainer(cell) || realChildCount > 0;
 		};
 		
 		/**
