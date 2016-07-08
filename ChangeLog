@@ -1,3 +1,4 @@
+- Fixes synchronous request warning in grapheditor example
 - Fixes overriden mxVertexHandler.isSizerVisible
 - Fixes horizontal/vertical flip in mxText
 - Fixes mxSvgCanvas2D state after addNode with no shape
