@@ -623,7 +623,23 @@ Actions.prototype.init = function()
 		this.editorUi.showDialog(dlg.container, 300, 80, true, true);
 		dlg.init();
 	}), null, null, 'Ctrl+0'));
-	
+	this.addAction('pageScale', mxUtils.bind(this, function()
+	{
+		var dlg = new FilenameDialog(this.editorUi, parseInt(graph.pageScale * 100), mxResources.get('apply'), mxUtils.bind(this, function(newValue)
+		{
+			var val = parseInt(newValue);
+			
+			if (!isNaN(val) && val > 0)
+			{
+				graph.pageScale = val / 100;
+				ui.refresh();
+				ui.editor.updateGraphComponents();
+			}
+		}), mxResources.get('pageScale') + ' (%)');
+		this.editorUi.showDialog(dlg.container, 300, 80, true, true);
+		dlg.init();
+	}));
+
 	// Option actions
 	var action = null;
 	action = this.addAction('grid', function()

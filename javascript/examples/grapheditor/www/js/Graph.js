@@ -18,6 +18,24 @@ mxConstants.VML_SHADOWCOLOR = '#d0d0d0';
 mxGraph.prototype.pageBreakColor = '#c0c0c0';
 mxGraph.prototype.pageScale = 1;
 
+// Letter page format is default in US, Canada and Mexico
+(function()
+{
+	try
+	{
+		if (navigator != null && navigator.language != null)
+		{
+			var lang = navigator.language.toLowerCase();
+			mxGraph.prototype.pageFormat = (lang === 'en-us' || lang === 'en-ca' || lang === 'es-mx') ?
+				mxConstants.PAGE_FORMAT_LETTER_PORTRAIT : mxConstants.PAGE_FORMAT_A4_PORTRAIT;
+		}
+	}
+	catch (e)
+	{
+		// ignore
+	}
+})();
+
 // Matches label positions of mxGraph 1.x
 mxText.prototype.baseSpacingTop = 5;
 mxText.prototype.baseSpacingBottom = 1;
