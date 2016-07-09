@@ -1,3 +1,4 @@
+- Adds elbow and isometric edge styles in grapheditor example
 - Adds View, Page scale in grapheditor example
 - Uses letter paper size in US, Canada and Mexico in grapheditor example
 - Fixes synchronous request warning in grapheditor example

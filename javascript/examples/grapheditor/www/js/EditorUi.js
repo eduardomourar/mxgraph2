@@ -727,6 +727,16 @@ EditorUi = function(editor, container, lightbox)
 				{
 					edgeStyleDiv.className = 'geSprite geSprite-entity';
 				}
+				else if (graph.currentEdgeStyle['edgeStyle'] == 'elbowEdgeStyle')
+				{
+					edgeStyleDiv.className = 'geSprite geSprite-' + ((graph.currentEdgeStyle['elbow'] == 'vertical') ?
+						'verticalelbow' : 'horizontalelbow');
+				}
+				else if (graph.currentEdgeStyle['edgeStyle'] == 'isometricEdgeStyle')
+				{
+					edgeStyleDiv.className = 'geSprite geSprite-' + ((graph.currentEdgeStyle['elbow'] == 'vertical') ?
+						'verticalisometric' : 'horizontalisometric');
+				}
 				else
 				{
 					edgeStyleDiv.className = 'geSprite geSprite-orthogonal';

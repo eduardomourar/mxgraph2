@@ -3668,6 +3668,10 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		{
 			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], [null, null, null], 'geIcon geSprite geSprite-straight', null, true).setAttribute('title', mxResources.get('straight'));
 			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['orthogonalEdgeStyle', null, null], 'geIcon geSprite geSprite-orthogonal', null, true).setAttribute('title', mxResources.get('orthogonal'));
+			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['elbowEdgeStyle', null, null, null], 'geIcon geSprite geSprite-horizontalelbow', null, true).setAttribute('title', 'simple');
+			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['elbowEdgeStyle', 'vertical', null, null], 'geIcon geSprite geSprite-verticalelbow', null, true).setAttribute('title', 'simple');
+			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['isometricEdgeStyle', null, null, null], 'geIcon geSprite geSprite-horizontalisometric', null, true).setAttribute('title', 'isometric');
+			this.editorUi.menus.edgeStyleChange(menu, '', [mxConstants.STYLE_EDGE, mxConstants.STYLE_ELBOW, mxConstants.STYLE_CURVED, mxConstants.STYLE_NOEDGESTYLE], ['isometricEdgeStyle', 'vertical', null, null], 'geIcon geSprite geSprite-verticalisometric', null, true).setAttribute('title', 'isometric');
 	
 			if (ss.style.shape == 'connector')
 			{
@@ -3974,6 +3978,18 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		else if (es == 'entityRelationEdgeStyle')
 		{
 			edgeStyleDiv.className = 'geSprite geSprite-entity';
+		}
+		else if (es == 'elbowEdgeStyle')
+		{
+			edgeStyleDiv.className = 'geSprite ' + ((mxUtils.getValue(ss.style,
+				mxConstants.STYLE_ELBOW, null) == 'vertical') ?
+				'geSprite-verticalelbow' : 'geSprite-horizontalelbow');
+		}
+		else if (es == 'isometricEdgeStyle')
+		{
+			edgeStyleDiv.className = 'geSprite ' + ((mxUtils.getValue(ss.style,
+				mxConstants.STYLE_ELBOW, null) == 'vertical') ?
+				'geSprite-verticalisometric' : 'geSprite-horizontalisometric');
 		}
 		else
 		{
