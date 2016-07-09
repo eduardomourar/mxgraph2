@@ -1,3 +1,5 @@
+- Fix resize, child bounds ignore maximumGraphBounds
+
 - Build separate core and layout JS files
 - Use unscaled coordinates for routing and states
 - Add style for start-/endArrow fill color
