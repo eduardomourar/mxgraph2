@@ -631,9 +631,7 @@ Actions.prototype.init = function()
 			
 			if (!isNaN(val) && val > 0)
 			{
-				graph.pageScale = val / 100;
-				ui.refresh();
-				ui.editor.updateGraphComponents();
+				ui.setPageScale(val / 100);
 			}
 		}), mxResources.get('pageScale') + ' (%)');
 		this.editorUi.showDialog(dlg.container, 300, 80, true, true);
