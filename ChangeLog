@@ -1,3 +1,6 @@
+- Adds rounding for middle segment in elbow edge styles
+- Fixes synchronous loading of special bundle in mxResources
+- Fixes resources loading with callback in mxResources
 - Adds elbow and isometric edge styles in grapheditor example
 - Adds View, Page scale in grapheditor example
 - Uses letter paper size in US, Canada and Mexico in grapheditor example
