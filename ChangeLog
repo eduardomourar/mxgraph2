@@ -1,3 +1,4 @@
+- Consumes event for mxEdgeHandler.addPoint
 - Adds rounding for middle segment in elbow edge styles
 - Fixes synchronous loading of special bundle in mxResources
 - Fixes resources loading with callback in mxResources
