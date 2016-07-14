@@ -1,3 +1,4 @@
+- Fixes handling of bounding box in mxGraph.constrainChild
 - Fixes ignored maximumGraphBounds in mxVertexHandler.resizeVertex
 - Consumes event for mxEdgeHandler.addPoint
 - Adds rounding for middle segment in elbow edge styles

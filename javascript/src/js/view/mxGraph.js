@@ -6280,29 +6280,26 @@ mxGraph.prototype.constrainChild = function(cell)
 					
 					if (bbox.x < left)
 					{
-						var dx = left - bbox.x;
-						geo.x += dx;
-					}
-					else if (area.width > 0 && bbox.x + bbox.width > right)
-					{
-						var dx = bbox.x + bbox.width - right;
-						geo.x -= dx;
-					}
-					
-					if (bbox.y < top)
-					{
-						var dy = top - bbox.y;
-						geo.y += dy;
-					}
-					else if (area.height > 0 && bbox.y + bbox.height > bottom)
-					{
-						var dy = bbox.y + bbox.height - bottom;
-						geo.y -= dy;
+						geo.width -= left - bbox.x;
+						geo.x = left;
 					}
 
-					geo.width = Math.min(geo.width, area.width + geo.width - bbox.width);
-					geo.height = Math.min(geo.height, area.height + geo.height - bbox.height);
+					if (bbox.y < top)
+					{
+						geo.height -= top - bbox.y;
+						geo.y = top;
+					}
 					
+					if (bbox.x + bbox.width > right)
+					{
+						geo.width -= bbox.x + bbox.width - right;
+					}
+
+					if (bbox.y + bbox.height > bottom)
+					{
+						geo.height -= bbox.y + bbox.height - bottom;
+					}
+
 					this.model.setGeometry(cell, geo);
 				}
 			}
@@ -10438,7 +10435,6 @@ mxGraph.prototype.setRecursiveResize = function(value)
 mxGraph.prototype.isConstrainChild = function(cell)
 {
 	return this.isConstrainChildren() && !this.getModel().isEdge(this.getModel().getParent(cell));
-		
 };
 
 /**
