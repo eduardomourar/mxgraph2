@@ -911,6 +911,45 @@ mxVertexHandler.prototype.resizeVertex = function(me)
 		new mxPoint(0, 0), this.isConstrainedEvent(me),
 		this.isCenteredEvent(this.state, me));
 	
+	// Keeps vertex within maximum graph bounds
+	var max = this.graph.getMaximumGraphBounds();
+	
+	if (max != null)
+	{
+		// Handles child cells
+		if (this.parentState != null)
+		{
+			max = mxRectangle.fromRectangle(max);
+			
+			max.x -= (this.parentState.x - tr.x * scale) / scale;
+			max.y -= (this.parentState.y - tr.y * scale) / scale;
+		}
+		
+		if (this.unscaledBounds.x < max.x)
+		{
+			this.unscaledBounds.width -= max.x - this.unscaledBounds.x;
+			this.unscaledBounds.x = max.x;
+		}
+		
+		if (this.unscaledBounds.y < max.y)
+		{
+			this.unscaledBounds.height -= max.y - this.unscaledBounds.y;
+			this.unscaledBounds.y = max.y;
+		}
+		
+		if (this.unscaledBounds.x + this.unscaledBounds.width > max.x + max.width)
+		{
+			this.unscaledBounds.width -= this.unscaledBounds.x +
+				this.unscaledBounds.width - max.x - max.width;
+		}
+		
+		if (this.unscaledBounds.y + this.unscaledBounds.height > max.y + max.height)
+		{
+			this.unscaledBounds.height -= this.unscaledBounds.y +
+				this.unscaledBounds.height - max.y - max.height;
+		}
+	}
+	
 	this.bounds = new mxRectangle(((this.parentState != null) ? this.parentState.x : tr.x * scale) +
 		(this.unscaledBounds.x) * scale, ((this.parentState != null) ? this.parentState.y : tr.y * scale) +
 		(this.unscaledBounds.y) * scale, this.unscaledBounds.width * scale, this.unscaledBounds.height * scale);
@@ -920,7 +959,7 @@ mxVertexHandler.prototype.resizeVertex = function(me)
 		this.bounds.x += this.state.x - this.parentState.x;
 		this.bounds.y += this.state.y - this.parentState.y;
 	}
-	
+
 	cos = Math.cos(alpha);
 	sin = Math.sin(alpha);
 	
