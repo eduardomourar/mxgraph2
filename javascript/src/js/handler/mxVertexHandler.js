@@ -912,12 +912,12 @@ mxVertexHandler.prototype.resizeVertex = function(me)
 		this.isCenteredEvent(this.state, me));
 	
 	// Keeps vertex within maximum graph bounds
-	var max = this.graph.getMaximumGraphBounds();
-	
-	if (max != null)
+	if (!geo.relative)
 	{
+		var max = this.graph.getMaximumGraphBounds();
+		
 		// Handles child cells
-		if (this.parentState != null)
+		if (max != null && this.parentState != null)
 		{
 			max = mxRectangle.fromRectangle(max);
 			
@@ -925,28 +925,61 @@ mxVertexHandler.prototype.resizeVertex = function(me)
 			max.y -= (this.parentState.y - tr.y * scale) / scale;
 		}
 		
-		if (this.unscaledBounds.x < max.x)
+		if (this.graph.isConstrainChild(this.state.cell))
 		{
-			this.unscaledBounds.width -= max.x - this.unscaledBounds.x;
-			this.unscaledBounds.x = max.x;
+			var tmp = this.graph.getCellContainmentArea(this.state.cell);
+			
+			if (tmp != null)
+			{
+				var overlap = this.graph.getOverlap(this.state.cell);
+				
+				if (overlap > 0)
+				{
+					tmp = mxRectangle.fromRectangle(tmp);
+					
+					tmp.x -= tmp.width * overlap;
+					tmp.y -= tmp.height * overlap;
+					tmp.width += 2 * tmp.width * overlap;
+					tmp.height += 2 * tmp.height * overlap;
+				}
+				
+				if (max == null)
+				{
+					max = tmp;
+				}
+				else
+				{
+					max = mxRectangle.fromRectangle(max);
+					max.intersect(tmp);
+				}
+			}
 		}
-		
-		if (this.unscaledBounds.y < max.y)
+	
+		if (max != null)
 		{
-			this.unscaledBounds.height -= max.y - this.unscaledBounds.y;
-			this.unscaledBounds.y = max.y;
-		}
-		
-		if (this.unscaledBounds.x + this.unscaledBounds.width > max.x + max.width)
-		{
-			this.unscaledBounds.width -= this.unscaledBounds.x +
-				this.unscaledBounds.width - max.x - max.width;
-		}
-		
-		if (this.unscaledBounds.y + this.unscaledBounds.height > max.y + max.height)
-		{
-			this.unscaledBounds.height -= this.unscaledBounds.y +
-				this.unscaledBounds.height - max.y - max.height;
+			if (this.unscaledBounds.x < max.x)
+			{
+				this.unscaledBounds.width -= max.x - this.unscaledBounds.x;
+				this.unscaledBounds.x = max.x;
+			}
+			
+			if (this.unscaledBounds.y < max.y)
+			{
+				this.unscaledBounds.height -= max.y - this.unscaledBounds.y;
+				this.unscaledBounds.y = max.y;
+			}
+			
+			if (this.unscaledBounds.x + this.unscaledBounds.width > max.x + max.width)
+			{
+				this.unscaledBounds.width -= this.unscaledBounds.x +
+					this.unscaledBounds.width - max.x - max.width;
+			}
+			
+			if (this.unscaledBounds.y + this.unscaledBounds.height > max.y + max.height)
+			{
+				this.unscaledBounds.height -= this.unscaledBounds.y +
+					this.unscaledBounds.height - max.y - max.height;
+			}
 		}
 	}
 	

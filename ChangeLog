@@ -1,6 +1,6 @@
 - Adds mxRectangle.intersect
 - Fixes handling of bounding box in mxGraph.constrainChild
-- Fixes ignored maximumGraphBounds in mxVertexHandler.resizeVertex
+- Fixes ignored constraints in mxVertexHandler.resizeVertex
 - Consumes event for mxEdgeHandler.addPoint
 - Adds rounding for middle segment in elbow edge styles
 - Fixes synchronous loading of special bundle in mxResources
