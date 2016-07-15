@@ -1361,19 +1361,19 @@ mxGraph.prototype.allowNegativeCoordinates = true;
 /**
  * Variable: constrainChildren
  * 
- * Specifies if a child should be constrained inside the parent bounds after a move of
- * the child. Default is true.
+ * Specifies if a child should be constrained inside the parent bounds after a
+ * move or resize of the child. Default is true.
  */
 mxGraph.prototype.constrainChildren = true;
 
 /**
- * Variable: constrainChildrenOnResize
+ * Variable: constrainRelativeChildren
  * 
- * Specifies if children should be constrained according to the <constrainChildren>
- * switch if cells are resized (including via <foldCells>). Default is false for
- * backwards compatiblity.
+ * Specifies if child cells with relative geometries should be constrained
+ * inside the parent bounds, if <constrainChildren> is true, and/or the
+ * <maximumGraphBounds>. Default is false.
  */
-mxGraph.prototype.constrainChildrenOnResize = false;
+mxGraph.prototype.constrainRelativeChildren = false;
 
 /**
  * Variable: extendParents
@@ -5084,10 +5084,7 @@ mxGraph.prototype.cellsFolded = function(cells, collapse, recurse, checkFoldable
 						this.foldCells(children, collapse, recurse);
 					}
 					
-					if (this.isConstrainChildrenOnResize())
-					{
-						this.constrainChild(cells[i]);
-					}
+					this.constrainChild(cells[i]);
 				}
 			}
 			
@@ -5606,10 +5603,7 @@ mxGraph.prototype.cellsResized = function(cells, bounds, recurse)
 					this.extendParent(cells[i]);
 				}
 				
-				if (this.isConstrainChildrenOnResize())
-				{
-					this.constrainChild(cells[i]);
-				}
+				this.constrainChild(cells[i]);
 			}
 
 			if (this.resetEdgesOnResize)
@@ -5683,11 +5677,7 @@ mxGraph.prototype.cellResized = function(cell, bounds, ignoreRelative, recurse)
 			}
 						
 			this.model.setGeometry(cell, geo);
-			
-			if (this.isConstrainChildrenOnResize())
-			{
-				this.constrainChildCells(cell);
-			}
+			this.constrainChildCells(cell);
 		}
 		finally
 		{
@@ -6126,11 +6116,7 @@ mxGraph.prototype.getCellContainmentArea = function(cell)
 	{
 		var parent = this.model.getParent(cell);
 		
-		if (parent == this.getDefaultParent() || parent == this.getCurrentRoot())
-		{
-			return this.getMaximumGraphBounds();
-		}
-		else if (parent != null && parent != this.getDefaultParent())	
+		if (parent != null && parent != this.getDefaultParent())
 		{
 			var g = this.model.getGeometry(parent);
 			
@@ -6199,107 +6185,148 @@ mxGraph.prototype.getMaximumGraphBounds = function()
  * Parameters:
  * 
  * cells - <mxCell> which should be constrained.
+ * sizeFirst - Specifies if the size should be changed first. Default is true.
  */
-mxGraph.prototype.constrainChild = function(cell)
+mxGraph.prototype.constrainChild = function(cell, sizeFirst)
 {
+	sizeFirst = (sizeFirst != null) ? sizeFirst : true;
+	
 	if (cell != null)
 	{
 		var geo = this.getCellGeometry(cell);
-		var max = this.getMaximumGraphBounds();
-		var area = (this.isConstrainChild(cell)) ? this.getCellContainmentArea(cell) : max;
 		
-		if (geo != null && !geo.relative && area != null)
+		if (geo != null && (this.isConstrainRelativeChildren() || !geo.relative))
 		{
-			var cells = [cell];
+			var parent = this.model.getParent(cell);
+			var pgeo = this.getCellGeometry(parent);
+			var max = this.getMaximumGraphBounds();
 			
-			if (!this.isCellCollapsed(cell))
+			// Finds parent offset
+			if (max != null)
 			{
-				var desc = this.model.getDescendants(cell);
+				var off = this.getBoundingBoxFromGeometry([parent], false);
 				
-				for (var i = 0; i < desc.length; i++)
+				if (off != null)
 				{
-					if (this.isCellVisible(desc[i]))
+					max = mxRectangle.fromRectangle(max);
+					
+					max.x -= off.x;
+					max.y -= off.y;
+				}
+			}
+			
+			if (this.isConstrainChild(cell))
+			{
+				var tmp = this.getCellContainmentArea(cell);
+				
+				if (tmp != null)
+				{
+					var overlap = this.getOverlap(cell);
+	
+					if (overlap > 0)
 					{
-						cells.push(desc[i]);
+						tmp = mxRectangle.fromRectangle(tmp);
+						
+						tmp.x -= tmp.width * overlap;
+						tmp.y -= tmp.height * overlap;
+						tmp.width += 2 * tmp.width * overlap;
+						tmp.height += 2 * tmp.height * overlap;
+					}
+					
+					// Find the intersection between max and tmp
+					if (max == null)
+					{
+						max = tmp;
+					}
+					else
+					{
+						max = mxRectangle.fromRectangle(max);
+						max.intersect(tmp);
 					}
 				}
 			}
 			
-			var bbox = this.getBoundingBoxFromGeometry(cells, false);
-			
-			if (bbox != null)
+			if (max != null)
 			{
-				var overlap = (area == max) ? 0 : this.getOverlap(cell);
+				var cells = [cell];
 				
-				// Includes max area to constrain child overlap
-				var areaUpdate = area == max;
-				
-				if (max != null)
+				if (!this.isCellCollapsed(cell))
 				{
-					max = mxRectangle.fromRectangle(max);
+					var desc = this.model.getDescendants(cell);
 					
-					// Max is relative to the parent origin
-					var parent = this.model.getParent(cell);
-					
-					while (this.model.isVertex(parent))
+					for (var i = 0; i < desc.length; i++)
 					{
-						var pgeo = this.getCellGeometry(parent);
-						
-						if (pgeo != null)
+						if (this.isCellVisible(desc[i]))
 						{
-							max.x -= pgeo.x;
-							max.y -= pgeo.y;
+							cells.push(desc[i]);
 						}
-						
-						parent = this.model.getParent(parent);
-					}
-	
-					if (areaUpdate)
-					{
-						area = max;
 					}
 				}
 				
-				var left = area.x - bbox.width * overlap;
-				var top = area.y - bbox.height * overlap;
-				var right = area.x + area.width + bbox.width * overlap;
-				var bottom = area.y + area.height + bbox.height * overlap;
+				var bbox = this.getBoundingBoxFromGeometry(cells, false);
 				
-				// Includes max area to constrain child overlap
-				if (area != max && max != null)
-				{
-					left = Math.max(left, max.x);
-					top = Math.max(top, max.y);
-				}
-
-				// Keeps child within the content area of the parent
-				if (bbox.x < left || bbox.x + bbox.width > right ||
-					bbox.y < top || bbox.y + bbox.height > bottom)
+				if (bbox != null)
 				{
 					geo = geo.clone();
 					
-					if (bbox.x < left)
+					// Cumulative horizontal movement
+					var dx = 0;
+					
+					if (geo.width > max.width)
 					{
-						geo.width -= left - bbox.x;
-						geo.x = left;
-					}
-
-					if (bbox.y < top)
-					{
-						geo.height -= top - bbox.y;
-						geo.y = top;
+						dx = geo.width - max.width;
+						geo.width -= dx;
 					}
 					
-					if (bbox.x + bbox.width > right)
+					if (bbox.x + bbox.width > max.x + max.width)
 					{
-						geo.width -= bbox.x + bbox.width - right;
+						dx -= bbox.x + bbox.width - max.x - max.width - dx;
 					}
-
-					if (bbox.y + bbox.height > bottom)
+					
+					// Cumulative vertical movement
+					var dy = 0;
+					
+					if (geo.height > max.height)
 					{
-						geo.height -= bbox.y + bbox.height - bottom;
+						dy = geo.height - max.height;
+						geo.height -= dy;
 					}
-
+					
+					if (bbox.y + bbox.height > max.y + max.height)
+					{
+						dy -= bbox.y + bbox.height - max.y - max.height - dy;
+					}
+					
+					if (bbox.x < max.x)
+					{
+						dx -= bbox.x - max.x;
+					}
+					
+					if (bbox.y < max.y)
+					{
+						dy -= bbox.y - max.y;
+					}
+					
+					if (dx != 0 || dy != 0)
+					{
+						if (geo.relative)
+						{
+							// Relative geometries are moved via absolute offset
+							if (geo.offset == null)
+							{
+								geo.offset = new mxPoint();
+							}
+						
+							geo.offset.x += dx;
+							geo.offset.y += dy;
+						}
+						else
+						{
+							geo.x += dx;
+							geo.y += dy;
+						}
+					}
+					
 					this.model.setGeometry(cell, geo);
 				}
 			}
@@ -7314,7 +7341,13 @@ mxGraph.prototype.getBoundingBoxFromGeometry = function(cells, includeEdges)
 								
 								if (tmp != null)
 								{
-									bbox = new mxRectangle(tmp.x + geo.x * tmp.width, tmp.y + geo.y * tmp.height, geo.width, geo.height);
+									bbox = new mxRectangle(geo.x * tmp.width, geo.y * tmp.height, geo.width, geo.height);
+									
+									if (mxUtils.indexOf(cells, parent) >= 0)
+									{
+										bbox.x += tmp.x;
+										bbox.y += tmp.y;
+									}
 								}
 							}
 						}
@@ -10458,23 +10491,23 @@ mxGraph.prototype.setConstrainChildren = function(value)
 };
 
 /**
- * Function: setConstrainChildrenOnResize
+ * Function: isConstrainRelativeChildren
  * 
- * Sets <constrainChildrenOnResize>.
+ * Returns <constrainRelativeChildren>.
  */
-mxGraph.prototype.setConstrainChildrenOnResize = function(value)
+mxGraph.prototype.isConstrainRelativeChildren = function()
 {
-	this.constrainChildrenOnResize = value;
+	return this.constrainRelativeChildren;
 };
 
 /**
- * Function: isConstrainChildrenOnResize
+ * Function: setConstrainRelativeChildren
  * 
- * Returns <constrainChildrenOnResize>.
+ * Sets <constrainRelativeChildren>.
  */
-mxGraph.prototype.isConstrainChildrenOnResize = function()
+mxGraph.prototype.setConstrainRelativeChildren = function(value)
 {
-	return this.constrainChildrenOnResize;
+	this.constrainRelativeChildren = value;
 };
 
 /**

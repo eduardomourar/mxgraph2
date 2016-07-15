@@ -1,4 +1,5 @@
-- Adds mxRectangle.intersect
+- Makes mxGraph.constrainChildrenOnResize default, removes switch
+- Adds mxRectangle.intersect, mxGraph.constrainRelativeChildren
 - Fixes handling of bounding box in mxGraph.constrainChild
 - Fixes ignored constraints in mxVertexHandler.resizeVertex
 - Consumes event for mxEdgeHandler.addPoint

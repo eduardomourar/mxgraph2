@@ -388,6 +388,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 		this.allowAutoPanning = true;
 		this.resetEdgesOnConnect = false;
 		this.constrainChildren = false;
+		this.constrainRelativeChildren = true;
 		
 		// Do not scroll after moving cells
 		this.graphHandler.scrollOnMove = false;
