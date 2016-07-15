@@ -911,7 +911,7 @@ mxVertexHandler.prototype.resizeVertex = function(me)
 		new mxPoint(0, 0), this.isConstrainedEvent(me),
 		this.isCenteredEvent(this.state, me));
 	
-	// Keeps vertex within maximum graph bounds
+	// Keeps vertex within maximum graph or parent bounds
 	if (!geo.relative)
 	{
 		var max = this.graph.getMaximumGraphBounds();
