@@ -1,3 +1,4 @@
+- Moves getEditBlankXml to EditorUi in grapheditor example
 - Makes mxGraph.constrainChildrenOnResize default, removes switch
 - Adds mxRectangle.intersect, mxGraph.constrainRelativeChildren
 - Fixes handling of bounding box in mxGraph.constrainChild

@@ -240,14 +240,6 @@ Editor.prototype.setAutosave = function(value)
 /**
  * 
  */
-Editor.prototype.getEditBlankXml = function()
-{
-	return mxUtils.getXml(this.getGraphXml());
-};
-
-/**
- * 
- */
 Editor.prototype.editAsNew = function(xml, title)
 {
 	var p = (title != null) ? '&title=' + encodeURIComponent(title) : '';
