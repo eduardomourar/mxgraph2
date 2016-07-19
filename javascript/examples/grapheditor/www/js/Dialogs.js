@@ -1070,6 +1070,20 @@ PrintDialog.createPrintPreview = function(graph, scale, pf, border, x0, y0, auto
 	
 	preview.backgroundColor = bg;
 	
+	var writeHead = preview.writeHead;
+	
+	// Adds a border in the preview
+	preview.writeHead = function(doc)
+	{
+		writeHead.apply(this, arguments);
+		
+		doc.writeln('<style type="text/css">');
+		doc.writeln('@media screen {');
+		doc.writeln('  body > div { padding:30px;box-sizing:content-box; }');
+		doc.writeln('}');
+		doc.writeln('</style>');
+	};
+	
 	return preview;
 };
 
