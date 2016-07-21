@@ -397,7 +397,13 @@ div.mxWindow .geButton {
 	white-space:nowrap;
 }
 .geFooterContainer td:hover {
-	background-color: #d3d3d3;
+	background-color: #b3b3b3;
+}
+#geFooterItem1 {
+	background-color: #cdcdcd;
+}
+#geFooterItem1:hover {
+	background-color: #b0b0b0;
 }
 .geFooterContainer>div>img {
 	opacity:0.5;
