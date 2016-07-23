@@ -1041,6 +1041,20 @@ Actions.prototype.init = function()
 			}
 		}
 	});
+	action = this.addAction('subscript', mxUtils.bind(this, function()
+	{
+	    if (graph.cellEditor.isContentEditing())
+	    {
+			document.execCommand('subscript', false, null);
+		}
+	}), null, null, 'Ctrl+,');
+	action = this.addAction('superscript', mxUtils.bind(this, function()
+	{
+	    if (graph.cellEditor.isContentEditing())
+	    {
+			document.execCommand('superscript', false, null);
+		}
+	}), null, null, 'Ctrl+.');
 	this.addAction('image...', function()
 	{
 		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))

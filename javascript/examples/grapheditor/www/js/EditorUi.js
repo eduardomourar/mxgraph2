@@ -3364,10 +3364,10 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	var isEventIgnored = keyHandler.isEventIgnored;
 	keyHandler.isEventIgnored = function(evt)
 	{
-		// Handles undo/redo via action and allows ctrl+b/u/i only if editing value is HTML (except for FF and Safari)
-		return (!this.isControlDown(evt) || mxEvent.isShiftDown(evt) || (evt.keyCode != 90 && evt.keyCode != 89)) &&
-			((evt.keyCode != 66 && evt.keyCode != 73 && evt.keyCode != 85) || !this.isControlDown(evt) ||
-			(this.graph.cellEditor.isContentEditing() && !mxClient.IS_FF && !mxClient.IS_SF)) &&
+		// Handles undo/redo/ctrl+./, via action and allows ctrl+b/u/i only if editing value is HTML (except for FF and Safari)
+		return (!this.isControlDown(evt) || mxEvent.isShiftDown(evt) || (evt.keyCode != 90 && evt.keyCode != 89 &&
+			evt.keyCode != 188 && evt.keyCode != 190)) && ((evt.keyCode != 66 && evt.keyCode != 73 && evt.keyCode != 85) ||
+			!this.isControlDown(evt) || (this.graph.cellEditor.isContentEditing() && !mxClient.IS_FF && !mxClient.IS_SF)) &&
 			isEventIgnored.apply(this, arguments);
 	};
 	
@@ -3646,6 +3646,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
 		keyHandler.bindAction(80, true, 'formatPanel', true); // Ctrl+Shift+P
 		keyHandler.bindAction(85, true, 'underline'); // Ctrl+U
 		keyHandler.bindAction(85, true, 'ungroup', true); // Ctrl+Shift+U
+		keyHandler.bindAction(190, true, 'superscript'); // Ctrl+.
+		keyHandler.bindAction(188, true, 'subscript'); // Ctrl+,
 		keyHandler.bindKey(13, function() { if (graph.isEnabled()) { graph.startEditingAtCell(); }}); // Enter
 		keyHandler.bindKey(113, function() { if (graph.isEnabled()) { graph.startEditingAtCell(); }}); // F2
 	}
