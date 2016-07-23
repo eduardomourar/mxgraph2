@@ -3652,7 +3652,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 		keyHandler.bindKey(113, function() { if (graph.isEnabled()) { graph.startEditingAtCell(); }}); // F2
 	}
 	
-	if (mxClient.IS_MAC)
+	if (!mxClient.IS_WIN)
 	{
 		keyHandler.bindAction(90, true, 'redo', true); // Ctrl+Shift+Z
 	}

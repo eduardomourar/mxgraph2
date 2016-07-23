@@ -83,7 +83,7 @@ Actions.prototype.init = function()
 	
 	// Edit actions
 	this.addAction('undo', function() { ui.undo(); }, null, 'sprite-undo', 'Ctrl+Z');
-	this.addAction('redo', function() { ui.redo(); }, null, 'sprite-redo', (mxClient.IS_MAC) ? 'Ctrl+Shift+Z' : 'Ctrl+Y');
+	this.addAction('redo', function() { ui.redo(); }, null, 'sprite-redo', (!mxClient.IS_WIN) ? 'Ctrl+Shift+Z' : 'Ctrl+Y');
 	this.addAction('cut', function() { mxClipboard.cut(graph); }, null, 'sprite-cut', 'Ctrl+X');
 	this.addAction('copy', function() { mxClipboard.copy(graph); }, null, 'sprite-copy', 'Ctrl+C');
 	this.addAction('paste', function()
