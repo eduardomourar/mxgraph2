@@ -67,7 +67,7 @@
 					{
 						console.log('data', msg.data);
 						
-						if (format.value != 'html')
+						if (format.value != 'html' && format.value != 'html2')
 						{
 							image.setAttribute('src', msg.data);
 						}
@@ -132,6 +132,7 @@
   <option value="xmlpng">PNG</option>
   <option value="xmlsvg">SVG</option>
   <option value="html">HTML</option>
+  <option value="html2">HTML2</option>
 </select>
 </span>
 </div>
