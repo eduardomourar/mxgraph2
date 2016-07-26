@@ -1075,7 +1075,7 @@ Graph.prototype.getLabel = function(cell)
 {
 	var result = mxGraph.prototype.getLabel.apply(this, arguments);
 	
-	if (result != null && this.isReplacePlaceholders(cell))
+	if (result != null && this.isReplacePlaceholders(cell) && cell.getAttribute('placeholder') == null)
 	{
 		result = this.replacePlaceholders(cell, result);
 	}
@@ -1626,7 +1626,14 @@ Graph.prototype.convertValueToString = function(cell)
 {
 	if (cell.value != null && typeof(cell.value) == 'object')
 	{
-		return cell.value.getAttribute('label');
+		if (this.isReplacePlaceholders(cell) && cell.getAttribute('placeholder') != null)
+		{
+			return this.getModel().getRoot().getAttribute(cell.getAttribute('placeholder')) || '';
+		}
+		else
+		{	
+			return cell.value.getAttribute('label');
+		}
 	}
 	
 	return mxGraph.prototype.convertValueToString.apply(this, arguments);
@@ -3729,15 +3736,32 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			// Removes all illegal control characters in user input
 			value = this.zapGremlins(value);
-			
-			if (cell.value != null && typeof(cell.value) == 'object')
-			{
-				var tmp = cell.value.cloneNode(true);
-				tmp.setAttribute('label', value);
-				value = tmp;
+
+			this.model.beginUpdate();
+			try
+			{			
+				if (cell.value != null && typeof cell.value == 'object')
+				{
+					var tmp = cell.value.cloneNode(true);
+					tmp.setAttribute('label', value);
+					
+					if (this.isReplacePlaceholders(cell) &&
+						tmp.getAttribute('placeholder') != null)
+					{
+						// LATER: Handle delete, name change
+						this.setAttributeForCell(this.getModel().getRoot(),
+							tmp.getAttribute('placeholder'), value);
+					}
+					
+					value = tmp;
+				}
+
+				mxGraph.prototype.cellLabelChanged.apply(this, arguments);
 			}
-			
-			mxGraph.prototype.cellLabelChanged.apply(this, arguments);
+			finally
+			{
+				this.model.endUpdate();
+			}
 		};
 		
 		/**

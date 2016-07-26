@@ -1,3 +1,4 @@
+- Adds support for placeholder metadata
 - Adds mxPopupMenu.addCheckmark
 - Changes signature for mxICanvas.get/setTranslate [Java]
 - Uses Ctrl+Shift+Z for redo on Linux in grapheditor example
