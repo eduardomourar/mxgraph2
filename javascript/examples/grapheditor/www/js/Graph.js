@@ -2091,8 +2091,7 @@ Graph.prototype.getTooltipForCell = function(cell)
 					}
 					else
 					{
-						var key = attrs[i].nodeName.substring(0, 1).toUpperCase() + attrs[i].nodeName.substring(1);
-						tip += key + ': ' + mxUtils.htmlEntities(attrs[i].nodeValue) + '\n';
+						tip += attrs[i].nodeName + ': ' + mxUtils.htmlEntities(attrs[i].nodeValue) + '\n';
 					}
 				}
 			}
