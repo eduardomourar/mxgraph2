@@ -1,3 +1,4 @@
+- Ignores edge childs for vertices in mxGraph.selectCells
 - Adds support for placeholder metadata
 - Adds mxPopupMenu.addCheckmark
 - Changes signature for mxICanvas.get/setTranslate [Java]

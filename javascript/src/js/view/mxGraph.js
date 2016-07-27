@@ -11944,7 +11944,8 @@ mxGraph.prototype.selectCells = function(vertices, edges, parent)
 	var filter = mxUtils.bind(this, function(cell)
 	{
 		return this.view.getState(cell) != null &&
-			((this.model.getChildCount(cell) == 0 && this.model.isVertex(cell) && vertices) ||
+			((this.model.getChildCount(cell) == 0 && this.model.isVertex(cell) && vertices
+			&& !this.model.isEdge(this.model.getParent(cell))) ||
 			(this.model.isEdge(cell) && edges));
 	});
 	
