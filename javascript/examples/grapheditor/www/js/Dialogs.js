@@ -1090,8 +1090,9 @@ PrintDialog.createPrintPreview = function(graph, scale, pf, border, x0, y0, auto
 /**
  * Constructs a new filename dialog.
  */
-var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content, helpLink)
+var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content, helpLink, closeOnBtn)
 {
+	closeOnBtn = (closeOnBtn != null) ? closeOnBtn : true;
 	var row, td;
 	
 	var table = document.createElement('table');
@@ -1115,7 +1116,11 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	{
 		if (validateFn == null || validateFn(nameInput.value))
 		{
-			editorUi.hideDialog();
+			if (closeOnBtn)
+			{
+				editorUi.hideDialog();
+			}
+			
 			fn(nameInput.value);
 		}
 	});
@@ -1123,6 +1128,11 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	
 	this.init = function()
 	{
+		if (label == null && content != null)
+		{
+			return;
+		}
+		
 		nameInput.focus();
 		
 		if (mxClient.IS_FF || document.documentMode >= 5 || mxClient.IS_QUIRKS)
@@ -1191,7 +1201,10 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	td.appendChild(nameInput);
 	row.appendChild(td);
 	
-	tbody.appendChild(row);
+	if (label != null || content == null)
+	{
+		tbody.appendChild(row);
+	}
 	
 	if (content != null)
 	{
