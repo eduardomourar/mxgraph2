@@ -101,7 +101,12 @@
 					
 					if (msg.event == 'exit')
 					{
-						if (temp != null)
+						if (format.value == 'xml')
+						{
+							console.log('data', temp);
+							close();
+						}
+						else if (temp != null)
 						{
 							iframe.contentWindow.postMessage(JSON.stringify({action: 'export',
 								format: format.value, xml: temp, spinKey: 'export'}), '*');
@@ -131,6 +136,7 @@
 <select id="format">
   <option value="xmlpng">PNG</option>
   <option value="xmlsvg">SVG</option>
+  <option value="xml">XML</option>
   <option value="html">HTML</option>
   <option value="html2">HTML2</option>
 </select>
