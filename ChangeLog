@@ -1,3 +1,4 @@
+- Wheel zooms to mouse cursor in grapheditor example
 - Ignores edge childs for vertices in mxGraph.selectCells
 - Adds support for placeholder metadata
 - Adds mxPopupMenu.addCheckmark

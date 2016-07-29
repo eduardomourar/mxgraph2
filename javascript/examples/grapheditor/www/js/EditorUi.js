@@ -1826,6 +1826,8 @@ EditorUi.prototype.initCanvas = function()
 	graph.updateZoomTimeout = null;
 	graph.cumulativeZoomFactor = 1;
 	
+	var cursorPosition = null;
+
 	graph.lazyZoom = function(zoomIn)
 	{
 		if (this.updateZoomTimeout != null)
@@ -1869,13 +1871,25 @@ EditorUi.prototype.initCanvas = function()
 		this.updateZoomTimeout = window.setTimeout(mxUtils.bind(this, function()
 		{
 			this.zoom(this.cumulativeZoomFactor);					
-			this.cumulativeZoomFactor = 1;
-			this.updateZoomTimeout = null;
 			
 			if (resize != null)
 			{
 				resize(false);
 			}
+			
+			// Zooms to mouse position if scrollbars enabled
+			if (cursorPosition != null && mxUtils.hasScrollbars(graph.container))
+			{
+				var offset = mxUtils.getOffset(graph.container);
+				var dx = graph.container.offsetWidth / 2 - cursorPosition.x + offset.x;
+				var dy = graph.container.offsetHeight / 2 - cursorPosition.y + offset.y;
+				
+				graph.container.scrollLeft -= dx * (this.cumulativeZoomFactor - 1);
+				graph.container.scrollTop -= dy * (this.cumulativeZoomFactor - 1);
+			}
+			
+			this.cumulativeZoomFactor = 1;
+			this.updateZoomTimeout = null;
 		}), 20);
 	};
 	
@@ -1892,9 +1906,10 @@ EditorUi.prototype.initCanvas = function()
 			{
 				if (source == graph.container)
 				{
+					cursorPosition = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 					graph.lazyZoom(up);
 					mxEvent.consume(evt);
-					
+			
 					return;
 				}
 				
