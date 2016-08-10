@@ -3,7 +3,7 @@
 <project basedir="." default="run">
 	<target name="run">
 		<java fork="false" classname="Webserver">
-			<arg value="8080"/>
+			<arg value="80"/>
 			<classpath>
 				<pathelement path="${basedir}"/>
 				<pathelement location="${basedir}/../../java/jars/servlet-api-2.5-6.1.1.jar"/>
