@@ -1,3 +1,4 @@
+- Adds mxPrintPreview.prototype.clipping switch
 - Adds Ant tasks for running Java examples [Java]
 - Wheel zooms to mouse cursor in grapheditor example
 - Ignores edge childs for vertices in mxGraph.selectCells
