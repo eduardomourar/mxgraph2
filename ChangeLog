@@ -1,3 +1,4 @@
+- Ignores scale in mxGuide.getGuideTolerance
 - Removes clipping for general text in grapheditor example
 - Adds mxPrintPreview.prototype.clipping switch
 - Adds Ant tasks for running Java examples [Java]
