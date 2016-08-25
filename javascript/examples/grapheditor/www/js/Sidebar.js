@@ -367,9 +367,14 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel)
 				var x0 = -Math.round(bounds.x - this.tooltipBorder);
 				var y0 = -Math.round(bounds.y - this.tooltipBorder);
 				
+				var b = document.body;
+				var d = document.documentElement;
+				var bottom = b.clientHeight || d.clientHeight;
+
 				var left = this.container.clientWidth + this.editorUi.splitSize + 3 + this.editorUi.container.offsetLeft;
-				var top = Math.max(0, (this.editorUi.container.offsetTop + this.container.offsetTop + elt.offsetTop - this.container.scrollTop - height / 2 + 16));
-				
+				var top = Math.min(bottom - height - 20 /*status bar*/, Math.max(0, (this.editorUi.container.offsetTop +
+					this.container.offsetTop + elt.offsetTop - this.container.scrollTop - height / 2 + 16)));
+
 				if (mxClient.IS_SVG)
 				{
 					if (x0 != 0 || y0 != 0)
