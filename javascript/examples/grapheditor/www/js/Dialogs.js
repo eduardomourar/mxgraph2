@@ -1046,7 +1046,24 @@ PrintDialog.showPreview = function(preview, print)
 	
 	if (print && result != null)
 	{
-		result.print();
+		var print = function()
+		{
+			result.focus();
+			result.print();
+			result.close();
+		};
+		
+		// Workaround for Google Chrome which needs a bit of a
+		// delay in order to render the SVG contents
+		// Needs testing in production
+		if (mxClient.IS_GC)
+		{
+			window.setTimeout(print, 500);
+		}
+		else
+		{
+			print();
+		}
 	}
 	
 	return result;
