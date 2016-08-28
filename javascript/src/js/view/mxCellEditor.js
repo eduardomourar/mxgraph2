@@ -469,12 +469,7 @@ mxCellEditor.prototype.resize = function()
 			this.textarea.style.height = Math.round(this.bounds.height / scale) + 'px';
 			
 			// FIXME: Offset when scaled
-			if (document.documentMode == 8)
-			{
-				this.textarea.style.left = Math.round(this.bounds.x) + 'px';
-				this.textarea.style.top = Math.round(this.bounds.y) + 'px';
-			}
-			else if (mxClient.IS_QUIRKS)
+			if (document.documentMode == 8 || mxClient.IS_QUIRKS)
 			{
 				this.textarea.style.left = Math.round(this.bounds.x) + 'px';
 				this.textarea.style.top = Math.round(this.bounds.y) + 'px';
