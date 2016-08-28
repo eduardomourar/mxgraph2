@@ -5408,22 +5408,8 @@ if (typeof mxVertexHandler != 'undefined')
 					this.bounds.width = parseInt(this.textarea.style.width) * scale;
 				}
 								
-				// FIXME: Offset when scaled
-				if (document.documentMode == 8)
-				{
-					this.textarea.style.left = Math.round(this.bounds.x) + 'px';
-					this.textarea.style.top = Math.round(this.bounds.y) + 'px';
-				}
-				else if (mxClient.IS_QUIRKS)
-				{
-					this.textarea.style.left = Math.round(this.bounds.x) + 'px';
-					this.textarea.style.top = Math.round(this.bounds.y) + 'px';
-				}
-				else
-				{
-					this.textarea.style.left = Math.round(this.bounds.x - 0.5 * this.bounds.width * (1 - scale) / scale) + 'px';
-					this.textarea.style.top = Math.round(this.bounds.y - 0.5 * this.bounds.height * (1 - scale) / scale) + 'px';
-				}
+				this.textarea.style.left = Math.round(this.bounds.x) + 'px';
+				this.textarea.style.top = Math.round(this.bounds.y) + 'px';
 	
 				if (mxClient.IS_VML)
 				{
