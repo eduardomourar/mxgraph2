@@ -17,6 +17,7 @@ mxConstants.SHADOWCOLOR = '#000000';
 mxConstants.VML_SHADOWCOLOR = '#d0d0d0';
 mxGraph.prototype.pageBreakColor = '#c0c0c0';
 mxGraph.prototype.pageScale = 1;
+mxDragSource.prototype.dragElementZIndex = mxPopupMenu.prototype.zIndex;
 
 // Letter page format is default in US, Canada and Mexico
 (function()
@@ -5083,6 +5084,8 @@ if (typeof mxVertexHandler != 'undefined')
 		/**
 		 * HTML in-place editor
 		 */
+		mxCellEditor.prototype.escapeCancelsEditing = false;
+		
 		var mxCellEditorStartEditing = mxCellEditor.prototype.startEditing;
 		mxCellEditor.prototype.startEditing = function(cell, trigger)
 		{
