@@ -70,30 +70,6 @@ cd ..
 # Clean up
 rm -rf tmp
 
-# Update mxgraph pages on github
-echo
-echo "Updating mxgraph pages on github..."
-cd ~/tmp-$date/mxgraph
-git checkout gh-pages
-cd ..
-cp $BUILD/mxgraph-distro.zip .
-mkdir tmp
-unzip mxgraph-distro.zip -d tmp
-cd tmp/mxgraph/javascript/
-rm -rf debug devel
-cd ~/tmp-$date
-rm -rf mxgraph/*
-cp -rf tmp/mxgraph/* mxgraph/
-rm -rf mxgraph/java/.gitignore
-cd mxgraph
-git add -A
-git commit -am "$DOTVERSION release"
-git push origin gh-pages
-git tag -a v$DOTVERSION -m "v$DOTVERSION"
-git push origin gh-pages --tags
-cd ../..
-rm -rf tmp-$date/*
-
 # Update jgraphx on github
 echo
 echo "Updating jgraphx on github..."
