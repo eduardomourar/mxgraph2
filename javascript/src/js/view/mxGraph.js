@@ -8363,8 +8363,9 @@ mxGraph.prototype.validateEdge = function(edge, source, target)
  * Validates the graph by validating each descendant of the given cell or
  * the root of the model. Context is an object that contains the validation
  * state for the complete validation run. The validation errors are
- * attached to their cells using <setCellWarning>. This function returns true
- * if no validation errors exist in the graph.
+ * attached to their cells using <setCellWarning>. Returns null in the case of
+ * successful validation or an array of strings (warnings) in the case of
+ * failed validations.
  * 
  * Paramters:
  * 
