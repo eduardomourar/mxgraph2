@@ -1,8 +1,9 @@
 - Add namespace, modern build environment
 - Use unscaled coordinates for routing and states
 - Use SVG transform for scale
-
 - Remove VML
+
+- Add support for npm/bower in repo
 - Build separate core and layout JS files
 - Add style for start-/endArrow fill color
 - Add exitDx/Dy and entryDx/Dy styles for absolute offsets in ports
