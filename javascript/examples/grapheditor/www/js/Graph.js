@@ -1015,8 +1015,16 @@ Graph.prototype.sanitizeHtml = function(value)
 	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
 	// NOTE: Original minimized sanitizer was modified to support data URIs for images
 	// LATER: Add MathML to whitelisted tags
-	function urlX(url) { if(/(^https?:|^mailto:|^data:image\/|^#)/.test(url)) { return url }}
-    function idX(id) { return id }
+	function urlX(link)
+	{
+		if (link != null && link.toString().toLowerCase().substring(0, 11) !== 'javascript:')
+		{
+			return link;
+		}
+		
+		return null;
+	};
+    function idX(id) { return id };
 	
 	return html_sanitize(value, urlX, idX);
 };
@@ -1653,7 +1661,7 @@ Graph.prototype.getLinkForCell = function(cell)
 		
 		// Removes links with leading javascript: protocol
 		// TODO: Check more possible attack vectors
-		if (link != null && link.toLowerCase().substring(0, 11) == 'javascript:')
+		if (link != null && link.toLowerCase().substring(0, 11) === 'javascript:')
 		{
 			link = link.substring(11);
 		}
