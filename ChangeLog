@@ -1,3 +1,4 @@
+- Fixes use of Navigator.pointerEnabled in mxClient.IS_POINTER
 - Adds mxCellEditor.escapeCancelsEditing, uses false in grapheditor
 - Fixes bounds for zoomed markup in-place editor in grapheditor example
 - Ignores scale in mxGuide.getGuideTolerance
