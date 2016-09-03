@@ -11890,12 +11890,14 @@ mxGraph.prototype.selectCell = function(isNext, isParent, isChild)
  * 
  * parent - Optional <mxCell> whose children should be selected.
  * Default is <defaultParent>.
+ * descendants - Optional boolean specifying whether all descendants should be
+ * selected. Default is false.
  */
-mxGraph.prototype.selectAll = function(parent)
+mxGraph.prototype.selectAll = function(parent, descendants)
 {
 	parent = parent || this.getDefaultParent();
 	
-	var children = this.model.getChildren(parent);
+	var children = (descendants) ? this.model.getDescendants(parent) : this.model.getChildren(parent);
 	
 	if (children != null)
 	{

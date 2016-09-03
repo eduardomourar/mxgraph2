@@ -174,7 +174,7 @@ Actions.prototype.init = function()
 	}, null, null, 'Ctrl+R');
 	this.addAction('selectVertices', function() { graph.selectVertices(); }, null, null, 'Ctrl+Shift+I');
 	this.addAction('selectEdges', function() { graph.selectEdges(); }, null, null, 'Ctrl+Shift+E');
-	this.addAction('selectAll', function() { graph.selectAll(); }, null, null, 'Ctrl+A');
+	this.addAction('selectAll', function() { graph.selectAll(null, true); }, null, null, 'Ctrl+A');
 	this.addAction('selectNone', function() { graph.clearSelection(); }, null, null, 'Ctrl+Shift+A');
 	this.addAction('lockUnlock', function()
 	{

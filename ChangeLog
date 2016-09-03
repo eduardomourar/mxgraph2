@@ -1,3 +1,5 @@
+- Ctrl+A selects all cells recursively in grapheditor
+- Adds optional boolean argument in mxGraph.selectAll
 - Enables relative links for labels in grapheditor
 - Fixes use of Navigator.pointerEnabled in mxClient.IS_POINTER
 - Adds mxCellEditor.escapeCancelsEditing, uses false in grapheditor
