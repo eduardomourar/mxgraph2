@@ -192,7 +192,8 @@ mxCellEditor.prototype.emptyLabelText = (mxClient.IS_FF) ? '<br>' : '';
  * Variable: escapeCancelsEditing
  * 
  * If true, pressing the escape key will stop editing and not accept the new
- * value. Change this to false to accept the new value. Default is true.
+ * value. Change this to false to accept the new value on escape, and cancel
+ * editing on Shift+Escape instead. Default is true.
  */
 mxCellEditor.prototype.escapeCancelsEditing = true;
 
@@ -329,7 +330,7 @@ mxCellEditor.prototype.installListeners = function(elt)
 			}
 			else if (evt.keyCode == 27 /* Escape */)
 			{
-				this.graph.stopEditing(this.escapeCancelsEditing);
+				this.graph.stopEditing(this.escapeCancelsEditing || mxEvent.isShiftDown(evt));
 				mxEvent.consume(evt);
 			}
 		}

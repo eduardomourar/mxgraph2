@@ -1,3 +1,4 @@
+- Moves Editor.(de)compress to Graph in grapheditor
 - Ctrl+A selects all cells recursively in grapheditor
 - Adds optional boolean argument in mxGraph.selectAll
 - Enables relative links for labels in grapheditor
