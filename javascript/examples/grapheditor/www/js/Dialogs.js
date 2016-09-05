@@ -2297,7 +2297,7 @@ var EditDataDialog = function(ui, cell)
 			link.setAttribute('title', mxResources.get('help'));
 			link.setAttribute('target', '_blank');
 			link.style.marginLeft = '10px';
-			link.style.cursor = 'pointer';
+			link.style.cursor = 'help';
 			
 			var icon = document.createElement('img');
 			icon.setAttribute('border', '0');
