@@ -2118,6 +2118,71 @@ Graph.prototype.getTooltipForCell = function(cell)
 };
 
 /**
+ * Turns the given string into an array.
+ */
+Graph.prototype.stringToBytes = function(str)
+{
+	var arr = new Array(str.length);
+
+    for (var i = 0; i < str.length; i++)
+    {
+        arr[i] = str.charCodeAt(i);
+    }
+    
+    return arr;
+};
+
+/**
+ * Turns the given array into a string.
+ */
+Graph.prototype.bytesToString = function(arr)
+{
+	var result = new Array(arr.length);
+
+    for (var i = 0; i < arr.length; i++)
+    {
+    	result[i] = String.fromCharCode(arr[i]);
+    }
+    
+    return result.join('');
+};
+
+/**
+ * Returns a base64 encoded version of the compressed string.
+ */
+Graph.prototype.compress = function(data)
+{
+	if (data == null || data.length == 0 || typeof(pako) === 'undefined')
+	{
+		return data;
+	}
+	else
+	{
+   		var tmp = this.bytesToString(pako.deflateRaw(encodeURIComponent(data)));
+   		
+   		return (window.btoa) ? btoa(tmp) : Base64.encode(tmp, true);
+	}
+};
+
+/**
+ * Returns a decompressed version of the base64 encoded string.
+ */
+Graph.prototype.decompress = function(data)
+{
+   	if (data == null || data.length == 0 || typeof(pako) === 'undefined')
+	{
+		return data;
+	}
+	else
+	{
+		var tmp = (window.atob) ? atob(data) : Base64.decode(data, true);
+		
+		return this.zapGremlins(decodeURIComponent(
+			this.bytesToString(pako.inflateRaw(tmp))));
+	}
+};
+
+/**
  * Removes all illegal control characters with ASCII code <32 except TAB, LF
  * and CR.
  */
@@ -2949,41 +3014,62 @@ HoverIcons.prototype.setCurrentState = function(state)
 };
 
 /**
- * Adds custom stencils defined via shape=stencil(value) style. The value is a base64 encoded, compressed and
- * URL encoded XML definition of the shape according to the stencil definition language of mxGraph.
- * 
- * Needs to be in this file to make sure its part of the embed client code. Also the check for ZLib is
- * different than for the Editor code.
+ * Adds support for placeholders in text elements of shapes.
  */
-var mxCellRendererCreateShape = mxCellRenderer.prototype.createShape;
-mxCellRenderer.prototype.createShape = function(state)
+(function()
 {
-	if (state.style != null && typeof(RawDeflate) !== 'undefined' && typeof RawDeflate.inflate === 'function')
-	{
-    	var shape = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
-
-    	// Extracts and decodes stencil XML if shape has the form shape=stencil(value)
-    	if (shape != null && shape.substring(0, 8) == 'stencil(')
-    	{
-    		try
-    		{
-    			var stencil = shape.substring(8, shape.length - 1);
-    			var doc = mxUtils.parseXml(decodeURIComponent(RawDeflate.inflate((window.atob) ? atob(stencil) : Base64.decode(stencil, true))));
-    			
-    			return new mxShape(new mxStencil(doc.documentElement));
-    		}
-    		catch (e)
-    		{
-    			if (window.console != null)
-    			{
-    				console.log('Error in shape: ' + e);
-    			}
-    		}
-    	}
-	}
+	var mxStencilEvaluateTextAttribute = mxStencil.prototype.evaluateTextAttribute;
 	
-	return mxCellRendererCreateShape.apply(this, arguments);
-};
+	mxStencil.prototype.evaluateTextAttribute = function(node, attribute, shape)
+	{
+		var result = mxStencilEvaluateTextAttribute.apply(this, arguments);
+		var placeholders = node.getAttribute('placeholders');
+		
+		if (placeholders == '1' && shape.state != null)
+		{
+			result = shape.state.view.graph.replacePlaceholders(shape.state.cell, result);
+		}
+		
+		return result;
+	};
+		
+	/**
+	 * Adds custom stencils defined via shape=stencil(value) style. The value is a base64 encoded, compressed and
+	 * URL encoded XML definition of the shape according to the stencil definition language of mxGraph.
+	 * 
+	 * Needs to be in this file to make sure its part of the embed client code. Also the check for ZLib is
+	 * different than for the Editor code.
+	 */
+	var mxCellRendererCreateShape = mxCellRenderer.prototype.createShape;
+	mxCellRenderer.prototype.createShape = function(state)
+	{
+		if (state.style != null && typeof(pako) !== 'undefined')
+		{
+	    	var shape = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
+	
+	    	// Extracts and decodes stencil XML if shape has the form shape=stencil(value)
+	    	if (shape != null && shape.substring(0, 8) == 'stencil(')
+	    	{
+	    		try
+	    		{
+	    			var stencil = shape.substring(8, shape.length - 1);
+	    			var doc = mxUtils.parseXml(state.view.graph.decompress(stencil));
+	    			
+	    			return new mxShape(new mxStencil(doc.documentElement));
+	    		}
+	    		catch (e)
+	    		{
+	    			if (window.console != null)
+	    			{
+	    				console.log('Error in shape: ' + e);
+	    			}
+	    		}
+	    	}
+		}
+		
+		return mxCellRendererCreateShape.apply(this, arguments);
+	};
+})();
 
 /**
  * Overrides stencil registry for dynamic loading of stencils.
@@ -6048,8 +6134,8 @@ if (typeof mxVertexHandler != 'undefined')
 						
 						this.div.style.left = this.x + 'px';
 						this.div.style.top = (origin.y + offset.y) + 'px';
-						this.div.style.width = Math.max(1, this.width) + 'px';
-						this.div.style.height = Math.max(1, this.graph.container.clientHeight) + 'px';
+						this.div.style.width = Math.max(0, this.width) + 'px';
+						this.div.style.height = Math.max(0, this.graph.container.clientHeight) + 'px';
 						this.div.style.backgroundColor = 'white';
 						this.div.style.borderWidth = '0px 1px 0px 1px';
 						this.div.style.borderStyle = 'dashed';
@@ -6062,8 +6148,8 @@ if (typeof mxVertexHandler != 'undefined')
 						
 						this.secondDiv.style.left = (origin.x + offset.x) + 'px';
 						this.secondDiv.style.top = this.y + 'px';
-						this.secondDiv.style.width = Math.max(1, this.graph.container.clientWidth) + 'px';
-						this.secondDiv.style.height = Math.max(1, this.height) + 'px';
+						this.secondDiv.style.width = Math.max(0, this.graph.container.clientWidth) + 'px';
+						this.secondDiv.style.height = Math.max(0, this.height) + 'px';
 						this.secondDiv.style.borderWidth = '1px 0px 1px 0px';
 					}
 					else
