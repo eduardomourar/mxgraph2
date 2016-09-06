@@ -1,3 +1,4 @@
+- Adds Alt+Shift+Cursor to connect and clone in grapheditor
 - Adds placeholders for custom shape text in grapheditor
 - Moves Editor.(de)compress to Graph in grapheditor
 - Ctrl+A selects all cells recursively in grapheditor

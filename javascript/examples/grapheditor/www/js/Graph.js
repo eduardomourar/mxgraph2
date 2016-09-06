@@ -1403,7 +1403,7 @@ Graph.prototype.selectCellsForConnectVertex = function(cells, evt, hoverIcons)
 /**
  * Adds a connection to the given vertex.
  */
-Graph.prototype.connectVertex = function(source, direction, length, evt)
+Graph.prototype.connectVertex = function(source, direction, length, evt, forceClone)
 {
 	var pt = (source.geometry.relative) ? new mxPoint(source.parent.geometry.width * source.geometry.x,
 			source.parent.geometry.height * source.geometry.y) : new mxPoint(source.geometry.x, source.geometry.y);
@@ -1449,7 +1449,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 	}
 	
 	// Checks actual end point of edge for target cell
-	var target = (mxEvent.isControlDown(evt)) ? null : this.getCellAt(dx + pt.x * s, dy + pt.y * s);
+	var target = (mxEvent.isControlDown(evt) && !forceClone) ? null : this.getCellAt(dx + pt.x * s, dy + pt.y * s);
 	
 	if (this.model.isAncestor(target, source))
 	{
@@ -1482,7 +1482,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt)
 		}
 	}
 	
-	var duplicate = !mxEvent.isShiftDown(evt);
+	var duplicate = !mxEvent.isShiftDown(evt) || forceClone;
 	
 	if (duplicate)
 	{
