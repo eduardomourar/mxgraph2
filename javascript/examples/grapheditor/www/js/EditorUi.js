@@ -3407,33 +3407,55 @@ EditorUi.prototype.createKeyHandler = function(editor)
 
 	mxKeyHandler.prototype.getFunction = function(evt)
 	{
-		if (mxEvent.isShiftDown(evt) && mxEvent.isAltDown(evt) && directions[evt.keyCode] != null)
+		if (directions[evt.keyCode] != null)
 		{
 			var cell = graph.getSelectionCell();
 			
 			if (graph.model.isVertex(cell))
 			{
-				return function()
+				if (mxEvent.isShiftDown(evt) && mxEvent.isAltDown(evt))
 				{
-					var cells = graph.connectVertex(cell, directions[evt.keyCode], graph.defaultEdgeLength, evt, true);
-	
-					if (cells != null && cells.length > 0)
+					return function()
 					{
-						if (cells.length == 1 && graph.model.isEdge(cells[0]))
+						var cells = graph.connectVertex(cell, directions[evt.keyCode], graph.defaultEdgeLength, evt, true);
+		
+						if (cells != null && cells.length > 0)
 						{
-							graph.setSelectionCell(graph.model.getTerminal(cells[0], false));
+							if (cells.length == 1 && graph.model.isEdge(cells[0]))
+							{
+								graph.setSelectionCell(graph.model.getTerminal(cells[0], false));
+							}
+							else
+							{
+								graph.setSelectionCell(cells[cells.length - 1]);
+							}
+							
+							if (editorUi.hoverIcons != null)
+							{
+								editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
+							}
 						}
-						else
+					};
+				}
+				else
+				{
+					// Avoids consuming event if no vertex is selected by returning null below
+					// Cursor keys move and resize (ctrl) cells
+					if (this.isControlDown(evt))
+					{
+						return function()
 						{
-							graph.setSelectionCell(cells[cells.length - 1]);
-						}
-						
-						if (editorUi.hoverIcons != null)
-						{
-							editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
-						}
+							nudge(evt.keyCode, (mxEvent.isShiftDown(evt)) ? graph.gridSize : null, true);
+						};
 					}
-				};
+					else
+					{
+						return function()
+						{
+							nudge(evt.keyCode, (mxEvent.isShiftDown(evt)) ? graph.gridSize : null);
+						};
+					}
+				}
 			}
 		}
 
@@ -3644,22 +3666,6 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	{
 		keyHandler.bindControlKey(36, function() { if (graph.isEnabled()) { graph.foldCells(true); }}); // Ctrl+Home
 		keyHandler.bindControlKey(35, function() { if (graph.isEnabled()) { graph.foldCells(false); }}); // Ctrl+End
-		keyHandler.bindKey(37, function() { nudge(37); }); // Left arrow
-		keyHandler.bindKey(38, function() { nudge(38); }); // Up arrow
-		keyHandler.bindKey(39, function() { nudge(39); }); // Right arrow
-		keyHandler.bindKey(40, function() { nudge(40); }); // Down arrow
-		keyHandler.bindShiftKey(37, function() { nudge(37, graph.gridSize); }); // Shift+Left arrow
-		keyHandler.bindShiftKey(38, function() { nudge(38, graph.gridSize); }); // Shift+Up arrow
-		keyHandler.bindShiftKey(39, function() { nudge(39, graph.gridSize); }); // Shift+Right arrow
-		keyHandler.bindShiftKey(40, function() { nudge(40, graph.gridSize); }); // Shift+Down arrow
-		keyHandler.bindControlKey(37, function() { nudge(37, null, true); }); // Ctrl+Left arrow
-		keyHandler.bindControlKey(38, function() { nudge(38, null, true); }); // Ctrl+Up arrow
-		keyHandler.bindControlKey(39, function() { nudge(39, null, true); }); // Ctrl+Right arrow
-		keyHandler.bindControlKey(40, function() { nudge(40, null, true); }); // Ctrl+Down arrow
-		keyHandler.bindControlShiftKey(37, function() { nudge(37, graph.gridSize, true); }); // Ctrl+Left arrow
-		keyHandler.bindControlShiftKey(38, function() { nudge(38, graph.gridSize, true); }); // Ctrl+Shift+Up arrow
-		keyHandler.bindControlShiftKey(39, function() { nudge(39, graph.gridSize, true); }); // Ctrl+Shift+Right arrow
-		keyHandler.bindControlShiftKey(40, function() { nudge(40, graph.gridSize, true); }); // Ctrl+Shift+Down arrow
 		keyHandler.bindControlKey(13, function() { if (graph.isEnabled()) { graph.setSelectionCells(graph.duplicateCells(graph.getSelectionCells(), false)); }}); // Ctrl+Enter
 		keyHandler.bindShiftKey(9, function() { if (graph.isEnabled()) { graph.selectPreviousCell(); }}); // Shift+Tab
 		keyHandler.bindControlKey(9, function() { if (graph.isEnabled()) { graph.selectParentCell(); }}); // Ctrl+Tab
