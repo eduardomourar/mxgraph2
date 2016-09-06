@@ -11897,11 +11897,14 @@ mxGraph.prototype.selectAll = function(parent, descendants)
 {
 	parent = parent || this.getDefaultParent();
 	
-	var children = (descendants) ? this.model.getDescendants(parent) : this.model.getChildren(parent);
-	
-	if (children != null)
+	var cells = (descendants) ? this.model.filterDescendants(function(cell)
 	{
-		this.setSelectionCells(children);
+		return cell != parent;
+	}, parent) : this.model.getChildren(parent);
+	
+	if (cells != null)
+	{
+		this.setSelectionCells(cells);
 	}
 };
 
