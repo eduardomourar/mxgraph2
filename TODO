@@ -1,4 +1,3 @@
-- Add hook for translating sidebar titles in grapheditor
 - Add namespace, modern build, npm/bower support
 - Use unscaled coordinates for routing and states
 - Use SVG transform for zoom
