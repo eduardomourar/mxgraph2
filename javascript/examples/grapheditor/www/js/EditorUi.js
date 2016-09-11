@@ -3550,27 +3550,31 @@ EditorUi.prototype.createKeyHandler = function(editor)
 		{
 			if (mxEvent.isShiftDown(evt) && mxEvent.isAltDown(evt))
 			{
-				return function()
+				if (graph.model.isVertex(graph.getSelectionCell()))
 				{
-					var cells = graph.connectVertex(cell, directions[evt.keyCode], graph.defaultEdgeLength, evt, true);
-	
-					if (cells != null && cells.length > 0)
+					return function()
 					{
-						if (cells.length == 1 && graph.model.isEdge(cells[0]))
+						var cells = graph.connectVertex(graph.getSelectionCell(), directions[evt.keyCode],
+							graph.defaultEdgeLength, evt, true);
+		
+						if (cells != null && cells.length > 0)
 						{
-							graph.setSelectionCell(graph.model.getTerminal(cells[0], false));
+							if (cells.length == 1 && graph.model.isEdge(cells[0]))
+							{
+								graph.setSelectionCell(graph.model.getTerminal(cells[0], false));
+							}
+							else
+							{
+								graph.setSelectionCell(cells[cells.length - 1]);
+							}
+							
+							if (editorUi.hoverIcons != null)
+							{
+								editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
+							}
 						}
-						else
-						{
-							graph.setSelectionCell(cells[cells.length - 1]);
-						}
-						
-						if (editorUi.hoverIcons != null)
-						{
-							editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
-						}
-					}
-				};
+					};
+				}
 			}
 			else
 			{
