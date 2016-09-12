@@ -123,6 +123,17 @@ function mxCellEditor(graph)
 	
 	this.graph.view.addListener(mxEvent.SCALE, this.zoomHandler);
 	this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.zoomHandler);
+	
+	// Adds handling of deleted cells while editing
+	this.changeHandler = mxUtils.bind(this, function(sender)
+	{
+		if (this.editingCell != null && this.graph.getView().getState(this.editingCell) == null)
+		{
+			this.stopEditing(true);
+		}
+	});
+
+	this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
 };
 
 /**
@@ -336,17 +347,6 @@ mxCellEditor.prototype.installListeners = function(elt)
 		}
 	}));
 
-	// Adds handling of deleted cells while editing
-	this.changeHandler = mxUtils.bind(this, function(sender)
-	{
-		if (this.editingCell != null && this.graph.getView().getState(this.editingCell) == null)
-		{
-			this.stopEditing(true);
-		}
-	});
-
-	this.graph.getModel().addListener(mxEvent.CHANGE, this.changeHandler);
-	
 	// Keypress only fires if printable key was pressed and handles removing the empty placeholder
 	var keypressHandler = mxUtils.bind(this, function(evt)
 	{
@@ -1040,17 +1040,18 @@ mxCellEditor.prototype.destroy = function ()
 		}
 		
 		this.textarea = null;
-		
-		if (this.changeHandler != null)
-		{
-			this.graph.getModel().removeListener(this.changeHandler);
-			this.changeHandler = null;
-		}
-		
-		if (this.zoomHandler)
-		{
-			this.graph.view.removeListener(this.zoomHandler);
-			this.zoomHandler = null;
-		}
+
+	}
+			
+	if (this.changeHandler != null)
+	{
+		this.graph.getModel().removeListener(this.changeHandler);
+		this.changeHandler = null;
+	}
+
+	if (this.zoomHandler)
+	{
+		this.graph.view.removeListener(this.zoomHandler);
+		this.zoomHandler = null;
 	}
 };
