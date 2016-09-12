@@ -25,7 +25,7 @@
 			var close = function()
 			{
 				window.removeEventListener('message', receive);
-				document.body.removeChild(iframe);
+				iframe.parentNode.removeChild(iframe);
 				toolbar.style.display = 'none';
 				image.style.display = '';
 			};
