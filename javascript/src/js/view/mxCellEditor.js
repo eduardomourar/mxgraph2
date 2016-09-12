@@ -857,6 +857,10 @@ mxCellEditor.prototype.stopEditing = function(cancel)
 				this.applyValue(state, value);
 			}
 		}
+		
+		// Forces new instance on next edit for undo history reset
+		mxEvent.release(this.textarea);
+		this.textarea = null;
 	}
 };
 

@@ -1,3 +1,5 @@
+- Resets undo history after editing in mxCellEditor
+
 07-SEP-2016: 3.6.0.0
 
 - Adds Alt+Shift+Cursor to connect and clone in grapheditor
