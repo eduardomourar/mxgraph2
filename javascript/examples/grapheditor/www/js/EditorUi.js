@@ -3033,7 +3033,7 @@ EditorUi.prototype.extractGraphModelFromHtml = function(data)
     		if (idx2 > idx)
     		{
     			result = data.substring(idx, idx2 + 21).replace(/&gt;/g, '>').
-    				replace(/&lt;/g, '<').replace(/\n/g, '');
+    				replace(/&lt;/g, '<').replace(/\\&quot;/g, '"').replace(/\n/g, '');
     		}
     	}
 	}
@@ -3043,26 +3043,6 @@ EditorUi.prototype.extractGraphModelFromHtml = function(data)
 	}
 	
 	return result;
-};
-
-/**
- * Returns true if the given string contains a compatible graph model.
- */
-EditorUi.prototype.isCompatibleString = function(data)
-{
-	try
-	{
-		var doc = mxUtils.parseXml(data);
-		var node = this.editor.extractGraphModel(doc.documentElement);
-		
-		return node != null && node.getElementsByTagName('parsererror').length == 0;
-	}
-	catch (e)
-	{
-		// ignore
-	}
-	
-	return false;
 };
 
 /**
@@ -3114,6 +3094,15 @@ EditorUi.prototype.extractGraphModelFromEvent = function(evt)
 	}
 	
 	return result;
+};
+
+/**
+ * Hook for subclassers to return true if event data is a supported format.
+ * This implementation always returns false.
+ */
+EditorUi.prototype.isCompatibleString = function(data)
+{
+	return false;
 };
 
 /**
