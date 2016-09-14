@@ -1345,7 +1345,8 @@ Graph.prototype.replacePlaceholders = function(cell, str)
 					{
 						if (current.value != null && typeof(current.value) == 'object')
 						{
-							tmp = current.value.getAttribute(name);
+							tmp = (current.hasAttribute(name)) ? ((current.getAttribute(name) != null) ?
+									current.getAttribute(name) : '') : null;
 						}
 						
 						current = this.model.getParent(current);
@@ -1358,7 +1359,7 @@ Graph.prototype.replacePlaceholders = function(cell, str)
 				}
 			}
 
-			result.push(str.substring(last, match.index) + (tmp || val));
+			result.push(str.substring(last, match.index) + ((tmp != null) ? tmp : val));
 			last = match.index + val.length;
 		}
 	}
@@ -1639,7 +1640,22 @@ Graph.prototype.convertValueToString = function(cell)
 	{
 		if (this.isReplacePlaceholders(cell) && cell.getAttribute('placeholder') != null)
 		{
-			return this.getModel().getRoot().getAttribute(cell.getAttribute('placeholder')) || '';
+			var name = cell.getAttribute('placeholder');
+			var current = cell;
+			var result = null;
+					
+			while (result == null && current != null)
+			{
+				if (current.value != null && typeof(current.value) == 'object')
+				{
+					result = (current.hasAttribute(name)) ? ((current.getAttribute(name) != null) ?
+							current.getAttribute(name) : '') : null;
+				}
+				
+				current = this.model.getParent(current);
+			}
+			
+			return result || '';
 		}
 		else
 		{	
@@ -3838,17 +3854,30 @@ if (typeof mxVertexHandler != 'undefined')
 			{			
 				if (cell.value != null && typeof cell.value == 'object')
 				{
-					var tmp = cell.value.cloneNode(true);
-					tmp.setAttribute('label', value);
-					
 					if (this.isReplacePlaceholders(cell) &&
-						tmp.getAttribute('placeholder') != null)
+						cell.getAttribute('placeholder') != null)
 					{
 						// LATER: Handle delete, name change
-						this.setAttributeForCell(this.getModel().getRoot(),
-							tmp.getAttribute('placeholder'), value);
+						var name = cell.getAttribute('placeholder');
+						var current = cell;
+								
+						while (current != null)
+						{
+							if (current.value != null && typeof(current.value) == 'object' &&
+								(current == this.model.getRoot() ||
+								current.hasAttribute(name)))
+							{
+								this.setAttributeForCell(current, name, value);
+								
+								break;
+							}
+							
+							current = this.model.getParent(current);
+						}
 					}
 					
+					var tmp = cell.value.cloneNode(true);
+					tmp.setAttribute('label', value);
 					value = tmp;
 				}
 
