@@ -3029,11 +3029,86 @@ HoverIcons.prototype.setCurrentState = function(state)
 	this.currentState = state;
 };
 
-/**
- * Adds support for placeholders in text elements of shapes.
- */
 (function()
 {
+	/**
+	 * Adds support for snapToPoint style.
+	 */
+	var mxGraphViewUpdateFloatingTerminalPoint = mxGraphView.prototype.updateFloatingTerminalPoint;
+	
+	mxGraphView.prototype.updateFloatingTerminalPoint = function(edge, start, end, source)
+	{
+		if (start != null && edge != null &&
+			(start.style['snapToPoint'] == '1' ||
+			edge.style['snapToPoint'] == '1'))
+		{
+		    start = this.getTerminalPort(edge, start, source);
+		    var next = this.getNextPoint(edge, end, source);
+		    
+		    var orth = this.graph.isOrthogonal(edge);
+		    var alpha = mxUtils.toRadians(Number(start.style[mxConstants.STYLE_ROTATION] || '0'));
+		    var center = new mxPoint(start.getCenterX(), start.getCenterY());
+		    
+		    if (alpha != 0)
+		    {
+		        var cos = Math.cos(-alpha);
+		        var sin = Math.sin(-alpha);
+		        next = mxUtils.getRotatedPoint(next, cos, sin, center);
+		    }
+		    
+		    var border = parseFloat(edge.style[mxConstants.STYLE_PERIMETER_SPACING] || 0);
+		    border += parseFloat(edge.style[(source) ?
+		        mxConstants.STYLE_SOURCE_PERIMETER_SPACING :
+		        mxConstants.STYLE_TARGET_PERIMETER_SPACING] || 0);
+		    var pt = this.getPerimeterPoint(start, next, alpha == 0 && orth, border);
+		
+		    if (alpha != 0)
+		    {
+		        var cos = Math.cos(alpha);
+		        var sin = Math.sin(alpha);
+		        pt = mxUtils.getRotatedPoint(pt, cos, sin, center);
+		    }
+		    
+		    // Finds closest connection point
+		    if (start != null)
+		    {
+		        var constraints = this.graph.getAllConnectionConstraints(start)
+		        var nearest = null;
+		        var dist = null;
+		    
+		        for (var i = 0; i < constraints.length; i++)
+		        {
+		            var cp = this.graph.getConnectionPoint(start, constraints[i]);
+		            
+		            if (cp != null)
+		            {
+		                var tmp = (cp.x - pt.x) * (cp.x - pt.x) + (cp.y - pt.y) * (cp.y - pt.y);
+		            
+		                if (dist == null || tmp < dist)
+		                {
+		                    nearest = cp;
+		                    dist = tmp;
+		                }
+		            }
+		        }
+		        
+		        if (nearest != null)
+		        {
+		            pt = nearest;
+		        }
+		    }
+		    
+		    edge.setAbsoluteTerminalPoint(pt, source);
+		}
+		else
+		{
+			mxGraphViewUpdateFloatingTerminalPoint.apply(this, arguments);
+		}
+	};
+		
+	/**
+	 * Adds support for placeholders in text elements of shapes.
+	 */
 	var mxStencilEvaluateTextAttribute = mxStencil.prototype.evaluateTextAttribute;
 	
 	mxStencil.prototype.evaluateTextAttribute = function(node, attribute, shape)
