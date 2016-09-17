@@ -1,3 +1,6 @@
+- Uses minimum of 1 page for empty graphs with preferPageSize
+- Adds crisp rendering, fixes scrollbars in IE for page breaks
+- Fixes scaled return value in mxGraph.getPreferredPageSize
 - Adds snapToPoint custom attribute in grapheditor
 - Adds mxCell.hasAttribute, scope for placeholder in grapheditor
 - Adds Alt+(Shift+)Tab for select parent/child in grapheditor

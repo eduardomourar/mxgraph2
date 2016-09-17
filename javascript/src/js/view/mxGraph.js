@@ -2860,13 +2860,13 @@ mxGraph.prototype.getPreferredPageSize = function(bounds, width, height)
 	var scale = this.view.scale;
 	var tr = this.view.translate;
 	var fmt = this.pageFormat;
-	var ps = scale * this.pageScale;
-	var page = new mxRectangle(0, 0, fmt.width * ps, fmt.height * ps);
+	var ps = this.pageScale;
+	var page = new mxRectangle(0, 0, Math.ceil(fmt.width * ps), Math.ceil(fmt.height * ps));
 	
 	var hCount = (this.pageBreaksVisible) ? Math.ceil(width / page.width) : 1;
 	var vCount = (this.pageBreaksVisible) ? Math.ceil(height / page.height) : 1;
 	
-	return new mxRectangle(0, 0, hCount * page.width + 2 + tr.x / scale, vCount * page.height + 2 + tr.y / scale);
+	return new mxRectangle(0, 0, hCount * page.width + 2 + tr.x, vCount * page.height + 2 + tr.y);
 };
 
 /**
@@ -3045,7 +3045,7 @@ mxGraph.prototype.sizeDidChange = function()
 
 		if (this.preferPageSize || (!mxClient.IS_IE && this.pageVisible))
 		{
-			var size = this.getPreferredPageSize(bounds, width, height);
+			var size = this.getPreferredPageSize(bounds, Math.max(1, width), Math.max(1, height));
 			
 			if (size != null)
 			{
@@ -3076,7 +3076,7 @@ mxGraph.prototype.sizeDidChange = function()
 		{
 			if (mxClient.IS_QUIRKS)
 			{
-				// Quirks mode has no minWidth/minHeight support
+				// Quirks mode does not support minWidth/-Height
 				this.view.updateHtmlCanvasSize(Math.max(1, width), Math.max(1, height));
 			}
 			else
@@ -3129,6 +3129,9 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 	var bounds = new mxRectangle(0, 0, fmt.width * ps, fmt.height * ps);
 
 	var gb = mxRectangle.fromRectangle(this.getGraphBounds());
+	gb.width = Math.max(1, gb.width);
+	gb.height = Math.max(1, gb.height);
+	
 	bounds.x = Math.floor((gb.x - tr.x * scale) / bounds.width) * bounds.width + tr.x * scale;
 	bounds.y = Math.floor((gb.y - tr.y * scale) / bounds.height) * bounds.height + tr.y * scale;
 	
@@ -3162,10 +3165,10 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 			for (var i = 0; i <= count; i++)
 			{
 				var pts = (breaks == this.horizontalPageBreaks) ?
-						[new mxPoint(bounds.x + i * bounds.width, bounds.y),
-				         new mxPoint(bounds.x + i * bounds.width, bounds.y + bottom)] :
-				        [new mxPoint(bounds.x, bounds.y + i * bounds.height),
-				         new mxPoint(bounds.x + right, bounds.y + i * bounds.height)];
+						[new mxPoint(Math.round(bounds.x + i * bounds.width), Math.round(bounds.y)),
+				         new mxPoint(Math.round(bounds.x + i * bounds.width), Math.round(bounds.y + bottom))] :
+				        [new mxPoint(Math.round(bounds.x), Math.round(bounds.y + i * bounds.height)),
+				         new mxPoint(Math.round(bounds.x + right), Math.round(bounds.y + i * bounds.height))];
 
 				if (breaks[i] != null)
 				{
