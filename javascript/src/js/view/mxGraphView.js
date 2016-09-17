@@ -161,6 +161,13 @@ mxGraphView.prototype.scale = 1;
 mxGraphView.prototype.translate = null;
 
 /**
+ * Variable: states
+ * 
+ * <mxDictionary> that maps from cell IDs to <mxCellStates>.
+ */
+mxGraphView.prototype.states = null;
+
+/**
  * Variable: updateStyle
  * 
  * Specifies if the style should be updated in each validation step. If this
