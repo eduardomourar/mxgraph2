@@ -1,3 +1,4 @@
+- Adds snapToPoint custom attribute in grapheditor
 - Adds mxCell.hasAttribute, scope for placeholder in grapheditor
 - Adds Alt+(Shift+)Tab for select parent/child in grapheditor
 - Resets undo history after editing in mxCellEditor
