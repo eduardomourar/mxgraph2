@@ -1,5 +1,6 @@
 - Add namespace, modern build, npm/bower support
 - Use unscaled coordinates for routing and states
+- Fix rounding errors in mxGraph.center
 - Use SVG transform for zoom
 
 - Remove VML support
