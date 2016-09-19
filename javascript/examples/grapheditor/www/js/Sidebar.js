@@ -757,7 +757,6 @@ Sidebar.prototype.addSearchPalette = function(expand)
 							}
 							
 							button.style.cursor = '';
-							
 							div.appendChild(center);
 						}
 					}), mxUtils.bind(this, function()
@@ -816,7 +815,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 		}
 		else if (!active)
 		{
-			if (complete)
+			if (complete || input.value == searchTerm)
 			{
 				button.style.display = 'none';
 			}
@@ -862,12 +861,12 @@ Sidebar.prototype.addSearchPalette = function(expand)
  */
 Sidebar.prototype.insertSearchHint = function(div, searchTerm, count, page, results, len, more, terms)
 {
-	if (results.length == 0)
+	if (results.length == 0 && page == 1)
 	{
 		var err = document.createElement('div');
 		err.className = 'geTitle';
 		err.style.cssText = 'background-color:transparent;border-color:transparent;' +
-			'color:gray;padding:0px;margin:0px 8px 0px 8px;padding-top:6px;' +
+			'color:gray;padding:6px 0px 0px 0px;margin:4px 8px 4px 8px;' +
 			'text-align:center;cursor:default !important';
 		
 		mxUtils.write(err, mxResources.get('noResultsFor', [searchTerm]));
