@@ -3165,10 +3165,10 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 			for (var i = 0; i <= count; i++)
 			{
 				var pts = (breaks == this.horizontalPageBreaks) ?
-						[new mxPoint(Math.round(bounds.x), Math.round(bounds.y + i * bounds.height)),
-				         new mxPoint(Math.round(bounds.x + right), Math.round(bounds.y + i * bounds.height))] :
-				        [new mxPoint(Math.round(bounds.x + i * bounds.width), Math.round(bounds.y)),
-				         new mxPoint(Math.round(bounds.x + i * bounds.width), Math.round(bounds.y + bottom))];
+					[new mxPoint(Math.round(bounds.x), Math.round(bounds.y + i * bounds.height)),
+			         new mxPoint(Math.round(bounds.x + right), Math.round(bounds.y + i * bounds.height))] :
+			        [new mxPoint(Math.round(bounds.x + i * bounds.width), Math.round(bounds.y)),
+			         new mxPoint(Math.round(bounds.x + i * bounds.width), Math.round(bounds.y + bottom))];
 
 				if (breaks[i] != null)
 				{
@@ -3186,6 +3186,8 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 					
 					breaks[i] = pageBreak;
 				}
+				
+				console.log('here', i, pts);
 			}
 			
 			for (var i = count; i < breaks.length; i++)
