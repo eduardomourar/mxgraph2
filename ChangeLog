@@ -1,3 +1,4 @@
+- Fixes vertical-/horizontalPageBreaks in mxGraph instance
 - Uses minimum of 1 page for empty graphs with preferPageSize
 - Adds crisp rendering, fixes scrollbars in IE for page breaks
 - Fixes scaled return value in mxGraph.getPreferredPageSize
