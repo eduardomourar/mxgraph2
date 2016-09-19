@@ -3141,10 +3141,10 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 	// Does not show page breaks if the scale is too small
 	visible = visible && Math.min(bounds.width, bounds.height) > this.minPageBreakDist;
 
-	var horizontalCount = (visible) ? Math.ceil(gb.width / bounds.width) + 1 : 0;
-	var verticalCount = (visible) ? Math.ceil(gb.height / bounds.height) + 1 : 0;
-	var right = (horizontalCount - 1) * bounds.width;
-	var bottom = (verticalCount - 1) * bounds.height;
+	var horizontalCount = (visible) ? Math.ceil(gb.height / bounds.height) + 1 : 0;
+	var verticalCount = (visible) ? Math.ceil(gb.width / bounds.width) + 1 : 0;
+	var right = (verticalCount - 1) * bounds.width;
+	var bottom = (horizontalCount - 1) * bounds.height;
 	
 	if (this.horizontalPageBreaks == null && horizontalCount > 0)
 	{
