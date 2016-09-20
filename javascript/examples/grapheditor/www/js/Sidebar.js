@@ -815,7 +815,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 		}
 		else if (!active)
 		{
-			if (complete || input.value == searchTerm)
+			if (complete)
 			{
 				button.style.display = 'none';
 			}
