@@ -464,7 +464,7 @@ mxCellEditor.prototype.resize = function()
 	{
 		this.stopEditing(true);
 	}
-	else
+	else if (this.textarea != null)
 	{
 		var isEdge = this.graph.getModel().isEdge(state.cell);
  		var scale = this.graph.getView().scale;
@@ -779,24 +779,21 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		
 		this.resize();
 		
-		if (this.textarea != null)
+		// Workaround for NS_ERROR_FAILURE in FF
+		try
 		{
-			// Workaround for NS_ERROR_FAILURE in FF
-			try
+			// Prefers blinking cursor over no selected text if empty
+			this.textarea.focus();
+			
+			if (this.isSelectText() && this.textarea.innerHTML.length > 0 &&
+				(this.textarea.innerHTML != this.getEmptyLabelText() || !this.clearOnChange))
 			{
-				// Prefers blinking cursor over no selected text if empty
-				this.textarea.focus();
-				
-				if (this.isSelectText() && this.textarea.innerHTML.length > 0 &&
-					(this.textarea.innerHTML != this.getEmptyLabelText() || !this.clearOnChange))
-				{
-					document.execCommand('selectAll', false, null);
-				}
+				document.execCommand('selectAll', false, null);
 			}
-			catch (e)
-			{
-				// ignore
-			}
+		}
+		catch (e)
+		{
+			// ignore
 		}
 	}
 };
