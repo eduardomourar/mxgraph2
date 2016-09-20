@@ -866,7 +866,7 @@ Sidebar.prototype.insertSearchHint = function(div, searchTerm, count, page, resu
 		var err = document.createElement('div');
 		err.className = 'geTitle';
 		err.style.cssText = 'background-color:transparent;border-color:transparent;' +
-			'color:gray;padding:6px 0px 0px 0px;margin:4px 8px 4px 8px;' +
+			'color:gray;padding:6px 0px 0px 0px !important;margin:4px 8px 4px 8px;' +
 			'text-align:center;cursor:default !important';
 		
 		mxUtils.write(err, mxResources.get('noResultsFor', [searchTerm]));
