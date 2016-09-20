@@ -3938,9 +3938,8 @@ if (typeof mxVertexHandler != 'undefined')
 								
 						while (current != null)
 						{
-							if (current.value != null && typeof(current.value) == 'object' &&
-								(current == this.model.getRoot() ||
-								current.hasAttribute(name)))
+							if (current == this.model.getRoot() || (current.value != null &&
+								typeof(current.value) == 'object' && current.hasAttribute(name)))
 							{
 								this.setAttributeForCell(current, name, value);
 								
