@@ -677,7 +677,9 @@ mxCellEditor.prototype.getBackgroundColor = function(state)
  */
 mxCellEditor.prototype.startEditing = function(cell, trigger)
 {
-	// Lazy instantiates textarea to save memory in IE
+	this.stopEditing(true);
+	
+	// Creates new textarea instance
 	if (this.textarea == null)
 	{
 		this.init();
@@ -688,7 +690,6 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		this.graph.tooltipHandler.hideTooltip();
 	}
 	
-	this.stopEditing(true);
 	var state = this.graph.getView().getState(cell);
 	
 	if (state != null)
