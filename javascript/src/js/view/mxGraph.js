@@ -7309,30 +7309,37 @@ mxGraph.prototype.getBoundingBoxFromGeometry = function(cells, includeEdges)
 					
 					if (this.model.isEdge(cells[i]))
 					{
+						var addPoint = function(pt)
+						{
+							if (pt != null)
+							{
+								if (tmp == null)
+								{
+									tmp = new mxRectangle(pt.x, pt.y, 0, 0);
+								}
+								else
+								{
+									tmp.add(new mxRectangle(pt.x, pt.y, 0, 0));
+								}
+							}
+						};
+						
+						addPoint(geo.getTerminalPoint(true));
+						addPoint(geo.getTerminalPoint(false));
+												
 						var pts = geo.points;
 						
 						if (pts != null && pts.length > 0)
 						{
 							var tmp = new mxRectangle(pts[0].x, pts[0].y, 0, 0);
-							
-							var addPoint = function(pt)
-							{
-								if (pt != null)
-								{
-									tmp.add(new mxRectangle(pt.x, pt.y, 0, 0));
-								}
-							};
-							
+
 							for (var j = 1; j < pts.length; j++)
 							{
 								addPoint(pts[j]);
 							}
-							
-							addPoint(geo.getTerminalPoint(true));
-							addPoint(geo.getTerminalPoint(false));
-							
-							bbox = tmp;
 						}
+						
+						bbox = tmp;
 					}
 					else
 					{
