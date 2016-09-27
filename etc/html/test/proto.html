@@ -50,12 +50,12 @@
 						if (data.indexOf('data:image/svg+xml;') == 0)
 						{
 							iframe.contentWindow.postMessage(JSON.stringify({action: 'load',
-								autosave: 1, xml: data}), '*');
+								autosave: 1, xml: data, title: 'Optional Title'}), '*');
 						}
 						else
 						{
-							iframe.contentWindow.postMessage(JSON.stringify({action: 'load', autosave: 1,
-								saveAndExit: '1', xmlpng: data, modified: 'unsavedChanges'}), '*');
+							iframe.contentWindow.postMessage(JSON.stringify({action: 'load', autosave: 1, saveAndExit: '1',
+								xmlpng: data, modified: 'unsavedChanges', title: 'Optional Title'}), '*');
 						}
 						
 						filetype.style.display = '';
