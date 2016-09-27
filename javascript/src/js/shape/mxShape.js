@@ -540,7 +540,7 @@ mxShape.prototype.createCanvas = function()
 		canvas = this.createVmlCanvas();
 	}
 	
-	if (this.outline)
+	if (canvas != null && this.outline)
 	{
 		canvas.setStrokeWidth(this.strokewidth);
 		canvas.setStrokeColor(this.stroke);
