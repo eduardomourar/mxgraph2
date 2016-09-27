@@ -522,8 +522,7 @@ mxShape.prototype.redrawShape = function()
 /**
  * Function: createCanvas
  * 
- * Destroys the given canvas which was used for drawing. This implementation
- * increments the reference counts on all shared gradients used in the canvas.
+ * Creates a new canvas for drawing this shape. May return null.
  */
 mxShape.prototype.createCanvas = function()
 {
