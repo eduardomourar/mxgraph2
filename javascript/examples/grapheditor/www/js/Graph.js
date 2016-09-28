@@ -5371,30 +5371,33 @@ if (typeof mxVertexHandler != 'undefined')
 			// Checks the given node for new nodes, recursively
 			function checkNode(node, clone)
 			{
-				if (clone.originalNode != node)
+				if (node != null)
 				{
-					cleanNode(node);
-				}
-				else if (node != null)
-				{
-					node = node.firstChild;
-					clone = clone.firstChild;
-					
-					while (node != null)
+					if (clone.originalNode != node)
 					{
-						var nextNode = node.nextSibling;
+						cleanNode(node);
+					}
+					else
+					{
+						node = node.firstChild;
+						clone = clone.firstChild;
 						
-						if (clone == null)
+						while (node != null)
 						{
-							cleanNode(node);
+							var nextNode = node.nextSibling;
+							
+							if (clone == null)
+							{
+								cleanNode(node);
+							}
+							else
+							{
+								checkNode(node, clone);
+								clone = clone.nextSibling;
+							}
+	
+							node = nextNode;
 						}
-						else
-						{
-							checkNode(node, clone);
-							clone = clone.nextSibling;
-						}
-
-						node = nextNode;
 					}
 				}
 			};
