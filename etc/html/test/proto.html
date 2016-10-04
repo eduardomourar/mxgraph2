@@ -49,7 +49,7 @@
 						
 						if (data.indexOf('data:image/svg+xml;') == 0)
 						{
-							iframe.contentWindow.postMessage(JSON.stringify({action: 'load',
+							iframe.contentWindow.postMessage(JSON.stringify({action: 'load', autosave: 1, saveAndExit: '1',
 								autosave: 1, xml: data, title: 'Optional Title'}), '*');
 						}
 						else
