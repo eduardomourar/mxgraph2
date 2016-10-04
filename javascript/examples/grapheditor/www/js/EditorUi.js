@@ -208,13 +208,13 @@ EditorUi = function(editor, container, lightbox)
 			mxEvent.isMiddleMouseButton(me.getEvent())));
 	};
 
-	// Control-enter applies editing value
-	// FIXME: Fix for HTML editing
+	// Ctrl/Cmd+Enter applies editing value
 	var cellEditorIsStopEditingEvent = graph.cellEditor.isStopEditingEvent;
 	graph.cellEditor.isStopEditingEvent = function(evt)
 	{
 		return cellEditorIsStopEditingEvent.apply(this, arguments) ||
-			(evt.keyCode == 13 && mxEvent.isControlDown(evt));
+			(evt.keyCode == 13 && (mxEvent.isControlDown(evt) ||
+			(mxClient.IS_MAC && mxEvent.isMetaDown(evt))));
 	};
 	
 	// Switches toolbar for text editing
