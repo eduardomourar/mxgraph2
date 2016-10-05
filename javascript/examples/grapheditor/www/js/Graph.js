@@ -1558,8 +1558,12 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 			realTarget = this.duplicateCells([cellToClone], false)[0];
 			
 			var geo = this.getCellGeometry(realTarget);
-			geo.x = pt.x - geo.width / 2;
-			geo.y = pt.y - geo.height / 2;
+			
+			if (geo != null)
+			{
+				geo.x = pt.x - geo.width / 2;
+				geo.y = pt.y - geo.height / 2;
+			}
 		}
 		
 		// Never connects children in stack layouts
