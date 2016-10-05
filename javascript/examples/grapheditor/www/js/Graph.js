@@ -5227,22 +5227,29 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		mxCellEditor.prototype.restoreSelection = function(savedSel)
 		{
-			if (savedSel)
+			try
 			{
-				if (window.getSelection)
+				if (savedSel)
 				{
-					sel = window.getSelection();
-					sel.removeAllRanges();
-	
-					for (var i = 0, len = savedSel.length; i < len; ++i)
+					if (window.getSelection)
 					{
-						sel.addRange(savedSel[i]);
+						sel = window.getSelection();
+						sel.removeAllRanges();
+		
+						for (var i = 0, len = savedSel.length; i < len; ++i)
+						{
+							sel.addRange(savedSel[i]);
+						}
+					}
+					else if (document.selection && savedSel.select)
+					{
+						savedSel.select();
 					}
 				}
-				else if (document.selection && savedSel.select)
-				{
-					savedSel.select();
-				}
+			}
+			catch (e)
+			{
+				// ignore
 			}
 		};
 	
