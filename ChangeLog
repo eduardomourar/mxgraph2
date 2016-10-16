@@ -1,3 +1,4 @@
+- Adds optional name for mxConnectionConstraint
 - Fixes handling of terminal points in mxGraph.getBoundingBoxFromGeometry
 - Fixes vertical-/horizontalPageBreaks in mxGraph instance
 - Uses minimum of 1 page for empty graphs with preferPageSize
