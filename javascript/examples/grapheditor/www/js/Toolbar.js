@@ -645,7 +645,10 @@ Toolbar.prototype.hideMenu = function()
 Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name, c, showAll)
 {
 	var menu = this.editorUi.menus.get(name);
-	var elt = this.addMenuFunction(label, tooltip, showLabels, menu.funct, c, showAll);
+	var elt = this.addMenuFunction(label, tooltip, showLabels, function()
+	{
+		menu.funct.apply(menu, arguments);
+	}, c, showAll);
 	
 	menu.addListener('stateChanged', function()
 	{
