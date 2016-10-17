@@ -1,7 +1,7 @@
-- Replace document.write for script injection
-- Add namespace, modern build, npm/bower support
 - Use unscaled coordinates for routing, states, mxGraph.center
 - Use SVG transform for zoom
+- Add namespace, modern build, npm/bower support
+- Replace document.write for script injection
 
 - Remove VML support
 - Build separate core and layout JS files
