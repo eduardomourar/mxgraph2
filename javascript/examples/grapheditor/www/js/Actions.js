@@ -156,9 +156,9 @@ Actions.prototype.init = function()
 		}
 	};
 	
-	this.addAction('delete', function()
+	this.addAction('delete', function(evt)
 	{
-		deleteCells(false);
+		deleteCells(evt != null && mxEvent.isShiftDown(evt));
 	}, null, null, 'Delete');
 	this.addAction('deleteAll', function()
 	{
