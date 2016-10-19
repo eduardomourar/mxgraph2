@@ -6171,7 +6171,14 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			if (execute)
 			{
-				if (this.isSpaceEvent(me))
+				if (mxEvent.isAltDown(me.getEvent()) && this.graph.isToggleEvent(me.getEvent()))
+				{
+					var rect = new mxRectangle(this.x, this.y, this.width, this.height);
+					var cells = this.graph.getCells(rect.x, rect.y, rect.width, rect.height);
+					
+					this.graph.removeSelectionCells(cells);
+				}
+				else if (this.isSpaceEvent(me))
 				{
 					this.graph.model.beginUpdate();
 					try
