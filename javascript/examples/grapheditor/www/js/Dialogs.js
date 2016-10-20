@@ -881,11 +881,12 @@ PageSetupDialog.addPageFormatPanel = function(div, namePostfix, pageFormat, page
 	return {set: function(value)
 	{
 		pageFormat = value;
-		listener();
+		listener(null, null, true);
 	},get: function()
 	{
 		return currentPageFormat;
-	}};
+	}, widthInput: widthInput,
+	heightInput: heightInput};
 };
 
 /**

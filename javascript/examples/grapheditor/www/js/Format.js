@@ -4632,6 +4632,16 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 		}
 	});
 	
+	this.addKeyHandler(accessor.widthInput, function()
+	{
+		console.log('here', graph.pageFormat);
+		accessor.set(graph.pageFormat);
+	});
+-	this.addKeyHandler(accessor.heightInput, function()
+	{
+		accessor.set(graph.pageFormat);	
+	});
+	
 	var listener = function()
 	{
 		accessor.set(graph.pageFormat);
