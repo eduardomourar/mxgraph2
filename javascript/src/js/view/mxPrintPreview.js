@@ -381,13 +381,13 @@ mxPrintPreview.prototype.getDoctype = function()
  * targetWindow - Optional window that should be used for rendering. If
  * this is specified then no HEAD tag, CSS and BODY tag will be written.
  */
-mxPrintPreview.prototype.appendGraph = function(graph, scale, x0, y0, forcePageBreaks)
+mxPrintPreview.prototype.appendGraph = function(graph, scale, x0, y0, forcePageBreaks, keepOpen)
 {
 	this.graph = graph;
 	this.scale = (scale != null) ? scale : 1 / graph.pageScale;
 	this.x0 = x0;
 	this.y0 = y0;
-	this.open(null, null, forcePageBreaks);
+	this.open(null, null, forcePageBreaks, keepOpen);
 };
 
 /**
@@ -402,7 +402,7 @@ mxPrintPreview.prototype.appendGraph = function(graph, scale, x0, y0, forcePageB
  * targetWindow - Optional window that should be used for rendering. If
  * this is specified then no HEAD tag, CSS and BODY tag will be written.
  */
-mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks)
+mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks, keepOpen)
 {
 	// Closing the window while the page is being rendered may cause an
 	// exception in IE. This and any other exceptions are simply ignored.
@@ -639,18 +639,10 @@ mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks)
 			}
 		}
 
-		if (isNewWindow)
+		if (isNewWindow && !keepOpen)
 		{
-			this.writePostfix(doc);
-			doc.writeln('</body>');
-			doc.writeln('</html>');
-			doc.close();
-			
-			// Marks the printing complete for async handling
+			this.closeDocument();
 			writePageSelector();
-			
-			// Removes all event handlers in the print output
-			mxEvent.release(doc.body);
 		}
 		
 		this.wnd.focus();
@@ -669,6 +661,25 @@ mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks)
 	}
 
 	return this.wnd;
+};
+
+/**
+ * Function: writeHead
+ * 
+ * Writes the HEAD section into the given document, without the opening
+ * and closing HEAD tags.
+ */
+mxPrintPreview.prototype.closeDocument = function()
+{
+	var doc = this.wnd.document;
+	
+	this.writePostfix(doc);
+	doc.writeln('</body>');
+	doc.writeln('</html>');
+	doc.close();
+	
+	// Removes all event handlers in the print output
+	mxEvent.release(doc.body);
 };
 
 /**
