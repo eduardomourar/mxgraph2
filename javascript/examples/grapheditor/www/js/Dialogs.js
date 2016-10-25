@@ -1076,7 +1076,13 @@ PrintDialog.prototype.create = function(editorUi)
 			autoOrigin = true;
 		}
 		
-		return PrintDialog.showPreview(PrintDialog.createPrintPreview(graph, scale, pf, border, x0, y0, autoOrigin, print), print);
+		var preview = PrintDialog.createPrintPreview(graph, scale, pf, border, x0, y0, autoOrigin);
+		preview.open();
+	
+		if (print)
+		{
+			PrintDialog.printPreview(preview);
+		}
 	};
 	
 	var cancelBtn = mxUtils.button(mxResources.get('cancel'), function()
@@ -1124,17 +1130,15 @@ PrintDialog.prototype.create = function(editorUi)
 /**
  * Constructs a new print dialog.
  */
-PrintDialog.showPreview = function(preview, print)
+PrintDialog.printPreview = function(preview)
 {
-	var result = preview.open();
-	
-	if (print && result != null)
+	if (preview.wnd != null)
 	{
-		var print = function()
+		var printFn = function()
 		{
-			result.focus();
-			result.print();
-			result.close();
+			preview.wnd.focus();
+			preview.wnd.print();
+			preview.wnd.close();
 		};
 		
 		// Workaround for Google Chrome which needs a bit of a
@@ -1142,15 +1146,13 @@ PrintDialog.showPreview = function(preview, print)
 		// Needs testing in production
 		if (mxClient.IS_GC)
 		{
-			window.setTimeout(print, 500);
+			window.setTimeout(printFn, 500);
 		}
 		else
 		{
-			print();
+			printFn();
 		}
 	}
-	
-	return result;
 };
 
 /**
