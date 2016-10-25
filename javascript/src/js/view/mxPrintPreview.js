@@ -381,11 +381,10 @@ mxPrintPreview.prototype.getDoctype = function()
  * targetWindow - Optional window that should be used for rendering. If
  * this is specified then no HEAD tag, CSS and BODY tag will be written.
  */
-mxPrintPreview.prototype.appendGraph = function(graph, scale, pageFormat, x0, y0, forcePageBreaks)
+mxPrintPreview.prototype.appendGraph = function(graph, scale, x0, y0, forcePageBreaks)
 {
 	this.graph = graph;
 	this.scale = (scale != null) ? scale : 1 / graph.pageScale;
-	this.pageFormat = mxRectangle.fromRectangle((pageFormat != null) ? pageFormat : graph.pageFormat);
 	this.x0 = x0;
 	this.y0 = y0;
 	this.open(null, null, forcePageBreaks);
