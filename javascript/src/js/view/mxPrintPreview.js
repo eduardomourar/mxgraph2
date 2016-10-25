@@ -578,9 +578,7 @@ mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks, kee
 
 			if (forcePageBreaks || addBreak)
 			{
-				var hr = doc.createElement('hr');
-				hr.className = 'mxPageBreak';
-				doc.body.appendChild(hr);
+				this.addPageBreak(doc);
 			}
 		});
 		
@@ -661,6 +659,18 @@ mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks, kee
 	}
 
 	return this.wnd;
+};
+
+/**
+ * Function: addPageBreak
+ * 
+ * Adds a page break to the given document.
+ */
+mxPrintPreview.prototype.addPageBreak = function(doc)
+{
+	var hr = doc.createElement('hr');
+	hr.className = 'mxPageBreak';
+	doc.body.appendChild(hr);
 };
 
 /**
