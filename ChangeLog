@@ -1,3 +1,4 @@
+- Adds mxPrintPreview.appendGraph, mxRubberband.isActive, execute
 - Adds optional name for mxConnectionConstraint
 - Fixes handling of terminal points in mxGraph.getBoundingBoxFromGeometry
 - Fixes vertical-/horizontalPageBreaks in mxGraph instance

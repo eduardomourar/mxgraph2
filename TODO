@@ -1,3 +1,5 @@
+- Merge unscaledWidth into cellBounds for mxCellState
+
 - Use unscaled coordinates for routing, states, mxGraph.center
 - Use SVG transform for zoom
 - Add namespace, modern build, npm/bower support
