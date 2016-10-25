@@ -275,6 +275,16 @@ mxRubberband.prototype.createShape = function()
 };
 
 /**
+ * Function: isActive
+ * 
+ * Returns true if this handler is active.
+ */
+mxRubberband.prototype.isActive = function(sender, me)
+{
+	return this.div != null && this.div.style.display != 'none';
+};
+
+/**
  * Function: mouseUp
  * 
  * Handles the event by selecting the region of the rubberband using
@@ -282,15 +292,24 @@ mxRubberband.prototype.createShape = function()
  */
 mxRubberband.prototype.mouseUp = function(sender, me)
 {
-	var execute = this.div != null && this.div.style.display != 'none';
-	this.reset();
-
-	if (execute)
+	if (this.isActive())
 	{
-		var rect = new mxRectangle(this.x, this.y, this.width, this.height);
-		this.graph.selectRegion(rect, me.getEvent());
+		this.execute(me.getEvent());
 		me.consume();
 	}
+};
+
+/**
+ * Function: execute
+ * 
+ * Resets the state of this handler and selects the current region
+ * for the given event.
+ */
+mxRubberband.prototype.execute = function(evt)
+{
+	this.reset();
+	var rect = new mxRectangle(this.x, this.y, this.width, this.height);
+	this.graph.selectRegion(rect, evt);
 };
 
 /**
