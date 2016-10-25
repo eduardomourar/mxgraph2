@@ -897,6 +897,15 @@ Graph.prototype.lightbox = false;
 Graph.prototype.defaultGraphBackground = '#ffffff';
 
 /**
+ * Specifies the size of the size for "tiles" to be used for a graph with
+ * scrollbars but no visible background page. A good value is large
+ * enough to reduce the number of repaints that is caused for auto-
+ * translation, which depends on this value, and small enough to give
+ * a small empty buffer around the graph. Default is 400x400.
+ */
+Graph.prototype.scrollTileSize = new mxRectangle(0, 0, 400, 400);
+
+/**
  * Overrides the background color and paints a transparent background.
  */
 Graph.prototype.transparentBackground = true;
@@ -1005,6 +1014,47 @@ Graph.prototype.initLayoutManager = function()
 		
 		return null;
 	};
+};
+	
+	/**
+	 * Returns the size of the page format scaled with the page size.
+	 */
+Graph.prototype.getPageSize = function()
+{
+	return (this.pageVisible) ? new mxRectangle(0, 0, this.pageFormat.width * this.pageScale,
+			this.pageFormat.height * this.pageScale) : this.scrollTileSize;
+};
+
+/**
+ * Returns a rectangle describing the position and count of the
+ * background pages, where x and y are the position of the top,
+ * left page and width and height are the vertical and horizontal
+ * page count.
+ */
+Graph.prototype.getPageLayout = function()
+{
+	var size = this.getPageSize();
+	var bounds = this.getGraphBounds();
+
+	if (bounds.width == 0 || bounds.height == 0)
+	{
+		return new mxRectangle(0, 0, 1, 1);
+	}
+	else
+	{
+		// Computes untransformed graph bounds
+		var x = Math.ceil(bounds.x / this.view.scale - this.view.translate.x);
+		var y = Math.ceil(bounds.y / this.view.scale - this.view.translate.y);
+		var w = Math.floor(bounds.width / this.view.scale);
+		var h = Math.floor(bounds.height / this.view.scale);
+		
+		var x0 = Math.floor(x / size.width);
+		var y0 = Math.floor(y / size.height);
+		var w0 = Math.ceil((x + w) / size.width) - x0;
+		var h0 = Math.ceil((y + h) / size.height) - y0;
+		
+		return new mxRectangle(x0, y0, w0, h0);
+	}
 };
 
 /**
