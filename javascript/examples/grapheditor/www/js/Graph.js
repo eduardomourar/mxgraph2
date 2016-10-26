@@ -4529,7 +4529,8 @@ if (typeof mxVertexHandler != 'undefined')
 			    },
 			    activate: function(state)
 			    {
-			    	this.currentLink = graph.getLinkUrl(graph.getLinkForCell(state.cell));
+			    	var tmp = graph.getLinkForCell(state.cell);
+			    	this.currentLink = (tmp != null) ? graph.getLinkUrl(tmp) : null;
 			    	
 			    	if (this.currentLink != null)
 			    	{
