@@ -2312,12 +2312,12 @@ EditorUi.prototype.resetScrollbars = function()
 				
 				if (bounds.width > 0 && bounds.height > 0)
 				{
-					if (bounds.x > graph.container.scrollLeft + graph.container.clientWidth - 60)
+					if (bounds.x > graph.container.scrollLeft + graph.container.clientWidth * 0.9)
 					{
 						graph.container.scrollLeft = Math.min(bounds.x + bounds.width - graph.container.clientWidth, bounds.x - 10);
 					}
 					
-					if (bounds.y > graph.container.scrollTop + graph.container.clientHeight - 40)
+					if (bounds.y > graph.container.scrollTop + graph.container.clientHeight * 0.9)
 					{
 						graph.container.scrollTop = Math.min(bounds.y + bounds.height - graph.container.clientHeight, bounds.y - 10);
 					}
