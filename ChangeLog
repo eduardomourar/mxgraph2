@@ -1,3 +1,4 @@
+- Fixes initial scrollbars for hidden content in grapheditor
 - Adds mxRubberband.isActive, execute
 - Adds mxPrintPreview.appendGraph, addPageBreak, closeDocument
 - Adds optional name for mxConnectionConstraint

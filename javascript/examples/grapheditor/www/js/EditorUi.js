@@ -2306,6 +2306,22 @@ EditorUi.prototype.resetScrollbars = function()
 				var pad = graph.getPagePadding();
 				graph.container.scrollTop = Math.floor(pad.y - this.editor.initialTopSpacing);
 				graph.container.scrollLeft = Math.floor(Math.min(pad.x, (graph.container.scrollWidth - graph.container.clientWidth) / 2));
+
+				// Scrolls graph to visible area
+				var bounds = graph.getGraphBounds();
+				
+				if (bounds.width > 0 && bounds.height > 0)
+				{
+					if (bounds.x > graph.container.scrollLeft + graph.container.clientWidth - 60)
+					{
+						graph.container.scrollLeft = Math.min(bounds.x + bounds.width - graph.container.clientWidth, bounds.x - 10);
+					}
+					
+					if (bounds.y > graph.container.scrollTop + graph.container.clientHeight - 40)
+					{
+						graph.container.scrollTop = Math.min(bounds.y + bounds.height - graph.container.clientHeight, bounds.y - 10);
+					}
+				}
 			}
 			else
 			{
