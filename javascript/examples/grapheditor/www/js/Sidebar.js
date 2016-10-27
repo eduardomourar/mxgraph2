@@ -3359,8 +3359,6 @@ Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ig
 {
 	scale = (scale != null) ? scale : 1;
 	
-	console.log(id, customFns, this.addStencilsToIndex);
-
 	if (this.addStencilsToIndex)
 	{
 		// LATER: Handle asynchronous loading dependency
