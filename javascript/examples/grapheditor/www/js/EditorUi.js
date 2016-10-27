@@ -2354,6 +2354,47 @@ EditorUi.prototype.resetScrollbars = function()
 /**
  * Loads the stylesheet for this graph.
  */
+EditorUi.prototype.setPageVisible = function(value)
+{
+	var graph = this.editor.graph;
+	var hasScrollbars = mxUtils.hasScrollbars(graph.container);
+	var tx = 0;
+	var ty = 0;
+	
+	if (hasScrollbars)
+	{
+		tx = graph.view.translate.x * graph.view.scale - graph.container.scrollLeft;
+		ty = graph.view.translate.y * graph.view.scale - graph.container.scrollTop;
+	}
+	
+	graph.pageVisible = value;
+	graph.pageBreaksVisible = value; 
+	graph.preferPageSize = value;
+	graph.view.validateBackground();
+
+	// Workaround for possible handle offset
+	if (hasScrollbars)
+	{
+		var cells = graph.getSelectionCells();
+		graph.clearSelection();
+		graph.setSelectionCells(cells);
+	}
+	
+	// Calls updatePageBreaks
+	graph.sizeDidChange();
+	
+	if (hasScrollbars)
+	{
+		graph.container.scrollLeft = graph.view.translate.x * graph.view.scale - tx;
+		graph.container.scrollTop = graph.view.translate.y * graph.view.scale - ty;
+	}
+	
+	this.fireEvent(new mxEventObject('pageViewChanged'));
+};
+
+/**
+ * Loads the stylesheet for this graph.
+ */
 EditorUi.prototype.setBackgroundColor = function(value)
 {
 	this.editor.graph.background = value;

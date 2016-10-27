@@ -680,39 +680,7 @@ Actions.prototype.init = function()
 	action.setSelectedCallback(function() { return graph.scrollbars; });
 	action = this.addAction('pageView', mxUtils.bind(this, function()
 	{
-		var hasScrollbars = mxUtils.hasScrollbars(graph.container);
-		var tx = 0;
-		var ty = 0;
-		
-		if (hasScrollbars)
-		{
-			tx = graph.view.translate.x * graph.view.scale - graph.container.scrollLeft;
-			ty = graph.view.translate.y * graph.view.scale - graph.container.scrollTop;
-		}
-		
-		graph.pageVisible = !graph.pageVisible;
-		graph.pageBreaksVisible = graph.pageVisible; 
-		graph.preferPageSize = graph.pageBreaksVisible;
-		graph.view.validateBackground();
-
-		// Workaround for possible handle offset
-		if (hasScrollbars)
-		{
-			var cells = graph.getSelectionCells();
-			graph.clearSelection();
-			graph.setSelectionCells(cells);
-		}
-		
-		// Calls updatePageBreaks
-		graph.sizeDidChange();
-		
-		if (hasScrollbars)
-		{
-			graph.container.scrollLeft = graph.view.translate.x * graph.view.scale - tx;
-			graph.container.scrollTop = graph.view.translate.y * graph.view.scale - ty;
-		}
-		
-		ui.fireEvent(new mxEventObject('pageViewChanged'));
+		ui.setPageVisible(!graph.pageVisible);
 	}));
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.pageVisible; });
