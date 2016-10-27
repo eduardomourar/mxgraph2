@@ -34,6 +34,7 @@ mkdir tmp
 unzip mxgraph-distro.zip -d tmp
 git clone git@github.com:jgraph/mxgraph.git
 cp mxgraph/README.md tmp/mxgraph
+cp mxgraph/LICENSE tmp/mxgraph
 cd tmp/mxgraph/javascript/
 mv src/js/mxClient.js mxClient.min.js
 mv debug/js/mxClient.js .
@@ -57,7 +58,7 @@ echo "Updating mxgraph-js on github..."
 git clone git@github.com:jgraph/mxgraph-js.git
 sed "s/@VERSION@/$DOTVERSION/" $BUILD/../etc/build/package.json > mxgraph-js/package.json
 cp tmp/mxgraph/ChangeLog mxgraph-js
-cp tmp/mxgraph/license.txt mxgraph-js
+cp tmp/mxgraph/LICENSE mxgraph-js
 cp -rf tmp/mxgraph/javascript mxgraph-js
 cd mxgraph-js
 git add .
