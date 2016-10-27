@@ -681,15 +681,18 @@ mxPrintPreview.prototype.addPageBreak = function(doc)
  */
 mxPrintPreview.prototype.closeDocument = function()
 {
-	var doc = this.wnd.document;
-	
-	this.writePostfix(doc);
-	doc.writeln('</body>');
-	doc.writeln('</html>');
-	doc.close();
-	
-	// Removes all event handlers in the print output
-	mxEvent.release(doc.body);
+	if (this.wnd != null)
+	{
+		var doc = this.wnd.document;
+		
+		this.writePostfix(doc);
+		doc.writeln('</body>');
+		doc.writeln('</html>');
+		doc.close();
+		
+		// Removes all event handlers in the print output
+		mxEvent.release(doc.body);
+	}
 };
 
 /**
