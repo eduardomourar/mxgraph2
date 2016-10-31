@@ -681,7 +681,7 @@ mxPrintPreview.prototype.addPageBreak = function(doc)
  */
 mxPrintPreview.prototype.closeDocument = function()
 {
-	if (this.wnd != null)
+	if (this.wnd != null && this.wnd.document != null)
 	{
 		var doc = this.wnd.document;
 		
