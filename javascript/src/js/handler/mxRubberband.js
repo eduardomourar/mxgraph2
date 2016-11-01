@@ -292,7 +292,10 @@ mxRubberband.prototype.isActive = function(sender, me)
  */
 mxRubberband.prototype.mouseUp = function(sender, me)
 {
-	if (this.isActive())
+	var active = this.isActive();
+	this.reset();
+	
+	if (active)
 	{
 		this.execute(me.getEvent());
 		me.consume();
@@ -307,7 +310,6 @@ mxRubberband.prototype.mouseUp = function(sender, me)
  */
 mxRubberband.prototype.execute = function(evt)
 {
-	this.reset();
 	var rect = new mxRectangle(this.x, this.y, this.width, this.height);
 	this.graph.selectRegion(rect, evt);
 };
