@@ -621,7 +621,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	}
 	else
 	{
-		cross.style.top = '2px';
+		cross.style.top = '1px';
 	}
 
 	// Needed to block event transparency in IE
@@ -676,7 +676,22 @@ Sidebar.prototype.addSearchPalette = function(expand)
 			child = next;
 		}
 	});
-	
+		
+	mxEvent.addListener(cross, 'click', function()
+	{
+		if (cross.getAttribute('src') == Dialog.prototype.closeImage)
+		{
+			cross.setAttribute('src', Sidebar.prototype.searchImage);
+			cross.setAttribute('title', mxResources.get('search'));
+			button.style.display = 'none';
+			input.value = '';
+			searchTerm = '';
+			clearDiv();
+		}
+
+		input.focus();
+	});
+
 	find = mxUtils.bind(this, function()
 	{
 		// Shows 4 rows (minimum 4 results)
@@ -776,19 +791,28 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	mxEvent.addListener(input, 'focus', function()
 	{
 		input.style.paddingRight = '';
-		cross.style.display = 'none';
 	});
 	
 	mxEvent.addListener(input, 'blur', function()
 	{
 		input.style.paddingRight = '20px';
-		cross.style.display = '';
 	});
 
 	input.style.paddingRight = '20px';
 	
 	mxEvent.addListener(input, 'keyup', mxUtils.bind(this, function(evt)
 	{
+		if (input.value == '')
+		{
+			cross.setAttribute('src', Sidebar.prototype.searchImage);
+			cross.setAttribute('title', mxResources.get('search'));
+		}
+		else
+		{
+			cross.setAttribute('src', Dialog.prototype.closeImage);
+			cross.setAttribute('title', mxResources.get('reset'));
+		}
+		
 		if (input.value == '')
 		{
 			complete = true;
