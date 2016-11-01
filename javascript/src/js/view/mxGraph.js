@@ -3187,8 +3187,6 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 					
 					breaks[i] = pageBreak;
 				}
-				
-				console.log('here', i, pts);
 			}
 			
 			for (var i = count; i < breaks.length; i++)
