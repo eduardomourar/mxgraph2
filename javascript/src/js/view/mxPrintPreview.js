@@ -37,19 +37,19 @@
  * 
  * preview.getCoverPages = function(w, h)
  * {
- *   return [this.renderPage(w, h, mxUtils.bind(this, function(div)
+ *   return [this.renderPage(w, h, 0, 0, mxUtils.bind(this, function(div)
  *   {
  *     div.innerHTML = '<div style="position:relative;margin:4px;">Cover Page</p>'
  *   }))];
- * }
+ * };
  * 
  * preview.getAppendices = function(w, h)
  * {
- *   return [this.renderPage(w, h, mxUtils.bind(this, function(div)
+ *   return [this.renderPage(w, h, 0, 0, mxUtils.bind(this, function(div)
  *   {
  *     div.innerHTML = '<div style="position:relative;margin:4px;">Appendix</p>'
  *   }))];
- * }
+ * };
  * 
  * preview.open();
  * (end)
@@ -633,7 +633,7 @@ mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks, kee
 		{
 			for (var i = 0; i < apx.length; i++)
 			{
-				addPage(apx[i], i < apx.length);
+				addPage(apx[i], i < apx.length - 1);
 			}
 		}
 

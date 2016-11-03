@@ -1,3 +1,4 @@
+- Fixes trailing page break after appendices in mxPrintPreview
 - Resets default parent if root changes in mxGraph.processChange
 - Fixes version format in package.json in mxgraph-js repo
 - Fixes initial scrollbars for hidden content in grapheditor
