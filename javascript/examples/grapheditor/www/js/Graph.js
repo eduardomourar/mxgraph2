@@ -916,7 +916,7 @@ Graph.prototype.transparentBackground = true;
 Graph.prototype.defaultEdgeLength = 80;
 
 /**
- * Allows all values in fit.
+ * Disables move of bends/segments without selecting.
  */
 Graph.prototype.edgeMode = false;
 
