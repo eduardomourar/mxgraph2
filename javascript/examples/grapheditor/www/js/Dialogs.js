@@ -2773,6 +2773,13 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		evt.stopPropagation();
 		evt.preventDefault();
 	});
+	
+	// Workaround for "element not found" error in FF
+	mxEvent.addListener(div, 'drop', function(evt)
+	{
+		evt.stopPropagation();
+		evt.preventDefault();
+	});
 
 	var layerCount = null;
 	var selectionLayer = null;
