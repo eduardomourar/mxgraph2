@@ -4245,6 +4245,33 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * 
+		 */
+		Graph.prototype.getFreeInsertPoint = function()
+		{
+			var view = this.view;
+			var bds = this.getGraphBounds();
+			var pt = this.getInsertPoint();
+			
+			// Places at same x-coord and 2 grid sizes below existing graph
+			var x = this.snap(Math.max(pt.x, bds.x / view.scale - view.translate.x +
+				((bds.width == 0) ? this.gridSize : 0)));
+			var y = this.snap(Math.max(pt.y, (bds.y + bds.height) / view.scale - view.translate.y +
+				((bds.height == 0) ? 1 : 2) * this.gridSize));
+			
+			return new mxPoint(x, y);
+		};
+		
+		/**
+		 * Hook for subclassers to return true if the current insert point was defined
+		 * using a mouse hover event.
+		 */
+		Graph.prototype.isMouseInsertPoint = function()
+		{			
+			return false;
+		};
+		
+		/**
 		 * Adds a new label at the given position and returns the new cell. State is
 		 * an optional edge state to be used as the parent for the label. Vertices
 		 * are not allowed currently as states.
