@@ -1060,7 +1060,7 @@ Graph.prototype.getPageLayout = function()
 /**
  * Sanitizes the given HTML markup.
  */
-Graph.prototype.sanitizeHtml = function(value)
+Graph.prototype.sanitizeHtml = function(value, editing)
 {
 	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
 	// NOTE: Original minimized sanitizer was modified to support data URIs for images
@@ -4697,6 +4697,48 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			}
 		};
+				
+		/**
+		 * Inserts the given image at the cursor in a content editable text box using
+		 * the insertimage command on the document instance.
+		 */
+		Graph.prototype.insertLink = function(value)
+		{
+			if (value.length == 0)
+			{
+				document.execCommand('unlink', false);
+			}
+			else
+			{
+				// To find the new link, we create a list of all existing links first
+				var tmp = this.cellEditor.textarea.getElementsByTagName('a');
+				var oldLinks = [];
+				
+				for (var i = 0; i < tmp.length; i++)
+				{
+					oldLinks.push(tmp[i]);
+				}
+
+				// LATER: Fix inserting link/image in IE8/quirks after focus lost
+				document.execCommand('createlink', false, mxUtils.trim(value));
+
+				// Adds target="_blank" for the new link
+				var newLinks = this.cellEditor.textarea.getElementsByTagName('a');
+				
+				if (newLinks.length == oldLinks.length + 1)
+				{
+					// Inverse order in favor of appended links
+					for (var i = newLinks.length - 1; i >= 0; i--)
+					{
+						if (i == 0 || newLinks[i] != oldLinks[i - 1])
+						{
+							newLinks[i].setAttribute('target', '_blank');
+							break;
+						}
+					}
+				}
+			}
+		};
 		
 		/**
 		 * 
@@ -5623,7 +5665,7 @@ if (typeof mxVertexHandler != 'undefined')
 					content = mxUtils.replaceTrailingNewlines(content, '<div><br></div>');
 				}
 				
-			    content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '').replace(/&lt;br\s*.?&gt;/g, '<br>') : content);
+			    content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '').replace(/&lt;br\s*.?&gt;/g, '<br>') : content, true);
 				this.textarea.className = 'mxCellEditor mxPlainTextEditor';
 				
 				var size = mxConstants.DEFAULT_FONTSIZE;
@@ -5656,7 +5698,7 @@ if (typeof mxVertexHandler != 'undefined')
 			    	content = content.substring(0, content.length - 1);
 			    }
 			    
-				content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '<br/>') : content)
+				content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '<br/>') : content, true)
 				this.textarea.className = 'mxCellEditor geContentEditable';
 				
 				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
@@ -5788,7 +5830,7 @@ if (typeof mxVertexHandler != 'undefined')
 					result = result.replace(/\n/g, '<br/>');
 				}
 				
-				result = this.graph.sanitizeHtml(result);
+				result = this.graph.sanitizeHtml(result, true);
 				
 				return result;
 			}
@@ -5803,7 +5845,7 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 			else
 			{
-				var result = this.graph.sanitizeHtml(this.textarea.innerHTML);
+				var result = this.graph.sanitizeHtml(this.textarea.innerHTML, true);
 	
 				if (mxUtils.getValue(state.style, 'nl2Br', '1') == '1')
 				{
