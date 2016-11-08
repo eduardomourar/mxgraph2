@@ -5937,6 +5937,19 @@ if (typeof mxVertexHandler != 'undefined')
 			return new mxRectangle(0, 0, (state.text == null) ? 30 :  state.text.size * scale + 20, 30);
 		};
 		
+		// Hold alt to ignore drop target
+		var mxGraphHandlerMoveCells = mxGraphHandler.prototype.moveCells;
+		
+		mxGraphHandler.prototype.moveCells = function(cells, dx, dy, clone, target, evt)
+		{
+			if (mxEvent.isAltDown(evt))
+			{
+				target = null;
+			}
+			
+			mxGraphHandlerMoveCells.apply(this, arguments);
+		};
+		
 		/**
 		 * Hints on handlers
 		 */

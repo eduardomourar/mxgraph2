@@ -1970,7 +1970,9 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInse
 			{
 				graph.stopEditing();
 				
-				var validDropTarget = (target != null) ? graph.isValidDropTarget(target, cells, evt) : false;
+				// Holding alt while mouse is released ignores drop target
+				var validDropTarget = (target != null && !mxEvent.isAltDown(evt)) ?
+					graph.isValidDropTarget(target, cells, evt) : false;
 				var select = null;
 
 				if (target != null && !validDropTarget)
