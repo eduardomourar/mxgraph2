@@ -2780,7 +2780,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		evt.preventDefault();
 	});
 	
-	// Workaround for "element not found" error in FF
+	// Workaround for "no element found" error in FF
 	mxEvent.addListener(div, 'drop', function(evt)
 	{
 		evt.stopPropagation();
