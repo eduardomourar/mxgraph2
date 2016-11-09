@@ -4382,7 +4382,8 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 
 		/**
-		 * Adds event handler for links and lightbox.
+		 * Adds a handler for clicking on shapes with links. This replaces all links in labels
+		 * as a side-effect and adds a target=_blank attribute if required.
 		 */
 		Graph.prototype.addClickHandler = function(highlight, beforeClick, onClick)
 		{
