@@ -47,16 +47,11 @@
 						
 						var data = image.getAttribute('src');
 						
-						if (data.indexOf('data:image/svg+xml;') == 0)
-						{
-							iframe.contentWindow.postMessage(JSON.stringify({action: 'load', autosave: 1, saveAndExit: '1',
-								autosave: 1, xml: data, title: 'Optional Title'}), '*');
-						}
-						else
-						{
-							iframe.contentWindow.postMessage(JSON.stringify({action: 'load', autosave: 1, saveAndExit: '1',
-								xmlpng: data, modified: 'unsavedChanges', title: 'Optional Title'}), '*');
-						}
+						iframe.contentWindow.postMessage(JSON.stringify({action: 'load', autosave: 1,
+							saveAndExit: '1', modified: 'unsavedChanges', xml: data, title: 'Title'}), '*');
+						
+// 						iframe.contentWindow.postMessage(JSON.stringify({action: 'draft',
+// 							data: data, name: 'Optional Title'}), '*');
 						
 						filetype.style.display = '';
 						status.style.display = 'none';
