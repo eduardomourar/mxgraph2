@@ -943,19 +943,23 @@ mxGraphHandler.prototype.shouldRemoveCellsFromParent = function(parent, cells, e
 	if (this.graph.getModel().isVertex(parent))
 	{
 		var pState = this.graph.getView().getState(parent);
-		var pt = mxUtils.convertPoint(this.graph.container,
-			mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-		var alpha = mxUtils.toRadians(mxUtils.getValue(pState.style, mxConstants.STYLE_ROTATION) || 0);
 		
-		if (alpha != 0)
+		if (pState != null)
 		{
-			var cos = Math.cos(-alpha);
-			var sin = Math.sin(-alpha);
-			var cx = new mxPoint(pState.getCenterX(), pState.getCenterY());
-			pt = mxUtils.getRotatedPoint(pt, cos, sin, cx);
-		}
+			var pt = mxUtils.convertPoint(this.graph.container,
+				mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+			var alpha = mxUtils.toRadians(mxUtils.getValue(pState.style, mxConstants.STYLE_ROTATION) || 0);
+			
+			if (alpha != 0)
+			{
+				var cos = Math.cos(-alpha);
+				var sin = Math.sin(-alpha);
+				var cx = new mxPoint(pState.getCenterX(), pState.getCenterY());
+				pt = mxUtils.getRotatedPoint(pt, cos, sin, cx);
+			}
 		
-		return pState != null && !mxUtils.contains(pState, pt.x, pt.y);
+			return !mxUtils.contains(pState, pt.x, pt.y);
+		}
 	}
 	
 	return false;
