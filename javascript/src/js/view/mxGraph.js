@@ -8987,8 +8987,7 @@ mxGraph.prototype.getVerticalAlign = function(state)
 {
 	return (state != null && state.style != null) ?
 		(state.style[mxConstants.STYLE_VERTICAL_ALIGN] ||
-		mxConstants.ALIGN_MIDDLE ):
-		null;
+		mxConstants.ALIGN_MIDDLE) : null;
 };
 
 /**
