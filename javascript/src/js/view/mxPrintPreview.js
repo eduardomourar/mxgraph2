@@ -674,10 +674,9 @@ mxPrintPreview.prototype.addPageBreak = function(doc)
 };
 
 /**
- * Function: writeHead
+ * Function: closeDocument
  * 
- * Writes the HEAD section into the given document, without the opening
- * and closing HEAD tags.
+ * Writes the closing tags for body and page after calling <writePostfix>.
  */
 mxPrintPreview.prototype.closeDocument = function()
 {
