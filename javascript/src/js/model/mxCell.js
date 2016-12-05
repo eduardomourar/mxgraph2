@@ -737,8 +737,8 @@ mxCell.prototype.hasAttribute = function(name)
 	var userObject = this.getValue();
 	
 	return (userObject != null &&
-		userObject.nodeType == mxConstants.NODETYPE_ELEMENT) ?
-		userObject.hasAttribute(name) : false;
+		userObject.nodeType == mxConstants.NODETYPE_ELEMENT && userObject.hasAttribute) ?
+		userObject.hasAttribute(name) : userObject.getAttribute(name) != null;
 };
 
 /**
