@@ -1709,7 +1709,8 @@ mxGraph.prototype.init = function(container)
 	// mode if no initial graph displayed or no label for shape defined
 	if (document.documentMode == 8)
 	{
-		container.insertAdjacentHTML('beforeend', '<v:group style="DISPLAY: none;"></v:group>');
+		container.insertAdjacentHTML('beforeend', '<' + mxClient.VML_PREFIX + ':group' +
+			' style="DISPLAY: none;"></' + mxClient.VML_PREFIX + ':group>');
 	}
 };
 
