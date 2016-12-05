@@ -283,7 +283,7 @@ var mxClient =
 		// Workaround for Operation Aborted in IE6 if base tag is used in head
 		if (mxClient.IS_IE6)
 		{
-			doc.write('<link rel="'+rel+'" href="'+href+'" charset="ISO-8859-1" type="text/css"/>');
+			doc.write('<link rel="' + rel + '" href="' + href + '" charset="UTF-8" type="text/css"/>');
 		}
 		else
 		{	
@@ -291,7 +291,7 @@ var mxClient =
 			
 			link.setAttribute('rel', rel);
 			link.setAttribute('href', href);
-			link.setAttribute('charset', 'ISO-8859-1');
+			link.setAttribute('charset', 'UTF-8');
 			link.setAttribute('type', 'text/css');
 			
 			var head = doc.getElementsByTagName('head')[0];
