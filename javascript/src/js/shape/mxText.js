@@ -573,11 +573,9 @@ mxText.prototype.updateBoundingBox = function()
 		}
 
 		if (ow != null && oh != null)
-		{
-			var x0 = this.bounds.x + this.margin.x * ow;
-			var y0 = this.bounds.y + this.margin.y * oh;
-			
-			this.boundingBox = new mxRectangle(x0, y0, ow, oh);
+		{	
+			this.boundingBox = new mxRectangle(this.bounds.x,
+				this.bounds.y, ow, oh);
 		}
 	}
 	else
@@ -590,11 +588,15 @@ mxText.prototype.updateBoundingBox = function()
 	{
 		if (rot != 0)
 		{
-			this.unrotatedBoundingBox = mxRectangle.fromRectangle(this.boundingBox);
-			var bbox = mxUtils.getBoundingBox(this.boundingBox, rot);
+			var bbox = mxUtils.getBoundingBox(new mxRectangle(
+				this.margin.x * this.boundingBox.width,
+				this.margin.y * this.boundingBox.height,
+				this.boundingBox.width, this.boundingBox.height),
+				rot, new mxPoint(0, 0));
 			
-			this.boundingBox.x = bbox.x;
-			this.boundingBox.y = bbox.y;
+			// Accounts for pre-rotated x and y
+			this.boundingBox.x += bbox.x;
+			this.boundingBox.y += bbox.y;
 			
 			if (!mxClient.IS_QUIRKS)
 			{
@@ -604,7 +606,8 @@ mxText.prototype.updateBoundingBox = function()
 		}
 		else
 		{
-			this.unrotatedBoundingBox = null;
+			this.boundingBox.x += this.margin.x * this.boundingBox.width;
+			this.boundingBox.y += this.margin.y * this.boundingBox.height;
 		}
 	}
 };

@@ -1,3 +1,4 @@
+- Fixes bounding box for rotated text, removes unrotatedBoundingBox
 - Fixes default alignment in mxText.resetStyles
 - Uses UTF-8 charset in mxClient.link
 - Adds fallback for missing function in mxCell.hasAttribute
