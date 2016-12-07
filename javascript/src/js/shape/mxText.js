@@ -475,19 +475,17 @@ mxText.prototype.updateBoundingBox = function()
 					if (typeof(this.value) == 'string' && mxUtils.trim(this.value) == 0)
 					{
 						this.boundingBox = null;
-						
-						return;
 					}
-					
-					if (b.width == 0 && b.height == 0)
+					else if (b.width == 0 && b.height == 0)
 					{
 						this.boundingBox = null;
-						
-						return;
+					}
+					else
+					{
+						this.boundingBox = new mxRectangle(b.x, b.y, b.width, b.height);
 					}
 					
-					this.boundingBox = new mxRectangle(b.x, b.y, b.width, b.height);
-					rot = 0;
+					return;
 				}
 				catch (e)
 				{
@@ -578,36 +576,32 @@ mxText.prototype.updateBoundingBox = function()
 				this.bounds.y, ow, oh);
 		}
 	}
-	else
-	{
-		this.boundingBox.x += this.margin.x * this.boundingBox.width;
-		this.boundingBox.y += this.margin.y * this.boundingBox.height;		
-	}
 
 	if (this.boundingBox != null)
 	{
 		if (rot != 0)
 		{
+			// Accounts for pre-rotated x and y
 			var bbox = mxUtils.getBoundingBox(new mxRectangle(
 				this.margin.x * this.boundingBox.width,
 				this.margin.y * this.boundingBox.height,
 				this.boundingBox.width, this.boundingBox.height),
 				rot, new mxPoint(0, 0));
 			
-			// Accounts for pre-rotated x and y
+			this.unrotatedBoundingBox = mxRectangle.fromRectangle(this.boundingBox);
+			this.unrotatedBoundingBox.x += this.margin.x * this.unrotatedBoundingBox.width;
+			this.unrotatedBoundingBox.y += this.margin.y * this.unrotatedBoundingBox.height;
+			
 			this.boundingBox.x += bbox.x;
 			this.boundingBox.y += bbox.y;
-			
-			if (!mxClient.IS_QUIRKS)
-			{
-				this.boundingBox.width = bbox.width;
-				this.boundingBox.height = bbox.height;
-			}
+			this.boundingBox.width = bbox.width;
+			this.boundingBox.height = bbox.height;
 		}
 		else
 		{
 			this.boundingBox.x += this.margin.x * this.boundingBox.width;
 			this.boundingBox.y += this.margin.y * this.boundingBox.height;
+			this.unrotatedBoundingBox = null;
 		}
 	}
 };

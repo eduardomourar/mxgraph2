@@ -6595,7 +6595,7 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			if (model.isEdge(parent) && geo != null && geo.relative && state.width < 2 && state.height < 2 && state.text != null && state.text.boundingBox != null)
 			{
-				var bbox = state.text.boundingBox;
+				var bbox = state.text.unrotatedBoundingBox || state.text.boundingBox;
 				
 				return new mxRectangle(Math.round(bbox.x), Math.round(bbox.y), Math.round(bbox.width), Math.round(bbox.height));
 			}
