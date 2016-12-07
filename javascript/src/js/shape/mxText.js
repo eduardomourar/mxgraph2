@@ -65,8 +65,8 @@ function mxText(value, bounds, align, valign, color,
 	this.value = value;
 	this.bounds = bounds;
 	this.color = (color != null) ? color : 'black';
-	this.align = (align != null) ? align : '';
-	this.valign = (valign != null) ? valign : '';
+	this.align = (align != null) ? align : mxConstants.ALIGN_CENTER;
+	this.valign = (valign != null) ? valign : mxConstants.ALIGN_MIDDLE;
 	this.family = (family != null) ? family : mxConstants.DEFAULT_FONTFAMILY;
 	this.size = (size != null) ? size : mxConstants.DEFAULT_FONTSIZE;
 	this.fontStyle = (fontStyle != null) ? fontStyle : mxConstants.DEFAULT_FONTSTYLE;
@@ -363,8 +363,8 @@ mxText.prototype.resetStyles = function()
 	mxShape.prototype.resetStyles.apply(this, arguments);
 	
 	this.color = 'black';
-	this.align = '';
-	this.valign = '';
+	this.align = mxConstants.ALIGN_CENTER;
+	this.valign = mxConstants.ALIGN_MIDDLE;
 	this.family = mxConstants.DEFAULT_FONTFAMILY;
 	this.size = mxConstants.DEFAULT_FONTSIZE;
 	this.fontStyle = mxConstants.DEFAULT_FONTSTYLE;
@@ -410,6 +410,7 @@ mxText.prototype.apply = function(state)
 		this.background = mxUtils.getValue(this.style, mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, this.background);
 		this.border = mxUtils.getValue(this.style, mxConstants.STYLE_LABEL_BORDERCOLOR, this.border);
 		this.textDirection = mxUtils.getValue(this.style, mxConstants.STYLE_TEXT_DIRECTION, mxConstants.DEFAULT_TEXT_DIRECTION);
+		this.opacity = mxUtils.getValue(this.style, mxConstants.STYLE_TEXT_OPACITY, 100);
 		this.updateMargin();
 	}
 	
