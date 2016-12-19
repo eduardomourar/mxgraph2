@@ -36,10 +36,23 @@
 			{
 				if (evt.data.length > 0)
 				{
-					var msg = JSON.parse(evt.data);
-					console.log('msg', msg);
+					var msg = null;
 					
-					if (msg.event == 'init')
+					try
+					{
+						msg = JSON.parse(evt.data);
+					}
+					catch (e)
+					{
+						// ignore
+					}
+				
+					if (msg == null)
+					{
+						// Ignore
+						return;
+					}
+					else if (msg.event == 'init')
 					{
 						// Shows template dialog in editor
 // 						iframe.contentWindow.postMessage(JSON.stringify({action: 'template',
