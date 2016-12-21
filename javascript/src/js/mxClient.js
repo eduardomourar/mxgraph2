@@ -225,9 +225,9 @@ var mxClient =
 	/**
 	 * Variable: IS_POINTER
 	 * 
-	 * True if this device supports Microsoft pointer events.
+	 * True if this device supports Microsoft pointer events (always false on Macs).
 	 */
-  	IS_POINTER: window.PointerEvent != null,
+  	IS_POINTER: window.PointerEvent != null && !(navigator.appVersion.indexOf('Mac') > 0),
 
 	/**
 	 * Variable: IS_LOCAL

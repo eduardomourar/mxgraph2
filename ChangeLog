@@ -1,3 +1,4 @@
+- Fixes mxClient.IS_POINTER for Chrome on Mac
 - Fixes bounding box for rotated text
 - Fixes default alignment in mxText.resetStyles
 - Uses UTF-8 charset in mxClient.link
