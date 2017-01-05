@@ -12633,7 +12633,7 @@ mxGraph.prototype.fireMouseEvent = function(evtName, me, sender)
 /**
  * Function: consumeMouseEvent
  * 
- * Destroys the graph and all its resources.
+ * Consumes the given <mxMouseEvent> if it's a touchStart event.
  */
 mxGraph.prototype.consumeMouseEvent = function(evtName, me, sender)
 {
