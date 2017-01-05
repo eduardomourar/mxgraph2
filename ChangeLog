@@ -1,4 +1,5 @@
-- Removes wrapping in mxLog for performance reasons
+- Adds mxGraphHandler.consumeMouseEvent hook
+- Removes word wrap in mxLog for performance reasons
 - Fixes mxClient.IS_POINTER for Chrome on Mac
 - Fixes bounding box for rotated text
 - Fixes default alignment in mxText.resetStyles
