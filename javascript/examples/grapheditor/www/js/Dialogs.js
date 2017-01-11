@@ -2912,13 +2912,13 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			
 			mxEvent.addListener(ldiv, 'dragend', function(evt)
 			{
-				if (dragSource != null)
+				if (dragSource != null && dropIndex != null)
 				{
 					graph.addCell(child, graph.model.root, dropIndex);
-					dragSource = null;
-					dropIndex = null;
 				}
-				
+
+				dragSource = null;
+				dropIndex = null;
 				evt.stopPropagation();
 				evt.preventDefault();
 			});
