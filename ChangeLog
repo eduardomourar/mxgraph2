@@ -1,3 +1,4 @@
+- mxXmlRequest.simulate no longer adds form to DOM in Webkit
 - Adds workaround for repaint issues in mxWindow
 - Adds mxGraphHandler.consumeMouseEvent hook
 - Removes word wrap in mxLog for performance reasons
