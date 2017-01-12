@@ -456,7 +456,6 @@ mxXmlRequest.prototype.simulate = function(doc, target)
 	}
 	
 	form.submit();
-	console.log('form.parentNode', form.parentNode);
 	
 	if (form.parentNode != null)
 	{
