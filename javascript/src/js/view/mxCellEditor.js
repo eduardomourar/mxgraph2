@@ -263,6 +263,12 @@ mxCellEditor.prototype.init = function ()
 	this.textarea.className = 'mxCellEditor mxPlainTextEditor';
 	this.textarea.contentEditable = true;
 	
+	// Workaround for selection outside of DIV if height is 0
+	if (mxClient.IS_GC)
+	{
+		this.textarea.style.minHeight = '1em';
+	}
+	
 	this.installListeners(this.textarea);
 };
 
