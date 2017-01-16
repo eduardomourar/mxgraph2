@@ -1,0 +1,8 @@
+Build Instructions:
+
+1. Update VERSION and Changelog
+1. Tag the version and push
+2. ssh dev.jgraph.com
+3. rm -rf mxgraph2; git clone https://username@bitbucket.org/jgraph/mxgraph2.git; cd mxgraph2; git checkout mxgraph-3_7_0_0; chmod 777 build.sh; ./build.sh
+4. build/deploy.sh
+5. Check https://www.jgraph.com/mxchangelog.html
