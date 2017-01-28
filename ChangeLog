@@ -1,3 +1,4 @@
+- Fixes mxXmlRequest.simulate in Webkit
 - Adds HTML_SCALE, HTML_UNIT in mxGraphicsCanvas2D
 - Fixes repaint in mxConstraintHandler
 
