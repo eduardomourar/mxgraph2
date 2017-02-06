@@ -1,3 +1,4 @@
+- Fixes extendParent order for mxGraph.groupCells
 - Fixes linefeeds in mxUtils.extractTextWithWhitespace
 
 29-JAN-2017: 3.7.0.1

@@ -3881,12 +3881,12 @@ mxGraph.prototype.groupCells = function(group, border, cells)
 
 			// Adds the group into the parent
 			var index = this.model.getChildCount(parent);
-			this.cellsAdded([group], parent, index, null, null, false);
+			this.cellsAdded([group], parent, index, null, null, false, false, false);
 
 			// Adds the children into the group and moves
 			index = this.model.getChildCount(group);
-			this.cellsAdded(cells, group, index, null, null, false, false);
-			this.cellsMoved(cells, -bounds.x, -bounds.y, false, true);
+			this.cellsAdded(cells, group, index, null, null, false, false, false);
+			this.cellsMoved(cells, -bounds.x, -bounds.y, false, false, false);
 
 			// Resizes the group
 			this.cellsResized([group], [bounds], false);
@@ -4570,7 +4570,7 @@ mxGraph.prototype.addCells = function(cells, parent, index, source, target)
  * Adds the specified cells to the given parent. This method fires
  * <mxEvent.CELLS_ADDED> while the transaction is in progress.
  */
-mxGraph.prototype.cellsAdded = function(cells, parent, index, source, target, absolute, constrain)
+mxGraph.prototype.cellsAdded = function(cells, parent, index, source, target, absolute, constrain, extend)
 {
 	if (cells != null && parent != null && index != null)
 	{
@@ -4634,7 +4634,8 @@ mxGraph.prototype.cellsAdded = function(cells, parent, index, source, target, ab
 					}
 
 					// Extends the parent or constrains the child
-					if (this.isExtendParentsOnAdd(cells[i]) && this.isExtendParent(cells[i]))
+					if ((extend == null || extend) &&
+						this.isExtendParentsOnAdd(cells[i]) && this.isExtendParent(cells[i]))
 					{
 						this.extendParent(cells[i]);
 					}
