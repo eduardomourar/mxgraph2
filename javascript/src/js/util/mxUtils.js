@@ -863,8 +863,11 @@ var mxUtils =
 		// to match the plain text output
 	    var ignoreBr = false;
 	    var ret = [];
+
+	    // Known block elements for handling linefeeds (list is not complete)
+		var blocks = ['BLOCKQUOTE', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'OL', 'P', 'PRE', 'TABLE', 'UL'];
 	    
-	    for (var i = 0; elems[i]; i++)
+	    for (var i = 0; i < elems.length; i++)
 	    {
 	        var elem = elems[i];
 
@@ -876,10 +879,10 @@ var mxUtils =
         		{
         			break;
         		}
-	        	
+	        
 	        	// Only inserts a newline if the next element is not another text element
-	        	ret.push(elem.nodeValue + ((elem.nextSibling == null || elem.nextSibling.nodeType != 3) ? '\n' : ''));
-	            ignoreBr = true;
+	            ignoreBr = (elem.nextSibling != null && mxUtils.indexOf(blocks, elem.nextSibling.nodeName) >= 0);
+	        	ret.push(elem.nodeValue + (ignoreBr ? '\n' : ''));
 
 	        // Traverse everything else, except comment nodes
 	        }
@@ -889,7 +892,7 @@ var mxUtils =
 	        	if ((((mxClient.IS_IE || mxClient.IS_IE11) && elem.nodeName == 'P' && elem.innerHTML.length == 0)) ||
 	        		(!ignoreBr && elem.nodeName == 'BR') || (elem.nodeName == 'DIV' && elem.innerHTML == '<br>'))
 	        	{
-	        		ret.push('\n');
+        			ret.push('\n');
 	        	}
 	        	else
 	        	{	 
