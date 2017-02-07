@@ -1,4 +1,4 @@
-- Adds mxSvgCanvas.imageOffset option
+- Adds mxSvgCanvas2D.imageOffset option
 - Refactors link handling in grapheditor
 - Fixes extendParent order for mxGraph.groupCells
 - Fixes linefeeds in mxUtils.extractTextWithWhitespace
