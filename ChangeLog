@@ -1,7 +1,8 @@
+- Adds mxCellEditor.prepareTextarea for linefeeds in FF
+- Fixes linefeeds in mxUtils.extractTextWithWhitespace
 - Adds mxSvgCanvas2D.imageOffset option
 - Refactors link handling in grapheditor
 - Fixes extendParent order for mxGraph.groupCells
-- Fixes linefeeds in mxUtils.extractTextWithWhitespace
 
 29-JAN-2017: 3.7.0.1
 
