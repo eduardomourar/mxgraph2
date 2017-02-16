@@ -7325,8 +7325,15 @@ mxGraph.prototype.getBoundingBoxFromGeometry = function(cells, includeEdges)
 							}
 						};
 						
-						addPoint(geo.getTerminalPoint(true));
-						addPoint(geo.getTerminalPoint(false));
+						if (this.model.getTerminal(cells[i], true) == null)
+						{
+							addPoint(geo.getTerminalPoint(true));
+						}
+						
+						if (this.model.getTerminal(cells[i], false) == null)
+						{
+							addPoint(geo.getTerminalPoint(false));
+						}
 												
 						var pts = geo.points;
 						

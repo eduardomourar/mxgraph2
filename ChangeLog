@@ -1,3 +1,4 @@
+- Ignores connected terminals in mxGraph.getBoundingBoxFromGeometry
 - Adds mxCellEditor.prepareTextarea for linefeeds in FF
 - Fixes linefeeds in mxUtils.extractTextWithWhitespace
 - Adds mxSvgCanvas2D.imageOffset option
