@@ -12,9 +12,6 @@ DOTVERSION=`cat $BUILD/version.txt`
 # Replaces all dots with underscores
 VERSION=`cat $BUILD/version.txt | sed "s/\./_/g"`
 
-# Replaces last dot with dash
-NPMVERSION=`cat $BUILD/version.txt | sed "s/\.\([^.]*\)$/-\1/g"`
-
 cd $BUILD
 BUILD=`pwd`
 
@@ -62,7 +59,7 @@ cd ..
 echo
 echo "Updating mxgraph-js on github..."
 git clone git@github.com:jgraph/mxgraph-js.git
-sed "s/@VERSION@/$NPMVERSION/" $BUILD/../etc/build/package.json > mxgraph-js/package.json
+sed "s/@VERSION@/$DOTVERSION/" $BUILD/../etc/build/package.json > mxgraph-js/package.json
 cp tmp/mxgraph/ChangeLog mxgraph-js
 cp tmp/mxgraph/LICENSE mxgraph-js
 cp -rf tmp/mxgraph/javascript mxgraph-js
