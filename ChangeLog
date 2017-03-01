@@ -1,4 +1,5 @@
-- Adds handling for general case in  mxGraph.getCellValidationError
+- Fixes mxUtils.getOffset and getScrollOrigin for fixed elements
+- Adds handling for general case in mxGraph.getCellValidationError
 - Ignores connected terminals in mxGraph.getBoundingBoxFromGeometry
 - Adds mxCellEditor.prepareTextarea for linefeeds in FF
 - Fixes linefeeds in mxUtils.extractTextWithWhitespace

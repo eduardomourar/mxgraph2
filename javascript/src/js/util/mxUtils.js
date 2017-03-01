@@ -2495,7 +2495,19 @@ var mxUtils =
 		var offsetLeft = 0;
 		var offsetTop = 0;
 		
-		if (scrollOffset != null && scrollOffset)
+		// Ignores document scroll origin for fixed elements
+		var fixed = false;
+		var node = container;
+		var b = document.body;
+		var d = document.documentElement;
+
+		while (node != null && node != b && node != d && !fixed)
+		{
+			fixed = fixed || mxUtils.getCurrentStyle(node).position == 'fixed';
+			node = node.parentNode;
+		}
+		
+		if (!scrollOffset && !fixed)
 		{
 			var offset = mxUtils.getDocumentScrollOrigin(container.ownerDocument);
 			offsetLeft += offset.x;
@@ -2543,10 +2555,12 @@ var mxUtils =
 	 */
 	getScrollOrigin: function(node)
 	{
-		var b = document.body;
-		var d = document.documentElement;
-		var result = mxUtils.getDocumentScrollOrigin((node != null) ? node.ownerDocument : document);
-		
+		var doc = (node != null) ? node.ownerDocument : document;
+		var b = doc.body;
+		var d = doc.documentElement;
+		var result = new mxPoint();
+		var fixed = false;
+
 		while (node != null && node != b && node != d)
 		{
 			if (!isNaN(node.scrollLeft) && !isNaN(node.scrollTop))
@@ -2554,13 +2568,22 @@ var mxUtils =
 				result.x += node.scrollLeft;
 				result.y += node.scrollTop;
 			}
-			
+
+			fixed = fixed || mxUtils.getCurrentStyle(node).position == 'fixed';
 			node = node.parentNode;
+		}
+
+		if (!fixed)
+		{
+			var origin = mxUtils.getDocumentScrollOrigin(doc);
+
+			result.x += origin.x;
+			result.y += origin.y;
 		}
 		
 		return result;
 	},
-	
+
 	/**
 	 * Function: convertPoint
 	 * 
