@@ -8491,20 +8491,20 @@ mxGraph.prototype.getCellValidationError = function(cell)
 			var rule = this.multiplicities[i];
 			
 			if (rule.source && mxUtils.isNode(value, rule.type,
-				rule.attr, rule.value) && ((rule.max == 0 && outCount > 0) ||
-				(rule.min == 1 && outCount == 0) || (rule.max == 1 && outCount > 1)))
+				rule.attr, rule.value) && (outCount > rule.max ||
+				outCount < rule.min))
 			{
 				error += rule.countError + '\n';
 			}
 			else if (!rule.source && mxUtils.isNode(value, rule.type,
-					rule.attr, rule.value) && ((rule.max == 0 && inCount > 0) ||
-					(rule.min == 1 && inCount == 0) || (rule.max == 1 && inCount > 1)))	
+					rule.attr, rule.value) && (inCount > rule.max ||
+					inCount < rule.min))
 			{
 				error += rule.countError + '\n';
 			}
 		}
 	}
-	
+
 	return (error.length > 0) ? error : null;
 };
 
