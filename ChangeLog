@@ -1,3 +1,6 @@
+01-MAR-2017: 3.7.1
+
+- Uses semantic versioning
 - Fixes mxUtils.getOffset and getScrollOrigin for fixed elements
 - Adds handling for general case in mxGraph.getCellValidationError
 - Ignores connected terminals in mxGraph.getBoundingBoxFromGeometry
