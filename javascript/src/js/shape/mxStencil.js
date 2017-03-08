@@ -49,7 +49,7 @@
  * line tracing of the outside of the shape, but not always.
  * 
  * Any stroke, fill or fillstroke of a background must be the first element of the
- * foreground element, they must not used within *background*. If the background
+ * foreground element, they must not be used within *background*. If the background
  * is empty, this is not required.
  * 
  * Because the background cannot have any fill or stroke, it can contain only one
