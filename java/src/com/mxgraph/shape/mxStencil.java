@@ -536,7 +536,12 @@ public class mxStencil implements mxIShape
 		}
 		else if (name.equals("dashed"))
 		{
-			canvas.setDashed(node.getAttribute("dashed") == "1");
+			String dashed = node.getAttribute("dashed");
+			
+			if (dashed != null)
+			{
+				canvas.setDashed(dashed.equals("1"));
+			}
 		}
 		else if (name.equals("dashpattern"))
 		{
