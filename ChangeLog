@@ -1,4 +1,4 @@
-- Fixes handling of dashed tag in stencils for Java
+- Fixes dashed and strokewidth tag in stencils for Java
 - Fixes markup for same window for IE in mxPrintPreview
 
 01-MAR-2017: 3.7.1
