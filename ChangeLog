@@ -1,3 +1,4 @@
+- Fixes Graph.encodeCells for children of selected parents
 - Fixes possible NPE in mxUtils.getOffset/getScrollOrigin
 - Fixes dashed and strokewidth tag in stencils for Java
 - Fixes markup for same window for IE in mxPrintPreview
