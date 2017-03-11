@@ -4894,11 +4894,7 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			for (var i = 0; i < cells.length; i++)
 			{
-				// Avoids duplicate output of children for included parents
-				if (!dict.get(this.model.getParent(cells[i])))
-				{
-					model.add(parent, clones[i]);
-				}
+				model.add(parent, clones[i]);
 			}
 
 			return codec.encode(model);
