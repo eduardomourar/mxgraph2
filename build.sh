@@ -140,7 +140,6 @@ mv $DIR/javascript/source.zip $DIR/javascript/devel/
 find $DIR -name .cvsignore | xargs rm -rf
 
 echo "Generating distribution..."
-cp docs/mx_commercial_license.txt $DIR/license.txt
 cd build; zip 2>/dev/null -q -r mxgraph-distro.zip mxgraph/.classpath mxgraph/.project mxgraph/*; cd ..
 
 # Creates special distribution for China
