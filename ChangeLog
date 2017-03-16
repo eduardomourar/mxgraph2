@@ -1,3 +1,4 @@
+- Fixes selection of removed parents in grapheditor
 - Fixes Graph.distributeCells for child cells in groups
 - Fixes Graph.encodeCells for children of selected parents
 - Fixes possible NPE in mxUtils.getOffset/getScrollOrigin
