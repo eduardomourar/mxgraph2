@@ -601,7 +601,8 @@ if (mxClient.IS_VML)
 
 // If script is loaded via CommonJS, do not write <script> tags to the page
 // for dependencies. These are already included in the build.
-if (!(typeof module === 'object' && module.exports)) {
+if (!(typeof module === 'object' && module.exports))
+{
 	mxClient.include(mxClient.basePath+'/js/util/mxLog.js');
 	mxClient.include(mxClient.basePath+'/js/util/mxObjectIdentity.js');
 	mxClient.include(mxClient.basePath+'/js/util/mxDictionary.js');
