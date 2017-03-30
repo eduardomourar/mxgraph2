@@ -3,3 +3,7 @@ mxgraph-dotnet.*suo
 classes
 bin
 target
+node_modules
+javascript/dist
+.jshintrc
+javascript/examples/**/dist
