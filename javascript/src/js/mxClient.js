@@ -599,10 +599,12 @@ if (mxClient.IS_VML)
 	}
 }
 
+// PREPROCESSOR-REMOVE-START
 // If script is loaded via CommonJS, do not write <script> tags to the page
 // for dependencies. These are already included in the build.
 if (!(typeof module === 'object' && module.exports))
 {
+// PREPROCESSOR-REMOVE-END
 	mxClient.include(mxClient.basePath+'/js/util/mxLog.js');
 	mxClient.include(mxClient.basePath+'/js/util/mxObjectIdentity.js');
 	mxClient.include(mxClient.basePath+'/js/util/mxDictionary.js');
@@ -743,4 +745,6 @@ if (!(typeof module === 'object' && module.exports))
 	mxClient.include(mxClient.basePath+'/js/io/mxDefaultToolbarCodec.js');
 	mxClient.include(mxClient.basePath+'/js/io/mxDefaultPopupMenuCodec.js');
 	mxClient.include(mxClient.basePath+'/js/io/mxEditorCodec.js');
+// PREPROCESSOR-REMOVE-START
 }
+// PREPROCESSOR-REMOVE-END

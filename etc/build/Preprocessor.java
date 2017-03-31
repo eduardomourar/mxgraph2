@@ -9,26 +9,23 @@ import java.util.Set;
 
 public class Preprocessor
 {
-	public static StringBuffer processIncludes(String filename,
-			StringBuffer buffer, boolean resolve, String path,
-			Set<String> excludes) throws IOException
+	public static StringBuffer processIncludes(String filename, StringBuffer buffer, boolean resolve, String path, Set<String> excludes)
+			throws IOException
 	{
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				new FileInputStream(filename)));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
 		String tmp = reader.readLine();
+		boolean ignoreLine = false;
 
 		while (tmp != null)
 		{
-			if (resolve
-					&& tmp.trim()
-							.indexOf("mxClient.include(mxClient.basePath+") == 0)
+			if (resolve && tmp.trim().indexOf("mxClient.include(mxClient.basePath+") == 0)
 			{
 				int index = tmp.indexOf("'");
 				int end = tmp.indexOf("'", index + 1);
 				String fname = tmp.substring(index + 1, end);
-				
+
 				if (excludes == null || !excludes.contains(fname))
-				{				
+				{
 					processIncludes(path + fname, buffer, false, path, excludes);
 				}
 				else
@@ -36,7 +33,15 @@ public class Preprocessor
 					System.out.println(fname + " ignored");
 				}
 			}
-			else
+			else if (tmp.trim().indexOf("// PREPROCESSOR-REMOVE-START") == 0)
+			{
+				ignoreLine = true;
+			}
+			else if (tmp.trim().indexOf("// PREPROCESSOR-REMOVE-END") == 0)
+			{
+				ignoreLine = false;
+			}
+			else if (!ignoreLine)
 			{
 				buffer.append(tmp + "\n");
 			}
@@ -53,8 +58,7 @@ public class Preprocessor
 	{
 		HashSet<String> result = new HashSet<String>();
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				new FileInputStream(filename)));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
 		String tmp = reader.readLine();
 
 		while (tmp != null)
@@ -85,11 +89,9 @@ public class Preprocessor
 
 			try
 			{
-				Set<String> excludes = (excludeFile != null) ? parseExcludes(excludeFile)
-						: null;
+				Set<String> excludes = (excludeFile != null) ? parseExcludes(excludeFile) : null;
 				FileWriter fw = new FileWriter(outputFile);
-				fw.write(processIncludes(inputFile, new StringBuffer(), true,
-						path, excludes).toString());
+				fw.write(processIncludes(inputFile, new StringBuffer(), true, path, excludes).toString());
 				fw.flush();
 				fw.close();
 				System.out.println(outputFile + " written");
@@ -104,8 +106,7 @@ public class Preprocessor
 		}
 		else
 		{
-			System.out
-					.println("Usage: java Preprocessor inputfile outputfile excludefile");
+			System.out.println("Usage: java Preprocessor inputfile outputfile excludefile");
 
 			System.exit(1);
 		}
