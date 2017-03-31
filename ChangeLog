@@ -1,5 +1,3 @@
-30-MAR-2017: 3.7.2
-
 - Adds automatic NPM release
 - Adds optional type argument in mxForm.addText
 - Fixes selection of removed parents in grapheditor
