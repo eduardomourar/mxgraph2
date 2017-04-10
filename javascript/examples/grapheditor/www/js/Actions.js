@@ -966,6 +966,8 @@ Actions.prototype.init = function()
 		
 		if (cells != null)
 		{
+			cells = graph.addAllEdges(cells);
+			
 			graph.getModel().beginUpdate();
 			try
 			{

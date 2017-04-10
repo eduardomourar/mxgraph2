@@ -1528,7 +1528,7 @@ ArrangePanel.prototype.addGroupOps = function(div)
 		div.appendChild(btn);
 		count++;
 	}
-	else if (ss.edges.length > 0)
+	else if (graph.getSelectionCount() > 0)
 	{
 		if (count > 0)
 		{

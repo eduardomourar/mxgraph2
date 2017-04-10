@@ -1003,9 +1003,11 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 		
 		cell = graph.getSelectionCell();
 		var state = graph.view.getState(cell);
-		
+
 		if (state != null)
 		{
+			var hasWaypoints = false;
+			
 			if (graph.getSelectionCount() == 1)
 			{
 				this.addMenuItems(menu, ['toFront', 'toBack', '-'], null, evt);
@@ -1034,13 +1036,15 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 	
 				// Adds reset waypoints option if waypoints exist
 				var geo = graph.getModel().getGeometry(cell);
-				
-				if (geo != null && geo.points != null && geo.points.length > 0)
-				{
-					this.addMenuItems(menu, ['clearWaypoints'], null, evt);	
-				}
+				hasWaypoints = geo != null && geo.points != null && geo.points.length > 0;
 			}
 
+			if (graph.getSelectionCount() == 1 && (hasWaypoints || (graph.getModel().isVertex(cell) &&
+				graph.getModel().getEdgeCount(cell) > 0)))
+			{
+				this.addMenuItems(menu, ['clearWaypoints'], null, evt);
+			}
+			
 			if (graph.getSelectionCount() > 1)	
 			{
 				menu.addSeparator();
