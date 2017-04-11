@@ -992,7 +992,7 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 
 	}
 
-	if (graph.getSelectionCount() > 0)
+	if (!graph.isSelectionEmpty())
 	{
 		if (graph.getSelectionCount() == 1)
 		{
@@ -1007,11 +1007,7 @@ Menus.prototype.createPopupMenu = function(menu, cell, evt)
 		if (state != null)
 		{
 			var hasWaypoints = false;
-			
-			if (graph.getSelectionCount() == 1)
-			{
-				this.addMenuItems(menu, ['toFront', 'toBack', '-'], null, evt);
-			}
+			this.addMenuItems(menu, ['toFront', 'toBack', '-'], null, evt);
 
 			if (graph.getModel().isEdge(cell) && mxUtils.getValue(state.style, mxConstants.STYLE_EDGE, null) != 'entityRelationEdgeStyle' &&
 				mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null) != 'arrow')
