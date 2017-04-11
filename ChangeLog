@@ -1,3 +1,4 @@
+- Adds checks for swimlane rendering boundary cases
 - Fixes cloned start/end arrow in mxGraph.splitEdge
 - Removes mxShape.arrowStrokewidth, fixes mxCellHighlight for arrows
 - Adds automatic NPM release
