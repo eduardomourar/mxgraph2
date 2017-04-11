@@ -3604,10 +3604,24 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	
 	var keyHandlerGetFunction = keyHandler.getFunction;
 
+	// Alt+Shift+Keycode mapping to action
+	var altShiftActions = {67: this.actions.get('clearWaypoints')}; // Alt+Shift+C
+	
 	mxKeyHandler.prototype.getFunction = function(evt)
 	{
 		if (graph.isEnabled())
 		{
+			// TODO: Add alt modified state in core API, here are some specific cases
+			if (!graph.isSelectionEmpty() && mxEvent.isShiftDown(evt) && mxEvent.isAltDown(evt))
+			{
+				var action = altShiftActions[evt.keyCode];
+
+				if (action != null)
+				{
+					return action.funct;
+				}
+			}
+			
 			if (evt.keyCode == 9 && mxEvent.isAltDown(evt))
 			{
 				if (mxEvent.isShiftDown(evt))
