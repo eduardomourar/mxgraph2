@@ -73,7 +73,7 @@ module.exports = function (grunt) {
       examples: {
         entry: "./javascript/examples/webpack/src/anchors.js",
         output: {
-          path: "javascript/examples/webpack/dist",
+          path: path.join(__dirname, "javascript/examples/webpack/dist"),
           filename: "anchors.js"
         }
       }
