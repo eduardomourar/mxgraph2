@@ -85,7 +85,6 @@ rm -rf tmp
 # Update jgraphx on github
 echo
 echo "Updating jgraphx on github..."
-cd tmp-$date
 git clone git@github.com:jgraph/jgraphx.git
 cp $BUILD/jgraphx.zip .
 mv jgraphx/README.md .
