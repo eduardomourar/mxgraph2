@@ -51,7 +51,7 @@ cp 2>/dev/null docs/mxGraphUserManual.pdf $DIR/docs/
 
 # Copies Resources
 echo "Copying Resources..."
-cp -r 2>/dev/null ChangeLog $DIR
+cp -r 2>/dev/null ChangeLog $DIR/
 cp -r 2>/dev/null mxgraph-dotnet.sln $DIR/
 cp -r 2>/dev/null etc/build/.project $DIR/
 cp -r 2>/dev/null etc/build/.classpath $DIR/

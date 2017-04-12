@@ -34,16 +34,23 @@ mkdir tmp-$date
 cd tmp-$date
 cp $BUILD/mxgraph-distro.zip .
 mkdir tmp
-unzip mxgraph-distro.zip -d tmp
+unzip -qq mxgraph-distro.zip -d tmp
 git clone git@github.com:jgraph/mxgraph.git
+
+# Publish to NPM
 sed "s/@VERSION@/$DOTVERSION/" $BUILD/../etc/build/mxgraph-package.json > tmp/mxgraph/package.json
+cp -r 2>/dev/null $BUILD/../etc/build/Gruntfile.js tmp/mxgraph/
+npm publish tmp/mxgraph --access public
+rm -rf tmp/mxgraph/package.json
+rm -rf tmp/mxgraph/Gruntfile.js
+
 cp mxgraph/README.md tmp/mxgraph
 cp mxgraph/LICENSE tmp/mxgraph
 cd tmp/mxgraph/javascript/
 mv src/js/mxClient.js mxClient.min.js
 mv debug/js/mxClient.js .
 rm -rf debug
-unzip devel/source.zip
+unzip -qq devel/source.zip
 rm -rf devel
 cd -
 rm -rf mxgraph/*
@@ -84,7 +91,7 @@ cp $BUILD/jgraphx.zip .
 mv jgraphx/README.md .
 rm -rf jgraphx/*
 mv README.md jgraphx
-unzip -o jgraphx.zip
+unzip -qq -o jgraphx.zip
 cd jgraphx
 git add -A
 git commit -am "$DOTVERSION release"
