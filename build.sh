@@ -142,18 +142,6 @@ find $DIR -name .cvsignore | xargs rm -rf
 echo "Generating distribution..."
 cd build; zip 2>/dev/null -q -r mxgraph-distro.zip mxgraph/.classpath mxgraph/.project mxgraph/*; cd ..
 
-# Creates special distribution for China
-# NOTE: Source is no longer removed as of 28-AUG-2012
-#rm -rf $DIR/javascript/debug
-#rm -rf $DIR/javascript/devel
-mv $DIR/javascript/src/js/mxClient.js $DIR/javascript/src/js/mxClient2.js
-
-cat etc/build/china-header.txt $DIR/javascript/src/js/mxClient2.js >> $DIR/javascript/src/js/mxClient.js
-rm $DIR/javascript/src/js/mxClient2.js
-
-echo "Generating eval-china distribution"
-cd build; zip 2>/dev/null -q -r mxgraph-china.zip mxgraph/.classpath mxgraph/.project mxgraph/*; cd ..
-
 # Creates archive for open source JGraph 6+
 echo "Creating archive for open source Java distribution..."
 cd build

@@ -22,7 +22,6 @@ cp -v $BUILD/jgraphx-demo.jar $WEBROOT/demo/jgraphx/
 cp -v $BUILD/jgraphx.jnlp $WEBROOT/demo/jgraphx/
 cp -v $BUILD/jgraphx.zip $WEBROOT/downloads/jgraphx/archive/jgraphx-$VERSION.zip
 cp -v $BUILD/mxgraph-distro.zip $WEBROOT/downloads/mx2/mxgraph-$VERSION.zip
-cp -v $BUILD/mxgraph-china.zip $WEBROOT/downloads/mx-cn/mxgraph-china-$VERSION.zip
 cp -v $BUILD/ChangeLog $WEBROOT/
 
 # Update mxgraph on github

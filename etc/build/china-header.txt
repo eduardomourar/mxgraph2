@@ -1,5 +1,0 @@
-/*
-   版权所有 JGraph Ltd. http://www.mxgraph.com
-   成都奥知智能有限公司，JGraph Ltd.中国独家代理、技术伙伴 
-   http://www.ozintel.cn
-*/
