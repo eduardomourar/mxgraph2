@@ -18,7 +18,7 @@ public class Preprocessor
 
 		while (tmp != null)
 		{
-			if (resolve && tmp.trim().indexOf("mxClient.include(mxClient.basePath+") == 0)
+			if (resolve && tmp.trim().startsWith("mxClient.include(mxClient.basePath+"))
 			{
 				int index = tmp.indexOf("'");
 				int end = tmp.indexOf("'", index + 1);
@@ -33,11 +33,11 @@ public class Preprocessor
 					System.out.println(fname + " ignored");
 				}
 			}
-			else if (tmp.trim().indexOf("// PREPROCESSOR-REMOVE-START") == 0)
+			else if (tmp.trim().startsWith("// PREPROCESSOR-REMOVE-START"))
 			{
 				ignoreLine = true;
 			}
-			else if (tmp.trim().indexOf("// PREPROCESSOR-REMOVE-END") == 0)
+			else if (tmp.trim().startsWith("// PREPROCESSOR-REMOVE-END"))
 			{
 				ignoreLine = false;
 			}
