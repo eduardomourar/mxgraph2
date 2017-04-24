@@ -1,3 +1,5 @@
+- Fixes touch events in Chrome for hiding modal dialogs
+
 12-APR-2017: 3.7.2
 
 - Adds checks for swimlane rendering boundary cases
