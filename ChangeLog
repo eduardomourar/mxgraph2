@@ -1,3 +1,5 @@
+- Fixes mxCellHighlight for scaled arrows
+- Removes fix for cloned start/end arrow when splitting edge
 - Fixes touch events in Chrome for hiding modal dialogs
 
 12-APR-2017: 3.7.2
