@@ -116,7 +116,7 @@
 							console.log('data', temp);
 							close();
 						}
-						else if (temp != null)
+						else if (temp != null && !msg.modified)
 						{
 							iframe.contentWindow.postMessage(JSON.stringify({action: 'export',
 								format: format.value, xml: temp, spinKey: 'export'}), '*');
