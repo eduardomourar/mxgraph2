@@ -2803,13 +2803,21 @@ HoverIcons.prototype.drag = function(evt, x, y)
 /**
  *
  */
+HoverIcons.prototype.getStateAt = function(state, x, y)
+{
+	return this.graph.view.getState(this.graph.getCellAt(x, y));
+};
+
+/**
+ *
+ */
 HoverIcons.prototype.click = function(state, dir, me)
 {
 	var evt = me.getEvent();
 	var x = me.getGraphX();
 	var y = me.getGraphY();
 	
-	var tmp = this.graph.view.getState(this.graph.getCellAt(x, y));
+	var tmp = this.getStateAt(state, x, y);
 	
 	if (tmp != null && this.graph.model.isEdge(tmp.cell) && !mxEvent.isControlDown(evt) &&
 		(tmp.getVisibleTerminalState(true) == state || tmp.getVisibleTerminalState(false) == state))
