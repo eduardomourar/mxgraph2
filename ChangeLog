@@ -1,3 +1,4 @@
+- Fixes possible String type for spacing in mxText
 - Adds mxForceIncludes global config variable
 - Fixes mxCellHighlight for scaled arrows
 - Removes fix for cloned start/end arrow when splitting edge
