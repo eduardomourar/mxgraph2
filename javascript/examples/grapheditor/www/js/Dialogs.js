@@ -446,7 +446,7 @@ ColorDialog.addRecentColor = function(color, max)
 		mxUtils.remove(color, ColorDialog.recentColors);
 		ColorDialog.recentColors.splice(0, 0, color);
 		
-		if (ColorDialog.recentColors.length > max)
+		if (ColorDialog.recentColors.length >= max)
 		{
 			ColorDialog.recentColors.pop();
 		}
