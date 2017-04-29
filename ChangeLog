@@ -1,3 +1,4 @@
+- Adds optional inverse argument for mxGraph.traverse
 - Fixes possible String type for spacing in mxText
 - Adds mxForceIncludes global config variable
 - Fixes mxCellHighlight for scaled arrows

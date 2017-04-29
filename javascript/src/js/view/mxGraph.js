@@ -11578,12 +11578,15 @@ mxGraph.prototype.findTreeRoots = function(parent, isolate, invert)
  * edge - Optional <mxCell> that represents the incoming edge. This is
  * null for the first step of the traversal.
  * visited - Optional <mxDictionary> from cells to true for the visited cells.
+ * inverse - Optional boolean to traverse in inverse direction. Default is false.
+ * This is ignored if directed is false.
  */
-mxGraph.prototype.traverse = function(vertex, directed, func, edge, visited)
+mxGraph.prototype.traverse = function(vertex, directed, func, edge, visited, inverse)
 {
 	if (func != null && vertex != null)
 	{
 		directed = (directed != null) ? directed : true;
+		inverse = (inverse != null) ? inverse : false;
 		visited = visited || new mxDictionary();
 		
 		if (!visited.get(vertex))
@@ -11601,11 +11604,11 @@ mxGraph.prototype.traverse = function(vertex, directed, func, edge, visited)
 					{
 						var e = this.model.getEdgeAt(vertex, i);
 						var isSource = this.model.getTerminal(e, true) == vertex;
-												
-						if (!directed || isSource)
+						
+						if (!directed || (!inverse == isSource))
 						{
 							var next = this.model.getTerminal(e, !isSource);
-							this.traverse(next, directed, func, e, visited);
+							this.traverse(next, directed, func, e, visited, inverse);
 						}
 					}
 				}
