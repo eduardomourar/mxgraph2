@@ -120,9 +120,19 @@ Toolbar.prototype.init = function()
 		this.addItems(['-', 'toFront', 'toBack']);
 	}
 
-	if (sw >= 640)
+	if (sw >= 740)
 	{
-		this.addItems(['-', 'fillColor', 'strokeColor', 'shadow']);
+		this.addItems(['-', 'fillColor']);
+		
+		if (sw >= 780)
+		{
+			this.addItems(['strokeColor']);
+			
+			if (sw >= 820)
+			{
+				this.addItems(['shadow']);
+			}
+		}
 	}
 	
 	if (sw >= 400)
