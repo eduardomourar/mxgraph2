@@ -14,12 +14,23 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 		// This needs to match the total padding of geDialog in CSS
 		dx = 80;
 	}
-
+	
 	w += dx;
 	h += dx;
 	
+	var dh = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+	
 	var left = Math.max(0, Math.round((document.body.scrollWidth - w) / 2));
-	var top = Math.max(0, Math.round((Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - h - editorUi.footerHeight) / 3));
+	var top = Math.max(0, Math.round((dh - h - editorUi.footerHeight) / 3));
+
+	// Keeps window size inside available space
+	if (!mxClient.IS_QUIRKS)
+	{
+		elt.style.maxHeight = '100%';
+	}
+	
+	w = Math.min(w, document.body.scrollWidth - 64);
+	h = Math.min(h, dh - 64);
 	
 	// Increments zIndex to put subdialogs and background over existing dialogs and background
 	if (editorUi.dialogs.length > 0)
