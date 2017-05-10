@@ -6327,6 +6327,19 @@ if (typeof mxVertexHandler != 'undefined')
 				{
 					dx = this.graph.snap(dx);
 					dy = this.graph.snap(dy);
+					
+					if (!this.graph.isGridEnabled())
+					{
+						if (dx < this.graph.tolerance)
+						{
+							dx = 0;
+						}
+						
+						if (dy < this.graph.tolerance)
+						{
+							dy = 0;
+						}
+					}
 				}
 			}
 			
