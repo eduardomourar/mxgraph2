@@ -69,7 +69,9 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 	mxGraph.call(this, container, model, renderHint, stylesheet);
 	
 	this.themes = themes || this.defaultThemes;
-	
+	this.currentEdgeStyle = this.defaultEdgeStyle;
+	this.currentVertexStyle = this.defaultVertexStyle;
+
 	// Sets the base domain URL and domain path URL for relative links.
 	var b = this.baseUrl;
 	var p = b.indexOf('//');
@@ -422,7 +424,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 		{
 			this.loadStylesheet();
 		}
-		
+
 		// Adds page centers to the guides for moving cells
 		var graphHandlerGetGuideStates = this.graphHandler.getGuideStates;
 		this.graphHandler.getGuideStates = function()
@@ -3678,20 +3680,15 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * 
+		 */
+		Graph.prototype.defaultVertexStyle = {};
+
+		/**
 		 * Contains the default style for edges.
 		 */
 		Graph.prototype.defaultEdgeStyle = {'edgeStyle': 'orthogonalEdgeStyle', 'rounded': '0', 'html': '1',
 			'jettySize': 'auto', 'orthogonalLoop': '1'};
-		
-		/**
-		 * Contains the current style for edges.
-		 */
-		Graph.prototype.currentEdgeStyle = Graph.prototype.defaultEdgeStyle;
-		
-		/**
-		 * Contains the current style for vertices.
-		 */
-		Graph.prototype.currentVertexStyle = {};
 
 		/**
 		 * Returns the current edge style as a string.
