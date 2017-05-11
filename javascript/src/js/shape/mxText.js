@@ -239,16 +239,17 @@ mxText.prototype.paint = function(c, update)
 	
 	this.updateTransform(c, x, y, w, h);
 	this.configureCanvas(c, x, y, w, h);
-	
+
+	var unscaledWidth = (this.state != null) ? this.state.unscaledWidth : null;
+
 	if (update)
 	{
-		var unscaledWidth = (this.state != null) ? this.state.unscaledWidth : null;
-		
-		if (this.node.firstChild != null && this.lastUnscaledWidth != unscaledWidth)
+		if (this.node.firstChild != null && (unscaledWidth == null ||
+			this.lastUnscaledWidth != unscaledWidth))
 		{
 			c.invalidateCachedOffsetSize(this.node);
 		}
-		
+
 		c.updateText(x, y, w, h, this.align, this.valign, this.wrap, this.overflow,
 				this.clipped, this.getTextRotation(), this.node);
 	}
@@ -292,7 +293,7 @@ mxText.prototype.paint = function(c, update)
 	}
 	
 	// Needs to invalidate the cached offset widths if the geometry changes
-	this.lastUnscaledWidth = (this.state != null) ? this.state.unscaledWidth : null;
+	this.lastUnscaledWidth = unscaledWidth;
 };
 
 /**
