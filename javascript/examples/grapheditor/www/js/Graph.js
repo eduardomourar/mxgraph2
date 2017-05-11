@@ -3225,41 +3225,45 @@ HoverIcons.prototype.setCurrentState = function(state)
 		        pt = mxUtils.getRotatedPoint(pt, cos, sin, center);
 		    }
 		    
-		    // Finds closest connection point
-		    if (start != null)
-		    {
-		        var constraints = this.graph.getAllConnectionConstraints(start)
-		        var nearest = null;
-		        var dist = null;
-		    
-		        for (var i = 0; i < constraints.length; i++)
-		        {
-		            var cp = this.graph.getConnectionPoint(start, constraints[i]);
-		            
-		            if (cp != null)
-		            {
-		                var tmp = (cp.x - pt.x) * (cp.x - pt.x) + (cp.y - pt.y) * (cp.y - pt.y);
-		            
-		                if (dist == null || tmp < dist)
-		                {
-		                    nearest = cp;
-		                    dist = tmp;
-		                }
-		            }
-		        }
-		        
-		        if (nearest != null)
-		        {
-		            pt = nearest;
-		        }
-		    }
-		    
-		    edge.setAbsoluteTerminalPoint(pt, source);
+		    edge.setAbsoluteTerminalPoint(this.snapToAnchorPoint(edge, start, end, source, pt), source);
 		}
 		else
 		{
 			mxGraphViewUpdateFloatingTerminalPoint.apply(this, arguments);
 		}
+	};
+
+	mxGraphView.prototype.snapToAnchorPoint = function(edge, start, end, source, pt)
+	{
+		if (start != null && edge != null)
+		{
+	        var constraints = this.graph.getAllConnectionConstraints(start)
+	        var nearest = null;
+	        var dist = null;
+	    
+	        for (var i = 0; i < constraints.length; i++)
+	        {
+	            var cp = this.graph.getConnectionPoint(start, constraints[i]);
+	            
+	            if (cp != null)
+	            {
+	                var tmp = (cp.x - pt.x) * (cp.x - pt.x) + (cp.y - pt.y) * (cp.y - pt.y);
+	            
+	                if (dist == null || tmp < dist)
+	                {
+	                    nearest = cp;
+	                    dist = tmp;
+	                }
+	            }
+	        }
+	        
+	        if (nearest != null)
+	        {
+	            pt = nearest;
+	        }
+		}
+		
+		return pt;
 	};
 		
 	/**
