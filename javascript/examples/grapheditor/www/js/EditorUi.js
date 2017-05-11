@@ -428,7 +428,7 @@ EditorUi = function(editor, container, lightbox)
 	this.clearDefaultStyle = function()
 	{
 		graph.currentEdgeStyle = graph.defaultEdgeStyle;
-		graph.currentVertexStyle = {};
+		graph.currentVertexStyle = graph.defaultVertexStyle;
 		
 		// Updates UI
 		this.fireEvent(new mxEventObject('styleChanged', 'keys', [], 'values', [], 'cells', []));
