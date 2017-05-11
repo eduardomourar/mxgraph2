@@ -2650,35 +2650,26 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 	
 	this.window.setLocation = function(x, y)
 	{
-		x = Math.max(0, x);
-		y = Math.max(0, y);
-		mxWindow.prototype.setLocation.apply(this, arguments);
+		var iw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+		var ih = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+		
+		x = Math.max(0, Math.min(x, iw - this.table.clientWidth));
+		y = Math.max(0, Math.min(y, ih - this.table.clientHeight - 48));
+
+		if (this.getX() != x || this.getY() != y)
+		{
+			mxWindow.prototype.setLocation.apply(this, arguments);
+		}
 	};
 	
 	mxEvent.addListener(window, 'resize', mxUtils.bind(this, function()
 	{
-		var iw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-		var ih = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-		
 		var x = this.window.getX();
 		var y = this.window.getY();
 		
-		if (x + this.window.table.clientWidth > iw)
-		{
-			x = Math.max(0, iw - this.window.table.clientWidth);
-		}
-		
-		if (y + this.window.table.clientHeight > ih)
-		{
-			y = Math.max(0, ih - this.window.table.clientHeight);
-		}
-		
-		if (this.window.getX() != x || this.window.getY() != y)
-		{
-			this.window.setLocation(x, y);
-		}
+		this.window.setLocation(x, y);
 	}));
-	
+
 	var outline = editorUi.createOutline(this.window);
 
 	this.window.addListener(mxEvent.RESIZE, mxUtils.bind(this, function()
@@ -3335,32 +3326,23 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	
 	this.window.setLocation = function(x, y)
 	{
-		x = Math.max(0, x);
-		y = Math.max(0, y);
-		mxWindow.prototype.setLocation.apply(this, arguments);
+		var iw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+		var ih = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+		
+		x = Math.max(0, Math.min(x, iw - this.table.clientWidth));
+		y = Math.max(0, Math.min(y, ih - this.table.clientHeight - 48));
+
+		if (this.getX() != x || this.getY() != y)
+		{
+			mxWindow.prototype.setLocation.apply(this, arguments);
+		}
 	};
 	
 	mxEvent.addListener(window, 'resize', mxUtils.bind(this, function()
 	{
-		var iw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-		var ih = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-		
 		var x = this.window.getX();
 		var y = this.window.getY();
 		
-		if (x + this.window.table.clientWidth > iw)
-		{
-			x = Math.max(0, iw - this.window.table.clientWidth);
-		}
-		
-		if (y + this.window.table.clientHeight > ih)
-		{
-			y = Math.max(0, ih - this.window.table.clientHeight);
-		}
-		
-		if (this.window.getX() != x || this.window.getY() != y)
-		{
-			this.window.setLocation(x, y);
-		}
+		this.window.setLocation(x, y);
 	}));
 };
