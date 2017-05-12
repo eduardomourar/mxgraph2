@@ -1643,9 +1643,7 @@ var EditDiagramDialog = function(editorUi)
 	newOption.setAttribute('value', 'new');
 	mxUtils.write(newOption, mxResources.get('openInNewWindow'));
 	
-	var chromeApp = window.chrome != null && chrome.app != null && chrome.app.runtime != null;
-	
-	if (!chromeApp)
+	if (EditDiagramDialog.showNewWindowOption)
 	{
 		select.appendChild(newOption);
 	}
@@ -1736,6 +1734,11 @@ var EditDiagramDialog = function(editorUi)
 
 	this.container = div;
 };
+
+/**
+ * 
+ */
+EditDiagramDialog.showNewWindowOption = true;
 
 /**
  * Constructs a new export dialog.
