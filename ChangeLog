@@ -1,3 +1,4 @@
+- Adds mxConstants.STYLE_SOURCE/TARGET_PORT_CONSTRAINT styles
 - Fixes cache invalidation for custom handle reset
 - Fixes submenu showing with negative x-coordinate
 - Adds optional inverse argument for mxGraph.traverse

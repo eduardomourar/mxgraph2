@@ -759,6 +759,24 @@
 	STYLE_PORT_CONSTRAINT_ROTATION: 'portConstraintRotation',
 
 	/**
+	 * Variable: STYLE_SOURCE_PORT_CONSTRAINT
+	 * 
+	 * Defines the direction(s) that edges are allowed to connect to sources in.
+	 * Possible values are "DIRECTION_NORTH, DIRECTION_SOUTH, DIRECTION_EAST"
+	 * and "DIRECTION_WEST". Value is "sourcePortConstraint".
+	 */
+	STYLE_SOURCE_PORT_CONSTRAINT: 'sourcePortConstraint',
+
+	/**
+	 * Variable: STYLE_TARGET_PORT_CONSTRAINT
+	 * 
+	 * Defines the direction(s) that edges are allowed to connect to targets in.
+	 * Possible values are "DIRECTION_NORTH, DIRECTION_SOUTH, DIRECTION_EAST"
+	 * and "DIRECTION_WEST". Value is "targetPortConstraint".
+	 */
+	STYLE_TARGET_PORT_CONSTRAINT: 'targetPortConstraint',
+
+	/**
 	 * Variable: STYLE_OPACITY
 	 * 
 	 * Defines the key for the opacity style. The type of the value is 
