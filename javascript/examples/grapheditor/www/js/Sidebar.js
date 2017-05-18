@@ -281,7 +281,10 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel)
 				
 				this.tooltip.style.display = 'block';
 				this.graph2.labelsVisible = (showLabel == null || showLabel);
+				var fo = mxClient.NO_FO;
+				mxClient.NO_FO = Editor.prototype.originalNoForeignObject;
 				this.graph2.addCells(cells);
+				mxClient.NO_FO = fo;
 				
 				var bounds = this.graph2.getGraphBounds();
 				var width = bounds.width + 2 * this.tooltipBorder + 4;
