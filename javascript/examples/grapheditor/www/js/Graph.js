@@ -6331,12 +6331,12 @@ if (typeof mxVertexHandler != 'undefined')
 					
 					if (!this.graph.isGridEnabled())
 					{
-						if (dx < this.graph.tolerance)
+						if (Math.abs(dx) < this.graph.tolerance)
 						{
 							dx = 0;
 						}
 						
-						if (dy < this.graph.tolerance)
+						if (Math.abs(dy) < this.graph.tolerance)
 						{
 							dy = 0;
 						}
