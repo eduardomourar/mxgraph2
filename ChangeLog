@@ -1,3 +1,6 @@
+- Fixes custom handle visible during resize with strict HTML
+- Fixes custom handle text flow preview with strict HTML
+- Fixes reset of inactive mxHandles in mxVertexHandler.reset
 - Adds mxConstants.STYLE_SOURCE/TARGET_PORT_CONSTRAINT styles
 - Fixes cache invalidation for custom handle reset
 - Fixes submenu showing with negative x-coordinate
