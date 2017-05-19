@@ -1572,8 +1572,6 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 	var target = (ignoreCellAt || (mxEvent.isControlDown(evt) && !forceClone)) ?
 		null : this.getCellAt(dx + pt.x * s, dy + pt.y * s);
 	
-	console.log('ignoreCellAt', target, ignoreCellAt);
-	
 	if (this.model.isAncestor(target, source))
 	{
 		target = null;
