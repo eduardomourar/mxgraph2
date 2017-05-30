@@ -1,3 +1,4 @@
+- Fixes ignored underline in mxUtils.getFont
 - Resets tooltip content in mxTooltipHandler.hideTooltip
 - Fixes custom handle visible during resize with strict HTML
 - Fixes custom handle text flow preview with strict HTML
