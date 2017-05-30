@@ -392,6 +392,7 @@ mxText.prototype.resetStyles = function()
  */
 mxText.prototype.apply = function(state)
 {
+	var old = this.spacing;
 	mxShape.prototype.apply.apply(this, arguments);
 	
 	if (this.style != null)
@@ -402,7 +403,6 @@ mxText.prototype.apply = function(state)
 		this.color = mxUtils.getValue(this.style, mxConstants.STYLE_FONTCOLOR, this.color);
 		this.align = mxUtils.getValue(this.style, mxConstants.STYLE_ALIGN, this.align);
 		this.valign = mxUtils.getValue(this.style, mxConstants.STYLE_VERTICAL_ALIGN, this.valign);
-		var old = this.spacing;
 		this.spacing = parseInt(mxUtils.getValue(this.style, mxConstants.STYLE_SPACING, this.spacing));
 		this.spacingTop = parseInt(mxUtils.getValue(this.style, mxConstants.STYLE_SPACING_TOP, this.spacingTop - old)) + this.spacing;
 		this.spacingRight = parseInt(mxUtils.getValue(this.style, mxConstants.STYLE_SPACING_RIGHT, this.spacingRight - old)) + this.spacing;
