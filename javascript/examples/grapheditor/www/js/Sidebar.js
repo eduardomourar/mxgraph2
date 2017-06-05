@@ -2049,7 +2049,6 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInse
 						if (allowCellsInserted)
 						{
 							graph.fireEvent(new mxEventObject('cellsInserted', 'cells', select));
-							console.log('select', select);
 						}
 					}
 					finally
