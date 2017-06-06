@@ -5308,7 +5308,7 @@ if (typeof mxVertexHandler != 'undefined')
 		 * Creates an anchor elements for handling the given link in the
 		 * hint that is shown when the cell is selected.
 		 */
-		Graph.prototype.createLinkForHint = function(link)
+		Graph.prototype.createLinkForHint = function(link, label)
 		{
 			var a = document.createElement('a');
 			a.setAttribute('href', this.getAbsoluteUrl(link));
@@ -5320,7 +5320,6 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 			
 			// Adds shortened label to link
-			var label = link;
 			var max = 60;
 			var head = 36;
 			var tail = 20;
@@ -6831,7 +6830,7 @@ if (typeof mxVertexHandler != 'undefined')
 					this.graph.container.appendChild(this.linkHint);
 				}
 
-				var a = this.graph.createLinkForHint(link);
+				var a = this.graph.createLinkForHint(link, link);
 				this.linkHint.innerHTML = '';
 				this.linkHint.appendChild(a);
 	
