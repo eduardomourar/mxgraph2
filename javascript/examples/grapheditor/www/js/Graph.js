@@ -986,7 +986,7 @@ Graph.prototype.init = function(container)
 	{
 		mxCellRenderer.prototype.initializeLabel.apply(this, arguments);
 		
-		mxEvent.addListener(shape.node, 'click', mxUtils.bind(this, function(evt)
+		var fn = mxUtils.bind(this, function(evt)
 		{
 			var elt = mxEvent.getSource(evt)
 			
@@ -1000,7 +1000,21 @@ Graph.prototype.init = function(container)
 				
 				elt = elt.parentNode;
 			}
-		}));
+		});
+		
+		// Workaround for no click events on touch
+		if (mxClient.IS_TOUCH)
+		{
+			mxEvent.addGestureListeners(shape.node, null, null, fn);
+			mxEvent.addListener(shape.node, 'click', function(evt)
+			{
+				mxEvent.consume(evt);
+			});
+		}
+		else
+		{
+			mxEvent.addListener(shape.node, 'click', fn);
+		}
 	};
 	
 	this.initLayoutManager();
@@ -4474,7 +4488,19 @@ if (typeof mxVertexHandler != 'undefined')
 							
 							if (beforeClick != null)
 			    			{
-			    				mxEvent.addListener(links[i], 'click', beforeClick);
+								// Workaround for no click events on touch
+								if (mxClient.IS_TOUCH)
+								{
+									mxEvent.addGestureListeners(links[i], null, null, beforeClick);
+									mxEvent.addListener(links[i], 'click', function(evt)
+									{
+										mxEvent.consume(evt);
+									});
+								}
+								else
+								{
+									mxEvent.addListener(links[i], 'click', beforeClick);
+								}
 			    			}
 						}
 					}
