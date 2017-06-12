@@ -1,3 +1,4 @@
+- Fixes possible XXE attack in mxXmlUtils.parseXml
 - Fixes ignored underline in mxUtils.getFont
 - Resets tooltip content in mxTooltipHandler.hideTooltip
 - Fixes custom handle visible during resize with strict HTML

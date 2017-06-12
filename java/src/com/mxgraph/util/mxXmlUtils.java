@@ -25,7 +25,7 @@ import org.xml.sax.InputSource;
 public class mxXmlUtils
 {
 	/**
-	 * Returns a new document for the given XML string.
+	 * Returns a new document for the given XML string. External entities and DTDs are ignored.
 	 * 
 	 * @param xml
 	 *            String that represents the XML data.
@@ -35,9 +35,15 @@ public class mxXmlUtils
 	{
 		try
 		{
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			dbf.setExpandEntityReferences(false);
+			dbf.setXIncludeAware(false);
+			
+			DocumentBuilder docBuilder = dbf.newDocumentBuilder();
 
 			return docBuilder.parse(new InputSource(new StringReader(xml)));
 		}
@@ -48,7 +54,7 @@ public class mxXmlUtils
 
 		return null;
 	}
-	
+
 	/**
 	 * Returns a string that represents the given node.
 	 * 
