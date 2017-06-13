@@ -25,11 +25,17 @@ public class mxDomUtils
 
 		try
 		{
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder parser = factory.newDocumentBuilder();
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-			result = parser.newDocument();
+			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			dbf.setExpandEntityReferences(false);
+			dbf.setXIncludeAware(false);
+			
+			DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+
+			result = docBuilder.newDocument();
 		}
 		catch (Exception e)
 		{

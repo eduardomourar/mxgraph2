@@ -2347,7 +2347,7 @@ public class mxUtils
 	}
 
 	/**
-	 * Returns a new DOM document for the given URI.
+	 * Returns a new DOM document for the given URI. External entities and DTDs are ignored.
 	 * 
 	 * @param uri
 	 *            URI to parse into the document.
@@ -2357,9 +2357,16 @@ public class mxUtils
 	{
 		try
 		{
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			dbf.setExpandEntityReferences(false);
+			dbf.setXIncludeAware(false);
+			
+			DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+			
 			return docBuilder.parse(uri);
 		}
 		catch (Exception e)

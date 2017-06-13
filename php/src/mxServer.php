@@ -14,6 +14,9 @@
  */
 define("MXGRAPH-VERSION", "@MXGRAPH-VERSION@");
 
+// Disables external entities in XML
+libxml_disable_entity_loader(true);
+
 include_once("util/mxLog.php");
 include_once("util/mxConstants.php");
 include_once("util/mxUtils.php");
