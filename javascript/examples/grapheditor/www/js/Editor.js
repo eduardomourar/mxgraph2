@@ -1397,14 +1397,14 @@ PageSetupDialog.addPageFormatPanel = function(div, namePostfix, pageFormat, page
 	customDiv.style.height = '24px';
 	
 	var widthInput = document.createElement('input');
-	widthInput.setAttribute('size', '6');
+	widthInput.setAttribute('size', '7');
 	widthInput.setAttribute('value', pageFormat.width);
 	widthInput.style.textAlign = 'right';
 	customDiv.appendChild(widthInput);
 	mxUtils.write(customDiv, ' in x ');
 	
 	var heightInput = document.createElement('input');
-	heightInput.setAttribute('size', '6');
+	heightInput.setAttribute('size', '7');
 	heightInput.setAttribute('value', pageFormat.height);
 	heightInput.style.textAlign = 'right';
 	customDiv.appendChild(heightInput);
