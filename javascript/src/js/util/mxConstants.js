@@ -674,7 +674,7 @@
 	 * Defines the rectangle for the A4 portrait page format. The dimensions
 	 * of this page format are 826x1169 pixels.
 	 */
-	PAGE_FORMAT_A4_PORTRAIT: new mxRectangle(0, 0, 826, 1169),
+	PAGE_FORMAT_A4_PORTRAIT: new mxRectangle(0, 0, 827, 1169),
 
 	/**
 	 * Variable: PAGE_FORMAT_A4_PORTRAIT
@@ -682,7 +682,7 @@
 	 * Defines the rectangle for the A4 portrait page format. The dimensions
 	 * of this page format are 826x1169 pixels.
 	 */
-	PAGE_FORMAT_A4_LANDSCAPE: new mxRectangle(0, 0, 1169, 826),
+	PAGE_FORMAT_A4_LANDSCAPE: new mxRectangle(0, 0, 1169, 827),
 
 	/**
 	 * Variable: PAGE_FORMAT_LETTER_PORTRAIT
