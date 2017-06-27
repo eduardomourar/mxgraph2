@@ -1,3 +1,5 @@
+27-JUN-2017: 3.7.3
+
 - Fixes horizontal/vertical flip for perimeter projections
 - Changes mxConstants.PAGE_FORMAT_A4_PORTRAIT/LANDSCAPE width/height to 827
 - Disables external XML entities in all backends
