@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mxgraph</groupId>
 	<artifactId>mxgraph-core</artifactId>
-	<version>3.7.0.0</version>
+	<version>3.7.3</version>
 	<name>mxGraph Core</name>
 	<description>mxGraph core classes</description>
 
@@ -58,7 +58,7 @@
 		<dependency>
 			<groupId>com.mxgraph</groupId>
 			<artifactId>mxPdf</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
