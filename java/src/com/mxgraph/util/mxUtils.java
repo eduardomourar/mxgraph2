@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -50,6 +51,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 import com.mxgraph.io.mxCodecRegistry;
 import com.mxgraph.model.mxCellPath;
@@ -2357,23 +2359,13 @@ public class mxUtils
 	{
 		try
 		{
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-			dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-			dbf.setExpandEntityReferences(false);
-			dbf.setXIncludeAware(false);
-			
-			DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-			
-			return docBuilder.parse(uri);
+			mxXmlUtils.getDocumentBuilder().parse(uri);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-
+		
 		return null;
 	}
 

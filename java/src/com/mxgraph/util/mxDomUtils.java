@@ -3,9 +3,6 @@
  */
 package com.mxgraph.util;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -14,6 +11,7 @@ import org.w3c.dom.Element;
  */
 public class mxDomUtils
 {
+
 	/**
 	 * Returns a new, empty DOM document.
 	 * 
@@ -21,28 +19,7 @@ public class mxDomUtils
 	 */
 	public static Document createDocument()
 	{
-		Document result = null;
-
-		try
-		{
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-			dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-			dbf.setExpandEntityReferences(false);
-			dbf.setXIncludeAware(false);
-			
-			DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-
-			result = docBuilder.newDocument();
-		}
-		catch (Exception e)
-		{
-			System.out.println(e.getMessage());
-		}
-
-		return result;
+		return mxXmlUtils.getDocumentBuilder().newDocument();
 	}
 
 	/**
@@ -85,8 +62,8 @@ public class mxDomUtils
 
 		Element style = document.createElement("style");
 		style.setAttribute("type", "text/css");
-		style.appendChild(document
-				.createTextNode("<!-- v\\:* {behavior: url(#default#VML);} -->"));
+		style.appendChild(document.createTextNode(
+				"<!-- v\\:* {behavior: url(#default#VML);} -->"));
 
 		head.appendChild(style);
 		root.appendChild(head);
