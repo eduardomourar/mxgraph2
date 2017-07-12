@@ -1077,7 +1077,7 @@ Graph.prototype.initLayoutManager = function()
 		if (style['childLayout'] == 'stackLayout')
 		{
 			var stackLayout = new mxStackLayout(this.graph, true);
-			stackLayout.resizeParentMax = true;
+			stackLayout.resizeParentMax = mxUtils.getValue(style, 'resizeParentMax', '1') == '1';
 			stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
 			stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
 			stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', '0') == '1';
@@ -1277,7 +1277,7 @@ Graph.prototype.isLabelMovable = function(cell)
 /**
  * Adds event if grid size is changed.
  */
-mxGraph.prototype.setGridSize = function(value)
+Graph.prototype.setGridSize = function(value)
 {
 	this.gridSize = value;
 	this.fireEvent(new mxEventObject('gridSizeChanged'));
@@ -6011,7 +6011,7 @@ if (typeof mxVertexHandler != 'undefined')
 					var stroke = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
 					var fill = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
 					
-					if (mxUtils.trim(value || '') == '' && stroke == mxConstants.NONE && fill == mxConstants.NONE)
+					if (value == '' && stroke == mxConstants.NONE && fill == mxConstants.NONE)
 					{
 						this.graph.removeCells([state.cell], false);
 					}
