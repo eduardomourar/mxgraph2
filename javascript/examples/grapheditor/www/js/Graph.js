@@ -986,35 +986,50 @@ Graph.prototype.init = function(container)
 	{
 		mxCellRenderer.prototype.initializeLabel.apply(this, arguments);
 		
-		var fn = mxUtils.bind(this, function(evt)
+		// Checks tolerance for clicks on links
+		var tol = state.view.graph.tolerance;
+		var handleClick = true;
+		var first = null;
+		
+		var down = mxUtils.bind(this, function(evt)
 		{
-			var elt = mxEvent.getSource(evt)
-			
-			while (elt != null && elt != shape.node)
-			{
-				if (elt.nodeName == 'A')
-				{
-					state.view.graph.labelLinkClicked(state, elt, evt);
-					break;
-				}
-				
-				elt = elt.parentNode;
-			}
+			first = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 		});
 		
-		// Workaround for no click events on touch
-		if (mxClient.IS_TOUCH)
+		var move = mxUtils.bind(this, function(evt)
 		{
-			mxEvent.addGestureListeners(shape.node, null, null, fn);
-			mxEvent.addListener(shape.node, 'click', function(evt)
+			handleClick = handleClick && first != null &&
+				Math.abs(first.x - mxEvent.getClientX(evt)) < tol &&
+				Math.abs(first.y - mxEvent.getClientY(evt)) < tol;
+		});
+		
+		var up = mxUtils.bind(this, function(evt)
+		{
+			if (handleClick)
 			{
-				mxEvent.consume(evt);
-			});
-		}
-		else
+				var elt = mxEvent.getSource(evt)
+				
+				while (elt != null && elt != shape.node)
+				{
+					if (elt.nodeName == 'A')
+					{
+						state.view.graph.labelLinkClicked(state, elt, evt);
+						break;
+					}
+					
+					elt = elt.parentNode;
+				}
+			}
+			
+			handleClick = true;
+			first = null;
+		});
+		
+		mxEvent.addGestureListeners(shape.node, down, move, up);
+		mxEvent.addListener(shape.node, 'click', function(evt)
 		{
-			mxEvent.addListener(shape.node, 'click', fn);
-		}
+			mxEvent.consume(evt);
+		});
 	};
 	
 	this.initLayoutManager();
