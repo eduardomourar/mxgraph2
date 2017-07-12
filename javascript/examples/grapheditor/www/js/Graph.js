@@ -972,7 +972,7 @@ Graph.prototype.defaultThemes = {};
 /**
  * Base URL for relative links.
  */
-Graph.prototype.baseUrl = (window != window.top) ? document.referrer : document.location.toString();
+Graph.prototype.baseUrl = ((window != window.top) ? document.referrer : document.location.toString()).split('#')[0];
 
 /**
  * Installs child layout styles.
