@@ -69,7 +69,12 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 	public static double HTML_SCALE = 1;
 
 	/**
-	 * Unit to be used for HTML labels. Default is "pt".
+	 * Unit to be used for HTML labels. Default is "pt". If you units within
+	 * HTML labels are used, this should match those units to produce a
+	 * consistent output. If the value is "px", then HTML_SCALE should be
+	 * changed the match the ratio between px units for rendering HTML and
+	 * the units used for rendering other graphics elements. This value is
+	 * 0.6 on Linux and 0.75 on all other platforms.
 	 */
 	public static String HTML_UNIT = "pt";
 
