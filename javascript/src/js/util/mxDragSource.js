@@ -586,7 +586,13 @@ mxDragSource.prototype.dragExit = function(graph, evt)
 mxDragSource.prototype.dragOver = function(graph, evt)
 {
 	var offset = mxUtils.getOffset(graph.container);
-	var origin = mxUtils.getScrollOrigin(graph.container);
+	
+	// Ignore scroll state of parent nodes except document
+	var origin = new mxPoint(graph.container.scrollLeft, graph.container.scrollTop);
+	var origin2 = mxUtils.getDocumentScrollOrigin(document);
+	origin.x += origin2.x;
+	origin.y += origin2.y;
+
 	var x = mxEvent.getClientX(evt) - offset.x + origin.x - graph.panDx;
 	var y = mxEvent.getClientY(evt) - offset.y + origin.y - graph.panDy;
 
