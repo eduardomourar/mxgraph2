@@ -1,4 +1,4 @@
-- Fixes possible offset for drop target in mxDragSource.dragOver
+- Adds optionl arguments in mxUtils.getScrollOrigin
 - Adds mxGraph.isTransparentClickEvent hook
 
 27-JUN-2017: 3.7.4
