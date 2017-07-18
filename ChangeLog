@@ -1,3 +1,4 @@
+- mxUtils.getScrollOrigin ignores ancestors by default
 - Adds optional arguments in mxUtils.getScrollOrigin
 - Adds mxGraph.isTransparentClickEvent hook
 

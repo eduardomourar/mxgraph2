@@ -2565,13 +2565,13 @@ var mxUtils =
 	 * 
 	 * node - DOM node whose scroll origin should be returned.
 	 * includeAncestors - Whether the scroll origin of the ancestors should be
-	 * included. Default is true.
+	 * included. Default is false.
 	 * includeDocument - Whether the scroll origin of the document should be
 	 * included. Default is true.
 	 */
 	getScrollOrigin: function(node, includeAncestors, includeDocument)
 	{
-		includeAncestors = (includeAncestors != null) ? includeAncestors : true;
+		includeAncestors = (includeAncestors != null) ? includeAncestors : false;
 		includeDocument = (includeDocument != null) ? includeDocument : true;
 		
 		var doc = (node != null) ? node.ownerDocument : document;
