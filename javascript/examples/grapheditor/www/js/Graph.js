@@ -4516,6 +4516,7 @@ if (typeof mxVertexHandler != 'undefined')
 									mxEvent.addListener(links[i], 'click', function(evt)
 									{
 										mxEvent.consume(evt);
+										console.log('consumed');
 									});
 								}
 								else
@@ -4645,6 +4646,7 @@ if (typeof mxVertexHandler != 'undefined')
 								}
 					    		
 					    		me.consume();
+								console.log('consumed');
 				    		}
 				    	}
 				    	else if (onClick != null && !me.isConsumed() &&
