@@ -4614,9 +4614,12 @@ if (typeof mxVertexHandler != 'undefined')
 			    	var source = me.getSource();
 			    	
 			    	// Ignores clicks on links and collapse/expand icon
-			    	if (source.nodeName.toLowerCase() != 'a' && !me.isConsumed() &&
+			    	if (source.nodeName.toLowerCase() != 'a' &&
+			    		(Math.abs(this.scrollLeft - graph.container.scrollLeft) < tol &&
+			        	Math.abs(this.scrollTop - graph.container.scrollTop) < tol) &&
 			    		(me.getState() == null || !me.isSource(me.getState().control)) &&
-			    		(mxEvent.isLeftMouseButton(me.getEvent()) || mxEvent.isTouchEvent(me.getEvent())))
+			    		(mxEvent.isLeftMouseButton(me.getEvent()) ||
+			    		mxEvent.isTouchEvent(me.getEvent())))
 			    	{
 				    	if (this.currentLink != null) 
 				    	{
