@@ -1133,7 +1133,7 @@ mxShape.prototype.addPoints = function(c, pts, rounded, arcSize, close)
 	}
 	else
 	{
-		c.lineTo(pe.x, pe.y);	
+		c.lineTo(pe.x, pe.y);
 	}
 };
 
