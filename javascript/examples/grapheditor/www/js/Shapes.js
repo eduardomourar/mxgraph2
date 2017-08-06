@@ -2119,10 +2119,10 @@
 	};
 	mxUtils.extend(FilledEdge, mxConnector);
 	
-	FilledEdge.prototype.origPaintLine = FilledEdge.prototype.paintLine;
-	FilledEdge.prototype.paintLine = function(c, pts, rounded)
+	FilledEdge.prototype.origPaintEdgeShape = FilledEdge.prototype.paintEdgeShape;
+	FilledEdge.prototype.paintEdgeShape = function(c, pts, rounded)
 	{
-		FilledEdge.prototype.origPaintLine.apply(this, arguments);
+		FilledEdge.prototype.origPaintEdgeShape.apply(this, arguments);
 		if (c.state.strokeWidth >= 3)
 		{
 			var fillClr = mxUtils.getValue(this.style, 'fillColor', null);
@@ -2132,7 +2132,7 @@
 				c.setStrokeColor(fillClr);
 				c.setStrokeWidth(c.state.strokeWidth - 2);
 			
-				FilledEdge.prototype.origPaintLine.apply(this, arguments);		
+				FilledEdge.prototype.origPaintEdgeShape.apply(this, arguments);		
 			}
 		}
 	};
