@@ -235,7 +235,7 @@ Format.prototype.isRoundedState = function(state)
 			shape == 'parallelogram' || shape == 'swimlane' || shape == 'triangle' || shape == 'trapezoid' ||
 			shape == 'ext' || shape == 'step' || shape == 'tee' || shape == 'process' || shape == 'link' ||
 			shape == 'rhombus' || shape == 'offPageConnector' || shape == 'loopLimit' || shape == 'hexagon' ||
-			shape == 'manualInput' || shape == 'curlyBracket' || shape == 'singleArrow' || shape == 'filledEdge' || 
+			shape == 'manualInput' || shape == 'curlyBracket' || shape == 'singleArrow' || 
 			shape == 'doubleArrow' || shape == 'flexArrow' || shape == 'card' || shape == 'umlLifeline');
 };
 
@@ -3985,7 +3985,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 			altInput.value = (isNaN(tmp)) ? '' : tmp + ' pt';
 		}
 		
-		styleSelect.style.visibility = (ss.style.shape == 'connector') ? '' : 'hidden';
+		styleSelect.style.visibility = (ss.style.shape == 'connector' || ss.style.shape == 'filledEdge') ? '' : 'hidden';
 		
 		if (mxUtils.getValue(ss.style, mxConstants.STYLE_CURVED, null) == '1')
 		{
