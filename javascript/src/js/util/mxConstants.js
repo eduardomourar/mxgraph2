@@ -1415,6 +1415,15 @@
 	STYLE_DASH_PATTERN: 'dashPattern',
 
 	/**
+	 * Variable: STYLE_FIX_DASH
+	 * 
+	 * Defines the key for the fixDash style. Use 0 (default) for dash patterns
+	 * that depend on the linewidth and 1 for dash patterns that ignore the
+	 * line width. Value is "fixDash".
+	 */
+	STYLE_FIX_DASH: 'fixDash',
+
+	/**
 	 * Variable: STYLE_ROUNDED
 	 * 
 	 * Defines the key for the rounded style. The type of this value is

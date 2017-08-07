@@ -925,7 +925,8 @@ mxShape.prototype.configureCanvas = function(c, x, y, w, h)
 	// Dash pattern
 	if (this.isDashed != null)
 	{
-		c.setDashed(this.isDashed);
+		c.setDashed(this.isDashed, (this.style != null) ?
+			mxUtils.getValue(this.style, mxConstants.STYLE_FIX_DASH, false) == 1 : false);
 	}
 
 	if (dash != null)

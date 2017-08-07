@@ -356,11 +356,17 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 	 */
 	public void setDashed(boolean value)
 	{
+		this.setDashed(value, state.fixDash);
+	}
+
+	/**
+	 * 
+	 */
+	public void setDashed(boolean value, boolean fixDash)
+	{
 		// Lazy and cached instantiation strategy for all stroke properties
-		if (value != state.dashed)
-		{
-			state.dashed = value;
-		}
+		state.dashed = value;
+		state.fixDash = fixDash;
 	}
 
 	/**
@@ -1591,7 +1597,7 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 
 				for (int i = 0; i < dash.length; i++)
 				{
-					dash[i] = (float) (state.dashPattern[i] * sw);
+					dash[i] = (float) (state.dashPattern[i] * ((state.fixDash) ? state.scale : sw));
 				}
 			}
 
@@ -1761,6 +1767,11 @@ public class mxGraphicsCanvas2D implements mxICanvas2D
 		 * 
 		 */
 		protected boolean dashed = false;
+
+		/**
+		 * 
+		 */
+		protected boolean fixDash = false;
 
 		/**
 		 * 

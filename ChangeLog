@@ -1,3 +1,4 @@
+- Adds fixDash style
 - Fixes possible NPE in mxUtils.ltrim and rtrim
 - mxUtils.getScrollOrigin ignores ancestors by default
 - Adds optional arguments in mxUtils.getScrollOrigin
