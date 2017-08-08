@@ -2122,6 +2122,10 @@
 	FilledEdge.prototype.origPaintEdgeShape = FilledEdge.prototype.paintEdgeShape;
 	FilledEdge.prototype.paintEdgeShape = function(c, pts, rounded)
 	{
+		//paintEdgeShape reset dashed to false
+		var dashed = c.state.dashed;
+		var fixDash = c.state.fixDash; 
+		
 		FilledEdge.prototype.origPaintEdgeShape.apply(this, arguments);
 		if (c.state.strokeWidth >= 3)
 		{
@@ -2131,6 +2135,7 @@
 			{
 				c.setStrokeColor(fillClr);
 				c.setStrokeWidth(c.state.strokeWidth - 2);
+				c.setDashed(dashed, fixDash);
 			
 				FilledEdge.prototype.origPaintEdgeShape.apply(this, arguments);		
 			}
