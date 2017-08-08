@@ -1416,8 +1416,8 @@
 	
 	mxStyleRegistry.putValue('stepPerimeter', mxPerimeter.StepPerimeter);
 	
-	//Hexagon Perimeter
-	mxPerimeter.HexagonPerimeter = function (bounds, vertex, next, orthogonal)
+	//Hexagon Perimeter (keep existing one)
+	mxPerimeter.HexagonPerimeter2 = function (bounds, vertex, next, orthogonal)
 	{
 		var size = HexagonShape.prototype.size;
 		
@@ -1444,7 +1444,7 @@
 		}
 	};
 	
-	mxStyleRegistry.putValue('hexagonPerimeter', mxPerimeter.HexagonPerimeter);
+	mxStyleRegistry.putValue('hexagonPerimeter2', mxPerimeter.HexagonPerimeter2);
 	
 	// Lollipop Shape
 	function LollipopShape()
@@ -3374,7 +3374,19 @@
 		                                new mxConnectionConstraint(new mxPoint(1, 0.65), false),
 										new mxConnectionConstraint(new mxPoint(0.25, 1), false),
 										new mxConnectionConstraint(new mxPoint(0.75, 0), false)];
-	StepShape.prototype.constraints = mxRectangleShape.prototype.constraints;
+	// TODO: Relative ports
+	StepShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
+                                       new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+                                       new mxConnectionConstraint(new mxPoint(0.75, 0), true),
+                                       new mxConnectionConstraint(new mxPoint(0.25, 1), true),
+  	        	            		 	new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+  	        	            		 	new mxConnectionConstraint(new mxPoint(0.75, 1), true),
+	                                   new mxConnectionConstraint(new mxPoint(0.1, 0.25), false),
+	                                   new mxConnectionConstraint(new mxPoint(0.2, 0.5), false),
+	                                   new mxConnectionConstraint(new mxPoint(0.1, 0.75), false),
+	                                   new mxConnectionConstraint(new mxPoint(0.9, 0.25), false),
+		                                new mxConnectionConstraint(new mxPoint(1, 0.5), false),
+		                                new mxConnectionConstraint(new mxPoint(0.9, 0.75), false)];
 	mxLine.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.5), false),
 	                                new mxConnectionConstraint(new mxPoint(0.25, 0.5), false),
 	                                new mxConnectionConstraint(new mxPoint(0.75, 0.5), false),
@@ -3416,7 +3428,6 @@
 	                                 new mxConnectionConstraint(new mxPoint(0.88, 0.25), false)];
 	ParallelogramShape.prototype.constraints = mxRectangleShape.prototype.constraints;
 	TrapezoidShape.prototype.constraints = mxRectangleShape.prototype.constraints;
-	HexagonShape.prototype.constraints = mxRectangleShape.prototype.constraints;
 	DocumentShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
 	                                          new mxConnectionConstraint(new mxPoint(0.5, 0), true),
 	                                          new mxConnectionConstraint(new mxPoint(0.75, 0), true),
