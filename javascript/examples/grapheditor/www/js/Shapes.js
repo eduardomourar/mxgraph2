@@ -1321,6 +1321,131 @@
 	
 	mxStyleRegistry.putValue('backbonePerimeter', mxPerimeter.BackbonePerimeter);
 	
+	//Parallelogram Perimeter
+	mxPerimeter.ParallelogramPerimeter = function (bounds, vertex, next, orthogonal)
+	{
+		var size = ParallelogramShape.prototype.size;
+		
+		if (vertex != null)
+		{
+			size = mxUtils.getValue(vertex.style, 'size', size);
+		}
+		
+		var dx = bounds.width * Math.max(0, Math.min(1, size));
+		
+		if (next.y == bounds.y)
+		{
+			return new mxPoint(bounds.x + dx + (next.x - bounds.x) / bounds.width * (bounds.width - dx), next.y);
+		}
+		else if (next.y == bounds.y + bounds.height)
+		{
+			return new mxPoint(bounds.x + (next.x - bounds.x) / bounds.width * (bounds.width - dx), next.y);
+		}
+		else if (next.x == bounds.x)
+		{
+			return new mxPoint(bounds.x + dx * (1 - (next.y - bounds.y) / bounds.height), next.y);
+		}
+		else
+		{
+			return new mxPoint(bounds.x + dx * (1 - (next.y - bounds.y) / bounds.height) + (bounds.width - dx), next.y);
+		}
+	};
+	
+	mxStyleRegistry.putValue('parallelogramPerimeter', mxPerimeter.ParallelogramPerimeter);
+	
+	
+	//Trapezoid Perimeter
+	mxPerimeter.TrapezoidPerimeter = function (bounds, vertex, next, orthogonal)
+	{
+		var size = TrapezoidShape.prototype.size;
+		
+		if (vertex != null)
+		{
+			size = mxUtils.getValue(vertex.style, 'size', size);
+		}
+		
+		var dx = bounds.width * Math.max(0, Math.min(1, size));
+		
+		if (next.y == bounds.y)
+		{
+			return new mxPoint(bounds.x + dx + (next.x - bounds.x) / bounds.width * (bounds.width - 2 * dx), next.y);
+		}
+		else if (next.x == bounds.x)
+		{
+			return new mxPoint(bounds.x + dx * (1 - (next.y - bounds.y) / bounds.height), next.y);
+		}
+		else if (next.x == bounds.x + bounds.width)
+		{
+			return new mxPoint(bounds.x + bounds.width - dx * (1 - (next.y - bounds.y) / bounds.height), next.y);
+		}
+		else
+		{
+			return next;
+		}
+	};
+	
+	mxStyleRegistry.putValue('trapezoidPerimeter', mxPerimeter.TrapezoidPerimeter);
+	
+	//Step Perimeter
+	mxPerimeter.StepPerimeter = function (bounds, vertex, next, orthogonal)
+	{
+		var size = StepShape.prototype.size;
+		
+		if (vertex != null)
+		{
+			size = mxUtils.getValue(vertex.style, 'size', size);
+		}
+		
+		var dx = bounds.width * Math.max(0, Math.min(1, size));
+		
+		if (next.x == bounds.x)
+		{
+			return next.y < bounds.getCenterY() ? new mxPoint(bounds.x + 2 * dx * (next.y - bounds.y) / bounds.height, next.y)
+										: new mxPoint(bounds.x + 2 * dx * (1 - (next.y - bounds.y) / bounds.height), next.y);
+		}
+		else if (next.x == bounds.x + bounds.width)
+		{
+			return next.y < bounds.getCenterY() ? new mxPoint(bounds.x + 2 * dx * (next.y - bounds.y) / bounds.height + (bounds.width - dx), next.y)
+											: new mxPoint(bounds.x + 2 * dx * (1 - (next.y - bounds.y) / bounds.height) + (bounds.width - dx), next.y);
+		}
+		else
+		{
+			return new mxPoint(bounds.x + (next.x - bounds.x) / bounds.width * (bounds.width - dx), next.y);
+		}
+	};
+	
+	mxStyleRegistry.putValue('stepPerimeter', mxPerimeter.StepPerimeter);
+	
+	//Hexagon Perimeter
+	mxPerimeter.HexagonPerimeter = function (bounds, vertex, next, orthogonal)
+	{
+		var size = HexagonShape.prototype.size;
+		
+		if (vertex != null)
+		{
+			size = mxUtils.getValue(vertex.style, 'size', size);
+		}
+		
+		var dx = bounds.width * Math.max(0, Math.min(1, size));
+		
+		if (next.x == bounds.x)
+		{
+			return next.y < bounds.getCenterY() ? new mxPoint(bounds.x + dx * (1 - 2 * (next.y - bounds.y) / bounds.height), next.y)
+										: new mxPoint(bounds.x + dx * (2 * (next.y - bounds.y) / bounds.height - 1), next.y);
+		}
+		else if (next.x == bounds.x + bounds.width)
+		{
+			return next.y < bounds.getCenterY() ? new mxPoint(bounds.x + 2 * dx * (next.y - bounds.y) / bounds.height + (bounds.width - dx), next.y)
+											: new mxPoint(bounds.x + 2 * dx * (1 - (next.y - bounds.y) / bounds.height) + (bounds.width - dx), next.y);
+		}
+		else
+		{
+			return new mxPoint(bounds.x + dx + (next.x - bounds.x) / bounds.width * (bounds.width - 2 * dx), next.y);
+		}
+	};
+	
+	mxStyleRegistry.putValue('hexagonPerimeter', mxPerimeter.HexagonPerimeter);
+	
 	// Lollipop Shape
 	function LollipopShape()
 	{
@@ -3249,19 +3374,7 @@
 		                                new mxConnectionConstraint(new mxPoint(1, 0.65), false),
 										new mxConnectionConstraint(new mxPoint(0.25, 1), false),
 										new mxConnectionConstraint(new mxPoint(0.75, 0), false)];
-	// TODO: Relative ports
-	StepShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
-                                       new mxConnectionConstraint(new mxPoint(0.5, 0), true),
-                                       new mxConnectionConstraint(new mxPoint(0.75, 0), true),
-                                       new mxConnectionConstraint(new mxPoint(0.25, 1), true),
-  	        	            		 	new mxConnectionConstraint(new mxPoint(0.5, 1), true),
-  	        	            		 	new mxConnectionConstraint(new mxPoint(0.75, 1), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.1, 0.25), false),
-	                                   new mxConnectionConstraint(new mxPoint(0.2, 0.5), false),
-	                                   new mxConnectionConstraint(new mxPoint(0.1, 0.75), false),
-	                                   new mxConnectionConstraint(new mxPoint(0.9, 0.25), false),
-		                                new mxConnectionConstraint(new mxPoint(1, 0.5), false),
-		                                new mxConnectionConstraint(new mxPoint(0.9, 0.75), false)];
+	StepShape.prototype.constraints = mxRectangleShape.prototype.constraints;
 	mxLine.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.5), false),
 	                                new mxConnectionConstraint(new mxPoint(0.25, 0.5), false),
 	                                new mxConnectionConstraint(new mxPoint(0.75, 0.5), false),
@@ -3303,6 +3416,7 @@
 	                                 new mxConnectionConstraint(new mxPoint(0.88, 0.25), false)];
 	ParallelogramShape.prototype.constraints = mxRectangleShape.prototype.constraints;
 	TrapezoidShape.prototype.constraints = mxRectangleShape.prototype.constraints;
+	HexagonShape.prototype.constraints = mxRectangleShape.prototype.constraints;
 	DocumentShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
 	                                          new mxConnectionConstraint(new mxPoint(0.5, 0), true),
 	                                          new mxConnectionConstraint(new mxPoint(0.75, 0), true),
