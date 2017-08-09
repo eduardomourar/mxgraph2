@@ -1,4 +1,5 @@
-- Adds fixDash style
+- Fixes pen events for Chrome on Windows
+- Adds fixDash style, mxEvent.isPenEvent
 - Fixes possible NPE in mxUtils.ltrim and rtrim
 - mxUtils.getScrollOrigin ignores ancestors by default
 - Adds optional arguments in mxUtils.getScrollOrigin
