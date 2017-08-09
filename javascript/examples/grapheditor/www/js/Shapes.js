@@ -1347,16 +1347,18 @@
 	    var y = line1Start.y + (a * (line1End.y - line1Start.y));
 
 	    if (a > 0 && a <= 1)// on line1?
-    	{
-	  	  var dx = line2End.x - x;
-		  var dy = line2End.y - y;
-		  var d = Math.sqrt(dy * dy + dx * dx); //distance from end of line 2 (next) to intersection point
-	      return {dist: d, p: new mxPoint(x, y)};
-    	}
+	    	{
+		  	  var dx = line2End.x - x;
+			  var dy = line2End.y - y;
+			  var d = Math.sqrt(dy * dy + dx * dx); //distance from end of line 2 (next) to intersection point
+		      return {dist: d, p: new mxPoint(x, y)};
+	    	}
 	    else
+	    {
 	      return null;
+	    }
 	  }
-	}
+	};
 
 	mxPerimeter.getPerimeterPoint = function (points, center, point)
 	{
@@ -1367,11 +1369,13 @@
 			var ip = mxPerimeter.lineIntersection(points[i], points[i + 1], center, point);
 			
 			if (ip != null && (!min || min.dist > ip.dist))
+			{
 				min = ip;
+			}
 		}
 		
 		return min.p;
-	}
+	};
 
 	//Parallelogram Perimeter
 	mxPerimeter.ParallelogramPerimeter = function (bounds, vertex, next, orthogonal)
@@ -1392,9 +1396,11 @@
 
 		var points = [new mxPoint(x + dx, y), new mxPoint(x + w, y),
 						new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h), new mxPoint(x + dx, y)];
+
+		var cx = bounds.getCenterX();
+		var cy = bounds.getCenterY();
 		
-		var p = mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
-		return p;
+		return mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
 	};
 	
 	mxStyleRegistry.putValue('parallelogramPerimeter', mxPerimeter.ParallelogramPerimeter);
@@ -1419,9 +1425,11 @@
 
 		var points = [new mxPoint(x + dx, y), new mxPoint(x + w - dx, y),
 						new mxPoint(x + w, y + h), new mxPoint(x, y + h), new mxPoint(x + dx, y)];
+
+		var cx = bounds.getCenterX();
+		var cy = bounds.getCenterY();
 		
-		var p = mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
-		return p;
+		return mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
 	};
 	
 	mxStyleRegistry.putValue('trapezoidPerimeter', mxPerimeter.TrapezoidPerimeter);
@@ -1450,8 +1458,7 @@
 						new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h),
 						new mxPoint(x + dx, cy), new mxPoint(x, y)];
 		
-		var p = mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
-		return p;
+		return mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
 	};
 	
 	mxStyleRegistry.putValue('stepPerimeter', mxPerimeter.StepPerimeter);
@@ -1480,8 +1487,7 @@
 						new mxPoint(x + w - dx, y + h), new mxPoint(x + dx, y + h),
 						new mxPoint(x, cy), new mxPoint(x + dx, y)];
 		
-		var p = mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
-		return p;
+		return mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
 	};
 	
 	mxStyleRegistry.putValue('hexagonPerimeter2', mxPerimeter.HexagonPerimeter2);
@@ -3414,18 +3420,19 @@
 		                                new mxConnectionConstraint(new mxPoint(1, 0.65), false),
 										new mxConnectionConstraint(new mxPoint(0.25, 1), false),
 										new mxConnectionConstraint(new mxPoint(0.75, 0), false)];
+	// TODO: Relative ports
 	StepShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
                                        new mxConnectionConstraint(new mxPoint(0.5, 0), true),
                                        new mxConnectionConstraint(new mxPoint(0.75, 0), true),
                                        new mxConnectionConstraint(new mxPoint(0.25, 1), true),
   	        	            		 	new mxConnectionConstraint(new mxPoint(0.5, 1), true),
   	        	            		 	new mxConnectionConstraint(new mxPoint(0.75, 1), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.1, 0.25), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.2, 0.5), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.1, 0.75), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.9, 0.25), true),
-		                                new mxConnectionConstraint(new mxPoint(1, 0.5), true),
-		                                new mxConnectionConstraint(new mxPoint(0.9, 0.75), true)];
+	                                   new mxConnectionConstraint(new mxPoint(0.1, 0.25), false),
+	                                   new mxConnectionConstraint(new mxPoint(0.2, 0.5), false),
+	                                   new mxConnectionConstraint(new mxPoint(0.1, 0.75), false),
+	                                   new mxConnectionConstraint(new mxPoint(0.9, 0.25), false),
+		                                new mxConnectionConstraint(new mxPoint(1, 0.5), false),
+		                                new mxConnectionConstraint(new mxPoint(0.9, 0.75), false)];
 	mxLine.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.5), false),
 	                                new mxConnectionConstraint(new mxPoint(0.25, 0.5), false),
 	                                new mxConnectionConstraint(new mxPoint(0.75, 0.5), false),
@@ -3443,13 +3450,13 @@
 	mxHexagon.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.375, 0), true),
 	                                    new mxConnectionConstraint(new mxPoint(0.5, 0), true),
 	                                   new mxConnectionConstraint(new mxPoint(0.625, 0), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.125, 0.25), true),
+	                                   new mxConnectionConstraint(new mxPoint(0.125, 0.25), false),
 	                                   new mxConnectionConstraint(new mxPoint(0, 0.5), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.125, 0.75), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.875, 0.25), true),
+	                                   new mxConnectionConstraint(new mxPoint(0.125, 0.75), false),
+	                                   new mxConnectionConstraint(new mxPoint(0.875, 0.25), false),
 	                                   new mxConnectionConstraint(new mxPoint(0, 0.5), true),
 	                                   new mxConnectionConstraint(new mxPoint(1, 0.5), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.875, 0.75), true),
+	                                   new mxConnectionConstraint(new mxPoint(0.875, 0.75), false),
 	                                   new mxConnectionConstraint(new mxPoint(0.375, 1), true),
 	                                    new mxConnectionConstraint(new mxPoint(0.5, 1), true),
 	                                   new mxConnectionConstraint(new mxPoint(0.625, 1), true)];
