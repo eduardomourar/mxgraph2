@@ -1346,7 +1346,7 @@
 	    var x = line1Start.x + (a * (line1End.x - line1Start.x));
 	    var y = line1Start.y + (a * (line1End.y - line1Start.y));
 
-	    if (a > 0 && a <= 1)// on line1?
+	    if (a >= 0 && a <= 1)// on line1?
 	    	{
 		  	  var dx = line2End.x - x;
 			  var dy = line2End.y - y;
@@ -1400,11 +1400,20 @@
 		var cx = bounds.getCenterX();
 		var cy = bounds.getCenterY();
 		
-		return mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
+		var p1 = new mxPoint(cx, cy);
+		
+		if (orthogonal)
+		{
+			if (next.x < x || next.x > x + w)
+				p1.y = next.y;
+			else
+				p1.x = next.x;
+		}
+		
+		return mxPerimeter.getPerimeterPoint(points, p1, next);
 	};
 	
 	mxStyleRegistry.putValue('parallelogramPerimeter', mxPerimeter.ParallelogramPerimeter);
-	
 	
 	//Trapezoid Perimeter
 	mxPerimeter.TrapezoidPerimeter = function (bounds, vertex, next, orthogonal)
@@ -1429,7 +1438,17 @@
 		var cx = bounds.getCenterX();
 		var cy = bounds.getCenterY();
 		
-		return mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
+		var p1 = new mxPoint(cx, cy);
+		
+		if (orthogonal)
+		{
+			if (next.x < x || next.x > x + w)
+				p1.y = next.y;
+			else
+				p1.x = next.x;
+		}
+
+		return mxPerimeter.getPerimeterPoint(points, p1, next);
 	};
 	
 	mxStyleRegistry.putValue('trapezoidPerimeter', mxPerimeter.TrapezoidPerimeter);
@@ -1458,7 +1477,17 @@
 						new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h),
 						new mxPoint(x + dx, cy), new mxPoint(x, y)];
 		
-		return mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
+		var p1 = new mxPoint(cx, cy);
+		
+		if (orthogonal)
+		{
+			if (next.x < x || next.x > x + w)
+				p1.y = next.y;
+			else
+				p1.x = next.x;
+		}
+		
+		return mxPerimeter.getPerimeterPoint(points, p1, next);
 	};
 	
 	mxStyleRegistry.putValue('stepPerimeter', mxPerimeter.StepPerimeter);
@@ -1487,7 +1516,17 @@
 						new mxPoint(x + w - dx, y + h), new mxPoint(x + dx, y + h),
 						new mxPoint(x, cy), new mxPoint(x + dx, y)];
 		
-		return mxPerimeter.getPerimeterPoint(points, new mxPoint(cx, cy), next);
+		var p1 = new mxPoint(cx, cy);
+		
+		if (orthogonal)
+		{
+			if (next.x < x || next.x > x + w)
+				p1.y = next.y;
+			else
+				p1.x = next.x;
+		}
+		
+		return mxPerimeter.getPerimeterPoint(points, p1, next);
 	};
 	
 	mxStyleRegistry.putValue('hexagonPerimeter2', mxPerimeter.HexagonPerimeter2);
