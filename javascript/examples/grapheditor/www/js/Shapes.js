@@ -1387,16 +1387,32 @@
 			size = mxUtils.getValue(vertex.style, 'size', size);
 		}
 		
-		var dx = bounds.width * Math.max(0, Math.min(1, size));
-		
 		var x = bounds.x;
 		var y = bounds.y;
 		var w = bounds.width;
 		var h = bounds.height;
 
-		var points = [new mxPoint(x + dx, y), new mxPoint(x + w, y),
-						new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h), new mxPoint(x + dx, y)];
-
+		var direction = (vertex != null) ? mxUtils.getValue(
+				vertex.style, mxConstants.STYLE_DIRECTION,
+				mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
+		var vertical = direction == mxConstants.DIRECTION_NORTH
+				|| direction == mxConstants.DIRECTION_SOUTH;
+				
+		var points;
+		
+		if (vertical)
+		{
+			var dy = h * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x, y), new mxPoint(x + w, y + dy),
+						new mxPoint(x + w, y + h), new mxPoint(x, y + h - dy), new mxPoint(x, y)];
+		}
+		else
+		{
+			var dx = w * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x + dx, y), new mxPoint(x + w, y),
+							new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h), new mxPoint(x + dx, y)];
+		}	
+		
 		var cx = bounds.getCenterX();
 		var cy = bounds.getCenterY();
 		
@@ -1425,15 +1441,41 @@
 			size = mxUtils.getValue(vertex.style, 'size', size);
 		}
 		
-		var dx = bounds.width * Math.max(0, Math.min(1, size));
-		
 		var x = bounds.x;
 		var y = bounds.y;
 		var w = bounds.width;
 		var h = bounds.height;
 
-		var points = [new mxPoint(x + dx, y), new mxPoint(x + w - dx, y),
+		var direction = (vertex != null) ? mxUtils.getValue(
+				vertex.style, mxConstants.STYLE_DIRECTION,
+				mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
+		
+		var points;
+		
+		if (direction == mxConstants.DIRECTION_EAST)
+		{
+			var dx = w * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x + dx, y), new mxPoint(x + w - dx, y),
 						new mxPoint(x + w, y + h), new mxPoint(x, y + h), new mxPoint(x + dx, y)];
+		}
+		else if (direction == mxConstants.DIRECTION_WEST)
+		{
+			var dx = w * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x, y), new mxPoint(x + w, y),
+						new mxPoint(x + w - dx, y + h), new mxPoint(x + dx, y + h), new mxPoint(x, y)];
+		}
+		else if (direction == mxConstants.DIRECTION_NORTH)
+		{
+			var dy = h * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x, y + dy), new mxPoint(x + w, y),
+						new mxPoint(x + w, y + h), new mxPoint(x, y + h - dy), new mxPoint(x, y + dy)];
+		}
+		else
+		{
+			var dy = h * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x, y), new mxPoint(x + w, y + dy),
+						new mxPoint(x + w, y + h - dy), new mxPoint(x, y + h), new mxPoint(x, y)];
+		}		
 
 		var cx = bounds.getCenterX();
 		var cy = bounds.getCenterY();
@@ -1463,8 +1505,6 @@
 			size = mxUtils.getValue(vertex.style, 'size', size);
 		}
 		
-		var dx = bounds.width * Math.max(0, Math.min(1, size));
-		
 		var x = bounds.x;
 		var y = bounds.y;
 		var w = bounds.width;
@@ -1473,9 +1513,40 @@
 		var cx = bounds.getCenterX();
 		var cy = bounds.getCenterY();
 		
-		var points = [new mxPoint(x, y), new mxPoint(x + w - dx, y), new mxPoint(x + w, cy),
-						new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h),
-						new mxPoint(x + dx, cy), new mxPoint(x, y)];
+		var direction = (vertex != null) ? mxUtils.getValue(
+				vertex.style, mxConstants.STYLE_DIRECTION,
+				mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
+		
+		var points;
+		
+		if (direction == mxConstants.DIRECTION_EAST)
+		{
+			var dx = w * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x, y), new mxPoint(x + w - dx, y), new mxPoint(x + w, cy),
+							new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h),
+							new mxPoint(x + dx, cy), new mxPoint(x, y)];
+		}
+		else if (direction == mxConstants.DIRECTION_WEST)
+		{
+			var dx = w * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x + dx, y), new mxPoint(x + w, y), new mxPoint(x + w - dx, cy),
+							new mxPoint(x + w, y + h), new mxPoint(x + dx, y + h),
+							new mxPoint(x, cy), new mxPoint(x + dx, y)];
+		}
+		else if (direction == mxConstants.DIRECTION_NORTH)
+		{
+			var dy = h * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x, y + dy), new mxPoint(cx, y), new mxPoint(x + w, y + dy),
+							new mxPoint(x + w, y + h), new mxPoint(cx, y + h - dy),
+							new mxPoint(x, y + h), new mxPoint(x, y + dy)];
+		}
+		else
+		{
+			var dy = h * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x, y), new mxPoint(cx, y + dy), new mxPoint(x + w, y),
+							new mxPoint(x + w, y + h - dy), new mxPoint(cx, y + h),
+							new mxPoint(x, y + h - dy), new mxPoint(x, y)];
+		}		
 		
 		var p1 = new mxPoint(cx, cy);
 		
@@ -1502,8 +1573,6 @@
 			size = mxUtils.getValue(vertex.style, 'size', size);
 		}
 		
-		var dx = bounds.width * Math.max(0, Math.min(1, size));
-		
 		var x = bounds.x;
 		var y = bounds.y;
 		var w = bounds.width;
@@ -1512,10 +1581,29 @@
 		var cx = bounds.getCenterX();
 		var cy = bounds.getCenterY();
 		
-		var points = [new mxPoint(x + dx, y), new mxPoint(x + w - dx, y), new mxPoint(x + w, cy),
+		var direction = (vertex != null) ? mxUtils.getValue(
+				vertex.style, mxConstants.STYLE_DIRECTION,
+				mxConstants.DIRECTION_EAST) : mxConstants.DIRECTION_EAST;
+		var vertical = direction == mxConstants.DIRECTION_NORTH
+				|| direction == mxConstants.DIRECTION_SOUTH;
+		
+		var points;
+		
+		if (vertical)
+		{
+			var dy = h * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(cx, y), new mxPoint(x + w, y + dy), new mxPoint(x + w, y + h - dy),
+							new mxPoint(cx, y + h), new mxPoint(x, y + h - dy),
+							new mxPoint(x, y + dy), new mxPoint(cx, y)];
+		}
+		else
+		{
+			var dx = w * Math.max(0, Math.min(1, size));
+			points = [new mxPoint(x + dx, y), new mxPoint(x + w - dx, y), new mxPoint(x + w, cy),
 						new mxPoint(x + w - dx, y + h), new mxPoint(x + dx, y + h),
 						new mxPoint(x, cy), new mxPoint(x + dx, y)];
-		
+		}		
+
 		var p1 = new mxPoint(cx, cy);
 		
 		if (orthogonal)
