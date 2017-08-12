@@ -345,7 +345,32 @@
 		c.close();
 		c.end();
 	};
-
+	
+	TapeShape.prototype.getLabelBounds = function(rect)
+	{
+		if (mxUtils.getValue(this.style, "boundedLbl", false))
+		{
+			var size = mxUtils.getValue(this.style, 'size', this.size);			
+			var w = rect.width;
+			var h = rect.height;
+			
+			if (this.direction == null ||
+					this.direction == mxConstants.DIRECTION_EAST ||
+					this.direction == mxConstants.DIRECTION_WEST)
+			{
+				var dy = h * size;
+				return new mxRectangle(rect.x, rect.y + dy, w, h - 2 * dy);
+			}
+			else
+			{
+				var dx = w * size;
+				return new mxRectangle(rect.x + dx, rect.y, w - 2 * dx, h);
+			}
+		}
+		
+		return rect;
+	};
+	
 	mxCellRenderer.prototype.defaultShapes['tape'] = TapeShape;
 
 	// Document shape
