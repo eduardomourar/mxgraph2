@@ -348,7 +348,7 @@
 	
 	TapeShape.prototype.getLabelBounds = function(rect)
 	{
-		if (mxUtils.getValue(this.style, "boundedLbl", false))
+		if (mxUtils.getValue(this.style, 'boundedLbl', false))
 		{
 			var size = mxUtils.getValue(this.style, 'size', this.size);			
 			var w = rect.width;
