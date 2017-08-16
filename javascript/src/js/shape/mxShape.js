@@ -439,7 +439,6 @@ mxShape.prototype.updateBoundsFromPoints = function()
 			}
 		}
 	}
-	
 };
 
 /**
@@ -451,7 +450,26 @@ mxShape.prototype.updateBoundsFromPoints = function()
  */
 mxShape.prototype.getLabelBounds = function(rect)
 {
+	var m = this.getLabelMargins(rect);
+	
+	if (m != null)
+	{
+		return mxUtils.getDirectedBounds(rect, m, this.style);
+	}
+	
 	return rect;
+};
+
+/**
+ * Function: getLabelMargins
+ * 
+ * Returns the scaled top, left, bottom and right margin to be used for
+ * computing the label bounds as an <mxRectangle>, where the bottom and right
+ * margin are defined in the width and height of the rectangle, respectively.
+ */
+mxShape.prototype.getLabelMargins= function(rect)
+{
+	return null;
 };
 
 /**
@@ -1056,7 +1074,7 @@ mxShape.prototype.paintGlassEffect = function(c, x, y, w, h, arc)
  * 
  * Paints the given points with rounded corners.
  */
-mxShape.prototype.addPoints = function(c, pts, rounded, arcSize, close)
+mxShape.prototype.addPoints = function(c, pts, rounded, arcSize, close, exclude)
 {
 	var pe = pts[pts.length - 1];
 	
@@ -1081,7 +1099,7 @@ mxShape.prototype.addPoints = function(c, pts, rounded, arcSize, close)
 		var dx = pt.x - tmp.x;
 		var dy = pt.y - tmp.y;
 
-		if (rounded && (dx != 0 || dy != 0))
+		if (rounded && (dx != 0 || dy != 0) && (exclude == null || mxUtils.indexOf(exclude, i - 1) < 0))
 		{
 			// Draws a line from the last point to the current
 			// point with a spacing of size off the current point

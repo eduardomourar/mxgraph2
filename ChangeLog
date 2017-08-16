@@ -1,3 +1,4 @@
+- Adds mxShape.getLabelMargins, exclude argument in addPoints
 - Adds mxUtils.getDirectedBounds, lineIntersection and getPerimeterPoint
 - Handles flipH/-V in mxGraphView.getPerimeterPoint
 - Fixes pen events for Chrome on Windows
