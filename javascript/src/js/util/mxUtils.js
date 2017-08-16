@@ -2273,7 +2273,136 @@ var mxUtils =
 		
 		return index;
 	},
+
+	/**
+	 * Function: getDirectedBounds
+	 * 
+	 * Adds the given margins to the given rectangle and rotates and flips the
+	 * rectangle according to the respective styles in style.
+	 */
+	getDirectedBounds: function (rect, m, style)
+	{
+		var d = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
+		var flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, false);
+		var flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, false);
+
+		m.x = Math.round(Math.max(0, Math.min(rect.width, m.x)));
+		m.y = Math.round(Math.max(0, Math.min(rect.height, m.y)));
+		m.width = Math.round(Math.max(0, Math.min(rect.width, m.width)));
+		m.height = Math.round(Math.max(0, Math.min(rect.height, m.height)));
+		
+		if ((flipV && (d == mxConstants.DIRECTION_SOUTH || d == mxConstants.DIRECTION_NORTH)) ||
+			(flipH && (d == mxConstants.DIRECTION_EAST || d == mxConstants.DIRECTION_WEST)))
+		{
+			var tmp = m.x;
+			m.x = m.width;
+			m.width = tmp;
+		}
+			
+		if ((flipH && (d == mxConstants.DIRECTION_SOUTH || d == mxConstants.DIRECTION_NORTH)) ||
+			(flipV && (d == mxConstants.DIRECTION_EAST || d == mxConstants.DIRECTION_WEST)))
+		{
+			var tmp = m.y;
+			m.y = m.height;
+			m.height = tmp;
+		}
+		
+		var m2 = mxRectangle.fromRectangle(m);
+		
+		if (d == mxConstants.DIRECTION_SOUTH)
+		{
+			m2.y = m.x;
+			m2.x = m.height;
+			m2.width = m.y;
+			m2.height = m.width;
+		}
+		else if (d == mxConstants.DIRECTION_WEST)
+		{
+			m2.y = m.height;
+			m2.x = m.width;
+			m2.width = m.x;
+			m2.height = m.y;
+		}
+		else if (d == mxConstants.DIRECTION_NORTH)
+		{
+			m2.y = m.width;
+			m2.x = m.y;
+			m2.width = m.height;
+			m2.height = m.x;
+		}
+		
+		return new mxRectangle(rect.x + m2.x, rect.y + m2.y, rect.width - m2.width - m2.x, rect.height - m2.height - m2.y);
+	},
+
+	/**
+	 * Function: lineIntersection
+	 * 
+	 * Returns the intersection between the two given lines or null if the
+	 * lines do not intersect.
+	 */
+	lineIntersection: function(line1Start, line1End, line2Start, line2End)
+	{
+		// if the lines intersect, the result contains the the
+		// intersection point if both line segment 1 and line segment 2 contain the point
+		// null otherwise
+		var denominator = ((line2End.y - line2Start.y) * (line1End.x - line1Start.x)) - 
+	  		((line2End.x - line2Start.x) * (line1End.y - line1Start.y));
+	  
+		if (denominator == 0) //parallel?
+		{
+			return null;
+		}
+		else
+		{
+			var a = line1Start.y - line2Start.y;
+			var b = line1Start.x - line2Start.x;
+			var numerator1 = ((line2End.x - line2Start.x) * a) - ((line2End.y - line2Start.y) * b);
+			var numerator2 = ((line1End.x - line1Start.x) * a) - ((line1End.y - line1Start.y) * b);
+			a = numerator1 / denominator;
+			b = numerator2 / denominator;
 	
+			// if we cast these lines infinitely in both directions, they intersect here:
+			var x = line1Start.x + (a * (line1End.x - line1Start.x));
+			var y = line1Start.y + (a * (line1End.y - line1Start.y));
+	
+			if (a >= 0 && a <= 1)// on line1?
+			{
+				var dx = line2End.x - x;
+				var dy = line2End.y - y;
+				var d = Math.sqrt(dy * dy + dx * dx); //distance from end of line 2 (next) to intersection point
+				
+				return {dist: d, p: new mxPoint(x, y)};
+			}
+			else
+			{
+				return null;
+			}
+		}
+	},
+
+	/**
+	 * Function: getPerimeterPoint
+	 * 
+	 * Returns the intersection between the polygon defined by the array of
+	 * points and the line between center and point.
+	 */
+	getPerimeterPoint: function (points, center, point)
+	{
+		var min = null;
+		
+		for (var i = 0; i < points.length - 1; i++)
+		{
+			var ip = mxUtils.lineIntersection(points[i], points[i + 1], center, point);
+			
+			if (ip != null && (min == null || min.dist > ip.dist))
+			{
+				min = ip;
+			}
+		}
+		
+		return min.p;
+	},
+
 	/**
 	 * Function: rectangleIntersectsSegment
 	 * 
