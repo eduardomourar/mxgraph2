@@ -2400,7 +2400,7 @@ var mxUtils =
 			}
 		}
 		
-		return min.p;
+		return (min != null) ? min.p : null;
 	},
 
 	/**
