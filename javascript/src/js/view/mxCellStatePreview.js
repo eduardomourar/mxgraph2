@@ -117,6 +117,7 @@ mxCellStatePreview.prototype.translateState = function(state, dx, dy)
 		if (model.isVertex(state.cell))
 		{
 			state.view.updateCellState(state);
+			state.updateCachedBounds();
 			var geo = model.getGeometry(state.cell);
 			
 			// Moves selection cells and non-relative vertices in
@@ -152,6 +153,7 @@ mxCellStatePreview.prototype.revalidateState = function(state, dx, dy, visitor)
 		if (model.isEdge(state.cell))
 		{
 			state.view.updateCellState(state);
+			state.updateCachedBounds();
 		}
 
 		var geo = this.graph.getCellGeometry(state.cell);
