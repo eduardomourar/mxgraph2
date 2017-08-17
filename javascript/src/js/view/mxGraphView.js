@@ -966,9 +966,10 @@ mxGraphView.prototype.validateCellState = function(cell, recurse)
 				if (cell != this.currentRoot && !state.invalid)
 				{
 					this.graph.cellRenderer.redraw(state, false, this.isRendering());
-				}
 
-				state.updateCachedBounds();
+					// Handles changes to invertex paintbounds after update of rendering shape
+					state.updateCachedBounds();
+				}
 			}
 
 			if (recurse && !state.invalid)
@@ -1080,6 +1081,8 @@ mxGraphView.prototype.updateCellState = function(state)
 			}
 		}
 	}
+
+	state.updateCachedBounds();
 };
 
 /**
