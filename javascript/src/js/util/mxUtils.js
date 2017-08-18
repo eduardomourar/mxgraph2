@@ -2280,11 +2280,11 @@ var mxUtils =
 	 * Adds the given margins to the given rectangle and rotates and flips the
 	 * rectangle according to the respective styles in style.
 	 */
-	getDirectedBounds: function (rect, m, style)
+	getDirectedBounds: function (rect, m, style, flipH, flipV)
 	{
 		var d = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
-		var flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, false);
-		var flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, false);
+		flipH = (flipH != null) ? flipH : mxUtils.getValue(style, mxConstants.STYLE_FLIPH, false);
+		flipV = (flipV != null) ? flipV : mxUtils.getValue(style, mxConstants.STYLE_FLIPV, false);
 
 		m.x = Math.round(Math.max(0, Math.min(rect.width, m.x)));
 		m.y = Math.round(Math.max(0, Math.min(rect.height, m.y)));
