@@ -6723,6 +6723,29 @@ mxGraph.prototype.getConnectionPoint = function(vertex, constraint)
 		else
 		{
 			r2 += r1;
+			
+			if (this.getModel().isVertex(vertex.cell))
+			{
+				var flipH = vertex.style[mxConstants.STYLE_FLIPH] == 1;
+				var flipV = vertex.style[mxConstants.STYLE_FLIPV] == 1;
+				
+				// Legacy support for stencilFlipH/V
+				if (vertex.shape != null && vertex.shape.stencil != null)
+				{
+					flipH = (mxUtils.getValue(vertex.style, 'stencilFlipH', 0) == 1) || flipH;
+					flipV = (mxUtils.getValue(vertex.style, 'stencilFlipV', 0) == 1) || flipV;
+				}
+				
+				if (flipH)
+				{
+					point.x = 2 * bounds.getCenterX() - point.x;
+				}
+				
+				if (flipV)
+				{
+					point.y = 2 * bounds.getCenterY() - point.y;
+				}
+			}
 		}
 
 		// Generic rotation after projection on perimeter
