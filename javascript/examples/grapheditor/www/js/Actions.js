@@ -671,14 +671,14 @@ Actions.prototype.init = function()
 	{
 		graph.connectionArrowsEnabled = !graph.connectionArrowsEnabled;
 		ui.fireEvent(new mxEventObject('connectionArrowsChanged'));
-	}, null, null, 'Ctrl+Q');
+	}, null, null, 'Alt+Shift+A');
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.connectionArrowsEnabled; });
 	action = this.addAction('connectionPoints', function()
 	{
 		graph.setConnectable(!graph.connectionHandler.isEnabled());
 		ui.fireEvent(new mxEventObject('connectionPointsChanged'));
-	}, null, null, 'Ctrl+Shift+Q');
+	}, null, null, 'Alt+Shift+P');
 	action.setToggleAction(true);
 	action.setSelectedCallback(function() { return graph.connectionHandler.isEnabled(); });
 	action = this.addAction('copyConnect', function()
