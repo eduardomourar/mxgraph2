@@ -1,6 +1,6 @@
 - Calls updateCachedBounds in mxGraphView.validateCellState
 - Adds mxShape.getLabelMargins, exclude argument in addPoints
-- Adds mxUtils.getDirectedBounds, lineIntersection and getPerimeterPoint
+- Adds mxUtils.getDirectedBounds and getPerimeterPoint
 - Handles flipH/-V in mxGraphView.getPerimeterPoint
 - Fixes pen events for Chrome on Windows
 - Adds fixDash style, mxEvent.isPenEvent

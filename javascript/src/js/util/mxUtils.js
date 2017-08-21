@@ -2335,68 +2335,30 @@ var mxUtils =
 	},
 
 	/**
-	 * Function: lineIntersection
-	 * 
-	 * Returns the intersection between the two given lines or null if the
-	 * lines do not intersect.
-	 */
-	lineIntersection: function(line1Start, line1End, line2Start, line2End)
-	{
-		// if the lines intersect, the result contains the the
-		// intersection point if both line segment 1 and line segment 2 contain the point
-		// null otherwise
-		var denominator = ((line2End.y - line2Start.y) * (line1End.x - line1Start.x)) - 
-	  		((line2End.x - line2Start.x) * (line1End.y - line1Start.y));
-	  
-		if (denominator == 0) //parallel?
-		{
-			return null;
-		}
-		else
-		{
-			var a = line1Start.y - line2Start.y;
-			var b = line1Start.x - line2Start.x;
-			var numerator1 = ((line2End.x - line2Start.x) * a) - ((line2End.y - line2Start.y) * b);
-			var numerator2 = ((line1End.x - line1Start.x) * a) - ((line1End.y - line1Start.y) * b);
-			a = numerator1 / denominator;
-			b = numerator2 / denominator;
-	
-			// if we cast these lines infinitely in both directions, they intersect here:
-			var x = line1Start.x + (a * (line1End.x - line1Start.x));
-			var y = line1Start.y + (a * (line1End.y - line1Start.y));
-	
-			if (a >= 0 && a <= 1)// on line1?
-			{
-				var dx = line2End.x - x;
-				var dy = line2End.y - y;
-				var d = Math.sqrt(dy * dy + dx * dx); //distance from end of line 2 (next) to intersection point
-				
-				return {dist: d, p: new mxPoint(x, y)};
-			}
-			else
-			{
-				return null;
-			}
-		}
-	},
-
-	/**
 	 * Function: getPerimeterPoint
 	 * 
 	 * Returns the intersection between the polygon defined by the array of
 	 * points and the line between center and point.
 	 */
-	getPerimeterPoint: function (points, center, point)
+	getPerimeterPoint: function (pts, center, point)
 	{
 		var min = null;
 		
-		for (var i = 0; i < points.length - 1; i++)
+		for (var i = 0; i < pts.length - 1; i++)
 		{
-			var ip = mxUtils.lineIntersection(points[i], points[i + 1], center, point);
+			var pt = mxUtils.intersection(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y,
+				center.x, center.y, point.x, point.y);
 			
-			if (ip != null && (min == null || min.dist > ip.dist))
+			if (pt != null)
 			{
-				min = ip;
+				var dx = point.x - pt.x;
+				var dy = point.y - pt.y;
+				var ip = {p: pt, distSq: dy * dy + dx * dx};
+				
+				if (ip != null && (min == null || min.distSq > ip.distSq))
+				{
+					min = ip;
+				}
 			}
 		}
 		
@@ -2884,9 +2846,9 @@ var mxUtils =
 	 */
 	intersection: function (x0, y0, x1, y1, x2, y2, x3, y3)
 	{
-		var denom = ((y3 - y2)*(x1 - x0)) - ((x3 - x2)*(y1 - y0));
-		var nume_a = ((x3 - x2)*(y0 - y2)) - ((y3 - y2)*(x0 - x2));
-		var nume_b = ((x1 - x0)*(y0 - y2)) - ((y1 - y0)*(x0 - x2));
+		var denom = ((y3 - y2) * (x1 - x0)) - ((x3 - x2) * (y1 - y0));
+		var nume_a = ((x3 - x2) * (y0 - y2)) - ((y3 - y2) * (x0 - x2));
+		var nume_b = ((x1 - x0) * (y0 - y2)) - ((y1 - y0) * (x0 - x2));
 
 		var ua = nume_a / denom;
 		var ub = nume_b / denom;
@@ -2894,10 +2856,10 @@ var mxUtils =
 		if(ua >= 0.0 && ua <= 1.0 && ub >= 0.0 && ub <= 1.0)
 		{
 			// Get the intersection point
-			var intersectionX = x0 + ua*(x1 - x0);
-			var intersectionY = y0 + ua*(y1 - y0);
+			var x = x0 + ua * (x1 - x0);
+			var y = y0 + ua * (y1 - y0);
 			
-			return new mxPoint(intersectionX, intersectionY);
+			return new mxPoint(x, y);
 		}
 		
 		// No intersection
