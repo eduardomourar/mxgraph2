@@ -1,3 +1,4 @@
+- Adds mxCellRenderer.isShapeInvalid hook
 - Adds mxConstants.STYLE_ABSOLUTE_ARCSIZE for rectangles
 - Calls updateCachedBounds in mxGraphView.validateCellState
 - Adds mxShape.getLabelMargins, exclude argument in addPoints
