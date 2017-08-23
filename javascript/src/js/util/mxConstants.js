@@ -1457,13 +1457,13 @@
 	STYLE_ARCSIZE: 'arcSize',
 
 	/**
-	 * Variable: STYLE_SMOOTH
+	 * Variable: STYLE_ABSOLUTE_ARCSIZE
 	 * 
-	 * An experimental style for edges. This style is currently not available
-	 * in the backends and is implemented differently for VML and SVG. The use
-	 * of this style is currently only recommended for VML. Value is "smooth".
+	 * Defines the key for the absolute arc size style. This specifies if
+	 * arcSize for rectangles is abolute or relative. Possible values are 1
+	 * and 0 (default). Value is "absoluteArcSize".
 	 */
-	STYLE_SMOOTH: 'smooth',
+	STYLE_ABSOLUTE_ARCSIZE: 'absoluteArcSize',
 
 	/**
 	 * Variable: STYLE_SOURCE_PERIMETER_SPACING

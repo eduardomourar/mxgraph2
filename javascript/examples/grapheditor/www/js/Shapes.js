@@ -685,9 +685,19 @@
 				
 				if (this.isRounded)
 				{
-					var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE,
-						mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
-					var r = Math.min(w * f, h * f);
+					var r = 0;
+					
+					if (mxUtils.getValue(this.style, mxConstants.STYLE_ABSOLUTE_ARCSIZE, 0) == '1')
+					{
+						r = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
+					}
+					else
+					{
+						var f = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE,
+							mxConstants.RECTANGLE_ROUNDING_FACTOR * 100) / 100;
+						r = Math.min(w * f, h * f);
+					}
+					
 					c.moveTo(x + r, y);
 					c.lineTo(x + w - r, y);
 					c.quadTo(x + w, y, x + w, y + r);
