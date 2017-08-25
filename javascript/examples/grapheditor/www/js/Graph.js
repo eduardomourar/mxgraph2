@@ -3413,6 +3413,19 @@ HoverIcons.prototype.setCurrentState = function(state)
 					var p0 = pts[i];
 					var list = [];
 					
+					// Ignores waypoint on straight segments
+					if (i < pts.length - 2)
+					{
+						var pn = pts[i + 2];
+						
+						if (mxUtils.ptSegDistSq(p0.x, p0.y, pn.x, pn.y,
+							p1.x, p1.y) < 1 * this.scale * this.scale)
+						{
+							p1 = pn;
+							i++;
+						}
+					}
+					
 					changed = addPoint(0, p0.x, p0.y) || changed;
 					
 					// Processes all previous edges
