@@ -1702,14 +1702,17 @@ mxGraphView.prototype.getPerimeterPoint = function(terminal, next, orthogonal, b
 				
 				point = perimeter(bounds, terminal, point, orthogonal);
 
-				if (flipH)
+				if (point != null)
 				{
-					point.x = 2 * bounds.getCenterX() - point.x;
-				}
-				
-				if (flipV)
-				{
-					point.y = 2 * bounds.getCenterY() - point.y;
+					if (flipH)
+					{
+						point.x = 2 * bounds.getCenterX() - point.x;
+					}
+					
+					if (flipV)
+					{
+						point.y = 2 * bounds.getCenterY() - point.y;
+					}
 				}
 			}
 		}
