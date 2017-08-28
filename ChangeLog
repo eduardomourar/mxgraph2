@@ -1,3 +1,5 @@
+28-AUG-2017: 3.7.5
+
 - Adds line jumps in grapheditor example
 - Adds mxCellRenderer.isShapeInvalid hook
 - Adds mxConstants.STYLE_ABSOLUTE_ARCSIZE for rectangles
