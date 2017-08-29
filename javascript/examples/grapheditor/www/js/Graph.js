@@ -7271,7 +7271,7 @@ if (typeof mxVertexHandler != 'undefined')
 				if (this.linkHint == null)
 				{
 					this.linkHint = createHint();
-					this.linkHint.style.padding = '4px 10px 6px 10px';
+					this.linkHint.style.padding = '6px 8px 6px 8px';
 					this.linkHint.style.fontSize = '90%';
 					this.linkHint.style.opacity = '1';
 					this.linkHint.style.filter = '';
@@ -7311,7 +7311,7 @@ if (typeof mxVertexHandler != 'undefined')
 					for (var i = 0; i < links.length; i++)
 					{
 						var div = document.createElement('div');
-						div.style.marginTop = '6px';
+						div.style.marginTop = (link != null || i > 0) ? '6px' : '0px';
 						div.appendChild(this.graph.createLinkForHint(
 								links[i].getAttribute('href'),
 								mxUtils.getTextContent(links[i])));
