@@ -2567,6 +2567,11 @@ HoverIcons.prototype.refreshTarget = new mxImage((mxClient.IS_SVG) ? 'data:image
 	IMAGE_PATH + '/refresh.png', 38, 38);
 
 /**
+ * Tolerance for hover icon clicks.
+ */
+HoverIcons.prototype.tolerance = (mxClient.IS_TOUCH) ? 6 : 0;
+
+/**
  * 
  */
 HoverIcons.prototype.init = function()
@@ -2756,6 +2761,7 @@ HoverIcons.prototype.createArrow = function(img, tooltip)
 		arrow = mxUtils.createImage(img.src);
 		arrow.style.width = img.width + 'px';
 		arrow.style.height = img.height + 'px';
+		arrow.style.padding = this.tolerance + 'px';
 	}
 	
 	if (tooltip != null)
@@ -3050,19 +3056,19 @@ HoverIcons.prototype.repaint = function()
 				}
 			}
 			
-			this.arrowUp.style.left = Math.round(this.currentState.getCenterX() - this.triangleUp.width / 2) + 'px';
-			this.arrowUp.style.top = Math.round(bds.y - this.triangleUp.height) + 'px';
+			this.arrowUp.style.left = Math.round(this.currentState.getCenterX() - this.triangleUp.width / 2 - this.tolerance) + 'px';
+			this.arrowUp.style.top = Math.round(bds.y - this.triangleUp.height - this.tolerance) + 'px';
 			mxUtils.setOpacity(this.arrowUp, this.inactiveOpacity);
 			
-			this.arrowRight.style.left = Math.round(bds.x + bds.width) + 'px';
-			this.arrowRight.style.top = Math.round(this.currentState.getCenterY() - this.triangleRight.height / 2) + 'px';
+			this.arrowRight.style.left = Math.round(bds.x + bds.width - this.tolerance) + 'px';
+			this.arrowRight.style.top = Math.round(this.currentState.getCenterY() - this.triangleRight.height / 2 - this.tolerance) + 'px';
 			mxUtils.setOpacity(this.arrowRight, this.inactiveOpacity);
 			
-			this.arrowDown.style.left = this.arrowUp.style.left
-			this.arrowDown.style.top = Math.round(bds.y + bds.height) + 'px';
+			this.arrowDown.style.left = this.arrowUp.style.left;
+			this.arrowDown.style.top = Math.round(bds.y + bds.height - this.tolerance) + 'px';
 			mxUtils.setOpacity(this.arrowDown, this.inactiveOpacity);
 			
-			this.arrowLeft.style.left = Math.round(bds.x - this.triangleLeft.width) + 'px';
+			this.arrowLeft.style.left = Math.round(bds.x - this.triangleLeft.width - this.tolerance) + 'px';
 			this.arrowLeft.style.top = this.arrowRight.style.top;
 			mxUtils.setOpacity(this.arrowLeft, this.inactiveOpacity);
 			
