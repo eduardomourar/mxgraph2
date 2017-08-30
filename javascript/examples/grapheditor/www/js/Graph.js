@@ -3582,10 +3582,11 @@ HoverIcons.prototype.setCurrentState = function(state)
 							pts.push(p0);
 							
 							this.addPoints(c, pts, rounded, arcSize, false, null, moveTo);
-	
-							var f = (Math.round(n.x) <= 0) ? 1 : -1;
-							moveTo = false;
 							
+							var f = (Math.round(n.x) < 0 || (Math.round(n.x) == 0
+									&& Math.round(n.y) <= 0)) ? 1 : -1;
+							moveTo = false;
+
 							if (style == 'sharp')
 							{
 								c.lineTo(p0.x - n.y * f, p0.y + n.x * f);
