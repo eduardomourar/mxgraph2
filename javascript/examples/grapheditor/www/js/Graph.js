@@ -3446,8 +3446,22 @@ HoverIcons.prototype.setCurrentState = function(state)
 							// Compares each segment of the edge with the current segment
 							for (var j = 0; j < pts2.length - 1; j++)
 							{
-								var p2 = pts2[j];
 								var p3 = pts2[j + 1];
+								var p2 = pts2[j];
+								
+								// Ignores waypoint on straight segments
+								if (j < pts2.length - 2)
+								{
+									var pn = pts2[j + 2];
+									
+									if (mxUtils.ptSegDistSq(p2.x, p2.y, pn.x, pn.y,
+										p3.x, p3.y) < 1 * this.scale * this.scale)
+									{
+										p3 = pn;
+										j++;
+									}
+								}
+								
 								var pt = mxUtils.intersection(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
 	
 								// Handles intersection between two segments
