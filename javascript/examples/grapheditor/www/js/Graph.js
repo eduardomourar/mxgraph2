@@ -3818,8 +3818,6 @@ mxStencilRegistry.getStencil = function(name)
 			{
 				if (mxStencilRegistry.packages[basename] == null)
 				{
-					mxStencilRegistry.packages[basename] = 1;
-					
 					for (var i = 0; i < libs.length; i++)
 					{
 						var fname = libs[i];
@@ -3855,6 +3853,8 @@ mxStencilRegistry.getStencil = function(name)
 							//mxResources.add(fname);
 						}
 					}
+
+					mxStencilRegistry.packages[basename] = 1;
 				}
 			}
 			else
