@@ -1024,7 +1024,7 @@ mxPrintPreview.prototype.addGraphFragment = function(dx, dy, scale, pageNumber, 
 		// Creates the temporary cell states in the view and
 		// draws them onto the temporary DOM nodes in the view
 		var cells = [this.getRoot()];
-		temp = new mxTemporaryCellStates(view, scale, cells, null, this.getLinkForCellState, mxUtils.bind(this, function(state)
+		temp = new mxTemporaryCellStates(view, scale, cells, null, mxUtils.bind(this, function(state)
 		{
 			return this.getLinkForCellState(state);
 		}));
