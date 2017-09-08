@@ -1,3 +1,6 @@
+- Adds links on shapes in mxPrintPreview
+- Adds mxCellRenderer.prototype.doRedrawShape
+
 28-AUG-2017: 3.7.5
 
 - Adds line jumps in grapheditor example
