@@ -1480,8 +1480,8 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 			state.view.graph.selectionCellsHandler.updateHandler(state);
 		}
 	}
-	else if (state.shape != null && (!mxUtils.equalEntries(state.shape.style, state.style) ||
-		this.checkPlaceholderStyles(state)))
+	else if (!force && state.shape != null && (!mxUtils.equalEntries(state.shape.style,
+		state.style) || this.checkPlaceholderStyles(state)))
 	{
 		state.shape.resetStyles();
 		this.configureShape(state);
