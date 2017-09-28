@@ -270,6 +270,31 @@ mxCellRenderer.prototype.postConfigureShape = function(state)
 };
 
 /**
+ * Function: checkPlaceholderStyles
+ * 
+ * Resolves special keywords 'inherit', 'indicated' and 'swimlane' and sets
+ * the respective color on the shape.
+ */
+mxCellRenderer.prototype.checkPlaceholderStyles = function(state)
+{
+	if (state.style != null)
+	{
+		var values = ['inherit', 'swimlane', 'indicated'];
+		var styles = [mxConstants.STYLE_FILLCOLOR, mxConstants.STYLE_STROKECOLOR, mxConstants.STYLE_GRADIENTCOLOR];
+		
+		for (var i = 0; i < styles.length; i++)
+		{
+			if (mxUtils.indexOf(values, state.style[styles[i]]) >= 0)
+			{
+				return true;
+			}
+		}
+	}
+	
+	return false;
+};
+
+/**
  * Function: resolveColor
  * 
  * Resolves special keywords 'inherit', 'indicated' and 'swimlane' and sets
@@ -1453,7 +1478,8 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 			state.view.graph.selectionCellsHandler.updateHandler(state);
 		}
 	}
-	else if (state.shape != null && !mxUtils.equalEntries(state.shape.style, state.style))
+	else if (state.shape != null && (!mxUtils.equalEntries(state.shape.style, state.style) ||
+		this.checkPlaceholderStyles(state)))
 	{
 		state.shape.resetStyles();
 		this.configureShape(state);
