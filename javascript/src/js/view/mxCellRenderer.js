@@ -277,6 +277,7 @@ mxCellRenderer.prototype.postConfigureShape = function(state)
  */
 mxCellRenderer.prototype.checkPlaceholderStyles = function(state)
 {
+	// LATER: Check if the color has actually changed
 	if (state.style != null)
 	{
 		var values = ['inherit', 'swimlane', 'indicated'];
