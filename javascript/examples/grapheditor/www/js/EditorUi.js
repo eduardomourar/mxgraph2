@@ -7,10 +7,11 @@
 EditorUi = function(editor, container, lightbox)
 {
 	mxEventSource.call(this);
+	
 	this.destroyFunctions = [];
-
 	this.editor = editor || new Editor();
 	this.container = container || document.body;
+	
 	var graph = this.editor.graph;
 	graph.lightbox = lightbox;
 
@@ -31,7 +32,7 @@ EditorUi = function(editor, container, lightbox)
 	}
 	
 	// Disables graph and forced panning in chromeless mode
-	if (this.editor.chromeless)
+	if (this.editor.chromeless && !this.editor.editable)
 	{
 		this.footerHeight = 0;
 		graph.isEnabled = function() { return false; };
@@ -83,7 +84,7 @@ EditorUi = function(editor, container, lightbox)
 	}
 	
 	// And uses built-in context menu while editing
-	if (!this.editor.chromeless)
+	if (!this.editor.chromeless || this.editor.editable)
 	{
 		if (mxClient.IS_IE && (typeof(document.documentMode) === 'undefined' || document.documentMode < 9))
 		{
@@ -195,7 +196,7 @@ EditorUi = function(editor, container, lightbox)
 	
 	var updateToolbar = mxUtils.bind(this, function()
 	{
-		if (textMode != graph.cellEditor.isContentEditing())
+		if (this.toolbar != null && textMode != graph.cellEditor.isContentEditing())
 		{
 			var node = this.toolbar.container.firstChild;
 			var newNodes = [];
@@ -2006,9 +2007,17 @@ EditorUi.prototype.toggleFormatPanel = function(forceHide)
  */
 EditorUi.prototype.lightboxFit = function()
 {
+	var p = urlParams['border'];
+	var border = 60;
+	
+	if (p != null)
+	{
+		border = parseInt(p);
+	}
+	
 	// LATER: Use initial graph bounds to avoid rounding errors
 	this.editor.graph.maxFitScale = 2;
-	this.editor.graph.fit(60);
+	this.editor.graph.fit(border);
 	this.editor.graph.maxFitScale = null;
 };
 
