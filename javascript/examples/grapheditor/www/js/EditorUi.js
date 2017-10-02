@@ -1717,50 +1717,53 @@ EditorUi.prototype.initCanvas = function()
 					fadeIn(30);
 				}
 			}));
+
+			// Shows/hides toolbar for touch devices
+			var tol = graph.getTolerance();
+			var ui = this;
+
+			graph.addMouseListener(
+			{
+			    startX: 0,
+			    startY: 0,
+			    scrollLeft: 0,
+			    scrollTop: 0,
+			    mouseDown: function(sender, me)
+			    {
+			    	this.startX = me.getGraphX();
+			    	this.startY = me.getGraphY();
+				    this.scrollLeft = graph.container.scrollLeft;
+				    this.scrollTop = graph.container.scrollTop;
+			    },
+			    mouseMove: function(sender, me) {},
+			    mouseUp: function(sender, me)
+			    {
+			    	if (mxEvent.isTouchEvent(me.getEvent()))
+			    	{
+				    	if ((Math.abs(this.scrollLeft - graph.container.scrollLeft) < tol &&
+				    		Math.abs(this.scrollTop - graph.container.scrollTop) < tol) &&
+				    		(Math.abs(this.startX - me.getGraphX()) < tol &&
+				    		Math.abs(this.startY - me.getGraphY()) < tol))
+				    	{
+				    		if (parseFloat(ui.chromelessToolbar.style.opacity || 0) > 0)
+				    		{
+				    			fadeOut();
+				    		}
+				    		else
+				    		{
+				    			fadeIn(30);
+				    		}
+						}
+			    	}
+			    }
+			});
 		} // end if toolbar
 
 		// Installs handling of highlight and handling links to relative links and anchors
-		this.addChromelessClickHandler();
-
-		// Shows/hides toolbar for touch devices
-		var tol = graph.getTolerance();
-		var ui = this;
-
-		graph.addMouseListener(
+		if (!this.editor.editable)
 		{
-		    startX: 0,
-		    startY: 0,
-		    scrollLeft: 0,
-		    scrollTop: 0,
-		    mouseDown: function(sender, me)
-		    {
-		    	this.startX = me.getGraphX();
-		    	this.startY = me.getGraphY();
-			    this.scrollLeft = graph.container.scrollLeft;
-			    this.scrollTop = graph.container.scrollTop;
-		    },
-		    mouseMove: function(sender, me) {},
-		    mouseUp: function(sender, me)
-		    {
-		    	if (mxEvent.isTouchEvent(me.getEvent()))
-		    	{
-			    	if ((Math.abs(this.scrollLeft - graph.container.scrollLeft) < tol &&
-			    		Math.abs(this.scrollTop - graph.container.scrollTop) < tol) &&
-			    		(Math.abs(this.startX - me.getGraphX()) < tol &&
-			    		Math.abs(this.startY - me.getGraphY()) < tol))
-			    	{
-			    		if (parseFloat(ui.chromelessToolbar.style.opacity || 0) > 0)
-			    		{
-			    			fadeOut();
-			    		}
-			    		else
-			    		{
-			    			fadeIn(30);
-			    		}
-					}
-		    	}
-		    }
-		});
+			this.addChromelessClickHandler();
+		}
 	}
 	else if (this.editor.extendCanvas)
 	{
