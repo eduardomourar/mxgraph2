@@ -3786,6 +3786,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
 								{
 									graph.setSelectionCell(cells[cells.length - 1]);
 								}
+
+								graph.scrollCellToVisible(graph.getSelectionCell());
 								
 								if (editorUi.hoverIcons != null)
 								{
