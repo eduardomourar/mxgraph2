@@ -951,6 +951,11 @@ EditorUi.prototype.hsplitPosition = (screen.width <= 640) ? 118 : 208;
 EditorUi.prototype.allowAnimation = true;
 
 /**
+ * Specifies if animations are allowed in <executeLayout>. Default is true.
+ */
+EditorUi.prototype.lightboxMaxFitScale = 2;
+
+/**
  * Installs the listeners to update the action states.
  */
 EditorUi.prototype.init = function()
@@ -2025,7 +2030,7 @@ EditorUi.prototype.lightboxFit = function()
 		}
 		
 		// LATER: Use initial graph bounds to avoid rounding errors
-		this.editor.graph.maxFitScale = 2;
+		this.editor.graph.maxFitScale = this.lightboxMaxFitScale;
 		this.editor.graph.fit(border);
 		this.editor.graph.maxFitScale = null;
 	}
