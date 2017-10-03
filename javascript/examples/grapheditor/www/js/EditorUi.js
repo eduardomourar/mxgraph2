@@ -2010,18 +2010,38 @@ EditorUi.prototype.toggleFormatPanel = function(forceHide)
  */
 EditorUi.prototype.lightboxFit = function()
 {
-	var p = urlParams['border'];
-	var border = 60;
-	
-	if (p != null)
+	if (this.isDiagramEmpty())
 	{
-		border = parseInt(p);
+		this.editor.graph.view.setScale(1);
 	}
+	else
+	{
+		var p = urlParams['border'];
+		var border = 60;
+		
+		if (p != null)
+		{
+			border = parseInt(p);
+		}
+		
+		// LATER: Use initial graph bounds to avoid rounding errors
+		this.editor.graph.maxFitScale = 2;
+		this.editor.graph.fit(border);
+		this.editor.graph.maxFitScale = null;
+	}
+};
+
+/**
+ * Translates this point by the given vector.
+ * 
+ * @param {number} dx X-coordinate of the translation.
+ * @param {number} dy Y-coordinate of the translation.
+ */
+EditorUi.prototype.isDiagramEmpty = function()
+{
+	var model = this.editor.graph.getModel();
 	
-	// LATER: Use initial graph bounds to avoid rounding errors
-	this.editor.graph.maxFitScale = 2;
-	this.editor.graph.fit(border);
-	this.editor.graph.maxFitScale = null;
+	return model.getChildCount(model.root) == 1 && model.getChildCount(model.getChildAt(model.root, 0)) == 0;
 };
 
 /**
