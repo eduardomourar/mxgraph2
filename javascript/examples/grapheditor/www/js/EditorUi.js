@@ -2156,7 +2156,7 @@ EditorUi.prototype.resetCurrentMenu = function()
 /**
  * Hides and destroys the current menu.
  */
-EditorUi.prototype.hideCurrentMenu = function(menu, elt)
+EditorUi.prototype.hideCurrentMenu = function()
 {
 	if (this.currentMenu != null)
 	{
