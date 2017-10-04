@@ -1355,7 +1355,7 @@ EditorUi.prototype.initCanvas = function()
 				var dx = Math.max((cw - ns * b.width) / 2, 0) / ns;
 				var dy = Math.max((ch - ns * b.height) / this.lightboxVerticalDivider, 0) / ns;
 				
-				graph.view.scaleAndTranslate(ns, dx - b.x, dy - b.y);
+				graph.view.scaleAndTranslate(ns, Math.floor(dx - b.x), Math.floor(dy - b.y));
 
 				graph.container.scrollTop = st * ns / s;
 				graph.container.scrollLeft = sl * ns / s;
