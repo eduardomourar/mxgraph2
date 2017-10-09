@@ -300,7 +300,7 @@ Actions.prototype.init = function()
 			ui.showLinkDialog(value, mxResources.get('apply'), function(link)
 			{
 				link = mxUtils.trim(link);
-    			graph.setLinkForCell(cell, (link.length > 0) ? link : null);
+    				graph.setLinkForCell(cell, (link.length > 0) ? link : null);
 			});
 		}
 	});
@@ -308,7 +308,7 @@ Actions.prototype.init = function()
 	{
 		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
 		{
-			var dlg = new LinkDialog(ui, '', mxResources.get('insert'), function(link, docs)
+			ui.showLinkDialog('', mxResources.get('insert'), function(link, docs)
 			{
 				link = mxUtils.trim(link);
 				
@@ -354,9 +354,6 @@ Actions.prototype.init = function()
 	            	    graph.scrollCellToVisible(graph.getSelectionCell());
 				}
 			});
-			
-			ui.showDialog(dlg.container, 420, 90, true, true);
-			dlg.init();
 		}
 	}).isEnabled = isGraphEnabled;
 	this.addAction('link...', mxUtils.bind(this, function()
