@@ -314,8 +314,28 @@ Actions.prototype.init = function()
 				
 				if (link.length > 0)
 				{
-					var title = link.substring(link.lastIndexOf('/') + 1);
 					var icon = null;
+					var title = link.substring(link.lastIndexOf('/') + 1);
+					var pageLink = graph.isPageLink(link);
+					
+					if (pageLink)
+					{
+						var comma = link.indexOf(',');
+
+						if (comma > 0)
+						{
+							var page = ui.getPageById(link.substring(comma + 1));
+			
+							if (page != null)
+							{
+								title = page.getName();
+							}
+							else
+							{
+								title = mxResources.get('pageNotFound');
+							}
+						}
+					}
 					
 					if (docs != null && docs.length > 0)
 					{
@@ -343,7 +363,7 @@ Actions.prototype.init = function()
 	            		try
 	            	    {
 	            	    		linkCell = graph.addCell(linkCell);
-	            	    		graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [cell]));
+	            	    		graph.fireEvent(new mxEventObject('cellsInserted', 'cells', [linkCell]));
 	            	    }
 	            		finally
 	            		{

@@ -1046,6 +1046,14 @@ Graph.prototype.init = function(container)
 };
 
 /**
+ * Adds support for page links.
+ */
+Graph.prototype.isPageLink = function(href)
+{
+	return false;
+};
+
+/**
  * Installs automatic layout via styles
  */
 Graph.prototype.labelLinkClicked = function(state, elt, evt)
