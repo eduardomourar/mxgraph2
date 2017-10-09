@@ -1,3 +1,4 @@
+- Resets constraint handler after translate
 - Adds mxCellRenderer.checkPlaceholderStyles
 - Adds links on shapes in mxPrintPreview
 - Adds mxCellRenderer.doRedrawShape
