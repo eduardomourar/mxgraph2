@@ -1082,7 +1082,8 @@ Graph.prototype.labelLinkClicked = function(state, elt, evt)
 				{
 					window.location.hash = href.split('#')[1];
 				}
-				else if (mxEvent.isLeftMouseButton(evt) ||
+				else if ((mxEvent.isLeftMouseButton(evt) &&
+					!mxEvent.isPopupTrigger(evt)) ||
 			    		mxEvent.isTouchEvent(evt))
 				{
 					window.open(href, target);
@@ -5030,6 +5031,7 @@ if (typeof mxVertexHandler != 'undefined')
 			    {
 			    	
 			    	var source = me.getSource();
+			    	var evt = me.getEvent();
 			    	
 			    	// Checks for parent link
 			    	var linkNode = source;
@@ -5044,8 +5046,9 @@ if (typeof mxVertexHandler != 'undefined')
 			    		(((Math.abs(this.scrollLeft - graph.container.scrollLeft) < tol &&
 			        	Math.abs(this.scrollTop - graph.container.scrollTop) < tol) &&
 			    		(me.getState() == null || !me.isSource(me.getState().control))) &&
-			    		(mxEvent.isLeftMouseButton(me.getEvent()) ||
-			    		mxEvent.isTouchEvent(me.getEvent()))))
+			    		((mxEvent.isLeftMouseButton(evt) &&
+					!mxEvent.isPopupTrigger(evt)) ||
+			    		mxEvent.isTouchEvent(evt))))
 			    	{
 				    	if (this.currentLink != null) 
 				    	{
@@ -5054,10 +5057,10 @@ if (typeof mxVertexHandler != 'undefined')
 				    		if ((this.currentLink.substring(0, 5) === 'data:' ||
 				    			!blank) && beforeClick != null)
 				    		{
-			    				beforeClick(me.getEvent(), this.currentLink);
+			    				beforeClick(evt, this.currentLink);
 				    		}
 				    		
-				    		if (!mxEvent.isConsumed(me.getEvent()))
+				    		if (!mxEvent.isConsumed(evt))
 				    		{
 					    		var target = (blank) ? graph.linkTarget : '_top';
 					    		
