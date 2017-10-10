@@ -1204,7 +1204,7 @@ Graph.prototype.sanitizeHtml = function(value, editing)
 {
 	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
 	// NOTE: Original minimized sanitizer was modified to support
-	// data URIs for images, and mailto and special data:-links.
+	// data URIs for images, mailto and special data:-links.
 	// LATER: Add MathML to whitelisted tags
 	function urlX(link)
 	{
