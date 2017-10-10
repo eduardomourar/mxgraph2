@@ -2395,8 +2395,11 @@ Graph.prototype.getTooltipForCell = function(cell)
 
 			for (var i = 0; i < temp.length; i++)
 			{
-				tip += ((temp[i].name != 'link') ? temp[i].name + ':' : '') +
-					mxUtils.htmlEntities(temp[i].value) + '\n';
+				if (temp[i].name != 'link' || !this.isPageLink(temp[i].value))
+				{
+					tip += ((temp[i].name != 'link') ? temp[i].name + ':' : '') +
+						mxUtils.htmlEntities(temp[i].value) + '\n';
+				}
 			}
 			
 			if (tip.length > 0)
