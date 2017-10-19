@@ -1,3 +1,4 @@
+- Fixes return value of mxUtils.loadDocument in Java
 - Resets constraint handler after translate
 - Adds mxCellRenderer.checkPlaceholderStyles
 - Adds links on shapes in mxPrintPreview
