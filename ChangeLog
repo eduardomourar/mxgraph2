@@ -1,3 +1,4 @@
+- Fixes text reflow after change of shape
 - Fixes return value of mxUtils.loadDocument in Java
 - Resets constraint handler after translate
 - Adds mxCellRenderer.checkPlaceholderStyles

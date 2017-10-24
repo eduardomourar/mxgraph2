@@ -929,6 +929,12 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 			state.text.scale != this.getTextScale(state) || state.text.dialect != dialect ||
 			!state.text.bounds.equals(bounds))
 		{
+			// Forces an update of the text bounding box
+			if (state.text.bounds.width != bounds.width)
+			{
+				state.unscaledWidth = null;
+			}
+			
 			state.text.dialect = dialect;
 			state.text.value = value;
 			state.text.bounds = bounds;
