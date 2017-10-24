@@ -18,6 +18,11 @@ Format.prototype.labelIndex = 0;
 Format.prototype.currentIndex = 0;
 
 /**
+ * Returns information about the current selection.
+ */
+Format.prototype.showCloseButton = true;
+
+/**
  * Adds the label menu items to the given menu and parent.
  */
 Format.prototype.init = function()
@@ -351,26 +356,29 @@ Format.prototype.refresh = function()
 		// Adds button to hide the format panel since
 		// people don't seem to find the toolbar button
 		// and the menu item in the format menu
-		var img = document.createElement('img');
-		img.setAttribute('border', '0');
-		img.setAttribute('src', Dialog.prototype.closeImage);
-		img.setAttribute('title', mxResources.get('hide'));
-		img.style.position = 'absolute';
-		img.style.display = 'block';
-		img.style.right = '0px';
-		img.style.top = '8px';
-		img.style.cursor = 'pointer';
-		img.style.marginTop = '1px';
-		img.style.marginRight = '17px';
-		img.style.border = '1px solid transparent';
-		img.style.padding = '1px';
-		img.style.opacity = 0.5;
-		label.appendChild(img)
-		
-		mxEvent.addListener(img, 'click', function()
+		if (this.showCloseButton)
 		{
-			ui.actions.get('formatPanel').funct();
-		});
+			var img = document.createElement('img');
+			img.setAttribute('border', '0');
+			img.setAttribute('src', Dialog.prototype.closeImage);
+			img.setAttribute('title', mxResources.get('hide'));
+			img.style.position = 'absolute';
+			img.style.display = 'block';
+			img.style.right = '0px';
+			img.style.top = '8px';
+			img.style.cursor = 'pointer';
+			img.style.marginTop = '1px';
+			img.style.marginRight = '17px';
+			img.style.border = '1px solid transparent';
+			img.style.padding = '1px';
+			img.style.opacity = 0.5;
+			label.appendChild(img)
+			
+			mxEvent.addListener(img, 'click', function()
+			{
+				ui.actions.get('formatPanel').funct();
+			});
+		}
 		
 		div.appendChild(label);
 		this.panels.push(new DiagramFormatPanel(this, ui, div));
