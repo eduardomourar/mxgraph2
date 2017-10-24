@@ -1363,7 +1363,14 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 			sizeDiv.offsetWidth) + padX;
 		oh = ((group.mxCachedFinalOffsetHeight != null) ? group.mxCachedFinalOffsetHeight :
 			sizeDiv.offsetHeight) - 2;
-
+		
+		if (this.cacheOffsetSize)
+		{
+			group.mxCachedOffsetWidth = tmp;
+			group.mxCachedFinalOffsetWidth = ow;
+			group.mxCachedFinalOffsetHeight = oh;
+		}
+		
 		if (clip)
 		{
 			oh = Math.min(oh, h);

@@ -900,7 +900,6 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 		// result in getLabelBounds we apply the new style to the shape
 		if (forced)
 		{
-
 			// Checks if a full repaint is needed
 			if (state.text.lastValue != null && this.isTextShapeInvalid(state, state.text))
 			{
