@@ -1335,7 +1335,7 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 		var oh = 0;
 		
 		// Padding avoids clipping on border and wrapping for differing font metrics on platforms
-		var padX = 2;
+		var padX = 0;
 		var padY = 2;
 
 		var sizeDiv = div;
@@ -1356,13 +1356,11 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 				ow = Math.min(ow, w);
 			}
 			
-			div.style.width = ow + 'px';
+			div.style.width = Math.round(ow + 1) + 'px';
 		}
-		
-		ow = ((group.mxCachedFinalOffsetWidth != null) ? group.mxCachedFinalOffsetWidth :
-			sizeDiv.offsetWidth) + padX;
-		oh = ((group.mxCachedFinalOffsetHeight != null) ? group.mxCachedFinalOffsetHeight :
-			sizeDiv.offsetHeight) - 2;
+
+		ow = (group.mxCachedFinalOffsetWidth != null) ? group.mxCachedFinalOffsetWidth : sizeDiv.offsetWidth;
+		oh = (group.mxCachedFinalOffsetHeight != null) ? group.mxCachedFinalOffsetHeight : sizeDiv.offsetHeight;
 		
 		if (this.cacheOffsetSize)
 		{
@@ -1370,6 +1368,9 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 			group.mxCachedFinalOffsetWidth = ow;
 			group.mxCachedFinalOffsetHeight = oh;
 		}
+		
+		ow += padX;
+		oh -= 2;
 		
 		if (clip)
 		{
@@ -1566,7 +1567,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 					var tmp = div2.offsetWidth;
 					
 					// Workaround for adding padding twice in IE8/IE9 standards mode if label is wrapped
-					var padDx = 0;
+					padDx = 0;
 					
 					// For export, if no wrapping occurs, we add a large padding to make
 					// sure there is no wrapping even if the text metrics are different.
