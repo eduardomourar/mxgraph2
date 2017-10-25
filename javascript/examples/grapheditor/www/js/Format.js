@@ -23,6 +23,11 @@ Format.prototype.currentIndex = 0;
 Format.prototype.showCloseButton = true;
 
 /**
+ * Background color for inactive tabs.
+ */
+Format.prototype.inactiveTabBackgroundColor = '#d7d7d7';
+
+/**
  * Adds the label menu items to the given menu and parent.
  */
 Format.prototype.init = function()
@@ -412,7 +417,7 @@ Format.prototype.refresh = function()
 					
 					if (currentLabel != null)
 					{
-						currentLabel.style.backgroundColor = '#d7d7d7';
+						currentLabel.style.backgroundColor = this.inactiveTabBackgroundColor;
 						currentLabel.style.borderBottomWidth = '1px';
 					}
 	
@@ -444,7 +449,7 @@ Format.prototype.refresh = function()
 		
 		var idx = 0;
 
-		label.style.backgroundColor = '#d7d7d7';
+		label.style.backgroundColor = this.inactiveTabBackgroundColor;
 		label.style.borderLeftWidth = '1px';
 		label.style.width = (containsLabel) ? '50%' : '33.3%';
 		label.style.width = (containsLabel) ? '50%' : '33.3%';
@@ -452,8 +457,8 @@ Format.prototype.refresh = function()
 		var label3 = label2.cloneNode(false);
 
 		// Workaround for ignored background in IE
-		label2.style.backgroundColor = '#d7d7d7';
-		label3.style.backgroundColor = '#d7d7d7';
+		label2.style.backgroundColor = this.inactiveTabBackgroundColor;
+		label3.style.backgroundColor = this.inactiveTabBackgroundColor;
 		
 		// Style
 		if (containsLabel)
