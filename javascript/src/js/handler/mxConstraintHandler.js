@@ -310,14 +310,9 @@ mxConstraintHandler.prototype.update = function(me, source, existingEdge, point)
 					minDistSq = tmp;
 					
 					var tmp = this.focusIcons[i].bounds.clone();
-					tmp.grow(mxConstants.HIGHLIGHT_SIZE);
-					
-					if (mxClient.IS_IE)
-					{
-						tmp.grow(1);
-						tmp.width -= 1;
-						tmp.height -= 1;
-					}
+					tmp.grow(mxConstants.HIGHLIGHT_SIZE + 1);
+					tmp.width -= 1;
+					tmp.height -= 1;
 					
 					if (this.focusHighlight == null)
 					{
