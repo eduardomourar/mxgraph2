@@ -922,14 +922,15 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 
 		// Text is a special case where change of dialect is possible at runtime
 		var overflow = state.style[mxConstants.STYLE_OVERFLOW] || 'visible';
+		var nextScale = this.getTextScale(state);
 		
 		if (forced || state.text.value != value || state.text.isWrapping != wrapping ||
 			state.text.overflow != overflow || state.text.isClipping != clipping ||
-			state.text.scale != this.getTextScale(state) || state.text.dialect != dialect ||
+			state.text.scale != nextScale || state.text.dialect != dialect ||
 			!state.text.bounds.equals(bounds))
 		{
 			// Forces an update of the text bounding box
-			if (state.text.bounds.width != bounds.width)
+			if (state.text.bounds.width != 0 && state.text.bounds.width / state.text.scale * nextScale != bounds.width)
 			{
 				state.unscaledWidth = null;
 			}
@@ -937,7 +938,7 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 			state.text.dialect = dialect;
 			state.text.value = value;
 			state.text.bounds = bounds;
-			state.text.scale = this.getTextScale(state);
+			state.text.scale = nextScale;
 			state.text.wrap = wrapping;
 			state.text.clipped = clipping;
 			state.text.overflow = overflow;
