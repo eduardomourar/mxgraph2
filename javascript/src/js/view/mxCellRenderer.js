@@ -930,7 +930,8 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 			!state.text.bounds.equals(bounds))
 		{
 			// Forces an update of the text bounding box
-			if (state.text.bounds.width != 0 && state.text.bounds.width / state.text.scale * nextScale != bounds.width)
+			if (state.text.bounds.width != 0 && Math.round((state.text.bounds.width /
+				state.text.scale * nextScale) - bounds.width) != 0)
 			{
 				state.unscaledWidth = null;
 			}
