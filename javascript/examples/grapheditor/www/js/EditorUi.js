@@ -86,14 +86,35 @@ EditorUi = function(editor, container, lightbox)
 	// And uses built-in context menu while editing
 	if (!this.editor.chromeless || this.editor.editable)
 	{
+		// Allows context menu for links in hints
+		var linkHandler = function(evt)
+		{
+			var source = mxEvent.getSource(evt);
+			
+			if (source.nodeName == 'A')
+			{
+				while (source != null)
+				{
+					if (source.className == 'geHint')
+					{
+						return true;
+					}
+					
+					source = source.parentNode;
+				}
+			}
+			
+			return textEditing(evt);
+		};
+		
 		if (mxClient.IS_IE && (typeof(document.documentMode) === 'undefined' || document.documentMode < 9))
 		{
-			mxEvent.addListener(this.diagramContainer, 'contextmenu', textEditing);
+			mxEvent.addListener(this.diagramContainer, 'contextmenu', linkHandler);
 		}
 		else
 		{
 			// Allows browser context menu outside of diagram and sidebar
-			this.diagramContainer.oncontextmenu = textEditing;
+			this.diagramContainer.oncontextmenu = linkHandler;
 		}
 	}
 	else
