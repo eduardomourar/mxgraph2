@@ -6652,13 +6652,26 @@ if (typeof mxVertexHandler != 'undefined')
 				
 				this.hint.style.left = bb.x + Math.round((bb.width - this.hint.clientWidth) / 2) + 'px';
 				this.hint.style.top = (bb.y + bb.height + 12) + 'px';
+				
+				if (this.linkHint != null)
+				{
+					this.linkHint.style.display = 'none';
+				}
 			}
 		};
 	
 		/**
 		 * Updates the hint for the current operation.
 		 */
-		mxVertexHandler.prototype.removeHint = mxGraphHandler.prototype.removeHint;
+		mxVertexHandler.prototype.removeHint = function()
+		{
+			mxGraphHandler.prototype.removeHint.apply(this, arguments);
+			
+			if (this.linkHint != null)
+			{
+				this.linkHint.style.display = '';
+			}
+		};
 	
 		/**
 		 * Updates the hint for the current operation.
