@@ -1489,7 +1489,7 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 			this.createCellOverlays(state);
 			this.installListeners(state);
 			
-			// Forces a refresh of the handler of one exists
+			// Forces a refresh of the handler if one exists
 			state.view.graph.selectionCellsHandler.updateHandler(state);
 		}
 	}
