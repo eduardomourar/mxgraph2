@@ -4279,6 +4279,73 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * 
+		 */
+		Graph.prototype.importGraphModel = function(node, dx, dy, crop)
+		{
+			dx = (dx != null) ? dx : 0;
+			dy = (dy != null) ? dy : 0;
+			
+			var cells = []
+			var model = new mxGraphModel();
+			var codec = new mxCodec(node.ownerDocument);
+			codec.decode(node, model);
+			
+			var childCount = model.getChildCount(model.getRoot());
+			var targetChildCount = this.model.getChildCount(this.model.getRoot());
+			
+			// Merges into active layer if one layer is pasted
+			this.model.beginUpdate();
+			try
+			{
+				// Mapping for multiple calls to cloneCells with the same set of cells
+				var mapping = new Object();
+				
+				for (var i = 0; i < childCount; i++)
+				{
+					var parent = model.getChildAt(model.getRoot(), i);
+					
+					// Adds cells to existing layer if not locked
+					if (childCount == 1 && !this.isCellLocked(this.getDefaultParent()))
+					{
+						var children = model.getChildren(parent);
+						cells = cells.concat(this.importCells(children, dx, dy, this.getDefaultParent(), null, mapping));
+					}
+					else
+					{
+						// Delta is non cascading, needs separate move for layers
+						parent = this.importCells([parent], 0, 0, this.model.getRoot(), null, mapping)[0];
+						var children = this.model.getChildren(parent);
+						this.moveCells(children, dx, dy);
+						cells = cells.concat(children);
+					}
+				}
+				
+				if (crop)
+				{
+					if (this.isGridEnabled())
+					{
+						dx = this.snap(dx);
+						dy = this.snap(dy);
+					}
+					
+					var bounds = this.getBoundingBoxFromGeometry(cells, true);
+					
+					if (bounds != null)
+					{
+						this.moveCells(cells, dx - bounds.x, dy - bounds.y);
+					}
+				}
+			}
+			finally
+			{
+				this.model.endUpdate();
+			}
+			
+			return cells;
+		}
+		
+		/**
 		 * Overrides method to provide connection constraints for shapes.
 		 */
 		Graph.prototype.getAllConnectionConstraints = function(terminal, source)
