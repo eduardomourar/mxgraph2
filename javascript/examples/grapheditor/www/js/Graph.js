@@ -3988,8 +3988,7 @@ mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force,
 				}
 				else
 				{
-					var req = mxUtils.load(stencilFile);
-					xmlDoc = req.getXml();
+					xmlDoc = mxStencilRegistry.loadStencil(stencilFile);
 					mxStencilRegistry.packages[stencilFile] = xmlDoc;
 					install = true;
 				}
@@ -4008,6 +4007,14 @@ mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force,
 			mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
 		}
 	}
+};
+
+// Loads the given stencil XML file synchronously
+mxStencilRegistry.loadStencil = function(filename)
+{
+	var req = mxUtils.load(filename);
+	
+	return req.getXml();
 };
 
 // Takes array of strings
