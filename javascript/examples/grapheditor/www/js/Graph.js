@@ -4009,7 +4009,7 @@ mxStencilRegistry.loadStencil = function(filename, fn)
 {
 	if (fn != null)
 	{
-		var req = mxUtils.get(stencilFile, mxUtils.bind(this, function(req)
+		var req = mxUtils.get(filename, mxUtils.bind(this, function(req)
 		{
 			fn((req.getStatus() >= 200 && req.getStatus() <= 299) ? req.getXml() : null);
 		}));
