@@ -2459,28 +2459,6 @@
 
 	mxCellRenderer.prototype.defaultShapes['cross'] = CrossShape;
 
-	// Annotation Shape
-	function AnnotationShape()
-	{
-		mxEllipse.call(this);
-	};
-	mxUtils.extend(AnnotationShape, mxEllipse);
-	AnnotationShape.prototype.paintVertexShape = function(c, x, y, w, h)
-	{
-		c.begin();
-		c.moveTo(x + w, y);
-		c.lineTo(x + w / 2, y);
-		c.lineTo(x + w / 2, y + h / 2);
-		c.lineTo(x, y + h / 2);
-		c.moveTo(x + w / 2, y);
-		c.lineTo(x + w / 2, y + h);
-		c.lineTo(x + w, y + h);
-		c.end();
-		c.stroke();
-	};
-
-	mxCellRenderer.prototype.defaultShapes['annotation'] = AnnotationShape;
-
 	// Display
 	function DisplayShape()
 	{
@@ -3670,12 +3648,6 @@
       	            		 new mxConnectionConstraint(new mxPoint(0.15, 0.95), false),
       	            		 new mxConnectionConstraint(new mxPoint(0.5, 1), true),
       	            		 new mxConnectionConstraint(new mxPoint(0.85, 0.95), false)];
-	AnnotationShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.5, 0), false),
-				new mxConnectionConstraint(new mxPoint(0.5, 1), false),
-				new mxConnectionConstraint(new mxPoint(0, 0.5), false),
-				new mxConnectionConstraint(new mxPoint(0.5, 0.5), false),
-				new mxConnectionConstraint(new mxPoint(1, 0), false),
-				new mxConnectionConstraint(new mxPoint(1, 1), false)];
 	UmlActorShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0.1), false),
 	                                          new mxConnectionConstraint(new mxPoint(0.5, 0), false),
 	                                          new mxConnectionConstraint(new mxPoint(0.75, 0.1), false),
