@@ -3969,18 +3969,13 @@ mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force,
 			{
 				if (async)
 				{
-					var req = mxUtils.get(stencilFile, mxUtils.bind(this, function(req)
+					mxStencilRegistry.loadStencil(stencilFile, mxUtils.bind(this, function(xmlDoc2)
 					{
-						if (req.getStatus() >= 200 && req.getStatus() <= 299)
+						if (xmlDoc2 != null && xmlDoc2.documentElement != null)
 						{
-							xmlDoc = req.getXml();
-							mxStencilRegistry.packages[stencilFile] = xmlDoc;
+							mxStencilRegistry.packages[stencilFile] = xmlDoc2;
 							install = true;
-							
-							if (xmlDoc != null && xmlDoc.documentElement != null)
-							{
-								mxStencilRegistry.parseStencilSet(xmlDoc.documentElement, postStencilLoad, install);
-							}
+							mxStencilRegistry.parseStencilSet(xmlDoc2.documentElement, postStencilLoad, install);
 						}
 					}));
 				
@@ -4009,12 +4004,20 @@ mxStencilRegistry.loadStencilSet = function(stencilFile, postStencilLoad, force,
 	}
 };
 
-// Loads the given stencil XML file synchronously
-mxStencilRegistry.loadStencil = function(filename)
+// Loads the given stencil XML file.
+mxStencilRegistry.loadStencil = function(filename, fn)
 {
-	var req = mxUtils.load(filename);
-	
-	return req.getXml();
+	if (fn != null)
+	{
+		var req = mxUtils.get(stencilFile, mxUtils.bind(this, function(req)
+		{
+			fn((req.getStatus() >= 200 && req.getStatus() <= 299) ? req.getXml() : null);
+		}));
+	}
+	else
+	{
+		return mxUtils.load(filename).getXml();
+	}
 };
 
 // Takes array of strings
