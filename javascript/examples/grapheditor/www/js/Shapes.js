@@ -2910,26 +2910,37 @@
 		
 		function createEdgeHandle(state, keys, start, getPosition, setPosition)
 		{
-			var pts = state.absolutePoints;
-			var n = pts.length - 1;
-			
-			var tr = state.view.translate;
-			var s = state.view.scale;
-			
-			var p0 = (start) ? pts[0] : pts[n];
-			var p1 = (start) ? pts[1] : pts[n - 1];
-			var dx = (start) ? p1.x - p0.x : p1.x - p0.x;
-			var dy = (start) ? p1.y - p0.y : p1.y - p0.y;
-
-			var dist = Math.sqrt(dx * dx + dy * dy);
-			
 			return createHandle(state, keys, function(bounds)
 			{
+				var pts = state.absolutePoints;
+				var n = pts.length - 1;
+				
+				var tr = state.view.translate;
+				var s = state.view.scale;
+				
+				var p0 = (start) ? pts[0] : pts[n];
+				var p1 = (start) ? pts[1] : pts[n - 1];
+				var dx = (start) ? p1.x - p0.x : p1.x - p0.x;
+				var dy = (start) ? p1.y - p0.y : p1.y - p0.y;
+
+				var dist = Math.sqrt(dx * dx + dy * dy);
+				
 				var pt = getPosition.call(this, dist, dx / dist, dy / dist, p0, p1);
 				
 				return new mxPoint(pt.x / s - tr.x, pt.y / s - tr.y);
 			}, function(bounds, pt, me)
 			{
+				var pts = state.absolutePoints;
+				var n = pts.length - 1;
+				
+				var tr = state.view.translate;
+				var s = state.view.scale;
+				
+				var p0 = (start) ? pts[0] : pts[n];
+				var p1 = (start) ? pts[1] : pts[n - 1];
+				var dx = (start) ? p1.x - p0.x : p1.x - p0.x;
+				var dy = (start) ? p1.y - p0.y : p1.y - p0.y;
+
 				var dist = Math.sqrt(dx * dx + dy * dy);
 				pt.x = (pt.x + tr.x) * s;
 				pt.y = (pt.y + tr.y) * s;
