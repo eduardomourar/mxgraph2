@@ -952,9 +952,6 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	    this.createVertexTemplateEntry('shape=card;whiteSpace=wrap;html=1;', 80, 100, '', 'Card'),
 	    this.createVertexTemplateEntry('shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;', 120, 80, '', 'Callout'),
 	 	this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false, null, 'user person human stickman'),
-	    this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;startArrow=classic;html=1;fillColor=#ffffff;', 50, 50, '', 'Bidirectional Arrow', null, lineTags + 'bidirectional'),
-	 	this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;html=1;fillColor=#ffffff;', 50, 50, '', 'Arrow', null, lineTags + 'directional directed'),
-	 	this.createEdgeTemplateEntry('shape=link;html=1;', 50, 50, '', 'Link', null, lineTags + 'link'),
 	 	this.addEntry('curve', mxUtils.bind(this, function()
 	 	{
 			var cell = new mxCell('', new mxGeometry(0, 0, 50, 50), 'curved=1;endArrow=classic;html=1;');
@@ -966,6 +963,9 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 			
 		    return this.createEdgeTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Curve');
 	 	})),
+	 	this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;startArrow=classic;html=1;fillColor=#ffffff;', 50, 50, '', 'Bidirectional Arrow', null, lineTags + 'bidirectional'),
+	 	this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;html=1;fillColor=#ffffff;', 50, 50, '', 'Arrow', null, lineTags + 'directional directed'),
+	 	this.createEdgeTemplateEntry('shape=link;html=1;', 50, 50, '', 'Link', null, lineTags + 'link'),
 	 	this.createEdgeTemplateEntry('endArrow=none;dashed=1;html=1;', 50, 50, '', 'Dashed Line', null, lineTags + 'dashed undirected no'),
 	 	this.createEdgeTemplateEntry('endArrow=none;html=1;', 50, 50, '', 'Line', null, lineTags + 'simple undirected plain blank no'),
 	 	this.createEdgeTemplateEntry('endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Bidirectional Connector', null, lineTags + 'bidirectional'),
@@ -1077,7 +1077,7 @@ Sidebar.prototype.addMiscPalette = function(expand)
 		this.createVertexTemplateEntry('shape=partialRectangle;whiteSpace=wrap;html=1;left=0;right=0;top=0;fillColor=none;routingCenterY=0.5;', 120, 60, '', 'Partial Rectangle'),
 		this.createVertexTemplateEntry('shape=partialRectangle;whiteSpace=wrap;html=1;bottom=1;right=1;top=0;bottom=1;fillColor=none;routingCenterX=-0.5;', 120, 60, '', 'Partial Rectangle'),
 	    this.createEdgeTemplateEntry('edgeStyle=segmentEdgeStyle;endArrow=classic;html=1;', 50, 50, '', 'Manual Line', null, lineTags + 'manual'),
-	 	this.createEdgeTemplateEntry('shape=filledEdge;rounded=0;fixDash=1;endArrow=none;strokeWidth=10;fillColor=#ffffff;edgeStyle=orthogonalEdgeStyle;', 120, 60, '', 'Filled Edge'),
+	 	this.createEdgeTemplateEntry('shape=filledEdge;rounded=0;fixDash=1;endArrow=none;strokeWidth=10;fillColor=#ffffff;edgeStyle=orthogonalEdgeStyle;', 60, 40, '', 'Filled Edge'),
 	 	this.createEdgeTemplateEntry('edgeStyle=elbowEdgeStyle;elbow=horizontal;endArrow=classic;html=1;', 50, 50, '', 'Horizontal Elbow', null, lineTags + 'elbow horizontal'),
 	 	this.createEdgeTemplateEntry('edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;html=1;', 50, 50, '', 'Vertical Elbow', null, lineTags + 'elbow vertical')
 	];
@@ -1132,8 +1132,10 @@ Sidebar.prototype.createAdvancedShapes = function()
 	 	this.createVertexTemplateEntry('shape=sortShape;perimeter=rhombusPerimeter;whiteSpace=wrap;html=1;', 80, 80, '', 'Sort', null, null, 'sort'),
 	 	this.createVertexTemplateEntry('shape=collate;whiteSpace=wrap;html=1;', 80, 80, '', 'Collate', null, null, 'collate'),
 	 	this.createVertexTemplateEntry('shape=switch;whiteSpace=wrap;html=1;', 60, 60, '', 'Switch', null, null, 'switch router'),
-	 	this.createVertexTemplateEntry('shape=dimension;whiteSpace=wrap;html=1;align=center;points=[];verticalAlign=bottom;spacingBottom=-5;labelBackgroundColor=#ffffff', 100, 40, 'Label', 'Horizontal Dimension', null, null, 'horizontal dimension measure distance unit'),
-	 	this.createVertexTemplateEntry('shape=dimension;direction=north;whiteSpace=wrap;html=1;align=right;points=[];verticalAlign=middle;labelBackgroundColor=#ffffff', 40, 100, 'Label', 'Vertical Dimension', null, null, 'vertical dimension measure distance unit'),
+		this.addEntry('process bar', function()
+		{
+			return sb.createVertexTemplateFromData('1ZVha4MwEIZ/TT4ONE7Kvmq3fmmh4C/I9Kah0UiSrtpfv0uMdWsVCoONFgq59+5Ncs8FJFFadxvF2monCxAkeiVRqqQ0w6ruUhCC0IAXJFoTSgP8E/q2kA1dNmiZgsbcY6CD4ZOJIwzKXskctEYxYWrIatMLn9UnXgvWYJTkFRfFlvXyaE/ShuWHMUoqqfhZNoZhQ+sQhQ8uRCqFVBg30vmnmsx6faECzc+wHxu4lnasQzW4qFumjRdyKQRrNX93d7WKNkoe4OpYd9FEqgKsGAajlLUs502J2lN42Z8Nm9lbMMHLBtc53sJak1byxmiLJU5IvLZNYjfjaYRGgfuh7hmDMtAtzslJfkgbkDUY1WPJiRemGipww8FWAS+r0TaKTA9CefFOY8eFn/z8K4huXkFmoEUlvH0AFWvBzRsLEAIojsc5llbaTzHOvIMiwyF5gtovV7Pw7oJE5yGNBo+i9135tr4hDOcQxqvfE3xeIkgfjOD/IYyXEEaPhfDlzxBiOH0pXO7Hh+QL', 300, 100, 'Process Bar');
+		}),
 	 	this.createVertexTemplateEntry('swimlane;', 200, 200, 'Container', 'Container', null, null, 'container swimlane lane pool'),
 		this.addEntry('list', function()
 		{

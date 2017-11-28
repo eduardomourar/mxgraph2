@@ -2843,11 +2843,17 @@
 					var size = parseFloat(mxUtils.getValue(this.state.style, 'size', (fixed) ? fixedDefaultValue : defaultValue));
 	
 					return new mxPoint(bounds.x + Math.max(0, Math.min(bounds.width, size * ((fixed) ? 1 : bounds.width))), bounds.getCenterY());
-				}, function(bounds, pt)
+				}, function(bounds, pt, me)
 				{
 					var fixed = (fixedDefaultValue != null) ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0' : null;
+					var size = (fixed) ? (pt.x - bounds.x) : Math.max(0, Math.min(max, (pt.x - bounds.x) / bounds.width));
 					
-					this.state.style['size'] = (fixed) ? (pt.x - bounds.x) : Math.max(0, Math.min(max, (pt.x - bounds.x) / bounds.width));
+					if (fixed && !mxEvent.isAltDown(me.getEvent()))
+					{
+						size = state.view.graph.snap(size);
+					}
+					
+					this.state.style['size'] = size;
 				}, null, redrawEdges)];
 				
 				if (allowArcHandle && mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
