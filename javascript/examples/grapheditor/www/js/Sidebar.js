@@ -1134,7 +1134,7 @@ Sidebar.prototype.createAdvancedShapes = function()
 	 	this.createVertexTemplateEntry('shape=switch;whiteSpace=wrap;html=1;', 60, 60, '', 'Switch', null, null, 'switch router'),
 		this.addEntry('process bar', function()
 		{
-			return sb.createVertexTemplateFromData('1ZVha4MwEIZ/TT4ONE7Kvmq3fmmh4C/I9Kah0UiSrtpfv0uMdWsVCoONFgq59+5Ncs8FJFFadxvF2monCxAkeiVRqqQ0w6ruUhCC0IAXJFoTSgP8E/q2kA1dNmiZgsbcY6CD4ZOJIwzKXskctEYxYWrIatMLn9UnXgvWYJTkFRfFlvXyaE/ShuWHMUoqqfhZNoZhQ+sQhQ8uRCqFVBg30vmnmsx6faECzc+wHxu4lnasQzW4qFumjRdyKQRrNX93d7WKNkoe4OpYd9FEqgKsGAajlLUs502J2lN42Z8Nm9lbMMHLBtc53sJak1byxmiLJU5IvLZNYjfjaYRGgfuh7hmDMtAtzslJfkgbkDUY1WPJiRemGipww8FWAS+r0TaKTA9CefFOY8eFn/z8K4huXkFmoEUlvH0AFWvBzRsLEAIojsc5llbaTzHOvIMiwyF5gtovV7Pw7oJE5yGNBo+i9135tr4hDOcQxqvfE3xeIkgfjOD/IYyXEEaPhfDlzxBiOH0pXO7Hh+QL', 300, 100, 'Process Bar');
+			return sb.createVertexTemplateFromData('zZXRaoMwFIafJpcDjbNrb2233rRQ8AkyPdPQaCRJV+3T7yTG2rUVBoOtgpDzn/xJzncCIdGyateKNeVW5iBI9EqipZLS9KOqXYIQhAY8J9GKUBrgT+jbRDZ02aBhCmrzEwPtDZ9MHKBXdkpmoDWKCVN9VptO+Kw+8kqwGqMkK7nIN6yTB7uTNizbD1FSSsVPsjYMC1qFKHxwIZZSSIVxLZ1/nJNar5+oQPMT7IYCrqUta1ENzuqGaeOFTArBGs3f3Vmtoo2Se7ja1h00kSoHK4bBIKUNy3hdoPYU0mF91i9mT8EEL2ocZ3gKa00ayWujLZY4IfHKFonVDLsRGgXuQ90zBmWgneyTk3yT1iArMKrDKUeem9L3ajHrbSXwohxsQd/ggOleKM7ese048J2/fwuim1uQGmhQCW8vQMkacP3GCQgBFMftHEsr7cYYe95CnmKTPMFbYD8CQ++DGQy+/M5X4ku5wHYmdIktfvk9tecpavThqS3m/0YtnqIWPTy1cD77K2wYjo+Ay317I74A', 296, 100, 'Process Bar');
 		}),
 	 	this.createVertexTemplateEntry('swimlane;', 200, 200, 'Container', 'Container', null, null, 'container swimlane lane pool'),
 		this.addEntry('list', function()
