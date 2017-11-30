@@ -21,7 +21,7 @@
 	/**
 	 * Registers the custom shape in the cell renderer
 	 */
-	mxCellRenderer.prototype.defaultShapes['curve'] = vsCurveShape;
+	mxCellRenderer.registerShape('curve', vsCurveShape);
 
 	/**
 	 * Function: createPoints
@@ -90,7 +90,7 @@
 	/**
 	 * Registers the custom shape in the cell renderer
 	 */
-	mxCellRenderer.prototype.defaultShapes['ase'] = vsAseShape;
+	mxCellRenderer.registerShape('ase', vsAseShape);
 
 	/**
 	 * Function: redrawPath
@@ -138,7 +138,7 @@
 	/**
 	 * Registers the custom shape in the cell renderer
 	 */
-	mxCellRenderer.prototype.defaultShapes['cloud'] = vsCloudShape;
+	mxCellRenderer.registerShape('cloud', vsCloudShape);
 
 	/**
 	 * Function: redrawPath
@@ -192,7 +192,7 @@
 	/**
 	 * Registers the custom shape in the cell renderer
 	 */
-	mxCellRenderer.prototype.defaultShapes['lan'] = vsLanShape;
+	mxCellRenderer.registerShape('lan', vsLanShape);
 
 	/**
 	 * Function: redrawPath
@@ -237,7 +237,7 @@
 	/**
 	 * Registers the custom shape in the cell renderer
 	 */
-	mxCellRenderer.prototype.defaultShapes['wave'] = vsWaveShape;
+	mxCellRenderer.registerShape('wave', vsWaveShape);
 
 	/**
 	 * Function: redrawPath

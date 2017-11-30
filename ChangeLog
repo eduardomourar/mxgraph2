@@ -1,3 +1,4 @@
+- Moves mxCellRenderer.prototype.defaultShapes to mxCellRenderer
 - Fixes handling of touch events in mxGraph.isEventIgnored
 - Adds mxSelectionCellsHandler.isHandlerActive hook
 
