@@ -1,3 +1,4 @@
+- Float loop router ignored for more than 1 point
 - Adds mxVertexHandler.getRotationHandlePosition
 
 30-NOV-2017: 3.8.0
