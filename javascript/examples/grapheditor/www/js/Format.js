@@ -2568,7 +2568,7 @@ TextFormatPanel.prototype.addFont = function(container)
 					}
 				};
 		
-				if (container != graph.cellEditor)
+				if (container != graph.cellEditor.textarea)
 				{
 					updateSize(container);
 					handled = true;
