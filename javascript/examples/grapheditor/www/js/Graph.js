@@ -7455,6 +7455,22 @@ if (typeof mxVertexHandler != 'undefined')
 							this.graph.editLink();
 							mxEvent.consume(evt);
 						}));
+						
+						var removeLink = document.createElement('img');
+						removeLink.setAttribute('src', Dialog.prototype.clearImage);
+						removeLink.setAttribute('title', mxResources.get('removeIt', [mxResources.get('link')]));
+						removeLink.setAttribute('width', '13');
+						removeLink.setAttribute('height', '10');
+						removeLink.style.marginLeft = '4px';
+						removeLink.style.marginBottom = '-1px';
+						removeLink.style.cursor = 'pointer';
+						this.linkHint.appendChild(removeLink);
+						
+						mxEvent.addListener(removeLink, 'click', mxUtils.bind(this, function(evt)
+						{
+							this.graph.setLinkForCell(this.state.cell, null);
+							mxEvent.consume(evt);
+						}));
 					}
 				}
 
