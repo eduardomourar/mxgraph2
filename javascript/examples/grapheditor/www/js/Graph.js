@@ -6789,24 +6789,16 @@ if (typeof mxVertexHandler != 'undefined')
 			this.hint.style.left = Math.round(me.getGraphX() - this.hint.clientWidth / 2) + 'px';
 			this.hint.style.top = (Math.max(me.getGraphY(), point.y) + this.state.view.graph.gridSize) + 'px';
 			
-			if (this.hideEdgeHintThread != null)
+			if (this.linkHint != null)
 			{
-				window.clearTimeout(this.hideEdgeHintThread);
+				this.linkHint.style.display = 'none';
 			}
-			
-			this.hideEdgeHintThread = window.setTimeout(mxUtils.bind(this, function()
-			{
-				if (this.hint != null)
-				{
-					this.hint.style.visibility = 'hidden';
-				}
-			}), 500);
 		};
 	
 		/**
 		 * Updates the hint for the current operation.
 		 */
-		mxEdgeHandler.prototype.removeHint = mxGraphHandler.prototype.removeHint;
+		mxEdgeHandler.prototype.removeHint = mxVertexHandler.prototype.removeHint;
 	
 		/**
 		 * Defines the handles for the UI. Uses data-URIs to speed-up loading time where supported.
