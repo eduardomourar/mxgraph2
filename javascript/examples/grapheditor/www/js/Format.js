@@ -2530,8 +2530,9 @@ TextFormatPanel.prototype.addFont = function(container)
 	var inputUpdate = this.installInputHandler(input, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize, 1, 999, ' pt',
 	function(fontSize)
 	{
+		// IE does not support containsNode
 		// KNOWN: Fixes font size issues but bypasses undo
-		if (window.getSelection)
+		if (window.getSelection && !mxClient.IS_IE && !mxClient.IS_IE11)
 		{
 			input.value = fontSize + ' pt';
 			var selection = window.getSelection();
@@ -2550,33 +2551,33 @@ TextFormatPanel.prototype.addFont = function(container)
 				
 				function updateSize(elt)
 				{
-					if (elt.nodeName == 'FONT')
+					if (elt != graph.cellEditor.textarea)
 					{
-						elt.removeAttribute('size');
-						elt.style.fontSize = fontSize + 'px';
-					}
-					else
-					{
-						var css = mxUtils.getCurrentStyle(elt);
-						
-						if (css.fontSize != fontSize + 'px')
+						if (elt.nodeName == 'FONT')
 						{
-							if (mxUtils.getCurrentStyle(elt.parentNode).fontSize != fontSize + 'px')
+							elt.removeAttribute('size');
+							elt.style.fontSize = fontSize + 'px';
+						}
+						else
+						{
+							var css = mxUtils.getCurrentStyle(elt);
+							
+							if (css.fontSize != fontSize + 'px')
 							{
-								elt.style.fontSize = fontSize + 'px';
-							}
-							else
-							{
-								elt.style.fontSize = '';
+								if (mxUtils.getCurrentStyle(elt.parentNode).fontSize != fontSize + 'px')
+								{
+									elt.style.fontSize = fontSize + 'px';
+								}
+								else
+								{
+									elt.style.fontSize = '';
+								}
 							}
 						}
 					}
 				};
 		
-				if (container != graph.cellEditor.textarea)
-				{
-					updateSize(container);
-				}
+				updateSize(container);
 				
 				for (var i = 0; i < elts.length; i++)
 				{
@@ -3268,24 +3269,37 @@ TextFormatPanel.prototype.addFont = function(container)
 							}
 							else
 							{
-								return (lineHeight.substring(css.lineHeight.length - 2) == 'px') ?
+								return (lineHeight.substring(lineHeight.length - 2) == 'px') ?
 										parseFloat(lineHeight) / fontSize : parseInt(lineHeight);
 							}
 						};
 						
+						function getAbsoluteFontSize(fontSize)
+						{
+							if (fontSize.substring(fontSize.length - 2) == 'px')
+							{
+								return parseFloat(fontSize);
+							}
+							else
+							{
+								return mxConstants.DEFAULT_FONTSIZE;
+							}
+						}
+						
 						//var realCss = mxUtils.getCurrentStyle(selectedElement);
 						var css = mxUtils.getCurrentStyle(node);
-						var fontSize = parseFloat(css.fontSize);
+						var fontSize = getAbsoluteFontSize(css.fontSize);
 						var lineHeight = getRelativeLineHeight(fontSize, css.lineHeight, node);
 
-						if (elts.length > 0 && window.getSelection)
+						// IE does not support containsNode
+						if (elts.length > 0 && window.getSelection && !mxClient.IS_IE && !mxClient.IS_IE11)
 						{
 							var selection = window.getSelection();
 							
 							if (selection.containsNode(elts[0], true))
 							{
 								var temp = mxUtils.getCurrentStyle(elts[0]);
-								fontSize = parseFloat(temp.fontSize);
+								fontSize = getAbsoluteFontSize(temp.fontSize);
 								lineHeight = getRelativeLineHeight(fontSize, temp.lineHeight, elts[0]);
 	
 								for (var i = 0; i < elts.length; i++)
@@ -3293,7 +3307,7 @@ TextFormatPanel.prototype.addFont = function(container)
 									if (selection.containsNode(elts[i], true))
 									{
 										temp = mxUtils.getCurrentStyle(elts[i]);
-										fontSize = Math.max(parseFloat(temp.fontSize), fontSize);
+										fontSize = Math.max(getAbsoluteFontSize(temp.fontSize), fontSize);
 										var lh = getRelativeLineHeight(fontSize, temp.lineHeight, elts[i]);
 										
 										if (lh != lineHeight || isNaN(lh))
