@@ -2536,7 +2536,8 @@ TextFormatPanel.prototype.addFont = function(container)
 		{
 			input.value = fontSize + ' pt';
 			var selection = window.getSelection();
-			var container = selection.getRangeAt(0).commonAncestorContainer;
+			var container = (selection.rangeCount > 0) ? selection.getRangeAt(0).commonAncestorContainer :
+				graph.cellEditor.textarea;
 			
 			// Wraps text node or mixed selection with leading text in a font element
 			if (container == graph.cellEditor.textarea || container.nodeType != mxConstants.NODETYPE_ELEMENT)
