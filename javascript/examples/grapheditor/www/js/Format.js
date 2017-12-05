@@ -2530,14 +2530,19 @@ TextFormatPanel.prototype.addFont = function(container)
 	var inputUpdate = this.installInputHandler(input, mxConstants.STYLE_FONTSIZE, Menus.prototype.defaultFontSize, 1, 999, ' pt',
 	function(fontSize)
 	{
-		var handled = false;
-		
 		// KNOWN: Fixes font size issues but bypasses undo
 		if (window.getSelection)
 		{
 			input.value = fontSize + ' pt';
 			var selection = window.getSelection();
 			var container = selection.getRangeAt(0).commonAncestorContainer;
+			
+			// Wraps text node or mixed selection with leading text in a font element
+			if (container == graph.cellEditor.textarea || container.nodeType != mxConstants.NODETYPE_ELEMENT)
+			{
+				document.execCommand('fontSize', false, '1');
+				container = container.parentNode;
+			}
 			
 			if (container.nodeType == mxConstants.NODETYPE_ELEMENT)
 			{
@@ -2571,7 +2576,6 @@ TextFormatPanel.prototype.addFont = function(container)
 				if (container != graph.cellEditor.textarea)
 				{
 					updateSize(container);
-					handled = true;
 				}
 				
 				for (var i = 0; i < elts.length; i++)
@@ -2579,13 +2583,11 @@ TextFormatPanel.prototype.addFont = function(container)
 					if (selection.containsNode(elts[i], true))
 					{
 						updateSize(elts[i]);
-						handled = true;
 					}
 				}
 			}
 		}
-		
-		if (!handled)
+		else
 		{
 			pendingFontSize = fontSize;
 			
