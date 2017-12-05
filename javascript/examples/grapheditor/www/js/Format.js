@@ -2534,60 +2534,62 @@ TextFormatPanel.prototype.addFont = function(container)
 		// KNOWN: Fixes font size issues but bypasses undo
 		if (window.getSelection && !mxClient.IS_IE && !mxClient.IS_IE11)
 		{
-			input.value = fontSize + ' pt';
 			var selection = window.getSelection();
 			var container = (selection.rangeCount > 0) ? selection.getRangeAt(0).commonAncestorContainer :
 				graph.cellEditor.textarea;
+
+			function updateSize(elt, ignoreContains)
+			{
+				if (elt != graph.cellEditor.textarea && (ignoreContains || selection.containsNode(elt, true)))
+				{
+					if (elt.nodeName == 'FONT')
+					{
+						elt.removeAttribute('size');
+						elt.style.fontSize = fontSize + 'px';
+					}
+					else
+					{
+						var css = mxUtils.getCurrentStyle(elt);
+						
+						if (css.fontSize != fontSize + 'px')
+						{
+							if (mxUtils.getCurrentStyle(elt.parentNode).fontSize != fontSize + 'px')
+							{
+								elt.style.fontSize = fontSize + 'px';
+							}
+							else
+							{
+								elt.style.fontSize = '';
+							}
+						}
+					}
+				}
+			};
 			
 			// Wraps text node or mixed selection with leading text in a font element
-			if (container == graph.cellEditor.textarea || container.nodeType != mxConstants.NODETYPE_ELEMENT)
+			if (container == graph.cellEditor.textarea ||
+				container.nodeType != mxConstants.NODETYPE_ELEMENT)
 			{
 				document.execCommand('fontSize', false, '1');
+			}
+
+			if (container != graph.cellEditor.textarea)
+			{
 				container = container.parentNode;
 			}
 			
 			if (container.nodeType == mxConstants.NODETYPE_ELEMENT)
 			{
 				var elts = container.getElementsByTagName('*');
-				
-				function updateSize(elt)
-				{
-					if (elt != graph.cellEditor.textarea)
-					{
-						if (elt.nodeName == 'FONT')
-						{
-							elt.removeAttribute('size');
-							elt.style.fontSize = fontSize + 'px';
-						}
-						else
-						{
-							var css = mxUtils.getCurrentStyle(elt);
-							
-							if (css.fontSize != fontSize + 'px')
-							{
-								if (mxUtils.getCurrentStyle(elt.parentNode).fontSize != fontSize + 'px')
-								{
-									elt.style.fontSize = fontSize + 'px';
-								}
-								else
-								{
-									elt.style.fontSize = '';
-								}
-							}
-						}
-					}
-				};
-		
 				updateSize(container);
 				
 				for (var i = 0; i < elts.length; i++)
 				{
-					if (selection.containsNode(elts[i], true))
-					{
-						updateSize(elts[i]);
-					}
+					updateSize(elts[i]);
 				}
 			}
+
+			input.value = fontSize + ' pt';
 		}
 		else
 		{
@@ -3252,9 +3254,6 @@ TextFormatPanel.prototype.addFont = function(container)
 
 					if (node != null)
 					{
-						// Finds common font size
-						var elts = node.getElementsByTagName('*');
-
 						// Workaround for commonAncestor on range in IE11 returning parent of common ancestor
 						if (node == graph.cellEditor.textarea && graph.cellEditor.textarea.children.length == 1 &&
 							graph.cellEditor.textarea.firstChild.nodeType == mxConstants.NODETYPE_ELEMENT)
@@ -3292,29 +3291,25 @@ TextFormatPanel.prototype.addFont = function(container)
 						var fontSize = getAbsoluteFontSize(css.fontSize);
 						var lineHeight = getRelativeLineHeight(fontSize, css.lineHeight, node);
 
+						// Finds common font size
+						var elts = node.getElementsByTagName('*');
+
 						// IE does not support containsNode
 						if (elts.length > 0 && window.getSelection && !mxClient.IS_IE && !mxClient.IS_IE11)
 						{
 							var selection = window.getSelection();
-							
-							if (selection.containsNode(elts[0], true))
+
+							for (var i = 0; i < elts.length; i++)
 							{
-								var temp = mxUtils.getCurrentStyle(elts[0]);
-								fontSize = getAbsoluteFontSize(temp.fontSize);
-								lineHeight = getRelativeLineHeight(fontSize, temp.lineHeight, elts[0]);
-	
-								for (var i = 0; i < elts.length; i++)
+								if (selection.containsNode(elts[i], true))
 								{
-									if (selection.containsNode(elts[i], true))
+									temp = mxUtils.getCurrentStyle(elts[i]);
+									fontSize = Math.max(getAbsoluteFontSize(temp.fontSize), fontSize);
+									var lh = getRelativeLineHeight(fontSize, temp.lineHeight, elts[i]);
+									
+									if (lh != lineHeight || isNaN(lh))
 									{
-										temp = mxUtils.getCurrentStyle(elts[i]);
-										fontSize = Math.max(getAbsoluteFontSize(temp.fontSize), fontSize);
-										var lh = getRelativeLineHeight(fontSize, temp.lineHeight, elts[i]);
-										
-										if (lh != lineHeight || isNaN(lh))
-										{
-											lineHeight = '';
-										}
+										lineHeight = '';
 									}
 								}
 							}
@@ -3343,12 +3338,12 @@ TextFormatPanel.prototype.addFont = function(container)
 									pendingFontSize != null)
 								{
 									node.removeAttribute('size');
-									node.style.fontSize = pendingFontSize + 'px';
+									node.style.fontSize = pendingFontSize + ' pt';
 									pendingFontSize = null;
 								}
 								else
 								{
-									input.value = (isNaN(fontSize)) ? '' : fontSize + 'px';
+									input.value = (isNaN(fontSize)) ? '' : fontSize + ' pt';
 								}
 								
 								var lh = parseFloat(lineHeight);
