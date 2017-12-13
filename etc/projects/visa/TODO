@@ -1,7 +1,0 @@
-2.1 - Place notice for server stack in middle in example 15
-2.1 - Check diagram bounds for boundingbox of HTML markup labels
-2.1 - Fix vertical shift in 2nd crossover (2 pixels down)
-2.1 - Fix distance of detours in ex. 10
-2.1 - Changes for "server stack" have not been applied in JS
-2.1 - Fix difference in alignDetourLabel in client and server
-2.1 - Double line shape
