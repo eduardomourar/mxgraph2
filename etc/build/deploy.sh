@@ -40,8 +40,7 @@ git clone git@github.com:jgraph/mxgraph.git
 sed "s/@VERSION@/$DOTVERSION/" $BUILD/../etc/build/mxgraph-package.json > tmp/mxgraph/package.json
 cp -v $BUILD/../etc/build/Gruntfile.js tmp/mxgraph/
 npm publish tmp/mxgraph --access public
-rm -rf tmp/mxgraph/package.json
-rm -rf tmp/mxgraph/Gruntfile.js
+mv tmp/mxgraph/Gruntfile.js tmp/mxgraph/etc/build/Gruntfile.js
 
 cp mxgraph/README.md tmp/mxgraph
 cp mxgraph/LICENSE tmp/mxgraph
