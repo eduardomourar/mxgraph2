@@ -1,3 +1,4 @@
+- Adds loggers, fixes silent fail cases
 - Fixes inline handler in mxEvent.disableContextMenu
 - Fixes mxPanningHandler for mouse up over scrollbar
 - Float loop router ignored for more than 1 point
