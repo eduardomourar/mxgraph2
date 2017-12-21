@@ -1,3 +1,4 @@
+- Adds editing for edge terminal points
 - Fixes redraw after remove change in mxEdgeHandler
 - Adds loggers, fixes silent fail cases
 - Fixes inline handler in mxEvent.disableContextMenu
