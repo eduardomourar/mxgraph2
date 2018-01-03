@@ -1,3 +1,4 @@
+- Fixes ignored node values in mxUtils.getPrettyXml 
 - Adds editing for edge terminal points
 - Fixes redraw after remove change in mxEdgeHandler
 - Adds loggers, fixes silent fail cases
