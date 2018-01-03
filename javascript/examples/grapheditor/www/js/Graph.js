@@ -7719,7 +7719,7 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 		};
 	
-		var edgeHandlerReset = 	mxEdgeHandler.prototype.reset;
+		var edgeHandlerReset = mxEdgeHandler.prototype.reset;
 		mxEdgeHandler.prototype.reset = function()
 		{
 			edgeHandlerReset.apply(this, arguments);
@@ -7730,7 +7730,7 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 		};
 		
-		var edgeHandlerDestroy = 	mxEdgeHandler.prototype.destroy;
+		var edgeHandlerDestroy = mxEdgeHandler.prototype.destroy;
 		mxEdgeHandler.prototype.destroy = function()
 		{
 			edgeHandlerDestroy.apply(this, arguments);
