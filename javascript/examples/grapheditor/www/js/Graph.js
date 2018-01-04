@@ -4117,13 +4117,16 @@ if (typeof mxVertexHandler != 'undefined')
 		mxConstants.HIGHLIGHT_OPACITY = 30;
 		mxConstants.HIGHLIGHT_SIZE = 8;
 		
-		//Enables snapping to off-grid terminals for edge waypoints
+		// Enables snapping to off-grid terminals for edge waypoints
 		mxEdgeHandler.prototype.snapToTerminals = true;
 	
-		//Enables guides
+		// Enables guides
 		mxGraphHandler.prototype.guidesEnabled = true;
 	
-		//Alt-move disables guides
+		// Enables fading of rubberband
+		mxRubberband.prototype.fadeOut = true;
+		
+		// Alt-move disables guides
 		mxGuide.prototype.isEnabledForEvent = function(evt)
 		{
 			return !mxEvent.isAltDown(evt);

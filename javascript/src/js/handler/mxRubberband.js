@@ -121,6 +121,13 @@ mxRubberband.prototype.currentX = 0;
 mxRubberband.prototype.currentY = 0;
 
 /**
+ * Variable: fadeOut
+ * 
+ * Optional fade out effect. Default is false.
+ */
+mxRubberband.prototype.fadeOut = false;
+
+/**
  * Function: isEnabled
  * 
  * Returns true if events are handled. This implementation returns
@@ -323,6 +330,25 @@ mxRubberband.prototype.reset = function()
 {
 	if (this.div != null)
 	{
+		if (mxClient.IS_SVG && (!mxClient.IS_IE || document.documentMode >= 10) && this.fadeOut)
+		{
+			var temp = this.div.cloneNode(true);
+			this.div.parentNode.appendChild(temp);
+			mxUtils.setPrefixedStyle(temp.style, 'transition', 'all 0.2s linear');
+			temp.style.pointerEvents = 'none';
+			
+			// Initial timeout required for animation to work
+			window.setTimeout(function()
+			{
+				temp.style.opacity = 0;
+			    
+			    window.setTimeout(function()
+			    	{
+			    		temp.parentNode.removeChild(temp);
+			    	}, 200);
+			}, 0);
+		}
+		
 		this.div.parentNode.removeChild(this.div);
 	}
 
