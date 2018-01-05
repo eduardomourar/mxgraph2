@@ -277,8 +277,14 @@ mxRubberband.prototype.createShape = function()
 	}
 
 	this.graph.container.appendChild(this.sharedDiv);
+	var result = this.sharedDiv;
+	
+	if (mxClient.IS_SVG && (!mxClient.IS_IE || document.documentMode >= 10) && this.fadeOut)
+	{
+		this.sharedDiv = null;
+	}
 		
-	return this.sharedDiv;
+	return result;
 };
 
 /**
@@ -332,24 +338,20 @@ mxRubberband.prototype.reset = function()
 	{
 		if (mxClient.IS_SVG && (!mxClient.IS_IE || document.documentMode >= 10) && this.fadeOut)
 		{
-			var temp = this.div.cloneNode(true);
-			this.div.parentNode.appendChild(temp);
+			var temp = this.div;
 			mxUtils.setPrefixedStyle(temp.style, 'transition', 'all 0.2s linear');
 			temp.style.pointerEvents = 'none';
-			
-			// Initial timeout required for animation to work
-			window.setTimeout(function()
-			{
-				temp.style.opacity = 0;
-			    
-			    window.setTimeout(function()
-			    	{
-			    		temp.parentNode.removeChild(temp);
-			    	}, 200);
-			}, 0);
+			temp.style.opacity = 0;
+		    
+		    window.setTimeout(function()
+		    	{
+		    		temp.parentNode.removeChild(temp);
+		    	}, 200);	
 		}
-		
-		this.div.parentNode.removeChild(this.div);
+		else
+		{
+			this.div.parentNode.removeChild(this.div);
+		}
 	}
 
 	mxEvent.removeGestureListeners(document, null, this.dragHandler, this.dropHandler);
