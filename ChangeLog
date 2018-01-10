@@ -1,3 +1,4 @@
+- Fixes recursion in mxGraph.cellsFolded
 - Adds mxRubberband.fadeOut switch
 - Fixes ignored node values in mxUtils.getPrettyXml 
 - Adds editing for edge terminal points
