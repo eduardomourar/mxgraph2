@@ -514,6 +514,11 @@ BaseFormatPanel = function(format, editorUi, container)
 };
 
 /**
+ * 
+ */
+BaseFormatPanel.prototype.buttonBackgroundColor = 'white';
+
+/**
  * Adds the given color option.
  */
 BaseFormatPanel.prototype.getSelectionState = function()
@@ -1226,7 +1231,7 @@ BaseFormatPanel.prototype.addArrow = function(elt, height)
 
 	mxUtils.setOpacity(elt, 100);
 	elt.style.border = '1px solid #a0a0a0';
-	elt.style.backgroundColor = 'white';
+	elt.style.backgroundColor = this.buttonBackgroundColor;
 	elt.style.backgroundImage = 'none';
 	elt.style.width = 'auto';
 	elt.className += ' geColorBtn';
