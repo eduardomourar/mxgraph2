@@ -3641,6 +3641,11 @@ StyleFormatPanel = function(format, editorUi, container)
 mxUtils.extend(StyleFormatPanel, BaseFormatPanel);
 
 /**
+ * 
+ */
+StyleFormatPanel.prototype.defaultStrokeColor = 'black';
+
+/**
  * Adds the label menu items to the given menu and parent.
  */
 StyleFormatPanel.prototype.init = function()
@@ -3922,7 +3927,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		var pat = document.createElement('div');
 		pat.style.width = width + 'px';
 		pat.style.height = '1px';
-		pat.style.borderBottom = '1px ' + cssName + ' black';
+		pat.style.borderBottom = '1px ' + cssName + ' ' + this.defaultStrokeColor;
 		pat.style.paddingTop = '6px';
 
 		item.firstChild.firstChild.style.padding = '0px 4px 0px 4px';
