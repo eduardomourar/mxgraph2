@@ -1771,7 +1771,7 @@ var LinkDialog = function(editorUi, initialValue, btnLabel, fn)
 var OutlineWindow = function(editorUi, x, y, w, h)
 {
 	var graph = editorUi.editor.graph;
-	
+
 	var div = document.createElement('div');
 	div.style.position = 'absolute';
 	div.style.width = '100%';
@@ -1846,9 +1846,9 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 		g.gridEnabled = false;
 		g.pageScale = graph.pageScale;
 		g.pageFormat = graph.pageFormat;
-		g.background = graph.background;
+		g.background = (graph.background == null || graph.background == mxConstants.NONE) ? graph.defaultPageBackgroundColor : graph.background;
 		g.pageVisible = graph.pageVisible;
-		
+
 		var current = mxUtils.getCurrentStyle(graph.container);
 		div.style.backgroundColor = current.backgroundColor;
 		
@@ -1860,11 +1860,11 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 		outline.outline.pageScale = graph.pageScale;
 		outline.outline.pageFormat = graph.pageFormat;
 		outline.outline.pageVisible = graph.pageVisible;
-		outline.outline.background = graph.background;
+		outline.outline.background = (graph.background == null || graph.background == mxConstants.NONE) ? graph.defaultPageBackgroundColor : graph.background;;
 		
 		var current = mxUtils.getCurrentStyle(graph.container);
 		div.style.backgroundColor = current.backgroundColor;
-		
+
 		if (graph.view.backgroundPageShape != null && outline.outline.view.backgroundPageShape != null)
 		{
 			outline.outline.view.backgroundPageShape.fill = graph.view.backgroundPageShape.fill;
