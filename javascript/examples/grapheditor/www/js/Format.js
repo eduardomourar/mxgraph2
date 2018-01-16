@@ -5157,7 +5157,7 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 	{
 		accessor.set(graph.pageFormat);
 	});
--	this.addKeyHandler(accessor.heightInput, function()
+	this.addKeyHandler(accessor.heightInput, function()
 	{
 		accessor.set(graph.pageFormat);	
 	});
