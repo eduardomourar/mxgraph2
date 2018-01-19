@@ -1,3 +1,7 @@
+19-JAN-2017: 3.9.0
+
+- Add layout.isAncestor where child == parent returns false
+- Removes duplicate WeightedCellSorter
 - Fixes recursion in mxGraph.cellsFolded
 - Adds mxRubberband.fadeOut switch
 - Fixes ignored node values in mxUtils.getPrettyXml 
