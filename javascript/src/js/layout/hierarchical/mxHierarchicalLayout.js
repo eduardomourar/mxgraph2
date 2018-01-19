@@ -413,8 +413,8 @@ mxHierarchicalLayout.prototype.getEdges = function(cell)
 		
 		if ((source == target) ||
 				((source != target) &&
-						((target == cell && (this.parent == null || this.isAncestor(source, this.parent, this.traverseAncestors))) ||
-						 	(source == cell && (this.parent == null || this.isAncestor(target, this.parent, this.traverseAncestors))))))
+						((target == cell && (this.parent == null || this.isAncestor(this.parent, source, this.traverseAncestors))) ||
+						 	(source == cell && (this.parent == null || this.isAncestor(this.parent, target, this.traverseAncestors))))))
 		{
 			result.push(edges[i]);
 		}
