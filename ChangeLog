@@ -1,3 +1,4 @@
+- Adds mxCellEditor.isCancelEditingKeyEvent
 - Adds mxClient.loadResources
 - Adds mxGraph.getLinkForCell hook
 
