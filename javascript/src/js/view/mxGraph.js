@@ -700,7 +700,11 @@ function mxGraph(container, model, renderHint, stylesheet)
  */
 if (mxLoadResources)
 {
-	mxResources.add(mxClient.basePath+'/resources/graph');
+	mxResources.add(mxClient.basePath + '/resources/graph');
+}
+else
+{
+	mxClient.defaultBundles.push(mxClient.basePath + '/resources/graph');
 }
 
 /**
