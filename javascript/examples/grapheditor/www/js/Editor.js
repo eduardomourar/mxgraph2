@@ -698,7 +698,7 @@ OpenFile.prototype.cancel = function(cancel)
 /**
  * Basic dialogs that are available in the viewer (print dialog).
  */
-function Dialog(editorUi, elt, w, h, modal, closable, onClose)
+function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll)
 {
 	var dx = 0;
 	
@@ -777,7 +777,7 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 	document.body.appendChild(div);
 	
 	// Adds vertical scrollbars if needed
-	if (elt.clientHeight > div.clientHeight - 64)
+	if (!noScroll && elt.clientHeight > div.clientHeight - 64)
 	{
 		elt.style.overflowY = 'auto';
 	}
@@ -827,7 +827,7 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose)
 		div.style.height = h + 'px';
 		
 		// Adds vertical scrollbars if needed
-		if (elt.clientHeight > div.clientHeight - 64)
+		if (!noScroll && elt.clientHeight > div.clientHeight - 64)
 		{
 			elt.style.overflowY = 'auto';
 		}
