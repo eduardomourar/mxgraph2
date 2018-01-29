@@ -4212,7 +4212,7 @@ public class mxGraph extends mxEventSource
 		{
 			mxRectangle bounds = this.view.getPerimeterBounds(vertex, 0);
 			mxPoint cx = new mxPoint(bounds.getCenterX(), bounds.getCenterY());
-			Object direction = mxUtils.getString(vertex.getStyle(), mxConstants.STYLE_DIRECTION);
+			String direction = mxUtils.getString(vertex.getStyle(), mxConstants.STYLE_DIRECTION);
 			
 			double r1 = 0;
 			
