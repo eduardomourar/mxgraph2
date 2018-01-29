@@ -38,9 +38,9 @@ git clone git@github.com:jgraph/mxgraph.git
 
 # Publish to NPM
 sed "s/@VERSION@/$DOTVERSION/" $BUILD/../etc/build/mxgraph-package.json > tmp/mxgraph/package.json
-cp -v $BUILD/../etc/build/Gruntfile.js tmp/mxgraph/
 mkdir -p tmp/mxgraph/etc/build
-cp tmp/mxgraph/Gruntfile.js tmp/mxgraph/etc/build/Gruntfile.js
+cp -v $BUILD/../etc/build/Gruntfile.js tmp/mxgraph/etc/build/
+cp -v $BUILD/../etc/build/.npmignore tmp/mxgraph/
 npm publish tmp/mxgraph --access public
 
 
