@@ -3843,7 +3843,7 @@ StyleFormatPanel.prototype.addFill = function(container)
 	container.appendChild(fillPanel);
 	container.appendChild(gradientPanel);
 
-	if (ss.style.shape == 'swimlane')
+	if (ss.style.shape == 'swimlane' || ss.style.shape == 'umlFrame')
 	{
 		container.appendChild(this.createCellColorOption(mxResources.get('laneColor'), 'swimlaneFillColor', '#ffffff'));
 	}
