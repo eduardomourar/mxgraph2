@@ -329,22 +329,12 @@ public class mxUtils
 	 */
 	public static FontMetrics getFontMetrics(Font font)
 	{
-		FontMetrics fm = null;
-
 		if (fontGraphics != null)
 		{
-			try
-			{
-				fm = fontGraphics.getFontMetrics(font);
-			}
-			catch (Exception e)
-			{
-				// Added to avoid NPE on GAE
-				fm = null;
-			}
+			return fontGraphics.getFontMetrics(font);
 		}
 
-		return fm;
+		return null;
 	}
 
 	/**
