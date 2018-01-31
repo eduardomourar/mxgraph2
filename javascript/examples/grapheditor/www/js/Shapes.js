@@ -2542,6 +2542,28 @@
 	// Registers the link shape
 	mxCellRenderer.registerShape('filledEdge', FilledEdge);
 
+	// Implements custom colors for shapes
+	if (typeof StyleFormatPanel !== 'undefined')
+	{
+		(function()
+		{
+			var styleFormatPanelGetCustomColors = StyleFormatPanel.prototype.getCustomColors;
+			
+			StyleFormatPanel.prototype.getCustomColors = function()
+			{
+				var ss = this.format.getSelectionState();
+				var result = styleFormatPanelGetCustomColors.apply(this, arguments);
+				
+				if (ss.style.shape == 'umlFrame')
+				{
+					result.push({title: mxResources.get('laneColor'), key: 'swimlaneFillColor', defaultValue: '#ffffff'});
+				}
+				
+				return result;
+			};
+		})();
+	}
+	
 	// Registers and defines the custom marker
 	mxMarker.addMarker('dash', function(c, shape, type, pe, unitX, unitY, size, source, sw, filled)
 	{
