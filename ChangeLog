@@ -1,3 +1,4 @@
+- Fixes block alignment for in-place editor
 - Fixes cloning of edges in mxEdgeHandler
 
 27-JAN-2018: 3.9.1

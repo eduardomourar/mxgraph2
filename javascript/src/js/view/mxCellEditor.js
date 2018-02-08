@@ -263,6 +263,12 @@ mxCellEditor.prototype.init = function ()
 	this.textarea.className = 'mxCellEditor mxPlainTextEditor';
 	this.textarea.contentEditable = true;
 	
+	if (mxClient.IS_QUIRKS || document.documenntMode == 7 || document.documenntMode == 8)
+	{
+		this.textarea.style.position = 'absolute';
+		this.textarea.style.display = 'block';
+	}
+	
 	// Workaround for selection outside of DIV if height is 0
 	if (mxClient.IS_GC)
 	{
@@ -585,11 +591,19 @@ mxCellEditor.prototype.resize = function()
 				
 		 		// Forces automatic reflow if text is removed from an oversize label and normal word wrap
 				var tmp = Math.round(this.bounds.width / ((document.documentMode == 8) ? scale : scale)) + this.wordWrapPadding;
-				this.textarea.style.width = tmp + 'px';
 				
-				if (this.textarea.scrollWidth > tmp)
+				if (mxClient.IS_QUIRKS || document.documenntMode == 7)
 				{
-					this.textarea.style.width = this.textarea.scrollWidth + 'px';
+					this.textarea.style.width = tmp + 'px';
+					
+					if (this.textarea.scrollWidth > tmp)
+					{
+						this.textarea.style.width = this.textarea.scrollWidth + 'px';
+					}
+				}
+				else
+				{
+					this.textarea.style.maxWidth = tmp + 'px';
 				}
 			}
 			else
