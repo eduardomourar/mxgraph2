@@ -3041,7 +3041,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		        this.editorUi.toolbar.addButton('geSprite-horizontalrule', mxResources.get('insertHorizontalRule'),
 				function()
 				{
-					document.execCommand('inserthorizontalrule', false, null);
+					document.execCommand('inserthorizontalrule', false);
 				}, insertPanel),				
 				this.editorUi.toolbar.addMenuFunctionInContainer(insertPanel, 'geSprite-table', mxResources.get('table'), false, mxUtils.bind(this, function(menu)
 				{
@@ -3071,10 +3071,10 @@ TextFormatPanel.prototype.addFont = function(container)
 				{
 					try
 					{
-			        	if (currentTable != null)
-			        	{
-			        		graph.selectNode(graph.insertColumn(currentTable, (tableCell != null) ? tableCell.cellIndex : 0));
-			        	}
+				        	if (currentTable != null)
+				        	{
+				        		graph.selectNode(graph.insertColumn(currentTable, (tableCell != null) ? tableCell.cellIndex : 0));
+				        	}
 					}
 					catch (e)
 					{
@@ -3087,9 +3087,9 @@ TextFormatPanel.prototype.addFont = function(container)
 					try
 					{
 						if (currentTable != null)
-			        	{
-							graph.selectNode(graph.insertColumn(currentTable, (tableCell != null) ? tableCell.cellIndex + 1 : -1));
-			        	}
+				        	{
+								graph.selectNode(graph.insertColumn(currentTable, (tableCell != null) ? tableCell.cellIndex + 1 : -1));
+				        	}
 					}
 					catch (e)
 					{
