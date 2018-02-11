@@ -5722,9 +5722,16 @@ if (typeof mxVertexHandler != 'undefined')
 						alt.setAttribute('text-decoration', 'underline');
 					}
 					
-					alt.innerHTML = str;
-					
-					return alt;
+					try
+					{
+						alt.innerHTML = str;
+						
+						return alt;
+					}
+					catch (e)
+					{
+						return createAlternateContent.apply(this, arguments);
+					}
 				}
 				else
 				{
