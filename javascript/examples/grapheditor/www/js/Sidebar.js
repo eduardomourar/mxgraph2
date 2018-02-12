@@ -324,7 +324,7 @@ Sidebar.prototype.showTooltip = function(elt, cells, w, h, title, showLabel)
 						this.tooltipTitle.style.overflow = 'hidden';
 						this.tooltipTitle.style.position = 'absolute';
 						this.tooltipTitle.style.paddingTop = '6px';
-						this.tooltipTitle.style.bottom = '4px';
+						this.tooltipTitle.style.bottom = '6px';
 
 						this.tooltip.appendChild(this.tooltipTitle);
 					}
