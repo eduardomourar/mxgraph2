@@ -263,12 +263,6 @@ mxCellEditor.prototype.init = function ()
 	this.textarea.className = 'mxCellEditor mxPlainTextEditor';
 	this.textarea.contentEditable = true;
 	
-	if (mxClient.IS_QUIRKS || document.documenntMode == 7 || document.documenntMode == 8)
-	{
-		this.textarea.style.position = 'absolute';
-		this.textarea.style.display = 'block';
-	}
-	
 	// Workaround for selection outside of DIV if height is 0
 	if (mxClient.IS_GC)
 	{
@@ -591,8 +585,8 @@ mxCellEditor.prototype.resize = function()
 				
 		 		// Forces automatic reflow if text is removed from an oversize label and normal word wrap
 				var tmp = Math.round(this.bounds.width / ((document.documentMode == 8) ? scale : scale)) + this.wordWrapPadding;
-				
-				if (mxClient.IS_QUIRKS || document.documenntMode == 7)
+
+				if (this.isLegacyEditor())
 				{
 					this.textarea.style.width = tmp + 'px';
 					
@@ -689,6 +683,17 @@ mxCellEditor.prototype.getBackgroundColor = function(state)
 };
 
 /**
+ * Function: isLegacyEditor
+ * 
+ * Returns true if no wrapper should be used for the in-place editor. This
+ * implementation returns true for IE9 and older.
+ */
+mxCellEditor.prototype.isLegacyEditor = function()
+{
+	return mxClient.IS_QUIRKS || document.documentMode < 9;
+};
+
+/**
  * Function: startEditing
  *
  * Starts the editor for the given cell.
@@ -779,7 +784,20 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 			this.clearOnChange = this.textarea.innerHTML == this.getEmptyLabelText();
 		}
 
-		this.graph.container.appendChild(this.textarea);
+		// Wrapper to detach editor from flow via absolute position but relative position
+		// on textnode needed for automatic resize behaviour with word wrapping
+		if (this.isLegacyEditor())
+		{
+			this.textarea.style.position = 'absolute';
+			this.graph.container.appendChild(this.textarea);
+		}
+		else
+		{
+			this.wrapper = document.createElement('div');
+			this.wrapper.style.cssText = 'position:absolute;overflow:visible;left:0px;top:0px;';
+			this.wrapper.appendChild(this.textarea);
+			this.graph.container.appendChild(this.wrapper);
+		}
 		
 		// Update this after firing all potential events that could update the cleanOnChange flag
 		this.editingCell = cell;
@@ -858,9 +876,13 @@ mxCellEditor.prototype.stopEditing = function(cancel)
 		this.bounds = null;
 		this.textarea.blur();
 		
-		if (this.textarea.parentNode != null)
+		if (this.wrapper == null && this.textarea.parentNode != null)
 		{
 			this.textarea.parentNode.removeChild(this.textarea);
+		}
+		else if (this.wrapper.parentNode != null)
+		{
+			this.wrapper.parentNode.removeChild(this.wrapper);
 		}
 		
 		if (this.clearOnChange && this.textarea.innerHTML == this.getEmptyLabelText())
@@ -883,6 +905,7 @@ mxCellEditor.prototype.stopEditing = function(cancel)
 		// Forces new instance on next edit for undo history reset
 		mxEvent.release(this.textarea);
 		this.textarea = null;
+		this.wrapper = null;
 	}
 };
 

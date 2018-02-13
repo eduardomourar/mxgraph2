@@ -1,4 +1,3 @@
-- Uses position absolute for SVG root
 - Handles file protocol in mxUrlConverter
 - Fixes block alignment for in-place editor
 - Fixes cloning of edges in mxEdgeHandler
