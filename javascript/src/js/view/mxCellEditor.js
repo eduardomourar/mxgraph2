@@ -686,11 +686,11 @@ mxCellEditor.prototype.getBackgroundColor = function(state)
  * Function: isLegacyEditor
  * 
  * Returns true if no wrapper should be used for the in-place editor. This
- * implementation returns true for IE9 and older.
+ * implementation returns true for IE8- and quirks mode.
  */
 mxCellEditor.prototype.isLegacyEditor = function()
 {
-	return mxClient.IS_QUIRKS || document.documentMode < 9;
+	return true; //mxClient.IS_QUIRKS || document.documentMode < 9;
 };
 
 /**
@@ -794,7 +794,10 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 		else
 		{
 			this.wrapper = document.createElement('div');
-			this.wrapper.style.cssText = 'position:absolute;overflow:visible;left:0px;top:0px;';
+			this.wrapper.style.cssText = 'position:absolute;overflow:visible;' +
+				'left:0px;top:0px;pointer-events:none;border:1px solid green;';
+			this.textarea.style.pointerEvents = 'auto';
+			this.textarea.style.background = 'yellow';
 			this.wrapper.appendChild(this.textarea);
 			this.graph.container.appendChild(this.wrapper);
 		}
