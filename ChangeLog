@@ -1,5 +1,6 @@
+- Hides special handles while editing in mxVertexHandler
 - Handles file protocol in mxUrlConverter
-- Fixes block alignment for in-place editor
+- mxCellEditor handles SVG with absolute position
 - Fixes cloning of edges in mxEdgeHandler
 
 27-JAN-2018: 3.9.1

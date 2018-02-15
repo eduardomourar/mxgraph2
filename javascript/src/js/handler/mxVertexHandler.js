@@ -1781,6 +1781,9 @@ mxVertexHandler.prototype.redrawHandles = function()
 		if (this.rotationShape.node != null)
 		{
 			this.moveSizerTo(this.rotationShape, pt.x, pt.y);
+
+			// Hides rotation handle during text editing
+			this.rotationShape.node.style.display = (this.state.view.graph.isEditing()) ? 'none' : '';
 		}
 	}
 	
@@ -1804,6 +1807,9 @@ mxVertexHandler.prototype.redrawHandles = function()
 			var temp = this.customHandles[i].shape.node.style.display;
 			this.customHandles[i].redraw();
 			this.customHandles[i].shape.node.style.display = temp;
+
+			// Hides custom handles during text editing
+			this.customHandles[i].shape.node.style.visibility = (this.graph.isEditing()) ? 'hidden' : '';
 		}
 	}
 
