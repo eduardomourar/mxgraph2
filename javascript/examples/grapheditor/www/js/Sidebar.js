@@ -1951,7 +1951,8 @@ Sidebar.prototype.updateShapes = function(source, targets)
 		// Lists the styles to carry over from the existing shape
 		var styles = ['shadow', 'dashed', 'dashPattern', 'fontFamily', 'fontSize', 'fontColor', 'align', 'startFill',
 		              'startSize', 'endFill', 'endSize', 'strokeColor', 'strokeWidth', 'fillColor', 'gradientColor',
-		              'html', 'part', 'noEdgeStyle', 'edgeStyle', 'elbow', 'childLayout', 'recursiveResize', 'container'];
+		              'html', 'part', 'noEdgeStyle', 'edgeStyle', 'elbow', 'childLayout', 'recursiveResize',
+		              'container', 'collapsible', 'connectable'];
 		
 		for (var i = 0; i < targets.length; i++)
 		{
