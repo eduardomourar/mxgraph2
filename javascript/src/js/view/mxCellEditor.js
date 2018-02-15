@@ -268,7 +268,8 @@ mxCellEditor.prototype.init = function ()
 	{
 		this.textarea.style.minHeight = '1em';
 	}
-	
+
+	this.textarea.style.position = ((this.isLegacyEditor())) ? 'absolute' : 'relative';
 	this.installListeners(this.textarea);
 };
 
@@ -586,7 +587,7 @@ mxCellEditor.prototype.resize = function()
 		 		// Forces automatic reflow if text is removed from an oversize label and normal word wrap
 				var tmp = Math.round(this.bounds.width / ((document.documentMode == 8) ? scale : scale)) + this.wordWrapPadding;
 
-				if (this.isLegacyEditor())
+				if (this.textarea.style.position != 'relative')
 				{
 					this.textarea.style.width = tmp + 'px';
 					
@@ -685,12 +686,35 @@ mxCellEditor.prototype.getBackgroundColor = function(state)
 /**
  * Function: isLegacyEditor
  * 
- * Returns true if no wrapper should be used for the in-place editor. This
- * implementation returns true for IE8- and quirks mode.
+ * Returns true if max-width is not supported or if the SVG root element in
+ * in the graph does not have CSS position absolute. In these cases the text
+ * editor must use CSS position absolute to avoid an offset but it will have
+ * a less accurate line wrapping width during the text editing preview. This
+ * implementation returns true for IE8- and quirks mode or if the CSS position
+ * of the SVG element is not absolute.
  */
 mxCellEditor.prototype.isLegacyEditor = function()
 {
-	return true; //mxClient.IS_QUIRKS || document.documentMode < 9;
+	if (mxClient.IS_VML)
+	{
+		return true;
+	}
+	else
+	{
+		var absoluteRoot = false;
+		
+		if (mxClient.IS_SVG)
+		{
+			var root = this.graph.view.getDrawPane().ownerSVGElement;
+			
+			if (root != null)
+			{
+				absoluteRoot = mxUtils.getCurrentStyle(root).position == 'absolute';
+			}
+		}
+		
+		return !absoluteRoot;
+	}
 };
 
 /**
@@ -784,23 +808,7 @@ mxCellEditor.prototype.startEditing = function(cell, trigger)
 			this.clearOnChange = this.textarea.innerHTML == this.getEmptyLabelText();
 		}
 
-		// Wrapper to detach editor from flow via absolute position but relative position
-		// on textnode needed for automatic resize behaviour with word wrapping
-		if (this.isLegacyEditor())
-		{
-			this.textarea.style.position = 'absolute';
-			this.graph.container.appendChild(this.textarea);
-		}
-		else
-		{
-			this.wrapper = document.createElement('div');
-			this.wrapper.style.cssText = 'position:absolute;overflow:visible;' +
-				'left:0px;top:0px;pointer-events:none;border:1px solid green;';
-			this.textarea.style.pointerEvents = 'auto';
-			this.textarea.style.background = 'yellow';
-			this.wrapper.appendChild(this.textarea);
-			this.graph.container.appendChild(this.wrapper);
-		}
+		this.graph.container.appendChild(this.textarea);
 		
 		// Update this after firing all potential events that could update the cleanOnChange flag
 		this.editingCell = cell;
