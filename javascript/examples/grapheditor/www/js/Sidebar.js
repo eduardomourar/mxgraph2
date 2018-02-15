@@ -1069,7 +1069,7 @@ Sidebar.prototype.addMiscPalette = function(expand)
 		this.addEntry('shape group container', function()
 		{
 		    var cell = new mxCell('', new mxGeometry(0, 0, 200, 100),
-				'html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;connectable=0;');
+				'html=1;whiteSpace=wrap;container=1;recursiveResize=0;collapsible=0;');
 		    cell.vertex = true;
 		    
 			var symbol = new mxCell('', new mxGeometry(20, 20, 20, 30), 'triangle;html=1;whiteSpace=wrap;');
