@@ -862,6 +862,37 @@ mxCellEditor.prototype.isSelectText = function()
 };
 
 /**
+ * Function: isSelectText
+ * 
+ * Returns <selectText>.
+ */
+mxCellEditor.prototype.clearSelection = function()
+{
+	var selection = null;
+	
+	if (window.getSelection)
+	{
+		selection = window.getSelection();
+	}
+	else if (document.selection)
+	{
+		selection = document.selection;
+	}
+	
+	if (selection != null)
+	{
+		if (selection.empty)
+		{
+			selection.empty();
+		}
+		else if (selection.removeAllRanges)
+		{
+			selection.removeAllRanges();
+		}
+	}
+};
+
+/**
  * Function: stopEditing
  *
  * Stops the editor and applies the value if cancel is false.
@@ -886,14 +917,11 @@ mxCellEditor.prototype.stopEditing = function(cancel)
 		this.trigger = null;
 		this.bounds = null;
 		this.textarea.blur();
+		this.clearSelection();
 		
-		if (this.wrapper == null && this.textarea.parentNode != null)
+		if (this.textarea.parentNode != null)
 		{
 			this.textarea.parentNode.removeChild(this.textarea);
-		}
-		else if (this.wrapper.parentNode != null)
-		{
-			this.wrapper.parentNode.removeChild(this.wrapper);
 		}
 		
 		if (this.clearOnChange && this.textarea.innerHTML == this.getEmptyLabelText())
@@ -916,7 +944,6 @@ mxCellEditor.prototype.stopEditing = function(cancel)
 		// Forces new instance on next edit for undo history reset
 		mxEvent.release(this.textarea);
 		this.textarea = null;
-		this.wrapper = null;
 	}
 };
 
