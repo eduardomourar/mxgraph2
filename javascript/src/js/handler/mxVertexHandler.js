@@ -1783,8 +1783,7 @@ mxVertexHandler.prototype.redrawHandles = function()
 			this.moveSizerTo(this.rotationShape, pt.x, pt.y);
 
 			// Hides rotation handle during text editing
-			this.rotationShape.node.style.display = (this.state.view.graph.isEditing() ||
-				this.rotationShape.node.style.display == 'none') ? 'none' : '';
+			this.rotationShape.node.style.visibility = (this.state.view.graph.isEditing()) ? 'hidden' : '';
 		}
 	}
 	
