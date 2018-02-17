@@ -1,3 +1,4 @@
+- Fixes possible inconsistency in mxChildChangeCodec
 - Clears selection after editing in mxCellEditor
 - Hides special handles while editing in mxVertexHandler
 - Handles file protocol in mxUrlConverter
