@@ -1,3 +1,4 @@
+- Allows for 0.5px steps in mxGraphHandler.roundLength
 - Fixes possible inconsistency in mxChildChangeCodec
 - Clears selection after editing in mxCellEditor
 - Hides special handles while editing in mxVertexHandler
