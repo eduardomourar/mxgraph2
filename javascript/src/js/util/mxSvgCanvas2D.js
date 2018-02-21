@@ -1304,29 +1304,31 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 		x += s.dx;
 		y += s.dy;
 		
+		//Using floor to get integer value is better such that label does not grow beyond the bounds of the shape
+		//TODO Why we used to add 1 to width and height
 		if (clip)
 		{
-			div.style.maxHeight = Math.round(h) + 'px';
-			div.style.maxWidth = Math.round(w) + 'px';
+			div.style.maxHeight = Math.floor(h) + 'px';
+			div.style.maxWidth = Math.floor(w) + 'px';
 		}
 		else if (overflow == 'fill')
 		{
-			div.style.width = Math.round(w + 1) + 'px';
-			div.style.height = Math.round(h + 1) + 'px';
+			div.style.width = Math.floor(w) + 'px';
+			div.style.height = Math.floor(h) + 'px';
 		}
 		else if (overflow == 'width')
 		{
-			div.style.width = Math.round(w + 1) + 'px';
+			div.style.width = Math.floor(w) + 'px';
 			
 			if (h > 0)
 			{
-				div.style.maxHeight = Math.round(h) + 'px';
+				div.style.maxHeight = Math.floor(h) + 'px';
 			}
 		}
 
 		if (wrap && w > 0)
 		{
-			div.style.width = Math.round(w + 1) + 'px';
+			div.style.width = Math.floor(w) + 'px';
 		}
 		
 		// Code that depends on the size which is computed after
@@ -1356,7 +1358,7 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 				ow = Math.min(ow, w);
 			}
 			
-			div.style.width = Math.round(ow + 1) + 'px';
+			div.style.width = Math.floor(ow) + 'px';
 		}
 
 		ow = (group.mxCachedFinalOffsetWidth != null) ? group.mxCachedFinalOffsetWidth : sizeDiv.offsetWidth;
@@ -1442,9 +1444,9 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 			tr += 'rotate(' + (rotation) + ',' + (-dx) + ',' + (-dy) + ')';
 		}
 
-		group.setAttribute('transform', 'translate(' + Math.round(x) + ',' + Math.round(y) + ')' + tr);
-		fo.setAttribute('width', Math.round(Math.max(1, w)));
-		fo.setAttribute('height', Math.round(Math.max(1, h)));
+		group.setAttribute('transform', 'translate(' + x + ',' + y + ')' + tr);
+		fo.setAttribute('width', Math.floor(Math.max(1, w)));
+		fo.setAttribute('height', Math.floor(Math.max(1, h)));
 	}
 };
 
@@ -1466,31 +1468,33 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 		x += s.dx;
 		y += s.dy;
 		
+		//Using floor to get integer value is better such that label does not grow beyond the bounds of the shape
+		//TODO Why we used to add 1 to width and height
 		if (this.foEnabled && format == 'html')
 		{
 			var style = 'vertical-align:top;';
 			
 			if (clip)
 			{
-				style += 'overflow:hidden;max-height:' + Math.round(h) + 'px;max-width:' + Math.round(w) + 'px;';
+				style += 'overflow:hidden;max-height:' + Math.floor(h) + 'px;max-width:' + Math.floor(w) + 'px;';
 			}
 			else if (overflow == 'fill')
 			{
-				style += 'width:' + Math.round(w + 1) + 'px;height:' + Math.round(h + 1) + 'px;overflow:hidden;';
+				style += 'width:' + Math.floor(w) + 'px;height:' + Math.floor(h) + 'px;overflow:hidden;';
 			}
 			else if (overflow == 'width')
 			{
-				style += 'width:' + Math.round(w + 1) + 'px;';
+				style += 'width:' + Math.floor(w) + 'px;';
 				
 				if (h > 0)
 				{
-					style += 'max-height:' + Math.round(h) + 'px;overflow:hidden;';
+					style += 'max-height:' + Math.floor(h) + 'px;overflow:hidden;';
 				}
 			}
 
 			if (wrap && w > 0)
 			{
-				style += 'width:' + Math.round(w + 1) + 'px;white-space:normal;word-wrap:' +
+				style += 'width:' + Math.floor(w) + 'px;white-space:normal;word-wrap:' +
 					mxConstants.WORD_WRAP + ';';
 			}
 			else
@@ -1776,10 +1780,10 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				tr += 'rotate(' + (rotation) + ',' + (-dx) + ',' + (-dy) + ')';
 			}
 
-			group.setAttribute('transform', 'translate(' + (Math.round(x) + this.foOffset) + ',' +
-				(Math.round(y) + this.foOffset) + ')' + tr);
-			fo.setAttribute('width', Math.round(Math.max(1, w)));
-			fo.setAttribute('height', Math.round(Math.max(1, h)));
+			group.setAttribute('transform', 'translate(' + (x + this.foOffset) + ',' +
+				(y + this.foOffset) + ')' + tr);
+			fo.setAttribute('width', Math.floor(Math.max(1, w)));
+			fo.setAttribute('height', Math.floor(Math.max(1, h)));
 			
 			// Adds alternate content if foreignObject not supported in viewer
 			if (this.root.ownerDocument != document)
