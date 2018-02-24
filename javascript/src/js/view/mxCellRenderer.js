@@ -1084,8 +1084,8 @@ mxCellRenderer.prototype.getLabelBounds = function(state)
 		if (sc != mxConstants.NONE && sc != '')
 		{
 			var s = parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STROKEWIDTH, 1)) * scale;
-			var dx = Math.max(s/2, 1);
-			var dh = Math.max(s, 1);
+			var dx = 1 + Math.floor((s - 1) / 2);
+			var dh = Math.floor(s + 1);
 			
 			bounds.x += dx;
 			bounds.y += dx;
