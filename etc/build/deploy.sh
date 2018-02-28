@@ -41,7 +41,10 @@ sed "s/@VERSION@/$DOTVERSION/" $BUILD/../etc/build/mxgraph-package.json > tmp/mx
 mkdir -p tmp/mxgraph/etc/build
 cp -v $BUILD/../etc/build/Gruntfile.js tmp/mxgraph/etc/build/
 cp -v $BUILD/../etc/build/.npmignore tmp/mxgraph/
-npm publish tmp/mxgraph --access public
+cd tmp/mxgraph
+npm install
+npm publish --access public
+cd ../..
 
 
 cp mxgraph/README.md tmp/mxgraph
