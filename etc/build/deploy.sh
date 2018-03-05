@@ -41,11 +41,6 @@ sed "s/@VERSION@/$DOTVERSION/" $BUILD/../etc/build/mxgraph-package.json > tmp/mx
 mkdir -p tmp/mxgraph/etc/build
 cp -v $BUILD/../etc/build/Gruntfile.js tmp/mxgraph/etc/build/
 cp -v $BUILD/../etc/build/.npmignore tmp/mxgraph/
-cd tmp/mxgraph
-npm install
-npm publish --access public
-cd ../..
-
 
 cp mxgraph/README.md tmp/mxgraph
 cp mxgraph/LICENSE tmp/mxgraph
@@ -64,6 +59,10 @@ git commit -am "$DOTVERSION release"
 git push origin master
 git tag -a v$DOTVERSION -m "v$DOTVERSION"
 git push origin --tags
+
+# Publish mxgraph to NPM
+npm install
+npm publish --access public
 cd ..
 
 # Copy selected resources to mxgraph-js and generate package.json
