@@ -1,3 +1,4 @@
+- Adds tolerance for straight edge detection
 - Uses Object for mxResources.resources
 
 05-MAR-2018: 3.9.3
