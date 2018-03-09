@@ -682,11 +682,13 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 				{
 					return 'pointer';
 				}
+				else if (this.isCellLocked(cell))
+				{
+					return 'default';
+				}
 			}
-			else
-			{
-				return getCursorForCell.apply(this, arguments);
-			}
+
+			return getCursorForCell.apply(this, arguments);
 		};
 		
 		// Changes rubberband selection to be recursive
