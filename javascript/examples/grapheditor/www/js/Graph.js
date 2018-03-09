@@ -621,13 +621,15 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			return mxEvent.isMouseEvent(me.getEvent());
 		};
 	
-		// Enables links if graph is "disabled" (ie. read-only)
+		// Handles links if graph is read-only or cell is locked
 		var click = this.click;
 		this.click = function(me)
 		{
-			if (!this.isEnabled() && !me.isConsumed())
+			var locked = me.state == null && me.sourceState != null && this.isCellLocked(me.sourceState.cell);
+			
+			if ((!this.isEnabled() || locked) && !me.isConsumed())
 			{
-				var cell = me.getCell();
+				var cell = (locked) ? me.sourceState.cell : me.getCell();
 				
 				if (cell != null)
 				{
@@ -644,13 +646,28 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 				return click.apply(this, arguments);
 			}
 		};
+
+		// Redirects tooltips for locked cells
+		this.tooltipHandler.getStateForEvent = function(me)
+		{
+			return me.sourceState;
+		};
+		
+		// Redirects cursor for locked cells
+		var getCursorForMouseEvent = this.getCursorForMouseEvent; 
+		this.getCursorForMouseEvent = function(me)
+		{
+			var locked = me.state == null && me.sourceState != null && this.isCellLocked(me.sourceState.cell);
+			
+			return this.getCursorForCell((locked) ? me.sourceState.cell : me.getCell());
+		};
 		
 		// Shows pointer cursor for clickable cells with links
 		// ie. if the graph is disabled and cells cannot be selected
 		var getCursorForCell = this.getCursorForCell;
 		this.getCursorForCell = function(cell)
 		{
-			if (!this.isEnabled())
+			if (!this.isEnabled() || this.isCellLocked(cell))
 			{
 				var link = this.getLinkForCell(cell);
 				
@@ -1085,7 +1102,7 @@ Graph.prototype.labelLinkClicked = function(state, elt, evt)
 	
 	if (href != null && !this.isPageLink(href))
 	{
-		if (!this.isEnabled())
+		if (!this.isEnabled() || this.isCellLocked(state.cell))
 		{
 			var target = state.view.graph.isBlankLink(href) ?
 				state.view.graph.linkTarget : '_top';
