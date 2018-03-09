@@ -1,3 +1,4 @@
+- Adds mxTooltipHandler.getStateForEvent hook
 - Adds tolerance for straight edge detection
 - Uses Object for mxResources.resources
 
