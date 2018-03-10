@@ -316,7 +316,7 @@ Actions.prototype.init = function()
     				graph.setLinkForCell(cell, (link.length > 0) ? link : null);
 			});
 		}
-	});
+	}, null, null, 'Alt+Shift+L');
 	this.addAction('insertLink...', function()
 	{
 		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
