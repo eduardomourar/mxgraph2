@@ -5447,7 +5447,7 @@ if (typeof mxVertexHandler != 'undefined')
 					}
 					else
 					{
-						// Maintains child index by inserting after cloned in parent
+						// Maintains child index by inserting after clone in parent
 						var index = parent.getIndex(cells[i]);
 						model.add(parent, clones[i], index + 1);
 					}
