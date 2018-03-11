@@ -25,7 +25,7 @@ Actions.prototype.init = function()
 	};
 
 	// File actions
-	this.addAction('new...', function() { window.open(ui.getUrl()); });
+	this.addAction('new...', function() { graph.openLink(ui.getUrl()); });
 	this.addAction('open...', function()
 	{
 		window.openNew = true;
@@ -298,7 +298,7 @@ Actions.prototype.init = function()
 		
 		if (link != null)
 		{
-			window.open(link);
+			graph.openLink(link);
 		}
 	});
 	this.addAction('editLink...', function()
@@ -755,7 +755,7 @@ Actions.prototype.init = function()
 			ext = '_' + mxClient.language;
 		}
 		
-		window.open(RESOURCES_PATH + '/help' + ext + '.html');
+		graph.openLink(RESOURCES_PATH + '/help' + ext + '.html');
 	});
 	
 	var showingAbout = false;

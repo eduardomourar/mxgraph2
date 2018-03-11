@@ -1717,7 +1717,7 @@ EditorUi.prototype.initCanvas = function()
 					}
 					else
 					{
-						window.open(this.editor.editButtonLink, 'editWindow');
+						graph.openLink(this.editor.editButtonLink, 'editWindow');
 					}
 					
 					mxEvent.consume(evt);

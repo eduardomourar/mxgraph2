@@ -643,7 +643,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 						}
 						else
 						{
-							window.open(link);
+							this.openLink(link);
 						}
 					}
 				}
@@ -1095,6 +1095,52 @@ Graph.prototype.init = function(container)
 };
 
 /**
+ * Installs automatic layout via styles
+ */
+Graph.prototype.labelLinkClicked = function(state, elt, evt)
+{
+	var href = elt.getAttribute('href');
+	
+	if (href != null && !this.isPageLink(href) && (mxEvent.isLeftMouseButton(evt) &&
+		!mxEvent.isPopupTrigger(evt)) || mxEvent.isTouchEvent(evt))
+	{
+		if (!this.isEnabled() || this.isCellLocked(state.cell))
+		{
+			var target = this.isBlankLink(href) ? this.linkTarget : '_top';
+			this.openLink(this.getAbsoluteUrl(href), target);
+		}
+		
+		mxEvent.consume(evt);
+	}
+};
+
+/**
+ * Returns the size of the page format scaled with the page size.
+ */
+Graph.prototype.openLink = function(href, target)
+{
+	// Workaround for blocking in same iframe
+	if (target == '_self' && window != window.top)
+	{
+		window.location.href = href;
+	}
+	else
+	{
+		// Avoids page reload for anchors (workaround for IE but used everywhere)
+		if (href.substring(0, this.baseUrl.length) == this.baseUrl &&
+			href.charAt(this.baseUrl.length) == '#' &&
+			target == '_top' && window == window.top)
+		{
+			window.location.hash = href.split('#')[1];
+		}
+		else
+		{
+			window.open(href, target);
+		}
+	}
+};
+
+/**
  * Adds support for page links.
  */
 Graph.prototype.isPageLink = function(href)
@@ -1108,48 +1154,6 @@ Graph.prototype.isPageLink = function(href)
 Graph.prototype.pageLinkClicked = function(cell, href)
 {
 	this.fireEvent(new mxEventObject('pageLinkClicked', 'cell', cell, 'href', href));
-};
-
-/**
- * Installs automatic layout via styles
- */
-Graph.prototype.labelLinkClicked = function(state, elt, evt)
-{
-	var href = elt.getAttribute('href');
-	
-	if (href != null && !this.isPageLink(href))
-	{
-		if (!this.isEnabled() || this.isCellLocked(state.cell))
-		{
-			var target = state.view.graph.isBlankLink(href) ?
-				state.view.graph.linkTarget : '_top';
-			href = state.view.graph.getAbsoluteUrl(href);
-	
-			// Workaround for blocking in same iframe
-			if (target == '_self' && window != window.top)
-			{
-				window.location.href = href;
-			}
-			else
-			{
-				// Avoids page reload for anchors (workaround for IE but used everywhere)
-				if (href.substring(0, this.baseUrl.length) == this.baseUrl &&
-					href.charAt(this.baseUrl.length) == '#' &&
-					target == '_top' && window == window.top)
-				{
-					window.location.hash = href.split('#')[1];
-				}
-				else if ((mxEvent.isLeftMouseButton(evt) &&
-					!mxEvent.isPopupTrigger(evt)) ||
-			    		mxEvent.isTouchEvent(evt))
-				{
-					window.open(href, target);
-				}
-			}
-		}
-		
-		mxEvent.consume(evt);
-	}
 };
 
 /**
@@ -5336,27 +5340,7 @@ if (typeof mxVertexHandler != 'undefined')
 					    		if (!mxEvent.isConsumed(evt))
 					    		{
 						    		var target = (blank) ? graph.linkTarget : '_top';
-						    		
-						    		// Workaround for blocking in same iframe
-								if (target == '_self' && window != window.top)
-								{
-									window.location.href = this.currentLink;
-								}
-								else
-								{
-									// Avoids page reload for anchors (workaround for IE but used everywhere)
-									if (this.currentLink.substring(0, graph.baseUrl.length) == graph.baseUrl &&
-										this.currentLink.charAt(graph.baseUrl.length) == '#' &&
-										target == '_top' && window == window.top)
-									{
-										window.location.hash = this.currentLink.split('#')[1];
-									}
-									else
-									{
-										window.open(this.currentLink, target);
-									}
-								}
-						    		
+						    		graph.openLink(this.currentLink, target);
 						    		me.consume();
 					    		}
 					    	}
