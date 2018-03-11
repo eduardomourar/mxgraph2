@@ -1131,7 +1131,15 @@ Graph.prototype.openLink = function(href, target)
 			href.charAt(this.baseUrl.length) == '#' &&
 			target == '_top' && window == window.top)
 		{
-			window.location.hash = href.split('#')[1];
+			var hash = href.split('#')[1];
+
+			// Forces navigation if on same hash
+			if (window.location.hash == '#' + hash)
+			{
+				window.location.hash = '';
+			}
+			
+			window.location.hash = hash;
 		}
 		else
 		{
@@ -1347,6 +1355,17 @@ Graph.prototype.isReplacePlaceholders = function(cell)
 {
 	return cell.value != null && typeof(cell.value) == 'object' &&
 		cell.value.getAttribute('placeholders') == '1';
+};
+
+/**
+ * Returns true if the given mouse wheel event should be used for zooming. This
+ * is invoked if no dialogs are showing and returns true if Alt or Control
+ * (except macOS) is pressed or if the panning handler is active.
+ */
+Graph.prototype.isZoomWheelEvent = function(evt)
+{
+	return mxEvent.isAltDown(evt) || (mxEvent.isControlDown(evt) && !mxClient.IS_MAC) ||
+		(this.panningHandler != null && this.panningHandler.isActive());
 };
 
 /**

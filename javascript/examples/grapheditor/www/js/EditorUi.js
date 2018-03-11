@@ -1321,8 +1321,6 @@ EditorUi.prototype.initClipboard = function()
  */
 EditorUi.prototype.initCanvas = function()
 {
-	var graph = this.editor.graph;
-
 	// Initial page layout view, scrollBuffer and timer-based scrolling
 	var graph = this.editor.graph;
 	graph.timerAutoScroll = true;
@@ -2009,7 +2007,7 @@ EditorUi.prototype.initCanvas = function()
 	{
 		// Ctrl+wheel (or pinch on touchpad) is a native browser zoom event is OS X
 		// LATER: Add support for zoom via pinch on trackpad for Chrome in OS X
-		if ((this.dialogs == null || this.dialogs.length == 0) && this.isZoomWheelEvent(evt))
+		if ((this.dialogs == null || this.dialogs.length == 0) && graph.isZoomWheelEvent(evt))
 		{
 			var source = mxEvent.getSource(evt);
 			
@@ -2028,17 +2026,6 @@ EditorUi.prototype.initCanvas = function()
 			}
 		}
 	}));
-};
-
-/**
- * Returns true if the given mouse wheel event should be used for zooming. This
- * is invoked if no dialogs are showing and returns true if Alt or Control
- * (except macOS) is pressed or if the panning handler is active.
- */
-EditorUi.prototype.isZoomWheelEvent = function(evt)
-{
-	return mxEvent.isAltDown(evt) || (mxEvent.isControlDown(evt) && !mxClient.IS_MAC) ||
-		this.editor.graph.panningHandler.isActive();
 };
 
 /**
