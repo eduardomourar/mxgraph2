@@ -32,6 +32,7 @@
 }
 .geDiagramContainer {
 	background-color:#ffffff;
+	border: 1px solid #e5e5e5;
 	outline:none;
 }
 .geMenubar, .geToolbar {
@@ -313,7 +314,6 @@ div.mxWindow .geButton {
 }
 .geDiagramBackdrop {
 	background-color: #ebebeb;
-	border: 1px solid #e5e5e5;
 }
 .geSidebarContainer {
 	background:#ffffff;
