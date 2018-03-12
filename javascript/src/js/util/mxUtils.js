@@ -945,7 +945,15 @@ var mxUtils =
 	 */
 	getTextContent: function(node)
 	{
-		return (node != null) ? node[(node.textContent === undefined) ? 'text' : 'textContent'] : '';
+		// Only IE10-
+		if (mxClient.IS_IE && node.innerText !== undefined)
+		{
+			return node.innerText;
+		}
+		else
+		{
+			return (node != null) ? node[(node.textContent === undefined) ? 'text' : 'textContent'] : '';
+		}
 	},
 	
 	/**
