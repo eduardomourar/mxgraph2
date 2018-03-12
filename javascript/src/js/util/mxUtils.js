@@ -945,14 +945,7 @@ var mxUtils =
 	 */
 	getTextContent: function(node)
 	{
-		if (node.innerText !== undefined)
-		{
-			return node.innerText;
-		}
-		else
-		{
-			return (node != null) ? node[(node.textContent === undefined) ? 'text' : 'textContent'] : '';
-		}
+		return (node != null) ? node[(node.textContent === undefined) ? 'text' : 'textContent'] : '';
 	},
 	
 	/**
