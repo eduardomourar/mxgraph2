@@ -3007,7 +3007,7 @@ EditorUi.prototype.createDivs = function()
 	}
 	else
 	{
-		this.diagramContainer.style.border = '1px solid transparent';
+		this.diagramContainer.style.border = 'none';
 	}
 };
 
