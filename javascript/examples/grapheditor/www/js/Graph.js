@@ -878,7 +878,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 		{
 			me = graphUpdateMouseEvent.apply(this, arguments);
 			
-			if (this.isCellLocked(me.getCell()))
+			if (me.state != null && this.isCellLocked(me.getCell()))
 			{
 				me.state = null;
 			}
@@ -3579,7 +3579,7 @@ HoverIcons.prototype.setCurrentState = function(state)
 						var state2 = this.validEdges[e];
 						var pts2 = state2.absolutePoints;
 						
-						if (pts2 != null && mxUtils.intersects(state, state2))
+						if (pts2 != null && mxUtils.intersects(state, state2) && state2.style['noJump'] != '1')
 						{
 							// Compares each segment of the edge with the current segment
 							for (var j = 0; j < pts2.length - 1; j++)
