@@ -1119,6 +1119,8 @@ Graph.prototype.labelLinkClicked = function(state, elt, evt)
  */
 Graph.prototype.openLink = function(href, target)
 {
+	var result = window;
+	
 	// Workaround for blocking in same iframe
 	if (target == '_self' && window != window.top)
 	{
@@ -1143,9 +1145,11 @@ Graph.prototype.openLink = function(href, target)
 		}
 		else
 		{
-			window.open(href, target);
+			result = window.open(href, target);
 		}
 	}
+	
+	return result;
 };
 
 /**
