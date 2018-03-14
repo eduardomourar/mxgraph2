@@ -5346,9 +5346,8 @@ if (typeof mxVertexHandler != 'undefined')
 				    		(((Math.abs(this.scrollLeft - graph.container.scrollLeft) < tol &&
 				        	Math.abs(this.scrollTop - graph.container.scrollTop) < tol) &&
 				    		(me.sourceState == null || !me.isSource(me.sourceState.control))) &&
-				    		((mxEvent.isLeftMouseButton(evt) &&
-						!mxEvent.isPopupTrigger(evt)) ||
-				    		mxEvent.isTouchEvent(evt))))
+				    		(((mxEvent.isLeftMouseButton(evt) || mxEvent.isMiddleMouseButton(evt)) &&
+						!mxEvent.isPopupTrigger(evt)) || mxEvent.isTouchEvent(evt))))
 				    	{
 					    	if (this.currentLink != null)
 					    	{
@@ -5362,7 +5361,8 @@ if (typeof mxVertexHandler != 'undefined')
 					    		
 					    		if (!mxEvent.isConsumed(evt))
 					    		{
-						    		var target = (blank) ? graph.linkTarget : '_top';
+						    		var target = (mxEvent.isMiddleMouseButton(evt)) ? '_blank' :
+						    			((blank) ? graph.linkTarget : '_top');
 						    		graph.openLink(this.currentLink, target);
 						    		me.consume();
 					    		}
