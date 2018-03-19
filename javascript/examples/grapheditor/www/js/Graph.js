@@ -5716,7 +5716,7 @@ if (typeof mxVertexHandler != 'undefined')
 		 * @param {number} dx X-coordinate of the translation.
 		 * @param {number} dy Y-coordinate of the translation.
 		 */
-		Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp, ignoreSelection, showText)
+		Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp, ignoreSelection, showText, imgExport)
 		{
 			scale = (scale != null) ? scale : 1;
 			border = (border != null) ? border : 0;
@@ -5864,7 +5864,7 @@ if (typeof mxVertexHandler != 'undefined')
 			svgCanvas.scale(s);
 			svgCanvas.textEnabled = showText;
 			
-			var imgExport = this.createSvgImageExport();
+			imgExport = (imgExport != null) ? imgExport : this.createSvgImageExport();
 			var imgExportDrawCellState = imgExport.drawCellState;
 			
 			// Implements ignoreSelection flag
