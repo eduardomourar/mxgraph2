@@ -1,3 +1,4 @@
+- Adds mxCellRenderer.minSvgStrokeWidth
 - Fixes use of innerText in mxUtils.getTextContent
 - Adds mxTooltipHandler.getStateForEvent hook
 - Adds tolerance for straight edge detection
