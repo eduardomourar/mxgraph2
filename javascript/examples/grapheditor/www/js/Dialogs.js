@@ -1807,15 +1807,24 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 		}
 	};
 	
-	mxEvent.addListener(window, 'resize', mxUtils.bind(this, function()
+	var resizeListener = mxUtils.bind(this, function()
 	{
 		var x = this.window.getX();
 		var y = this.window.getY();
 		
 		this.window.setLocation(x, y);
-	}));
-
+	});
+	
+	mxEvent.addListener(window, 'resize', resizeListener);
+	
 	var outline = editorUi.createOutline(this.window);
+
+	this.destroy = function()
+	{
+		mxEvent.removeListener(window, 'resize', resizeListener);
+		this.window.destroy();
+		outline.destroy();
+	}
 
 	this.window.addListener(mxEvent.RESIZE, mxUtils.bind(this, function()
    	{
@@ -2481,11 +2490,19 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		}
 	};
 	
-	mxEvent.addListener(window, 'resize', mxUtils.bind(this, function()
+	var resizeListener = mxUtils.bind(this, function()
 	{
 		var x = this.window.getX();
 		var y = this.window.getY();
 		
 		this.window.setLocation(x, y);
-	}));
+	});
+	
+	mxEvent.addListener(window, 'resize', resizeListener);
+
+	this.destroy = function()
+	{
+		mxEvent.removeListener(window, 'resize', resizeListener);
+		this.window.destroy();
+	}
 };
