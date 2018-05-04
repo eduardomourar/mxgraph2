@@ -354,6 +354,11 @@ mxDragSource.prototype.startDrag = function(evt)
 	this.dragElement.style.position = 'absolute';
 	this.dragElement.style.zIndex = this.dragElementZIndex;
 	mxUtils.setOpacity(this.dragElement, this.dragElementOpacity);
+
+	if (this.checkEventSource && mxClient.IS_SVG)
+	{
+		this.dragElement.style.pointerEvents = 'none';
+	}
 };
 
 /**
@@ -542,6 +547,11 @@ mxDragSource.prototype.dragEnter = function(graph, evt)
 	graph.isMouseDown = true;
 	graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
 	this.previewElement = this.createPreviewElement(graph);
+	
+	if (this.checkEventSource && mxClient.IS_SVG)
+	{
+		this.previewElement.style.pointerEvents = 'none';
+	}
 	
 	// Guide is only needed if preview element is used
 	if (this.isGuidesEnabled() && this.previewElement != null)
