@@ -2015,9 +2015,16 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInse
 {
 	allowCellsInserted = (allowCellsInserted != null) ? allowCellsInserted : true;
 	
-	return mxUtils.bind(this, function(graph, evt, target, x, y)
+	return mxUtils.bind(this, function(graph, evt, target, x, y, force)
 	{
-		if (graph.isEnabled())
+		var elt = (force) ? null : mxEvent.getSource(evt);
+		
+		while (elt != null && elt != this.container)
+		{
+			elt = elt.parentNode;
+		}
+		
+		if (elt == null && graph.isEnabled())
 		{
 			cells = graph.getImportableCells(cells);
 			
@@ -2089,6 +2096,14 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInse
 					{
 						graph.scrollCellToVisible(select[0]);
 						graph.setSelectionCells(select);
+					}
+
+					if (graph.editAfterInsert && select != null && select.length == 1)
+					{
+						window.setTimeout(function()
+						{
+							graph.startEditing(select[0]);
+						}, 0);
 					}
 				}
 			}
@@ -3081,6 +3096,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 {
 	var graph = this.editorUi.editor.graph;
+	graph.container.focus();
 	
 	// Alt+Click inserts and connects
 	if (mxEvent.isAltDown(evt))
@@ -3115,7 +3131,7 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 	else
 	{
 		var pt = graph.getFreeInsertPoint();
-		ds.drop(graph, evt, null, pt.x, pt.y);
+		ds.drop(graph, evt, null, pt.x, pt.y, true);
 		
 		if (this.editorUi.hoverIcons != null && (mxEvent.isTouchEvent(evt) || mxEvent.isPenEvent(evt)))
 		{

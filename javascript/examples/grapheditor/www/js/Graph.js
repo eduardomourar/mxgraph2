@@ -1036,6 +1036,11 @@ Graph.prototype.defaultThemes = {};
 Graph.prototype.baseUrl = ((window != window.top) ? document.referrer : document.location.toString()).split('#')[0];
 
 /**
+ * Specifies if the label should be edited after an insert.
+ */
+Graph.prototype.editAfterInsert = false;
+
+/**
  * Installs child layout styles.
  */
 Graph.prototype.init = function(container)
@@ -1092,6 +1097,14 @@ Graph.prototype.init = function(container)
 	};
 	
 	this.initLayoutManager();
+};
+
+/**
+ * Sets the XML node for the current diagram.
+ */
+Graph.prototype.isLightboxView = function()
+{
+	return this.lightbox;
 };
 
 /**

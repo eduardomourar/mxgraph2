@@ -1274,7 +1274,7 @@ BaseFormatPanel.prototype.createRelativeOption = function(label, key, width, han
 	mxUtils.write(div, label);
 	div.style.fontWeight = 'bold';
 	
-	function update(evt)
+	var update = mxUtils.bind(this, function(evt)
 	{
 		if (handler != null)
 		{
@@ -1295,13 +1295,15 @@ BaseFormatPanel.prototype.createRelativeOption = function(label, key, width, han
 				}
 				
 				graph.setCellStyles(key, value, graph.getSelectionCells());
+				this.editorUi.fireEvent(new mxEventObject('styleChanged', 'keys', [key],
+					'values', [value], 'cells', graph.getSelectionCells()));
 			}
 	
 			input.value = ((value != null) ? value : '100') + ' %';
 		}
 		
 		mxEvent.consume(evt);
-	};
+	});
 
 	var input = this.addUnitInput(div, '%', 20, width, update, 10, -15, handler != null);
 
