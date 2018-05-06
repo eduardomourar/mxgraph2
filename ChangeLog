@@ -1,4 +1,4 @@
-- Adds mxDragSource.checkEventSource, pass-through for dropHandler
+- Adds mxDragSource.checkEventSource, getElementForEvent
 - Adds mxCellRenderer.minSvgStrokeWidth
 - Fixes use of innerText in mxUtils.getTextContent
 - Adds mxTooltipHandler.getStateForEvent hook
