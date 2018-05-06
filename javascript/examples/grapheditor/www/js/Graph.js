@@ -1951,6 +1951,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 //			var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
 //			edge.style = mxUtils.setStyle(edge.style, 'edgeStyle', 'elbowEdgeStyle');
 //			edge.style = mxUtils.setStyle(edge.style, 'elbow', elbowValue);
+//			edge.style = mxUtils.setStyle(edge.style, 'sourcePortConstraint', direction);
 			result.push(edge);
 		}
 		
@@ -3084,6 +3085,9 @@ HoverIcons.prototype.drag = function(evt, x, y)
 		
 		// Uses elbow edges with vertical or horizontal direction
 //		var direction = this.getDirection();
+//		var es = this.graph.connectionHandler.edgeState;
+//		es.cell.style = mxUtils.setStyle(es.cell.style, 'sourcePortConstraint', direction);
+//		es.style['sourcePortConstraint'] = direction;
 //		var elbowValue = (direction == mxConstants.DIRECTION_NORTH || direction == mxConstants.DIRECTION_SOUTH) ? 'vertical' : 'horizontal';
 //		
 //		var es = this.graph.connectionHandler.edgeState;

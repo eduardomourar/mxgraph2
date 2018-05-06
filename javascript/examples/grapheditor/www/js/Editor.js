@@ -361,7 +361,7 @@ Editor.prototype.createGraph = function(themes, model)
  */
 Editor.prototype.resetGraph = function()
 {
-	this.graph.gridEnabled = !this.chromeless || urlParams['grid'] == '1';
+	this.graph.gridEnabled = !this.isChromelessView() || urlParams['grid'] == '1';
 	this.graph.graphHandler.guidesEnabled = true;
 	this.graph.setTooltips(true);
 	this.graph.setConnectable(true);

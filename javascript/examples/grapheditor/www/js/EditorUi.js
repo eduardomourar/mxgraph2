@@ -1519,7 +1519,6 @@ EditorUi.prototype.initCanvas = function()
 				mxEvent.consume(evt);
 			}), Editor.previousLargeImage, mxResources.get('previousPage'));
 			
-			
 			var pageInfo = document.createElement('div');
 			pageInfo.style.display = 'inline-block';
 			pageInfo.style.verticalAlign = 'top';
@@ -1583,7 +1582,7 @@ EditorUi.prototype.initCanvas = function()
 			
 			addButton(mxUtils.bind(this, function(evt)
 			{
-				if (graph.lightbox)
+				if (graph.isLightboxView())
 				{
 					if (graph.view.scale == 1)
 					{
@@ -2153,7 +2152,7 @@ EditorUi.prototype.addBeforeUnloadListener = function()
 	// This must be disabled during save and image export
 	window.onbeforeunload = mxUtils.bind(this, function()
 	{
-		if (!this.editor.chromeless)
+		if (!this.editor.isChromelessView())
 		{
 			return this.onBeforeUnload();
 		}
