@@ -229,12 +229,12 @@ mxTooltipHandler.prototype.resetTimer = function()
  * 
  * Resets and/or restarts the timer to trigger the display of the tooltip.
  */
-mxTooltipHandler.prototype.reset = function(me, restart)
+mxTooltipHandler.prototype.reset = function(me, restart, state)
 {
 	if (!this.ignoreTouchEvents || mxEvent.isMouseEvent(me.getEvent()))
 	{
 		this.resetTimer();
-		var state = this.getStateForEvent(me);
+		state = (state != null) ? state : this.getStateForEvent(me);
 		
 		if (restart && this.isEnabled() && state != null && (this.div == null ||
 			this.div.style.visibility == 'hidden'))
