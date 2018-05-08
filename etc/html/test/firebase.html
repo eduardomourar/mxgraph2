@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+	<script>
+	  // Initialize Firebase
+	  var config = {
+	    apiKey: "AIzaSyAswBx2gPBwc3U8o66ZIBeWjvDEEHDFFTk",
+	    authDomain: "api-project-792900127581.firebaseapp.com",
+	    databaseURL: "https://api-project-792900127581.firebaseio.com",
+	    projectId: "api-project-792900127581",
+	    storageBucket: "",
+	    messagingSenderId: "792900127581"
+	  };
+	  
+	  firebase.initializeApp(config);
+	  
+	  console.log('updating user');
+	  
+	  var sessionRef = firebase.database().ref('sessions/Ltest/edits').set([]);
+	  firebase.database().ref('sessions/Ltest/edits').push().set({username: new Date().getTime()});
+	  firebase.database().ref('sessions/Ltest/edits').push().set({username: new Date().getTime()});
+	  
+	  firebase.database().ref('sessions/Ltest/edits').on('child_added', function(data) {
+		  console.log('child_added', data.val());
+		});
+	  firebase.database().ref('sessions/Ltest/edits').on('child_changed', function(data) {
+		  console.log('child_changed', data.val());
+		});
+	  firebase.database().ref('sessions/Ltest/edits').on('child_removed', function(data) {
+		  console.log('child_removed', data.val());
+		});
+	</script>
+</head>
+<body>
+</body>
+</html>
