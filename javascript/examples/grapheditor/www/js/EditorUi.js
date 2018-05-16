@@ -3292,6 +3292,7 @@ EditorUi.prototype.hideDialog = function(cancel)
 			this.editor.graph.container.focus();
 		}
 		
+		mxUtils.clearSelection();
 		this.editor.fireEvent(new mxEventObject('hideDialog'));
 	}
 };
