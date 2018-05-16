@@ -390,7 +390,7 @@ Editor.prototype.readGraphState = function(node)
 	this.graph.connectionArrowsEnabled = node.getAttribute('arrows') != '0';
 	this.graph.foldingEnabled = node.getAttribute('fold') != '0';
 
-	if (this.chromeless && this.graph.foldingEnabled)
+	if (this.isChromelessView() && this.graph.foldingEnabled)
 	{
 		this.graph.foldingEnabled = urlParams['nav'] == '1';
 		this.graph.cellRenderer.forceControlClickHandler = this.graph.foldingEnabled;
