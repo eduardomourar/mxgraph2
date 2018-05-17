@@ -1,3 +1,5 @@
+17-MAY-2018: 3.9.4
+
 - Adds optional state argument in mxTooltipHandler.reset
 - Adds mxDragSource.checkEventSource, getElementForEvent
 - Adds mxCellRenderer.minSvgStrokeWidth
