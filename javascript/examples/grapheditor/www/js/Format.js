@@ -2739,7 +2739,8 @@ TextFormatPanel.prototype.addFont = function(container)
 
 			function updateSize(elt, ignoreContains)
 			{
-				if (elt != graph.cellEditor.textarea && (ignoreContains || selection.containsNode(elt, true)))
+				if (elt != graph.cellEditor.textarea && graph.cellEditor.textarea.contains(elt) &&
+					(ignoreContains || selection.containsNode(elt, true)))
 				{
 					if (elt.nodeName == 'FONT')
 					{
