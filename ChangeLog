@@ -1,3 +1,5 @@
+- Fixes missing highlight if no stroke is used in outlined shapes
+
 24-MAY-2018: 3.9.5
 
 - Fixes possible NPE in mxDragSource.dragEnter
