@@ -3858,20 +3858,23 @@ HoverIcons.prototype.setCurrentState = function(state)
 	        var nearest = null;
 	        var dist = null;
 	    
-	        for (var i = 0; i < constraints.length; i++)
+	        if (constraints != null)
 	        {
-	            var cp = this.graph.getConnectionPoint(start, constraints[i]);
-	            
-	            if (cp != null)
-	            {
-	                var tmp = (cp.x - pt.x) * (cp.x - pt.x) + (cp.y - pt.y) * (cp.y - pt.y);
-	            
-	                if (dist == null || tmp < dist)
-	                {
-	                    nearest = cp;
-	                    dist = tmp;
-	                }
-	            }
+		        for (var i = 0; i < constraints.length; i++)
+		        {
+		            var cp = this.graph.getConnectionPoint(start, constraints[i]);
+		            
+		            if (cp != null)
+		            {
+		                var tmp = (cp.x - pt.x) * (cp.x - pt.x) + (cp.y - pt.y) * (cp.y - pt.y);
+		            
+		                if (dist == null || tmp < dist)
+		                {
+		                    nearest = cp;
+		                    dist = tmp;
+		                }
+		            }
+		        }
 	        }
 	        
 	        if (nearest != null)
