@@ -3730,6 +3730,12 @@ StyleFormatPanel.prototype.init = function()
 	var graph = editor.graph;
 	var ss = this.format.getSelectionState();
 	
+	if (ss.containsImage && ss.vertices.length == 1 && ss.style.shape == 'image' &&
+		ss.style.image != null && ss.style.image.substring(0, 19) == 'data:image/svg+xml;')
+	{
+		this.container.appendChild(this.addSvgStyles(this.createPanel()));
+	}
+	
 	if (!ss.containsImage || ss.style.shape == 'image')
 	{
 		this.container.appendChild(this.addFill(this.createPanel()));
@@ -3750,6 +3756,102 @@ StyleFormatPanel.prototype.init = function()
 	}
 	
 	this.container.appendChild(this.addStyleOps(opsPanel));
+};
+
+/**
+ * Use browser for parsing CSS.
+ */
+StyleFormatPanel.prototype.getCssRules = function(css)
+{
+	var doc = document.implementation.createHTMLDocument('');
+	var styleElement = document.createElement('style');
+	
+	mxUtils.setTextContent(styleElement, css);
+	doc.body.appendChild(styleElement);
+	
+	return styleElement.sheet.cssRules;
+};
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+StyleFormatPanel.prototype.addSvgStyles = function(container)
+{
+	var ui = this.editorUi;
+	var graph = ui.editor.graph;
+	var ss = this.format.getSelectionState();
+	container.style.paddingTop = '6px';
+	container.style.paddingBottom = '6px';
+	container.style.fontWeight = 'bold';
+	container.style.display = 'none';
+	
+	var data = ss.style.image.substring(ss.style.image.indexOf(',') + 1);
+	var xml = (window.atob) ? atob(data) : Base64.decode(data, true);
+	var svg = mxUtils.parseXml(xml);
+	
+	if (svg != null)
+	{
+		var styles = svg.getElementsByTagName('style');
+		
+		for (var i = 0; i < styles.length; i++)
+		{
+			var rules = this.getCssRules(mxUtils.getTextContent(styles[i]));
+			
+			for (var j = 0; j < rules.length; j++)
+			{
+				this.addSvgRule(container, rules[j], xml);
+			}
+		}
+	}
+	
+	return container;
+};
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+StyleFormatPanel.prototype.addSvgRule = function(container, rule, xml)
+{
+	var ui = this.editorUi;
+	var graph = ui.editor.graph;
+
+	if (rule.selectorText.charAt(0) == '.')
+	{
+		var addStyleRule = mxUtils.bind(this, function(rule, key, label)
+		{
+			if (rule.style[key] != '')
+			{
+				var option = this.createColorOption(label + ' ' + rule.selectorText.substring(1), function()
+				{
+					return rule.style[key];
+				}, function(color)
+				{
+					// TODO: Update color (or remove) CSS rule in XML
+					graph.setCellStyles(mxConstants.STYLE_IMAGE, 'data:image/svg+xml,' +
+						((window.btoa) ? btoa(xml) : Base64.encode(xml, true)),
+						graph.getSelectionCells());
+				}, '#ffffff',
+				{
+					install: function(apply)
+					{
+						// ignore
+					},
+					destroy: function()
+					{
+						// ignore
+					}
+				});
+			
+				container.appendChild(option);
+				
+				// Shows container if rules are added
+				container.style.display = '';
+			}
+		});
+		
+		addStyleRule(rule, 'fill', mxResources.get('fill'));
+		addStyleRule(rule, 'stroke', mxResources.get('line'));
+	}
 };
 
 /**
