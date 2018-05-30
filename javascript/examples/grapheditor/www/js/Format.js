@@ -3835,7 +3835,7 @@ StyleFormatPanel.prototype.addSvgRule = function(container, rule, svg, styleElem
 		{
 			if (rule.style[key] != '')
 			{
-				var option = this.createColorOption(label + ' ' + rule.selectorText.substring(1), function()
+				var option = this.createColorOption(label + ' ' + rule.selectorText, function()
 				{
 					return rule.style[key];
 				}, function(color)
