@@ -3784,24 +3784,38 @@ StyleFormatPanel.prototype.addSvgStyles = function(container)
 	container.style.paddingBottom = '6px';
 	container.style.fontWeight = 'bold';
 	container.style.display = 'none';
-	
-	var data = ss.style.image.substring(ss.style.image.indexOf(',') + 1);
-	var xml = (window.atob) ? atob(data) : Base64.decode(data, true);
-	var svg = mxUtils.parseXml(xml);
-	
-	if (svg != null)
+
+	try
 	{
-		var styles = svg.getElementsByTagName('style');
+		var exp = ss.style.editableCssRules;
 		
-		for (var i = 0; i < styles.length; i++)
+		if (exp != null)
 		{
-			var rules = this.getCssRules(mxUtils.getTextContent(styles[i]));
+			var regex = new RegExp(exp);
 			
-			for (var j = 0; j < rules.length; j++)
+			var data = ss.style.image.substring(ss.style.image.indexOf(',') + 1);
+			var xml = (window.atob) ? atob(data) : Base64.decode(data, true);
+			var svg = mxUtils.parseXml(xml);
+			
+			if (svg != null)
 			{
-				this.addSvgRule(container, rules[j], svg, styles[i], rules, j);
+				var styles = svg.getElementsByTagName('style');
+				
+				for (var i = 0; i < styles.length; i++)
+				{
+					var rules = this.getCssRules(mxUtils.getTextContent(styles[i]));
+					
+					for (var j = 0; j < rules.length; j++)
+					{
+						this.addSvgRule(container, rules[j], svg, styles[i], rules, j, regex);
+					}
+				}
 			}
 		}
+	}
+	catch (e)
+	{
+		// ignore
 	}
 	
 	return container;
@@ -3810,14 +3824,12 @@ StyleFormatPanel.prototype.addSvgStyles = function(container)
 /**
  * Adds the label menu items to the given menu and parent.
  */
-StyleFormatPanel.prototype.addSvgRule = function(container, rule, svg, styleElem, rules, ruleIndex)
+StyleFormatPanel.prototype.addSvgRule = function(container, rule, svg, styleElem, rules, ruleIndex, regex)
 {
 	var ui = this.editorUi;
 	var graph = ui.editor.graph;
-	var state = graph.view.getState(graph.getSelectionCell());
-	var exp = state.style['editableCssRules'];
 	
-	if (exp != null && new RegExp(exp).test(rule.selectorText))
+	if (regex.test(rule.selectorText))
 	{
 		var addStyleRule = mxUtils.bind(this, function(rule, key, label)
 		{
