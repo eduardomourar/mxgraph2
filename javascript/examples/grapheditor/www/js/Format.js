@@ -3814,8 +3814,10 @@ StyleFormatPanel.prototype.addSvgRule = function(container, rule, svg, styleElem
 {
 	var ui = this.editorUi;
 	var graph = ui.editor.graph;
-
-	if (rule.selectorText.charAt(0) == '.')
+	var state = graph.view.getState(graph.getSelectionCell());
+	var exp = state.style['editableCssRules'];
+	
+	if (exp != null && new RegExp(exp).test(rule.selectorText))
 	{
 		var addStyleRule = mxUtils.bind(this, function(rule, key, label)
 		{
@@ -3827,11 +3829,11 @@ StyleFormatPanel.prototype.addSvgRule = function(container, rule, svg, styleElem
 				}, function(color)
 				{
 					rules[ruleIndex].style[key] = color;
-					var cssTxt = "";
+					var cssTxt = '';
 					
 					for (var i = 0; i < rules.length; i++) 
 					{
-						cssTxt += rules[i].cssText + " ";
+						cssTxt += rules[i].cssText + ' ';
 					}
 					
 					styleElem.textContent = cssTxt;
@@ -3950,8 +3952,9 @@ StyleFormatPanel.prototype.addFill = function(container)
 	});
 
 	var fillKey = (ss.style.shape == 'image') ? mxConstants.STYLE_IMAGE_BACKGROUND : mxConstants.STYLE_FILLCOLOR;
+	var label = (ss.style.shape == 'image') ? mxResources.get('background') : mxResources.get('fill');
 	
-	var fillPanel = this.createCellColorOption(mxResources.get('fill'), fillKey, '#ffffff');
+	var fillPanel = this.createCellColorOption(label, fillKey, '#ffffff');
 	fillPanel.style.fontWeight = 'bold';
 
 	var tmpColor = mxUtils.getValue(ss.style, fillKey, null);
@@ -4111,8 +4114,9 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	});
 
 	var strokeKey = (ss.style.shape == 'image') ? mxConstants.STYLE_IMAGE_BORDER : mxConstants.STYLE_STROKECOLOR;
+	var label = (ss.style.shape == 'image') ? mxResources.get('border') : mxResources.get('line');
 	
-	var lineColor = this.createCellColorOption(mxResources.get('line'), strokeKey, '#000000');
+	var lineColor = this.createCellColorOption(label, strokeKey, '#000000');
 	lineColor.appendChild(styleSelect);
 	colorPanel.appendChild(lineColor);
 	
