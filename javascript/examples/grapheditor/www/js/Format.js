@@ -3831,13 +3831,23 @@ StyleFormatPanel.prototype.addSvgRule = function(container, rule, svg, styleElem
 	
 	if (regex.test(rule.selectorText))
 	{
+		function rgb2hex(rgb)
+		{
+			 rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+			 
+			 return (rgb && rgb.length === 4) ? "#" +
+			  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+			  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+			  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+		};
+		
 		var addStyleRule = mxUtils.bind(this, function(rule, key, label)
 		{
 			if (rule.style[key] != '')
 			{
 				var option = this.createColorOption(label + ' ' + rule.selectorText, function()
 				{
-					return rule.style[key];
+					return rgb2hex(rule.style[key]);
 				}, function(color)
 				{
 					rules[ruleIndex].style[key] = color;
