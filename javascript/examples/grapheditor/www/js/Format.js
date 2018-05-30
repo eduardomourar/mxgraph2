@@ -3799,7 +3799,7 @@ StyleFormatPanel.prototype.addSvgStyles = function(container)
 			
 			for (var j = 0; j < rules.length; j++)
 			{
-				this.addSvgRule(container, rules[j], xml);
+				this.addSvgRule(container, rules[j], svg, styles[i], rules, j);
 			}
 		}
 	}
@@ -3810,7 +3810,7 @@ StyleFormatPanel.prototype.addSvgStyles = function(container)
 /**
  * Adds the label menu items to the given menu and parent.
  */
-StyleFormatPanel.prototype.addSvgRule = function(container, rule, xml)
+StyleFormatPanel.prototype.addSvgRule = function(container, rule, svg, styleElem, rules, ruleIndex)
 {
 	var ui = this.editorUi;
 	var graph = ui.editor.graph;
@@ -3826,7 +3826,17 @@ StyleFormatPanel.prototype.addSvgRule = function(container, rule, xml)
 					return rule.style[key];
 				}, function(color)
 				{
-					// TODO: Update color (or remove) CSS rule in XML
+					rules[ruleIndex].style[key] = color;
+					var cssTxt = "";
+					
+					for (var i = 0; i < rules.length; i++) 
+					{
+						cssTxt += rules[i].cssText + " ";
+					}
+					
+					styleElem.textContent = cssTxt;
+					var xml = mxUtils.getXml(svg.documentElement);
+					
 					graph.setCellStyles(mxConstants.STYLE_IMAGE, 'data:image/svg+xml,' +
 						((window.btoa) ? btoa(xml) : Base64.encode(xml, true)),
 						graph.getSelectionCells());
