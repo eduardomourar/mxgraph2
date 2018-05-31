@@ -1,5 +1,7 @@
+31-MAY-2018: 3.9.6
+
 - Adds mxConnectionHandler.isCellEnabled
-- Fixes missing highlight if no stroke is used in outlined shapes
+- Fixes outline for shapes with no stroke
 
 24-MAY-2018: 3.9.5
 
