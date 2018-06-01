@@ -1649,6 +1649,15 @@
 	STYLE_EDITABLE: 'editable',
 
 	/**
+	 * Variable: STYLE_BACKGROUND_OUTLINE
+	 * 
+	 * Defines the key for the backgroundOutline style. This specifies if a
+	 * only the background of a cell should be painted when it is highlighted.
+	 * Possible values are 0 or 1. Default is 0. Value is "backgroundOutline".
+	 */
+	STYLE_BACKGROUND_OUTLINE: 'backgroundOutline',
+
+	/**
 	 * Variable: STYLE_BENDABLE
 	 * 
 	 * Defines the key for the bendable style. This specifies if the control

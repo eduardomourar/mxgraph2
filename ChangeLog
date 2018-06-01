@@ -1,3 +1,5 @@
+- Adds mxConstants.STYLE_BACKGROUND_OUTLINE
+
 31-MAY-2018: 3.9.6
 
 - Adds mxConnectionHandler.isCellEnabled

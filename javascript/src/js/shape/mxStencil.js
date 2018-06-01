@@ -415,7 +415,12 @@ mxStencil.prototype.drawShape = function(canvas, shape, x, y, w, h)
 	canvas.setStrokeWidth(sw);
 
 	this.drawChildren(canvas, shape, x, y, w, h, this.bgNode, aspect, false);
-	this.drawChildren(canvas, shape, x, y, w, h, this.fgNode, aspect, true);
+	
+	if (!shape.outline || shape.style == null || mxUtils.getValue(
+		shape.style, mxConstants.STYLE_BACKGROUND_OUTLINE, 0) == 1)
+	{
+		this.drawChildren(canvas, shape, x, y, w, h, this.fgNode, aspect, true);
+	}
 };
 
 /**
