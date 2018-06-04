@@ -567,6 +567,8 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 	    };
 
 	    // Activates outline connect after 1500ms with touch event or if alt is pressed inside the shape
+	    // outlineConnect=0 is a custom style that means do not connect to strokes inside the shape
+	    // (the name is because the highlight, including all strokes, is called outline in the code)
 	    var connectionHandleIsOutlineConnectEvent = this.connectionHandler.isOutlineConnectEvent;
 	    
 	    this.connectionHandler.isOutlineConnectEvent = function(me)
