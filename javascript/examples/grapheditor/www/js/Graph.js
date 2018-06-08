@@ -1103,6 +1103,210 @@ Graph.prototype.init = function(container)
 };
 
 /**
+ * Implements zoom and offset via CSS transforms. This is currently only used
+ * in read-only as there are fewer issues with the mxCellState not being scaled
+ * and translated.
+ * 
+ * KNOWN ISSUES TO FIX:
+ * - Top diagram is offset in http://devhost.jgraph.com/drawio/etc/embed/?dev=1
+ * - Image export in lightbox (via camera icon in toolbar) is wrong
+ */
+(function()
+{
+	/**
+	 * Uses CSS transforms for scale and translate.
+	 */
+	Graph.prototype.useCssTransforms = false;
+
+	/**
+	 * Contains the scale.
+	 */
+	Graph.prototype.currentScale = 1;
+
+	/**
+	 * Contains the offset.
+	 */
+	Graph.prototype.currentTranslate = new mxPoint(0, 0);
+
+	/**
+	 * Safari has problems with math typesetting and using transforms is slow
+	 */
+	Graph.prototype.isCssTransformsSupported = function()
+	{
+		return this.dialect == mxConstants.DIALECT_SVG && !mxClient.IS_SF;
+	};
+
+	/**
+	 * Function: getCellAt
+	 * 
+	 * Overrides to transform incoming coordinates.
+	 */
+	Graph.prototype.getCellAt = function(x, y, parent, vertices, edges, ignoreFn)
+	{
+		if (this.useCssTransforms)
+		{
+			x /= this.currentScale - this.currentTranslate.x;
+			y /= this.currentScale - this.currentTranslate.y;
+		}
+		
+		return mxGraph.prototype.getCellAt.apply(this, arguments);
+	};
+
+	/**
+	 * Function: repaint
+	 * 
+	 * Updates the highlight after a change of the model or view.
+	 */
+	mxCellHighlight.prototype.getStrokeWidth = function(state)
+	{
+		var s = this.strokeWidth;
+		
+		if (this.graph.useCssTransforms)
+		{
+			s /= this.graph.currentScale;
+		}
+
+		return s;
+	};
+
+	/**
+	 * Function: getGraphBounds
+	 * 
+	 * Overrides getGraphBounds to use bounding box from SVG.
+	 */
+	mxGraphView.prototype.getGraphBounds = function()
+	{
+		var b = this.graphBounds;
+		
+		if (this.graph.useCssTransforms)
+		{
+			var t = this.graph.currentTranslate;
+			var s = this.graph.currentScale;
+
+			b = new mxRectangle(
+				(b.x + t.x) * s, (b.y + t.y) * s,
+				b.width * s, b.height * s);
+		}
+
+		return b;
+	};
+	
+	/**
+	 * Function: viewStateChanged
+	 * 
+	 * Overrides to bypass full cell tree validation.
+	 * TODO: Check if this improves performance
+	 */
+	mxGraphView.prototype.viewStateChanged = function()
+	{
+		if (this.graph.useCssTransforms)
+		{
+			this.validate();
+			this.graph.sizeDidChange();
+		}
+		else
+		{
+			this.revalidate();
+			this.graph.sizeDidChange();
+		}
+	};
+
+	/**
+	 * Function: validate
+	 * 
+	 * Overrides validate to normalize validation view state and pass
+	 * current state to CSS transform.
+	 */
+	var graphViewValidate = mxGraphView.prototype.validate;
+	
+	mxGraphView.prototype.validate = function(cell)
+	{
+		if (this.graph.useCssTransforms)
+		{
+			this.graph.currentScale = this.scale;
+			this.graph.currentTranslate.x = this.translate.x;
+			this.graph.currentTranslate.y = this.translate.y;
+			
+			this.scale = 1;
+			this.translate.x = 0;
+			this.translate.y = 0;
+		}
+		
+		graphViewValidate.apply(this, arguments);
+		
+		if (this.graph.useCssTransforms)
+		{
+			this.graph.updateCssTransform();
+			
+			this.scale = this.graph.currentScale;
+			this.translate.x = this.graph.currentTranslate.x;
+			this.translate.y = this.graph.currentTranslate.y;
+		}
+	};
+
+	/**
+	 * Function: updateCssTransform
+	 * 
+	 * Zooms out of the graph by <zoomFactor>.
+	 */
+	Graph.prototype.updateCssTransform = function()
+	{
+		var temp = this.view.getDrawPane();
+		
+		if (temp != null)
+		{
+			var g = this.view.getDrawPane().parentNode;
+			var prev = g.getAttribute('transform');
+			g.setAttribute('transformOrigin', '0 0');
+			g.setAttribute('transform', 'scale(' + this.currentScale + ',' + this.currentScale + ')' +
+				'translate(' + this.currentTranslate.x + ',' + this.currentTranslate.y + ')');
+
+			// Applies workarounds only if translate has changed
+			if (prev != g.getAttribute('transform'))
+			{
+				try
+				{
+					// Applies transform to labels outside of the SVG DOM
+					if (mxClient.NO_FO)
+					{
+						var transform = 'scale(' + this.currentScale + ')' + 'translate(' +
+							this.currentTranslate.x + 'px,' + this.currentTranslate.y + 'px)';
+							
+						this.view.states.visit(mxUtils.bind(this, function(cell, state)
+						{
+							if (state.text != null && state.text.node != null)
+							{
+								// Stores initial CSS transform that is used for the label alignment
+								if (state.text.originalTransform == null)
+								{
+									state.text.originalTransform = state.text.node.style.transform;
+								}
+								
+								state.text.node.style.transform = transform + state.text.originalTransform;
+							}
+						}));
+					}
+					// Workaround for https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/4320441/
+					else if (mxClient.IS_EDGE)
+					{
+						// Recommended workaround is to do this on all
+						// foreignObjects, but this seems to be faster
+						var val = g.style.display;
+						g.style.display = 'none';
+						g.getBBox();
+						g.style.display = val;
+					}
+				}
+				catch (e)
+				{
+					// ignore
+				}
+			}
+		}
+	};
+})();
+
+/**
  * Sets the XML node for the current diagram.
  */
 Graph.prototype.isLightboxView = function()

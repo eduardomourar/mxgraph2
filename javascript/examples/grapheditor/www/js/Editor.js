@@ -384,6 +384,9 @@ Editor.prototype.resetGraph = function()
 	this.graph.background = this.graph.defaultGraphBackground;
 	this.graph.pageScale = mxGraph.prototype.pageScale;
 	this.graph.pageFormat = mxGraph.prototype.pageFormat;
+	this.graph.currentScale = 1;
+	this.graph.currentTranslate.x = 0;
+	this.graph.currentTranslate.y = 0;
 	this.updateGraphComponents();
 	this.graph.view.setScale(1);
 };
