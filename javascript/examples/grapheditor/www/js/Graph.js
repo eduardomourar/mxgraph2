@@ -1110,6 +1110,7 @@ Graph.prototype.init = function(container)
  * KNOWN ISSUES TO FIX:
  * - Top diagram is offset in http://devhost.jgraph.com/drawio/etc/embed/?dev=1
  * - Image export in lightbox (via camera icon in toolbar) is wrong
+ * - Apply CSS transforms to HTML labels in IE11
  */
 (function()
 {
