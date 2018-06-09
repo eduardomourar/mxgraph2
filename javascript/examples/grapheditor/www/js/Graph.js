@@ -889,6 +889,9 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 			return me;
 		};
 	}
+	
+	//Create a unique offset object for each graph instance.
+	this.currentTranslate = new mxPoint(0, 0);
 };
 
 /**
