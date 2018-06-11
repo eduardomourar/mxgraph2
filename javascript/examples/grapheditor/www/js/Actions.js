@@ -399,8 +399,21 @@ Actions.prototype.init = function()
 			{
 				var link = graph.getParentByName(graph.getSelectedElement(), 'A', graph.cellEditor.textarea);
 				var oldValue = '';
-				
-				if (link != null)
+
+				// Workaround for FF returning the outermost selected element after double
+				// click on a DOM hierarchy with a link inside (not as topmost element)
+				if (link == null)
+				{
+					link = graph.cellEditor.textarea;
+					
+					while (link != null && link.nodeName != 'A' &&
+							link.childNodes.length == 1)
+					{
+						link = link.firstChild;
+					}
+				}
+
+				if (link != null && link.nodeName == 'A')
 				{
 					oldValue = link.getAttribute('href') || '';
 				}
@@ -409,11 +422,11 @@ Actions.prototype.init = function()
 				
 				ui.showLinkDialog(oldValue, mxResources.get('apply'), mxUtils.bind(this, function(value)
 				{
-			    		graph.cellEditor.restoreSelection(selState);
-	
-			    		if (value != null)
-			    		{
-			    			graph.insertLink(value);
+		    		graph.cellEditor.restoreSelection(selState);
+
+		    		if (value != null)
+		    		{
+		    			graph.insertLink(value);
 					}
 				}));
 			}
