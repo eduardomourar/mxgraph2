@@ -1430,6 +1430,15 @@ var EditDataDialog = function(ui, cell)
 	    }
 	});
 	
+	var text = document.createElement('input');
+	text.style.width = '280px';
+	text.style.textAlign = 'right';
+	text.setAttribute('type', 'text');
+	text.setAttribute('readOnly', 'true');
+	text.setAttribute('value', cell.getId());
+	
+	form.addField(mxResources.get('id') + ':', text);
+	
 	for (var i = 0; i < temp.length; i++)
 	{
 		addTextArea(count, temp[i].name, temp[i].value);
