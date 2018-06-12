@@ -1432,7 +1432,7 @@ var EditDataDialog = function(ui, cell)
 	
 	var text = document.createElement('input');
 	text.style.width = '280px';
-	text.style.textAlign = 'right';
+	text.style.textAlign = 'center';
 	text.setAttribute('type', 'text');
 	text.setAttribute('readOnly', 'true');
 	text.setAttribute('value', cell.getId());
