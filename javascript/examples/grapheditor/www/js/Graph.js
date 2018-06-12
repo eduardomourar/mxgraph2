@@ -640,9 +640,9 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 					
 					if (link != null)
 					{
-						if (this.isPageLink(link))
+						if (this.isCustomLink(link))
 						{
-							this.pageLinkClicked(cell, link);
+							this.customLinkClicked(cell, link);
 						}
 						else
 						{
@@ -1117,7 +1117,7 @@ Graph.prototype.labelLinkClicked = function(state, elt, evt)
 {
 	var href = elt.getAttribute('href');
 	
-	if (href != null && !this.isPageLink(href) && (mxEvent.isLeftMouseButton(evt) &&
+	if (href != null && !this.isCustomLink(href) && (mxEvent.isLeftMouseButton(evt) &&
 		!mxEvent.isPopupTrigger(evt)) || mxEvent.isTouchEvent(evt))
 	{
 		if (!this.isEnabled() || this.isCellLocked(state.cell))
@@ -1171,17 +1171,25 @@ Graph.prototype.openLink = function(href, target)
 /**
  * Adds support for page links.
  */
-Graph.prototype.isPageLink = function(href)
+Graph.prototype.getLinkTitle = function(href)
 {
-	return false;
+	return href.substring(href.lastIndexOf('/') + 1);
 };
 
 /**
  * Adds support for page links.
  */
-Graph.prototype.pageLinkClicked = function(cell, href)
+Graph.prototype.isCustomLink = function(href)
 {
-	this.fireEvent(new mxEventObject('pageLinkClicked', 'cell', cell, 'href', href));
+	return href.substring(0, 5) == 'data:';
+};
+
+/**
+ * Adds support for page links.
+ */
+Graph.prototype.customLinkClicked = function(cell, href)
+{
+	this.fireEvent(new mxEventObject('customLinkClicked', 'cell', cell, 'href', href));
 };
 
 /**
@@ -2535,7 +2543,7 @@ Graph.prototype.getTooltipForCell = function(cell)
 
 			for (var i = 0; i < temp.length; i++)
 			{
-				if (temp[i].name != 'link' || !this.isPageLink(temp[i].value))
+				if (temp[i].name != 'link' || !this.isCustomLink(temp[i].value))
 				{
 					tip += ((temp[i].name != 'link') ? temp[i].name + ':' : '') +
 						mxUtils.htmlEntities(temp[i].value) + '\n';
@@ -6162,7 +6170,11 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			var a = document.createElement('a');
 			a.setAttribute('href', this.getAbsoluteUrl(link));
-			a.setAttribute('title', link);
+			
+			if (!this.isCustomLink(link))
+			{
+				a.setAttribute('title', link);
+			}
 			
 			if (this.linkTarget != null)
 			{
