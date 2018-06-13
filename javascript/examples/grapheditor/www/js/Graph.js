@@ -1387,13 +1387,12 @@ Graph.prototype.isReplacePlaceholders = function(cell)
 
 /**
  * Returns true if the given mouse wheel event should be used for zooming. This
- * is invoked if no dialogs are showing and returns true if Alt or Control
- * (except macOS) is pressed or if the panning handler is active.
+ * is invoked if no dialogs are showing and returns true with Alt or Control
+ * (except macOS) is pressed.
  */
 Graph.prototype.isZoomWheelEvent = function(evt)
 {
-	return mxEvent.isAltDown(evt) || (mxEvent.isControlDown(evt) && !mxClient.IS_MAC) ||
-		(this.panningHandler != null && this.panningHandler.isActive());
+	return mxEvent.isAltDown(evt) || (mxEvent.isControlDown(evt) && !mxClient.IS_MAC);
 };
 
 /**
