@@ -2209,6 +2209,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			ldiv.style.borderColor = '#c3c3c3';
 			ldiv.style.borderStyle = 'solid';
 			ldiv.style.whiteSpace = 'nowrap';
+			ldiv.setAttribute('title', mxResources.get('id') + ': ' + child.getId());
 			
 			var left = document.createElement('div');
 			left.style.display = 'inline-block';
