@@ -642,7 +642,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 					{
 						if (this.isCustomLink(link))
 						{
-							this.customLinkClicked(cell, link);
+							this.customLinkClicked(link);
 						}
 						else
 						{
@@ -1187,9 +1187,10 @@ Graph.prototype.isCustomLink = function(href)
 /**
  * Adds support for page links.
  */
-Graph.prototype.customLinkClicked = function(cell, href)
+Graph.prototype.customLinkClicked = function(link)
 {
-	this.fireEvent(new mxEventObject('customLinkClicked', 'cell', cell, 'href', href));
+	console.log('customLinkClicked not implemented');
+	// Hook for subclassers
 };
 
 /**
