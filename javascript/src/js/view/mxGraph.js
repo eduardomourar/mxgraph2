@@ -9299,7 +9299,7 @@ mxGraph.prototype.isCellsLocked = function()
 };
 
 /**
- * Function: setLocked
+ * Function: setCellsLocked
  * 
  * Sets if any cell may be moved, sized, bended, disconnected, edited or
  * selected.
