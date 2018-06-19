@@ -307,13 +307,7 @@ Actions.prototype.init = function()
 	this.addAction('editData...', function()
 	{
 		var cell = graph.getSelectionCell() || graph.getModel().getRoot();
-		
-		if (cell != null)
-		{
-			var dlg = new EditDataDialog(ui, cell);
-			ui.showDialog(dlg.container, 340, 340, true, false, null, false);
-			dlg.init();
-		}
+		ui.showDataDialog(cell);
 	}, null, null, Editor.ctrlKey + '+M');
 	this.addAction('editTooltip...', function()
 	{

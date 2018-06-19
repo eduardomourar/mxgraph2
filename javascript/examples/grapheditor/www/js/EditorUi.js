@@ -3613,6 +3613,19 @@ EditorUi.prototype.showLinkDialog = function(value, btnLabel, fn)
 /**
  * Hides the current menu.
  */
+EditorUi.prototype.showDataDialog = function(cell)
+{
+	if (cell != null)
+	{
+		var dlg = new EditDataDialog(this, cell);
+		this.showDialog(dlg.container, 340, 340, true, false, null, false);
+		dlg.init();
+	}
+};
+
+/**
+ * Hides the current menu.
+ */
 EditorUi.prototype.showBackgroundImageDialog = function(apply)
 {
 	apply = (apply != null) ? apply : mxUtils.bind(this, function(image)
