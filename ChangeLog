@@ -1,3 +1,4 @@
+- Adds mxDragSource.tolerance, mxCylinder.getCylinderSize
 - Adds mxConstants.STYLE_ANCHOR_POINT_DIRECTION
 - Fixes mxGraphicsCanvas2D rotated text with HTML_SCALE [Java]
 - Adds webkit-print-color-adjust in mxPrintPreview

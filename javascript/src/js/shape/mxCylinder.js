@@ -80,9 +80,19 @@ mxCylinder.prototype.paintVertexShape = function(c, x, y, w, h)
  *
  * Draws the path for this shape.
  */
+mxCylinder.prototype.getCylinderSize = function(x, y, w, h)
+{
+	return Math.min(this.maxHeight, Math.round(h / 5));
+};
+
+/**
+ * Function: redrawPath
+ *
+ * Draws the path for this shape.
+ */
 mxCylinder.prototype.redrawPath = function(c, x, y, w, h, isForeground)
 {
-	var dy = Math.min(this.maxHeight, Math.round(h / 5));
+	var dy = this.getCylinderSize(x, y, w, h);
 	
 	if ((isForeground && this.fill != null) || (!isForeground && this.fill == null))
 	{
