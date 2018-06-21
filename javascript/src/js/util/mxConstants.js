@@ -1567,6 +1567,17 @@
 	STYLE_DIRECTION: 'direction',
 
 	/**
+	 * Variable: STYLE_ANCHOR_POINT_DIRECTION
+	 * 
+	 * Defines the key for the anchorPointDirection style. The defines if the
+	 * direction style should be taken into account when computing the fixed
+	 * point location for connected edges. Default is 1 (yes). Set this to 0
+	 * to ignore the direction style for fixed connection points. Value is
+	 * "anchorPointDirection".
+	 */
+	STYLE_ANCHOR_POINT_DIRECTION: 'anchorPointDirection',
+
+	/**
 	 * Variable: STYLE_ELBOW
 	 * 
 	 * Defines the key for the elbow style. Possible values are
