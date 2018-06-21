@@ -19,36 +19,50 @@ function mxDragSource(element, dropHandler)
 {
 	this.element = element;
 	this.dropHandler = dropHandler;
-	
+	this.init();
+};
+
+/**
+ * Function: init
+ *
+ * Initializes the drag source.
+ */
+mxDragSource.prototype.init = function()
+{
 	// Handles a drag gesture on the element
-	var first = null;
-	
-	mxEvent.addGestureListeners(element, mxUtils.bind(this, function(evt)
+	mxEvent.addGestureListeners(this.element, mxUtils.bind(this, function(evt)
 	{
 		if (this.tolerance != null)
 		{
-			first = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+			this.first = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+			
+			this.mouseDragMoveHandler = mxUtils.bind(this, function(evt)
+			{
+				if (this.first != null &&
+					(Math.abs(this.first.x - mxEvent.getClientX(evt)) > this.tolerance ||
+					Math.abs(this.first.y - mxEvent.getClientY(evt)) > this.tolerance))
+				{
+					this.mouseDown(evt);
+					this.first = null;
+				}
+			});
+			
+			this.mouseDragUpHandler = mxUtils.bind(this, function(evt)
+			{
+				this.mouseUp(evt);
+				this.first = null;
+			});
+			
+			mxEvent.addGestureListeners(document, null, this.mouseDragMoveHandler, this.mouseDragUpHandler);
 		}
 		else
 		{
 			this.mouseDown(evt);
 		}
-	}), mxUtils.bind(this, function(evt)
-	{
-		if (first != null &&
-			(Math.abs(first.x - mxEvent.getClientX(evt)) > this.tolerance ||
-			Math.abs(first.y - mxEvent.getClientY(evt)) > this.tolerance))
-		{
-			this.mouseDown(evt);
-			first = null;
-		}
-	}), mxUtils.bind(this, function(evt)
-	{
-		first = null;
 	}));
-	
+
 	// Prevents native drag and drop
-	mxEvent.addListener(element, 'dragstart', function(evt)
+	mxEvent.addListener(this.element, 'dragstart', function(evt)
 	{
 		mxEvent.consume(evt);
 	});
@@ -71,6 +85,13 @@ function mxDragSource(element, dropHandler)
  * Reference to the DOM node which was made draggable.
  */
 mxDragSource.prototype.element = null;
+
+/**
+ * Variable: first
+ * 
+ * Contains the point of the initial mouse down event if tolerance is used.
+ */
+mxDragSource.prototype.first = null;
 
 /**
  * Variable: tolerance
@@ -331,6 +352,7 @@ mxDragSource.prototype.reset = function()
 	this.removeDragElement();
 	this.removeListeners();
 	this.stopDrag();
+	this.first = null;
 };
 
 /**
@@ -360,13 +382,12 @@ mxDragSource.prototype.mouseDown = function(evt)
 	{
 		this.startDrag(evt);
 		this.mouseMoveHandler = mxUtils.bind(this, this.mouseMove);
-		this.mouseUpHandler = mxUtils.bind(this, this.mouseUp);		
-		mxEvent.addGestureListeners(document, null, this.mouseMoveHandler, this.mouseUpHandler);
+		mxEvent.addGestureListeners(document, null, this.mouseMoveHandler);
 		
 		if (mxClient.IS_TOUCH && !mxEvent.isMouseEvent(evt))
 		{
 			this.eventSource = mxEvent.getSource(evt);
-			mxEvent.addGestureListeners(this.eventSource, null, this.mouseMoveHandler, this.mouseUpHandler);
+			mxEvent.addGestureListeners(this.eventSource, null, this.mouseMoveHandler);
 		}
 	}
 };
@@ -554,7 +575,6 @@ mxDragSource.prototype.mouseUp = function(evt)
 
 	this.stopDrag();
 	this.removeListeners();
-	
 	mxEvent.consume(evt);
 };
 
@@ -565,15 +585,24 @@ mxDragSource.prototype.mouseUp = function(evt)
  */
 mxDragSource.prototype.removeListeners = function()
 {
-	if (this.eventSource != null)
+	if (this.mouseMoveHandler != null)
 	{
-		mxEvent.removeGestureListeners(this.eventSource, null, this.mouseMoveHandler, this.mouseUpHandler);
-		this.eventSource = null;
+		if (this.eventSource != null)
+		{
+			mxEvent.removeGestureListeners(this.eventSource, null, this.mouseMoveHandler);
+			this.eventSource = null;
+		}
+	
+		mxEvent.removeGestureListeners(document, null, this.mouseMoveHandler);
+		this.mouseMoveHandler = null;
 	}
 	
-	mxEvent.removeGestureListeners(document, null, this.mouseMoveHandler, this.mouseUpHandler);
-	this.mouseMoveHandler = null;
-	this.mouseUpHandler = null;
+	if (this.mouseDragMoveHandler != null)
+	{
+		mxEvent.removeGestureListeners(document, null, this.mouseDragMoveHandler, this.mouseDragUpHandler);
+		this.mouseDragMoveHandler = null;
+		this.mouseDragUpHandler = null;
+	}
 };
 
 /**

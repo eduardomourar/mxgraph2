@@ -3166,7 +3166,6 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells)
 	
 	mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
 	{
-		elt.style.opacity = 0.5;
 		mouseDown = true;
 	}), null, mxUtils.bind(this, function(evt)
 	{
@@ -3175,21 +3174,19 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells)
 		{
 			this.itemClicked(cells, ds, evt, elt);
 		}
-
-		elt.style.opacity = 1;
-		mouseDown = false;
 		
 		// Blocks tooltips on this element after single click
 		this.currentElt = elt;
+		mouseDown = false;
+		ds.reset();
 	}));
 	
-	// Invokes when drag starts
+	// Invoked when drag starts
 	var dsMouseDown = ds.mouseDown;
 	
 	ds.mouseDown = mxUtils.bind(this, function(evt)
 	{
 		dsMouseDown.apply(ds, arguments);
-		elt.style.opacity = 1;
 		mouseDown = false;
 	});
 };
