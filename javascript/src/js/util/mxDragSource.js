@@ -21,9 +21,30 @@ function mxDragSource(element, dropHandler)
 	this.dropHandler = dropHandler;
 	
 	// Handles a drag gesture on the element
+	var first = null;
+	
 	mxEvent.addGestureListeners(element, mxUtils.bind(this, function(evt)
 	{
-		this.mouseDown(evt);
+		if (this.tolerance != null)
+		{
+			first = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+		}
+		else
+		{
+			this.mouseDown(evt);
+		}
+	}), mxUtils.bind(this, function(evt)
+	{
+		if (first != null &&
+			(Math.abs(first.x - mxEvent.getClientX(evt)) > this.tolerance ||
+			Math.abs(first.y - mxEvent.getClientY(evt)) > this.tolerance))
+		{
+			this.mouseDown(evt);
+			first = null;
+		}
+	}), mxUtils.bind(this, function(evt)
+	{
+		first = null;
 	}));
 	
 	// Prevents native drag and drop
@@ -50,6 +71,13 @@ function mxDragSource(element, dropHandler)
  * Reference to the DOM node which was made draggable.
  */
 mxDragSource.prototype.element = null;
+
+/**
+ * Variable: tolerance
+ *
+ * Optional tolerance for starting the drag. Default is null.
+ */
+mxDragSource.prototype.tolerance = null;
 
 /**
  * Variable: dropHandler

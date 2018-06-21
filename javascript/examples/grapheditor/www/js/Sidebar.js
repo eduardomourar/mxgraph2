@@ -2472,10 +2472,11 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 			this.editorUi.hoverIcons.update(graph.view.getState(graph.getSelectionCell()));
 		}
 	}),
-	preview, 0, 0, this.editorUi.editor.graph.autoscroll, true, true);
+	preview, 0, 0, graph.autoscroll, true, true);
+	dragSource.tolerance = graph.tolerance;
 	
 	// Stops dragging if cancel is pressed
-	this.editorUi.editor.graph.addListener(mxEvent.ESCAPE, function(sender, evt)
+	graph.addListener(mxEvent.ESCAPE, function(sender, evt)
 	{
 		if (dragSource.isActive())
 		{
@@ -3164,14 +3165,16 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells)
 	var oldMouseUp = ds.mouseUp;
 	var first = null;
 	
-	mxEvent.addGestureListeners(elt, function(evt)
+	mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
 	{
 		first = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
-	});
-	
-	ds.mouseUp = mxUtils.bind(this, function(evt)
+		elt.style.opacity = 0.5;
+	}), null, mxUtils.bind(this, function(evt)
 	{
-		if (!mxEvent.isPopupTrigger(evt) && this.currentGraph == null && first != null)
+		elt.style.opacity = 1;
+		
+		if (!ds.isActive() && !mxEvent.isPopupTrigger(evt) &&
+			this.currentGraph == null && first != null)
 		{
 			var tol = graph.tolerance;
 			
@@ -3187,6 +3190,14 @@ Sidebar.prototype.addClickHandler = function(elt, ds, cells)
 		
 		// Blocks tooltips on this element after single click
 		this.currentElt = elt;
+	}));
+	
+	var dsMouseDown = ds.mouseDown;
+	
+	ds.mouseDown = mxUtils.bind(this, function(evt)
+	{
+		dsMouseDown.apply(ds, arguments);
+		elt.style.opacity = 1;
 	});
 };
 
