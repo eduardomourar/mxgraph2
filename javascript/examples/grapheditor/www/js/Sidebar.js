@@ -3162,42 +3162,35 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 Sidebar.prototype.addClickHandler = function(elt, ds, cells)
 {
 	var graph = this.editorUi.editor.graph;
-	var oldMouseUp = ds.mouseUp;
-	var first = null;
+	var mouseDown = false;
 	
 	mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
 	{
-		first = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 		elt.style.opacity = 0.5;
+		mouseDown = true;
 	}), null, mxUtils.bind(this, function(evt)
 	{
-		elt.style.opacity = 1;
-		
-		if (!ds.isActive() && !mxEvent.isPopupTrigger(evt) &&
-			this.currentGraph == null && first != null)
+		if (mouseDown && !ds.isActive() && !mxEvent.isPopupTrigger(evt) &&
+			this.currentGraph == null)
 		{
-			var tol = graph.tolerance;
-			
-			if (Math.abs(first.x - mxEvent.getClientX(evt)) <= tol &&
-				Math.abs(first.y - mxEvent.getClientY(evt)) <= tol)
-			{
-				this.itemClicked(cells, ds, evt, elt);
-			}
+			this.itemClicked(cells, ds, evt, elt);
 		}
 
-		oldMouseUp.apply(ds, arguments);
-		first = null;
+		elt.style.opacity = 1;
+		mouseDown = false;
 		
 		// Blocks tooltips on this element after single click
 		this.currentElt = elt;
 	}));
 	
+	// Invokes when drag starts
 	var dsMouseDown = ds.mouseDown;
 	
 	ds.mouseDown = mxUtils.bind(this, function(evt)
 	{
 		dsMouseDown.apply(ds, arguments);
 		elt.style.opacity = 1;
+		mouseDown = false;
 	});
 };
 
