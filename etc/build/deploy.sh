@@ -53,6 +53,7 @@ rm -rf devel
 cd -
 rm -rf mxgraph/*
 cp -rf tmp/mxgraph/* mxgraph/
+cp -v $BUILD/../etc/build/.npmignore mxgraph/
 cd mxgraph
 git add .
 git commit -am "$DOTVERSION release"
