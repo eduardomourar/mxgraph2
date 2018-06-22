@@ -1306,6 +1306,25 @@ Graph.prototype.init = function(container)
 			}
 		}
 	};
+	
+	var graphViewCreateSvgGrid = mxGraphView.prototype.createSvgGrid;
+	
+	mxGraphView.prototype.createSvgGrid = function() 
+	{
+		var viewScale = this.scale; 
+		
+		if (this.graph.useCssTransforms)
+		{
+			this.scale = this.graph.currentScale;
+		}
+		
+		var svg = graphViewCreateSvgGrid.apply(this, arguments);
+		
+		this.scale = viewScale; 
+		
+		return svg;
+	};
+	
 })();
 
 /**
