@@ -1307,24 +1307,30 @@ Graph.prototype.init = function(container)
 		}
 	};
 	
-	var graphViewCreateSvgGrid = mxGraphView.prototype.createSvgGrid;
+	var graphViewValidateBackgroundPage = mxGraphView.prototype.validateBackgroundPage;
 	
-	mxGraphView.prototype.createSvgGrid = function() 
+	mxGraphView.prototype.validateBackgroundPage = function()
 	{
-		var viewScale = this.scale; 
+		var useCssTranforms = this.graph.useCssTransforms, scale = this.scale, 
+			translate = this.translate;
 		
-		if (this.graph.useCssTransforms)
+		if (useCssTranforms)
 		{
 			this.scale = this.graph.currentScale;
+			this.translate = this.graph.currentTranslate;
+			this.graph.useCssTransforms = false;
 		}
 		
-		var svg = graphViewCreateSvgGrid.apply(this, arguments);
+		graphViewValidateBackgroundPage.apply(this, arguments);
 		
-		this.scale = viewScale; 
-		
-		return svg;
+		if (useCssTranforms)
+		{
+			this.scale = scale;
+			this.translate = translate;
+			this.graph.useCssTransforms = useCssTranforms;
+		}
 	};
-	
+
 })();
 
 /**
