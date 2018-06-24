@@ -1002,6 +1002,11 @@ EditorUi.prototype.lightboxMaxFitScale = 2;
 EditorUi.prototype.lightboxVerticalDivider = 4;
 
 /**
+ * Specifies if single click on horizontal split should collapse sidebar. Default is false.
+ */
+EditorUi.prototype.hsplitClickEnabled = false;
+
+/**
  * Installs the listeners to update the action states.
  */
 EditorUi.prototype.init = function()
@@ -3247,16 +3252,16 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 		mxEvent.consume(evt);
 	});
 	
-	mxEvent.addListener(elt, 'click', function(evt)
+	mxEvent.addListener(elt, 'click', mxUtils.bind(this, function(evt)
 	{
-		if (!ignoreClick)
+		if (!ignoreClick && this.hsplitClickEnabled)
 		{
 			var next = (last != null) ? last - dx : 0;
 			last = getValue();
 			onChange(next);
 			mxEvent.consume(evt);
 		}
-	});
+	}));
 
 	mxEvent.addGestureListeners(document, null, moveHandler, dropHandler);
 	
