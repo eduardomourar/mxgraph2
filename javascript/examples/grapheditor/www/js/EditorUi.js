@@ -976,11 +976,6 @@ EditorUi.prototype.footerHeight = 28;
 EditorUi.prototype.sidebarFooterHeight = 34;
 
 /**
- * Specifies the link for the edit button in chromeless mode.
- */
-EditorUi.prototype.editButtonLink = null;
-
-/**
  * Specifies the position of the horizontal split bar. Default is 208 or 118 for
  * screen widths <= 640px.
  */
