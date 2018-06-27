@@ -1410,6 +1410,16 @@ mxShape.prototype.getCursor = function()
 };
 
 /**
+ * Function: isRoundable
+ * 
+ * Hook for subclassers.
+ */
+mxShape.prototype.isRoundable = function()
+{
+	return false;
+};
+
+/**
  * Function: updateBoundingBox
  *
  * Updates the <boundingBox> for this shape using <createBoundingBox> and
