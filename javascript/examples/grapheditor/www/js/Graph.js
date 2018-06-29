@@ -1396,7 +1396,8 @@ Graph.prototype.isReplacePlaceholders = function(cell)
  */
 Graph.prototype.isZoomWheelEvent = function(evt)
 {
-	return mxEvent.isAltDown(evt) || (mxEvent.isControlDown(evt) && !mxClient.IS_MAC);
+	return mxEvent.isAltDown(evt) || (mxEvent.isMetaDown(evt) && mxClient.IS_MAC) ||
+		(mxEvent.isControlDown(evt) && !mxClient.IS_MAC);
 };
 
 /**
