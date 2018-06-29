@@ -228,11 +228,11 @@ public class mxObjectCodec
 		}
 		catch (InstantiationException e)
 		{
-			log.log(Level.SEVERE, "Failed to clone the template", e);
+			log.log(Level.FINEST, "Failed to clone the template", e);
 		}
 		catch (IllegalAccessException e)
 		{
-			log.log(Level.SEVERE, "Failed to clone the template", e);
+			log.log(Level.FINEST, "Failed to clone the template", e);
 		}
 
 		return obj;
@@ -440,7 +440,7 @@ public class mxObjectCodec
 
 				if (tmp == null)
 				{
-					log.severe("mxObjectCodec.encode: No ID for "
+					log.log(Level.FINEST, "mxObjectCodec.encode: No ID for "
 							+ getName() + "." + fieldname + "=" + value);
 					return; // exit
 				}
@@ -536,7 +536,7 @@ public class mxObjectCodec
 		}
 		else
 		{
-			log.severe("mxObjectCodec.encode: No node for " + getName()
+			log.log(Level.FINEST, "mxObjectCodec.encode: No node for " + getName()
 					+ "." + attr + ": " + value);
 		}
 	}
@@ -742,7 +742,7 @@ public class mxObjectCodec
 			}
 			catch (Exception e)
 			{
-				log.log(Level.SEVERE, "Failed to get method " + name + " from " + obj, e);
+				log.log(Level.FINEST, "Failed to get method " + name + " from " + obj, e);
 			}
 
 			// Adds accessor to cache
@@ -832,7 +832,7 @@ public class mxObjectCodec
 			}
 			catch (Exception e)
 			{
-				log.log(Level.SEVERE, "Failed to get value from field " + fieldname + " in " + obj, e);
+				log.log(Level.FINEST, "Failed to get value from field " + fieldname + " in " + obj, e);
 			}
 		}
 
@@ -859,7 +859,7 @@ public class mxObjectCodec
 			}
 			catch (Exception e)
 			{
-				log.log(Level.SEVERE, "Failed to get value from field " + field + " in " + obj, e);
+				log.log(Level.FINEST, "Failed to get value from field " + field + " in " + obj, e);
 			}
 		}
 
@@ -903,7 +903,7 @@ public class mxObjectCodec
 		}
 		catch (Exception e)
 		{
-			log.log(Level.SEVERE, "Failed to set value \"" + value + "\" to field " + fieldname + " in " + obj, e);
+			log.log(Level.FINEST, "Failed to set value \"" + value + "\" to field " + fieldname + " in " + obj, e);
 		}
 	}
 
