@@ -937,7 +937,7 @@ public class mxObjectCodec
 			}
 			catch (Exception e)
 			{
-				log.log(Level.SEVERE, "setFieldValue: " + e + " on "
+				log.log(Level.FINEST, "setFieldValue: " + e + " on "
 						+ obj.getClass().getSimpleName() + "."
 						+ field.getName() + " ("
 						+ field.getType().getSimpleName() + ") = " + value
@@ -1103,7 +1103,7 @@ public class mxObjectCodec
 
 				if (tmp == null)
 				{
-					log.severe("mxObjectCodec.decode: No object for "
+					log.log(Level.FINEST, "mxObjectCodec.decode: No object for "
 							+ getName() + "." + fieldname + "=" + value);
 					return; // exit
 				}
@@ -1161,7 +1161,7 @@ public class mxObjectCodec
 			else
 			{
 				value = dec.decode(child, template);
-				// log.fine("Decoded " + child.getNodeName() + "."
+				// log.log(Level.FINEST, "Decoded " + child.getNodeName() + "."
 				// + fieldname + "=" + value);
 			}
 
@@ -1257,7 +1257,7 @@ public class mxObjectCodec
 				}
 				catch (Exception e)
 				{
-					log.log(Level.SEVERE, "Cannot process include: " + name, e);
+					log.log(Level.FINEST, "Cannot process include: " + name, e);
 				}
 			}
 
