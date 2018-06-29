@@ -1,3 +1,5 @@
+- Adds mxShape.isRoundable
+
 22-JUN-2018: 3.9.7
 
 - Adds mxCylinder.getCylinderSize
