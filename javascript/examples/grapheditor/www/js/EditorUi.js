@@ -985,11 +985,6 @@ EditorUi.prototype.footerHeight = 28;
 EditorUi.prototype.sidebarFooterHeight = 34;
 
 /**
- * Specifies the link for the edit button in chromeless mode.
- */
-EditorUi.prototype.editButtonLink = null;
-
-/**
  * Specifies the position of the horizontal split bar. Default is 208 or 118 for
  * screen widths <= 640px.
  */
@@ -1009,6 +1004,11 @@ EditorUi.prototype.lightboxMaxFitScale = 2;
  * Specifies if animations are allowed in <executeLayout>. Default is true.
  */
 EditorUi.prototype.lightboxVerticalDivider = 4;
+
+/**
+ * Specifies if single click on horizontal split should collapse sidebar. Default is false.
+ */
+EditorUi.prototype.hsplitClickEnabled = false;
 
 /**
  * Installs the listeners to update the action states.
@@ -2787,7 +2787,7 @@ EditorUi.prototype.updateActionStates = function()
 	// Updates action states
 	var actions = ['cut', 'copy', 'bold', 'italic', 'underline', 'delete', 'duplicate',
 	               'editStyle', 'editTooltip', 'editLink', 'backgroundColor', 'borderColor',
-	               'edit', 'toFront', 'toBack', 'lockUnlock', 'solid', 'dashed',
+	               'edit', 'toFront', 'toBack', 'lockUnlock', 'solid', 'dashed', 'pasteSize',
 	               'dotted', 'fillColor', 'gradientColor', 'shadow', 'fontColor',
 	               'formattedText', 'rounded', 'toggleRounded', 'sharp', 'strokeColor'];
 	
@@ -2798,6 +2798,7 @@ EditorUi.prototype.updateActionStates = function()
 	
 	this.actions.get('setAsDefaultStyle').setEnabled(graph.getSelectionCount() == 1);
 	this.actions.get('clearWaypoints').setEnabled(!graph.isSelectionEmpty());
+	this.actions.get('copySize').setEnabled(graph.getSelectionCount() == 1);
 	this.actions.get('turn').setEnabled(!graph.isSelectionEmpty());
 	this.actions.get('curved').setEnabled(edgeSelected);
 	this.actions.get('rotation').setEnabled(vertexSelected);
@@ -3255,16 +3256,16 @@ EditorUi.prototype.addSplitHandler = function(elt, horizontal, dx, onChange)
 		mxEvent.consume(evt);
 	});
 	
-	mxEvent.addListener(elt, 'click', function(evt)
+	mxEvent.addListener(elt, 'click', mxUtils.bind(this, function(evt)
 	{
-		if (!ignoreClick)
+		if (!ignoreClick && this.hsplitClickEnabled)
 		{
 			var next = (last != null) ? last - dx : 0;
 			last = getValue();
 			onChange(next);
 			mxEvent.consume(evt);
 		}
-	});
+	}));
 
 	mxEvent.addGestureListeners(document, null, moveHandler, dropHandler);
 	
@@ -3621,6 +3622,19 @@ EditorUi.prototype.showLinkDialog = function(value, btnLabel, fn)
 /**
  * Hides the current menu.
  */
+EditorUi.prototype.showDataDialog = function(cell)
+{
+	if (cell != null)
+	{
+		var dlg = new EditDataDialog(this, cell);
+		this.showDialog(dlg.container, 340, 340, true, false, null, false);
+		dlg.init();
+	}
+};
+
+/**
+ * Hides the current menu.
+ */
 EditorUi.prototype.showBackgroundImageDialog = function(apply)
 {
 	apply = (apply != null) ? apply : mxUtils.bind(this, function(image)
@@ -3887,7 +3901,9 @@ EditorUi.prototype.createKeyHandler = function(editor)
 						  65: this.actions.get('connectionArrows'), // Alt+Shift+A
 						  76: this.actions.get('editLink'), // Alt+Shift+L
 						  80: this.actions.get('connectionPoints'), // Alt+Shift+P
-						  84: this.actions.get('editTooltip') // Alt+Shift+T
+						  84: this.actions.get('editTooltip'), // Alt+Shift+T
+						  86: this.actions.get('pasteSize'), // Alt+Shift+V
+						  88: this.actions.get('copySize') // Alt+Shift+X
 	};
 	
 	mxKeyHandler.prototype.getFunction = function(evt)

@@ -642,7 +642,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 					{
 						if (this.isCustomLink(link))
 						{
-							this.customLinkClicked(cell, link);
+							this.customLinkClicked(link);
 						}
 						else
 						{
@@ -1039,7 +1039,10 @@ Graph.prototype.defaultThemes = {};
 /**
  * Base URL for relative links.
  */
-Graph.prototype.baseUrl = ((window != window.top) ? document.referrer : document.location.toString()).split('#')[0];
+Graph.prototype.baseUrl = (urlParams['base'] != null) ?
+	decodeURIComponent(urlParams['base']) :
+	(((window != window.top) ? document.referrer :
+	document.location.toString()).split('#')[0]);
 
 /**
  * Specifies if the label should be edited after an insert.
@@ -1418,9 +1421,10 @@ Graph.prototype.isCustomLink = function(href)
 /**
  * Adds support for page links.
  */
-Graph.prototype.customLinkClicked = function(cell, href)
+Graph.prototype.customLinkClicked = function(link)
 {
-	this.fireEvent(new mxEventObject('customLinkClicked', 'cell', cell, 'href', href));
+	console.log('customLinkClicked not implemented');
+	// Hook for subclassers
 };
 
 /**
@@ -1623,7 +1627,8 @@ Graph.prototype.isReplacePlaceholders = function(cell)
  */
 Graph.prototype.isZoomWheelEvent = function(evt)
 {
-	return mxEvent.isAltDown(evt) || (mxEvent.isControlDown(evt) && !mxClient.IS_MAC);
+	return mxEvent.isAltDown(evt) || (mxEvent.isMetaDown(evt) && mxClient.IS_MAC) ||
+		(mxEvent.isControlDown(evt) && !mxClient.IS_MAC);
 };
 
 /**
@@ -1843,7 +1848,7 @@ Graph.prototype.createLayersDialog = function()
 	
 	for (var i = 0; i < childCount; i++)
 	{
-		(function(layer)
+		(mxUtils.bind(this, function(layer)
 		{
 			var span = document.createElement('div');
 			span.style.overflow = 'hidden';
@@ -1862,7 +1867,8 @@ Graph.prototype.createLayersDialog = function()
 			}
 			
 			span.appendChild(cb);
-			var title = layer.value || (mxResources.get('background') || 'Background');
+			
+			var title = this.convertValueToString(layer) || (mxResources.get('background') || 'Background');
 			span.setAttribute('title', title);
 			mxUtils.write(span, title);
 			div.appendChild(span);
@@ -1880,7 +1886,7 @@ Graph.prototype.createLayersDialog = function()
 				
 				model.setVisible(layer, cb.checked);
 			});
-		}(model.getChildAt(model.root, i)));
+		})(model.getChildAt(model.root, i)));
 	}
 	
 	return div;
@@ -2775,7 +2781,7 @@ Graph.prototype.getTooltipForCell = function(cell)
 			{
 				if (temp[i].name != 'link' || !this.isCustomLink(temp[i].value))
 				{
-					tip += ((temp[i].name != 'link') ? temp[i].name + ':' : '') +
+					tip += ((temp[i].name != 'link') ? '<b>' + temp[i].name + ':</b> ' : '') +
 						mxUtils.htmlEntities(temp[i].value) + '\n';
 				}
 			}
@@ -2783,6 +2789,11 @@ Graph.prototype.getTooltipForCell = function(cell)
 			if (tip.length > 0)
 			{
 				tip = tip.substring(0, tip.length - 1);
+				
+				if (mxClient.IS_SVG)
+				{
+					tip = '<div style="max-width:360px;">' + tip + '</div>';
+				}
 			}
 		}
 	}

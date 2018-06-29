@@ -28,6 +28,16 @@ Format.prototype.showCloseButton = true;
 Format.prototype.inactiveTabBackgroundColor = '#d7d7d7';
 
 /**
+ * Background color for inactive tabs.
+ */
+Format.prototype.roundableShapes = ['label', 'rectangle', 'internalStorage', 'corner',
+	'parallelogram', 'swimlane', 'triangle', 'trapezoid',
+	'ext', 'step', 'tee', 'process', 'link',
+	'rhombus', 'offPageConnector', 'loopLimit', 'hexagon',
+	'manualInput', 'curlyBracket', 'singleArrow', 'callout',
+	'doubleArrow', 'flexArrow', 'card', 'umlLifeline'];
+
+/**
  * Adds the label menu items to the given menu and parent.
  */
 Format.prototype.init = function()
@@ -245,14 +255,9 @@ Format.prototype.isGlassState = function(state)
  */
 Format.prototype.isRoundedState = function(state)
 {
-	var shape = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
-	
-	return (shape == 'label' || shape == 'rectangle' || shape == 'internalStorage' || shape == 'corner' ||
-			shape == 'parallelogram' || shape == 'swimlane' || shape == 'triangle' || shape == 'trapezoid' ||
-			shape == 'ext' || shape == 'step' || shape == 'tee' || shape == 'process' || shape == 'link' ||
-			shape == 'rhombus' || shape == 'offPageConnector' || shape == 'loopLimit' || shape == 'hexagon' ||
-			shape == 'manualInput' || shape == 'curlyBracket' || shape == 'singleArrow' || shape == 'callout' ||
-			shape == 'doubleArrow' || shape == 'flexArrow' || shape == 'card' || shape == 'umlLifeline');
+	return (state.shape != null) ? state.shape.isRoundable() :
+		mxUtils.indexOf(this.roundableShapes, mxUtils.getValue(state.style,
+		mxConstants.STYLE_SHAPE, null)) >= 0;
 };
 
 /**
@@ -1536,11 +1541,53 @@ ArrangePanel.prototype.addGroupOps = function(div)
 			ui.actions.get('ungroup').funct();
 		})
 		
-		btn.setAttribute('title', mxResources.get('ungroup') + ' (' + this.editorUi.actions.get('ungroup').shortcut + ')');
+		btn.setAttribute('title', mxResources.get('ungroup') + ' (' +
+			this.editorUi.actions.get('ungroup').shortcut + ')');
 		btn.style.width = '202px';
 		btn.style.marginBottom = '2px';
 		div.appendChild(btn);
 		count++;
+	}
+	
+	if (ss.vertices.length > 0)
+	{
+		if (count > 0)
+		{
+			mxUtils.br(div);
+			count = 0;
+		}
+		
+		var btn = mxUtils.button(mxResources.get('copySize'), function(evt)
+		{
+			ui.actions.get('copySize').funct();
+		});
+		
+		btn.setAttribute('title', mxResources.get('copySize') + ' (' +
+			this.editorUi.actions.get('copySize').shortcut + ')');
+		btn.style.width = '202px';
+		btn.style.marginBottom = '2px';
+
+		div.appendChild(btn);
+		count++;
+		
+		if (ui.copiedSize != null)
+		{
+			var btn2 = mxUtils.button(mxResources.get('pasteSize'), function(evt)
+			{
+				ui.actions.get('pasteSize').funct();
+			});
+			
+			btn2.setAttribute('title', mxResources.get('pasteSize') + ' (' +
+				this.editorUi.actions.get('pasteSize').shortcut + ')');
+			
+			div.appendChild(btn2);
+			count++;
+			
+			btn.style.width = '100px';
+			btn.style.marginBottom = '2px';
+			btn2.style.width = '100px';
+			btn2.style.marginBottom = '2px';
+		}
 	}
 	
 	if (graph.getSelectionCount() == 1 && graph.getModel().isVertex(cell) &&
