@@ -981,6 +981,11 @@ EditorUi.prototype.sidebarFooterHeight = 34;
 EditorUi.prototype.editButtonLink = null;
 
 /**
+ * Specifies a function for the edit button in chromeless mode. This overrides editButtonLink
+ */
+EditorUi.prototype.editButtonFunc = null;
+
+/**
  * Specifies the position of the horizontal split bar. Default is 208 or 118 for
  * screen widths <= 640px.
  */
@@ -1718,11 +1723,15 @@ EditorUi.prototype.initCanvas = function()
 	
 			this.addChromelessToolbarItems(addButton);
 	
-			if (this.editor.editButtonLink != null)
+			if (this.editor.editButtonLink != null || this.editor.editButtonFunc != null)
 			{
 				addButton(mxUtils.bind(this, function(evt)
 				{
-					if (this.editor.editButtonLink == '_blank')
+					if (this.editor.editButtonFunc != null) 
+					{
+						this.editor.editButtonFunc();
+					} 
+					else if (this.editor.editButtonLink == '_blank')
 					{
 						this.editor.editAsNew(this.getEditBlankXml());
 					}
