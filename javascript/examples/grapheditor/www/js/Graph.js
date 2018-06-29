@@ -1321,7 +1321,6 @@ Graph.prototype.init = function(container)
 		{
 			this.scale = this.graph.currentScale;
 			this.translate = this.graph.currentTranslate;
-			this.graph.useCssTransforms = false;
 		}
 		
 		graphViewValidateBackgroundPage.apply(this, arguments);
@@ -1330,7 +1329,6 @@ Graph.prototype.init = function(container)
 		{
 			this.scale = scale;
 			this.translate = translate;
-			this.graph.useCssTransforms = useCssTranforms;
 		}
 	};
 
