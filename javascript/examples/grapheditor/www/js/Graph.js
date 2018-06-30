@@ -1134,11 +1134,11 @@ Graph.prototype.init = function(container)
 	Graph.prototype.currentTranslate = new mxPoint(0, 0);
 
 	/**
-	 * Safari has problems with math typesetting and using transforms is slow
+	 * Only foreignObject supported for now (no IE11).
 	 */
 	Graph.prototype.isCssTransformsSupported = function()
 	{
-		return this.dialect == mxConstants.DIALECT_SVG && !mxClient.IS_SF;
+		return this.dialect == mxConstants.DIALECT_SVG && !mxClient.NO_FO;
 	};
 
 	/**
@@ -1272,6 +1272,7 @@ Graph.prototype.init = function(container)
 				try
 				{
 					// Applies transform to labels outside of the SVG DOM
+					// Excluded via isCssTransformsSupported
 					if (mxClient.NO_FO)
 					{
 						var transform = 'scale(' + this.currentScale + ')' + 'translate(' +
