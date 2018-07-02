@@ -14,21 +14,9 @@ EditorUi = function(editor, container, lightbox)
 	
 	var graph = this.editor.graph;
 	graph.lightbox = lightbox;
-	// FIXME:
-	// - Fix grid offset in chromeless and lightbox
-	// - Page view in chromeless mode
-	// Test URL:
-	// - Without CSS transforms: https://tinyurl.com/ycnezquo
-	// - With CSS transforms: https://tinyurl.com/y9djpprt
-	// See mxGraphView.prototype.getBackgroundPageBounds in mx2/../Editor.js
-	// See line 1874 in mx2/../Editor.js for grid origin
-	// This URL Parameter used for testing, remove after fix!
-	if (urlParams['use-css-transforms'] == '1')
-	{
-		graph.useCssTransforms =
-			this.editor.isChromelessView() &&
-			graph.isCssTransformsSupported();
-	}
+	graph.useCssTransforms =
+		this.editor.isChromelessView() &&
+		graph.isCssTransformsSupported();
 
 	// Faster scrollwheel zoom is possible with CSS transforms
 	if (graph.useCssTransforms)
