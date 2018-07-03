@@ -1273,24 +1273,48 @@ Graph.prototype.init = function(container)
 				{
 					// Applies transform to labels outside of the SVG DOM
 					// Excluded via isCssTransformsSupported
-					if (mxClient.NO_FO)
+//					if (mxClient.NO_FO)
+//					{
+//						var transform = 'scale(' + this.currentScale + ')' + 'translate(' +
+//							this.currentTranslate.x + 'px,' + this.currentTranslate.y + 'px)';
+//							
+//						this.view.states.visit(mxUtils.bind(this, function(cell, state)
+//						{
+//							if (state.text != null && state.text.node != null)
+//							{
+//								// Stores initial CSS transform that is used for the label alignment
+//								if (state.text.originalTransform == null)
+//								{
+//									state.text.originalTransform = state.text.node.style.transform;
+//								}
+//								
+//								state.text.node.style.transform = transform + state.text.originalTransform;
+//							}
+//						}));
+//					}
+					// Workaround for https://bugs.webkit.org/show_bug.cgi?id=93358 in WebKit
+					// Adding an absolute position DIV before the SVG seems to mitigate the problem.
+					if (mxClient.IS_GC)
 					{
-						var transform = 'scale(' + this.currentScale + ')' + 'translate(' +
-							this.currentTranslate.x + 'px,' + this.currentTranslate.y + 'px)';
-							
-						this.view.states.visit(mxUtils.bind(this, function(cell, state)
+						if (this.mathEnabled && (this.webKitForceRepaintNode == null ||
+							this.webKitForceRepaintNode.parentNode == null) &&
+							this.container.firstChild.nodeName == 'svg')
 						{
-							if (state.text != null && state.text.node != null)
+							this.webKitForceRepaintNode = document.createElement('div');
+							this.webKitForceRepaintNode.style.cssText = 'position:absolute;';
+							g.ownerSVGElement.parentNode.insertBefore(this.webKitForceRepaintNode, g.ownerSVGElement);
+						}
+						else if (this.webKitForceRepaintNode != null && (!this.mathEnabled ||
+								(this.container.firstChild.nodeName != 'svg' &&
+								this.container.firstChild != this.webKitForceRepaintNode)))
+						{
+							if (this.webKitForceRepaintNode.parentNode != null)
 							{
-								// Stores initial CSS transform that is used for the label alignment
-								if (state.text.originalTransform == null)
-								{
-									state.text.originalTransform = state.text.node.style.transform;
-								}
-								
-								state.text.node.style.transform = transform + state.text.originalTransform;
+								this.webKitForceRepaintNode.parentNode.removeChild(this.webKitForceRepaintNode);
 							}
-						}));
+							
+							this.webKitForceRepaintNode = null;
+						}
 					}
 					// Workaround for https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/4320441/
 					else if (mxClient.IS_EDGE)
@@ -1306,6 +1330,7 @@ Graph.prototype.init = function(container)
 				catch (e)
 				{
 					// ignore
+					console.log('err', e);
 				}
 			}
 		}
