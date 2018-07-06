@@ -6414,7 +6414,16 @@ if (typeof mxVertexHandler != 'undefined')
 		Graph.prototype.insertRow = function(table, index)
 		{
 			var bd = table.tBodies[0];
-			var cols = (bd.rows.length > 0) ? bd.rows[0].cells.length : 1;
+			var cells = bd.rows[0].cells;
+			var cols = 0;
+			
+			// Counts columns including colspans
+			for (var i = 0; i < cells.length; i++)
+			{
+				var colspan = cells[i].getAttribute('colspan');
+				cols = (colspan != null) ? parseInt(colspan) : 1;
+			}
+			
 			var row = bd.insertRow(index);
 			
 			for (var i = 0; i < cols; i++)
