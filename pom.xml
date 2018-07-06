@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mxgraph</groupId>
 	<artifactId>mxgraph-core</artifactId>
-	<version>3.9.7</version>
+	<version>3.9.8</version>
 	<name>mxGraph Core</name>
 	<description>mxGraph core classes</description>
 
