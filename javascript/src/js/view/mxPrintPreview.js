@@ -660,11 +660,6 @@ mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks, kee
 		{
 			div.parentNode.removeChild(div);
 		}
-		
-
-		console.log('catch', e);
-		
-		throw e;
 	}
 	finally
 	{
