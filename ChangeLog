@@ -1,3 +1,4 @@
+- Fixes mxPrintPreview.appendGraph for IE and Edge
 - Using CSS transform in mxPrintPreview (experimental)
 - Adds mxShape.isRoundable
 

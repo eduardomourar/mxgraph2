@@ -570,6 +570,14 @@ mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks, kee
 				doc.writeln(div.outerHTML);
 				div.parentNode.removeChild(div);
 			}
+			else if (mxClient.IS_IE || document.documentMode >= 11 || mxClient.IS_EDGE)
+			{
+				var clone = doc.createElement('div');
+				clone.innerHTML = div.outerHTML;
+				clone = clone.getElementsByTagName('div')[0];
+				doc.body.appendChild(clone);
+				div.parentNode.removeChild(div);
+			}
 			else
 			{
 				div.parentNode.removeChild(div);
@@ -652,6 +660,11 @@ mxPrintPreview.prototype.open = function(css, targetWindow, forcePageBreaks, kee
 		{
 			div.parentNode.removeChild(div);
 		}
+		
+
+		console.log('catch', e);
+		
+		throw e;
 	}
 	finally
 	{
