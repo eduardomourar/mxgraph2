@@ -1977,7 +1977,6 @@ Graph.prototype.replacePlaceholders = function(cell, str)
 	if (str != null)
 	{
 		var last = 0;
-		var math = [];
 		
 		while (match = this.placeholderPattern.exec(str))
 		{
@@ -2024,7 +2023,7 @@ Graph.prototype.replacePlaceholders = function(cell, str)
 		}
 		
 		result.push(str.substring(last));
-	}	
+	}
 
 	return result.join('');
 };
