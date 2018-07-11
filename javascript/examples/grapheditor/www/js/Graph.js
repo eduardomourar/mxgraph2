@@ -1311,53 +1311,61 @@ Graph.prototype.init = function(container)
 		
 		if (temp != null)
 		{
-			var g = this.view.getDrawPane().parentNode;
-			var prev = g.getAttribute('transform');
-			g.setAttribute('transformOrigin', '0 0');
-			g.setAttribute('transform', 'scale(' + this.currentScale + ',' + this.currentScale + ')' +
-				'translate(' + this.currentTranslate.x + ',' + this.currentTranslate.y + ')');
-
-			// Applies workarounds only if translate has changed
-			if (prev != g.getAttribute('transform'))
+			var g = temp.parentNode;
+			
+			if (!this.useCssTransforms)
 			{
-				try
+				g.removeAttribute('transformOrigin');
+				g.removeAttribute('transform');
+			}
+			else
+			{
+				var prev = g.getAttribute('transform');
+				g.setAttribute('transformOrigin', '0 0');
+				g.setAttribute('transform', 'scale(' + this.currentScale + ',' + this.currentScale + ')' +
+					'translate(' + this.currentTranslate.x + ',' + this.currentTranslate.y + ')');
+	
+				// Applies workarounds only if translate has changed
+				if (prev != g.getAttribute('transform'))
 				{
-					// Applies transform to labels outside of the SVG DOM
-					// Excluded via isCssTransformsSupported
-//					if (mxClient.NO_FO)
-//					{
-//						var transform = 'scale(' + this.currentScale + ')' + 'translate(' +
-//							this.currentTranslate.x + 'px,' + this.currentTranslate.y + 'px)';
-//							
-//						this.view.states.visit(mxUtils.bind(this, function(cell, state)
-//						{
-//							if (state.text != null && state.text.node != null)
-//							{
-//								// Stores initial CSS transform that is used for the label alignment
-//								if (state.text.originalTransform == null)
-//								{
-//									state.text.originalTransform = state.text.node.style.transform;
-//								}
-//								
-//								state.text.node.style.transform = transform + state.text.originalTransform;
-//							}
-//						}));
-//					}
-					// Workaround for https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/4320441/
-					if (mxClient.IS_EDGE)
+					try
 					{
-						// Recommended workaround is to do this on all
-						// foreignObjects, but this seems to be faster
-						var val = g.style.display;
-						g.style.display = 'none';
-						g.getBBox();
-						g.style.display = val;
+						// Applies transform to labels outside of the SVG DOM
+						// Excluded via isCssTransformsSupported
+	//					if (mxClient.NO_FO)
+	//					{
+	//						var transform = 'scale(' + this.currentScale + ')' + 'translate(' +
+	//							this.currentTranslate.x + 'px,' + this.currentTranslate.y + 'px)';
+	//							
+	//						this.view.states.visit(mxUtils.bind(this, function(cell, state)
+	//						{
+	//							if (state.text != null && state.text.node != null)
+	//							{
+	//								// Stores initial CSS transform that is used for the label alignment
+	//								if (state.text.originalTransform == null)
+	//								{
+	//									state.text.originalTransform = state.text.node.style.transform;
+	//								}
+	//								
+	//								state.text.node.style.transform = transform + state.text.originalTransform;
+	//							}
+	//						}));
+	//					}
+						// Workaround for https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/4320441/
+						if (mxClient.IS_EDGE)
+						{
+							// Recommended workaround is to do this on all
+							// foreignObjects, but this seems to be faster
+							var val = g.style.display;
+							g.style.display = 'none';
+							g.getBBox();
+							g.style.display = val;
+						}
 					}
-				}
-				catch (e)
-				{
-					// ignore
-					console.log('err', e);
+					catch (e)
+					{
+						// ignore
+					}
 				}
 			}
 		}
