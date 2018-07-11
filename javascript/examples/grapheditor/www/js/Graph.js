@@ -6396,7 +6396,7 @@ if (typeof mxVertexHandler != 'undefined')
 			for (var i = 0; i < cells.length; i++)
 			{
 				var colspan = cells[i].getAttribute('colspan');
-				cols = (colspan != null) ? parseInt(colspan) : 1;
+				cols += (colspan != null) ? parseInt(colspan) : 1;
 			}
 			
 			var row = bd.insertRow(index);
