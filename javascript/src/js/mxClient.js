@@ -347,24 +347,6 @@ var mxClient =
 	include: function(src)
 	{
 		document.write('<script src="'+src+'"></script>');
-	},
-	
-	/**
-	 * Function: dispose
-	 * 
-	 * Frees up memory in IE by resolving cyclic dependencies between the DOM
-	 * and the JavaScript objects.
-	 */
-	dispose: function()
-	{
-		// Cleans all objects where listeners have been added
-		for (var i = 0; i < mxEvent.objects.length; i++)
-		{
-			if (mxEvent.objects[i].mxListenerList != null)
-			{
-				mxEvent.removeAllListeners(mxEvent.objects[i]);
-			}
-		}
 	}
 };
 
@@ -647,9 +629,6 @@ if (mxClient.IS_VML)
 	    {
 	    	mxClient.link('stylesheet', mxClient.basePath + '/css/explorer.css');
 	    }
-	
-		// Cleans up resources when the application terminates
-		window.attachEvent('onunload', mxClient.dispose);
 	}
 }
 
