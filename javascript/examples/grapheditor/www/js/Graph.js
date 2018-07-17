@@ -2372,7 +2372,7 @@ Graph.prototype.convertValueToString = function(cell)
 		}
 		else
 		{	
-			return cell.value.getAttribute('label');
+			return cell.value.getAttribute('label') || '';
 		}
 	}
 	
