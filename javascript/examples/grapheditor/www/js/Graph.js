@@ -8087,7 +8087,6 @@ if (typeof mxVertexHandler != 'undefined')
 				{
 					this.linkHint = createHint();
 					this.linkHint.style.padding = '6px 8px 6px 8px';
-					this.linkHint.style.fontSize = '90%';
 					this.linkHint.style.opacity = '1';
 					this.linkHint.style.filter = '';
 					
