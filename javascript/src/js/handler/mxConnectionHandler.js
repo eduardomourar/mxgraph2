@@ -1961,8 +1961,7 @@ mxConnectionHandler.prototype.connect = function(source, target, evt, dropTarget
 
 					if (tmp != null && tmp.parent != null && tmp.parent == edge.parent)
 					{
-						var index = tmp.parent.getIndex(tmp);
-						tmp.parent.insert(edge, index);
+						model.add(parent, edge, tmp.parent.getIndex(tmp));
 					}
 				}
 				

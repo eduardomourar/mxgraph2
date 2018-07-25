@@ -1,3 +1,4 @@
+- Fixes cell order change in mxConnectionHandler.connect
 - Fixes duplicate call to onload in mxXmlRequest.send
 - Removes mxEvent.objects and mxClient.dispose
 - Fixes mxPrintPreview.appendGraph for IE and Edge
