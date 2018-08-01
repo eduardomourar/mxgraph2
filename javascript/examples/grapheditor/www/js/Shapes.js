@@ -856,6 +856,10 @@
 		return new mxRectangle(0, 0, 0, parseFloat(mxUtils.getValue(
 			this.style, 'size', this.size)) * this.scale);
 	};
+	CalloutShape.prototype.isRoundable = function()
+	{
+		return true;
+	};
 	CalloutShape.prototype.redrawPath = function(c, x, y, w, h)
 	{
 		var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
