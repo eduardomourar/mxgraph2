@@ -1694,6 +1694,19 @@ mxConnectionHandler.prototype.addWaypointForEvent = function(me)
 };
 
 /**
+ * Function: checkConstraints
+ * 
+ * Returns true if the connection for the given constraints is valid. This
+ * implementation returns true if the constraints are not pointing to the
+ * same fixed connection point.
+ */
+mxConnectionHandler.prototype.checkConstraints = function(c1, c2)
+{
+	return (c1 == null || c2 == null || c1.point == null || c2.point == null ||
+		!c1.point.equals(c2.point) || c1.perimeter != c2.perimeter);
+};
+
+/**
  * Function: mouseUp
  * 
  * Handles the event by inserting the new connection.
@@ -1710,8 +1723,11 @@ mxConnectionHandler.prototype.mouseUp = function(sender, me)
 			return;
 		}
 		
-		// Inserts the edge if no validation error exists
-		if (this.error == null)
+		var c1 = this.sourceConstraint;
+		var c2 = this.constraintHandler.currentConstraint;
+		
+		// Inserts the edge if no validation error exists and if constraints differ
+		if (this.error == null && this.checkConstraints(c1, c2))
 		{
 			var source = (this.previous != null) ? this.previous.cell : null;
 			var target = null;
@@ -1735,12 +1751,12 @@ mxConnectionHandler.prototype.mouseUp = function(sender, me)
 			if (this.previous != null && this.marker.validState != null &&
 				this.previous.cell == this.marker.validState.cell)
 			{
-				this.graph.selectCellForEvent(this.marker.source, evt);
+				this.graph.selectCellForEvent(this.marker.source, me.getEvent());
 			}
 			
 			// Displays the error message if it is not an empty string,
 			// for empty error messages, the event is silently dropped
-			if (this.error.length > 0)
+			if (this.error != null && this.error.length > 0)
 			{
 				this.graph.validationAlert(this.error);
 			}
