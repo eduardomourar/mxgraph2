@@ -1479,6 +1479,11 @@ Graph.prototype.openLink = function(href, target)
 		else
 		{
 			result = window.open(href, target);
+			
+			if (result != null)
+			{
+				result.opener = null;
+			}
 		}
 	}
 	
