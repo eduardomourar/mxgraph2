@@ -1450,7 +1450,7 @@ Graph.prototype.labelLinkClicked = function(state, elt, evt)
 /**
  * Returns the size of the page format scaled with the page size.
  */
-Graph.prototype.openLink = function(href, target)
+Graph.prototype.openLink = function(href, target, allowOpener)
 {
 	var result = window;
 	
@@ -1480,7 +1480,7 @@ Graph.prototype.openLink = function(href, target)
 		{
 			result = window.open(href, target);
 			
-			if (result != null)
+			if (result != null && !allowOpener)
 			{
 				result.opener = null;
 			}
