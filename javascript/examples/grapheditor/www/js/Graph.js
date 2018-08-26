@@ -6624,6 +6624,7 @@ if (typeof mxVertexHandler != 'undefined')
 			};
 			
 			var a = document.createElement('a');
+			a.setAttribute('rel', 'nofollow noopener noreferrer');
 			a.setAttribute('href', this.getAbsoluteUrl(link));
 			a.setAttribute('title', short((this.isCustomLink(link)) ?
 				this.getLinkTitle(link) : link, 80));
