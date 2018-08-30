@@ -224,8 +224,7 @@ mxSwimlane.prototype.paintSwimlane = function(c, x, y, w, h, start, fill, swimla
 	{
 		c.save();
 		c.setFillColor(fill);
-		c.rect(0, 0, w, h);
-		c.fillAndStroke();
+		mxRectangleShape.prototype.paintBackground.call(this, c, 0, 0, w, h);
 		c.restore();
 		c.setShadow(false);
 	}

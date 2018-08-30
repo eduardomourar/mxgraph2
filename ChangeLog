@@ -1,3 +1,4 @@
+- Uses mxRectangleShape.paintBackground in mxSwimlane
 - Fixes cell order, adds checkConstraints in mxConnectionHandler
 - Fixes duplicate call to onload in mxXmlRequest.send
 - Removes mxEvent.objects and mxClient.dispose
