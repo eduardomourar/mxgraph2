@@ -305,8 +305,7 @@ mxSwimlane.prototype.paintRoundedSwimlane = function(c, x, y, w, h, start, r, fi
 	{
 		c.save();
 		c.setFillColor(fill);
-		c.roundrect(0, 0, w, h, r, r);
-		c.fillAndStroke();
+		mxRectangleShape.prototype.paintBackground.call(this, c, 0, 0, w, h);
 		c.restore();
 		c.setShadow(false);
 	}
