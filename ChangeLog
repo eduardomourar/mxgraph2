@@ -1,3 +1,5 @@
+21-SEP-2018: 3.9.9
+
 - Uses mxRectangleShape.paintBackground in mxSwimlane
 - Fixes cell order, adds checkConstraints in mxConnectionHandler
 - Fixes duplicate call to onload in mxXmlRequest.send
