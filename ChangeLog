@@ -1,3 +1,5 @@
+- Ignores constraint check for different source and target in mxConnectionHandler
+
 21-SEP-2018: 3.9.9
 
 - Uses mxRectangleShape.paintBackground in mxSwimlane
