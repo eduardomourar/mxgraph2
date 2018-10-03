@@ -10,7 +10,7 @@
 		}
 	</style>
 	<script type="text/javascript">
-		var editor = 'https://test.draw.io/?dev=1&drawdev=1&embed=1&spin=1&ui=atlas&proto=json&libraries=1';
+		var editor = 'https://test.draw.io/?dev=1&drawdev=1&embed=1&spin=1&ui=atlas&proto=json&libraries=1&configure=1';
 		var temp = null;
 		
 		function edit(image)
@@ -51,6 +51,12 @@
 					{
 						// Ignore
 						return;
+					}
+					else if (msg.event == 'load')
+					{
+						// Configuration example
+						iframe.contentWindow.postMessage(JSON.stringify({action: 'configure',
+							config: {defaultFonts: ["Humor Sans"]}}), '*');
 					}
 					else if (msg.event == 'init')
 					{
