@@ -1,3 +1,4 @@
+- Fixes swimlane rendering for certain arc sizes
 - Ignores constraint check for different source and target in mxConnectionHandler
 
 21-SEP-2018: 3.9.9
