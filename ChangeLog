@@ -1,3 +1,5 @@
+- Removes ctor error in mxCodec.getElementById
+
 08-OCT-2018: 3.9.10
 
 - Fixes swimlane rendering for certain arc sizes
