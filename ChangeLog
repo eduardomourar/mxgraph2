@@ -1,4 +1,5 @@
 - Removes ctor error in mxCodec.getElementById
+- Adds boolean clone argument in mxGuide.move
 
 08-OCT-2018: 3.9.10
 
