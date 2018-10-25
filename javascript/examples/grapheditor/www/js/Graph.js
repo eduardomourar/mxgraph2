@@ -956,6 +956,13 @@ Graph.prototype.linkPolicy = (urlParams['target'] == 'frame') ? 'blank' : (urlPa
 Graph.prototype.linkTarget = (urlParams['target'] == 'frame') ? '_self' : '_blank';
 
 /**
+ * Value to the rel attribute of links. Default is 'nofollow noopener noreferrer'.
+ * NOTE: There are security implications when this is changed and if noopener is removed,
+ * then <openLink> must be overridden to allow for the opener to be set by default.
+ */
+Graph.prototype.linkRelation = 'nofollow noopener noreferrer';
+
+/**
  * Scrollbars are enabled on non-touch devices (not including Firefox because touch events
  * cannot be detected in Firefox, see above).
  */
@@ -5639,7 +5646,7 @@ if (typeof mxVertexHandler != 'undefined')
 						
 						if (href != null)
 						{
-							links[i].setAttribute('rel', 'nofollow noopener noreferrer');
+							links[i].setAttribute('rel', this.linkRelation);
 							links[i].setAttribute('href', href);
 							
 							if (beforeClick != null)
@@ -6656,7 +6663,7 @@ if (typeof mxVertexHandler != 'undefined')
 			};
 			
 			var a = document.createElement('a');
-			a.setAttribute('rel', 'nofollow noopener noreferrer');
+			a.setAttribute('rel', this.linkRelation);
 			a.setAttribute('href', this.getAbsoluteUrl(link));
 			a.setAttribute('title', short((this.isCustomLink(link)) ?
 				this.getLinkTitle(link) : link, 80));
