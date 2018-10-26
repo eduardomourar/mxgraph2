@@ -412,7 +412,7 @@ Editor.prototype.readGraphState = function(node)
 	
 	var ps = parseFloat(node.getAttribute('pageScale'));
 	
-	if (isFinite(ps) && ps > 0)
+	if (!isNaN(ps) && ps > 0)
 	{
 		this.graph.pageScale = ps;
 	}
@@ -442,12 +442,12 @@ Editor.prototype.readGraphState = function(node)
 	this.graph.pageBreaksVisible = this.graph.pageVisible; 
 	this.graph.preferPageSize = this.graph.pageBreaksVisible;
 	
-	var pw = node.getAttribute('pageWidth');
-	var ph = node.getAttribute('pageHeight');
+	var pw = parseFloat(node.getAttribute('pageWidth'));
+	var ph = parseFloat(node.getAttribute('pageHeight'));
 	
-	if (pw != null && ph != null)
+	if (!isNaN(pw) && !isNaN(ph))
 	{
-		this.graph.pageFormat = new mxRectangle(0, 0, parseFloat(pw), parseFloat(ph));
+		this.graph.pageFormat = new mxRectangle(0, 0, pw, ph);
 	}
 
 	// Loads the persistent state settings

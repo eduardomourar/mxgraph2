@@ -1,3 +1,4 @@
+- Improved handling for numeric values in mxObjectCodec
 - Removes ctor error in mxCodec.getElementById
 - Adds boolean clone argument in mxGuide.move
 
