@@ -1,9 +1,6 @@
-<<<<<<< Upstream, based on origin/master
+- Improved handling for numeric values in mxObjectCodec
 - Removes ctor error in mxCodec.getElementById
 - Adds boolean clone argument in mxGuide.move
-=======
-- Improved handling for numeric values in mxObjectCodec
->>>>>>> 6b8a9b7 Improved handling for numeric values in mxObjectCodec
 
 08-OCT-2018: 3.9.10
 
