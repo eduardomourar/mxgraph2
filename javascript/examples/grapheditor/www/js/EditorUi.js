@@ -2693,19 +2693,25 @@ EditorUi.prototype.setPageFormat = function(value)
  */
 EditorUi.prototype.setPageScale = function(value)
 {
-	this.editor.graph.pageScale = value;
-	
-	if (!this.editor.graph.pageVisible)
-	{
-		this.actions.get('pageView').funct();
-	}
-	else
-	{
-		this.editor.graph.view.validateBackground();
-		this.editor.graph.sizeDidChange();
-	}
+	//validate the value to make sure it is a valid float
+	value = parseFloat(value);
 
-	this.fireEvent(new mxEventObject('pageScaleChanged'));
+	if (isFinite(value) && value > 0)
+	{
+		this.editor.graph.pageScale = value;
+		
+		if (!this.editor.graph.pageVisible)
+		{
+			this.actions.get('pageView').funct();
+		}
+		else
+		{
+			this.editor.graph.view.validateBackground();
+			this.editor.graph.sizeDidChange();
+		}
+	
+		this.fireEvent(new mxEventObject('pageScaleChanged'));
+	}
 };
 
 /**
