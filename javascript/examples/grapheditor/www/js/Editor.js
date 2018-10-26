@@ -553,8 +553,7 @@ Editor.prototype.getGraphXml = function(ignoreSelection)
 	node.setAttribute('arrows', (this.graph.connectionArrowsEnabled) ? '1' : '0');
 	node.setAttribute('fold', (this.graph.foldingEnabled) ? '1' : '0');
 	node.setAttribute('page', (this.graph.pageVisible) ? '1' : '0');
-	var ps = parseFloat(this.graph.pageScale);
-	node.setAttribute('pageScale', isFinite(ps)? ps : mxGraph.prototype.pageScale);
+	node.setAttribute('pageScale', this.graph.pageScale);
 	node.setAttribute('pageWidth', this.graph.pageFormat.width);
 	node.setAttribute('pageHeight', this.graph.pageFormat.height);
 
@@ -1648,14 +1647,16 @@ PageSetupDialog.addPageFormatPanel = function(div, namePostfix, pageFormat, page
 			customDiv.style.display = '';
 		}
 		
-		var wi = parseFloat(widthInput.value), hi = parseFloat(heightInput.value);
+		var wi = parseFloat(widthInput.value);
 		
-		if (!isFinite(wi) || wi <= 0)
+		if (isNaN(wi) || wi <= 0)
 		{
 			widthInput.value = pageFormat.width / 100;
 		}
-
-		if (!isFinite(hi) || hi <= 0)
+		
+		var hi = parseFloat(heightInput.value);
+		
+		if (isNaN(hi) || hi <= 0)
 		{
 			heightInput.value = pageFormat.height / 100;
 		}
