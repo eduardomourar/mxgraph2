@@ -2925,6 +2925,14 @@ Graph.prototype.bytesToString = function(arr)
 };
 
 /**
+ * Returns a base64 encoded version of the compressed outer XML of the given node.
+ */
+Graph.prototype.compressNode = function(node)
+{
+	return this.compress(this.zapGremlins(mxUtils.getXml(node)));
+};
+
+/**
  * Returns a base64 encoded version of the compressed string.
  */
 Graph.prototype.compress = function(data)
