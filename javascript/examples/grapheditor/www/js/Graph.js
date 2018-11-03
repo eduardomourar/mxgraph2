@@ -4805,6 +4805,10 @@ if (typeof mxVertexHandler != 'undefined')
 				// Mapping for multiple calls to cloneCells with the same set of cells
 				var mapping = new Object();
 				
+				// Populates the mapping to fix lookups for forward refs from edges
+				// to cells in parents that are cloned later in the loop below
+				this.cloneCells([model.root], this.isCloneInvalidEdges(), mapping);
+
 				for (var i = 0; i < childCount; i++)
 				{
 					var parent = model.getChildAt(model.getRoot(), i);
