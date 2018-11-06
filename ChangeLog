@@ -1,3 +1,4 @@
+- Fixes use of undefined variable in mxGraphLayout.isAncestor
 - Fixes lookup for clones in mxGraphModel.cloneCells
 - Improved handling for numeric values in mxObjectCodec
 - Removes ctor error in mxCodec.getElementById
