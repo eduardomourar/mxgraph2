@@ -4807,7 +4807,7 @@ if (typeof mxVertexHandler != 'undefined')
 				
 				// Populates the mapping to fix lookups for forward refs from edges
 				// to cells in parents that are cloned later in the loop below
-				this.cloneCells([model.root], this.isCloneInvalidEdges(), mapping);
+// 				this.cloneCells([model.root], this.isCloneInvalidEdges(), mapping);
 
 				for (var i = 0; i < childCount; i++)
 				{

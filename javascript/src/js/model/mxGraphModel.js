@@ -2217,29 +2217,48 @@ mxGraphModel.prototype.cloneCells = function(cells, includeChildren, mapping)
  */
 mxGraphModel.prototype.cloneCellImpl = function(cell, mapping, includeChildren)
 {
-	var ident = mxObjectIdentity.get(cell);
-	var clone = mapping[ident];
+	var clone = this.cellCloned(cell);
 	
 	// Stores the clone in the lookup table
-	if (clone == null)
+	mapping[mxObjectIdentity.get(cell)] = clone;
+	
+	if (includeChildren)
 	{
-		clone = this.cellCloned(cell);
-		mapping[ident] = clone;
-
-		if (includeChildren)
+		var childCount = this.getChildCount(cell);
+		
+		for (var i = 0; i < childCount; i++)
 		{
-			var childCount = this.getChildCount(cell);
-			
-			for (var i = 0; i < childCount; i++)
-			{
-				var cloneChild = this.cloneCellImpl(
-					this.getChildAt(cell, i), mapping, true);
-				clone.insert(cloneChild);
-			}
+			var cloneChild = this.cloneCellImpl(
+				this.getChildAt(cell, i), mapping, true);
+			clone.insert(cloneChild);
 		}
 	}
 	
 	return clone;
+
+//	var ident = mxObjectIdentity.get(cell);
+//	var clone = mapping[ident];
+//	
+//	// Stores the clone in the lookup table
+//	if (clone == null)
+//	{
+//		clone = this.cellCloned(cell);
+//		mapping[ident] = clone;
+//
+//		if (includeChildren)
+//		{
+//			var childCount = this.getChildCount(cell);
+//			
+//			for (var i = 0; i < childCount; i++)
+//			{
+//				var cloneChild = this.cloneCellImpl(
+//					this.getChildAt(cell, i), mapping, true);
+//				clone.insert(cloneChild);
+//			}
+//		}
+//	}
+//	
+//	return clone;
 };
 
 /**
