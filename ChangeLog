@@ -1,3 +1,5 @@
+06-NOV-2018: 3.9.11
+
 - Fixes use of undefined variable in mxGraphLayout.isAncestor
 - Fixes lookup for clones in mxGraphModel.cloneCells
 - Improved handling for numeric values in mxObjectCodec
