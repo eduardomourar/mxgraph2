@@ -2053,6 +2053,33 @@ Graph.prototype.replacePlaceholders = function(cell, str)
 };
 
 /**
+ * Resolves the given cells in the model and selects them.
+ */
+Graph.prototype.restoreSelection = function(cells)
+{
+	if (cells != null && cells.length > 0)
+	{
+		var temp = [];
+
+		for (var i = 0; i < cells.length; i++)
+		{
+			var newCell = this.model.getCell(cells[i].id);
+
+			if (newCell != null)
+			{
+				temp.push(newCell);
+			}
+		}
+
+		this.setSelectionCells(temp);
+	}
+	else
+	{
+		this.clearSelection();
+	}
+};
+
+/**
  * Selects cells for connect vertex return value.
  */
 Graph.prototype.selectCellsForConnectVertex = function(cells, evt, hoverIcons)
