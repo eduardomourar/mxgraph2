@@ -6244,7 +6244,7 @@ if (typeof mxVertexHandler != 'undefined')
 		 * @param {number} dy Y-coordinate of the translation.
 		 */
 		Graph.prototype.getSvg = function(background, scale, border, nocrop, crisp,
-			ignoreSelection, showText, imgExport, linkTarget)
+			ignoreSelection, showText, imgExport, linkTarget, hasShadow)
 		{
 			//Disable Css Transforms if it is used
 			var origUseCssTrans = this.useCssTransforms;
@@ -6303,9 +6303,9 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 				
 				var s = scale / vs;
-				var w = Math.max(1, Math.ceil(bounds.width * s) + 2 * border);
-				var h = Math.max(1, Math.ceil(bounds.height * s) + 2 * border);
-
+				var w = Math.max(1, Math.ceil(bounds.width * s) + 2 * border) + ((hasShadow) ? 5 : 0);
+				var h = Math.max(1, Math.ceil(bounds.height * s) + 2 * border) + ((hasShadow) ? 5 : 0);
+				
 				root.setAttribute('version', '1.1');
 				root.setAttribute('width', w + 'px');
 				root.setAttribute('height', h + 'px');
