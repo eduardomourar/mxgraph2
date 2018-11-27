@@ -990,11 +990,6 @@ Graph.prototype.defaultPageBackgroundColor = '#ffffff';
 Graph.prototype.defaultPageBorderColor = '#ffffff';
 
 /**
- * 
- */
-Graph.prototype.defaultGraphBackground = '#ffffff';
-
-/**
  * Specifies the size of the size for "tiles" to be used for a graph with
  * scrollbars but no visible background page. A good value is large
  * enough to reduce the number of repaints that is caused for auto-
@@ -5918,7 +5913,7 @@ if (typeof mxVertexHandler != 'undefined')
 			model.beginUpdate();
 			try
 			{
-				var clones = this.cloneCells(cells, false);
+				var clones = this.cloneCells(cells, false, null, true);
 				
 				for (var i = 0; i < cells.length; i++)
 				{
