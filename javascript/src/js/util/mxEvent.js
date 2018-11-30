@@ -112,15 +112,22 @@ var mxEvent =
 	 */
 	removeAllListeners: function(element)
 	{
-		var list = element.mxListenerList;
-
-		if (list != null)
+		try
 		{
-			while (list.length > 0)
+			var list = element.mxListenerList;
+	
+			if (list != null)
 			{
-				var entry = list[0];
-				mxEvent.removeListener(element, entry.name, entry.f);
+				while (list.length > 0)
+				{
+					var entry = list[0];
+					mxEvent.removeListener(element, entry.name, entry.f);
+				}
 			}
+		}
+		catch (e)
+		{
+			// ignores errors as this is typically called in cleanup code
 		}
 	},
 	
