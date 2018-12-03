@@ -1,4 +1,4 @@
-- Ignores errors in mxEvent.release
+- Ignores errors in mxEvent.release, mxPrintPreview.closeDocument
 - Adds keepPosition in mxGraph.cloneCells
 - Updates move preview during remote changes
 
