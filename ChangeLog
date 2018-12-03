@@ -1,4 +1,4 @@
-- Ignores errors in mxEvent.removeAllListeners
+- Ignores errors in mxEvent.release
 - Adds keepPosition in mxGraph.cloneCells
 - Updates move preview during remote changes
 

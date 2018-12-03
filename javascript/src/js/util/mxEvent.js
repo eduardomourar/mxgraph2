@@ -112,22 +112,15 @@ var mxEvent =
 	 */
 	removeAllListeners: function(element)
 	{
-		try
+		var list = element.mxListenerList;
+
+		if (list != null)
 		{
-			var list = element.mxListenerList;
-	
-			if (list != null)
+			while (list.length > 0)
 			{
-				while (list.length > 0)
-				{
-					var entry = list[0];
-					mxEvent.removeListener(element, entry.name, entry.f);
-				}
+				var entry = list[0];
+				mxEvent.removeListener(element, entry.name, entry.f);
 			}
-		}
-		catch (e)
-		{
-			// ignores errors as this is typically called in cleanup code
 		}
 	},
 	
@@ -294,21 +287,28 @@ var mxEvent =
 	 */
 	release: function(element)
 	{
-		if (element != null)
+		try
 		{
-			mxEvent.removeAllListeners(element);
-			
-			var children = element.childNodes;
-			
-			if (children != null)
+			if (element != null)
 			{
-		        var childCount = children.length;
-		        
-		        for (var i = 0; i < childCount; i += 1)
-		        {
-		        	mxEvent.release(children[i]);
-		        }
-		    }
+				mxEvent.removeAllListeners(element);
+				
+				var children = element.childNodes;
+				
+				if (children != null)
+				{
+			        var childCount = children.length;
+			        
+			        for (var i = 0; i < childCount; i += 1)
+			        {
+			        	mxEvent.release(children[i]);
+			        }
+			    }
+			}
+		}
+		catch (e)
+		{
+			// ignores errors as this is typically called in cleanup code
 		}
 	},
 
