@@ -6424,11 +6424,7 @@ if (typeof mxVertexHandler != 'undefined')
 				};
 	
 				imgExport.drawState(this.getView().getState(this.model.root), svgCanvas);
-				
-				if (linkTarget != null)
-				{
-					this.updateLinkTargets(root, linkTarget);
-				}
+				this.updateSvgLinks(root, linkTarget, true);
 			
 				return root;
 			}
@@ -6446,7 +6442,7 @@ if (typeof mxVertexHandler != 'undefined')
 		/**
 		 * Hook for creating the canvas used in getSvg.
 		 */
-		Graph.prototype.updateLinkTargets = function(node, target)
+		Graph.prototype.updateSvgLinks = function(node, target, removeCustom)
 		{
 			var links = node.getElementsByTagName('a');
 			
@@ -6459,9 +6455,16 @@ if (typeof mxVertexHandler != 'undefined')
 					href = links[i].getAttribute('xlink:href');
 				}
 				
-				if (href != null && /^https?:\/\//.test(href))
+				if (href != null)
 				{
-					links[i].setAttribute('target', target);
+					if (target != null && /^https?:\/\//.test(href))
+					{
+						links[i].setAttribute('target', target);
+					}
+					else if (removeCustom && this.isCustomLink(href))
+					{
+						links[i].setAttribute('href', 'javascript:void(0);');
+					}
 				}
 			}
 		};
