@@ -363,6 +363,7 @@ Format.prototype.refresh = function()
 	label.style.paddingTop = '8px';
 	label.style.height = (mxClient.IS_QUIRKS) ? '34px' : '25px';
 	label.style.width = '100%';
+	label.style.cursor = 'pointer';
 	this.container.appendChild(div);
 	
 	if (graph.isSelectionEmpty())
@@ -450,6 +451,10 @@ Format.prototype.refresh = function()
 			});
 			
 			mxEvent.addListener(elt, 'click', clickHandler);
+			mxEvent.addListener(elt, 'mousedown', function(evt)
+			{
+				mxEvent.consume(evt);
+			});
 			
 			if (index == ((containsLabel) ? this.labelIndex : this.currentIndex))
 			{
