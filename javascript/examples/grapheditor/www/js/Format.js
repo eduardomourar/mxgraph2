@@ -3565,7 +3565,7 @@ TextFormatPanel.prototype.addFont = function(container)
 						
 						function getRelativeLineHeight(fontSize, css, elt)
 						{
-							if (css != null)
+							if (elt.style != null && css != null)
 							{
 								var lineHeight = css.lineHeight
 								
@@ -3585,9 +3585,11 @@ TextFormatPanel.prototype.addFont = function(container)
 							}
 						};
 						
-						function getAbsoluteFontSize(fontSize)
+						function getAbsoluteFontSize(css)
 						{
-							if (fontSize.substring(fontSize.length - 2) == 'px')
+							var fontSize = (css != null) ? css.fontSize : null;
+								
+							if (fontSize != null && fontSize.substring(fontSize.length - 2) == 'px')
 							{
 								return parseFloat(fontSize);
 							}
@@ -3595,10 +3597,10 @@ TextFormatPanel.prototype.addFont = function(container)
 							{
 								return mxConstants.DEFAULT_FONTSIZE;
 							}
-						}
+						};
 						
 						var css = mxUtils.getCurrentStyle(node);
-						var fontSize = getAbsoluteFontSize(css.fontSize);
+						var fontSize = getAbsoluteFontSize(css);
 						var lineHeight = getRelativeLineHeight(fontSize, css, node);
 
 						// Finds common font size
@@ -3614,7 +3616,7 @@ TextFormatPanel.prototype.addFont = function(container)
 								if (selection.containsNode(elts[i], true))
 								{
 									temp = mxUtils.getCurrentStyle(elts[i]);
-									fontSize = Math.max(getAbsoluteFontSize(temp.fontSize), fontSize);
+									fontSize = Math.max(getAbsoluteFontSize(temp), fontSize);
 									var lh = getRelativeLineHeight(fontSize, temp, elts[i]);
 									
 									if (lh != lineHeight || isNaN(lh))
