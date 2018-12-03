@@ -1,3 +1,4 @@
+- Fixes possible NPE in mxEdgeSegmentHandler.start
 - Ignores errors in mxEvent.release, mxPrintPreview.closeDocument
 - Adds keepPosition in mxGraph.cloneCells
 - Updates move preview during remote changes
