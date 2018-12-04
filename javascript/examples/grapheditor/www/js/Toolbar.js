@@ -852,7 +852,7 @@ Toolbar.prototype.addClickHandler = function(elt, funct)
 Toolbar.prototype.createButton = function(classname)
 {
 	var elt = document.createElement('a');
-	elt.setAttribute('href', 'javascript:void(0);');
+	//elt.setAttribute('href', 'javascript:void(0);');
 	elt.className = 'geButton';
 
 	var inner = document.createElement('div');
@@ -873,7 +873,7 @@ Toolbar.prototype.createButton = function(classname)
 Toolbar.prototype.createLabel = function(label, tooltip)
 {
 	var elt = document.createElement('a');
-	elt.setAttribute('href', 'javascript:void(0);');
+	//elt.setAttribute('href', 'javascript:void(0);');
 	elt.className = 'geLabel';
 	mxUtils.write(elt, label);
 	

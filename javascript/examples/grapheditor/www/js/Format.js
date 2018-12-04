@@ -397,6 +397,11 @@ Format.prototype.refresh = function()
 			});
 		}
 		
+		mxEvent.addListener(label, 'mousedown', function(evt)
+		{
+			mxEvent.consume(evt);
+		});
+		
 		div.appendChild(label);
 		this.panels.push(new DiagramFormatPanel(this, ui, div));
 	}
