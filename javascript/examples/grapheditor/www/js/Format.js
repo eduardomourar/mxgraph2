@@ -366,6 +366,11 @@ Format.prototype.refresh = function()
 	label.style.cursor = 'pointer';
 	this.container.appendChild(div);
 	
+	mxEvent.addListener(label, 'mousedown', function(evt)
+	{
+		evt.preventDefault();
+	});
+	
 	if (graph.isSelectionEmpty())
 	{
 		mxUtils.write(label, mxResources.get('diagram'));
@@ -396,11 +401,6 @@ Format.prototype.refresh = function()
 				ui.actions.get('formatPanel').funct();
 			});
 		}
-		
-		mxEvent.addListener(label, 'mousedown', function(evt)
-		{
-			mxEvent.consume(evt);
-		});
 		
 		div.appendChild(label);
 		this.panels.push(new DiagramFormatPanel(this, ui, div));
@@ -458,7 +458,7 @@ Format.prototype.refresh = function()
 			mxEvent.addListener(elt, 'click', clickHandler);
 			mxEvent.addListener(elt, 'mousedown', function(evt)
 			{
-				mxEvent.consume(evt);
+				evt.preventDefault();
 			});
 			
 			if (index == ((containsLabel) ? this.labelIndex : this.currentIndex))

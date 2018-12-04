@@ -1246,9 +1246,12 @@ Menubar.prototype.addMenuHandler = function(elt, funct)
 		}));
 
 		// Hides menu if already showing
-		mxEvent.addListener(elt, 'mousedown', mxUtils.bind(this, function()
+		mxEvent.addListener(elt, 'mousedown', mxUtils.bind(this, function(evt)
 		{
 			show = this.currentElt != elt;
+
+			// Prevents focus
+			evt.preventDefault();
 		}));
 		
 		mxEvent.addListener(elt, 'click', mxUtils.bind(this, function(evt)

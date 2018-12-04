@@ -835,14 +835,11 @@ Toolbar.prototype.addClickHandler = function(elt, funct)
 			mxEvent.consume(evt);
 		});
 		
-		if (document.documentMode != null && document.documentMode >= 9)
+		// Prevents focus
+		mxEvent.addListener(elt, 'mousedown', function(evt)
 		{
-			// Prevents focus
-			mxEvent.addListener(elt, 'mousedown', function(evt)
-			{
-				evt.preventDefault();
-			});
-		}
+			evt.preventDefault();
+		});
 	}
 };
 
@@ -936,10 +933,7 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll)
 			show = this.currentElt != elt;
 			
 			// Prevents focus
-			if (document.documentMode != null && document.documentMode >= 9)
-			{
-				evt.preventDefault();
-			}
+			evt.preventDefault();
 		}));
 	}
 };

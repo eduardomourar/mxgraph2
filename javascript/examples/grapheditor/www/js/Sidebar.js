@@ -3362,7 +3362,7 @@ Sidebar.prototype.addPalette = function(id, title, expanded, onInit)
     // Keeps references to the DOM nodes
     if (id != null)
     {
-    		this.palettes[id] = [elt, outer];
+    	this.palettes[id] = [elt, outer];
     }
     
     return div;
@@ -3431,6 +3431,12 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 		}
 		
 		mxEvent.consume(evt);
+	}));
+	
+	// Prevents focus
+	mxEvent.addListener(title, 'mousedown', mxUtils.bind(this, function(evt)
+	{
+		evt.preventDefault();
 	}));
 };
 
