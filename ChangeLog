@@ -1,3 +1,4 @@
+- Adds mxGraph.cloneCell helper function
 - Fixes possible NPE in mxEdgeSegmentHandler.start
 - Ignores errors in mxEvent.release, mxPrintPreview.closeDocument
 - Adds keepPosition in mxGraph.cloneCells

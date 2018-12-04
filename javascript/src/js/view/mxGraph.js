@@ -4263,6 +4263,22 @@ mxGraph.prototype.getBoundingBox = function(cells)
  */
 
 /**
+ * Function: cloneCell
+ * 
+ * Returns the clone for the given cell. Uses <cloneCells>.
+ * 
+ * Parameters:
+ * 
+ * cell - <mxCell> to be cloned.
+ * keepPosition - Optional boolean indicating if the position of the cells should
+ * be updated to reflect the lost parent cell. Default is false.
+ */
+mxGraph.prototype.cloneCell = function(cell, keepPosition)
+{
+	return this.cloneCells([cell], null, null, keepPosition)[0];
+};
+
+/**
  * Function: cloneCells
  * 
  * Returns the clones for the given cells. The clones are created recursively
@@ -4905,7 +4921,7 @@ mxGraph.prototype.splitEdge = function(edge, cells, newEdge, dx, dy)
 	{
 		if (newEdge == null)
 		{
-			newEdge = this.cloneCells([edge])[0];
+			newEdge = this.cloneCell(edge);
 			
 			// Removes waypoints before/after new cell
 			var state = this.view.getState(edge);
