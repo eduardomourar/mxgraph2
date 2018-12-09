@@ -48,6 +48,11 @@ Format.prototype.init = function()
 	
 	this.update = mxUtils.bind(this, function(sender, evt)
 	{
+		if (this.editorUi.currentMenu != null)
+		{
+			this.editorUi.hideCurrentMenu();
+		}
+		
 		this.clearSelectionState();
 		this.refresh();
 	});
@@ -366,10 +371,11 @@ Format.prototype.refresh = function()
 	label.style.cursor = 'pointer';
 	this.container.appendChild(div);
 	
-	mxEvent.addListener(label, 'mousedown', function(evt)
+	// Prevents text selection
+	mxEvent.addGestureListeners(label, mxUtils.bind(this, function(evt)
 	{
 		evt.preventDefault();
-	});
+	}));
 	
 	if (graph.isSelectionEmpty())
 	{
@@ -456,10 +462,12 @@ Format.prototype.refresh = function()
 			});
 			
 			mxEvent.addListener(elt, 'click', clickHandler);
-			mxEvent.addListener(elt, 'mousedown', function(evt)
+			
+			// Prevents text selection
+			mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
 			{
 				evt.preventDefault();
-			});
+			}));
 			
 			if (index == ((containsLabel) ? this.labelIndex : this.currentIndex))
 			{

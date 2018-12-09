@@ -1781,7 +1781,6 @@ Sidebar.prototype.addBpmnPalette = function(dir, expand)
 Sidebar.prototype.createTitle = function(label)
 {
 	var elt = document.createElement('a');
-	//elt.setAttribute('href', 'javascript:void(0);');
 	elt.setAttribute('title', mxResources.get('sidebarTooltip'));
 	elt.className = 'geTitle';
 	mxUtils.write(elt, label);
@@ -1877,7 +1876,6 @@ Sidebar.prototype.createThumb = function(cells, width, height, parent, title, sh
 Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, width, height, allowCellsInserted)
 {
 	var elt = document.createElement('a');
-	elt.setAttribute('href', 'javascript:void(0);');
 	elt.className = 'geItem';
 	elt.style.overflow = 'hidden';
 	var border = (mxClient.IS_QUIRKS) ? 8 + 2 * this.thumbPadding : 2 * this.thumbBorder;
@@ -3434,7 +3432,7 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 	}));
 	
 	// Prevents focus
-	mxEvent.addListener(title, 'mousedown', mxUtils.bind(this, function(evt)
+	mxEvent.addGestureListeners(title, mxUtils.bind(this, function(evt)
 	{
 		evt.preventDefault();
 	}));

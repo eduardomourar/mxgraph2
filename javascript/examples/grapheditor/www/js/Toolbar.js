@@ -836,10 +836,10 @@ Toolbar.prototype.addClickHandler = function(elt, funct)
 		});
 		
 		// Prevents focus
-		mxEvent.addListener(elt, 'mousedown', function(evt)
+		mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
 		{
 			evt.preventDefault();
-		});
+		}));
 	}
 };
 
@@ -849,7 +849,6 @@ Toolbar.prototype.addClickHandler = function(elt, funct)
 Toolbar.prototype.createButton = function(classname)
 {
 	var elt = document.createElement('a');
-	//elt.setAttribute('href', 'javascript:void(0);');
 	elt.className = 'geButton';
 
 	var inner = document.createElement('div');
@@ -870,7 +869,6 @@ Toolbar.prototype.createButton = function(classname)
 Toolbar.prototype.createLabel = function(label, tooltip)
 {
 	var elt = document.createElement('a');
-	//elt.setAttribute('href', 'javascript:void(0);');
 	elt.className = 'geLabel';
 	mxUtils.write(elt, label);
 	
@@ -927,12 +925,10 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll)
 			mxEvent.consume(evt);
 		}));
 
-		// Hides menu if already showing
-		mxEvent.addListener(elt, 'mousedown', mxUtils.bind(this, function(evt)
+		// Hides menu if already showing and prevents focus
+		mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
 		{
 			show = this.currentElt != elt;
-			
-			// Prevents focus
 			evt.preventDefault();
 		}));
 	}
