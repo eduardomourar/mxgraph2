@@ -836,8 +836,9 @@ Toolbar.prototype.addClickHandler = function(elt, funct)
 		});
 		
 		// Prevents focus
-		mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
-		{
+	    mxEvent.addListener(elt, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
+        	mxUtils.bind(this, function(evt)
+    	{
 			evt.preventDefault();
 		}));
 	}
@@ -926,7 +927,8 @@ Toolbar.prototype.addMenuHandler = function(elt, showLabels, funct, showAll)
 		}));
 
 		// Hides menu if already showing and prevents focus
-		mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
+        mxEvent.addListener(elt, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
+        	mxUtils.bind(this, function(evt)
 		{
 			show = this.currentElt != elt;
 			evt.preventDefault();

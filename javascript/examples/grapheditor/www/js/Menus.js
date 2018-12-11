@@ -1248,7 +1248,8 @@ Menubar.prototype.addMenuHandler = function(elt, funct)
 		}));
 		
 		// Hides menu if already showing and prevents focus
-		mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
+        mxEvent.addListener(elt, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
+        	mxUtils.bind(this, function(evt)
 		{
 			show = this.currentElt != elt;
 			evt.preventDefault();

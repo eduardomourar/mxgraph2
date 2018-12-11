@@ -3432,7 +3432,8 @@ Sidebar.prototype.addFoldingHandler = function(title, content, funct)
 	}));
 	
 	// Prevents focus
-	mxEvent.addGestureListeners(title, mxUtils.bind(this, function(evt)
+    mxEvent.addListener(title, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
+    	mxUtils.bind(this, function(evt)
 	{
 		evt.preventDefault();
 	}));

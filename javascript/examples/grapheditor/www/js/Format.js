@@ -368,11 +368,11 @@ Format.prototype.refresh = function()
 	label.style.paddingTop = '8px';
 	label.style.height = (mxClient.IS_QUIRKS) ? '34px' : '25px';
 	label.style.width = '100%';
-	label.style.cursor = 'pointer';
 	this.container.appendChild(div);
 	
 	// Prevents text selection
-	mxEvent.addGestureListeners(label, mxUtils.bind(this, function(evt)
+    mxEvent.addListener(label, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
+        mxUtils.bind(this, function(evt)
 	{
 		evt.preventDefault();
 	}));
@@ -464,8 +464,9 @@ Format.prototype.refresh = function()
 			mxEvent.addListener(elt, 'click', clickHandler);
 			
 			// Prevents text selection
-			mxEvent.addGestureListeners(elt, mxUtils.bind(this, function(evt)
-			{
+		    mxEvent.addListener(elt, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
+	        	mxUtils.bind(this, function(evt)
+	    	{
 				evt.preventDefault();
 			}));
 			
@@ -480,6 +481,7 @@ Format.prototype.refresh = function()
 
 		label.style.backgroundColor = this.inactiveTabBackgroundColor;
 		label.style.borderLeftWidth = '1px';
+		label.style.cursor = 'pointer';
 		label.style.width = (containsLabel) ? '50%' : '33.3%';
 		label.style.width = (containsLabel) ? '50%' : '33.3%';
 		var label2 = label.cloneNode(false);
