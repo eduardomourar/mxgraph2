@@ -1,3 +1,4 @@
+- Fixes invalidation bug in mxGraph.processChange
 - Adds mxGraph.cloneCell helper function
 - Fixes possible NPE in mxEdgeSegmentHandler.start
 - Ignores errors in mxEvent.release, mxPrintPreview.closeDocument

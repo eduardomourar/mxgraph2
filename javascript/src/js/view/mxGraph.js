@@ -2039,8 +2039,8 @@ mxGraph.prototype.processChange = function(change)
 	{
 		var newParent = this.model.getParent(change.child);
 		this.view.invalidate(change.child, true, true);
-
-		if (newParent == null || this.isCellCollapsed(newParent))
+		
+		if (!this.model.contains(newParent) || this.isCellCollapsed(newParent))
 		{
 			this.view.invalidate(change.child, true, true);
 			this.removeStateForCell(change.child);
@@ -4270,12 +4270,15 @@ mxGraph.prototype.getBoundingBox = function(cells)
  * Parameters:
  * 
  * cell - <mxCell> to be cloned.
+ * allowInvalidEdges - Optional boolean that specifies if invalid edges
+ * should be cloned. Default is true.
+ * mapping - Optional mapping for existing clones.
  * keepPosition - Optional boolean indicating if the position of the cells should
  * be updated to reflect the lost parent cell. Default is false.
  */
-mxGraph.prototype.cloneCell = function(cell, keepPosition)
+mxGraph.prototype.cloneCell = function(cell, allowInvalidEdges, mapping, keepPosition)
 {
-	return this.cloneCells([cell], null, null, keepPosition)[0];
+	return this.cloneCells([cell], allowInvalidEdges, mapping, keepPosition)[0];
 };
 
 /**
@@ -5942,9 +5945,9 @@ mxGraph.prototype.moveCells = function(cells, dx, dy, clone, target, evt, mappin
 	
 	if (cells != null && (dx != 0 || dy != 0 || clone || target != null))
 	{
-		// Removes descandants with ancestors in cells to avoid multiple moving
+		// Removes descendants with ancestors in cells to avoid multiple moving
 		cells = this.model.getTopmostCells(cells);
-
+		
 		this.model.beginUpdate();
 		try
 		{
