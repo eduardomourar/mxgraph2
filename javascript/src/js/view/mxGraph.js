@@ -1914,8 +1914,30 @@ mxGraph.prototype.setSelectionModel = function(selectionModel)
  */
 mxGraph.prototype.getSelectionCellsForChanges = function(changes)
 {
+	var dict = new mxDictionary();
 	var cells = [];
 	
+	var addCell = mxUtils.bind(this, function(cell)
+	{
+		if (!dict.get(cell) && this.model.contains(cell))
+		{
+			if (this.model.isEdge(cell) || this.model.isVertex(cell))
+			{
+				dict.put(cell, true);
+				cells.push(cell);
+			}
+			else
+			{
+				var childCount = this.model.getChildCount(cell);
+				
+				for (var i = 0; i < childCount; i++)
+				{
+					addCell(this.model.getChildAt(cell, i));
+				}
+			}
+		}
+	});
+
 	for (var i = 0; i < changes.length; i++)
 	{
 		var change = changes[i];
@@ -1924,7 +1946,7 @@ mxGraph.prototype.getSelectionCellsForChanges = function(changes)
 		{
 			var cell = null;
 
-			if (change instanceof mxChildChange && change.previous == null)
+			if (change instanceof mxChildChange)
 			{
 				cell = change.child;
 			}
@@ -1933,14 +1955,14 @@ mxGraph.prototype.getSelectionCellsForChanges = function(changes)
 				cell = change.cell;
 			}
 			
-			if (cell != null && mxUtils.indexOf(cells, cell) < 0)
+			if (cell != null)
 			{
-				cells.push(cell);
+				addCell(cell);
 			}
 		}
 	}
 	
-	return this.getModel().getTopmostCells(cells);
+	return cells;
 };
 
 /**
@@ -1961,7 +1983,6 @@ mxGraph.prototype.graphModelChanged = function(changes)
 	}
 	
 	this.removeSelectionCells(this.getRemovedCellsForChanges(changes));
-	
 	this.view.validate();
 	this.sizeDidChange();
 };
@@ -1987,7 +2008,7 @@ mxGraph.prototype.getRemovedCellsForChanges = function(changes)
 		}
 		else if (change instanceof mxChildChange)
 		{
-			if (change.previous != null && change.parent == null)
+			if (this.model.contains(change.previous) && !this.model.contains(change.parent))
 			{
 				result = result.concat(this.model.getDescendants(change.child));
 			}
