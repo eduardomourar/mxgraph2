@@ -2621,7 +2621,7 @@ ChangePageSetup.prototype.execute = function()
 
     if (this.foldingEnabled != null && this.foldingEnabled != this.ui.editor.graph.foldingEnabled)
     {
-    		this.ui.setFoldingEnabled(this.foldingEnabled);
+    	this.ui.setFoldingEnabled(this.foldingEnabled);
         this.foldingEnabled = !this.foldingEnabled;
     }
 };
