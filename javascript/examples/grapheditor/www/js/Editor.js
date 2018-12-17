@@ -725,7 +725,7 @@ OpenFile.prototype.cancel = function(cancel)
 /**
  * Basic dialogs that are available in the viewer (print dialog).
  */
-function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll, transparent)
+function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll, transparent, onResize)
 {
 	var dx = 0;
 	
@@ -838,6 +838,17 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll, transpa
 	
 	this.resizeListener = mxUtils.bind(this, function()
 	{
+		if (onResize != null)
+		{
+			var newWH = onResize();
+			
+			if (newWH != null)
+			{
+				w0 = w = newWH.w;
+				h0 = h = newWH.h;
+			}
+		}
+		
 		dh = Math.max(document.body.clientHeight, document.documentElement.clientHeight);
 		this.bg.style.height = dh + 'px';
 		
@@ -931,7 +942,11 @@ Dialog.prototype.close = function(cancel)
 {
 	if (this.onDialogClose != null)
 	{
-		this.onDialogClose(cancel);
+		if (this.onDialogClose(cancel) == false)
+		{
+			return false;
+		}
+		
 		this.onDialogClose = null;
 	}
 	
