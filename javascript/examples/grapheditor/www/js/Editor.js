@@ -938,11 +938,11 @@ Dialog.prototype.getPosition = function(left, top)
 /**
  * Removes the dialog from the DOM.
  */
-Dialog.prototype.close = function(cancel)
+Dialog.prototype.close = function(cancel, isEsc)
 {
 	if (this.onDialogClose != null)
 	{
-		if (this.onDialogClose(cancel) == false)
+		if (this.onDialogClose(cancel, isEsc) == false)
 		{
 			return false;
 		}

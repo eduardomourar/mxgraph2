@@ -188,7 +188,7 @@ EditorUi = function(editor, container, lightbox)
 		}
 		else if (!mxEvent.isConsumed(evt) && evt.keyCode == 27 /* Escape */)
 		{
-			this.hideDialog();
+			this.hideDialog(null, true);
 		}
 	});
    	
@@ -3307,13 +3307,13 @@ EditorUi.prototype.showDialog = function(elt, w, h, modal, closable, onClose, no
 /**
  * Displays a print dialog.
  */
-EditorUi.prototype.hideDialog = function(cancel)
+EditorUi.prototype.hideDialog = function(cancel, isEsc)
 {
 	if (this.dialogs != null && this.dialogs.length > 0)
 	{
 		var dlg = this.dialogs.pop();
 		
-		if (dlg.close(cancel) == false) 
+		if (dlg.close(cancel, isEsc) == false) 
 		{
 			//add the dialog back if dialog closing is cancelled
 			this.dialogs.push(dlg);
