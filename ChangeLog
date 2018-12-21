@@ -1,3 +1,5 @@
+- Fixes possible type errors in mxSvgCanvas
+
 14-DEC-2018: 3.9.12
 
 - Fixes mxGraph.getSelectionCellsForChanges
