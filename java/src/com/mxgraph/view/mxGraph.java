@@ -866,9 +866,30 @@ public class mxGraph extends mxEventSource
 			}
 		}
 
-		removeSelectionCells(getRemovedCellsForChanges(changes));
+		updateSelection();
 
 		return dirty;
+	}
+	
+	/**
+	 * Function: updateSelection
+	 * 
+	 * Removes selection cells that are not in the model from the selection.
+	 */
+	protected void updateSelection()
+	{
+		Object[] cells = getSelectionCells();
+		List<Object> removed = new ArrayList<Object>();
+		
+		for (int i = 0; i < cells.length; i++)
+		{
+			if (!model.contains(cells[i]))
+			{
+				removed.add(cells[i]);
+			}
+		}
+		
+		removeSelectionCells(removed.toArray());
 	}
 
 	/**
@@ -914,43 +935,6 @@ public class mxGraph extends mxEventSource
 						new mxPoint(t.getX() - dx, t.getY() - dy));
 			}
 		}
-	}
-
-	/**
-	 * Returns the cells that have been removed from the model.
-	 */
-	public Object[] getRemovedCellsForChanges(List<mxUndoableChange> changes)
-	{
-		List<Object> result = new ArrayList<Object>();
-		Iterator<mxUndoableChange> it = changes.iterator();
-
-		while (it.hasNext())
-		{
-			Object change = it.next();
-
-			if (change instanceof mxRootChange)
-			{
-				break;
-			}
-			else if (change instanceof mxChildChange)
-			{
-				mxChildChange cc = (mxChildChange) change;
-
-				if (model.contains(cc.getPrevious())
-						&& !model.contains(cc.getParent()))
-				{
-					result.addAll(
-							mxGraphModel.getDescendants(model, cc.getChild()));
-				}
-			}
-			else if (change instanceof mxVisibleChange)
-			{
-				Object cell = ((mxVisibleChange) change).getCell();
-				result.addAll(mxGraphModel.getDescendants(model, cell));
-			}
-		}
-
-		return result.toArray();
 	}
 
 	/**

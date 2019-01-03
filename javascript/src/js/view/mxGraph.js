@@ -1981,45 +1981,31 @@ mxGraph.prototype.graphModelChanged = function(changes)
 	{
 		this.processChange(changes[i]);
 	}
-	
-	this.removeSelectionCells(this.getRemovedCellsForChanges(changes));
+
+	this.updateSelection();
 	this.view.validate();
 	this.sizeDidChange();
 };
 
 /**
- * Function: getRemovedCellsForChanges
+ * Function: updateSelection
  * 
- * Returns the cells that have been removed from the model.
+ * Removes selection cells that are not in the model from the selection.
  */
-mxGraph.prototype.getRemovedCellsForChanges = function(changes)
+mxGraph.prototype.updateSelection = function()
 {
-	var result = [];
+	var cells = this.getSelectionCells();
+	var removed = [];
 	
-	for (var i = 0; i < changes.length; i++)
+	for (var i = 0; i < cells.length; i++)
 	{
-		var change = changes[i];
-		
-		// Resets the view settings, removes all cells and clears
-		// the selection if the root changes.
-		if (change instanceof mxRootChange)
+		if (!this.model.contains(cells[i]))
 		{
-			break;
-		}
-		else if (change instanceof mxChildChange)
-		{
-			if (this.model.contains(change.previous) && !this.model.contains(change.parent))
-			{
-				result = result.concat(this.model.getDescendants(change.child));
-			}
-		}
-		else if (change instanceof mxVisibleChange)
-		{
-			result = result.concat(this.model.getDescendants(change.cell));
+			removed.push(cells[i]);
 		}
 	}
 	
-	return result;
+	this.removeSelectionCells(removed);
 };
 
 /**
