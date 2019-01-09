@@ -36,7 +36,7 @@ mxCodecRegistry.register(function()
 	 */
 	codec.isReference = function(obj, attr, value, isWrite)
 	{
-		if (attr == 'child' && (obj.previous != null || !isWrite))
+		if (attr == 'child' && (!isWrite || obj.model.contains(obj.previous)))
 		{
 			return true;
 		}
@@ -52,7 +52,7 @@ mxCodecRegistry.register(function()
 	 */
 	codec.afterEncode = function(enc, obj, node)
 	{
-		if (this.isReference(obj, 'child',  obj.child, true))
+		if (this.isReference(obj, 'child', obj.child, true))
 		{
 			// Encodes as reference (id)
 			node.setAttribute('child', enc.getId(obj.child));
@@ -139,7 +139,6 @@ mxCodecRegistry.register(function()
             if (obj.child.parent != null && obj.previous != null &&
                 obj.child.parent != obj.previous)
             {
-            	
                 obj.previous = obj.child.parent;
             }
 
