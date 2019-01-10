@@ -1,3 +1,4 @@
+- Ignores current root in mxGraphView.getVisibleTerminal
 - Adds mxGraph.updateSelection
 - Fixes edit replay for mxChildChange
 - Removes mxGraph.getRemovedCellsForChanges

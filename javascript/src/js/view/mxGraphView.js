@@ -1907,8 +1907,9 @@ mxGraphView.prototype.getVisibleTerminal = function(edge, source)
 		result = model.getParent(result);
 	}
 
-	// Checks if the result is not a layer
-	if (model.getParent(best) == model.getRoot())
+	// Checks if the result is not a layer or the current root
+	if (model.getParent(best) == model.getRoot() ||
+		best == this.currentRoot)
 	{
 		best = null;
 	}
