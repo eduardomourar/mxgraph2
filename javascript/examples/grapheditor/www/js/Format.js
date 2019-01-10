@@ -5150,36 +5150,36 @@ DiagramFormatPanel.prototype.addView = function(div)
 	
 	// Grid
 	this.addGridOption(div);
-
+	
+	// Page View
+	if (DiagramFormatPanel.showPageView)
+	{
+		div.appendChild(this.createOption(mxResources.get('pageView'), function()
+		{
+			return graph.pageVisible;
+		}, function(checked)
+		{
+			ui.actions.get('pageView').funct();
+		},
+		{
+			install: function(apply)
+			{
+				this.listener = function()
+				{
+					apply(graph.pageVisible);
+				};
+				
+				ui.addListener('pageViewChanged', this.listener);
+			},
+			destroy: function()
+			{
+				ui.removeListener(this.listener);
+			}
+		}));
+	}
+	
 	if (graph.isEnabled())
 	{
-		// Page View
-		if (DiagramFormatPanel.showPageView)
-		{
-			div.appendChild(this.createOption(mxResources.get('pageView'), function()
-			{
-				return graph.pageVisible;
-			}, function(checked)
-			{
-				ui.actions.get('pageView').funct();
-			},
-			{
-				install: function(apply)
-				{
-					this.listener = function()
-					{
-						apply(graph.pageVisible);
-					};
-					
-					ui.addListener('pageViewChanged', this.listener);
-				},
-				destroy: function()
-				{
-					ui.removeListener(this.listener);
-				}
-			}));
-		}
-		
 		// Background
 		var bg = this.createColorOption(mxResources.get('background'), function()
 		{
