@@ -1011,12 +1011,12 @@ mxGraphModel.prototype.parentForCellChanged = function(cell, parent, index)
 	}
 	
 	// Checks if the previous parent was already in the
-	// model and avoids calling cellAdded if it was.
+	// model and avoids calling cellAdded if it was
 	if (!this.contains(previous) && this.contains(parent))
 	{
 		this.cellAdded(cell);
 	}
-	else
+	else if (this.contains(previous) && !this.contains(parent))
 	{
 		this.cellRemoved(cell);
 	}
