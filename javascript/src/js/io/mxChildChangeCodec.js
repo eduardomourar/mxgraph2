@@ -45,6 +45,18 @@ mxCodecRegistry.register(function()
 	};
 
 	/**
+	 * Function: isExcluded
+	 *
+	 * Excludes references to parent or previous if not in the model.
+	 */
+  	codec.isExcluded = function(obj, attr, value, write)
+  	{
+  		return mxObjectCodec.prototype.isExcluded.apply(this, arguments) ||
+  			(write && value != null && (attr == 'previous' ||
+  			attr == 'parent') && !obj.model.contains(value));
+  	};
+  	
+	/**
 	 * Function: afterEncode
 	 *
 	 * Encodes the child recusively and adds the result
@@ -130,7 +142,7 @@ mxCodecRegistry.register(function()
 	 */
 	codec.afterDecode = function(dec, node, obj)
 	{
-		// Cells are encoded here after a complete transaction so the previous
+		// Cells are decoded here after a complete transaction so the previous
 		// parent must be restored on the cell for the case where the cell was
 		// added. This is needed for the local model to identify the cell as a
 		// new cell and register the ID.

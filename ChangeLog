@@ -1,5 +1,5 @@
 - Adds mxGraph.updateSelection
-- Fixes mxChildChangeCodec.isReference
+- Fixes edit replay for mxChildChange
 - Removes mxGraph.getRemovedCellsForChanges
 - Fixes possible type errors in mxSvgCanvas
 
