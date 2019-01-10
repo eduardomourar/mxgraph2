@@ -863,6 +863,23 @@
 	 */
 	STYLE_EXIT_Y: 'exitY',
 
+	
+	/**
+	* Variable: STYLE_EXIT_DX
+	* 
+	* Defines the key for the horizontal offset of the connection point
+	* of an edge with its source terminal. Value is "exitDx".
+	*/
+	STYLE_EXIT_DX: 'exitDx',
+
+	/**
+	* Variable: STYLE_EXIT_DY
+	* 
+	* Defines the key for the vertical offset of the connection point
+	* of an edge with its source terminal. Value is "exitDy".
+	*/
+	STYLE_EXIT_DY: 'exitDy',
+	
 	/**
 	 * Variable: STYLE_EXIT_PERIMETER
 	 * 
@@ -887,6 +904,22 @@
 	 * of an edge with its target terminal. Value is "entryY".
 	 */
 	STYLE_ENTRY_Y: 'entryY',
+
+	/**
+	 * Variable: STYLE_ENTRY_DX
+	 * 
+	* Defines the key for the horizontal offset of the connection point
+	* of an edge with its target terminal. Value is "entryDx".
+	*/
+	STYLE_ENTRY_DX: 'entryDx',
+
+	/**
+	 * Variable: STYLE_ENTRY_DY
+	 * 
+	* Defines the key for the vertical offset of the connection point
+	* of an edge with its target terminal. Value is "entryDy".
+	*/
+	STYLE_ENTRY_DY: 'entryDy',
 
 	/**
 	 * Variable: STYLE_ENTRY_PERIMETER
