@@ -1,3 +1,5 @@
+- Fixes terminal point after disconnect with navigation
+- Adds invisible connected edges in mxGraph.removeCells
 - Ignores current root in mxGraphView.getVisibleTerminal
 - Adds mxGraph.updateSelection
 - Fixes edit replay for mxChildChange
