@@ -188,27 +188,47 @@
 	};
 	mxUtils.extend(NoteShape, mxCylinder);
 	NoteShape.prototype.size = 30;
-	NoteShape.prototype.redrawPath = function(path, x, y, w, h, isForeground)
+	NoteShape.prototype.darkOpacity = 0;
+	
+	NoteShape.prototype.paintVertexShape = function(c, x, y, w, h)
 	{
 		var s = Math.max(0, Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))));
-
-		if (isForeground)
+		var op = Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity', this.darkOpacity))));
+		c.translate(x, y);
+		
+		c.begin();
+		c.moveTo(0, 0);
+		c.lineTo(w - s, 0);
+		c.lineTo(w, s);
+		c.lineTo(w, h);
+		c.lineTo(0, h);
+		c.lineTo(0, 0);
+		c.close();
+		c.end();
+		c.fillAndStroke();
+		
+		if (!this.outline)
 		{
-			path.moveTo(w - s, 0);
-			path.lineTo(w - s, s);
-			path.lineTo(w, s);
-			path.end();
-		}
-		else
-		{
-			path.moveTo(0, 0);
-			path.lineTo(w - s, 0);
-			path.lineTo(w, s);
-			path.lineTo(w, h);
-			path.lineTo(0, h);
-			path.lineTo(0, 0);
-			path.close();
-			path.end();
+			c.setShadow(false);
+	
+			if (op != 0)
+			{
+				c.setFillAlpha(op);
+				c.setFillColor('#000000');
+				c.begin();
+				c.moveTo(w - s, 0);
+				c.lineTo(w - s, s);
+				c.lineTo(w, s);
+				c.close();
+				c.fill();
+			}
+			
+			c.begin();
+			c.moveTo(w - s, 0);
+			c.lineTo(w - s, s);
+			c.lineTo(w, s);
+			c.end();
+			c.stroke();
 		}
 	};
 
