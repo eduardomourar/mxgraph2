@@ -20,8 +20,8 @@
 	CubeShape.prototype.paintVertexShape = function(c, x, y, w, h)
 	{
 		var s = Math.max(0, Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))));
-		var op = Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity', this.darkOpacity))));
-		var op2 = Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity2', this.darkOpacity2))));
+		var op = Math.max(-1, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity', this.darkOpacity))));
+		var op2 = Math.max(-1, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity2', this.darkOpacity2))));
 		c.translate(x, y);
 		
 		c.begin();
@@ -42,8 +42,8 @@
 	
 			if (op != 0)
 			{
-				c.setFillAlpha(op);
-				c.setFillColor('#000000');
+				c.setFillAlpha(Math.abs(op));
+				c.setFillColor((op < 0) ? '#FFFFFF' : '#000000');
 				c.begin();
 				c.moveTo(0, 0);
 				c.lineTo(w - s, 0);
@@ -55,8 +55,8 @@
 
 			if (op2 != 0)
 			{
-				c.setFillAlpha(op2);
-				c.setFillColor('#000000');
+				c.setFillAlpha(Math.abs(op2));
+				c.setFillColor((op2 < 0) ? '#FFFFFF' : '#000000');
 				c.begin();
 				c.moveTo(0, 0);
 				c.lineTo(s, s);
@@ -229,7 +229,7 @@
 	NoteShape.prototype.paintVertexShape = function(c, x, y, w, h)
 	{
 		var s = Math.max(0, Math.min(w, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'size', this.size)))));
-		var op = Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity', this.darkOpacity))));
+		var op = Math.max(-1, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'darkOpacity', this.darkOpacity))));
 		c.translate(x, y);
 		
 		c.begin();
@@ -249,8 +249,8 @@
 	
 			if (op != 0)
 			{
-				c.setFillAlpha(op);
-				c.setFillColor('#000000');
+				c.setFillAlpha(Math.abs(op));
+				c.setFillColor((op < 0) ? '#FFFFFF' : '#000000');
 				c.begin();
 				c.moveTo(w - s, 0);
 				c.lineTo(w - s, s);
