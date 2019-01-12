@@ -2563,7 +2563,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	// TODO: Add translations and toggle state
 	if (graph.cellEditor.isContentEditing())
 	{
-		var strike = this.editorUi.toolbar.addButton('geSprite-removeformat', mxResources.get('removeFormat'),
+		var strike = this.editorUi.toolbar.addButton('geSprite-removeformat', null,
 			function()
 			{
 				document.execCommand('strikeThrough', false, null);
@@ -2645,7 +2645,7 @@ TextFormatPanel.prototype.addFont = function(container)
 				{
 					document.execCommand('indent', false, null);
 				}, tmp),
-			this.editorUi.toolbar.addButton('geSprite-removeformat', mxResources.get('html'),
+			this.editorUi.toolbar.addButton('geSprite-removeformat', mxResources.get('removeFormat'),
 				function()
 				{
 					document.execCommand('removeformat', false, null);
