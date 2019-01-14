@@ -2003,6 +2003,21 @@ mxGraph.prototype.updateSelection = function()
 		{
 			removed.push(cells[i]);
 		}
+		else
+		{
+			var par = this.model.getParent(cells[i]);
+			
+			while (par != null && par != this.view.currentRoot)
+			{
+				if (this.isCellCollapsed(par) || !this.isCellVisible(par))
+				{
+					removed.push(cells[i]);
+					break;
+				}
+				
+				par = this.model.getParent(par);
+			}
+		}
 	}
 	
 	this.removeSelectionCells(removed);
