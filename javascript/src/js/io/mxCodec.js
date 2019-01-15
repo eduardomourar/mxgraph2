@@ -556,7 +556,14 @@ mxCodec.prototype.insertIntoGraph = function(cell)
 	
 	if (parent != null)
 	{
-		parent.insert(cell);
+		if (parent == cell)
+		{
+			throw new Error('Self Reference ' + parent.id);
+		}
+		else
+		{
+			parent.insert(cell);
+		}
 	}
 
 	if (source != null)
