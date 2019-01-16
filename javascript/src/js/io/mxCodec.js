@@ -503,35 +503,45 @@ mxCodec.prototype.decodeCell = function(node, restoreStructures)
 	
 	if (node != null && node.nodeType == mxConstants.NODETYPE_ELEMENT)
 	{
-		// Tries to find a codec for the given node name. If that does
-		// not return a codec then the node is the user object (an XML node
-		// that contains the mxCell, aka inversion).
-		var decoder = mxCodecRegistry.getCodec(node.nodeName);
+		var id = node.getAttribute('id');
+		cell = (id != null) ? this.objects[id] : null;
 		
-		// Tries to find the codec for the cell inside the user object.
-		// This assumes all node names inside the user object are either
-		// not registered or they correspond to a class for cells.
-		if (!this.isCellCodec(decoder))
+		if (cell != null && restoreStructures)
 		{
-			var child = node.firstChild;
+			throw new Error(cell.id + ': Duplicate');
+		}
+		else
+		{
+			// Tries to find a codec for the given node name. If that does
+			// not return a codec then the node is the user object (an XML node
+			// that contains the mxCell, aka inversion).
+			var decoder = mxCodecRegistry.getCodec(node.nodeName);
 			
-			while (child != null && !this.isCellCodec(decoder))
+			// Tries to find the codec for the cell inside the user object.
+			// This assumes all node names inside the user object are either
+			// not registered or they correspond to a class for cells.
+			if (!this.isCellCodec(decoder))
 			{
-				decoder = mxCodecRegistry.getCodec(child.nodeName);
-				child = child.nextSibling;
+				var child = node.firstChild;
+				
+				while (child != null && !this.isCellCodec(decoder))
+				{
+					decoder = mxCodecRegistry.getCodec(child.nodeName);
+					child = child.nextSibling;
+				}
 			}
-		}
-		
-		if (!this.isCellCodec(decoder))
-		{
-			decoder = mxCodecRegistry.getCodec(mxCell);
-		}
-
-		cell = decoder.decode(this, node);
-		
-		if (restoreStructures)
-		{
-			this.insertIntoGraph(cell);
+			
+			if (!this.isCellCodec(decoder))
+			{
+				decoder = mxCodecRegistry.getCodec(mxCell);
+			}
+			
+			cell = decoder.decode(this, node);
+			
+			if (restoreStructures)
+			{
+				this.insertIntoGraph(cell);
+			}
 		}
 	}
 	
@@ -558,7 +568,7 @@ mxCodec.prototype.insertIntoGraph = function(cell)
 	{
 		if (parent == cell)
 		{
-			throw new Error('Self Reference ' + parent.id);
+			throw new Error(parent.id + ': Self Reference');
 		}
 		else
 		{

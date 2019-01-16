@@ -1,4 +1,4 @@
-- Handles self references in mxCodec
+- Handles self references and duplicates in mxCodec
 - Make navigation steps significant in undo history
 - Fixes terminal point after disconnect with navigation
 - Adds invisible connected edges in mxGraph.removeCells
