@@ -234,6 +234,22 @@ mxCodec.prototype.lookup = function(id)
  */
 mxCodec.prototype.getElementById = function(id)
 {
+	this.updateElements();
+	
+	return this.elements[id];
+};
+
+/**
+ * Function: updateElements
+ *
+ * Returns the element with the given ID from <document>.
+ *
+ * Parameters:
+ *
+ * id - String that contains the ID.
+ */
+mxCodec.prototype.updateElements = function()
+{
 	if (this.elements == null)
 	{
 		this.elements = new Object();
@@ -243,8 +259,6 @@ mxCodec.prototype.getElementById = function(id)
 			this.addElement(this.document.documentElement);
 		}
 	}
-	
-	return this.elements[id];
 };
 
 /**
@@ -258,9 +272,16 @@ mxCodec.prototype.addElement = function(node)
 	{
 		var id = node.getAttribute('id');
 		
-		if (id != null && this.elements[id] == null)
+		if (id != null)
 		{
-			this.elements[id] = node;
+			if (this.elements[id] == null)
+			{
+				this.elements[id] = node;
+			}
+			else if (this.elements[id] != node)
+			{
+				throw new Error(id + ': Duplicate ID');
+			}
 		}
 	}
 	
@@ -396,6 +417,7 @@ mxCodec.prototype.encode = function(obj)
  */
 mxCodec.prototype.decode = function(node, into)
 {
+	this.updateElements();
 	var obj = null;
 	
 	if (node != null && node.nodeType == mxConstants.NODETYPE_ELEMENT)
@@ -503,45 +525,35 @@ mxCodec.prototype.decodeCell = function(node, restoreStructures)
 	
 	if (node != null && node.nodeType == mxConstants.NODETYPE_ELEMENT)
 	{
-		var id = node.getAttribute('id');
-		cell = (id != null) ? this.objects[id] : null;
+		// Tries to find a codec for the given node name. If that does
+		// not return a codec then the node is the user object (an XML node
+		// that contains the mxCell, aka inversion).
+		var decoder = mxCodecRegistry.getCodec(node.nodeName);
 		
-		if (cell != null && restoreStructures)
+		// Tries to find the codec for the cell inside the user object.
+		// This assumes all node names inside the user object are either
+		// not registered or they correspond to a class for cells.
+		if (!this.isCellCodec(decoder))
 		{
-			throw new Error(cell.id + ': Duplicate');
+			var child = node.firstChild;
+			
+			while (child != null && !this.isCellCodec(decoder))
+			{
+				decoder = mxCodecRegistry.getCodec(child.nodeName);
+				child = child.nextSibling;
+			}
 		}
-		else
+		
+		if (!this.isCellCodec(decoder))
 		{
-			// Tries to find a codec for the given node name. If that does
-			// not return a codec then the node is the user object (an XML node
-			// that contains the mxCell, aka inversion).
-			var decoder = mxCodecRegistry.getCodec(node.nodeName);
-			
-			// Tries to find the codec for the cell inside the user object.
-			// This assumes all node names inside the user object are either
-			// not registered or they correspond to a class for cells.
-			if (!this.isCellCodec(decoder))
-			{
-				var child = node.firstChild;
-				
-				while (child != null && !this.isCellCodec(decoder))
-				{
-					decoder = mxCodecRegistry.getCodec(child.nodeName);
-					child = child.nextSibling;
-				}
-			}
-			
-			if (!this.isCellCodec(decoder))
-			{
-				decoder = mxCodecRegistry.getCodec(mxCell);
-			}
-			
-			cell = decoder.decode(this, node);
-			
-			if (restoreStructures)
-			{
-				this.insertIntoGraph(cell);
-			}
+			decoder = mxCodecRegistry.getCodec(mxCell);
+		}
+
+		cell = decoder.decode(this, node);
+		
+		if (restoreStructures)
+		{
+			this.insertIntoGraph(cell);
 		}
 	}
 	
