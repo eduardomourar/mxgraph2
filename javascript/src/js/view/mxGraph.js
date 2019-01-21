@@ -4899,7 +4899,7 @@ mxGraph.prototype.cellsRemoved = function(cells)
 							geo = geo.clone();
 							var state = this.view.getState(edge);
 
-							if (state != null)
+							if (state != null && state.absolutePoints != null)
 							{
 								var pts = state.absolutePoints;
 								var n = (source) ? 0 : pts.length - 1;
