@@ -426,51 +426,55 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 		{
 			// Setup the dnd listeners
 			var dlg = table.parentNode;
-			var graph = editorUi.editor.graph;
-			var dropElt = null;
-				
-			mxEvent.addListener(dlg, 'dragleave', function(evt)
-			{
-				if (dropElt != null)
-			    {
-					dropElt.style.backgroundColor = '';
-			    	dropElt = null;
-			    }
-			    
-				evt.stopPropagation();
-				evt.preventDefault();
-			});
 			
-			mxEvent.addListener(dlg, 'dragover', mxUtils.bind(this, function(evt)
+			if (dlg != null)
 			{
-				// IE 10 does not implement pointer-events so it can't have a drop highlight
-				if (dropElt == null && (!mxClient.IS_IE || document.documentMode > 10))
-				{
-					dropElt = nameInput;
-					dropElt.style.backgroundColor = '#ebf2f9';
-				}
-				
-				evt.stopPropagation();
-				evt.preventDefault();
-			}));
+				var graph = editorUi.editor.graph;
+				var dropElt = null;
 					
-			mxEvent.addListener(dlg, 'drop', mxUtils.bind(this, function(evt)
-			{
-			    if (dropElt != null)
-			    {
-					dropElt.style.backgroundColor = '';
-			    	dropElt = null;
-			    }
-
-			    if (mxUtils.indexOf(evt.dataTransfer.types, 'text/uri-list') >= 0)
-			    {
-			    	nameInput.value = decodeURIComponent(evt.dataTransfer.getData('text/uri-list'));
-			    	genericBtn.click();
-			    }
-
-			    evt.stopPropagation();
-			    evt.preventDefault();
-			}));
+				mxEvent.addListener(dlg, 'dragleave', function(evt)
+				{
+					if (dropElt != null)
+				    {
+						dropElt.style.backgroundColor = '';
+				    	dropElt = null;
+				    }
+				    
+					evt.stopPropagation();
+					evt.preventDefault();
+				});
+				
+				mxEvent.addListener(dlg, 'dragover', mxUtils.bind(this, function(evt)
+				{
+					// IE 10 does not implement pointer-events so it can't have a drop highlight
+					if (dropElt == null && (!mxClient.IS_IE || document.documentMode > 10))
+					{
+						dropElt = nameInput;
+						dropElt.style.backgroundColor = '#ebf2f9';
+					}
+					
+					evt.stopPropagation();
+					evt.preventDefault();
+				}));
+						
+				mxEvent.addListener(dlg, 'drop', mxUtils.bind(this, function(evt)
+				{
+				    if (dropElt != null)
+				    {
+						dropElt.style.backgroundColor = '';
+				    	dropElt = null;
+				    }
+	
+				    if (mxUtils.indexOf(evt.dataTransfer.types, 'text/uri-list') >= 0)
+				    {
+				    	nameInput.value = decodeURIComponent(evt.dataTransfer.getData('text/uri-list'));
+				    	genericBtn.click();
+				    }
+	
+				    evt.stopPropagation();
+				    evt.preventDefault();
+				}));
+			}
 		}
 	};
 
@@ -1330,7 +1334,8 @@ var EditDataDialog = function(ui, cell)
 	var texts = [];
 	var count = 0;
 
-	var id = EditDataDialog.getDisplayIdForCell(ui, cell);
+	var id = (EditDataDialog.getDisplayIdForCell != null) ?
+		EditDataDialog.getDisplayIdForCell(ui, cell) : null;
 	
 	// FIXME: Fix remove button for quirks mode
 	var addRemoveButton = function(text, name)
