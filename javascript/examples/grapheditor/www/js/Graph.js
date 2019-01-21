@@ -5975,7 +5975,7 @@ if (typeof mxVertexHandler != 'undefined')
 		Graph.prototype.insertImage = function(newValue, w, h)
 		{
 			// To find the new image, we create a list of all existing links first
-			if (newValue != null)
+			if (newValue != null && this.cellEditor.textarea != null)
 			{
 				var tmp = this.cellEditor.textarea.getElementsByTagName('img');
 				var oldImages = [];
@@ -6021,46 +6021,49 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 			else if (mxClient.IS_FF)
 			{
-				// Workaround for Firefox that adds a new link and removes
-				// the href from the inner link if its parent is a span is
-				// to remove all inner links inside the new outer link
-				var tmp = this.cellEditor.textarea.getElementsByTagName('a');
-				var oldLinks = [];
-				
-				for (var i = 0; i < tmp.length; i++)
+				if (this.cellEditor.textarea != null)
 				{
-					oldLinks.push(tmp[i]);
-				}
-				
-				document.execCommand('createlink', false, mxUtils.trim(value));
-				
-				// Finds the new link element
-				var newLinks = this.cellEditor.textarea.getElementsByTagName('a');
-				
-				if (newLinks.length == oldLinks.length + 1)
-				{
-					// Inverse order in favor of appended links
-					for (var i = newLinks.length - 1; i >= 0; i--)
+					// Workaround for Firefox that adds a new link and removes
+					// the href from the inner link if its parent is a span is
+					// to remove all inner links inside the new outer link
+					var tmp = this.cellEditor.textarea.getElementsByTagName('a');
+					var oldLinks = [];
+					
+					for (var i = 0; i < tmp.length; i++)
 					{
-						if (newLinks[i] != oldLinks[i - 1])
+						oldLinks.push(tmp[i]);
+					}
+					
+					document.execCommand('createlink', false, mxUtils.trim(value));
+					
+					// Finds the new link element
+					var newLinks = this.cellEditor.textarea.getElementsByTagName('a');
+					
+					if (newLinks.length == oldLinks.length + 1)
+					{
+						// Inverse order in favor of appended links
+						for (var i = newLinks.length - 1; i >= 0; i--)
 						{
-							// Removes all inner links from the new link and
-							// moves the children to the inner link parent
-							var tmp = newLinks[i].getElementsByTagName('a');
-							
-							while (tmp.length > 0)
+							if (newLinks[i] != oldLinks[i - 1])
 							{
-								var parent = tmp[0].parentNode;
+								// Removes all inner links from the new link and
+								// moves the children to the inner link parent
+								var tmp = newLinks[i].getElementsByTagName('a');
 								
-								while (tmp[0].firstChild != null)
+								while (tmp.length > 0)
 								{
-									parent.insertBefore(tmp[0].firstChild, tmp[0]);
+									var parent = tmp[0].parentNode;
+									
+									while (tmp[0].firstChild != null)
+									{
+										parent.insertBefore(tmp[0].firstChild, tmp[0]);
+									}
+									
+									parent.removeChild(tmp[0]);
 								}
 								
-								parent.removeChild(tmp[0]);
+								break;
 							}
-							
-							break;
 						}
 					}
 				}
