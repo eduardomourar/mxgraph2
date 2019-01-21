@@ -1999,7 +1999,7 @@ mxGraph.prototype.updateSelection = function()
 	
 	for (var i = 0; i < cells.length; i++)
 	{
-		if (!this.model.contains(cells[i]))
+		if (!this.model.contains(cells[i]) || !this.isCellVisible(cells[i]))
 		{
 			removed.push(cells[i]);
 		}
