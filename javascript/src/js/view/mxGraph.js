@@ -4370,46 +4370,49 @@ mxGraph.prototype.cloneCells = function(cells, allowInvalidEdges, mapping, keepP
 							{
 								var pts = state.absolutePoints;
 								
-								// Checks if the source is cloned or sets the terminal point
-								var src = this.model.getTerminal(cells[i], true);
-								
-								while (src != null && !dict.get(src))
+								if (pts != null)
 								{
-									src = this.model.getParent(src);
-								}
-								
-								if (src == null)
-								{
-									g.setTerminalPoint(
-										new mxPoint(pts[0].x / scale - trans.x,
-											pts[0].y / scale - trans.y), true);
-								}
-								
-								// Checks if the target is cloned or sets the terminal point
-								var trg = this.model.getTerminal(cells[i], false);
-								
-								while (trg != null && !dict.get(trg))
-								{
-									trg = this.model.getParent(trg);
-								}
-								
-								if (trg == null)
-								{
-									var n = pts.length - 1;
-									g.setTerminalPoint(
-										new mxPoint(pts[n].x / scale - trans.x,
-											pts[n].y / scale - trans.y), false);
-								}
-								
-								// Translates the control points
-								var points = g.points;
-								
-								if (points != null)
-								{
-									for (var j = 0; j < points.length; j++)
+									// Checks if the source is cloned or sets the terminal point
+									var src = this.model.getTerminal(cells[i], true);
+									
+									while (src != null && !dict.get(src))
 									{
-										points[j].x += dx;
-										points[j].y += dy;
+										src = this.model.getParent(src);
+									}
+									
+									if (src == null)
+									{
+										g.setTerminalPoint(
+											new mxPoint(pts[0].x / scale - trans.x,
+												pts[0].y / scale - trans.y), true);
+									}
+									
+									// Checks if the target is cloned or sets the terminal point
+									var trg = this.model.getTerminal(cells[i], false);
+									
+									while (trg != null && !dict.get(trg))
+									{
+										trg = this.model.getParent(trg);
+									}
+									
+									if (trg == null)
+									{
+										var n = pts.length - 1;
+										g.setTerminalPoint(
+											new mxPoint(pts[n].x / scale - trans.x,
+												pts[n].y / scale - trans.y), false);
+									}
+									
+									// Translates the control points
+									var points = g.points;
+									
+									if (points != null)
+									{
+										for (var j = 0; j < points.length; j++)
+										{
+											points[j].x += dx;
+											points[j].y += dy;
+										}
 									}
 								}
 							}
