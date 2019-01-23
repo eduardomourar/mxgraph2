@@ -449,7 +449,7 @@ Sidebar.prototype.addEntry = function(tags, fn)
 
 		var doAddEntry = mxUtils.bind(this, function(tag)
 		{
-			if (tag.length > 1)
+			if (tag != null && tag.length > 1)
 			{
 				var entry = this.taglist[tag];
 				
