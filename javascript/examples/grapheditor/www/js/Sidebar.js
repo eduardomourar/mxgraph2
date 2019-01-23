@@ -755,9 +755,13 @@ Sidebar.prototype.addSearchPalette = function(expand)
 							results = (results != null) ? results : [];
 							active = false;
 							page++;
-							center.parentNode.removeChild(center);
 							this.insertSearchHint(div, searchTerm, count, page, results, len, more, terms);
 
+							if (center.parentNode != null)
+							{
+								center.parentNode.removeChild(center);
+							}
+							
 							for (var i = 0; i < results.length; i++)
 							{
 								var elt = results[i]();
