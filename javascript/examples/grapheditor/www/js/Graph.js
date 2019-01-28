@@ -6022,13 +6022,13 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.insertLink = function(value)
 		{
-			if (value.length == 0)
+			if (this.cellEditor.textarea != null)
 			{
-				document.execCommand('unlink', false);
-			}
-			else if (mxClient.IS_FF)
-			{
-				if (this.cellEditor.textarea != null)
+				if (value.length == 0)
+				{
+					document.execCommand('unlink', false);
+				}
+				else if (mxClient.IS_FF)
 				{
 					// Workaround for Firefox that adds a new link and removes
 					// the href from the inner link if its parent is a span is
@@ -6074,11 +6074,11 @@ if (typeof mxVertexHandler != 'undefined')
 						}
 					}
 				}
-			}
-			else
-			{
-				// LATER: Fix inserting link/image in IE8/quirks after focus lost
-				document.execCommand('createlink', false, mxUtils.trim(value));
+				else
+				{
+					// LATER: Fix inserting link/image in IE8/quirks after focus lost
+					document.execCommand('createlink', false, mxUtils.trim(value));
+				}
 			}
 		};
 		
