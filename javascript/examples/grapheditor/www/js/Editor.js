@@ -743,9 +743,9 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll, transpa
 	var h0 = h;
 	
 	// clientHeight check is attempted fix for print dialog offset in viewer lightbox
-	var dh = (document.documentElement.clientHeight > 0) ? document.documentElement.clientHeight :
-		Math.max(document.body.clientHeight || 0, document.documentElement.clientHeight);
-	var left = Math.max(1, Math.round((document.body.clientWidth - w - 64) / 2));
+	var ds = mxUtils.getDocumentSize();
+	var dh = ds.height;
+	var left = Math.max(1, Math.round((ds.width - w - 64) / 2));
 	var top = Math.max(1, Math.round((dh - h - editorUi.footerHeight) / 3));
 	
 	// Keeps window size inside available space
@@ -849,10 +849,11 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll, transpa
 			}
 		}
 		
-		dh = Math.max(document.body.clientHeight, document.documentElement.clientHeight);
+		var ds = mxUtils.getDocumentSize();
+		dh = ds.height;
 		this.bg.style.height = dh + 'px';
 		
-		left = Math.max(1, Math.round((document.body.clientWidth - w - 64) / 2));
+		left = Math.max(1, Math.round((ds.width - w - 64) / 2));
 		top = Math.max(1, Math.round((dh - h - editorUi.footerHeight) / 3));
 		w = Math.min(w0, document.body.scrollWidth - 64);
 		h = Math.min(h0, dh - 64);

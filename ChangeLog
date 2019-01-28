@@ -1,3 +1,4 @@
+- Adds mxUtils.getDocumentSize
 - Handles self references and duplicates in mxCodec
 - Make navigation steps significant in undo history
 - Fixes terminal point after disconnect with navigation
