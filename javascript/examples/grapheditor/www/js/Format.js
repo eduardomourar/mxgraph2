@@ -2854,7 +2854,7 @@ TextFormatPanel.prototype.addFont = function(container)
 				container = container.parentNode;
 			}
 			
-			if (container.nodeType == mxConstants.NODETYPE_ELEMENT)
+			if (container != null && container.nodeType == mxConstants.NODETYPE_ELEMENT)
 			{
 				var elts = container.getElementsByTagName('*');
 				updateSize(container);
