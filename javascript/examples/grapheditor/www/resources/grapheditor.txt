@@ -282,6 +282,7 @@ sourceSpacing=Source Spacing
 south=South
 spacing=Spacing
 straight=Straight
+strikethrough=Strikethrough
 strokeColor=Line Color
 style=Style
 subscript=Subscript

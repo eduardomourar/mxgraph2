@@ -282,6 +282,7 @@ sourceSpacing=Anfangsabstand
 south=Süd
 spacing=Abstand
 straight=Gerade
+strikethrough=Durchgestrichen
 strokeColor=Linienfarbe
 style=Style
 subscript=Tiefgestellt
