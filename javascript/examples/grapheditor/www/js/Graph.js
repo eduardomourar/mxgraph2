@@ -115,7 +115,7 @@ Graph = function(container, model, renderHint, stylesheet, themes)
 		var state = this.view.getState(cell);
 		var style = (state != null) ? state.style : this.getCellStyle(cell);
 		
-		return style['html'] == '1' || style[mxConstants.STYLE_WHITE_SPACE] == 'wrap';
+		return (style != null) ? (style['html'] == '1' || style[mxConstants.STYLE_WHITE_SPACE] == 'wrap') : false;
 	};
 	
 	// Implements a listener for hover and click handling on edges
@@ -2694,7 +2694,7 @@ Graph.prototype.isCellConnectable = function(cell)
 	var state = this.view.getState(cell);
 	var style = (state != null) ? state.style : this.getCellStyle(cell);
 	
-	return (style['connectable'] != null) ? style['connectable'] != '0' :
+	return (style != null && style['connectable'] != null) ? style['connectable'] != '0' :
 		mxGraph.prototype.isCellConnectable.apply(this, arguments);
 };
 
@@ -3757,24 +3757,36 @@ HoverIcons.prototype.getState = function(state)
 	{
 		var cell = state.cell;
 		
-		// Uses connectable parent vertex if child is not connectable
-		if (this.graph.getModel().isVertex(cell) && !this.graph.isCellConnectable(cell))
+		if (!this.graph.getModel().contains(cell))
 		{
-			var parent = this.graph.getModel().getParent(cell);
-			
-			if (this.graph.getModel().isVertex(parent) && this.graph.isCellConnectable(parent))
+			state = null;
+		}
+		else
+		{
+			// Uses connectable parent vertex if child is not connectable
+			if (this.graph.getModel().isVertex(cell) && !this.graph.isCellConnectable(cell))
 			{
-				cell = parent;
+				var parent = this.graph.getModel().getParent(cell);
+				
+				if (this.graph.getModel().isVertex(parent) && this.graph.isCellConnectable(parent))
+				{
+					cell = parent;
+				}
+			}
+			
+			// Ignores locked cells and edges
+			if (this.graph.isCellLocked(cell) || this.graph.model.isEdge(cell))
+			{
+				cell = null;
+			}
+			
+			state = this.graph.view.getState(cell);
+			
+			if (state != null && state.style == null)
+			{
+				state = null;
 			}
 		}
-		
-		// Ignores locked cells and edges
-		if (this.graph.isCellLocked(cell) || this.graph.model.isEdge(cell))
-		{
-			cell = null;
-		}
-		
-		state = this.graph.view.getState(cell);
 	}
 	
 	return state;
@@ -3909,7 +3921,7 @@ HoverIcons.prototype.setCurrentState = function(state)
 		
 		// Adds to the list of edges that may intersect with later edges
 		if (state != null && this.graph.model.isEdge(state.cell) &&
-			state.style[mxConstants.STYLE_CURVED] != 1)
+			state.style != null && state.style[mxConstants.STYLE_CURVED] != 1)
 		{
 			// LATER: Reuse jumps for valid edges
 			this.validEdges.push(state);
