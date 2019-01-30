@@ -6310,7 +6310,7 @@ if (typeof mxVertexHandler != 'undefined')
 				// Prepares SVG document that holds the output
 				var svgDoc = mxUtils.createXmlDocument();
 				var root = (svgDoc.createElementNS != null) ?
-			    		svgDoc.createElementNS(mxConstants.NS_SVG, 'svg') : svgDoc.createElement('svg');
+			    	svgDoc.createElementNS(mxConstants.NS_SVG, 'svg') : svgDoc.createElement('svg');
 			    
 				if (background != null)
 				{
@@ -6347,7 +6347,11 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			    // Renders graph. Offset will be multiplied with state's scale when painting state.
 				// TextOffset only seems to affect FF output but used everywhere for consistency.
-				var svgCanvas = this.createSvgCanvas(root);
+				var group = (svgDoc.createElementNS != null) ?
+			    	svgDoc.createElementNS(mxConstants.NS_SVG, 'g') : svgDoc.createElement('g');
+			    root.appendChild(group);
+
+				var svgCanvas = this.createSvgCanvas(group);
 				svgCanvas.foOffset = (crisp) ? -0.5 : 0;
 				svgCanvas.textOffset = (crisp) ? -0.5 : 0;
 				svgCanvas.imageOffset = (crisp) ? -0.5 : 0;
