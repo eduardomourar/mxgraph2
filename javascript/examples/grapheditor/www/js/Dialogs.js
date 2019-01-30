@@ -1976,7 +1976,6 @@ var OutlineWindow = function(editorUi, x, y, w, h)
  */
 var LayersWindow = function(editorUi, x, y, w, h)
 {
-	console.log('dialog.bg', Dialog.backdropColor);
 	var graph = editorUi.editor.graph;
 	
 	var div = document.createElement('div');
