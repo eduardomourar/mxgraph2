@@ -2160,7 +2160,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 	var dx = t.x * s;
 	var dy = t.y * s;
 	
-	if (this.model.isVertex(parentState.cell))
+	if (parentState != null && this.model.isVertex(parentState.cell))
 	{
 		dx = parentState.x;
 		dy = parentState.y;
