@@ -7142,106 +7142,110 @@ if (typeof mxVertexHandler != 'undefined')
 		mxCellEditor.prototype.toggleViewMode = function()
 		{
 			var state = this.graph.view.getState(this.editingCell);
-			var nl2Br = state != null && mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
-			var tmp = this.saveSelection();
 			
-			if (!this.codeViewMode)
+			if (state != null)
 			{
-				// Clears the initial empty label on the first keystroke
-				if (this.clearOnChange && this.textarea.innerHTML == this.getEmptyLabelText())
+				var nl2Br = state != null && mxUtils.getValue(state.style, 'nl2Br', '1') != '0';
+				var tmp = this.saveSelection();
+				
+				if (!this.codeViewMode)
 				{
-					this.clearOnChange = false;
-					this.textarea.innerHTML = '';
-				}
-				
-				// Removes newlines from HTML and converts breaks to newlines
-				// to match the HTML output in plain text
-				var content = mxUtils.htmlEntities(this.textarea.innerHTML);
-	
-			    // Workaround for trailing line breaks being ignored in the editor
-				if (!mxClient.IS_QUIRKS && document.documentMode != 8)
-				{
-					content = mxUtils.replaceTrailingNewlines(content, '<div><br></div>');
-				}
-				
-			    content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '').replace(/&lt;br\s*.?&gt;/g, '<br>') : content, true);
-				this.textarea.className = 'mxCellEditor mxPlainTextEditor';
-				
-				var size = mxConstants.DEFAULT_FONTSIZE;
-				
-				this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-				this.textarea.style.fontSize = Math.round(size) + 'px';
-				this.textarea.style.textDecoration = '';
-				this.textarea.style.fontWeight = 'normal';
-				this.textarea.style.fontStyle = '';
-				this.textarea.style.fontFamily = mxConstants.DEFAULT_FONTFAMILY;
-				this.textarea.style.textAlign = 'left';
-				
-				// Adds padding to make cursor visible with borders
-				this.textarea.style.padding = '2px';
-				
-				if (this.textarea.innerHTML != content)
-				{
-					this.textarea.innerHTML = content;
-				}
-	
-				this.codeViewMode = true;
-			}
-			else
-			{
-				var content = mxUtils.extractTextWithWhitespace(this.textarea.childNodes);
-			    
-				// Strips trailing line break
-			    if (content.length > 0 && content.charAt(content.length - 1) == '\n')
-			    {
-			    	content = content.substring(0, content.length - 1);
-			    }
-			    
-				content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '<br/>') : content, true)
-				this.textarea.className = 'mxCellEditor geContentEditable';
-				
-				var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
-				var family = mxUtils.getValue(state.style, mxConstants.STYLE_FONTFAMILY, mxConstants.DEFAULT_FONTFAMILY);
-				var align = mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_LEFT);
-				var bold = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
-						mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD;
-				var italic = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
-						mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC;
-				var uline = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
-						mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE;
-				
-				this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
-				this.textarea.style.fontSize = Math.round(size) + 'px';
-				this.textarea.style.textDecoration = (uline) ? 'underline' : '';
-				this.textarea.style.fontWeight = (bold) ? 'bold' : 'normal';
-				this.textarea.style.fontStyle = (italic) ? 'italic' : '';
-				this.textarea.style.fontFamily = family;
-				this.textarea.style.textAlign = align;
-				this.textarea.style.padding = '0px';
-				
-				if (this.textarea.innerHTML != content)
-				{
-					this.textarea.innerHTML = content;
-					
-					if (this.textarea.innerHTML.length == 0)
+					// Clears the initial empty label on the first keystroke
+					if (this.clearOnChange && this.textarea.innerHTML == this.getEmptyLabelText())
 					{
-						this.textarea.innerHTML = this.getEmptyLabelText();
-						this.clearOnChange = this.textarea.innerHTML.length > 0;
+						this.clearOnChange = false;
+						this.textarea.innerHTML = '';
 					}
-				}
-	
-				this.codeViewMode = false;
-			}
-			
-			this.textarea.focus();
+					
+					// Removes newlines from HTML and converts breaks to newlines
+					// to match the HTML output in plain text
+					var content = mxUtils.htmlEntities(this.textarea.innerHTML);
 		
-			if (this.switchSelectionState != null)
-			{
-				this.restoreSelection(this.switchSelectionState);
-			}
+				    // Workaround for trailing line breaks being ignored in the editor
+					if (!mxClient.IS_QUIRKS && document.documentMode != 8)
+					{
+						content = mxUtils.replaceTrailingNewlines(content, '<div><br></div>');
+					}
+					
+				    content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '').replace(/&lt;br\s*.?&gt;/g, '<br>') : content, true);
+					this.textarea.className = 'mxCellEditor mxPlainTextEditor';
+					
+					var size = mxConstants.DEFAULT_FONTSIZE;
+					
+					this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
+					this.textarea.style.fontSize = Math.round(size) + 'px';
+					this.textarea.style.textDecoration = '';
+					this.textarea.style.fontWeight = 'normal';
+					this.textarea.style.fontStyle = '';
+					this.textarea.style.fontFamily = mxConstants.DEFAULT_FONTFAMILY;
+					this.textarea.style.textAlign = 'left';
+					
+					// Adds padding to make cursor visible with borders
+					this.textarea.style.padding = '2px';
+					
+					if (this.textarea.innerHTML != content)
+					{
+						this.textarea.innerHTML = content;
+					}
+		
+					this.codeViewMode = true;
+				}
+				else
+				{
+					var content = mxUtils.extractTextWithWhitespace(this.textarea.childNodes);
+				    
+					// Strips trailing line break
+				    if (content.length > 0 && content.charAt(content.length - 1) == '\n')
+				    {
+				    	content = content.substring(0, content.length - 1);
+				    }
+				    
+					content = this.graph.sanitizeHtml((nl2Br) ? content.replace(/\n/g, '<br/>') : content, true)
+					this.textarea.className = 'mxCellEditor geContentEditable';
+					
+					var size = mxUtils.getValue(state.style, mxConstants.STYLE_FONTSIZE, mxConstants.DEFAULT_FONTSIZE);
+					var family = mxUtils.getValue(state.style, mxConstants.STYLE_FONTFAMILY, mxConstants.DEFAULT_FONTFAMILY);
+					var align = mxUtils.getValue(state.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_LEFT);
+					var bold = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
+							mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD;
+					var italic = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
+							mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC;
+					var uline = (mxUtils.getValue(state.style, mxConstants.STYLE_FONTSTYLE, 0) &
+							mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE;
+					
+					this.textarea.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? Math.round(size * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
+					this.textarea.style.fontSize = Math.round(size) + 'px';
+					this.textarea.style.textDecoration = (uline) ? 'underline' : '';
+					this.textarea.style.fontWeight = (bold) ? 'bold' : 'normal';
+					this.textarea.style.fontStyle = (italic) ? 'italic' : '';
+					this.textarea.style.fontFamily = family;
+					this.textarea.style.textAlign = align;
+					this.textarea.style.padding = '0px';
+					
+					if (this.textarea.innerHTML != content)
+					{
+						this.textarea.innerHTML = content;
+						
+						if (this.textarea.innerHTML.length == 0)
+						{
+							this.textarea.innerHTML = this.getEmptyLabelText();
+							this.clearOnChange = this.textarea.innerHTML.length > 0;
+						}
+					}
+		
+					this.codeViewMode = false;
+				}
+				
+				this.textarea.focus();
 			
-			this.switchSelectionState = tmp;
-			this.resize();
+				if (this.switchSelectionState != null)
+				{
+					this.restoreSelection(this.switchSelectionState);
+				}
+				
+				this.switchSelectionState = tmp;
+				this.resize();
+			}
 		};
 		
 		var mxCellEditorResize = mxCellEditor.prototype.resize;
