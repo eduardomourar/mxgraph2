@@ -276,6 +276,11 @@ Editor.prototype.appName = document.title;
 Editor.prototype.editBlankUrl = window.location.protocol + '//' + window.location.host + '/';
 
 /**
+ * Default value for the graph container overflow style.
+ */
+Editor.prototype.defaultGraphOverflow = 'hidden';
+
+/**
  * Initializes the environment.
  */
 Editor.prototype.init = function() { };
@@ -575,7 +580,7 @@ Editor.prototype.updateGraphComponents = function()
 	if (graph.container != null)
 	{
 		graph.view.validateBackground();
-		graph.container.style.overflow = (graph.scrollbars) ? 'auto' : 'hidden';
+		graph.container.style.overflow = (graph.scrollbars) ? 'auto' : this.defaultGraphOverflow;
 		
 		this.fireEvent(new mxEventObject('updateGraphComponents'));
 	}
