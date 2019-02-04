@@ -2117,11 +2117,14 @@ EditorUi.prototype.addChromelessClickHandler = function()
  */
 EditorUi.prototype.toggleFormatPanel = function(forceHide)
 {
-	this.formatWidth = (forceHide || this.formatWidth > 0) ? 0 : 240;
-	this.formatContainer.style.display = (forceHide || this.formatWidth > 0) ? '' : 'none';
-	this.refresh();
-	this.format.refresh();
-	this.fireEvent(new mxEventObject('formatWidthChanged'));
+	if (this.format != null)
+	{
+		this.formatWidth = (forceHide || this.formatWidth > 0) ? 0 : 240;
+		this.formatContainer.style.display = (forceHide || this.formatWidth > 0) ? '' : 'none';
+		this.refresh();
+		this.format.refresh();
+		this.fireEvent(new mxEventObject('formatWidthChanged'));
+	}
 };
 
 /**
