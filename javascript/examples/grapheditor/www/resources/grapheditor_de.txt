@@ -32,6 +32,7 @@ arrows=Pfeile
 automatic=Automatisch
 autosave=Automatisch Speichern
 autosize=Grösse anpassen
+back=Zurück
 background=Hintergrund
 backgroundColor=Hintergrundfarbe
 backgroundImage=Hintergrundbild
