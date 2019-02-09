@@ -1798,6 +1798,23 @@ EditorUi.prototype.initCanvas = function()
 					mxEvent.consume(evt);
 				}), Editor.refreshLargeImage, mxResources.get('refresh', null, 'Refresh'));
 			}
+
+			if (toolbarConfig.fullscreenBtn != null && window.self !== window.top)
+			{
+				addButton(mxUtils.bind(this, function(evt)
+				{
+					if (toolbarConfig.fullscreenBtn.url)
+					{
+						graph.openLink(toolbarConfig.fullscreenBtn.url);
+					}
+					else
+					{
+						graph.openLink(window.location.href);
+					}
+					
+					mxEvent.consume(evt);
+				}), Editor.fullscreenLargeImage, mxResources.get('openInNewWindow', null, 'Open in New Window'));
+			}
 			
 			// Initial state invisible
 			this.chromelessToolbar.style.display = 'none';
