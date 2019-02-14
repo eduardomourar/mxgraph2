@@ -365,7 +365,7 @@ var AboutDialog = function(editorUi)
 /**
  * Constructs a new filename dialog.
  */
-var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content, helpLink, closeOnBtn, cancelFn)
+var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content, helpLink, closeOnBtn, cancelFn, typeLabel, extensions)
 {
 	closeOnBtn = (closeOnBtn != null) ? closeOnBtn : true;
 	var row, td;
@@ -485,6 +485,29 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	if (label != null || content == null)
 	{
 		tbody.appendChild(row);
+		
+		if (extensions != null)
+		{
+			nameInput.style.width = '220px';
+			row = document.createElement('tr');
+			
+			td = document.createElement('td');
+			td.style.whiteSpace = 'nowrap';
+			td.style.fontSize = '10pt';
+			td.style.width = '120px';
+			mxUtils.write(td, typeLabel + ':');
+			
+			row.appendChild(td);
+
+			var select = FilenameDialog.createTypeSelect(nameInput, extensions);
+			select.style.width = '220px';
+			
+			td = document.createElement('td');
+			td.appendChild(select);
+			row.appendChild(td);
+			
+			tbody.appendChild(row);
+		}
 	}
 	
 	if (content != null)
@@ -551,6 +574,68 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	table.appendChild(tbody);
 	
 	this.container = table;
+};
+
+/**
+ * 
+ */
+FilenameDialog.createTypeSelect = function(nameInput, extensions)
+{
+	var select = document.createElement('select');
+	select.className = 'geBtn';
+	select.value = '';
+	
+	for (var i = 0; i < extensions.length; i++)
+	{
+		var extOption = document.createElement('option');
+		extOption.setAttribute('value', extensions[i].ext);
+		mxUtils.write(extOption, extensions[i].title);
+		select.appendChild(extOption);
+		
+		if (nameInput.value.substring(nameInput.value.length -
+			extensions[i].ext.length - 1) == '.' + extensions[i].ext)
+		{
+			select.value = extensions[i].ext;
+		}
+	}
+	
+	mxEvent.addListener(select, 'change', function()
+	{
+		var basename = nameInput.value;
+		
+		if (/(\.xml)$/i.test(basename) || /(\.html)$/i.test(basename) ||
+			/(\.svg)$/i.test(basename) || /(\.png)$/i.test(basename) ||
+			/(\.drawio)$/i.test(basename))
+		{
+			basename = basename.substring(0, basename.lastIndexOf('.'));
+		}
+		
+		if (select.value.length > 0)
+		{
+			nameInput.value = basename + '.' + select.value;
+		}
+		else
+		{
+			nameInput.value = basename;
+		}
+	});
+
+	mxEvent.addListener(nameInput, 'blur', function()
+	{
+		select.value = '';
+		
+		for (var i = 0; i < extensions.length; i++)
+		{
+			if (extensions[i].ext.length > 0 &&
+				nameInput.value.substring(nameInput.value.length -
+				extensions[i].ext.length - 1) == '.' + extensions[i].ext)
+			{
+				select.value = extensions[i].ext;
+			}
+		}
+	});
+	
+	return select;
 };
 
 /**
