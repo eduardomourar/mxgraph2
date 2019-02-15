@@ -365,7 +365,7 @@ var AboutDialog = function(editorUi)
 /**
  * Constructs a new filename dialog.
  */
-var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content, helpLink, closeOnBtn, cancelFn, typeLabel, extensions)
+var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content, helpLink, closeOnBtn, cancelFn, hints)
 {
 	closeOnBtn = (closeOnBtn != null) ? closeOnBtn : true;
 	var row, td;
@@ -486,27 +486,9 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	{
 		tbody.appendChild(row);
 		
-		if (extensions != null)
+		if (hints != null)
 		{
-			nameInput.style.width = '220px';
-			row = document.createElement('tr');
-			
-			td = document.createElement('td');
-			td.style.whiteSpace = 'nowrap';
-			td.style.fontSize = '10pt';
-			td.style.width = '120px';
-			mxUtils.write(td, typeLabel + ':');
-			
-			row.appendChild(td);
-
-			var select = FilenameDialog.createTypeSelect(nameInput, extensions);
-			select.style.width = '220px';
-			
-			td = document.createElement('td');
-			td.appendChild(select);
-			row.appendChild(td);
-			
-			tbody.appendChild(row);
+			td.appendChild(FilenameDialog.createTypeHint(editorUi, nameInput, hints));
 		}
 	}
 	
@@ -579,63 +561,56 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 /**
  * 
  */
-FilenameDialog.createTypeSelect = function(nameInput, extensions)
-{
-	var select = document.createElement('select');
-	select.className = 'geBtn';
-	select.value = '';
-	
-	for (var i = 0; i < extensions.length; i++)
-	{
-		var extOption = document.createElement('option');
-		extOption.setAttribute('value', extensions[i].ext);
-		mxUtils.write(extOption, extensions[i].title);
-		select.appendChild(extOption);
-		
-		if (nameInput.value.substring(nameInput.value.length -
-			extensions[i].ext.length - 1) == '.' + extensions[i].ext)
-		{
-			select.value = extensions[i].ext;
-		}
-	}
-	
-	mxEvent.addListener(select, 'change', function()
-	{
-		var basename = nameInput.value;
-		
-		if (/(\.xml)$/i.test(basename) || /(\.html)$/i.test(basename) ||
-			/(\.svg)$/i.test(basename) || /(\.png)$/i.test(basename) ||
-			/(\.drawio)$/i.test(basename))
-		{
-			basename = basename.substring(0, basename.lastIndexOf('.'));
-		}
-		
-		if (select.value.length > 0)
-		{
-			nameInput.value = basename + '.' + select.value;
-		}
-		else
-		{
-			nameInput.value = basename;
-		}
-	});
+FilenameDialog.filenameHelpLink = null;
 
-	mxEvent.addListener(nameInput, 'blur', function()
+/**
+ * 
+ */
+FilenameDialog.createTypeHint = function(ui, nameInput, hints)
+{
+	var hint = document.createElement('img');
+	hint.style.cssText = 'vertical-align:top;height:16px;width:16px;margin-left:4px;background-repeat:no-repeat;background-position:center bottom;cursor:pointer;';
+	mxUtils.setOpacity(hint, 70);
+	
+	var nameChanged = function()
 	{
-		select.value = '';
+		hint.setAttribute('src', Editor.helpImage);
+		hint.setAttribute('title', mxResources.get('help'));
 		
-		for (var i = 0; i < extensions.length; i++)
+		for (var i = 0; i < hints.length; i++)
 		{
-			if (extensions[i].ext.length > 0 &&
+			if (hints[i].ext.length > 0 &&
 				nameInput.value.substring(nameInput.value.length -
-				extensions[i].ext.length - 1) == '.' + extensions[i].ext)
+						hints[i].ext.length - 1) == '.' + hints[i].ext)
 			{
-				select.value = extensions[i].ext;
+				hint.setAttribute('src',  mxClient.imageBasePath + '/warning.png');
+				hint.setAttribute('title', mxResources.get(hints[i].title));
+				break;
 			}
 		}
-	});
+	};
 	
-	return select;
+	mxEvent.addListener(nameInput, 'keyup', nameChanged);
+	mxEvent.addListener(nameInput, 'change', nameChanged);
+	mxEvent.addListener(hint, 'click', function(evt)
+	{
+		var title = hint.getAttribute('title');
+		
+		if (hint.getAttribute('src') == Editor.helpImage)
+		{
+			window.open(FilenameDialog.filenameHelpLink);
+		}
+		else if (title != '')
+		{
+			ui.alert(title);
+		}
+		
+		mxEvent.consume(evt);
+	});
+
+	nameChanged();
+	
+	return hint;
 };
 
 /**
