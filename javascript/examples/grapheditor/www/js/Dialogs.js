@@ -598,7 +598,7 @@ FilenameDialog.createTypeHint = function(ui, nameInput, hints)
 		
 		if (hint.getAttribute('src') == Editor.helpImage)
 		{
-			window.open(FilenameDialog.filenameHelpLink);
+			ui.editor.graph.openLink(FilenameDialog.filenameHelpLink);
 		}
 		else if (title != '')
 		{
