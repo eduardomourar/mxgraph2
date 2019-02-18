@@ -602,12 +602,15 @@ FilenameDialog.createTypeHint = function(ui, nameInput, hints)
 		}
 		else if (title != '')
 		{
-			ui.alert(title);
+			ui.showError(null, title, mxResources.get('help'), function()
+			{
+				ui.editor.graph.openLink(FilenameDialog.filenameHelpLink);
+			}, null, mxResources.get('ok'), null, null, null, 340, 90);
 		}
 		
 		mxEvent.consume(evt);
 	});
-
+	
 	nameChanged();
 	
 	return hint;
