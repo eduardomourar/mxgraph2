@@ -1,3 +1,4 @@
+- Fixes events for transparent unclosed SVG paths
 - Adds mxGuide.rounded, getDelta
 - Disables drag and drop for text in mxCellEditor
 - Adds mxUtils.getDocumentSize
