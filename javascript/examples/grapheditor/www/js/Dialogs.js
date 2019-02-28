@@ -2157,6 +2157,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	ldiv.appendChild(removeLink);
 
 	var insertLink = link.cloneNode();
+	insertLink.setAttribute('title', mxUtils.trim(mxResources.get('moveSelectionTo', [''])));
 	insertLink.innerHTML = '<div class="geSprite geSprite-insert" style="display:inline-block;"></div>';
 	
 	mxEvent.addListener(insertLink, 'click', function(evt)
@@ -2574,7 +2575,6 @@ var LayersWindow = function(editorUi, x, y, w, h)
 		
 		var label = graph.convertValueToString(selectionLayer) || mxResources.get('background');
 		removeLink.setAttribute('title', mxResources.get('removeIt', [label]));
-		insertLink.setAttribute('title', mxResources.get('moveSelectionTo', ['...']));
 		duplicateLink.setAttribute('title', mxResources.get('duplicateIt', [label]));
 		dataLink.setAttribute('title', mxResources.get('editData'));
 
