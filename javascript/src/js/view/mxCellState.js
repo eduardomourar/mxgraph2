@@ -31,7 +31,7 @@ function mxCellState(view, cell, style)
 {
 	this.view = view;
 	this.cell = cell;
-	this.style = style;
+	this.style = (style != null) ? style : {};
 	
 	this.origin = new mxPoint();
 	this.absoluteOffset = new mxPoint();

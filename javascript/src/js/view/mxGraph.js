@@ -714,13 +714,6 @@ mxGraph.prototype = new mxEventSource();
 mxGraph.prototype.constructor = mxGraph;
 
 /**
- * Variable: EMPTY_ARRAY
- *
- * Immutable empty array instance.
- */
-mxGraph.prototype.EMPTY_ARRAY = [];
-
-/**
  * Group: Variables
  */
 
@@ -3257,8 +3250,8 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
  * 
  * Returns an array of key, value pairs representing the cell style for the
  * given cell. If no string is defined in the model that specifies the
- * style, then the default style for the cell is returned or <EMPTY_ARRAY>,
- * if not style can be found. Note: You should try and get the cell state
+ * style, then the default style for the cell is returned or an empty object,
+ * if no style can be found. Note: You should try and get the cell state
  * for the given cell and use the cached style in the state before using
  * this method.
  * 
@@ -3290,7 +3283,7 @@ mxGraph.prototype.getCellStyle = function(cell)
 	// Returns a non-null value if no style can be found
 	if (style == null)
 	{
-		style = mxGraph.prototype.EMPTY_ARRAY;
+		style = new Object();
 	}
 	
 	return style;
