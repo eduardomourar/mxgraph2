@@ -66,6 +66,13 @@ mxCellState.prototype.cell = null;
 mxCellState.prototype.style = null;
 
 /**
+ * Variable: invalidStyle
+ * 
+ * Specifies if the style is invalid. Default is false.
+ */
+mxCellState.prototype.invalidStyle = false;
+
+/**
  * Variable: invalid
  * 
  * Specifies if the state is invalid. Default is true.

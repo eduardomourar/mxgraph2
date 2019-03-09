@@ -955,9 +955,10 @@ mxGraphView.prototype.validateCellState = function(cell, recurse)
 			{
 				state.invalid = false;
 				
-				if (state.style == null)
+				if (state.style == null || state.invalidStyle)
 				{
 					state.style = this.graph.getCellStyle(state.cell);
+					state.invalidStyle = false;
 				}
 				
 				if (cell != this.currentRoot)

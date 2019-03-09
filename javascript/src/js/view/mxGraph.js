@@ -2109,7 +2109,7 @@ mxGraph.prototype.processChange = function(change)
 		
 		if (state != null)
 		{
-			state.style = null;
+			state.invalidStyle = true;
 		}
 	}
 	

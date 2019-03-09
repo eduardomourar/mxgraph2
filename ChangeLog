@@ -1,4 +1,4 @@
-- Fixes possible null for mxCellState.style
+- Adds mxCellState.invalidStyle
 - Removes mxGraph.EMPTY_ARRAY
 - Fixes events for transparent unclosed SVG paths
 - Adds mxGuide.rounded, getDelta
