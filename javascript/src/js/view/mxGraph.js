@@ -3107,10 +3107,13 @@ mxGraph.prototype.sizeDidChange = function()
 		{
 			var root = this.view.getDrawPane().ownerSVGElement;
 			
-			root.style.minWidth = Math.max(1, width) + 'px';
-			root.style.minHeight = Math.max(1, height) + 'px';
-			root.style.width = '100%';
-			root.style.height = '100%';
+			if (root != null)
+			{
+				root.style.minWidth = Math.max(1, width) + 'px';
+				root.style.minHeight = Math.max(1, height) + 'px';
+				root.style.width = '100%';
+				root.style.height = '100%';
+			}
 		}
 		else
 		{
