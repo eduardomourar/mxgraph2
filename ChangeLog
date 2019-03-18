@@ -1,3 +1,4 @@
+- Adds mxStackLayout.allowGaps and gridSize
 - Fixes possible NPE in mxGraph.sizeDidChange
 
 11-MAR-2018: 4.0.0
