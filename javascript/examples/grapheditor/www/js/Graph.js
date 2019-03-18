@@ -1728,8 +1728,8 @@ Graph.prototype.initLayoutManager = function()
 
 	this.layoutManager.getLayout = function(cell)
 	{
-		var state = this.graph.view.getState(cell);
-		var style = (state != null) ? state.style : this.graph.getCellStyle(cell);
+		// Workaround for possible invalid style after change and before view validation
+		var style = this.graph.getCellStyle(cell);
 		
 		if (style != null)
 		{
