@@ -1784,10 +1784,10 @@ Graph.prototype.initLayoutManager = function()
 		return null;
 	};
 };
-	
-	/**
-	 * Returns the size of the page format scaled with the page size.
-	 */
+
+/**
+ * Returns the size of the page format scaled with the page size.
+ */
 Graph.prototype.getPageSize = function()
 {
 	return (this.pageVisible) ? new mxRectangle(0, 0, this.pageFormat.width * this.pageScale,
