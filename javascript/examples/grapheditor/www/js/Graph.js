@@ -5079,12 +5079,13 @@ if (typeof mxVertexHandler != 'undefined')
 					
 					return result;
 				}
-				else if (terminal.shape != null)
+				else if (terminal.shape != null && terminal.shape.bounds != null)
 				{
 					var dir = terminal.shape.direction;
 					var bounds = terminal.shape.bounds;
 					var scale = terminal.shape.scale;
-					var w = bounds.width / scale, h = bounds.height / scale;
+					var w = bounds.width / scale;
+					var h = bounds.height / scale;
 					
 					if (dir == mxConstants.DIRECTION_NORTH || dir == mxConstants.DIRECTION_SOUTH)
 					{
