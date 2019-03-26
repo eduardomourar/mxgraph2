@@ -5692,23 +5692,16 @@ if (typeof mxVertexHandler != 'undefined')
 					var state = (this.model.isEdge(cell)) ? this.view.getState(cell) : null;
 					var src = mxEvent.getSource(evt);
 					
-					if (this.firstClickState == state && this.firstClickSource == src)
+					if ((this.firstClickState == state && this.firstClickSource == src) &&
+						(state == null || (state.text == null || state.text.node == null ||
+						state.text.boundingBox == null || (!mxUtils.contains(state.text.boundingBox,
+						pt.x, pt.y) && !mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt))))) &&
+						((state == null && !this.isCellLocked(this.getDefaultParent())) ||
+						(state != null && !this.isCellLocked(state.cell))) &&
+						(state != null || (mxClient.IS_VML && src == this.view.getCanvas()) ||
+						(mxClient.IS_SVG && src == this.view.getCanvas().ownerSVGElement)))
 					{
-						if (state == null || (state.text == null || state.text.node == null ||
-							(!mxUtils.contains(state.text.boundingBox, pt.x, pt.y) &&
-							!mxUtils.isAncestorNode(state.text.node, mxEvent.getSource(evt)))))
-						{
-							if ((state == null && !this.isCellLocked(this.getDefaultParent())) ||
-								(state != null && !this.isCellLocked(state.cell)))
-							{
-								// Avoids accidental inserts on background
-								if (state != null || (mxClient.IS_VML && src == this.view.getCanvas()) ||
-									(mxClient.IS_SVG && src == this.view.getCanvas().ownerSVGElement))
-								{
-									cell = this.addText(pt.x, pt.y, state);
-								}
-							}
-						}
+						cell = this.addText(pt.x, pt.y, state);
 					}
 				}
 			
