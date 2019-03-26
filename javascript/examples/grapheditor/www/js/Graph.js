@@ -3915,7 +3915,8 @@ HoverIcons.prototype.update = function(state, x, y)
 	}
 	else
 	{
-		if (state != null && state.cell.geometry.relative && this.graph.model.isEdge(state.cell.parent))
+		if (state != null && state.cell.geometry != null && state.cell.geometry.relative &&
+			this.graph.model.isEdge(state.cell.parent))
 		{
 			state = null;
 		}
