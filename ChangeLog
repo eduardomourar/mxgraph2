@@ -1,3 +1,4 @@
+- Add target for Chrome in mxEvent.addMouseWheelListener
 - Removes scroll handler in mxOutline.destroy
 - Adds mxStackLayout.allowGaps and gridSize
 - Fixes possible NPE in mxGraph.sizeDidChange
