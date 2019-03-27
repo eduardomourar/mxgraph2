@@ -375,7 +375,7 @@ var mxEvent =
 			if (mxClient.IS_NS && document.documentMode == null)
 			{
 				var eventName = (mxClient.IS_SF || mxClient.IS_GC) ? 'mousewheel' : 'DOMMouseScroll';
-				mxEvent.addListener((mxClient.IS_GC && chromeTarget != null) ? chromeTarget : window,
+				mxEvent.addListener((mxClient.IS_GC && target != null) ? target : window,
 					eventName, wheelHandler);
 			}
 			else
