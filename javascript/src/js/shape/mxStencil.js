@@ -414,6 +414,15 @@ mxStencil.prototype.drawShape = function(canvas, shape, x, y, w, h)
 			Number(this.strokewidth) * minScale;
 	canvas.setStrokeWidth(sw);
 
+	// Draws a transparent rectangle for catching events
+	if (shape.style != null && mxUtils.getValue(shape.style, mxConstants.STYLE_POINTER_EVENTS, '0') == '1')
+	{
+		canvas.setStrokeColor(mxConstants.NONE);
+		canvas.rect(x, y, w, h);
+		canvas.stroke();
+		canvas.setStrokeColor(this.stroke);
+	}
+
 	this.drawChildren(canvas, shape, x, y, w, h, this.bgNode, aspect, false, true);
 	this.drawChildren(canvas, shape, x, y, w, h, this.fgNode, aspect, true,
 		!shape.outline || shape.style == null || mxUtils.getValue(
