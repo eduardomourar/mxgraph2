@@ -420,7 +420,7 @@ mxStencil.prototype.drawShape = function(canvas, shape, x, y, w, h)
 		canvas.setStrokeColor(mxConstants.NONE);
 		canvas.rect(x, y, w, h);
 		canvas.stroke();
-		canvas.setStrokeColor(this.stroke);
+		canvas.setStrokeColor(shape.stroke);
 	}
 
 	this.drawChildren(canvas, shape, x, y, w, h, this.bgNode, aspect, false, true);
