@@ -2997,20 +2997,6 @@ TextFormatPanel.prototype.addFont = function(container)
 	}, function(color)
 	{
 		document.execCommand('forecolor', false, (color != mxConstants.NONE) ? color : 'transparent');
-		
-		//Firefox doesn't inherit color of parent font tags with links, so this fixes it
-		if (mxClient.IS_FF)
-		{
-			var links = graph.cellEditor.textarea.getElementsByTagName('a');
-			
-			for (var i = 0; i < links.length; i++)
-			{
-				if (!links[i].style.color)
-				{
-					links[i].style.color = 'inherit';
-				}
-			}
-		}
 	}, '#000000',
 	{
 		install: function(apply) { fontColorApply = apply; },
