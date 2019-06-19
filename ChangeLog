@@ -1,3 +1,4 @@
+- No longer prevents default for pen/touch events in mxMouseEvent
 - Adds validation of color codes
 - Fixes handling of Infinity in mxObjectCodec
 - Add target for Chrome in mxEvent.addMouseWheelListener
