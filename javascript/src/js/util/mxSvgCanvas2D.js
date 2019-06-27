@@ -1185,8 +1185,9 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 	var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
 		(mxConstants.LINE_HEIGHT * this.lineHeightCorrection);
 	
-	style = 'display:inline-block;font-size:' + s.fontSize + 'px;font-family:' + s.fontFamily +
-		';color:' + s.fontColor + ';line-height:' + lh + ';' + style;
+	// Quotes are workaround for font name "m+"
+	style = 'display:inline-block;font-size:' + s.fontSize + 'px;font-family:"' + s.fontFamily +
+		'";color:' + s.fontColor + ';line-height:' + lh + ';' + style;
 
 	if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
 	{
@@ -1223,7 +1224,7 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 	{
 		css += 'border:1px solid ' + s.fontBorderColor + ';';
 	}
-	
+
 	var val = str;
 	
 	if (!mxUtils.isNode(val))
@@ -2100,7 +2101,8 @@ mxSvgCanvas2D.prototype.addTextBackground = function(node, str, x, y, w, h, alig
 			// Wrapping and clipping can be ignored here
 			div.style.lineHeight = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' : mxConstants.LINE_HEIGHT;
 			div.style.fontSize = s.fontSize + 'px';
-			div.style.fontFamily = s.fontFamily;
+			// Quotes are workaround for font name "m+"
+			div.style.fontFamily = '"' + s.fontFamily + '"';
 			div.style.whiteSpace = 'nowrap';
 			div.style.position = 'absolute';
 			div.style.visibility = 'hidden';
