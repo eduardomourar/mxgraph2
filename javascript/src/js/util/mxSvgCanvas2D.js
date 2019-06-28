@@ -380,7 +380,8 @@ mxSvgCanvas2D.prototype.createAlternateContent = function(fo, x, y, w, h, str, a
 		alt.setAttribute('fill', s.fontColor || 'black');
 		alt.setAttribute('text-anchor', 'middle');
 		alt.setAttribute('font-size', s.fontSize + 'px');
-		alt.setAttribute('font-family', s.fontFamily);
+		// Quotes are workaround for font name "m+"
+		alt.setAttribute('font-family', '\'' + s.fontFamily + '\'');
 		
 		if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
 		{
@@ -2025,7 +2026,7 @@ mxSvgCanvas2D.prototype.updateFont = function(node)
 	
 	if (!this.styleEnabled || s.fontFamily != mxConstants.DEFAULT_FONTFAMILY)
 	{
-		node.setAttribute('font-family', s.fontFamily);
+		node.setAttribute('font-family', '\'' + s.fontFamily + '\'');
 	}
 
 	if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
