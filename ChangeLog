@@ -1,4 +1,4 @@
-- Forces quotes around font names in CSS and SVG attributes
+- Forces quotes around font names in CSS and SVG
 - No longer prevents default for pen/touch events in mxMouseEvent
 - Adds validation of color codes
 - Fixes handling of Infinity in mxObjectCodec
