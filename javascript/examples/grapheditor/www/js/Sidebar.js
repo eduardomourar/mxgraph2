@@ -669,7 +669,7 @@ Sidebar.prototype.addSearchPalette = function(expand)
 	button.style.marginTop = '4px';
 	button.style.marginBottom = '8px';
 	center.style.paddingTop = '4px';
-	center.style.paddingBottom = '8px';
+	center.style.paddingBottom = '4px';
 	
 	center.appendChild(button);
 	div.appendChild(center);
