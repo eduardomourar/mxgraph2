@@ -546,7 +546,8 @@ mxStencil.prototype.drawNode = function(canvas, shape, node, aspect, disableShad
 				parseRegularly = false;
 				
 				var arcSize = Number(node.getAttribute('arcSize'));
-				var points = [];
+				var pointCount = 0;
+				var segs = [];
 				
 				// Renders the elements inside the given path
 				var childNode = node.firstChild;
@@ -559,7 +560,14 @@ mxStencil.prototype.drawNode = function(canvas, shape, node, aspect, disableShad
 						
 						if (childName == 'move' || childName == 'line')
 						{
-							points.push(new mxPoint(x0 + Number(childNode.getAttribute('x')) * sx, y0 + Number(childNode.getAttribute('y')) * sy));
+							if (childName == 'move' || segs.length == 0)
+							{
+								segs.push([]);
+							}
+							
+							segs[segs.length - 1].push(new mxPoint(x0 + Number(childNode.getAttribute('x')) * sx,
+								y0 + Number(childNode.getAttribute('y')) * sy));
+							pointCount++;
 						}
 						else
 						{
@@ -571,18 +579,21 @@ mxStencil.prototype.drawNode = function(canvas, shape, node, aspect, disableShad
 					
 					childNode = childNode.nextSibling;
 				}
-				
-				if (!parseRegularly && points.length > 0)
+
+				if (!parseRegularly && pointCount > 0)
 				{
-					var close = false, ps = points[0], pe = points[points.length - 1];
-					
-					if (ps.x == pe.x && ps.y == pe.y) 
+					for (var i = 0; i < segs.length; i++)
 					{
-						points.pop();
-						close = true;
+						var close = false, ps = segs[i][0], pe = segs[i][segs[i].length - 1];
+						
+						if (ps.x == pe.x && ps.y == pe.y) 
+						{
+							segs[i].pop();
+							close = true;
+						}
+						
+						this.addPoints(canvas, segs[i], true, arcSize, close);
 					}
-					
-					this.addPoints(canvas, points, true, arcSize, close);
 				}
 				else
 				{
