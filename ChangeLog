@@ -1,3 +1,5 @@
+- Adds mxCellEditor.setAlign for block alignment changes
+
 02-JUL-2019: 4.0.1
 
 - Forces quotes around font names in CSS and SVG
