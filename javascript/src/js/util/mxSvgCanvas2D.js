@@ -1213,6 +1213,10 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 	{
 		style += 'text-align:right;';
 	}
+	else
+	{
+		style += 'text-align:left;';
+	}
 
 	var css = '';
 	
