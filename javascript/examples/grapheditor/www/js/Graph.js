@@ -4479,7 +4479,7 @@ HoverIcons.prototype.setCurrentState = function(state)
 	    	var shape = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
 	
 	    	// Extracts and decodes stencil XML if shape has the form shape=stencil(value)
-	    	if (shape != null && shape.substring(0, 8) == 'stencil(')
+	    	if (shape != null && typeof shape === 'string' && shape.substring(0, 8) == 'stencil(')
 	    	{
 	    		try
 	    		{
@@ -7365,8 +7365,6 @@ if (typeof mxVertexHandler != 'undefined')
 						{
 							checkNode(this.textarea, clone);
 						}
-						
-						this.textarea.innerHTML = this.graph.sanitizeHtml(this.textarea.innerHTML, true);
 					}), 0);
 				}));
 			}
