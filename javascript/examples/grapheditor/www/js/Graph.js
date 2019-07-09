@@ -7656,7 +7656,7 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		mxCellEditor.prototype.getBackgroundColor = function(state)
 		{
-			var color = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_BACKGROUNDCOLOR);
+			var color = mxUtils.getValue(state.style, mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, null);
 
 			if ((color == null || color == mxConstants.NONE) &&
 				(state.cell.geometry != null && state.cell.geometry.width > 0) &&
