@@ -965,11 +965,13 @@ mxCellEditor.prototype.stopEditing = function(cancel)
 			this.textarea.innerHTML = '';
 			this.clearOnChange = false;
 		}
-		
+
 		if (state != null && (this.textarea.innerHTML != initial || this.align != null))
 		{
 			this.prepareTextarea();
 			var value = this.getCurrentValue(state);
+			var handler = (this.graph.selectionCellsHandler != null) ?
+				this.graph.selectionCellsHandler.getHandler(state.cell) : null;
 			
 			this.graph.getModel().beginUpdate();
 			try
@@ -987,6 +989,19 @@ mxCellEditor.prototype.stopEditing = function(cancel)
 			finally
 			{
 				this.graph.getModel().endUpdate();
+			}
+			
+			// Carries handler state over to new handler if style was changed
+			if (handler != null)
+			{
+				var newHandler = (this.graph.selectionCellsHandler != null) ?
+					this.graph.selectionCellsHandler.getHandler(state.cell) : null;
+				
+				if (newHandler != null && newHandler != handler && handler.index != null &&
+					handler.startX != null && handler.startY != null)
+				{
+					newHandler.start(handler.startX, handler.startY, handler.index);
+				}
 			}
 		}
 		
