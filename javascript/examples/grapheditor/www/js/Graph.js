@@ -4610,7 +4610,7 @@ mxStencilRegistry.getBasenameForStencil = function(name)
 {
 	var tmp = null;
 	
-	if (name != null)
+	if (name != null && typeof name === 'string')
 	{
 		var parts = name.split('.');
 		
