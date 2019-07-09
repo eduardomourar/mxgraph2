@@ -169,7 +169,10 @@ mxAbstractCanvas2D.prototype.createState = function()
 		shadowDy: mxConstants.SHADOW_OFFSET_Y,
 		rotation: 0,
 		rotationCx: 0,
-		rotationCy: 0
+		rotationCy: 0,
+		isoAngle: -1,
+		isoCx: 0,
+		isoCy: 0
 	};
 };
 
@@ -290,6 +293,35 @@ mxAbstractCanvas2D.prototype.rotate = function(theta, flipH, flipV, cx, cy)
 };
 
 /**
+ * Function: project
+ * 
+ * Makes the isometric projection of the current state.
+ */
+mxAbstractCanvas2D.prototype.projectIsometric = function(theta, cx, cy)
+{
+	if (theta != null)
+	{
+		var s = this.state;
+		cx += s.dx;
+		cy += s.dy;
+	
+		cx *= s.scale;
+		cy *= s.scale;
+
+		var tr = mxUtils.isometricProjection(theta, cx, cy);
+		var node = this.node || this.root;
+		if (node != null)
+		{
+			mxUtils.setPrefixedStyle(node.style, 'transform', tr);
+		
+			s.isoAngle = theta;
+			s.isoCx = cx;
+			s.isoCy = cy;
+		}
+	}
+};
+
+/**
  * Function: setAlpha
  * 
  * Sets the current alpha.
@@ -373,6 +405,21 @@ mxAbstractCanvas2D.prototype.setStrokeColor = function(value)
 mxAbstractCanvas2D.prototype.setStrokeWidth = function(value)
 {
 	this.state.strokeWidth = value;
+};
+
+/**
+ * Function: setIsoAngle
+ * 
+ * Sets the current perspective view angle.
+ */
+mxAbstractCanvas2D.prototype.setIsoAngle = function(value)
+{
+	if (value < 0)
+	{
+		value = -1;
+	}
+	
+	this.state.isoAngle = value;
 };
 
 /**

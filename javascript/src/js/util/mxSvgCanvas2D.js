@@ -936,10 +936,35 @@ mxSvgCanvas2D.prototype.rotate = function(theta, flipH, flipV, cx, cy)
 		{
 			s.transform += 'rotate(' + this.format(theta) + ',' + this.format(cx) + ',' + this.format(cy) + ')';
 		}
-		
+
 		s.rotation = s.rotation + theta;
 		s.rotationCx = cx;
 		s.rotationCy = cy;
+	}
+};
+
+/**
+ * Function: project
+ * 
+ * Sets the isometric projection of the current state.
+ */
+mxSvgCanvas2D.prototype.projectIsometric = function(theta, cx, cy)
+{
+	if (theta != null)
+	{
+		var s = this.state;
+		cx += s.dx;
+		cy += s.dy;
+	
+		cx *= s.scale;
+		cy *= s.scale;
+
+		var tr = mxUtils.isometricProjection(theta, cx, cy);
+		s.transform = (s.transform || '') + tr;
+	
+		s.isoAngle = theta;
+		s.isoCx = cx;
+		s.isoCy = cy;
 	}
 };
 
@@ -1212,10 +1237,6 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 	else if (align == mxConstants.ALIGN_RIGHT)
 	{
 		style += 'text-align:right;';
-	}
-	else
-	{
-		style += 'text-align:left;';
 	}
 
 	var css = '';

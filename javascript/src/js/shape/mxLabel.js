@@ -50,7 +50,7 @@ mxLabel.prototype.spacing = 2;
 /**
  * Variable: indicatorSize
  *
- * Default width and height for the indicicator. Default is 10.
+ * Default width and height for the indicator. Default is 10.
  */
 mxLabel.prototype.indicatorSize = 10;
 

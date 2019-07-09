@@ -581,7 +581,7 @@ Editor.prototype.getGraphXml = function(ignoreSelection)
 	{
 		node.setAttribute('background', this.graph.background);
 	}
-	
+
 	return node;
 };
 
@@ -2061,6 +2061,10 @@ PageSetupDialog.getFormats = function()
 			canvas.style.backgroundColor = color;
 			canvas.style.backgroundImage = image;
 		}
+
+		// TODO: Create isometric 3D grid option
+		// var tr = mxUtils.isometricProjection(30, 0, 0);
+		// mxUtils.setPrefixedStyle(graph.view.backgroundPageShape.node.style, 'transform', tr);
 	};
 	
 	// Returns the SVG required for painting the background grid.

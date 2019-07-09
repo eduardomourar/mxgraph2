@@ -11,7 +11,7 @@
  * property which is assigned from within the <mxCellRenderer>
  * when the shape is created. The dialect must be assigned
  * for a shape, and it does normally depend on the browser and
- * the confiuration of the graph (see <mxGraph> rendering hint).
+ * the configuration of the graph (see <mxGraph> rendering hint).
  *
  * For each supported shape in SVG and VML, a corresponding
  * shape exists in mxGraph, namely for text, image, rectangle,
@@ -216,9 +216,16 @@ mxShape.prototype.visible = true;
 mxShape.prototype.useSvgBoundingBox = false;
 
 /**
+ * Variable: isoAngle
+ *
+ * Set isometric projection angle for shape. Default is -1 ("none").
+ */
+mxShape.prototype.isoAngle = -1;
+
+/**
  * Function: init
  *
- * Initializes the shape by creaing the DOM node using <create>
+ * Initializes the shape by creating the DOM node using <create>
  * and adding it into the given container.
  *
  * Parameters:
@@ -252,6 +259,7 @@ mxShape.prototype.initStyles = function(container)
 	this.strokeOpacity = 100;
 	this.flipH = false;
 	this.flipV = false;
+	this.isoAngle = -1;
 };
 
 /**
@@ -916,7 +924,7 @@ mxShape.prototype.paint = function(c)
 		w = h;
 		h = tmp;
 	}
-	
+
 	this.updateTransform(c, x, y, w, h);
 	this.configureCanvas(c, x, y, w, h);
 
@@ -940,6 +948,11 @@ mxShape.prototype.paint = function(c)
 			rect.stroked = 'false';
 			c.root.appendChild(rect);
 		}
+	}
+
+	if (this.stencil != null || this.points == null)
+	{
+		this.updateIsometric(c, x, y, w, h);
 	}
 
 	if (this.stencil != null)
@@ -1033,6 +1046,7 @@ mxShape.prototype.configureCanvas = function(c, x, y, w, h)
 	}
 
 	c.setStrokeColor(this.stroke);
+	c.setIsoAngle(this.isoAngle);
 };
 
 /**
@@ -1294,6 +1308,7 @@ mxShape.prototype.resetStyles = function()
  * - <mxConstants.STYLE_STROKE_OPACITY> => strokeOpacity
  * - <mxConstants.STYLE_STROKECOLOR> => stroke
  * - <mxConstants.STYLE_STROKEWIDTH> => strokewidth
+ * - <mxConstants.STYLE_ISO_ANGLE> => isoAngle
  * - <mxConstants.STYLE_SHADOW> => isShadow
  * - <mxConstants.STYLE_DASHED> => isDashed
  * - <mxConstants.STYLE_SPACING> => spacing
@@ -1338,7 +1353,8 @@ mxShape.prototype.apply = function(state)
 		this.rotation = mxUtils.getValue(this.style, mxConstants.STYLE_ROTATION, this.rotation);
 		this.direction = mxUtils.getValue(this.style, mxConstants.STYLE_DIRECTION, this.direction);
 		this.flipH = mxUtils.getValue(this.style, mxConstants.STYLE_FLIPH, 0) == 1;
-		this.flipV = mxUtils.getValue(this.style, mxConstants.STYLE_FLIPV, 0) == 1;	
+		this.flipV = mxUtils.getValue(this.style, mxConstants.STYLE_FLIPV, 0) == 1;
+		this.isoAngle = mxUtils.getNumber(this.style, mxConstants.STYLE_ISO_ANGLE, this.isoAngle);
 		
 		// Legacy support for stencilFlipH/V
 		if (this.stencil != null)
@@ -1572,6 +1588,37 @@ mxShape.prototype.getShapeRotation = function()
 	}
 	
 	return rot;
+};
+
+/**
+ * Function: getIsoAngle
+ * 
+ * Returns the isometric angle from the style.
+ */
+mxShape.prototype.getIsoAngle = function()
+{
+	var isoAngle = mxUtils.getNumber(this.style, mxConstants.STYLE_ISO_ANGLE, this.isoAngle);
+	// Fallback to original default value from class
+	if (isoAngle == null || isoAngle < 0)
+	{
+		isoAngle = Object.getPrototypeOf(this).isoAngle;
+	}
+	return isoAngle;
+};
+
+/**
+ * Function: updateIsometric
+ *
+ * Update isometric projection based on perspective angle.
+ */
+mxShape.prototype.updateIsometric = function(c, x, y, w, h)
+{
+	var isoAngle = this.getIsoAngle();
+	if (isoAngle >= 0)
+	{
+		// Getting absolute center point (considering scale already)
+		c.projectIsometric(isoAngle, x + w / 2, y + h / 2);
+	}
 };
 
 /**

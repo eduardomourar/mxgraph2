@@ -1145,6 +1145,15 @@
 	STYLE_IMAGE_VERTICAL_ALIGN: 'imageVerticalAlign',
 
 	/**
+	 * Variable: STYLE_ISO_ANGLE
+	 * 
+	 * Defines the key for the perspective view angle. The type of this value is float
+	 * and the value represents the angle between the x- and z-axes and the "horizon".
+	 * Default is -1 (which means not in perspective view). Value is "isoAngle".
+	 */
+	STYLE_ISO_ANGLE: 'isoAngle',
+
+	/**
 	 * Variable: STYLE_GLASS
 	 * 
 	 * Defines the key for the glass style. Possible values are 0 (disabled) and

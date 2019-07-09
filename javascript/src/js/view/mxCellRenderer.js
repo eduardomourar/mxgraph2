@@ -213,7 +213,27 @@ mxCellRenderer.prototype.createIndicatorShape = function(state)
  */
 mxCellRenderer.prototype.getShape = function(name)
 {
-	return (name != null) ? mxCellRenderer.defaultShapes[name] : null;
+	var shape = null;
+	
+	if (name != null)
+	{
+		// Checks if there is a stencil for the name
+		var stencil = mxStencilRegistry.getStencil(name);
+		
+		if (stencil != null)
+		{
+			function StencilShape() { };
+			StencilShape.prototype = new mxShape(stencil);
+			StencilShape.prototype.constructor = StencilShape;
+			shape = StencilShape;
+		}
+		else
+		{
+			shape = mxCellRenderer.defaultShapes[name];
+		}
+	}
+	
+	return shape;
 };
 
 /**

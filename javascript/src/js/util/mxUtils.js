@@ -4382,6 +4382,125 @@ var mxUtils =
 		}
 		
 		return dragSource;
-	}
+	},
 
+	/**
+	 * Function: isometricProjection
+	 * 
+	 * Generate the transformation matrix to make isometric projection of any shape.
+	 * (https://www.compuphase.com/axometr.htm)
+	 */
+	isometricProjection: function(theta, cx, cy)
+	{
+		cx = cx || 0;
+		cy = cy || 0;
+		tr = '';
+		if (theta >= 0.1)
+		{
+			// Apply SR45 method (http://www.petercollingridge.co.uk/tutorials/svg/isometric-projection):
+			// E.g.: translate(10,10)matrix(0.707,0.408,-0.707,0.408,0,-0.816)translate(-10,-10)
+
+			var r = [
+				[0.7071068,		-0.7071068,		0],
+				[0.4082483,		0.4082483,		-0.8164966],
+				[0,				0,				1] // [0.5773503, 0.5773503, 0.5773503]
+			];
+
+			if (theta !== 30) {
+				// Rotation matrix for angle through the horizontal axis
+				// Almost the same effect as scale vertical axis by tan(angle)
+				var isoSideview = Math.asin(Math.tan(theta * Math.PI / 180));
+				var theta0 = (Math.PI / 2) - isoSideview;
+				var cos0 = Math.cos(theta0);
+				var sin0 = Math.sin(theta0);
+				var m0 = [
+					[1,				0,				0],
+					[0,				cos0,			-sin0],
+					[0,				0,				1] // [0, sin0, cos0]
+				];
+
+				// Rotation matrix for 45° in the plane of the screen
+				var theta1 = 45 * Math.PI / 180;
+				var cos1 = Math.cos(theta1);
+				var sin1 = Math.sin(theta1);
+				var m1 = [
+					[cos1,			-sin1,			0],
+					[sin1,			cos1,			0],
+					[0,				0,				1]
+				];
+				r = this.multiplyMatrices(m0, m1);
+			}
+
+			// Calculate final Euclidean transformation matrix
+			if (cx === 0 && cy === 0)
+			{
+				e = r;
+			} else
+			{
+				// Translation matrix from origin to center point
+				var t0 = [
+					[1,		0,		cx],
+					[0,		1,		cy],
+					[0,		0,		1]
+				];
+
+				// Translation matrix from center point to origin
+				var t1 = [
+					[1,		0,		-cx],
+					[0,		1,		-cy],
+					[0,		0,		1]
+				];
+
+				e = this.multiplyMatrices(t0, r, t1);
+			}
+
+			tr += 'matrix(' + this.precisionRound(e[0][0], 3) + ',' + this.precisionRound(e[1][0], 3) + ',' + this.precisionRound(e[0][1], 3);
+			tr += ',' + this.precisionRound(e[1][1], 3) + ',' + this.precisionRound(e[0][2], 3)+ ',' + this.precisionRound(e[1][2], 3) + ')';
+		}
+		return tr;
+	},
+
+	/**
+	 * Function: precisionRound
+	 * 
+	 * Round number to certain decimal places
+	 */
+	precisionRound: function(number, precision) {
+		var factor = Math.pow(10, precision);
+		return Math.round(number * factor) / factor;
+	},
+
+	/**
+	 * Function: multiplyMatrices
+	 * 
+	 * Calculate the product of any amount of matrices
+	 */
+	multiplyMatrices: function() {
+
+		var r = arguments[0];
+    	for (var z = 1; z < arguments.length; z++) {
+			var a = r;
+			var b = arguments[z];
+			var mA = a[0].length;
+			var mB = b.length;
+			if (mA !== mB)
+			{
+				throw new Error('Dimension mismatch. Matrix A (' + mA + ') must match Matrix B (' + mB + ')');
+			}
+			var n = a.length;
+			var p = b[0].length;
+
+			r = new Array(n).fill(0).map(_ => new Array(p).fill(0));
+
+			r = r.map(function(row, i) {
+				return row.map(function(_, j) {
+					return a[i].reduce(function(prev, curr, k) {
+						return prev + (curr * b[k][j]);
+					}, 0);
+				});
+			});
+		}
+
+		return r;
+	}
 };
