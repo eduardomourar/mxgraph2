@@ -1118,19 +1118,21 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 	if (this.index != null && this.state != null)
 	{
 		var point = new mxPoint(me.getGraphX(), me.getGraphY());
+		var index = this.index;
+		this.index = null;
 
 		this.graph.getModel().beginUpdate();
 		try
 		{
-			if (this.index <= mxEvent.CUSTOM_HANDLE)
+			if (index <= mxEvent.CUSTOM_HANDLE)
 			{
 				if (this.customHandles != null)
 				{
-					this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].active = false;
-					this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].execute();
+					this.customHandles[mxEvent.CUSTOM_HANDLE - index].active = false;
+					this.customHandles[mxEvent.CUSTOM_HANDLE - index].execute();
 				}
 			}
-			else if (this.index == mxEvent.ROTATION_HANDLE)
+			else if (index == mxEvent.ROTATION_HANDLE)
 			{
 				if (this.currentAlpha != null)
 				{
@@ -1166,7 +1168,7 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 				var s = this.graph.view.scale;
 				var recurse = this.isRecursiveResize(this.state, me);
 				this.resizeCell(this.state.cell, this.roundLength(dx / s), this.roundLength(dy / s),
-					this.index, gridEnabled, this.isConstrainedEvent(me), recurse);
+					index, gridEnabled, this.isConstrainedEvent(me), recurse);
 			}
 		}
 		finally
