@@ -7353,8 +7353,9 @@ if (typeof mxVertexHandler != 'undefined')
 					window.setTimeout(mxUtils.bind(this, function()
 					{
 						// Paste from Word or Excel
-						if (this.textarea.innerHTML.indexOf('<o:OfficeDocumentSettings>') >= 0 ||
-							this.textarea.innerHTML.indexOf('<!--[if !mso]>') >= 0)
+						if (this.textarea != null &&
+							(this.textarea.innerHTML.indexOf('<o:OfficeDocumentSettings>') >= 0 ||
+							this.textarea.innerHTML.indexOf('<!--[if !mso]>') >= 0))
 						{
 							checkNode(this.textarea, clone);
 						}
