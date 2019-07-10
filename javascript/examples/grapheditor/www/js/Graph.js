@@ -2953,9 +2953,10 @@ Graph.prototype.isCellFoldable = function(cell)
 	var state = this.view.getState(cell);
 	var style = (state != null) ? state.style : this.getCellStyle(cell);
 	
-	return this.foldingEnabled && !this.isCellLocked(cell) &&
+	return this.foldingEnabled && (style['treeFolding'] == '1' ||
+		(!this.isCellLocked(cell) &&
 		((this.isContainer(cell) && style['collapsible'] != '0') ||
-		(!this.isContainer(cell) && style['collapsible'] == '1'));
+		(!this.isContainer(cell) && style['collapsible'] == '1'))));
 };
 
 /**
