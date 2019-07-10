@@ -1005,7 +1005,7 @@ mxCellEditor.prototype.stopEditing = function(cancel)
  */
 mxCellEditor.prototype.prepareTextarea = function()
 {
-	if (mxClient.IS_FF && this.textarea.lastChild != null &&
+	if (this.textarea.lastChild != null &&
 		this.textarea.lastChild.nodeName == 'BR')
 	{
 		this.textarea.removeChild(this.textarea.lastChild);
