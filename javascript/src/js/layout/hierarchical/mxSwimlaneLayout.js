@@ -47,14 +47,6 @@ mxSwimlaneLayout.prototype.roots = null;
 mxSwimlaneLayout.prototype.swimlanes = null;
 
 /**
- * Variable: dummyVertices
- * 
- * Holds an array of <mxCell> of dummy vertices inserted during the layout
- * to pad out empty swimlanes
- */
-mxSwimlaneLayout.prototype.dummyVertices = null;
-
-/**
  * Variable: dummyVertexWidth
  * 
  * The cell width of any dummy vertices inserted
@@ -263,7 +255,7 @@ mxSwimlaneLayout.prototype.execute = function(parent, swimlanes)
 	}
 
 	this.swimlanes = swimlanes;
-	this.dummyVertices = [];
+	var dummyVertices = [];
 	// Check the swimlanes all have vertices
 	// in them
 	for (var i = 0; i < swimlanes.length; i++)
@@ -273,7 +265,7 @@ mxSwimlaneLayout.prototype.execute = function(parent, swimlanes)
 		if (children == null || children.length == 0)
 		{
 			var vertex = this.graph.insertVertex(swimlanes[i], null, null, 0, 0, this.dummyVertexWidth, 0);
-			this.dummyVertices.push(vertex);
+			dummyVertices.push(vertex);
 		}
 	}
 	
@@ -301,7 +293,7 @@ mxSwimlaneLayout.prototype.execute = function(parent, swimlanes)
 			}
 		}
 
-		this.graph.removeCells(this.dummyVertices);
+		this.graph.removeCells(dummyVertices);
 	}
 	finally
 	{
