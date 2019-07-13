@@ -685,7 +685,7 @@ mxSwimlaneLayout.prototype.run = function(parent)
 	this.layeringStage();
 	
 	this.crossingStage(parent);
-	initialX = this.placementStage(0, parent);
+	this.placementStage(0, parent);
 };
 
 /**
