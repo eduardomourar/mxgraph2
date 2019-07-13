@@ -590,7 +590,7 @@ mxSwimlaneLayout.prototype.run = function(parent)
 {
 	// Separate out unconnected hierarchies
 	var hierarchyVertices = [];
-	var allVertexSet = [];
+	var allVertexSet = Object();
 
 	if (this.swimlanes != null && this.swimlanes.length > 0 && parent != null)
 	{
