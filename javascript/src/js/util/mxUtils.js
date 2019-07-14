@@ -1819,9 +1819,10 @@ var mxUtils =
 					return false;
 				}
 			}
+			return count == 0;
 		}
 		
-		return count == 0;
+		return true;
 	},
 	
 	/**
