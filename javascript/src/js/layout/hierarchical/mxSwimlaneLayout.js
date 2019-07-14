@@ -373,8 +373,9 @@ mxSwimlaneLayout.prototype.updateGroupBounds = function()
 			var newGeo = geo.clone();
 			
 			var leftGroupBorder = (i == 0) ? this.parentBorder : this.interRankCellSpacing/2;
+
 			newGeo.x += childBounds[i].x - size.width - leftGroupBorder;
-			newGeo.y = newGeo.y + layoutBounds.y - geo.y - this.parentBorder;
+			newGeo.y = layoutBounds.y - this.parentBorder;
 			
 			newGeo.width = childBounds[i].width + size.width + this.interRankCellSpacing/2 + leftGroupBorder;
 			newGeo.height = layoutBounds.height + size.height + 2 * this.parentBorder;
