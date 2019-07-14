@@ -28,7 +28,7 @@
 	/**
 	 * Extends mxGraphLayout.
 	 */
-	mxFastOrganicLayout.prototype = new mxGraphLayout();
+	pmaLayout.prototype = new mxGraphLayout();
 	pmaLayout.prototype.constructor = pmaLayout;
 	
 	/**
@@ -60,7 +60,7 @@
 	 * 
 	 * Hashtable from cells to local indices.
 	 */
-	mxFastOrganicLayout.prototype.indices;
+	pmaLayout.prototype.indices;
 
 	/**
 	 * Variable: minDistanceLimitSquared
