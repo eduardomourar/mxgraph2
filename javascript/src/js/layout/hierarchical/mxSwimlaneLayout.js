@@ -90,7 +90,7 @@ mxSwimlaneLayout.prototype.moveParent = false;
  * Variable: parentBorder
  * 
  * The border to be added around the children if the parent is to be
- * resized using <resizeParent>. Default is 0.
+ * resized using <resizeParent>. Default is 30.
  */
 mxSwimlaneLayout.prototype.parentBorder = 30;
 
@@ -104,7 +104,7 @@ mxSwimlaneLayout.prototype.intraCellSpacing = 30;
 /**
  * Variable: interRankCellSpacing
  * 
- * The spacing buffer added between cell on adjacent layers. Default is 50.
+ * The spacing buffer added between cell on adjacent layers. Default is 100.
  */
 mxSwimlaneLayout.prototype.interRankCellSpacing = 100;
 
@@ -118,7 +118,8 @@ mxSwimlaneLayout.prototype.interHierarchySpacing = 60;
 /**
  * Variable: parallelEdgeSpacing
  * 
- * The distance between each parallel edge on each ranks for long edges
+ * The distance between each parallel edge on each ranks for long edges.
+ * Default is 10.
  */
 mxSwimlaneLayout.prototype.parallelEdgeSpacing = 10;
 
@@ -139,11 +140,10 @@ mxSwimlaneLayout.prototype.orientation = mxConstants.DIRECTION_NORTH;
 mxSwimlaneLayout.prototype.fineTuning = true;
 
 /**
- * 
  * Variable: tightenToSource
  * 
  * Whether or not to tighten the assigned ranks of vertices up towards
- * the source cells.
+ * the source cells. Default is true.
  */
 mxSwimlaneLayout.prototype.tightenToSource = true;
 
@@ -160,8 +160,8 @@ mxSwimlaneLayout.prototype.disableEdgeStyle = true;
  * 
  * Whether or not to drill into child cells and layout in reverse
  * group order. This also cause the layout to navigate edges whose 
- * terminal vertices  * have different parents but are in the same 
- * ancestry chain
+ * terminal vertices have different parents but are in the same
+ * ancestry chain. Default is true.
  */
 mxSwimlaneLayout.prototype.traverseAncestors = true;
 
@@ -196,7 +196,8 @@ mxHierarchicalLayout.prototype.edgesTargetTermCache = null;
 /**
  * Variable: edgeStyle
  * 
- * The style to apply between cell layers to edge segments
+ * The style to apply between cell layers to edge segments.
+ * Default is <mxHierarchicalEdgeStyle.POLYLINE>.
  */
 mxHierarchicalLayout.prototype.edgeStyle = mxHierarchicalEdgeStyle.POLYLINE;
 

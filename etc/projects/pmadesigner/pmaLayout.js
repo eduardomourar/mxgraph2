@@ -50,7 +50,7 @@
 	/**
 	 * Variable: disableEdgeStyle
 	 * 
-	 * Specifies if the STYLE_NOEDGESTYLE flag should be set on edges that are
+	 * Specifies if the <mxConstants.STYLE_NOEDGESTYLE> flag should be set on edges that are
 	 * modified by the result. Default is true.
 	 */
 	pmaLayout.prototype.disableEdgeStyle = true;
