@@ -373,16 +373,17 @@ mxSwimlaneLayout.prototype.updateGroupBounds = function()
 			var newGeo = geo.clone();
 			
 			var leftGroupBorder = (i == 0) ? this.parentBorder : this.interRankCellSpacing/2;
+			var x = childBounds[i].x - size.width - leftGroupBorder;
+			var y = layoutBounds.y - this.parentBorder;
 
-			newGeo.x += childBounds[i].x - size.width - leftGroupBorder;
-			newGeo.y = layoutBounds.y - this.parentBorder;
+			newGeo.x += x;
+			newGeo.y = y;
 			
 			newGeo.width = childBounds[i].width + size.width + this.interRankCellSpacing/2 + leftGroupBorder;
 			newGeo.height = layoutBounds.height + size.height + 2 * this.parentBorder;
 			
 			this.graph.model.setGeometry(lane, newGeo);
-			this.graph.moveCells(children, -childBounds[i].x + size.width + leftGroupBorder, 
-					geo.y - layoutBounds.y + this.parentBorder);
+			this.graph.moveCells(children, -x, geo.y - y);
 		}
 	}
 };
