@@ -4798,6 +4798,9 @@ if (typeof mxVertexHandler != 'undefined')
 	
 		// Enables guides
 		mxGraphHandler.prototype.guidesEnabled = true;
+		
+		// Removes parents where all child cells are moved out
+		mxGraphHandler.prototype.removeEmptyParents = true;
 	
 		// Enables fading of rubberband
 		mxRubberband.prototype.fadeOut = true;
