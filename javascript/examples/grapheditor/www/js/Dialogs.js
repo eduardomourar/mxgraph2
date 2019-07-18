@@ -374,7 +374,7 @@ var AboutDialog = function(editorUi)
 /**
  * Constructs a new filename dialog.
  */
-var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content, helpLink, closeOnBtn, cancelFn, hints)
+var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validateFn, content, helpLink, closeOnBtn, cancelFn, hints, w)
 {
 	closeOnBtn = (closeOnBtn != null) ? closeOnBtn : true;
 	var row, td;
@@ -396,7 +396,7 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	var nameInput = document.createElement('input');
 	nameInput.setAttribute('value', filename || '');
 	nameInput.style.marginLeft = '4px';
-	nameInput.style.width = '180px';
+	nameInput.style.width = (w != null) ? w + 'px' : '180px';
 	
 	var genericBtn = mxUtils.button(buttonText, function()
 	{
