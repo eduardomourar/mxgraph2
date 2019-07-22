@@ -1,3 +1,5 @@
+- Adds mxClient.IS_CHROMEOS
+
 15-JUL-2019: 4.0.2
 
 - Adds mxCellEditor.setAlign for block alignment changes
