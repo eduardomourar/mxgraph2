@@ -12045,10 +12045,10 @@ mxGraph.prototype.selectAll = function(parent, descendants)
 {
 	parent = parent || this.getDefaultParent();
 	
-	var cells = (descendants) ? this.model.filterDescendants(function(cell)
+	var cells = (descendants) ? this.model.filterDescendants(mxUtils.bind(this, function(cell)
 	{
-		return cell != parent;
-	}, parent) : this.model.getChildren(parent);
+		return cell != parent && this.view.getState(cell) != null;
+	}, parent)) : this.model.getChildren(parent);
 	
 	if (cells != null)
 	{
@@ -12104,7 +12104,11 @@ mxGraph.prototype.selectCells = function(vertices, edges, parent)
 	});
 	
 	var cells = this.model.filterDescendants(filter, parent);
-	this.setSelectionCells(cells);
+	
+	if (cells != null)
+	{
+		this.setSelectionCells(cells);
+	}
 };
 
 /**
