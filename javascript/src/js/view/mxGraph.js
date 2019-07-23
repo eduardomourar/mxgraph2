@@ -12048,7 +12048,7 @@ mxGraph.prototype.selectAll = function(parent, descendants)
 	var cells = (descendants) ? this.model.filterDescendants(mxUtils.bind(this, function(cell)
 	{
 		return cell != parent && this.view.getState(cell) != null;
-	}, parent)) : this.model.getChildren(parent);
+	}), parent) : this.model.getChildren(parent);
 	
 	if (cells != null)
 	{
