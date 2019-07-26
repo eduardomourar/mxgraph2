@@ -1,3 +1,6 @@
+26-JUL-2019: 4.0.3
+
+- Reverts forcing quotes around font names in CSS and SVG
 - Ignores hidden cells in mxGraph.selectAll
 - Adds mxClient.IS_CHROMEOS
 
