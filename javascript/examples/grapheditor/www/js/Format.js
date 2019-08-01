@@ -2491,12 +2491,6 @@ TextFormatPanel.prototype.addFont = function(container)
 		var arrow = cssMenu.getElementsByTagName('div')[0];
 		arrow.style.cssFloat = 'right';
 		container.appendChild(cssPanel);
-		
-		// Workaround for offset in FF
-		if (mxClient.IS_FF)
-		{
-			cssMenu.getElementsByTagName('div')[0].style.marginTop = '-18px';
-		}
 	}
 	
 	container.appendChild(stylePanel);
