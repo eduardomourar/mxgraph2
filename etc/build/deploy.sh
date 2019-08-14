@@ -63,6 +63,7 @@ git push origin --tags
 
 # Publish mxgraph to NPM
 npm install
+npm run prepare
 npm publish --access public
 cd ..
 
