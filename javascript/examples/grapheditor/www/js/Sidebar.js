@@ -1329,9 +1329,9 @@ Sidebar.prototype.addUmlPalette = function(expand)
 			
 			return sb.createVertexTemplateFromCells([cell.clone()], cell.geometry.width, cell.geometry.height, 'Interface 2');
 		}),
-		this.createVertexTemplateEntry('shape=providedRequiredInterface;html=1;verticalLabelPosition=bottom;', 20, 20, '', 'Provided Required Interface', null, null, dt + 'provided required interface'),
-		this.createVertexTemplateEntry('shape=requiredInterface;html=1;verticalLabelPosition=bottom;', 10, 20, '', 'Required Interface', null, null, dt + 'required interface'),
-		this.addEntry('uml provided required interface', function()
+		this.createVertexTemplateEntry('shape=providedRequiredInterface;html=1;verticalLabelPosition=bottom;', 20, 20, '', 'Provided Required Interface', null, null, 'uml provided required interface lollipop'),
+		this.createVertexTemplateEntry('shape=requiredInterface;html=1;verticalLabelPosition=bottom;', 10, 20, '', 'Required Interface', null, null, 'uml required interface lollipop'),
+		this.addEntry('uml lollipop provided required interface', function()
 		{
 			return sb.createVertexTemplateFromData('zVTBTuMwEP0aH0FpQrnTlLKHRULiAHv0JpPE4GSiybRN+HrGsWka0QoOaLWWIuW9mfFo3rOtkrTu70i31T3mYFVyq5KUENn/1X0K1qo4MrlK1iqOI/lUvDkTXYzRqNUEDX+nIPYFO2234BlPdDzYQBBumxxcfqSSFRJXWGKj7W/EVsiFkC/APDyaN1eht4xCVVzbEIUmvyHCvcAGG/DMxlgbtvQdIS9hNgRrKiEMcfV5rjErDHUHWAPTICkEVrPZzbfSnYflIe9Q+oBGdpxSOtxSBoGdhJOfozYTNcp5Wtrk30pbaVukhjL7WWDRjIZnBy6XH/DPHK7749z1cEB56H0tqGPCV3gyOVeh/39hXR8aRfOKn3Py6msnpcC0nZN+XxmGx1ZnLrKXiz13rMCGN7o21kn8C+wO2GQ6BILWizjgFC3S2CCJxiW8tqZshMtETqCDK6dSCzkCR3wxLuFbp8mo0nKllmu3addC5twpTO/O44qgM2/67zjedEd3QAz92afmjK8fBUtfMXh4EeA+HCeXERyswJQVz7lT52Bm6eSfwOkB9XYfv6/v',
 				50, 20, 'Lollipop Notation');
