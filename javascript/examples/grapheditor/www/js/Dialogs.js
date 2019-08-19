@@ -1119,6 +1119,8 @@ var ExportDialog = function(editorUi)
 	customDpi.setAttribute('min', '50');
 	customDpi.setAttribute('step', '50');
 	
+	var zoomUserChanged = false;
+	
 	mxEvent.addListener(dpiSelect, 'change', function()
 	{
 		if (this.value == 'custom')
@@ -1130,6 +1132,11 @@ var ExportDialog = function(editorUi)
 		else
 		{
 			customDpi.value = this.value;
+			
+			if (!zoomUserChanged) 
+			{
+				zoomInput.value = this.value;
+			}
 		}
 	});
 	
@@ -1144,6 +1151,11 @@ var ExportDialog = function(editorUi)
 		else
 		{
 			customDpi.style.backgroundColor = '';
+
+			if (!zoomUserChanged) 
+			{
+				zoomInput.value = dpi;
+			}
 		}	
 	});
 	
@@ -1271,6 +1283,7 @@ var ExportDialog = function(editorUi)
 
 	mxEvent.addListener(zoomInput, 'change', function()
 	{
+		zoomUserChanged = true;
 		var s = Math.max(0, parseFloat(zoomInput.value) || 100) / 100;
 		zoomInput.value = parseFloat((s * 100).toFixed(2));
 		
