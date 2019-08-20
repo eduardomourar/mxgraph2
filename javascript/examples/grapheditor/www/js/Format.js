@@ -2694,6 +2694,7 @@ TextFormatPanel.prototype.addFont = function(container)
 			{
 				document.execCommand('superscript', false, null);
 			}, stylePanel3)]);
+		sub.style.marginLeft = '9px';
 		
 		var tmp = stylePanel3.cloneNode(false);
 		tmp.style.paddingTop = '4px';
@@ -3850,29 +3851,34 @@ TextFormatPanel.prototype.addFont = function(container)
 							setSelected(fontStyleItems[1], css.fontStyle == 'italic' ||
 								hasParentOrOnlyChild('I') || hasParentOrOnlyChild('EM'));
 							setSelected(fontStyleItems[2], hasParentOrOnlyChild('U'));
-							setSelected(full, isEqualOrPrefixed(css.textAlign, 'justify'));
 							setSelected(sup, hasParentOrOnlyChild('SUP'));
 							setSelected(sub, hasParentOrOnlyChild('SUB'));
 							
 							if (!graph.cellEditor.isTableSelected())
 							{
 								var align = graph.cellEditor.align || mxUtils.getValue(ss.style, mxConstants.STYLE_ALIGN, mxConstants.ALIGN_CENTER);
-								setSelected(left, align == mxConstants.ALIGN_LEFT);
-								setSelected(center, align == mxConstants.ALIGN_CENTER);
-								setSelected(right, align == mxConstants.ALIGN_RIGHT);
-								
-								setSelected(full, false);
-								full.style.opacity = 0.2;
-								full.style.cursor = 'default';
+
+								if (isEqualOrPrefixed(css.textAlign, 'justify'))
+								{
+									setSelected(full, isEqualOrPrefixed(css.textAlign, 'justify'));
+									setSelected(left, false);
+									setSelected(center, false);
+									setSelected(right, false);
+								}
+								else
+								{
+									setSelected(full, false);
+									setSelected(left, align == mxConstants.ALIGN_LEFT);
+									setSelected(center, align == mxConstants.ALIGN_CENTER);
+									setSelected(right, align == mxConstants.ALIGN_RIGHT);
+								}
 							}
 							else
 							{
+								setSelected(full, isEqualOrPrefixed(css.textAlign, 'justify'));
 								setSelected(left, isEqualOrPrefixed(css.textAlign, 'left'));
 								setSelected(center, isEqualOrPrefixed(css.textAlign, 'center'));
 								setSelected(right, isEqualOrPrefixed(css.textAlign, 'right'));
-								
-								full.style.opacity = 1;
-								full.style.cursor = '';
 							}
 							
 							currentTable = graph.getParentByName(node, 'TABLE', graph.cellEditor.textarea);

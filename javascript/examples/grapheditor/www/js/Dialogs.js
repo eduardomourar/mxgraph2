@@ -488,6 +488,7 @@ var FilenameDialog = function(editorUi, filename, buttonText, fn, label, validat
 	};
 
 	td = document.createElement('td');
+	td.style.whiteSpace = 'nowrap';
 	td.appendChild(nameInput);
 	row.appendChild(td);
 	
@@ -1079,7 +1080,7 @@ var ExportDialog = function(editorUi)
 	
 	td = document.createElement('td');
 	td.style.fontSize = '10pt';
-	mxUtils.write(td, mxResources.get('dpi', null, 'DPI') + ':');
+	mxUtils.write(td, mxResources.get('dpi') + ':');
 	
 	row.appendChild(td);
 	
