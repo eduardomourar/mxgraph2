@@ -1429,27 +1429,6 @@ var PageSetupDialog = function(editorUi)
 	row.appendChild(td);
 	tbody.appendChild(row);
 	
-	if (urlParams['ruler'] == '1')
-	{
-		row = document.createElement('tr');
-		
-		td = document.createElement('td');
-		td.style.verticalAlign = 'top';
-		td.style.fontSize = '10pt';
-		mxUtils.write(td, mxResources.get('unit', null, 'Unit') + ':');
-		
-		row.appendChild(td);
-		
-		td = document.createElement('td');
-		td.style.verticalAlign = 'top';
-		td.style.fontSize = '10pt';
-		
-		var unitSelect = PageSetupDialog.addUnitPanel(td, graph.view.unit);
-		
-		row.appendChild(td);
-		tbody.appendChild(row);
-	}
-	
 	row = document.createElement('tr');
 	
 	td = document.createElement('td');

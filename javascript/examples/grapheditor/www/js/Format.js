@@ -5721,24 +5721,6 @@ DiagramFormatPanel.prototype.addPaperSize = function(div)
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
 	this.listeners.push({destroy: function() { graph.getModel().removeListener(listener); }});
 	
-	if (urlParams['ruler'] == '1')
-	{
-		div.appendChild(this.createTitle(mxResources.get('unit', null, 'Unit')));
-		
-		var unitSelect = PageSetupDialog.addUnitPanel(div, graph.view.unit, function(unit)
-		{
-			graph.view.setUnit(unit);
-		});
-		
-		var unitChangeListener = function(sender, evt)
-		{
-			unitSelect.value = evt.getProperty('unit');
-		};
-		
-		graph.view.addListener('unitChanged', unitChangeListener);
-		this.listeners.push({destroy: function() { graph.view.removeListener(unitChangeListener); }});
-	}
-	
 	return div;
 };
 
