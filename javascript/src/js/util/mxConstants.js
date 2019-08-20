@@ -2331,12 +2331,12 @@
 	 * Measurements Units
 	 */
 	PIXELS: 1,
- 	CENTIMETERS: 2,
+	MILLIMETERS: 2,
  	INCHES: 3,
  	
  	/**
  	 * This ratio is with page scale 1
  	 */
- 	PIXELS_PER_CM: 39.37,
+ 	PIXELS_PER_MM: 3.937,
  	PIXELS_PER_INCH: 100
 };

@@ -7736,8 +7736,8 @@ if (typeof mxVertexHandler != 'undefined')
 		    {
 		        case mxConstants.PIXELS:
 		            return pixels;
-		        case mxConstants.CENTIMETERS:
-		            return (pixels / mxConstants.PIXELS_PER_CM).toFixed(2);
+		        case mxConstants.MILLIMETERS:
+		            return (pixels / mxConstants.PIXELS_PER_MM).toFixed(1);
 		        case mxConstants.INCHES:
 		            return (pixels / mxConstants.PIXELS_PER_INCH).toFixed(2);
 		    }
