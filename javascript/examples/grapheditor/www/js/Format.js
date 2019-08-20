@@ -1915,7 +1915,7 @@ BaseFormatPanel.prototype.getUnit = function()
 	
 	switch(unit)
 	{
-		case mxConstants.PIXELS:
+		case mxConstants.POINTS:
 			return 'pt';
 		case mxConstants.INCHES:
 			return '"';
@@ -1935,7 +1935,7 @@ BaseFormatPanel.prototype.fromUnit = function(value)
 	
 	switch(unit)
 	{
-		case mxConstants.PIXELS:
+		case mxConstants.POINTS:
 			return value;
 		case mxConstants.INCHES:
 			return value * mxConstants.PIXELS_PER_INCH;
@@ -1946,7 +1946,7 @@ BaseFormatPanel.prototype.fromUnit = function(value)
 
 BaseFormatPanel.prototype.isFloatUnit = function()
 {
-	return this.editorUi.editor.graph.view.unit != mxConstants.PIXELS;
+	return this.editorUi.editor.graph.view.unit != mxConstants.POINTS;
 };
 
 BaseFormatPanel.prototype.getUnitStep = function()
@@ -1955,7 +1955,7 @@ BaseFormatPanel.prototype.getUnitStep = function()
 	
 	switch(unit)
 	{
-		case mxConstants.PIXELS:
+		case mxConstants.POINTS:
 			return 1;
 		case mxConstants.INCHES:
 			return 0.1;

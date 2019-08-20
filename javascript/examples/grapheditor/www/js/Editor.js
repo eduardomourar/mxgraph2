@@ -1960,7 +1960,7 @@ PageSetupDialog.addUnitPanel = function(div, unit, unitListener)
 
 PageSetupDialog.getUnits = function()
 {
-	return [{key: 'point', title: 'Point', unit: mxConstants.PIXELS},
+	return [{key: 'point', title: 'Point', unit: mxConstants.POINTS},
 	        {key: 'inch', title: 'Inch', unit: mxConstants.INCHES},
 	        {key: 'mm', title: 'MM', unit: mxConstants.MILLIMETERS}];
 };

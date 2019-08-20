@@ -2325,18 +2325,5 @@
 	 * Name of the triangle perimeter. Can be used as a string value
 	 * for the STYLE_PERIMETER style.
 	 */
-	PERIMETER_TRIANGLE: 'trianglePerimeter',
-	
-	/**
-	 * Measurements Units
-	 */
-	PIXELS: 1,
-	MILLIMETERS: 2,
- 	INCHES: 3,
- 	
- 	/**
- 	 * This ratio is with page scale 1
- 	 */
- 	PIXELS_PER_MM: 3.937,
- 	PIXELS_PER_INCH: 100
+	PERIMETER_TRIANGLE: 'trianglePerimeter'
 };
