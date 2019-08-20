@@ -4,13 +4,6 @@
 #
 # See LICENSE file for license details. If you are unable to locate
 # this file please contact info (at) jgraph (dot) com.
-#
-# This script creates the following distributions:
-#
-# jgraphx.zip: Java source code, BSD license
-# mxgraph-eval.zip: Eval license, full JS code
-# mxgraph-full-src.zip: Commercial license, full JS code
-#
 
 # Other build variables
 VERSION=`cat VERSION`
@@ -22,7 +15,6 @@ JSDOC=/opt/system/bin/naturaldocs/NaturalDocs
 DOXYGEN=/usr/bin/doxygen
 PERL=/usr/bin/perl
 JSDIR=javascript/src/js
-PHPDIR=$DIR/php/src
 
 # Echo version
 echo "Building $VERSION..."
@@ -62,28 +54,16 @@ cp -r 2>/dev/null javascript/src/images $DIR/javascript/src
 cp -r 2>/dev/null javascript/src/resources $DIR/javascript/src
 cp -r 2>/dev/null dotnet $DIR/dotnet
 cp -r 2>/dev/null java $DIR/java
-cp -r 2>/dev/null php $DIR/php
 
 # Replaces the version number in the Java build files and mxGraph classes
 rm -f $DIR/dotnet/src/view/mxGraph.cs
 sed "s/@MXGRAPH-VERSION@/$VERSION/;s/@MXGRAPH-DATE@/$TODAY/" dotnet/src/view/mxGraph.cs > $DIR/dotnet/src/view/mxGraph.cs
-
-rm -f $DIR/php/src/mxServer.php
-sed "s/@MXGRAPH-VERSION@/$VERSION/;s/@MXGRAPH-DATE@/$TODAY/" php/src/mxServer.php > $DIR/php/src/mxServer.php
 
 rm -f $DIR/java/src/com/mxgraph/view/mxGraph.java
 sed "s/@MXGRAPH-VERSION@/$VERSION/;s/@MXGRAPH-DATE@/$TODAY/" java/src/com/mxgraph/view/mxGraph.java > $DIR/java/src/com/mxgraph/view/mxGraph.java
 
 rm -f $DIR/java/build.xml
 sed "s/@MXGRAPH-VERSION@/$VERSION/;s/@MXGRAPH-DATE@/$TODAY/" java/build.xml > $DIR/java/build.xml
-
-# Generates PHP API docs
-mkdir -p build/tmp
-mkdir -p $DIR/docs/php-api
-$JSDOC -img $DIR/docs -i $PHPDIR -i $PHPDIR/model -i $PHPDIR/util \
-	-i $PHPDIR/view -i $PHPDIR/canvas \
-	-i $PHPDIR/reader -o HTML $DIR/docs/php-api -p build/tmp
-rm -rf build/tmp
 
 # Builds Java version and Javadocs
 cd $DIR/java
