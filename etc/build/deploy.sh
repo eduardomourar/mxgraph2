@@ -6,7 +6,6 @@
 # this file please contact info (at) jgraph (dot) com.
 #
 BUILD=`dirname $0`
-WEBROOT=/var/www/www.jgraph.com
 DOTVERSION=`cat $BUILD/version.txt`
 
 # Replaces all dots with underscores
@@ -14,15 +13,6 @@ VERSION=`cat $BUILD/version.txt | sed "s/\./_/g"`
 
 cd $BUILD
 BUILD=`pwd`
-
-echo "Deploying from $BUILD to $WEBROOT..."
-echo
-
-cp -v $BUILD/jgraphx-demo.jar $WEBROOT/demo/jgraphx/
-cp -v $BUILD/jgraphx.jnlp $WEBROOT/demo/jgraphx/
-cp -v $BUILD/jgraphx.zip $WEBROOT/downloads/jgraphx/archive/jgraphx-$VERSION.zip
-cp -v $BUILD/mxgraph-distro.zip $WEBROOT/downloads/mx2/mxgraph-$VERSION.zip
-cp -v $BUILD/ChangeLog $WEBROOT/
 
 # Update mxgraph on github
 echo
@@ -105,6 +95,4 @@ cd ../..
 rm -rf tmp-$date
 
 echo
-echo "Deployed from $BUILD to $WEBROOT"
-echo "Changelog is at https://www.jgraph.com/mxchangelog.html"
 echo "Done."
