@@ -1286,18 +1286,43 @@ EditorUi.prototype.initClipboard = function()
 	var mxClipboardCopy = mxClipboard.copy;
 	mxClipboard.copy = function(graph)
 	{
+		var result = null;
+		
 		if (graph.cellEditor.isContentEditing())
 		{
 			document.execCommand('copy', false, null);
 		}
 		else
 		{
-			mxClipboardCopy.apply(this, arguments);
+			result = result || graph.getSelectionCells();
+			result = graph.getExportableCells(graph.model.getTopmostCells(result));
+			
+			var cloneMap = new Object();
+			var lookup = graph.createCellLookup(result);
+			var clones = graph.cloneCells(result, null, cloneMap);
+			
+			// Uses temporary model to force new IDs to be assigned
+			// to avoid having to carry over the mapping from object
+			// ID to cell ID to the paste operation
+			var model = new mxGraphModel();
+			var parent = model.getChildAt(model.getRoot(), 0);
+			
+			for (var i = 0; i < clones.length; i++)
+			{
+				model.add(parent, clones[i]);
+			}
+			
+			graph.updateCustomLinks(graph.createCellMapping(cloneMap, lookup), clones);
+
+			mxClipboard.insertCount = 1;
+			mxClipboard.setCells(clones);
 		}
 		
 		ui.updatePasteActionStates();
+		
+		return result;
 	};
-	
+
 	var mxClipboardPaste = mxClipboard.paste;
 	mxClipboard.paste = function(graph)
 	{
