@@ -637,9 +637,9 @@ Actions.prototype.init = function()
 		if (mxUtils.hasScrollbars(graph.container))
 		{
 			graph.container.scrollTop = (bounds.y + t.y) * scale -
-				Math.max((ch - bounds.height * scale) / 2, 0);
+				Math.max((ch - bounds.height * scale) / 2 + 5, 0);
 			graph.container.scrollLeft = (bounds.x + t.x) * scale -
-				Math.max((cw - bounds.width * scale) / 2, 0);
+				Math.max((cw - bounds.width * scale) / 2 + 5, 0);
 		}
 	}, null, null, Editor.ctrlKey + '+Shift+H');
 	this.addAction('fitPage', mxUtils.bind(this, function()
