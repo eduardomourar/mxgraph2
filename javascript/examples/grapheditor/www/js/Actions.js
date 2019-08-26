@@ -621,32 +621,25 @@ Actions.prototype.init = function()
 	this.addAction('zoomOut', function(evt) { graph.zoomOut(); }, null, null, Editor.ctrlKey + ' - (Numpad) / Alt+Mousewheel');
 	this.addAction('fitWindow', function()
 	{
-		if (graph.isSelectionEmpty())
-		{
-			graph.fit();
-		}
-		else
-		{
-			var bounds = graph.getBoundingBox(graph.getSelectionCells());
-			var t = graph.view.translate;
-			var s = graph.view.scale;
-			bounds.width /= s;
-			bounds.height /= s;
-			bounds.x = bounds.x / s - t.x;
-			bounds.y = bounds.y / s - t.y;
-			
-			var cw = graph.container.clientWidth - 10;
-			var ch = graph.container.clientHeight - 10;
-			var scale = Math.floor(20 * Math.min(cw / bounds.width, ch / bounds.height)) / 20;
-			graph.zoomTo(scale);
+		var bounds = (graph.isSelectionEmpty()) ? graph.getGraphBounds() : graph.getBoundingBox(graph.getSelectionCells());
+		var t = graph.view.translate;
+		var s = graph.view.scale;
+		bounds.width /= s;
+		bounds.height /= s;
+		bounds.x = bounds.x / s - t.x;
+		bounds.y = bounds.y / s - t.y;
+		
+		var cw = graph.container.clientWidth - 10;
+		var ch = graph.container.clientHeight - 10;
+		var scale = Math.floor(20 * Math.min(cw / bounds.width, ch / bounds.height)) / 20;
+		graph.zoomTo(scale);
 
-			if (mxUtils.hasScrollbars(graph.container))
-			{
-				graph.container.scrollTop = (bounds.y + t.y) * scale -
-					Math.max((ch - bounds.height * scale) / 2, 0);
-				graph.container.scrollLeft = (bounds.x + t.x) * scale -
-					Math.max((cw - bounds.width * scale) / 2, 0);
-			}
+		if (mxUtils.hasScrollbars(graph.container))
+		{
+			graph.container.scrollTop = (bounds.y + t.y) * scale -
+				Math.max((ch - bounds.height * scale) / 2, 0);
+			graph.container.scrollLeft = (bounds.x + t.x) * scale -
+				Math.max((cw - bounds.width * scale) / 2, 0);
 		}
 	}, null, null, Editor.ctrlKey + '+Shift+H');
 	this.addAction('fitPage', mxUtils.bind(this, function()
