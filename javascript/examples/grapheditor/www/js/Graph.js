@@ -138,13 +138,14 @@ mxShape.prototype.getConstraints = function(style, w, h)
 /**
  * Defines graph class.
  */
-Graph = function(container, model, renderHint, stylesheet, themes)
+Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 {
 	mxGraph.call(this, container, model, renderHint, stylesheet);
 	
 	this.themes = themes || this.defaultThemes;
 	this.currentEdgeStyle = mxUtils.clone(this.defaultEdgeStyle);
 	this.currentVertexStyle = mxUtils.clone(this.defaultVertexStyle);
+	this.standalone = (standalone != null) ? standalone : false;
 
 	// Sets the base domain URL and domain path URL for relative links.
 	var b = this.baseUrl;
@@ -1233,6 +1234,13 @@ Graph.prototype.editAfterInsert = false;
  * Defines the built-in properties to be ignored in tooltips.
  */
 Graph.prototype.builtInProperties = ['label', 'tooltip', 'placeholders', 'placeholder'];
+
+/**
+ * Defines if the graph is part of an EditorUi. If this is false the graph can
+ * be used in an EditorUi instance but will not have a UI added, functions
+ * overridden or event handlers added.
+ */
+Graph.prototype.standalone = false;
 
 /**
  * Installs child layout styles.
