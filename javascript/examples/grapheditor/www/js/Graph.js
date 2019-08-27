@@ -5241,7 +5241,10 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			for (var i = 0; i < cells.length; i++)
 			{
-				this.updateCustomLinksForCell(mapping, cells[i]);
+				if (cells[i] != null)
+				{
+					this.updateCustomLinksForCell(mapping, cells[i]);
+				}
 			}
 		};
 		
