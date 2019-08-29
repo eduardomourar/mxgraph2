@@ -1,0 +1,57 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style type="text/css">
+		html, body {
+		  height:100%; overflow:hidden;
+		}
+		iframe {
+			border:1px solid black;top:0px;left:0;width:200px;height:120px;
+		}
+	</style>
+</head>
+<body>
+	<script type="text/javascript">
+		var editor = 'https://test.draw.io/?dev=1&test=1&viewer=1&chrome=0#G1CDRF_rWws5YKUD2tNhTF7uVn9Nzz2voi';
+		var iframe = document.createElement('iframe');
+		var receive = function(evt)
+		{
+			if (evt.data.length > 0)
+			{
+				var msg = null;
+				
+				try
+				{
+					msg = JSON.parse(evt.data);
+				}
+				catch (e)
+				{
+					// ignore
+				}
+				
+				console.log('received', msg);
+			
+				if (msg == null)
+				{
+					// Ignore
+					return;
+				}
+				else if (msg.event == 'size')
+				{
+					var bounds = msg.bounds;
+					
+					iframe.style.width = Math.ceil(bounds.x + bounds.width + 10) + 'px';
+					iframe.style.height = Math.ceil(bounds.y + bounds.height + 10) + 'px';
+				}
+			}
+		};
+
+		window.addEventListener('message', receive);
+		iframe.setAttribute('src', editor);
+		var wrapper = document.createElement('div');
+		wrapper.style.cssText = 'position:absolute;top:20px;bottom:0px;left:0px;right:0px;';
+		wrapper.appendChild(iframe);
+		document.body.appendChild(wrapper);
+	</script>
+</body>
+</html>
