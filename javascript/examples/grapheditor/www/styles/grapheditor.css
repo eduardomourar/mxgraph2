@@ -250,15 +250,12 @@
 	background: #eee;
 	border-radius:2px;
 }
-.geToolbarContainer .geButton:active {
+.geToolbarContainer .geButton:active, .geToolbarContainer .geLabel:active {
 	background: #F8C382;
 }
 .geToolbarContainer .geLabel:hover {
 	background: #eee;
 	border-radius:2px;
-}
-.geToolbarContainer .geLabel:active {
-	background: #F8C382;
 }
 .geToolbarButton {
 	opacity: 0.6;
