@@ -608,6 +608,7 @@ mxVertexHandler.prototype.start = function(x, y, index)
 {
 	if (this.selectionBorder != null)
 	{
+		this.livePreviewActive = this.livePreview && this.graph.model.getChildCount(this.state.cell) == 0;
 		this.inTolerance = true;
 		this.childOffsetX = 0;
 		this.childOffsetY = 0;
@@ -628,7 +629,7 @@ mxVertexHandler.prototype.start = function(x, y, index)
 		this.selectionBorder.node.style.display = (index == mxEvent.ROTATION_HANDLE) ? 'inline' : 'none';
 		
 		// Creates the border that represents the new bounds
-		if (!this.livePreview || this.isLivePreviewBorder())
+		if (!this.livePreviewActive || this.isLivePreviewBorder())
 		{
 			this.preview = this.createSelectionShape(this.bounds);
 			
@@ -647,7 +648,7 @@ mxVertexHandler.prototype.start = function(x, y, index)
 		}
 		
 		// Prepares the handles for live preview
-		if (this.livePreview)
+		if (this.livePreviewActive)
 		{
 			this.hideSizers();
 			
@@ -878,7 +879,7 @@ mxVertexHandler.prototype.rotateVertex = function(me)
 	this.selectionBorder.rotation = this.currentAlpha;
 	this.selectionBorder.redraw();
 					
-	if (this.livePreview)
+	if (this.livePreviewActive)
 	{
 		this.redrawHandles();
 	}
@@ -1038,7 +1039,7 @@ mxVertexHandler.prototype.resizeVertex = function(me)
 		this.childOffsetY = 0;
 	}
 	
-	if (this.livePreview)
+	if (this.livePreviewActive)
 	{
 		this.updateLivePreview(me);
 	}
@@ -1288,7 +1289,7 @@ mxVertexHandler.prototype.reset = function()
 		this.preview = null;
 	}
 
-	if (this.livePreview && this.sizers != null)
+	if (this.livePreviewActive && this.sizers != null)
 	{
 		for (var i = 0; i < this.sizers.length; i++)
 		{
@@ -1335,6 +1336,7 @@ mxVertexHandler.prototype.reset = function()
 	this.redrawHandles();
 	this.edgeHandlers = null;
 	this.unscaledBounds = null;
+	this.livePreviewActive = null;
 };
 
 /**

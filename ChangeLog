@@ -1,5 +1,6 @@
 - Fixes ignored alignment in mxGraph.cellSizeUpdated
 - Adds optional argument in redraw for handlers
+- Disables resize live preview for groups
 - Adds mxGraphHandler.maxLivePreview
 - Adds mxGuide.isStateIgnored hook
 
