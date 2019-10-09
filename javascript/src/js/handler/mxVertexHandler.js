@@ -1104,6 +1104,12 @@ mxVertexHandler.prototype.updateLivePreview = function(me)
 	this.state.view.validate();
 	this.redrawHandles();
 	
+	// Hides folding icon
+	if (this.state.control != null && this.state.control.node != null)
+	{
+		this.state.control.node.style.visibility = 'hidden';
+	}
+	
 	// Restores current state
 	this.state.setState(tempState);
 };
@@ -1290,6 +1296,12 @@ mxVertexHandler.prototype.reset = function()
 			{
 				this.sizers[i].node.style.display = '';
 			}
+		}
+		
+		// Shows folding icon
+		if (this.state.control != null && this.state.control.node != null)
+		{
+			this.state.control.node.style.visibility = '';
 		}
 	}
 
