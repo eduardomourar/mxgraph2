@@ -1,4 +1,5 @@
 - Adds optional argument in redraw for handlers
+- Adds mxGraphHandler.maxLivePreview
 - Adds mxGuide.isStateIgnored hook
 
 20-JUL-2019: 4.0.4
