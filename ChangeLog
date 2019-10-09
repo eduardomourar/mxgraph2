@@ -1,3 +1,4 @@
+- Fixes ignored alignment in mxGraph.cellSizeUpdated
 - Adds optional argument in redraw for handlers
 - Adds mxGraphHandler.maxLivePreview
 - Adds mxGuide.isStateIgnored hook

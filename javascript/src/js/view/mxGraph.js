@@ -5447,6 +5447,29 @@ mxGraph.prototype.cellSizeUpdated = function(cell, ignoreChildren)
 				}
 				else
 				{
+					var state = this.view.getState(cell) || this.view.createState(cell);
+					var align = (state.style[mxConstants.STYLE_ALIGN] || mxConstants.ALIGN_CENTER);
+					
+					if (align == mxConstants.ALIGN_RIGHT)
+					{
+						geo.x += geo.width - size.width;
+					}
+					else if (align == mxConstants.ALIGN_CENTER)
+					{
+						geo.x += Math.round((geo.width - size.width) / 2);
+					}
+
+					var valign = this.getVerticalAlign(state);
+					
+					if (valign == mxConstants.ALIGN_BOTTOM)
+					{
+						geo.y += geo.height - size.height;
+					}
+					else if (valign == mxConstants.ALIGN_MIDDLE)
+					{
+						geo.y += Math.round((geo.height - size.height) / 2);
+					}
+
 					geo.width = size.width;
 					geo.height = size.height;
 				}
