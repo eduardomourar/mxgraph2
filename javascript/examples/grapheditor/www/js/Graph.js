@@ -1102,8 +1102,8 @@ Graph.compress = function(data, deflate)
 	}
 	else
 	{
-   		var tmp = Graph.bytesToString((deflate) ? pako.deflate(encodeURIComponent(data)) :
-   			pako.deflateRaw(encodeURIComponent(data)));
+   		var tmp = (deflate) ? pako.deflate(encodeURIComponent(data), {to: 'string'}) :
+   			pako.deflateRaw(encodeURIComponent(data), {to: 'string'});
    		
    		return (window.btoa) ? btoa(tmp) : Base64.encode(tmp, true);
 	}
@@ -1122,9 +1122,10 @@ Graph.decompress = function(data, inflate)
 	{
 		var tmp = (window.atob) ? atob(data) : Base64.decode(data, true);
 		
-		return Graph.zapGremlins(decodeURIComponent(
-			Graph.bytesToString((inflate) ? pako.inflate(tmp) :
-				pako.inflateRaw(tmp))));
+		var inflated = (inflate) ? pako.inflate(tmp, {to: 'string'}) :
+			pako.inflateRaw(tmp, {to: 'string'})
+
+		return Graph.zapGremlins(decodeURIComponent(inflated));
 	}
 };
 
