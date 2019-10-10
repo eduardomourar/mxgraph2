@@ -1,3 +1,4 @@
+- Fixes border handling in mxGraph.fit and sizeDidChange
 - Fixes ignored alignment in mxGraph.cellSizeUpdated
 - Adds optional argument in redraw for handlers
 - Disables resize live preview for groups
