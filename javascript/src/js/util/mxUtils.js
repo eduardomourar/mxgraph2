@@ -1795,6 +1795,9 @@ var mxUtils =
 	 */
 	equalEntries: function(a, b)
 	{
+		// Counts keys in b to check if all values have been compared
+		var count = 0;
+
 		if ((a == null && b != null) || (a != null && b == null) ||
 			(a != null && b != null && a.length != b.length))
 		{
@@ -1802,9 +1805,6 @@ var mxUtils =
 		}
 		else if (a != null && b != null)
 		{
-			// Counts keys in b to check if all values have been compared
-			var count = 0;
-			
 			for (var key in b)
 			{
 				count++;
@@ -1819,10 +1819,9 @@ var mxUtils =
 					return false;
 				}
 			}
-			return count == 0;
 		}
 		
-		return true;
+		return count == 0;
 	},
 	
 	/**
