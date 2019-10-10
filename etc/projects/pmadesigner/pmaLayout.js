@@ -28,7 +28,7 @@
 	/**
 	 * Extends mxGraphLayout.
 	 */
-	mxFastOrganicLayout.prototype = new mxGraphLayout();
+	pmaLayout.prototype = new mxGraphLayout();
 	pmaLayout.prototype.constructor = pmaLayout;
 	
 	/**
@@ -50,7 +50,7 @@
 	/**
 	 * Variable: disableEdgeStyle
 	 * 
-	 * Specifies if the STYLE_NOEDGESTYLE flag should be set on edges that are
+	 * Specifies if the <mxConstants.STYLE_NOEDGESTYLE> flag should be set on edges that are
 	 * modified by the result. Default is true.
 	 */
 	pmaLayout.prototype.disableEdgeStyle = true;
@@ -60,7 +60,7 @@
 	 * 
 	 * Hashtable from cells to local indices.
 	 */
-	mxFastOrganicLayout.prototype.indices;
+	pmaLayout.prototype.indices;
 
 	/**
 	 * Variable: minDistanceLimitSquared

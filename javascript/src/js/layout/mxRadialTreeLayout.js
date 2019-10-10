@@ -123,22 +123,6 @@ mxRadialTreeLayout.prototype.rowRadi = [];
 mxRadialTreeLayout.prototype.row = [];
 
 /**
- * Function: isVertexIgnored
- * 
- * Returns a boolean indicating if the given <mxCell> should be ignored as a
- * vertex. This returns true if the cell has no connections.
- * 
- * Parameters:
- * 
- * vertex - <mxCell> whose ignored state should be returned.
- */
-mxRadialTreeLayout.prototype.isVertexIgnored = function(vertex)
-{
-	return mxGraphLayout.prototype.isVertexIgnored.apply(this, arguments) ||
-		this.graph.getConnections(vertex).length == 0;
-};
-
-/**
  * Function: execute
  * 
  * Implements <mxGraphLayout.execute>.
