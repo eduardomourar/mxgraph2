@@ -8577,7 +8577,8 @@ if (typeof mxVertexHandler != 'undefined')
 				{
 					var state = this.graph.view.getState(cells[0]);
 					
-					if (state != null && state.width < 2 && state.height < 2 && state.text != null && state.text.boundingBox != null)
+					if (state != null && state.width < 2 && state.height < 2 && state.text != null &&
+						state.text.boundingBox != null)
 					{
 						return mxRectangle.fromRectangle(state.text.boundingBox);
 					}
@@ -8586,7 +8587,26 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			return mxGraphHandlerGetBoundingBox.apply(this, arguments);
 		};
+
+		// Ignores child cells with part style as guides
+		var mxGraphHandlerGetGuideStates = mxGraphHandler.prototype.getGuideStates;
 		
+		mxGraphHandler.prototype.getGuideStates = function()
+		{
+			var states = mxGraphHandlerGetGuideStates.apply(this, arguments);
+			var result = [];
+			
+			for (var i = 0; i < states.length; i++)
+			{
+				if (mxUtils.getValue(states[i].style, 'part', '0') != '1')
+				{
+					result.push(states[i]);
+				}
+			}
+			
+			return result;
+		};
+
 		// Uses text bounding box for edge labels
 		var mxVertexHandlerGetSelectionBounds = mxVertexHandler.prototype.getSelectionBounds;
 		mxVertexHandler.prototype.getSelectionBounds = function(state)
