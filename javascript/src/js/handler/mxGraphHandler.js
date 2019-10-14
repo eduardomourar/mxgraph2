@@ -650,10 +650,12 @@ mxGraphHandler.prototype.start = function(cell, x, y)
 	if (this.guidesEnabled)
 	{
 		this.guide = new mxGuide(this.graph, this.getGuideStates());
+		var parent = this.graph.model.getParent(cell);
 		
 		this.guide.isStateIgnored = mxUtils.bind(this, function(state)
 		{
-			return !this.cloning && this.isCellMoving(state.cell);
+			return (!this.cloning && this.isCellMoving(state.cell)) ||
+				this.graph.model.getParent(state.cell) != (this.target || parent);
 		});
 	}
 };
@@ -799,6 +801,66 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			var hideGuide = true;
 			this.cloning = clone;
 			
+			
+			
+			
+			
+
+			var target = null;
+			var cell = me.getCell();
+
+			if (graph.isDropEnabled() && this.highlightEnabled)
+			{
+				// Contains a call to getCellAt to find the cell under the mouse
+				target = graph.getDropTarget(this.cells, me.getEvent(), cell, clone);
+			}
+
+			var state = graph.getView().getState(target);
+			var highlight = false;
+			
+			if (state != null && (graph.model.getParent(this.cell) != target || clone))
+			{
+			    if (this.target != target)
+			    {
+				    this.target = target;
+				    this.setHighlightColor(mxConstants.DROP_TARGET_COLOR);
+				}
+			    
+			    highlight = true;
+			}
+			else
+			{
+				this.target = null;
+
+				if (this.connectOnDrop && cell != null && this.cells.length == 1 &&
+					graph.getModel().isVertex(cell) && graph.isCellConnectable(cell))
+				{
+					state = graph.getView().getState(cell);
+					
+					if (state != null)
+					{
+						var error = graph.getEdgeValidationError(null, this.cell, cell);
+						var color = (error == null) ?
+							mxConstants.VALID_COLOR :
+							mxConstants.INVALID_CONNECT_TARGET_COLOR;
+						this.setHighlightColor(color);
+						highlight = true;
+					}
+				}
+			}
+			
+			if (state != null && highlight)
+			{
+				this.highlight.highlight(state);
+			}
+			else
+			{
+				this.highlight.hide();
+			}
+			
+			
+			
+			
 			if (this.livePreviewActive && clone)
 			{
 				this.resetLivePreview();
@@ -856,58 +918,6 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			this.currentDx = dx;
 			this.currentDy = dy;
 			this.updatePreview();
-
-			var target = null;
-			var cell = me.getCell();
-
-			if (graph.isDropEnabled() && this.highlightEnabled)
-			{
-				// Contains a call to getCellAt to find the cell under the mouse
-				target = graph.getDropTarget(this.cells, me.getEvent(), cell, clone);
-			}
-
-			var state = graph.getView().getState(target);
-			var highlight = false;
-			
-			if (state != null && (graph.model.getParent(this.cell) != target || clone))
-			{
-			    if (this.target != target)
-			    {
-				    this.target = target;
-				    this.setHighlightColor(mxConstants.DROP_TARGET_COLOR);
-				}
-			    
-			    highlight = true;
-			}
-			else
-			{
-				this.target = null;
-
-				if (this.connectOnDrop && cell != null && this.cells.length == 1 &&
-					graph.getModel().isVertex(cell) && graph.isCellConnectable(cell))
-				{
-					state = graph.getView().getState(cell);
-					
-					if (state != null)
-					{
-						var error = graph.getEdgeValidationError(null, this.cell, cell);
-						var color = (error == null) ?
-							mxConstants.VALID_COLOR :
-							mxConstants.INVALID_CONNECT_TARGET_COLOR;
-						this.setHighlightColor(color);
-						highlight = true;
-					}
-				}
-			}
-			
-			if (state != null && highlight)
-			{
-				this.highlight.highlight(state);
-			}
-			else
-			{
-				this.highlight.hide();
-			}
 		}
 
 		this.updateHint(me);
