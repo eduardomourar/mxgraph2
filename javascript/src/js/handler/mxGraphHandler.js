@@ -651,11 +651,16 @@ mxGraphHandler.prototype.start = function(cell, x, y)
 	{
 		this.guide = new mxGuide(this.graph, this.getGuideStates());
 		var parent = this.graph.model.getParent(cell);
+		var ignore = this.graph.model.getChildCount(parent) < 2;
 		
 		this.guide.isStateIgnored = mxUtils.bind(this, function(state)
 		{
+			var p = this.graph.model.getParent(state.cell);
+			
 			return (!this.cloning && this.isCellMoving(state.cell)) ||
-				this.graph.model.getParent(state.cell) != (this.target || parent);
+				(state.cell != (this.target || parent) && !ignore &&
+				(this.target == null || this.graph.model.getChildCount(
+				this.target) >= 2) && p != (this.target || parent));  
 		});
 	}
 };
