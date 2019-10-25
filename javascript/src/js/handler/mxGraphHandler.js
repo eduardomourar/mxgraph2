@@ -665,10 +665,11 @@ mxGraphHandler.prototype.start = function(cell, x, y)
 		{
 			var p = this.graph.model.getParent(state.cell);
 			
-			return (!this.cloning && this.isCellMoving(state.cell)) ||
+			return state.cell != null && ((!this.cloning &&
+				this.isCellMoving(state.cell)) ||
 				(state.cell != (this.target || parent) && !ignore &&
 				(this.target == null || this.graph.model.getChildCount(
-				this.target) >= 2) && p != (this.target || parent));  
+				this.target) >= 2) && p != (this.target || parent)));  
 		});
 	}
 };
