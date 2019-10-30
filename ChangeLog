@@ -1,3 +1,5 @@
+- Fixes handling of empty strings in mxCell.getAttribute
+
 17-OCT-2019: 4.0.5
 
 - Fixes border handling in mxGraph.fit, center and sizeDidChange
