@@ -6860,7 +6860,11 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.createSvgCanvas = function(node)
 		{
-			return new mxSvgCanvas2D(node);
+			var canvas = new mxSvgCanvas2D(node);
+			
+			canvas.pointerEvents = true;
+			
+			return canvas;
 		};
 		
 		/**
