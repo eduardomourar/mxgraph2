@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+
+  # Automatic update checking
+  config.vm.box_check_update = true
+
+  # Provider Settings
+  config.vm.provider "virtualbox" do |vb|
+    # Customize the amount of memory and # of cpus on the VM:
+    vb.memory = 4096
+    vb.cpus = 4
+  end
+
+  # The template folder contains the keystore that is used for signing jgraphx-demo.jar as well as GIT_USERNAME and GIT_EMAIL
+  config.vm.synced_folder "./template", "/opt/system/template"
+  # In order for adding this key automatically, don't use passphrase, otherwise, add it manually using "ssh-add /opt/system/ssh_key/id_rsa"
+  config.vm.synced_folder "./ssh_key", "/opt/system/ssh_key"
+
+  # Provision Settings
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get upgrade
+    apt-get install -y zip ant npm default-jdk doxygen naturaldocs ruby-full git
+    grep -q JAVA_HOME /etc/environment || echo 'JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' >> /etc/environment
+    grep -q "user.email" /home/vagrant/.profile || echo 'git config --global user.email "`cat /opt/system/template/GIT_EMAIL`"' >> /home/vagrant/.profile
+    grep -q "user.name" /home/vagrant/.profile || echo 'git config --global user.name "`cat /opt/system/template/GIT_USERNAME`"' >> /home/vagrant/.profile
+    grep -q "ssh-agent" /home/vagrant/.profile || echo "exec ssh-agent bash" >> /home/vagrant/.profile
+    grep -q "ssh-add" /home/vagrant/.profile || echo "ssh-add /opt/system/ssh_key/id_rsa" >> /home/vagrant/.profile
+  SHELL
+end
