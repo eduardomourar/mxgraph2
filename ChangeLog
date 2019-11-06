@@ -1,3 +1,4 @@
+- Consumes iOS touch events by default in mxMouseEvent.consume
 - Fixes ignored direction for horizontal/vertical flip in mxGraph.getConnectionPoint
 - Fixes handling of empty strings in mxCell.getAttribute
 
