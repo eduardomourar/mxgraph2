@@ -9,7 +9,6 @@
 	<property name="product.name"    value="JGraphX"/>
 	<property name="product.version" value="@MXGRAPH-VERSION@"/>
 	<property name="jgraphx.jar"     value="jgraphx.jar"/>
-	<property name="demo.jar"        value="jgraphx-demo.jar"/>
 
 <!-- ===================== Project Environment =========================== -->
 
@@ -24,7 +23,7 @@
 
 <!-- ==================== All ==================== -->
 
-	<target name="all" depends="build"
+	<target name="all" depends="compile"
 		description="Clean up and build the project"/>
 
 <!-- ==================== Clean ==================== -->
@@ -54,26 +53,4 @@
 			</classpath>
 		</javac>
 	</target>
-
-<!-- ==================== Build ==================== -->
-
-	<target name="build" depends="compile" description="Builds all Java archives (JARs)">
-		<unjar src="${basedir}/lib/${jgraphx.jar}" dest="${basedir}/classes"/>
-		<jar jarfile="${basedir}/lib/${demo.jar}">
-			<manifest>
-				<attribute name="Vendor" value="JGraph Ltd"/>
-				<attribute name="Version" value="${product.version}"/>
-				<attribute name="Main-Class" value="com.mxgraph.examples.swing.GraphEditor" />
-			</manifest>
-			<fileset dir="${example.home}">
-				<exclude name="**/*.java"/>
-			</fileset>
-			<fileset dir="${basedir}/classes">
-				<include name="com/mxgraph/**"/>
-			</fileset>
-		</jar>
-		<signjar jar="${basedir}/lib/${demo.jar}" keystore="/opt/system/template/keystore" alias="jgraph-group" storepass="keines" />
-		<delete dir="${basedir}/classes"/>
-    </target>
-
 </project>

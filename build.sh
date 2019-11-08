@@ -151,7 +151,6 @@ zip 2>/dev/null -q -r jgraphx.zip jgraphx/*;
 sed "s/@MXGRAPH-VERSION@/$VERSION/;s/@MXGRAPH-DATE@/$TODAY/" ../etc/build/jgraphx-www-build.xml > jgraphx/build-www.xml
 cd jgraphx
 ant -f build-www.xml
-cp lib/jgraphx-demo.jar ../
 cd ..
 rm -rf jgraphx
 cd ..
