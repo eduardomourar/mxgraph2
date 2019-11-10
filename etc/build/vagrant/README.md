@@ -1,6 +1,6 @@
 # Deploying mxGraph using Vagrant
 
-1. Install [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+1. Install [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads). On Mac you can `brew cask install vagrant`
 1. Open a shell terminal and change directory to the `vagrant` directory
 1. In folder `ssh_key` under `vagrant`, add your github SSH private key in a file name `id_rsa`. If that key is protected with a passphrase, you will need to execute `ssh-add /opt/system/ssh_key/id_rsa` manually before deploying. Refer to [github documentation](https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) for more details.
 1. In folder `template` under `vagrant`, add `keystore` file that will be used to sign `jgraphx-demo.jar`. Also, add your github username amd email for files `GIT_USERNAME` and `GIT_EMAIL`. Also, edit the `settings.xml` file. Replace `USERNAME` with your GitHub username, and `TOKEN` with your personal access token (must have `repo`, `write:packages`, `read:packages`, and `delete:packages` scopes) [more info](https://help.github.com/en/github/managing-packages-with-github-package-registry/configuring-apache-maven-for-use-with-github-package-registry).
