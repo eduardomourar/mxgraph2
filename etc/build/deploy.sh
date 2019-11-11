@@ -97,10 +97,10 @@ rm -rf tmp-$date
 echo
 echo "Updating mxgraph jars to Github Package Registry..."
 cd $BUILD/mxgraph/java
-mvn deploy:deploy-file -DgroupId=com.mxgraph -DartifactId=mxgraphx-core -Dversion=$DOTVERSION -Dpackaging=jar -Dfile=lib/mxgraph-core.jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/jgraph/mxgraph2
-mvn deploy:deploy-file -DgroupId=com.mxgraph -DartifactId=mxgraphx-swing -Dversion=$DOTVERSION -Dpackaging=jar -Dfile=lib/mxgraph-swing.jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/jgraph/mxgraph2
-mvn deploy:deploy-file -DgroupId=com.mxgraph -DartifactId=mxgraphx-all -Dversion=$DOTVERSION -Dpackaging=jar -Dfile=lib/mxgraph-all.jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/jgraph/mxgraph2
-#mvn deploy:deploy-file -DgroupId=com.mxgraph -DartifactId=mxPdf -Dversion=1.0.2 -Dpackaging=jar -Dfile=jars/mxPdf.jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/jgraph/mxgraph2
+mvn deploy:deploy-file -DgroupId=com.mxgraph -DartifactId=mxgraphx-core -Dversion=$DOTVERSION -Dpackaging=jar -Dfile=lib/mxgraph-core.jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/jgraph/mxgraph
+mvn deploy:deploy-file -DgroupId=com.mxgraph -DartifactId=mxgraphx-swing -Dversion=$DOTVERSION -Dpackaging=jar -Dfile=lib/mxgraph-swing.jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/jgraph/mxgraph
+mvn deploy:deploy-file -DgroupId=com.mxgraph -DartifactId=mxgraphx-all -Dversion=$DOTVERSION -Dpackaging=jar -Dfile=lib/mxgraph-all.jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/jgraph/mxgraph
+#mvn deploy:deploy-file -DgroupId=com.mxgraph -DartifactId=mxPdf -Dversion=1.0.2 -Dpackaging=jar -Dfile=jars/mxPdf.jar -DrepositoryId=github -Durl=https://maven.pkg.github.com/jgraph/mxgraph
 
 echo
 echo "Done."
