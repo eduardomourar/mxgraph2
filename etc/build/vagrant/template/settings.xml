@@ -29,8 +29,8 @@
   <servers>
     <server>
       <id>github</id>
-      <username>davidjgraph</username>
-      <password>0ba22023e5b09bc8a9f2fff7031feb325ff131d2</password>
+      <username>USERNAME</username>
+      <password>TOKEN</password>
     </server>
   </servers>
 </settings>
