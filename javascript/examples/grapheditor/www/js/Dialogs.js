@@ -629,7 +629,7 @@ FilenameDialog.createTypeHint = function(ui, nameInput, hints)
  * Constructs a new textarea dialog.
  */
 var TextareaDialog = function(editorUi, title, url, fn, cancelFn, cancelTitle, w, h,
-	addButtons, noHide, noWrap, applyTitle, helpLink, customBtnLabel, customBtnFn)
+	addButtons, noHide, noWrap, applyTitle, helpLink, customButtons)
 {
 	w = (w != null) ? w : 300;
 	h = (h != null) ? h : 120;
@@ -699,15 +699,21 @@ var TextareaDialog = function(editorUi, title, url, fn, cancelFn, cancelTitle, w
 		td.appendChild(helpBtn);
 	}
 	
-	if (customBtnLabel != null && customBtnFn != null)
+	if (customButtons != null)
 	{
-		var customBtn = mxUtils.button(customBtnLabel, function()
+		for (var i = 0; i < customButtons.length; i++)
 		{
-			customBtnFn(nameInput.value);
-		});
-		customBtn.className = 'geBtn';
-		
-		td.appendChild(customBtn);
+			(function(label, fn)
+			{
+				var customBtn = mxUtils.button(label, function(e)
+				{
+					fn(e, nameInput);
+				});
+				customBtn.className = 'geBtn';
+				
+				td.appendChild(customBtn);
+			})(customButtons[i][0], customButtons[i][1]);
+		}
 	}
 	
 	var cancelBtn = mxUtils.button(cancelTitle || mxResources.get('cancel'), function()
