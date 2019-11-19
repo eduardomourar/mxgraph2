@@ -717,13 +717,13 @@ mxText.prototype.updateHtmlTransform = function()
 	if (theta != 0)
 	{
 		mxUtils.setPrefixedStyle(style, 'transformOrigin', (-dx * 100) + '%' + ' ' + (-dy * 100) + '%');
-		mxUtils.setPrefixedStyle(style, 'transform', 'translate(' + (dx * 100) + '%' + ',' + (dy * 100) + '%)' +
+		mxUtils.setPrefixedStyle(style, 'transform', 'translate(' + (dx * 100) + '%' + ',' + (dy * 100) + '%) ' +
 			'scale(' + this.scale + ') rotate(' + theta + 'deg)');
 	}
 	else
 	{
 		mxUtils.setPrefixedStyle(style, 'transformOrigin', '0% 0%');
-		mxUtils.setPrefixedStyle(style, 'transform', 'scale(' + this.scale + ')' +
+		mxUtils.setPrefixedStyle(style, 'transform', 'scale(' + this.scale + ') ' +
 			'translate(' + (dx * 100) + '%' + ',' + (dy * 100) + '%)');
 	}
 
