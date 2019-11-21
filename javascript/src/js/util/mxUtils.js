@@ -3619,8 +3619,9 @@ var mxUtils =
 	 * fontFamily - String that specifies the name of the font family. Default
 	 * is <mxConstants.DEFAULT_FONTFAMILY>.
 	 * textWidth - Optional width for text wrapping.
+	 * fontStyle - Optional font style.
 	 */
-	getSizeForString: function(text, fontSize, fontFamily, textWidth)
+	getSizeForString: function(text, fontSize, fontFamily, textWidth, fontStyle)
 	{
 		fontSize = (fontSize != null) ? fontSize : mxConstants.DEFAULT_FONTSIZE;
 		fontFamily = (fontFamily != null) ? fontFamily : mxConstants.DEFAULT_FONTFAMILY;
@@ -3630,6 +3631,25 @@ var mxUtils =
 		div.style.fontFamily = fontFamily;
 		div.style.fontSize = Math.round(fontSize) + 'px';
 		div.style.lineHeight = Math.round(fontSize * mxConstants.LINE_HEIGHT) + 'px';
+		
+		// Sets the font style
+		if (fontStyle != null)
+		{
+			if ((fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
+			{
+				div.style.fontWeight = 'bold';
+			}
+			
+			if ((fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC)
+			{
+				div.style.fontStyle = 'italic';
+			}
+			
+			if ((fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
+			{
+				div.style.textDecoration = 'underline';
+			}
+		}
 		
 		// Disables block layout and outside wrapping and hides the div
 		div.style.position = 'absolute';
