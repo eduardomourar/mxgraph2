@@ -1474,6 +1474,305 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
  * foreignObject is supported and <foEnabled> is true. (This means IE9 and later
  * does currently not support HTML text as part of shapes.)
  */
+mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation, dir, div, root)
+{
+	var s = this.state;
+	
+	// Uses outer group for opacity and transforms to
+	// fix rendering order in Chrome
+	var group = this.createElement('g');
+	
+	if (s.alpha < 1)
+	{
+		group.setAttribute('opacity', s.alpha);
+	}
+
+	var fo = this.createElement('foreignObject');
+	fo.setAttribute('style', 'overflow:visible;');
+	fo.setAttribute('pointer-events', (this.pointerEvents) ? this.pointerEventsValue : 'none');
+
+	group.appendChild(fo);
+	root.appendChild(group);
+	
+	// Code that depends on the size which is computed after
+	// the element was added to the DOM.
+	var ow = 0;
+	var oh = 0;
+	
+	// Padding avoids clipping on border and wrapping for differing font metrics on platforms
+	var padX = 2;
+	var padY = 2;
+
+	// NOTE: IE is always export as it does not support foreign objects
+	if (mxClient.IS_IE && (document.documentMode == 9 || !mxClient.IS_SVG))
+	{
+		// Handles non-standard namespace for getting size in IE
+		var clone = document.createElement('div');
+		
+		clone.style.cssText = div.getAttribute('style');
+		clone.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+		clone.style.position = 'absolute';
+		clone.style.visibility = 'hidden';
+
+		// Inner DIV is needed for text measuring
+		var div2 = document.createElement('div');
+		div2.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
+		div2.style.wordWrap = mxConstants.WORD_WRAP;
+		div2.innerHTML = (mxUtils.isNode(str)) ? str.outerHTML : str;
+		clone.appendChild(div2);
+
+		document.body.appendChild(clone);
+
+		// Workaround for different box models
+		if (document.documentMode != 8 && document.documentMode != 9 && s.fontBorderColor != null)
+		{
+			padX += 2;
+			padY += 2;
+		}
+
+		if (wrap && w > 0)
+		{
+			var tmp = div2.offsetWidth;
+			
+			// Workaround for adding padding twice in IE8/IE9 standards mode if label is wrapped
+			padDx = 0;
+			
+			// For export, if no wrapping occurs, we add a large padding to make
+			// sure there is no wrapping even if the text metrics are different.
+			// This adds support for text metrics on different operating systems.
+			// Disables wrapping if text is not wrapped for given width
+			if (!clip && wrap && w > 0 && this.root.ownerDocument != document && overflow != 'fill')
+			{
+				var ws = clone.style.whiteSpace;
+				div2.style.whiteSpace = 'nowrap';
+				
+				if (tmp < div2.offsetWidth)
+				{
+					clone.style.whiteSpace = ws;
+				}
+			}
+			
+			if (clip)
+			{
+				tmp = Math.min(tmp, w);
+			}
+			
+			clone.style.width = tmp + 'px';
+
+			// Padding avoids clipping on border
+			ow = div2.offsetWidth + padX + padDx;
+			oh = div2.offsetHeight + padY;
+			
+			// Overrides the width of the DIV via XML DOM by using the
+			// clone DOM style, getting the CSS text for that and
+			// then setting that on the DIV via setAttribute
+			clone.style.display = 'inline-block';
+			clone.style.position = '';
+			clone.style.visibility = '';
+			clone.style.width = ow + 'px';
+			
+			div.setAttribute('style', clone.style.cssText);
+		}
+		else
+		{
+			// Padding avoids clipping on border
+			ow = div2.offsetWidth + padX;
+			oh = div2.offsetHeight + padY;
+		}
+
+		clone.parentNode.removeChild(clone);
+		fo.appendChild(div);
+	}
+	else
+	{
+		// Uses document for text measuring during export
+		if (this.root.ownerDocument != document)
+		{
+			div.style.visibility = 'hidden';
+			document.body.appendChild(div);
+		}
+		else
+		{
+			fo.appendChild(div);
+		}
+
+		var sizeDiv = div;
+		
+		if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV')
+		{
+			sizeDiv = sizeDiv.firstChild;
+			
+			if (wrap && div.style.wordWrap == 'break-word')
+			{
+				sizeDiv.style.width = '100%';
+			}
+		}
+		
+		var tmp = sizeDiv.offsetWidth;
+		
+		// Workaround for text measuring in hidden containers
+		if (tmp == 0 && div.parentNode == fo)
+		{
+			div.style.visibility = 'hidden';
+			document.body.appendChild(div);
+			
+			tmp = sizeDiv.offsetWidth;
+		}
+		
+		if (this.cacheOffsetSize)
+		{
+			group.mxCachedOffsetWidth = tmp;
+		}
+		
+		// Disables wrapping if text is not wrapped for given width
+		if (!clip && wrap && w > 0 && this.root.ownerDocument != document &&
+			overflow != 'fill' && overflow != 'width')
+		{
+			var ws = div.style.whiteSpace;
+			div.style.whiteSpace = 'nowrap';
+			
+			if (tmp < sizeDiv.offsetWidth)
+			{
+				div.style.whiteSpace = ws;
+			}
+		}
+
+		ow = tmp + padX - 1;
+
+		// Recomputes the height of the element for wrapped width
+		if (wrap && overflow != 'fill' && overflow != 'width')
+		{
+			if (clip)
+			{
+				ow = Math.min(ow, w);
+			}
+			
+			div.style.width = ow + 'px';
+		}
+
+		ow = sizeDiv.offsetWidth;
+		oh = sizeDiv.offsetHeight;
+		
+		if (this.cacheOffsetSize)
+		{
+			group.mxCachedFinalOffsetWidth = ow;
+			group.mxCachedFinalOffsetHeight = oh;
+		}
+
+		oh -= padY;
+		
+		if (div.parentNode != fo)
+		{
+			fo.appendChild(div);
+			div.style.visibility = '';
+		}
+	}
+
+	if (clip)
+	{
+		oh = Math.min(oh, h);
+		ow = Math.min(ow, w);
+	}
+
+	if (overflow == 'width')
+	{
+		h = oh;
+	}
+	else if (overflow != 'fill')
+	{
+		w = ow;
+		h = oh;
+	}
+
+	if (s.alpha < 1)
+	{
+		group.setAttribute('opacity', s.alpha);
+	}
+	
+	var dx = 0;
+	var dy = 0;
+
+	if (align == mxConstants.ALIGN_CENTER)
+	{
+		dx -= w / 2;
+	}
+	else if (align == mxConstants.ALIGN_RIGHT)
+	{
+		dx -= w;
+	}
+	
+	x += dx;
+	
+	// FIXME: LINE_HEIGHT not ideal for all text sizes, fix for export
+	if (valign == mxConstants.ALIGN_MIDDLE)
+	{
+		dy -= h / 2;
+	}
+	else if (valign == mxConstants.ALIGN_BOTTOM)
+	{
+		dy -= h;
+	}
+	
+	// Workaround for rendering offsets
+	// TODO: Check if export needs these fixes, too
+	//if (this.root.ownerDocument == document)
+	if (overflow != 'fill' && mxClient.IS_FF && mxClient.IS_WIN)
+	{
+		dy -= 2;
+	}
+	
+	y += dy;
+
+	var tr = (s.scale != 1) ? 'scale(' + s.scale + ')' : '';
+
+	if (s.rotation != 0 && this.rotateHtml)
+	{
+		tr += 'rotate(' + (s.rotation) + ',' + (w / 2) + ',' + (h / 2) + ')';
+		var pt = this.rotatePoint((x + w / 2) * s.scale, (y + h / 2) * s.scale,
+			s.rotation, s.rotationCx, s.rotationCy);
+		x = pt.x - w * s.scale / 2;
+		y = pt.y - h * s.scale / 2;
+	}
+	else
+	{
+		x *= s.scale;
+		y *= s.scale;
+	}
+
+	if (rotation != 0)
+	{
+		tr += 'rotate(' + (rotation) + ',' + (-dx) + ',' + (-dy) + ')';
+	}
+
+	group.setAttribute('transform', 'translate(' + (Math.round(x) + this.foOffset) + ',' +
+		(Math.round(y) + this.foOffset) + ')' + tr);
+	fo.setAttribute('width', Math.round(Math.max(1, w)));
+	fo.setAttribute('height', Math.round(Math.max(1, h)));
+	
+	// Adds alternate content if foreignObject not supported in viewer
+	if (this.root.ownerDocument != document)
+	{
+		var alt = this.createAlternateContent(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation);
+		
+		if (alt != null)
+		{
+			fo.setAttribute('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility');
+			var sw = this.createElement('switch');
+			sw.appendChild(fo);
+			sw.appendChild(alt);
+			group.appendChild(sw);
+		}
+	}
+};
+
+/**
+ * Function: text
+ * 
+ * Paints the given text. Possible values for format are empty string for plain
+ * text and html for HTML markup. Note that HTML markup is only supported if
+ * foreignObject is supported and <foEnabled> is true. (This means IE9 and later
+ * does currently not support HTML text as part of shapes.)
+ */
 mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation, dir)
 {
 	if (this.textEnabled && str != null)
@@ -1516,19 +1815,6 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				style += 'white-space:nowrap;';
 			}
 			
-			// Uses outer group for opacity and transforms to
-			// fix rendering order in Chrome
-			var group = this.createElement('g');
-			
-			if (s.alpha < 1)
-			{
-				group.setAttribute('opacity', s.alpha);
-			}
-
-			var fo = this.createElement('foreignObject');
-			fo.setAttribute('style', 'overflow:visible;');
-			fo.setAttribute('pointer-events', (this.pointerEvents) ? this.pointerEventsValue : 'none');
-			
 			var div = this.createDiv(str, align, valign, style, overflow, (wrap && w > 0) ? 'normal' : null);
 			
 			// Ignores invalid XHTML labels
@@ -1541,278 +1827,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 				div.setAttribute('dir', dir);
 			}
 
-			group.appendChild(fo);
-			this.root.appendChild(group);
-			
-			// Code that depends on the size which is computed after
-			// the element was added to the DOM.
-			var ow = 0;
-			var oh = 0;
-			
-			// Padding avoids clipping on border and wrapping for differing font metrics on platforms
-			var padX = 2;
-			var padY = 2;
-
-			// NOTE: IE is always export as it does not support foreign objects
-			if (mxClient.IS_IE && (document.documentMode == 9 || !mxClient.IS_SVG))
-			{
-				// Handles non-standard namespace for getting size in IE
-				var clone = document.createElement('div');
-				
-				clone.style.cssText = div.getAttribute('style');
-				clone.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
-				clone.style.position = 'absolute';
-				clone.style.visibility = 'hidden';
-
-				// Inner DIV is needed for text measuring
-				var div2 = document.createElement('div');
-				div2.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
-				div2.style.wordWrap = mxConstants.WORD_WRAP;
-				div2.innerHTML = (mxUtils.isNode(str)) ? str.outerHTML : str;
-				clone.appendChild(div2);
-
-				document.body.appendChild(clone);
-
-				// Workaround for different box models
-				if (document.documentMode != 8 && document.documentMode != 9 && s.fontBorderColor != null)
-				{
-					padX += 2;
-					padY += 2;
-				}
-
-				if (wrap && w > 0)
-				{
-					var tmp = div2.offsetWidth;
-					
-					// Workaround for adding padding twice in IE8/IE9 standards mode if label is wrapped
-					padDx = 0;
-					
-					// For export, if no wrapping occurs, we add a large padding to make
-					// sure there is no wrapping even if the text metrics are different.
-					// This adds support for text metrics on different operating systems.
-					// Disables wrapping if text is not wrapped for given width
-					if (!clip && wrap && w > 0 && this.root.ownerDocument != document && overflow != 'fill')
-					{
-						var ws = clone.style.whiteSpace;
-						div2.style.whiteSpace = 'nowrap';
-						
-						if (tmp < div2.offsetWidth)
-						{
-							clone.style.whiteSpace = ws;
-						}
-					}
-					
-					if (clip)
-					{
-						tmp = Math.min(tmp, w);
-					}
-					
-					clone.style.width = tmp + 'px';
-	
-					// Padding avoids clipping on border
-					ow = div2.offsetWidth + padX + padDx;
-					oh = div2.offsetHeight + padY;
-					
-					// Overrides the width of the DIV via XML DOM by using the
-					// clone DOM style, getting the CSS text for that and
-					// then setting that on the DIV via setAttribute
-					clone.style.display = 'inline-block';
-					clone.style.position = '';
-					clone.style.visibility = '';
-					clone.style.width = ow + 'px';
-					
-					div.setAttribute('style', clone.style.cssText);
-				}
-				else
-				{
-					// Padding avoids clipping on border
-					ow = div2.offsetWidth + padX;
-					oh = div2.offsetHeight + padY;
-				}
-
-				clone.parentNode.removeChild(clone);
-				fo.appendChild(div);
-			}
-			else
-			{
-				// Uses document for text measuring during export
-				if (this.root.ownerDocument != document)
-				{
-					div.style.visibility = 'hidden';
-					document.body.appendChild(div);
-				}
-				else
-				{
-					fo.appendChild(div);
-				}
-
-				var sizeDiv = div;
-				
-				if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV')
-				{
-					sizeDiv = sizeDiv.firstChild;
-					
-					if (wrap && div.style.wordWrap == 'break-word')
-					{
-						sizeDiv.style.width = '100%';
-					}
-				}
-				
-				var tmp = sizeDiv.offsetWidth;
-				
-				// Workaround for text measuring in hidden containers
-				if (tmp == 0 && div.parentNode == fo)
-				{
-					div.style.visibility = 'hidden';
-					document.body.appendChild(div);
-					
-					tmp = sizeDiv.offsetWidth;
-				}
-				
-				if (this.cacheOffsetSize)
-				{
-					group.mxCachedOffsetWidth = tmp;
-				}
-				
-				// Disables wrapping if text is not wrapped for given width
-				if (!clip && wrap && w > 0 && this.root.ownerDocument != document &&
-					overflow != 'fill' && overflow != 'width')
-				{
-					var ws = div.style.whiteSpace;
-					div.style.whiteSpace = 'nowrap';
-					
-					if (tmp < sizeDiv.offsetWidth)
-					{
-						div.style.whiteSpace = ws;
-					}
-				}
-
-				ow = tmp + padX - 1;
-
-				// Recomputes the height of the element for wrapped width
-				if (wrap && overflow != 'fill' && overflow != 'width')
-				{
-					if (clip)
-					{
-						ow = Math.min(ow, w);
-					}
-					
-					div.style.width = ow + 'px';
-				}
-
-				ow = sizeDiv.offsetWidth;
-				oh = sizeDiv.offsetHeight;
-				
-				if (this.cacheOffsetSize)
-				{
-					group.mxCachedFinalOffsetWidth = ow;
-					group.mxCachedFinalOffsetHeight = oh;
-				}
-
-				oh -= padY;
-				
-				if (div.parentNode != fo)
-				{
-					fo.appendChild(div);
-					div.style.visibility = '';
-				}
-			}
-
-			if (clip)
-			{
-				oh = Math.min(oh, h);
-				ow = Math.min(ow, w);
-			}
-
-			if (overflow == 'width')
-			{
-				h = oh;
-			}
-			else if (overflow != 'fill')
-			{
-				w = ow;
-				h = oh;
-			}
-
-			if (s.alpha < 1)
-			{
-				group.setAttribute('opacity', s.alpha);
-			}
-			
-			var dx = 0;
-			var dy = 0;
-
-			if (align == mxConstants.ALIGN_CENTER)
-			{
-				dx -= w / 2;
-			}
-			else if (align == mxConstants.ALIGN_RIGHT)
-			{
-				dx -= w;
-			}
-			
-			x += dx;
-			
-			// FIXME: LINE_HEIGHT not ideal for all text sizes, fix for export
-			if (valign == mxConstants.ALIGN_MIDDLE)
-			{
-				dy -= h / 2;
-			}
-			else if (valign == mxConstants.ALIGN_BOTTOM)
-			{
-				dy -= h;
-			}
-			
-			// Workaround for rendering offsets
-			// TODO: Check if export needs these fixes, too
-			//if (this.root.ownerDocument == document)
-			if (overflow != 'fill' && mxClient.IS_FF && mxClient.IS_WIN)
-			{
-				dy -= 2;
-			}
-			
-			y += dy;
-
-			var tr = (s.scale != 1) ? 'scale(' + s.scale + ')' : '';
-
-			if (s.rotation != 0 && this.rotateHtml)
-			{
-				tr += 'rotate(' + (s.rotation) + ',' + (w / 2) + ',' + (h / 2) + ')';
-				var pt = this.rotatePoint((x + w / 2) * s.scale, (y + h / 2) * s.scale,
-					s.rotation, s.rotationCx, s.rotationCy);
-				x = pt.x - w * s.scale / 2;
-				y = pt.y - h * s.scale / 2;
-			}
-			else
-			{
-				x *= s.scale;
-				y *= s.scale;
-			}
-
-			if (rotation != 0)
-			{
-				tr += 'rotate(' + (rotation) + ',' + (-dx) + ',' + (-dy) + ')';
-			}
-
-			group.setAttribute('transform', 'translate(' + (Math.round(x) + this.foOffset) + ',' +
-				(Math.round(y) + this.foOffset) + ')' + tr);
-			fo.setAttribute('width', Math.round(Math.max(1, w)));
-			fo.setAttribute('height', Math.round(Math.max(1, h)));
-			
-			// Adds alternate content if foreignObject not supported in viewer
-			if (this.root.ownerDocument != document)
-			{
-				var alt = this.createAlternateContent(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation);
-				
-				if (alt != null)
-				{
-					fo.setAttribute('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility');
-					var sw = this.createElement('switch');
-					sw.appendChild(fo);
-					sw.appendChild(alt);
-					group.appendChild(sw);
-				}
-			}
+			this.addForeignObject(x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation, dir, div, this.root);
 		}
 		else
 		{
