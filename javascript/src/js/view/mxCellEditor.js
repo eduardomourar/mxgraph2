@@ -743,7 +743,12 @@ mxCellEditor.prototype.isLegacyEditor = function()
 			
 			if (root != null)
 			{
-				absoluteRoot = mxUtils.getCurrentStyle(root).position == 'absolute';
+				var css = mxUtils.getCurrentStyle(root);
+				
+				if (css != null)
+				{				
+					absoluteRoot = css.position == 'absolute';
+				}
 			}
 		}
 		
