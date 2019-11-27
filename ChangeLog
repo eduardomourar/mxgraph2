@@ -1,4 +1,6 @@
+- Fixes moving and resizing on iOS 13
 - Adds mxSvgCanvas2D.addForeignObject
+- Adds mxClient.IOS_VERSION
 
 08-NOV-2019: 4.0.6
 
