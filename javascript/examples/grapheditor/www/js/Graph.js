@@ -4336,7 +4336,6 @@ HoverIcons.prototype.setCurrentState = function(state)
 			var size = (parseInt(mxUtils.getValue(this.style, 'jumpSize',
 				Graph.defaultJumpSize)) - 2) / 2 + this.strokewidth;
 			var style = mxUtils.getValue(this.style, 'jumpStyle', 'none');
-			var f = Editor.jumpSizeRatio;
 			var moveTo = true;
 			var last = null;
 			var len = null;
