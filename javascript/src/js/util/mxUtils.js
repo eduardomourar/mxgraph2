@@ -3645,9 +3645,21 @@ var mxUtils =
 				div.style.fontStyle = 'italic';
 			}
 			
+			var txtDecor = [];
+			
 			if ((fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
 			{
-				div.style.textDecoration = 'underline';
+				txtDecor.push('underline');
+			}
+			
+			if ((fontStyle & mxConstants.FONT_STRIKETHROUGH) == mxConstants.FONT_STRIKETHROUGH)
+			{
+				txtDecor.push('line-through');
+			}
+			
+			if (txtDecor.length > 0)
+			{
+				div.style.textDecoration = txtDecor.join(' ');
 			}
 		}
 		

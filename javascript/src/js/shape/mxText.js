@@ -1101,14 +1101,19 @@ mxText.prototype.updateFont = function(node)
 		style.fontStyle = '';
 	}
 	
+	var txtDecor = [];
+	
 	if ((this.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
 	{
-		style.textDecoration = 'underline';
+		txtDecor.push('underline');
 	}
-	else
+	
+	if ((this.fontStyle & mxConstants.FONT_STRIKETHROUGH) == mxConstants.FONT_STRIKETHROUGH)
 	{
-		style.textDecoration = '';
+		txtDecor.push('line-through');
 	}
+	
+	style.textDecoration = txtDecor.join(' ');
 	
 	if (this.align == mxConstants.ALIGN_CENTER)
 	{

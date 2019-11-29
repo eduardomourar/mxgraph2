@@ -392,9 +392,21 @@ mxSvgCanvas2D.prototype.createAlternateContent = function(fo, x, y, w, h, str, a
 			alt.setAttribute('font-style', 'italic');
 		}
 		
+		var txtDecor = [];
+		
 		if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
 		{
-			alt.setAttribute('text-decoration', 'underline');
+			txtDecor.push('underline');
+		}
+		
+		if ((s.fontStyle & mxConstants.FONT_STRIKETHROUGH) == mxConstants.FONT_STRIKETHROUGH)
+		{
+			txtDecor.push('line-through');
+		}
+		
+		if (txtDecor.length > 0)
+		{
+			alt.setAttribute('text-decoration', txtDecor.join(' '));
 		}
 		
 		mxUtils.write(alt, this.foAltText);
@@ -1198,9 +1210,21 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 		style += 'font-style:italic;';
 	}
 	
+	var txtDecor = [];
+	
 	if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
 	{
-		style += 'text-decoration:underline;';
+		txtDecor.push('underline');
+	}
+	
+	if ((s.fontStyle & mxConstants.FONT_STRIKETHROUGH) == mxConstants.FONT_STRIKETHROUGH)
+	{
+		txtDecor.push('line-through');
+	}
+	
+	if (txtDecor.length > 0)
+	{
+		style += 'text-decoration:' + txtDecor.join(' ') + ';';
 	}
 	
 	if (align == mxConstants.ALIGN_CENTER)
@@ -2056,9 +2080,21 @@ mxSvgCanvas2D.prototype.updateFont = function(node)
 		node.setAttribute('font-style', 'italic');
 	}
 	
+	var txtDecor = [];
+	
 	if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
 	{
-		node.setAttribute('text-decoration', 'underline');
+		txtDecor.push('underline');
+	}
+	
+	if ((s.fontStyle & mxConstants.FONT_STRIKETHROUGH) == mxConstants.FONT_STRIKETHROUGH)
+	{
+		txtDecor.push('line-through');
+	}
+	
+	if (txtDecor.length > 0)
+	{
+		node.setAttribute('text-decoration', txtDecor.join(' '));
 	}
 };
 
