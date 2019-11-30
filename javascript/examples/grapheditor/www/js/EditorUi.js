@@ -2112,9 +2112,9 @@ EditorUi.prototype.initCanvas = function()
 		
 		if (urlParams['zoom'] == 'fast')
 		{
-			var cx = (ignoreCursorPosition) ? graph.container.scrollWidth / 2 :
+			var cx = (ignoreCursorPosition) ? graph.container.scrollLeft + graph.container.clientWidth / 2 :
 				cursorPosition.x + graph.container.scrollLeft - graph.container.offsetLeft;
-			var cy = (ignoreCursorPosition) ? graph.container.scrollHeight / 2 :
+			var cy = (ignoreCursorPosition) ? graph.container.scrollTop + graph.container.clientHeight / 2 :
 				cursorPosition.y + graph.container.scrollTop - graph.container.offsetTop;
 			mainGroup.setAttribute('transform-origin', cx + ' ' + cy);
 			mainGroup.setAttribute('transform', 'scale(' +
@@ -2124,16 +2124,19 @@ EditorUi.prototype.initCanvas = function()
 					this.cumulativeZoomFactor + ')');
 
 			var page = graph.view.backgroundPageShape.node;
-
+			
 			mxUtils.setPrefixedStyle(page.style, 'transform-origin',
-				(ignoreCursorPosition) ? '50%' : ((cursorPosition.x + graph.container.offsetLeft - page.offsetLeft) + 'px') + ' ' +
-				(ignoreCursorPosition) ? '50%' : ((cursorPosition.y - page.offsetTop) + 'px'));
+				((ignoreCursorPosition) ? ((graph.container.clientWidth / 2 + graph.container.scrollLeft -
+					page.offsetLeft) + 'px') : ((cursorPosition.x + graph.container.scrollLeft -
+					page.offsetLeft - graph.container.offsetLeft) + 'px')) + ' ' +
+				((ignoreCursorPosition) ? ((graph.container.clientHeight / 2 + graph.container.scrollTop -
+					page.offsetTop) + 'px') : ((cursorPosition.y + graph.container.scrollTop -
+					page.offsetTop - graph.container.offsetTop) + 'px')));
 			mxUtils.setPrefixedStyle(page.style, 'transform',
 				'scale(' + this.cumulativeZoomFactor + ')');
 
 			graph.view.getOverlayPane().style.opacity = '0';
 			graph.view.getDecoratorPane().style.opacity = '0';
-			console.log('here', this.cumulativeZoomFactor, cx, page.offsetLeft, page.offsetWidth);
 		}
 		
 		this.cumulativeZoomFactor = Math.max(0.01, Math.min(this.view.scale * this.cumulativeZoomFactor, 160) / this.view.scale);
@@ -2183,7 +2186,7 @@ EditorUi.prototype.initCanvas = function()
             
             this.cumulativeZoomFactor = 1;
             this.updateZoomTimeout = null;
-        }), (urlParams['zoom'] == 'fast') ? 500 : this.lazyZoomDelay);
+        }), (urlParams['zoom'] == 'fast') ? 800 : this.lazyZoomDelay);
 	};
 	
 	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up)
