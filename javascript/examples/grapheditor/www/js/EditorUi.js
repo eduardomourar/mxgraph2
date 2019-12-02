@@ -2074,7 +2074,7 @@ EditorUi.prototype.initCanvas = function()
 	
 	var isFastZoomEnabled = function()
 	{
-		return urlParams['zoom'] == 'fast' && !graph.mathEnabled;
+		return urlParams['zoom'] == 'fast' && !graph.mathEnabled && !mxClient.NO_FO;
 	};
 	
 	var scheduleZoom = function()
