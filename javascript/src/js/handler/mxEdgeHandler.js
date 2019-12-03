@@ -2068,27 +2068,31 @@ mxEdgeHandler.prototype.redraw = function(ignoreHandles)
 {
 	this.abspoints = this.state.absolutePoints.slice();
 	var g = this.graph.getModel().getGeometry(this.state.cell);
-	var pts = g.points;
-
-	if (this.bends != null && this.bends.length > 0)
+	
+	if (g != null)
 	{
-		if (pts != null)
+		var pts = g.points;
+	
+		if (this.bends != null && this.bends.length > 0)
 		{
-			if (this.points == null)
+			if (pts != null)
 			{
-				this.points = [];
-			}
-			
-			for (var i = 1; i < this.bends.length - 1; i++)
-			{
-				if (this.bends[i] != null && this.abspoints[i] != null)
+				if (this.points == null)
 				{
-					this.points[i - 1] = pts[i - 1];
+					this.points = [];
+				}
+				
+				for (var i = 1; i < this.bends.length - 1; i++)
+				{
+					if (this.bends[i] != null && this.abspoints[i] != null)
+					{
+						this.points[i - 1] = pts[i - 1];
+					}
 				}
 			}
 		}
 	}
-
+	
 	this.drawPreview();
 	
 	if (!ignoreHandles)
