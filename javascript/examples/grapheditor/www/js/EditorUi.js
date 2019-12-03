@@ -1373,9 +1373,14 @@ EditorUi.prototype.initClipboard = function()
 };
 
 /**
- * Initializes the infinite canvas.
+ * Delay between zoom steps when not using preview.
  */
 EditorUi.prototype.lazyZoomDelay = 20;
+
+/**
+ * Delay before update of DOM when using preview.
+ */
+EditorUi.prototype.previewZoomDelay = 420;
 
 /**
  * Initializes the infinite canvas.
@@ -2074,7 +2079,7 @@ EditorUi.prototype.initCanvas = function()
 	
 	var isFastZoomEnabled = function()
 	{
-		return urlParams['zoom'] == 'fast' && !graph.mathEnabled &&
+		return urlParams['zoom'] != 'nocss' && !graph.mathEnabled &&
 			!mxClient.NO_FO && !graph.useCssTransforms;
 	};
 	
@@ -2151,7 +2156,7 @@ EditorUi.prototype.initCanvas = function()
 		            updateZoomTimeout = null;
 		            scrollPosition = null;
 		            cursorPosition = null;
-		        }), (immediate) ? 0 : ((isFastZoomEnabled()) ? 600 : this.lazyZoomDelay));
+		        }), (immediate) ? 0 : ((isFastZoomEnabled()) ? ui.previewZoomDelay : ui.lazyZoomDelay));
 			}
 		}, 0);
 	};
