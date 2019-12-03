@@ -5712,11 +5712,14 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.processElements = function(elt, fn)
 		{
-			var elts = elt.getElementsByTagName('*');
-			
-			for (var i = 0; i < elts.length; i++)
+			if (elt != null)
 			{
-				fn(elts[i]);
+				var elts = elt.getElementsByTagName('*');
+				
+				for (var i = 0; i < elts.length; i++)
+				{
+					fn(elts[i]);
+				}
 			}
 		};
 		
