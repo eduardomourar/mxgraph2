@@ -1,3 +1,4 @@
+- Allows for corner rotation in mxVertexHandler
 - Fixes moving and resizing on iOS 13
 - Adds mxSvgCanvas2D.addForeignObject
 - Adds mxClient.IOS_VERSION
