@@ -647,6 +647,18 @@ mxVertexHandler.prototype.start = function(x, y, index)
 			}
 		}
 		
+		if (index == mxEvent.ROTATION_HANDLE)
+		{
+			// With the rotation handle in a corner, need the angle and distance
+			var pos = this.getRotationHandlePosition();
+			
+			var dx = pos.x - this.state.getCenterX();
+			var dy = pos.y - this.state.getCenterY();
+			
+			this.startAngle = (dx != 0) ? Math.atan(dy / dx) * 180 / Math.PI + 90 : ((dy < 0) ? 180 : 0);
+			this.startDist = Math.sqrt(dx * dx + dy * dy);
+		}
+
 		// Prepares the handles for live preview
 		if (this.livePreviewActive)
 		{
@@ -655,14 +667,6 @@ mxVertexHandler.prototype.start = function(x, y, index)
 			if (index == mxEvent.ROTATION_HANDLE)
 			{
 				this.rotationShape.node.style.display = '';
-				
-				var pos = this.getRotationHandlePosition();
-				
-				var dx = pos.x - this.state.getCenterX();
-				var dy = pos.y - this.state.getCenterY();
-				
-				this.startAngle = (dx != 0) ? Math.atan(dy / dx) * 180 / Math.PI + 90 : ((dy < 0) ? 180 : 0);
-				this.startDist = Math.sqrt(dx * dx + dy * dy);
 			}
 			else if (index == mxEvent.LABEL_HANDLE)
 			{
