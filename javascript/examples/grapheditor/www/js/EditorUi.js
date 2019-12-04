@@ -2079,7 +2079,7 @@ EditorUi.prototype.initCanvas = function()
 	
 	var isFastZoomEnabled = function()
 	{
-		return urlParams['zoom'] != 'nocss' && !graph.mathEnabled &&
+		return mxClient.IS_GC && urlParams['zoom'] != 'nocss' && !graph.mathEnabled &&
 			!mxClient.NO_FO && !graph.useCssTransforms;
 	};
 	
