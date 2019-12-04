@@ -647,25 +647,11 @@ Actions.prototype.init = function()
 	}, null, null, Editor.ctrlKey + '+H');
 	this.addAction('zoomIn', function(evt)
 	{
-		if (urlParams['zoom'] != 'nocss')
-		{
-			graph.lazyZoom(true, true);
-		}
-		else
-		{
-			graph.zoomIn();
-		}
+		graph.zoomIn();
 	}, null, null, Editor.ctrlKey + ' + (Numpad) / Alt+Mousewheel');
 	this.addAction('zoomOut', function(evt)
 	{
-		if (urlParams['zoom'] != 'nocss')
-		{
-			graph.lazyZoom(false, true);
-		}
-		else
-		{
-			graph.zoomOut();
-		}
+		graph.zoomOut();
 	}, null, null, Editor.ctrlKey + ' - (Numpad) / Alt+Mousewheel');
 	this.addAction('fitWindow', function()
 	{
