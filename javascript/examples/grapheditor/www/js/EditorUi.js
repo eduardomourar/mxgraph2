@@ -2284,18 +2284,6 @@ EditorUi.prototype.initCanvas = function()
 					
 					cursorPosition = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));;
 					graph.lazyZoom(up);
-					
-					if (cp != null)
-					{
-						// FIXME: Wheel on point then move and wheel again within timeout jumps around
-						var f = cz / graph.cumulativeZoomFactor;
-						var tx = (cursorPosition.x - cp.x) * f / graph.view.scale;
-						var ty = (cursorPosition.y - cp.y) * f / graph.view.scale;
-						//console.log('cp', cursorPosition, cp, cz / graph.cumulativeZoomFactor, tx, graph.zoomFactor, f);
-						graph.container.scrollLeft -= tx;
-						graph.container.scrollTop -= ty;
-					}
-					
 					mxEvent.consume(evt);
 			
 					return false;
