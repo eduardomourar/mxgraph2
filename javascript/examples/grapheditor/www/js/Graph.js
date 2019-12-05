@@ -1354,6 +1354,15 @@ Graph.prototype.init = function(container)
 	Graph.prototype.currentTranslate = new mxPoint(0, 0);
 
 	/**
+	 * Returns true if fast zoom preview should be used.
+	 */
+	Graph.prototype.isFastZoomEnabled = function()
+	{
+		return mxClient.IS_GC && urlParams['zoom'] != 'nocss' && !this.mathEnabled &&
+			!mxClient.NO_FO && !this.useCssTransforms;
+	};
+	
+	/**
 	 * Only foreignObject supported for now (no IE11).
 	 */
 	Graph.prototype.isCssTransformsSupported = function()

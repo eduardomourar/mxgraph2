@@ -647,11 +647,25 @@ Actions.prototype.init = function()
 	}, null, null, Editor.ctrlKey + '+H');
 	this.addAction('zoomIn', function(evt)
 	{
-		graph.zoomIn();
+		if (graph.isFastZoomEnabled())
+		{
+			graph.lazyZoom(true, true, ui.buttonZoomDelay);
+		}
+		else
+		{
+			graph.zoomIn();
+		}
 	}, null, null, Editor.ctrlKey + ' + (Numpad) / Alt+Mousewheel');
 	this.addAction('zoomOut', function(evt)
 	{
-		graph.zoomOut();
+		if (graph.isFastZoomEnabled())
+		{
+			graph.lazyZoom(false, true, ui.buttonZoomDelay);
+		}
+		else
+		{
+			graph.zoomOut();
+		}
 	}, null, null, Editor.ctrlKey + ' - (Numpad) / Alt+Mousewheel');
 	this.addAction('fitWindow', function()
 	{
