@@ -1358,7 +1358,8 @@ Graph.prototype.init = function(container)
 	 */
 	Graph.prototype.isFastZoomEnabled = function()
 	{
-		return mxClient.IS_GC && urlParams['zoom'] != 'nocss' && !this.mathEnabled &&
+		// LATER: Fix fast zoom preview for Safari
+		return !mxClient.IS_SF && urlParams['zoom'] != 'nocss' && !this.mathEnabled &&
 			!mxClient.NO_FO && !this.useCssTransforms;
 	};
 	
