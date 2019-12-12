@@ -1,3 +1,4 @@
+- Adds optional cells argument in mxGraphHandler.start
 - Fixes mxGraph.sizeDidChange for negative coordinates
 - Allows for corner rotation in mxVertexHandler
 - Fixes moving and resizing on iOS 13
