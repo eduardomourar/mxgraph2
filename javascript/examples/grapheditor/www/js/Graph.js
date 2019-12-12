@@ -1993,12 +1993,12 @@ Graph.prototype.isReplacePlaceholders = function(cell)
 /**
  * Returns true if the given mouse wheel event should be used for zooming. This
  * is invoked if no dialogs are showing and returns true with Alt or Control
- * (except macOS) is pressed.
+ * (or cmd in macOS only) is pressed.
  */
 Graph.prototype.isZoomWheelEvent = function(evt)
 {
 	return mxEvent.isAltDown(evt) || (mxEvent.isMetaDown(evt) && mxClient.IS_MAC) ||
-		(mxEvent.isControlDown(evt) && !mxClient.IS_MAC);
+		mxEvent.isControlDown(evt);
 };
 
 /**
