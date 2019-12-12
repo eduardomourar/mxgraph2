@@ -3359,12 +3359,17 @@ HoverIcons.prototype.init = function()
 
 	this.elts = [this.arrowUp, this.arrowRight, this.arrowDown, this.arrowLeft];
 
+	this.resetHandler = mxUtils.bind(this, function()
+	{
+		this.reset();
+	});
+	
 	this.repaintHandler = mxUtils.bind(this, function()
 	{
 		this.repaint();
 	});
 
-	this.graph.selectionModel.addListener(mxEvent.CHANGE, this.repaintHandler);
+	this.graph.selectionModel.addListener(mxEvent.CHANGE, this.resetHandler);
 	this.graph.model.addListener(mxEvent.CHANGE, this.repaintHandler);
 	this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.repaintHandler);
 	this.graph.view.addListener(mxEvent.TRANSLATE, this.repaintHandler);
