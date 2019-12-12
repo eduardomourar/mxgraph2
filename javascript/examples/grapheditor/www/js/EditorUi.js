@@ -2106,9 +2106,25 @@ EditorUi.prototype.initCanvas = function()
 		  				
 		  				// Transforms graph and background image
 		  				mainGroup.style.transformOrigin = '';
-		  				mainGroup.style.transform = '';
 		  				bgGroup.style.transformOrigin = '';
-		  				bgGroup.style.transform = '';
+
+		  				// Workaround for no reset of transform in Safari
+		  				if (mxClient.IS_SF)
+		  				{
+			  				mainGroup.style.transform = 'scale(1)';
+			  				bgGroup.style.transform = 'scale(1)';
+			  				
+			  				window.setTimeout(function()
+	  						{
+			  					mainGroup.style.transform = '';
+	  							bgGroup.style.transform = '';
+	  						}, 0)
+		  				}
+		  				else
+		  				{
+			  				mainGroup.style.transform = '';
+			  				bgGroup.style.transform = '';
+		  				}
 		  				
 		            	// Shows interactive elements
 		            	graph.view.getDecoratorPane().style.opacity = '';

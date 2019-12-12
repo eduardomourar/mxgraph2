@@ -1,5 +1,7 @@
+- Adds optional cells argument in mxGraphHandler.start
 - Fixes mxGraph.sizeDidChange for negative coordinates
 - Allows for corner rotation in mxVertexHandler
+- Adds mxGraphHandler.suspend and resume
 - Fixes moving and resizing on iOS 13
 - Adds mxSvgCanvas2D.addForeignObject
 - Adds mxClient.IOS_VERSION

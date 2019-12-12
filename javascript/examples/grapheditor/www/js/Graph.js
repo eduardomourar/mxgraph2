@@ -687,8 +687,8 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 	    var isForceRubberBandEvent = rubberband.isForceRubberbandEvent;
 	    rubberband.isForceRubberbandEvent = function(me)
 	    {
-		    	return isForceRubberBandEvent.apply(this, arguments) ||
-		    		(mxClient.IS_CHROMEOS && mxEvent.isShiftDown(me.getEvent())) ||
+		    	return (isForceRubberBandEvent.apply(this, arguments) && !mxEvent.isShiftDown(me.getEvent()) &&
+		    		!mxEvent.isControlDown(me.getEvent())) || (mxClient.IS_CHROMEOS && mxEvent.isShiftDown(me.getEvent())) ||
 		    		(mxUtils.hasScrollbars(this.graph.container) && mxClient.IS_FF &&
 		    		mxClient.IS_WIN && me.getState() == null && mxEvent.isTouchEvent(me.getEvent()));
 	    };
@@ -1358,8 +1358,7 @@ Graph.prototype.init = function(container)
 	 */
 	Graph.prototype.isFastZoomEnabled = function()
 	{
-		// LATER: Fix fast zoom preview for Safari
-		return !mxClient.IS_SF && urlParams['zoom'] != 'nocss' && !this.mathEnabled &&
+		return urlParams['zoom'] != 'nocss' && !this.mathEnabled &&
 			!mxClient.NO_FO && !this.useCssTransforms;
 	};
 	
@@ -3360,12 +3359,17 @@ HoverIcons.prototype.init = function()
 
 	this.elts = [this.arrowUp, this.arrowRight, this.arrowDown, this.arrowLeft];
 
+	this.resetHandler = mxUtils.bind(this, function()
+	{
+		this.reset();
+	});
+	
 	this.repaintHandler = mxUtils.bind(this, function()
 	{
 		this.repaint();
 	});
 
-	this.graph.selectionModel.addListener(mxEvent.CHANGE, this.repaintHandler);
+	this.graph.selectionModel.addListener(mxEvent.CHANGE, this.resetHandler);
 	this.graph.model.addListener(mxEvent.CHANGE, this.repaintHandler);
 	this.graph.view.addListener(mxEvent.SCALE_AND_TRANSLATE, this.repaintHandler);
 	this.graph.view.addListener(mxEvent.TRANSLATE, this.repaintHandler);
@@ -8008,7 +8012,7 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		mxGraphHandler.prototype.updateHint = function(me)
 		{
-			if (this.shape != null)
+			if (this.pBounds != null && (this.shape != null || this.livePreviewActive))
 			{
 				if (this.hint == null)
 				{
@@ -8023,9 +8027,11 @@ if (typeof mxVertexHandler != 'undefined')
 				var unit = this.graph.view.unit;
 				
 				this.hint.innerHTML = formatHintText(x, unit) + ', ' + formatHintText(y, unit);
-	
-				this.hint.style.left = (this.shape.bounds.x + Math.round((this.shape.bounds.width - this.hint.clientWidth) / 2)) + 'px';
-				this.hint.style.top = (this.shape.bounds.y + this.shape.bounds.height + 12) + 'px';
+				
+				this.hint.style.left = (this.pBounds.x + this.currentDx +
+					Math.round((this.pBounds.width - this.hint.clientWidth) / 2)) + 'px';
+				this.hint.style.top = (this.pBounds.y + this.currentDy +
+					this.pBounds.height + 12) + 'px';
 			}
 		};
 	
@@ -8222,7 +8228,8 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 			
 			this.hint.style.left = Math.round(me.getGraphX() - this.hint.clientWidth / 2) + 'px';
-			this.hint.style.top = (Math.max(me.getGraphY(), point.y) + this.state.view.graph.gridSize) + 'px';
+			this.hint.style.top = (Math.max(me.getGraphY(), point.y) +
+				2 * this.state.view.graph.gridSize) + 'px';
 			
 			if (this.linkHint != null)
 			{
