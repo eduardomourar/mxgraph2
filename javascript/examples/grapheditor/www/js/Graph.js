@@ -8007,7 +8007,7 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		mxGraphHandler.prototype.updateHint = function(me)
 		{
-			if (this.pBounds != null)
+			if (this.pBounds != null && (this.shape != null || this.livePreviewActive))
 			{
 				if (this.hint == null)
 				{
@@ -8223,7 +8223,8 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 			
 			this.hint.style.left = Math.round(me.getGraphX() - this.hint.clientWidth / 2) + 'px';
-			this.hint.style.top = (Math.max(me.getGraphY(), point.y) + this.state.view.graph.gridSize) + 'px';
+			this.hint.style.top = (Math.max(me.getGraphY(), point.y) +
+				2 * this.state.view.graph.gridSize) + 'px';
 			
 			if (this.linkHint != null)
 			{
