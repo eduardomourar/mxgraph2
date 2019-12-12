@@ -876,7 +876,7 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			}
 			else if (this.maxLivePreview >= this.cellCount && !this.livePreviewActive && this.allowLivePreview)
 			{
-				if (!clone)
+				if (!clone || !this.livePreviewActive)
 				{
 					this.setHandlesVisibleForCells(this.cells, false);
 					this.livePreviewActive = true;
