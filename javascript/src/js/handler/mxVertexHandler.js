@@ -785,7 +785,7 @@ mxVertexHandler.prototype.roundAngle = function(angle)
  */
 mxVertexHandler.prototype.roundLength = function(length)
 {
-	return Math.round(length);
+	return Math.round(length * 100) / 100;
 };
 
 /**
@@ -1488,6 +1488,8 @@ mxVertexHandler.prototype.moveChildren = function(cell, dx, dy)
  */
 mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, scale, tr, constrained, centered)
 {
+	gridEnabled = (gridEnabled != null) ? gridEnabled && this.graph.gridEnabled : this.graph.gridEnabled;
+	
 	if (this.singleSizer)
 	{
 		var x = bounds.x + bounds.width + dx;
@@ -1524,6 +1526,10 @@ mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, s
 			{
 				bottom = this.graph.snap(bottom / scale) * scale;
 			}
+			else
+			{
+				bottom = Math.round(bottom / scale) * scale;
+			}
 		}
 		else if (index < 3 /* Top Row */)
 		{
@@ -1532,6 +1538,10 @@ mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, s
 			if (gridEnabled)
 			{
 				top = this.graph.snap(top / scale) * scale;
+			}
+			else
+			{
+				top = Math.round(top / scale) * scale;
 			}
 		}
 		
@@ -1543,6 +1553,10 @@ mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, s
 			{
 				left = this.graph.snap(left / scale) * scale;
 			}
+			else
+			{
+				left = Math.round(left / scale) * scale;
+			}
 		}
 		else if (index == 2 || index == 4 || index == 7 /* Right */)
 		{
@@ -1551,6 +1565,10 @@ mxVertexHandler.prototype.union = function(bounds, dx, dy, index, gridEnabled, s
 			if (gridEnabled)
 			{
 				right = this.graph.snap(right / scale) * scale;
+			}
+			else
+			{
+				right = Math.round(right / scale) * scale;
 			}
 		}
 		

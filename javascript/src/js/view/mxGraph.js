@@ -7597,13 +7597,13 @@ mxGraph.prototype.snapDelta = function(delta, bounds, ignoreGrid, ignoreHorizont
 	
 	if (!ignoreGrid && this.gridEnabled)
 	{
-		var tol = this.gridSize * s / 4;
+		var tol = this.gridSize * s * 0.5;
 		
 		if (!ignoreHorizontal)
 		{
 			var tx = bounds.x - (this.snap(bounds.x / s - t.x) + t.x) * s;
 			
-			if (Math.abs(delta.x - tol) < Math.abs(tx) / 2)
+			if (Math.abs(delta.x- tx) < tol)
 			{
 				delta.x = 0;
 			}
@@ -7616,8 +7616,8 @@ mxGraph.prototype.snapDelta = function(delta, bounds, ignoreGrid, ignoreHorizont
 		if (!ignoreVertical)
 		{
 			var ty = bounds.y - (this.snap(bounds.y / s - t.y) + t.y) * s;
-			
-			if (Math.abs(delta.y - tol) < Math.abs(ty) / 2)
+				
+			if (Math.abs(delta.y - ty) < tol)
 			{
 				delta.y = 0;
 			}
