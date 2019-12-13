@@ -7633,26 +7633,28 @@ mxGraph.prototype.snapDelta = function(delta, bounds, ignoreGrid, ignoreHorizont
 		
 		if (!ignoreHorizontal)
 		{
-			if (Math.abs(delta.x) < tol)
+			var tx = bounds.x - (Math.round(bounds.x / s - t.x) + t.x) * s;
+			
+			if (Math.abs(delta.x - tx) < tol)
 			{
 				delta.x = 0;
 			}
 			else
 			{
-				var tx = bounds.x - (Math.round(bounds.x / s - t.x) + t.x) * s;
 				delta.x = Math.round(delta.x / s) * s - tx;
 			}
 		}
 		
 		if (!ignoreVertical)
 		{		
-			if (Math.abs(delta.y) < tol)
+			var ty = bounds.y - (Math.round(bounds.y / s - t.y) + t.y) * s;
+			
+			if (Math.abs(delta.y - ty) < tol)
 			{
 				delta.y = 0;
 			}
 			else
 			{
-				var ty = bounds.y - (Math.round(bounds.y / s - t.y) + t.y) * s;
 				delta.y = Math.round(delta.y / s) * s - ty;
 			}
 		}
