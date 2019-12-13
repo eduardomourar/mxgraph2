@@ -664,6 +664,20 @@ mxGraphHandler.prototype.start = function(cell, x, y, cells)
 		var parent = this.graph.model.getParent(cell);
 		var ignore = this.graph.model.getChildCount(parent) < 2;
 		
+		// Uses connected states as guides
+		var connected = new mxDictionary();
+		var opps = this.graph.getOpposites(this.graph.getEdges(this.cell), this.cell);
+		
+		for (var i = 0; i < opps.length; i++)
+		{
+			var state = this.graph.view.getState(opps[i]);
+			
+			if (state != null && !connected.get(state))
+			{
+				connected.put(state, true);
+			}
+		}
+
 		this.guide.isStateIgnored = mxUtils.bind(this, function(state)
 		{
 			var p = this.graph.model.getParent(state.cell);
@@ -671,6 +685,7 @@ mxGraphHandler.prototype.start = function(cell, x, y, cells)
 			return state.cell != null && ((!this.cloning &&
 				this.isCellMoving(state.cell)) ||
 				(state.cell != (this.target || parent) && !ignore &&
+				!connected.get(state) &&
 				(this.target == null || this.graph.model.getChildCount(
 				this.target) >= 2) && p != (this.target || parent)));  
 		});
@@ -749,10 +764,9 @@ mxGraphHandler.prototype.snap = function(vector)
 mxGraphHandler.prototype.getDelta = function(me)
 {
 	var point = mxUtils.convertPoint(this.graph.container, me.getX(), me.getY());
-	var s = this.graph.view.scale;
 	
-	return new mxPoint(this.roundLength((point.x - this.first.x - this.graph.panDx) / s) * s,
-		this.roundLength((point.y - this.first.y - this.graph.panDy) / s) * s);
+	return new mxPoint(point.x - this.first.x - this.graph.panDx,
+		point.y - this.first.y - this.graph.panDy);
 };
 
 /**
@@ -772,11 +786,13 @@ mxGraphHandler.prototype.removeHint = function() { };
 /**
  * Function: roundLength
  * 
- * Hook for rounding the unscaled vector. This uses Math.round.
+ * Hook for rounding the unscaled vector. Allows for half steps in the raster so
+ * numbers coming in should be rounded if no half steps are allowed (ie for non
+ * aligned standard moving where pixel steps should be preferred).
  */
 mxGraphHandler.prototype.roundLength = function(length)
 {
-	return Math.round(length * 2) / 2;
+	return Math.round(length * 100) / 100;
 };
 
 /**
@@ -800,11 +816,9 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 		}
 		
 		var delta = this.getDelta(me);
-		var dx = delta.x;
-		var dy = delta.y;
 		var tol = graph.tolerance;
 
-		if (this.shape != null || this.livePreviewActive || Math.abs(dx) > tol || Math.abs(dy) > tol)
+		if (this.shape != null || this.livePreviewActive || Math.abs(delta.x) > tol || Math.abs(delta.y) > tol)
 		{
 			// Highlight is used for highlighting drop targets
 			if (this.highlight == null)
@@ -890,22 +904,12 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			
 			if (this.guide != null && this.useGuidesForEvent(me))
 			{
-				delta = this.guide.move(this.bounds, new mxPoint(dx, dy), gridEnabled, clone);
+				delta = this.guide.move(this.bounds, delta, gridEnabled, clone);
 				hideGuide = false;
-				dx = delta.x;
-				dy = delta.y;
 			}
-			else if (gridEnabled)
+			else
 			{
-				var trx = graph.getView().translate;
-				var scale = graph.getView().scale;				
-				
-				var tx = this.bounds.x - (graph.snap(this.bounds.x / scale - trx.x) + trx.x) * scale;
-				var ty = this.bounds.y - (graph.snap(this.bounds.y / scale - trx.y) + trx.y) * scale;
-				var v = this.snap(new mxPoint(dx, dy));
-				
-				dx = v.x - tx;
-				dy = v.y - ty;
+				delta = this.graph.snapDelta(delta, this.bounds, !gridEnabled, false, false);
 			}
 			
 			if (this.guide != null && hideGuide)
@@ -916,18 +920,18 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			// Constrained movement if shift key is pressed
 			if (graph.isConstrainedEvent(me.getEvent()))
 			{
-				if (Math.abs(dx) > Math.abs(dy))
+				if (Math.abs(delta.x) > Math.abs(delta.y))
 				{
-					dy = 0;
+					delta.y = 0;
 				}
 				else
 				{
-					dx = 0;
+					delta.x = 0;
 				}
 			}
 
-			this.currentDx = dx;
-			this.currentDy = dy;
+			this.currentDx = delta.x;
+			this.currentDy = delta.y;
 			this.updatePreview();
 		}
 
@@ -940,7 +944,7 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 		mxEvent.consume(me.getEvent());
 	}
 	else if ((this.isMoveEnabled() || this.isCloneEnabled()) && this.updateCursor && !me.isConsumed() &&
-		(me.getState() != null || me.sourceState != null) && !graph.isMouseDown)
+			(me.getState() != null || me.sourceState != null) && !graph.isMouseDown)
 	{
 		var cursor = graph.getCursorForMouseEvent(me);
 		
@@ -1054,7 +1058,7 @@ mxGraphHandler.prototype.updateLivePreview = function(dx, dy)
 				{
 					state.x += dx;
 					state.y += dy;
-	
+					
 					// Draws the live preview
 					if (!this.cloning)
 					{
@@ -1130,8 +1134,9 @@ mxGraphHandler.prototype.updateLivePreview = function(dx, dy)
 				
 				state.view.updatePoints(state, points, source, target);
 				state.view.updateFloatingTerminalPoints(state, source, target);
+				state.view.updateEdgeLabelOffset(state);
 				state.invalid = false;
-						
+
 				// Draws the live preview but avoids update of state
 				if (!this.cloning)
 				{
