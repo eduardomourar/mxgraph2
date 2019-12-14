@@ -94,7 +94,7 @@ mxGuide.prototype.isEnabledForEvent = function(evt)
  */
 mxGuide.prototype.getGuideTolerance = function(gridEnabled)
 {
-	return (gridEnabled && this.graph.gridEnabled) ? this.graph.gridSize / 2 : 0.5;
+	return (gridEnabled && this.graph.gridEnabled) ? this.graph.gridSize / 2 : 2;
 };
 
 /**
