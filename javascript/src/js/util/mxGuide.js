@@ -67,6 +67,13 @@ mxGuide.prototype.guideY = null;
 mxGuide.prototype.rounded = false;
 
 /**
+ * Variable: tolerance
+ * 
+ * Default tolerance in px if grid is disabled. Default is 2.
+ */
+mxGuide.prototype.tolerance = 2;
+
+/**
  * Function: setStates
  * 
  * Sets the <mxCellStates> that should be used for alignment.
@@ -94,7 +101,7 @@ mxGuide.prototype.isEnabledForEvent = function(evt)
  */
 mxGuide.prototype.getGuideTolerance = function(gridEnabled)
 {
-	return (gridEnabled && this.graph.gridEnabled) ? this.graph.gridSize / 2 : 2;
+	return (gridEnabled && this.graph.gridEnabled) ? this.graph.gridSize / 2 : this.tolerance;
 };
 
 /**
