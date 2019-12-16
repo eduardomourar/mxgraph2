@@ -2302,6 +2302,14 @@ EditorUi.prototype.initCanvas = function()
 			}
 		}
 	}), graph.container);
+	
+	// Uses fast zoom for pinch gestures on iOS
+	graph.panningHandler.zoomGraph = function(evt)
+	{
+		graph.cumulativeZoomFactor = evt.scale;
+		graph.lazyZoom(evt.scale > 0, true);
+		mxEvent.consume(evt);
+	};
 };
 
 /**
