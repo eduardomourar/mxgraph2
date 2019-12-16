@@ -1358,7 +1358,7 @@ Graph.prototype.init = function(container)
 	 */
 	Graph.prototype.isFastZoomEnabled = function()
 	{
-		return this.scrollbars && urlParams['zoom'] != 'nocss' && !this.mathEnabled &&
+		return urlParams['zoom'] != 'nocss' && !this.mathEnabled &&
 			!mxClient.NO_FO && !this.useCssTransforms;
 	};
 	
