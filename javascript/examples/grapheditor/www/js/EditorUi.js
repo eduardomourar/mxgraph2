@@ -2223,8 +2223,6 @@ EditorUi.prototype.initCanvas = function()
 		{
 			scrollPosition = new mxPoint(graph.container.scrollLeft, graph.container.scrollTop);
 			
-			console.log('scrollLeft', graph.container.scrollLeft);
-			
 			var cx = (ignoreCursorPosition) ? graph.container.scrollLeft + graph.container.clientWidth / 2 :
 				cursorPosition.x + graph.container.scrollLeft - graph.container.offsetLeft;
 			var cy = (ignoreCursorPosition) ? graph.container.scrollTop + graph.container.clientHeight / 2 :
