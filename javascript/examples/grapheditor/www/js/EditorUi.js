@@ -1036,6 +1036,23 @@ EditorUi.prototype.init = function()
 	
 	if (!graph.standalone)
 	{
+		// Hides tooltips and connection points when scrolling
+		mxEvent.addListener(graph.container, 'scroll', mxUtils.bind(this, function()
+		{
+			graph.tooltipHandler.hide();
+			
+			if (graph.connectionHandler != null && graph.connectionHandler.constraintHandler != null)
+			{
+				graph.connectionHandler.constraintHandler.reset();
+			}
+		}));
+		
+		// Hides tooltip on escape
+		graph.addListener(mxEvent.ESCAPE, mxUtils.bind(this, function()
+		{
+			graph.tooltipHandler.hide();
+		}));
+		
 		mxEvent.addListener(graph.container, 'keydown', mxUtils.bind(this, function(evt)
 		{
 			this.onKeyDown(evt);
