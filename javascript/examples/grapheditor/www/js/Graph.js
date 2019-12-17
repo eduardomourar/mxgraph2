@@ -1762,7 +1762,7 @@ Graph.prototype.customLinkClicked = function(link)
 };
 
 /**
- * Returns true if the fiven href references an external protocol that
+ * Returns true if the given href references an external protocol that
  * should never open in a new window. Default returns true for mailto.
  */
 Graph.prototype.isExternalProtocol = function(href)
