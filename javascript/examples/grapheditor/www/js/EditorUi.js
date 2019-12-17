@@ -2285,23 +2285,40 @@ EditorUi.prototype.initCanvas = function()
 
 	mxEvent.addMouseWheelListener(mxUtils.bind(this, function(evt, up, force)
 	{
-		// Add Ctrl+wheel (or pinch on trackpad) native browser zoom event for macOS
-		if ((this.dialogs == null || this.dialogs.length == 0) && (force || graph.isZoomWheelEvent(evt)))
+		if (this.dialogs == null || this.dialogs.length == 0)
 		{
-			var source = mxEvent.getSource(evt);
-			
-			while (source != null)
+			// Scrolls with scrollbars turned off
+			if (!graph.scrollbars && !graph.isZoomWheelEvent(evt))
+            {
+                var t = graph.view.getTranslate();
+                var step = 40 / graph.view.scale;
+                
+                if (!mxEvent.isShiftDown(evt))
+                {
+                    graph.view.setTranslate(t.x, t.y + ((up) ? step : -step));
+                }
+                else
+                {
+                    graph.view.setTranslate(t.x + ((up) ? -step : step), t.y);
+                }
+            }
+			else if (force || graph.isZoomWheelEvent(evt))
 			{
-				if (source == graph.container)
-				{
-					cursorPosition = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));;
-					graph.lazyZoom(up);
-					mxEvent.consume(evt);
-			
-					return false;
-				}
+				var source = mxEvent.getSource(evt);
 				
-				source = source.parentNode;
+				while (source != null)
+				{
+					if (source == graph.container)
+					{
+						cursorPosition = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));;
+						graph.lazyZoom(up);
+						mxEvent.consume(evt);
+				
+						return false;
+					}
+					
+					source = source.parentNode;
+				}
 			}
 		}
 	}), graph.container);

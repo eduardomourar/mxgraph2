@@ -353,20 +353,18 @@ var mxEvent =
 					evt = window.event;
 				}
 			
-				var delta = 0;
-
 				//To prevent window zoom on trackpad pinch
 				if (evt.ctrlKey) 
 				{
 					evt.preventDefault();
 				}
 
-				delta = -evt.deltaY;
+				var delta = -evt.deltaY;
 				
 				// Handles the event using the given function
-				if (Math.abs(delta) > 0.5)
+				if (Math.abs(evt.deltaX) > 0.5 || Math.abs(evt.deltaY) > 0.5)
 				{
-					funct(evt, delta > 0);
+					funct(evt, (evt.deltaY == 0) ?  -evt.deltaX > 0 : -evt.deltaY > 0);
 				}
 			};
 	
