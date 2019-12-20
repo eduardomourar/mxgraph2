@@ -783,7 +783,8 @@ mxEdgeHandler.prototype.getHandleForEvent = function(me)
 
 	function checkShape(shape)
 	{
-		if (shape != null && shape.node.style.display != 'none' && shape.node.style.visibility != 'hidden' &&
+		if (shape != null && shape.node != null && shape.node.style.display != 'none' &&
+			shape.node.style.visibility != 'hidden' &&
 			(me.isSource(shape) || (hit != null && mxUtils.intersects(shape.bounds, hit))))
 		{
 			var dx = me.getGraphX() - shape.bounds.getCenterX();
