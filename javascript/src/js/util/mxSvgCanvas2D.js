@@ -1609,11 +1609,18 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
 	}
 	else
 	{
-		// Uses document for text measuring during export
+		// Uses DOM for export text metrics
 		if (this.root.ownerDocument != document)
 		{
-			div.style.visibility = 'hidden';
-			document.body.appendChild(div);
+			// Workaround for different font metrics in foreignObject
+			var temp = document.createElementNS(mxConstants.NS_SVG, 'svg');
+			temp.style.position = 'absolute';
+			temp.style.visibility = 'hidden';
+			
+			var tempFo = this.createElement('foreignObject');
+			tempFo.appendChild(div);
+			temp.appendChild(tempFo);
+			document.body.appendChild(temp);
 		}
 		else
 		{
@@ -1687,8 +1694,13 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
 		
 		if (div.parentNode != fo)
 		{
+			// Removes wrapper object from DOM
+			if (div.parentNode != null && div.parentNode.ownerSVGElement != fo.ownerSVGElement)
+			{
+				div.parentNode.ownerSVGElement.parentNode.removeChild(div.parentNode.ownerSVGElement);
+			}
+			
 			fo.appendChild(div);
-			div.style.visibility = '';
 		}
 	}
 
