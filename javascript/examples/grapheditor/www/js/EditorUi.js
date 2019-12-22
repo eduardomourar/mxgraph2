@@ -2328,7 +2328,7 @@ EditorUi.prototype.initCanvas = function()
 				{
 					if (source == graph.container)
 					{
-						cursorPosition = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));;
+						cursorPosition = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 						graph.lazyZoom(up);
 						mxEvent.consume(evt);
 				
@@ -4259,6 +4259,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 			if (queue.length > 0)
 			{
 				graph.getModel().beginUpdate();
+				
 				try
 				{
 					for (var i = 0; i < queue.length; i++)
@@ -4272,7 +4273,6 @@ EditorUi.prototype.createKeyHandler = function(editor)
 				{
 					graph.getModel().endUpdate();
 				}
-				graph.scrollCellToVisible(graph.getSelectionCell());
 			}
 		}, 200);
 	};
