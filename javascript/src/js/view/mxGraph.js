@@ -5587,10 +5587,11 @@ mxGraph.prototype.getPreferredSizeForCell = function(cell)
 			{
 				if (!this.isHtmlLabel(state.cell))
 				{
-					value = mxUtils.htmlEntities(value);
+					value = mxUtils.htmlEntities(value, false);
 				}
 				
 				value = value.replace(/\n/g, '<br>');
+				console.log('value', value);
 				
 				var size = mxUtils.getSizeForString(value, fontSize,
 					style[mxConstants.STYLE_FONTFAMILY], null,
