@@ -940,14 +940,6 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 			state.text.scale != nextScale || state.text.dialect != dialect ||
 			!state.text.bounds.equals(bounds))
 		{
-			// Forces an update of the text bounding box
-			if (state.text.bounds.width != 0 && state.unscaledWidth != null &&
-				Math.round((state.text.bounds.width /
-				state.text.scale * nextScale) - bounds.width) != 0)
-			{
-				state.unscaledWidth = null;
-			}
-			
 			state.text.dialect = dialect;
 			state.text.value = value;
 			state.text.bounds = bounds;
@@ -1087,20 +1079,6 @@ mxCellRenderer.prototype.getLabelBounds = function(state)
 		// Minimum of 1 fixes alignment bug in HTML labels
 		bounds.width = Math.max(1, state.width);
 		bounds.height = Math.max(1, state.height);
-
-		var sc = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
-		
-		if (sc != mxConstants.NONE && sc != '')
-		{
-			var s = parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STROKEWIDTH, 1)) * scale;
-			var dx = 1 + Math.floor((s - 1) / 2);
-			var dh = Math.floor(s + 1);
-			
-			bounds.x += dx;
-			bounds.y += dx;
-			bounds.width -= dh;
-			bounds.height -= dh;
-		}
 	}
 
 	if (state.text.isPaintBoundsInverted())

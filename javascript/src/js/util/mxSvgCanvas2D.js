@@ -1189,27 +1189,38 @@ mxSvgCanvas2D.prototype.convertHtml = function(val)
  * 
  * Private helper function to create SVG elements
  */
-mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow, whiteSpace)
+mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, whiteSpace)
 {
 	var s = this.state;
 
 	// Inline block for rendering HTML background over SVG in Safari
 	var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
 		(mxConstants.LINE_HEIGHT * this.lineHeightCorrection);
+	var css = 'display: inline-block; font-size: ' + s.fontSize + 'px; font-family: ' +
+		s.fontFamily + '; color:' + s.fontColor + '; line-height: ' + lh + '; ' +
+		'pointer-events: ' + ((this.pointerEvents) ? this.pointerEventsValue : 'none') + '; ' +
+		((s.alpha < 1) ? 'opacity: ' + s.alpha + '; ' : '');
 	
-	style = 'display:inline-block;font-size:' + s.fontSize + 'px;font-family:' + s.fontFamily +
-		';color:' + s.fontColor + ';line-height:' + lh + ';' + style;
-
 	if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
 	{
-		style += 'font-weight:bold;';
+		css += 'font-weight: bold; ';
 	}
 
 	if ((s.fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC)
 	{
-		style += 'font-style:italic;';
+		css += 'font-style: italic; ';
+	}
+
+	if (s.fontBackgroundColor != null)
+	{
+		css += 'background-color: ' + mxUtils.htmlEntities(s.fontBackgroundColor) + '; ';
 	}
 	
+	if (s.fontBorderColor != null)
+	{
+		css += 'border: 1px solid ' + mxUtils.htmlEntities(s.fontBorderColor) + '; ';
+	}
+		
 	var txtDecor = [];
 	
 	if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
@@ -1224,56 +1235,22 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 	
 	if (txtDecor.length > 0)
 	{
-		style += 'text-decoration:' + txtDecor.join(' ') + ';';
-	}
-	
-	if (align == mxConstants.ALIGN_CENTER)
-	{
-		style += 'text-align:center;';
-	}
-	else if (align == mxConstants.ALIGN_RIGHT)
-	{
-		style += 'text-align:right;';
-	}
-	else
-	{
-		style += 'text-align:left;';
+		css += 'text-decoration: ' + txtDecor.join(' ') + '; ';
 	}
 
-	var css = '';
-	
-	if (s.fontBackgroundColor != null)
+	if (whiteSpace != null)
 	{
-		css += 'background-color:' + mxUtils.htmlEntities(s.fontBackgroundColor) + ';';
+		css += 'white-space: ' + whiteSpace + '; word-wrap: ' + mxConstants.WORD_WRAP + '; ';
 	}
-	
-	if (s.fontBorderColor != null)
-	{
-		css += 'border:1px solid ' + mxUtils.htmlEntities(s.fontBorderColor) + ';';
-	}
-	
+
 	var val = str;
 	
 	if (!mxUtils.isNode(val))
 	{
-		val = this.convertHtml(val);
-		
-		if (overflow != 'fill' && overflow != 'width')
-		{
-			// Workaround for no wrapping in HTML canvas for image
-			// export if the inner HTML contains a DIV with width
-			if (whiteSpace != null)
-			{
-				css += 'white-space:' + whiteSpace + ';';
-			}
-			
-			// Inner div always needed to measure wrapped text
-			val = '<div xmlns="http://www.w3.org/1999/xhtml" style="display:inline-block;text-align:inherit;text-decoration:inherit;' + css + '">' + val + '</div>';
-		}
-		else
-		{
-			style += css;
-		}
+		val = '<div xmlns="http://www.w3.org/1999/xhtml" style="text-align: ' +
+			((align == mxConstants.ALIGN_LEFT) ? 'left' : ((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center'))  + ';">' +
+			'<div xmlns="http://www.w3.org/1999/xhtml" style="' + css + '">' +
+			this.convertHtml(val) + '</div></div>';
 	}
 
 	// Uses DOM API where available. This cannot be used in IE to avoid
@@ -1281,7 +1258,7 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 	if (!mxClient.IS_IE && document.createElementNS)
 	{
 		var div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
-		div.setAttribute('style', style);
+		div.setAttribute('style', 'position:absolute;');
 		
 		if (mxUtils.isNode(val))
 		{
@@ -1311,19 +1288,9 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, style, overflow
 		}
 
 		// NOTE: FF 3.6 crashes if content CSS contains "height:100%"
-		return mxUtils.parseXml('<div xmlns="http://www.w3.org/1999/xhtml" style="' + style + 
-			'">' + val + '</div>').documentElement;
+		return mxUtils.parseXml('<div xmlns="http://www.w3.org/1999/xhtml" ' +
+			'style="position:absolute;">' + val + '</div>').documentElement;
 	}
-};
-
-/**
- * Invalidates the cached offset size for the given node.
- */
-mxSvgCanvas2D.prototype.invalidateCachedOffsetSize = function(node)
-{
-	delete node.firstChild.mxCachedOffsetWidth;
-	delete node.firstChild.mxCachedFinalOffsetWidth;
-	delete node.firstChild.mxCachedFinalOffsetHeight;
 };
 
 /**
@@ -1331,162 +1298,12 @@ mxSvgCanvas2D.prototype.invalidateCachedOffsetSize = function(node)
  */
 mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, node)
 {
-	if (node != null && node.firstChild != null && node.firstChild.firstChild != null &&
-		node.firstChild.firstChild.firstChild != null)
+	if (node != null && node.firstChild != null && node.firstChild.firstChild != null)
 	{
-		// Uses outer group for opacity and transforms to
-		// fix rendering order in Chrome
-		var group = node.firstChild;
-		var fo = group.firstChild;
-		var div = fo.firstChild;
-
-		rotation = (rotation != null) ? rotation : 0;
+		var fo = node.firstChild;
 		
-		var s = this.state;
-		x += s.dx;
-		y += s.dy;
-		
-		if (clip)
-		{
-			div.style.maxHeight = Math.round(h) + 'px';
-			div.style.maxWidth = Math.round(w) + 'px';
-		}
-		else if (overflow == 'fill')
-		{
-			div.style.width = Math.round(w + 1) + 'px';
-			div.style.height = Math.round(h + 1) + 'px';
-		}
-		else if (overflow == 'width')
-		{
-			div.style.width = Math.round(w + 1) + 'px';
-			
-			if (h > 0)
-			{
-				div.style.maxHeight = Math.round(h) + 'px';
-			}
-		}
-
-		if (wrap && w > 0)
-		{
-			div.style.width = Math.round(w + 1) + 'px';
-		}
-		
-		// Code that depends on the size which is computed after
-		// the element was added to the DOM.
-		var ow = 0;
-		var oh = 0;
-		
-		// Padding avoids clipping on border and wrapping for differing font metrics on platforms
-		var padX = 0;
-		var padY = 2;
-
-		var sizeDiv = div;
-		
-		if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV')
-		{
-			sizeDiv = sizeDiv.firstChild;
-		}
-		
-		var tmp = (group.mxCachedOffsetWidth != null) ? group.mxCachedOffsetWidth : sizeDiv.offsetWidth;
-		ow = tmp + padX;
-
-		// Recomputes the height of the element for wrapped width
-		if (wrap && overflow != 'fill')
-		{
-			if (clip)
-			{
-				ow = Math.min(ow, w);
-			}
-			
-			div.style.width = Math.round(ow + 1) + 'px';
-		}
-
-		ow = (group.mxCachedFinalOffsetWidth != null) ? group.mxCachedFinalOffsetWidth : sizeDiv.offsetWidth;
-		oh = (group.mxCachedFinalOffsetHeight != null) ? group.mxCachedFinalOffsetHeight : sizeDiv.offsetHeight;
-		
-		if (this.cacheOffsetSize)
-		{
-			group.mxCachedOffsetWidth = tmp;
-			group.mxCachedFinalOffsetWidth = ow;
-			group.mxCachedFinalOffsetHeight = oh;
-		}
-		
-		ow += padX;
-		oh -= 2;
-		
-		if (clip)
-		{
-			oh = Math.min(oh, h);
-			ow = Math.min(ow, w);
-		}
-
-		if (overflow == 'width')
-		{
-			h = oh;
-		}
-		else if (overflow != 'fill')
-		{
-			w = ow;
-			h = oh;
-		}
-
-		var dx = 0;
-		var dy = 0;
-
-		if (align == mxConstants.ALIGN_CENTER)
-		{
-			dx -= w / 2;
-		}
-		else if (align == mxConstants.ALIGN_RIGHT)
-		{
-			dx -= w;
-		}
-		
-		x += dx;
-		
-		// FIXME: LINE_HEIGHT not ideal for all text sizes, fix for export
-		if (valign == mxConstants.ALIGN_MIDDLE)
-		{
-			dy -= h / 2;
-		}
-		else if (valign == mxConstants.ALIGN_BOTTOM)
-		{
-			dy -= h;
-		}
-		
-		// Workaround for rendering offsets
-		// TODO: Check if export needs these fixes, too
-		if (overflow != 'fill' && mxClient.IS_FF && mxClient.IS_WIN)
-		{
-			dy -= 2;
-		}
-		
-		y += dy;
-
-		var tr = (s.scale != 1) ? 'scale(' + s.scale + ')' : '';
-
-		if (s.rotation != 0 && this.rotateHtml)
-		{
-			tr += 'rotate(' + (s.rotation) + ',' + (w / 2) + ',' + (h / 2) + ')';
-			var pt = this.rotatePoint((x + w / 2) * s.scale, (y + h / 2) * s.scale,
-				s.rotation, s.rotationCx, s.rotationCy);
-			x = pt.x - w * s.scale / 2;
-			y = pt.y - h * s.scale / 2;
-		}
-		else
-		{
-			x *= s.scale;
-			y *= s.scale;
-		}
-
-		if (rotation != 0)
-		{
-			tr += 'rotate(' + (rotation) + ',' + (-dx) + ',' + (-dy) + ')';
-		}
-
-		group.setAttribute('transform', 'translate(' + Math.round(x) + ',' + Math.round(y) + ')' + tr);
-		fo.setAttribute('width', Math.round(Math.max(1, w)));
-		fo.setAttribute('height', Math.round(Math.max(1, h)));
+		this.updateTextNodes(x, y, w, h, align, valign, wrap,
+			overflow, clip, rotation, fo, fo.firstChild);
 	}
 };
 
@@ -1500,292 +1317,19 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
  */
 mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation, dir, div, root)
 {
-	var s = this.state;
-	
-	// Uses outer group for opacity and transforms to
-	// fix rendering order in Chrome
-	var group = this.createElement('g');
-	
-	if (s.alpha < 1)
-	{
-		group.setAttribute('opacity', s.alpha);
-	}
-
 	var fo = this.createElement('foreignObject');
-	fo.setAttribute('style', 'overflow:visible;');
-	fo.setAttribute('pointer-events', (this.pointerEvents) ? this.pointerEventsValue : 'none');
 
-	group.appendChild(fo);
-	root.appendChild(group);
+	// Workarounds for scroll clipping and opacity rendering order bugs in Chrome
+	fo.setAttribute('pointer-events', 'none');
+	fo.setAttribute('width', '100%');
+	fo.setAttribute('height', '100%');
+
+	this.updateTextNodes(x, y, w, h, align, valign, wrap, overflow, clip, rotation, fo, div);
 	
-	// Code that depends on the size which is computed after
-	// the element was added to the DOM.
-	var ow = 0;
-	var oh = 0;
+	fo.appendChild(div);
+	root.appendChild(fo);
 	
-	// Padding avoids clipping on border and wrapping for differing font metrics on platforms
-	var padX = 2;
-	var padY = 2;
-
-	// NOTE: IE is always export as it does not support foreign objects
-	if (mxClient.IS_IE && (document.documentMode == 9 || !mxClient.IS_SVG))
-	{
-		// Handles non-standard namespace for getting size in IE
-		var clone = document.createElement('div');
-		
-		clone.style.cssText = div.getAttribute('style');
-		clone.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
-		clone.style.position = 'absolute';
-		clone.style.visibility = 'hidden';
-
-		// Inner DIV is needed for text measuring
-		var div2 = document.createElement('div');
-		div2.style.display = (mxClient.IS_QUIRKS) ? 'inline' : 'inline-block';
-		div2.style.wordWrap = mxConstants.WORD_WRAP;
-		div2.innerHTML = (mxUtils.isNode(str)) ? str.outerHTML : str;
-		clone.appendChild(div2);
-
-		document.body.appendChild(clone);
-
-		// Workaround for different box models
-		if (document.documentMode != 8 && document.documentMode != 9 && s.fontBorderColor != null)
-		{
-			padX += 2;
-			padY += 2;
-		}
-
-		if (wrap && w > 0)
-		{
-			var tmp = div2.offsetWidth;
-			
-			// Workaround for adding padding twice in IE8/IE9 standards mode if label is wrapped
-			padDx = 0;
-			
-			// For export, if no wrapping occurs, we add a large padding to make
-			// sure there is no wrapping even if the text metrics are different.
-			// This adds support for text metrics on different operating systems.
-			// Disables wrapping if text is not wrapped for given width
-			if (!clip && wrap && w > 0 && this.root.ownerDocument != document && overflow != 'fill')
-			{
-				var ws = clone.style.whiteSpace;
-				div2.style.whiteSpace = 'nowrap';
-				
-				if (tmp < div2.offsetWidth)
-				{
-					clone.style.whiteSpace = ws;
-				}
-			}
-			
-			if (clip)
-			{
-				tmp = Math.min(tmp, w);
-			}
-			
-			clone.style.width = tmp + 'px';
-
-			// Padding avoids clipping on border
-			ow = div2.offsetWidth + padX + padDx;
-			oh = div2.offsetHeight + padY;
-			
-			// Overrides the width of the DIV via XML DOM by using the
-			// clone DOM style, getting the CSS text for that and
-			// then setting that on the DIV via setAttribute
-			clone.style.display = 'inline-block';
-			clone.style.position = '';
-			clone.style.visibility = '';
-			clone.style.width = ow + 'px';
-			
-			div.setAttribute('style', clone.style.cssText);
-		}
-		else
-		{
-			// Padding avoids clipping on border
-			ow = div2.offsetWidth + padX;
-			oh = div2.offsetHeight + padY;
-		}
-
-		clone.parentNode.removeChild(clone);
-		fo.appendChild(div);
-	}
-	else
-	{
-		// Uses DOM for export text metrics
-		if (this.root.ownerDocument != document)
-		{
-			// Workaround for different font metrics in foreignObject
-			var temp = document.createElementNS(mxConstants.NS_SVG, 'svg');
-			temp.style.position = 'absolute';
-			temp.style.visibility = 'hidden';
-			
-			var tempFo = this.createElement('foreignObject');
-			tempFo.appendChild(div);
-			temp.appendChild(tempFo);
-			document.body.appendChild(temp);
-		}
-		else
-		{
-			fo.appendChild(div);
-		}
-
-		var sizeDiv = div;
-		
-		if (sizeDiv.firstChild != null && sizeDiv.firstChild.nodeName == 'DIV')
-		{
-			sizeDiv = sizeDiv.firstChild;
-			
-			if (wrap && div.style.wordWrap == 'break-word')
-			{
-				sizeDiv.style.width = '100%';
-			}
-		}
-		
-		var tmp = sizeDiv.offsetWidth;
-		
-		// Workaround for text measuring in hidden containers
-		if (tmp == 0 && div.parentNode == fo)
-		{
-			div.style.visibility = 'hidden';
-			document.body.appendChild(div);
-			
-			tmp = sizeDiv.offsetWidth;
-		}
-		
-		if (this.cacheOffsetSize)
-		{
-			group.mxCachedOffsetWidth = tmp;
-		}
-		
-		// Disables wrapping if text is not wrapped for given width
-		if (!clip && wrap && w > 0 && this.root.ownerDocument != document &&
-			overflow != 'fill' && overflow != 'width')
-		{
-			var ws = div.style.whiteSpace;
-			div.style.whiteSpace = 'nowrap';
-			
-			if (tmp < sizeDiv.offsetWidth)
-			{
-				div.style.whiteSpace = ws;
-			}
-		}
-
-		ow = tmp + padX - 1;
-
-		// Recomputes the height of the element for wrapped width
-		if (wrap && overflow != 'fill' && overflow != 'width')
-		{
-			if (clip)
-			{
-				ow = Math.min(ow, w);
-			}
-			
-			div.style.width = ow + 'px';
-		}
-
-		ow = sizeDiv.offsetWidth;
-		oh = sizeDiv.offsetHeight;
-		
-		if (this.cacheOffsetSize)
-		{
-			group.mxCachedFinalOffsetWidth = ow;
-			group.mxCachedFinalOffsetHeight = oh;
-		}
-
-		oh -= padY;
-		
-		if (div.parentNode != fo)
-		{
-			// Removes wrapper object from DOM
-			if (div.parentNode != null && div.parentNode.ownerSVGElement != fo.ownerSVGElement)
-			{
-				div.parentNode.ownerSVGElement.parentNode.removeChild(div.parentNode.ownerSVGElement);
-			}
-			
-			fo.appendChild(div);
-		}
-	}
-
-	if (clip)
-	{
-		oh = Math.min(oh, h);
-		ow = Math.min(ow, w);
-	}
-
-	if (overflow == 'width')
-	{
-		h = oh;
-	}
-	else if (overflow != 'fill')
-	{
-		w = ow;
-		h = oh;
-	}
-
-	if (s.alpha < 1)
-	{
-		group.setAttribute('opacity', s.alpha);
-	}
-	
-	var dx = 0;
-	var dy = 0;
-
-	if (align == mxConstants.ALIGN_CENTER)
-	{
-		dx -= w / 2;
-	}
-	else if (align == mxConstants.ALIGN_RIGHT)
-	{
-		dx -= w;
-	}
-	
-	x += dx;
-	
-	// FIXME: LINE_HEIGHT not ideal for all text sizes, fix for export
-	if (valign == mxConstants.ALIGN_MIDDLE)
-	{
-		dy -= h / 2;
-	}
-	else if (valign == mxConstants.ALIGN_BOTTOM)
-	{
-		dy -= h;
-	}
-	
-	// Workaround for rendering offsets
-	// TODO: Check if export needs these fixes, too
-	//if (this.root.ownerDocument == document)
-	if (overflow != 'fill' && mxClient.IS_FF && mxClient.IS_WIN)
-	{
-		dy -= 2;
-	}
-	
-	y += dy;
-
-	var tr = (s.scale != 1) ? 'scale(' + s.scale + ')' : '';
-
-	if (s.rotation != 0 && this.rotateHtml)
-	{
-		tr += 'rotate(' + (s.rotation) + ',' + (w / 2) + ',' + (h / 2) + ')';
-		var pt = this.rotatePoint((x + w / 2) * s.scale, (y + h / 2) * s.scale,
-			s.rotation, s.rotationCx, s.rotationCy);
-		x = pt.x - w * s.scale / 2;
-		y = pt.y - h * s.scale / 2;
-	}
-	else
-	{
-		x *= s.scale;
-		y *= s.scale;
-	}
-
-	if (rotation != 0)
-	{
-		tr += 'rotate(' + (rotation) + ',' + (-dx) + ',' + (-dy) + ')';
-	}
-
-	group.setAttribute('transform', 'translate(' + (Math.round(x) + this.foOffset) + ',' +
-		(Math.round(y) + this.foOffset) + ')' + tr);
-	fo.setAttribute('width', Math.round(Math.max(1, w)));
-	fo.setAttribute('height', Math.round(Math.max(1, h)));
-	
-	// Adds alternate content if foreignObject not supported in viewer
+	// Adds alternate content for unsupported foreignObject
 	if (this.root.ownerDocument != document)
 	{
 		var alt = this.createAlternateContent(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation);
@@ -1794,10 +1338,69 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
 		{
 			fo.setAttribute('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility');
 			var sw = this.createElement('switch');
-			sw.appendChild(fo);
 			sw.appendChild(alt);
-			group.appendChild(sw);
+			fo.parentNode.replaceChild(sw, fo);
+			sw.insertBefore(fo, alt);
 		}
+	}
+};
+
+/**
+ * Updates existing DOM nodes for text rendering.
+ */
+mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, fo, div)
+{
+	var r = ((this.rotateHtml) ? this.state.rotation : 0) + ((rotation != null) ? rotation : 0);
+	var text = div.firstChild;
+	var hidden = true;
+	
+	if (clip)
+	{
+		text.style.maxHeight = Math.round(h) + 'px';
+		text.style.maxWidth = Math.round(w) + 'px';
+	}
+	else if (overflow == 'fill')
+	{
+		text.style.width = Math.round(w + 1) + 'px';
+		text.style.height = Math.round(h + 1) + 'px';
+	}
+	else if (overflow == 'width')
+	{
+		text.style.width = Math.round(w + 1) + 'px';
+		
+		if (h > 0)
+		{
+			text.style.maxHeight = Math.round(h) + 'px';
+		}
+	}
+	else
+	{
+		hidden = false;
+	}
+
+	if (wrap && w > 0)
+	{
+		text.style.maxWidth = Math.round(w + 1) + 'px';
+	}
+
+	var s = this.state.scale;
+	div.style.transformOrigin = '0% 0%';
+	div.style.transform = 'translate(' +
+		(Math.round((x + this.state.dx) * s) + this.foOffset) + 'px,' +
+		(Math.round((y + this.state.dy) * s) + this.foOffset) + 'px)' +
+		((s != 1) ? 'scale(' + s + ')' : '') + ((r != 0) ? 'rotate(' + r + 'deg)' : '');
+	var pt = mxUtils.getAlignmentAsPoint(align, valign);
+	var tr = 'translate(' + (pt.x * 100) + '%,' + (pt.y * 100) + '%)';
+	
+	if (hidden)
+	{
+		// Uses clipped node for relative transform
+		text.style.overflow = 'hidden';
+		text.style.transform = tr;
+	}
+	else
+	{
+		text.firstChild.style.transform = tr;
 	}
 };
 
@@ -1814,60 +1417,27 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 	if (this.textEnabled && str != null)
 	{
 		rotation = (rotation != null) ? rotation : 0;
-		
-		var s = this.state;
-		x += s.dx;
-		y += s.dy;
-		
+
 		if (this.foEnabled && format == 'html')
 		{
-			var style = 'vertical-align:top;';
-			
-			if (clip)
-			{
-				style += 'overflow:hidden;max-height:' + Math.round(h) + 'px;max-width:' + Math.round(w) + 'px;';
-			}
-			else if (overflow == 'fill')
-			{
-				style += 'width:' + Math.round(w + 1) + 'px;height:' + Math.round(h + 1) + 'px;overflow:hidden;';
-			}
-			else if (overflow == 'width')
-			{
-				style += 'width:' + Math.round(w + 1) + 'px;';
-				
-				if (h > 0)
-				{
-					style += 'max-height:' + Math.round(h) + 'px;overflow:hidden;';
-				}
-			}
-
-			if (wrap && w > 0)
-			{
-				style += 'width:' + Math.round(w + 1) + 'px;white-space:normal;word-wrap:' +
-					mxConstants.WORD_WRAP + ';';
-			}
-			else
-			{
-				style += 'white-space:nowrap;';
-			}
-			
-			var div = this.createDiv(str, align, valign, style, overflow, (wrap && w > 0) ? 'normal' : null);
+			var div = this.createDiv(str, align, valign, overflow, (wrap && w > 0) ? 'normal' : null);
 			
 			// Ignores invalid XHTML labels
-			if (div == null)
+			if (div != null)
 			{
-				return;
+				if (dir != null)
+				{
+					div.setAttribute('dir', dir);
+				}
+				
+				this.addForeignObject(x, y, w, h, str, align, valign, wrap,
+					format, overflow, clip, rotation, dir, div, this.root);
 			}
-			else if (dir != null)
-			{
-				div.setAttribute('dir', dir);
-			}
-
-			this.addForeignObject(x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation, dir, div, this.root);
 		}
 		else
 		{
-			this.plainText(x, y, w, h, str, align, valign, wrap, overflow, clip, rotation, dir);
+			this.plainText(x + this.state.dx, y + this.state.dy, w, h, str,
+				align, valign, wrap, overflow, clip, rotation, dir);
 		}
 	}
 };
@@ -2028,7 +1598,7 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 		else
 		{
 			var dy = ((this.matchHtmlAlignment && clip && h > 0) ? Math.min(textHeight, h) : textHeight) / 2;
-			cy -= dy + 1;
+			cy -= dy + 2;
 		}
 	}
 	else if (valign == mxConstants.ALIGN_BOTTOM)
@@ -2040,7 +1610,7 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 		else
 		{
 			var dy = (this.matchHtmlAlignment && clip && h > 0) ? Math.min(textHeight, h) : textHeight;
-			cy -= dy + 2;
+			cy -= dy + 4;
 		}
 	}
 

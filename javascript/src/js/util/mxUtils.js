@@ -3570,13 +3570,13 @@ var mxUtils =
 	 */
 	getAlignmentAsPoint: function(align, valign)
 	{
-		var dx = 0;
-		var dy = 0;
+		var dx = -0.5;
+		var dy = -0.5;
 		
 		// Horizontal alignment
-		if (align == mxConstants.ALIGN_CENTER)
+		if (align == mxConstants.ALIGN_LEFT)
 		{
-			dx = -0.5;
+			dx = 0;
 		}
 		else if (align == mxConstants.ALIGN_RIGHT)
 		{
@@ -3584,9 +3584,9 @@ var mxUtils =
 		}
 
 		// Vertical alignment
-		if (valign == mxConstants.ALIGN_MIDDLE)
+		if (valign == mxConstants.ALIGN_TOP)
 		{
-			dy = -0.5;
+			dy = 0;
 		}
 		else if (valign == mxConstants.ALIGN_BOTTOM)
 		{

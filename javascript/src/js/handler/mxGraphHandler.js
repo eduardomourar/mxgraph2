@@ -1040,7 +1040,7 @@ mxGraphHandler.prototype.updateLivePreview = function(dx, dy)
 						if (node.firstChild != null && node.firstChild.firstChild != null &&
 							node.firstChild.firstChild.nodeName == 'foreignObject')
 						{
-							node.firstChild.firstChild.setAttribute('pointer-events', 'none');
+							//node.firstChild.firstChild.setAttribute('pointer-events', 'none');
 						}
 						else if (node.ownerSVGElement != null)
 						{
@@ -1265,7 +1265,7 @@ mxGraphHandler.prototype.resetLivePreview = function()
 					if (node.firstChild != null && node.firstChild.firstChild != null &&
 						node.firstChild.firstChild.nodeName == 'foreignObject')
 					{
-						node.firstChild.firstChild.setAttribute('pointer-events', 'all');
+						//node.firstChild.firstChild.setAttribute('pointer-events', 'all');
 					}
 					else if (node.ownerSVGElement != null)
 					{

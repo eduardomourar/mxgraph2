@@ -240,16 +240,8 @@ mxText.prototype.paint = function(c, update)
 	this.updateTransform(c, x, y, w, h);
 	this.configureCanvas(c, x, y, w, h);
 
-	var unscaledWidth = (this.state != null) ? this.state.unscaledWidth : null;
-
 	if (update)
 	{
-		if (this.node.firstChild != null && (unscaledWidth == null ||
-			this.lastUnscaledWidth != unscaledWidth))
-		{
-			c.invalidateCachedOffsetSize(this.node);
-		}
-
 		c.updateText(x, y, w, h, this.align, this.valign, this.wrap, this.overflow,
 				this.clipped, this.getTextRotation(), this.node);
 	}
@@ -287,13 +279,10 @@ mxText.prototype.paint = function(c, update)
 		{
 			dir = null;
 		}
-	
-		c.text(x, y, w, h, val, this.align, this.valign, this.wrap, fmt, this.overflow,
-			this.clipped, this.getTextRotation(), dir);
+		
+		c.text(x, y, w, h, val, this.align, this.valign, this.wrap, fmt,
+			this.overflow, this.clipped, this.getTextRotation(), dir);
 	}
-	
-	// Needs to invalidate the cached offset widths if the geometry changes
-	this.lastUnscaledWidth = unscaledWidth;
 };
 
 /**
@@ -325,8 +314,7 @@ mxText.prototype.redraw = function()
 		{
 			var canvas = this.createCanvas();
 
-			if (canvas != null && canvas.updateText != null &&
-				canvas.invalidateCachedOffsetSize != null)
+			if (canvas != null && canvas.updateText != null)
 			{
 				this.paint(canvas, true);
 				this.destroyCanvas(canvas);
@@ -439,6 +427,40 @@ mxText.prototype.getAutoDirection = function()
 };
 
 /**
+ * Function: getMetricsNode
+ *
+ * Returns the DIV that should be used for text measuring.
+ */
+mxText.prototype.getMetricsNode = function()
+{
+	if (node.firstChild != null && node.firstChild != null &&
+		node.firstChild.nodeName == 'foreignObject' &&
+		node.firstChild.firstChild != null)
+	{
+		return node.firstChild.firstChild.firstChild;
+	}
+	
+	return null;
+};
+
+/**
+ * Function: getMetricsNode
+ *
+ * Returns the DIV that should be used for text measuring.
+ */
+mxText.prototype.getContentNode = function()
+{
+	if (node.firstChild != null && node.firstChild != null &&
+		node.firstChild.nodeName == 'foreignObject' &&
+		node.firstChild.firstChild != null)
+	{
+		return node.firstChild.firstChild.firstChild;
+	}
+	
+	return null;
+};
+
+/**
  * Function: updateBoundingBox
  *
  * Updates the <boundingBox> for this shape using the given node and position.
@@ -460,17 +482,19 @@ mxText.prototype.updateBoundingBox = function()
 		
 		if (node.ownerSVGElement != null)
 		{
-			if (node.firstChild != null && node.firstChild.firstChild != null &&
-				node.firstChild.firstChild.nodeName == 'foreignObject')
+			if (node.firstChild != null && node.firstChild != null &&
+				node.firstChild.nodeName == 'foreignObject')
 			{
-				node = node.firstChild.firstChild;
-				ow = parseInt(node.getAttribute('width')) * this.scale;
-				oh = parseInt(node.getAttribute('height')) * this.scale;
+				// Uses second inner DIV for font metrics
+				node = node.firstChild.firstChild.firstChild;
+				ow = node.offsetWidth * this.scale;
+				oh = node.offsetHeight * this.scale;
 			}
 			else
 			{
 				try
 				{
+					// TODO: Check if this is working
 					var b = node.getBBox();
 					
 					// Workaround for bounding box of empty string

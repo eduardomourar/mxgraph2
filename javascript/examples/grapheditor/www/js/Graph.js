@@ -1367,7 +1367,8 @@ Graph.prototype.init = function(container)
 	 */
 	Graph.prototype.isCssTransformsSupported = function()
 	{
-		return this.dialect == mxConstants.DIALECT_SVG && !mxClient.NO_FO;
+		// Safari ignores SVG transforms if CSS transforms in foreignObjects are used
+		return this.dialect == mxConstants.DIALECT_SVG && !mxClient.NO_FO && !mxClient.IS_SF;
 	};
 
 	/**

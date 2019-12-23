@@ -1044,7 +1044,7 @@ mxGraphView.prototype.updateCellState = function(state)
 		{
 			if (!model.isEdge(state.cell))
 			{
-				offset = geo.offset || this.EMPTY_POINT;
+				offset = (geo.offset != null) ? geo.offset : this.EMPTY_POINT;
 	
 				if (geo.relative && pState != null)
 				{
@@ -1060,8 +1060,8 @@ mxGraphView.prototype.updateCellState = function(state)
 					}
 					else
 					{
-						state.origin.x += geo.x * pState.width / this.scale + offset.x;
-						state.origin.y += geo.y * pState.height / this.scale + offset.y;
+						state.origin.x += geo.x * pState.unscaledWidth + offset.x;
+						state.origin.y += geo.y * pState.unscaledHeight + offset.y;
 					}
 				}
 				else
@@ -1078,6 +1078,7 @@ mxGraphView.prototype.updateCellState = function(state)
 			state.width = this.scale * geo.width;
 			state.unscaledWidth = geo.width;
 			state.height = this.scale * geo.height;
+			state.unscaledHeight = geo.height;
 			
 			if (model.isVertex(state.cell))
 			{

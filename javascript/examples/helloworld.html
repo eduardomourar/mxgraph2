@@ -23,40 +23,42 @@
 		// from the onLoad event handler of the document (see below).
 		function main(container)
 		{
-			// Checks if the browser is supported
-			if (!mxClient.isBrowserSupported())
-			{
-				// Displays an error message if the browser is not supported.
-				mxUtils.error('Browser is not supported!', 200, false);
-			}
-			else
-			{
-				// Disables the built-in context menu
-				mxEvent.disableContextMenu(container);
+// 			// Checks if the browser is supported
+// 			if (!mxClient.isBrowserSupported())
+// 			{
+// 				// Displays an error message if the browser is not supported.
+// 				mxUtils.error('Browser is not supported!', 200, false);
+// 			}
+// 			else
+// 			{
+// 				// Disables the built-in context menu
+// 				mxEvent.disableContextMenu(container);
 				
-				// Creates the graph inside the given container
-				var graph = new mxGraph(container);
+// 				// Creates the graph inside the given container
+// 				var graph = new mxGraph(container);
+// 				graph.view.scale = 2;
+// 				graph.htmlLabels = true;
 
-				// Enables rubberband selection
-				new mxRubberband(graph);
+// 				// Enables rubberband selection
+// 				new mxRubberband(graph);
 				
-				// Gets the default parent for inserting new cells. This
-				// is normally the first child of the root (ie. layer 0).
-				var parent = graph.getDefaultParent();
+// 				// Gets the default parent for inserting new cells. This
+// 				// is normally the first child of the root (ie. layer 0).
+// 				var parent = graph.getDefaultParent();
 								
-				// Adds cells to the model in a single step
-				graph.getModel().beginUpdate();
-				try
-				{
-					var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
-					var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
-					var e1 = graph.insertEdge(parent, null, '', v1, v2);
-				}
-				finally
-				{
-					// Updates the display
-					graph.getModel().endUpdate();
-				}
+// 				// Adds cells to the model in a single step
+// 				graph.getModel().beginUpdate();
+// 				try
+// 				{
+// 					var v1 = graph.insertVertex(parent, null, 'This is an oversize label for a vertex', 200, 20, 80, 30);
+// 					var v2 = graph.insertVertex(parent, null, 'This is a text with word wrapping that expands vertically', 20, 150, 80, 30, 'whiteSpace=wrap;');
+// 					var e1 = graph.insertEdge(parent, null, 'This is a test label', v1, v2);
+// 				}
+// 				finally
+// 				{
+// 					// Updates the display
+// 					graph.getModel().endUpdate();
+// 				}
 			}
 		};
 	</script>
@@ -66,8 +68,15 @@
 <body onload="main(document.getElementById('graphContainer'))">
 
 	<!-- Creates a container for the graph with a grid wallpaper -->
-	<div id="graphContainer"
-		style="position:relative;overflow:hidden;width:321px;height:241px;background:url('editors/images/grid.gif');cursor:default;">
+<!-- 	<div style="overflow:auto;width:400px;height:400px"> -->
+<!-- 		<div id="graphContainer" -->
+<!-- 			style="position:relative;overflow:hidden;width:821px;height:641px;background:url('editors/images/grid.gif');cursor:default;"> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+	
+	<div style="position:absolute;display:inline-block;left:150px;top:30px;width:4px;height:4px;background:blue;"></div>
+	<div style="position:absolute;display:block;left:150px;top:30px;height:30px;">
+		<div style="display:inline-block;margin-left:-50%;vertical-align:middle;">this is a test</div>
 	</div>
 </body>
 </html>

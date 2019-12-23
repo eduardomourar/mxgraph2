@@ -1098,7 +1098,7 @@ mxVertexHandler.prototype.updateLivePreview = function(me)
 	this.state.height = this.bounds.height;
 	
 	// Needed to force update of text bounds
-	this.state.unscaledWidth = null;
+//	this.state.unscaledWidth = null;
 	
 	// Redraws cell and handles
 	var off = this.state.absoluteOffset;
