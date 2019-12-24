@@ -5591,7 +5591,6 @@ mxGraph.prototype.getPreferredSizeForCell = function(cell)
 				}
 				
 				value = value.replace(/\n/g, '<br>');
-				console.log('value', value);
 				
 				var size = mxUtils.getSizeForString(value, fontSize,
 					style[mxConstants.STYLE_FONTFAMILY], null,
