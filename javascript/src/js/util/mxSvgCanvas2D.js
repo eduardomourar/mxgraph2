@@ -1192,14 +1192,11 @@ mxSvgCanvas2D.prototype.convertHtml = function(val)
 mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, whiteSpace)
 {
 	var s = this.state;
-
-	// Inline block for rendering HTML background over SVG in Safari
 	var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
 		(mxConstants.LINE_HEIGHT * this.lineHeightCorrection);
 	var css = 'display: inline-block; font-size: ' + s.fontSize + 'px; font-family: ' +
 		s.fontFamily + '; color:' + s.fontColor + '; line-height: ' + lh + '; ' +
-		'pointer-events: ' + ((this.pointerEvents) ? this.pointerEventsValue : 'none') + '; ' +
-		((s.alpha < 1) ? 'opacity: ' + s.alpha + '; ' : '');
+		'pointer-events: ' + ((this.pointerEvents) ? this.pointerEventsValue : 'none') + '; ';
 	
 	if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
 	{
@@ -1242,23 +1239,33 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, white
 	{
 		css += 'white-space: ' + whiteSpace + '; word-wrap: ' + mxConstants.WORD_WRAP + '; ';
 	}
+	else
+	{
+		css += 'white-space: nowrap; ';
+	}
 
+	css += 'text-align: ' + ((align == mxConstants.ALIGN_LEFT) ? 'left' :
+		((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center'))  + ';';
+	
 	var val = str;
 	
 	if (!mxUtils.isNode(val))
 	{
-		val = '<div xmlns="http://www.w3.org/1999/xhtml" style="text-align: ' +
-			((align == mxConstants.ALIGN_LEFT) ? 'left' : ((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center'))  + ';">' +
-			'<div xmlns="http://www.w3.org/1999/xhtml" style="' + css + '">' +
-			this.convertHtml(val) + '</div></div>';
+		val = '<div style="' + css + '">' + this.convertHtml(val) + '</div>';
 	}
+	
+	// Cannot use opacity, transforms and positions in XHTML due to bugs in Safari
+	var flex = 'display: flex; align-items: unsafe ' + ((valign == mxConstants.ALIGN_TOP) ? 'flex-start' :
+		((valign == mxConstants.ALIGN_BOTTOM) ? 'flex-end' : 'center'))  + '; ' +
+		'justify-content: unsafe ' + ((align == mxConstants.ALIGN_LEFT) ? 'flex-start' :
+		((align == mxConstants.ALIGN_RIGHT) ? 'flex-end' : 'center'))  + '; width: 1px; height: 1px;';
 
 	// Uses DOM API where available. This cannot be used in IE to avoid
 	// an opening and two (!) closing TBODY tags being added to tables.
 	if (!mxClient.IS_IE && document.createElementNS)
 	{
 		var div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
-		div.setAttribute('style', 'position:absolute;');
+		div.setAttribute('style', flex);
 		
 		if (mxUtils.isNode(val))
 		{
@@ -1289,7 +1296,7 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, white
 
 		// NOTE: FF 3.6 crashes if content CSS contains "height:100%"
 		return mxUtils.parseXml('<div xmlns="http://www.w3.org/1999/xhtml" ' +
-			'style="position:absolute;">' + val + '</div>').documentElement;
+			'style="' + flex + '">' + val + '</div>').documentElement;
 	}
 };
 
@@ -1300,10 +1307,7 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 {
 	if (node != null && node.firstChild != null && node.firstChild.firstChild != null)
 	{
-		var fo = node.firstChild;
-		
-		this.updateTextNodes(x, y, w, h, align, valign, wrap,
-			overflow, clip, rotation, fo, fo.firstChild);
+		this.updateTextNodes(x, y, w, h, align, valign, wrap, overflow, clip, rotation, node.firstChild);
 	}
 };
 
@@ -1317,17 +1321,18 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
  */
 mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation, dir, div, root)
 {
+	var group = this.createElement('g');
 	var fo = this.createElement('foreignObject');
 
 	// Workarounds for scroll clipping and opacity rendering order bugs in Chrome
+	fo.setAttribute('style', 'overflow: visible;');
 	fo.setAttribute('pointer-events', 'none');
 	fo.setAttribute('width', '100%');
 	fo.setAttribute('height', '100%');
-
-	this.updateTextNodes(x, y, w, h, align, valign, wrap, overflow, clip, rotation, fo, div);
-	
 	fo.appendChild(div);
-	root.appendChild(fo);
+	group.appendChild(fo);
+	
+	this.updateTextNodes(x, y, w, h, align, valign, wrap, overflow, clip, rotation, group);
 	
 	// Adds alternate content for unsupported foreignObject
 	if (this.root.ownerDocument != document)
@@ -1338,31 +1343,46 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
 		{
 			fo.setAttribute('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility');
 			var sw = this.createElement('switch');
+			sw.appendChild(fo);
 			sw.appendChild(alt);
-			fo.parentNode.replaceChild(sw, fo);
-			sw.insertBefore(fo, alt);
+			group.appendChild(sw);
 		}
 	}
+	
+	root.appendChild(group);
 };
 
 /**
  * Updates existing DOM nodes for text rendering.
  */
-mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, fo, div)
+mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, g)
 {
 	var r = ((this.rotateHtml) ? this.state.rotation : 0) + ((rotation != null) ? rotation : 0);
+	var pt = mxUtils.getAlignmentAsPoint(align, valign);
+	var fo = g.firstChild;
+	var div = fo.firstChild;
 	var text = div.firstChild;
 	var hidden = true;
 	
+	if (this.state.alpha < 1)
+	{
+		g.setAttribute('opacity', this.state.alpha);
+	}
+	
+	// TODO: Should use max CSS
 	if (clip)
 	{
-		text.style.maxHeight = Math.round(h) + 'px';
-		text.style.maxWidth = Math.round(w) + 'px';
+		text.style.height = Math.round(h) + 'px';
+		text.style.width = Math.round(w) + 'px';
+//		text.style.maxHeight = Math.round(h) + 'px';
+//		text.style.maxWidth = Math.round(w) + 'px';
 	}
 	else if (overflow == 'fill')
 	{
 		text.style.width = Math.round(w + 1) + 'px';
 		text.style.height = Math.round(h + 1) + 'px';
+//		text.style.width = Math.round(w + 1) + 'px';
+//		text.style.height = Math.round(h + 1) + 'px';
 	}
 	else if (overflow == 'width')
 	{
@@ -1372,36 +1392,32 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		{
 			text.style.maxHeight = Math.round(h) + 'px';
 		}
+//		text.style.width = Math.round(w + 1) + 'px';
+//		
+//		if (h > 0)
+//		{
+//			text.style.maxHeight = Math.round(h) + 'px';
+//		}
 	}
 	else
 	{
 		hidden = false;
 	}
-
+	
+	text.style.overflow = (hidden) ? 'hidden' : '';
+	var s = this.state.scale;
+	var dx = 0;
+	
 	if (wrap && w > 0)
 	{
-		text.style.maxWidth = Math.round(w + 1) + 'px';
+		div.style.width = Math.round(w + 1) + 'px';
+		dx += pt.x * w;
+		//text.style.maxWidth = Math.round(w + 1) + 'px';
 	}
 
-	var s = this.state.scale;
-	div.style.transformOrigin = '0% 0%';
-	div.style.transform = 'translate(' +
-		(Math.round((x + this.state.dx) * s) + this.foOffset) + 'px,' +
-		(Math.round((y + this.state.dy) * s) + this.foOffset) + 'px)' +
-		((s != 1) ? 'scale(' + s + ')' : '') + ((r != 0) ? 'rotate(' + r + 'deg)' : '');
-	var pt = mxUtils.getAlignmentAsPoint(align, valign);
-	var tr = 'translate(' + (pt.x * 100) + '%,' + (pt.y * 100) + '%)';
-	
-	if (hidden)
-	{
-		// Uses clipped node for relative transform
-		text.style.overflow = 'hidden';
-		text.style.transform = tr;
-	}
-	else
-	{
-		text.firstChild.style.transform = tr;
-	}
+	g.setAttribute('transform', ((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ')' : '') +
+		((s != 1) ? 'scale(' + s + ')' : '') + 'translate(' + (x + dx + this.state.dx) + ' ' + (y + this.state.dy) + ')' +
+		((r != 0) ? ('rotate(' + r + ' ' + (-dx) + ' 0)') : ''));
 };
 
 /**
