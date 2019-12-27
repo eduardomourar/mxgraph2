@@ -1695,7 +1695,9 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
 		if (div.parentNode != fo)
 		{
 			// Removes wrapper object from DOM
-			if (div.parentNode != null && div.parentNode.ownerSVGElement != fo.ownerSVGElement)
+			if (div.parentNode != null && div.parentNode.ownerSVGElement != null &&
+				div.parentNode.ownerSVGElement.parentNode != null &&
+				div.parentNode.ownerSVGElement != fo.ownerSVGElement)
 			{
 				div.parentNode.ownerSVGElement.parentNode.removeChild(div.parentNode.ownerSVGElement);
 			}
