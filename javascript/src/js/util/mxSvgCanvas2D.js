@@ -1194,9 +1194,9 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, white
 	var s = this.state;
 	var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
 		(mxConstants.LINE_HEIGHT * this.lineHeightCorrection);
-	var css = 'display: inline-block; font-size: ' + s.fontSize + 'px; font-family: ' +
-		s.fontFamily + '; color:' + s.fontColor + '; line-height: ' + lh + '; ' +
-		'pointer-events: ' + ((this.pointerEvents) ? this.pointerEventsValue : 'none') + '; ';
+	var css = 'font-size: ' + s.fontSize + 'px; font-family: ' + s.fontFamily +
+		'; color: ' + s.fontColor + '; line-height: ' + lh +
+		'; pointer-events: ' + ((this.pointerEvents) ? this.pointerEventsValue : 'none') + '; ';
 	
 	if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
 	{
@@ -1251,7 +1251,8 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, white
 	
 	if (!mxUtils.isNode(val))
 	{
-		val = '<div style="' + css + '">' + this.convertHtml(val) + '</div>';
+		// Inner inline block forces width of longest line of text for wrapping
+		val = '<div style="' + css + '"><div style="display:inline-block;">' + this.convertHtml(val) + '</div></div>';
 	}
 	
 	// Cannot use opacity, transforms and positions in XHTML due to bugs in Safari
