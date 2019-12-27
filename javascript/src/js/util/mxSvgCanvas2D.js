@@ -1212,6 +1212,10 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, white
 	{
 		css += 'background-color: ' + mxUtils.htmlEntities(s.fontBackgroundColor) + '; ';
 	}
+	else
+	{
+		css += 'background:transparent;';
+	}
 	
 	if (s.fontBorderColor != null)
 	{
@@ -1331,6 +1335,7 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
 	fo.setAttribute('width', '100%');
 	fo.setAttribute('height', '100%');
 	fo.appendChild(div);
+	
 	group.appendChild(fo);
 	
 	this.updateTextNodes(x, y, w, h, align, valign, wrap, overflow, clip, rotation, group);
@@ -1382,8 +1387,6 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 	{
 		text.style.width = Math.round(w + 1) + 'px';
 		text.style.height = Math.round(h + 1) + 'px';
-//		text.style.width = Math.round(w + 1) + 'px';
-//		text.style.height = Math.round(h + 1) + 'px';
 	}
 	else if (overflow == 'width')
 	{
@@ -1393,12 +1396,6 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		{
 			text.style.maxHeight = Math.round(h) + 'px';
 		}
-//		text.style.width = Math.round(w + 1) + 'px';
-//		
-//		if (h > 0)
-//		{
-//			text.style.maxHeight = Math.round(h) + 'px';
-//		}
 	}
 	else
 	{
@@ -1415,10 +1412,19 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		dx += pt.x * w;
 		//text.style.maxWidth = Math.round(w + 1) + 'px';
 	}
-
-	g.setAttribute('transform', ((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ')' : '') +
-		((s != 1) ? 'scale(' + s + ')' : '') + 'translate(' + (x + dx + this.state.dx) + ' ' + (y + this.state.dy) + ')' +
-		((r != 0) ? ('rotate(' + r + ' ' + (-dx) + ' 0)') : ''));
+	
+	// Cannot use transform or absolute position in Safari
+	// and must cover complete surface for zoomed repaint
+	// clipping with scrollbars working in Chrome and Safari
+	// ie. foreignObject must be at (0,0) with size 100%
+	g.setAttribute('transform',
+		((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ')' : '') +
+		((s != 1) ? 'scale(' + s + ')' : '') +
+		((r != 0) ? ('rotate(' + r + ' ' + (x + dx + this.state.dx) + ' ' + (y + this.state.dy) + ')') : '')
+	);
+	
+	div.style.paddingTop = (y + this.state.dy) + 'px';
+	div.style.paddingLeft = (x + dx + this.state.dx) + 'px';
 };
 
 /**
