@@ -1212,10 +1212,6 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, white
 	{
 		css += 'background-color: ' + mxUtils.htmlEntities(s.fontBackgroundColor) + '; ';
 	}
-	else
-	{
-		css += 'background:transparent;';
-	}
 	
 	if (s.fontBorderColor != null)
 	{
@@ -1255,8 +1251,10 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, white
 	
 	if (!mxUtils.isNode(val))
 	{
-		// Inner inline block forces width of longest line of text for wrapping
-		val = '<div style="' + css + '"><div style="display:inline-block;">' + this.convertHtml(val) + '</div></div>';
+		// Inner inline block forces width of longest line for text wrapping
+		val = '<div style="' + 'text-align: ' + ((align == mxConstants.ALIGN_LEFT) ? 'left' :
+		((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center'))  + ';">' + 
+		'<div style="display:inline-block; ' + css + '">' + this.convertHtml(val) + '</div></div>';
 	}
 	
 	// Cannot use opacity, transforms and positions in XHTML due to bugs in Safari
@@ -1329,13 +1327,9 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
 	var group = this.createElement('g');
 	var fo = this.createElement('foreignObject');
 
-	// Workarounds for scroll clipping and opacity rendering order bugs in Chrome
-	fo.setAttribute('style', 'overflow: visible;');
+	// Workarounds for scroll clipping and opacity rendering order bugs in Webkit
 	fo.setAttribute('pointer-events', 'none');
-	fo.setAttribute('width', '100%');
-	fo.setAttribute('height', '100%');
 	fo.appendChild(div);
-	
 	group.appendChild(fo);
 	
 	this.updateTextNodes(x, y, w, h, align, valign, wrap, overflow, clip, rotation, group);
@@ -1367,34 +1361,26 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 	var pt = mxUtils.getAlignmentAsPoint(align, valign);
 	var fo = g.firstChild;
 	var div = fo.firstChild;
-	var text = div.firstChild;
+	var box = div.firstChild;
 	var hidden = true;
 	
-	if (this.state.alpha < 1)
-	{
-		g.setAttribute('opacity', this.state.alpha);
-	}
-	
-	// TODO: Should use max CSS
 	if (clip)
 	{
-		text.style.height = Math.round(h) + 'px';
-		text.style.width = Math.round(w) + 'px';
-//		text.style.maxHeight = Math.round(h) + 'px';
-//		text.style.maxWidth = Math.round(w) + 'px';
+		box.style.maxHeight = Math.round(h) + 'px';
+		box.style.maxWidth = Math.round(w) + 'px';
 	}
 	else if (overflow == 'fill')
 	{
-		text.style.width = Math.round(w + 1) + 'px';
-		text.style.height = Math.round(h + 1) + 'px';
+		box.style.width = Math.round(w + 1) + 'px';
+		box.style.height = Math.round(h + 1) + 'px';
 	}
 	else if (overflow == 'width')
 	{
-		text.style.width = Math.round(w + 1) + 'px';
+		box.style.width = Math.round(w + 1) + 'px';
 		
 		if (h > 0)
 		{
-			text.style.maxHeight = Math.round(h) + 'px';
+			box.style.maxHeight = Math.round(h) + 'px';
 		}
 	}
 	else
@@ -1402,7 +1388,7 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		hidden = false;
 	}
 	
-	text.style.overflow = (hidden) ? 'hidden' : '';
+	box.style.overflow = (hidden) ? 'hidden' : '';
 	var s = this.state.scale;
 	var dx = 0;
 	
@@ -1410,21 +1396,26 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 	{
 		div.style.width = Math.round(w + 1) + 'px';
 		dx += pt.x * w;
-		//text.style.maxWidth = Math.round(w + 1) + 'px';
 	}
 	
-	// Cannot use transform or absolute position in Safari
-	// and must cover complete surface for zoomed repaint
-	// clipping with scrollbars working in Chrome and Safari
-	// ie. foreignObject must be at (0,0) with size 100%
+	// Fixes foreignObject bbox ignores transform
+	fo.setAttribute('width', (1 / Math.min(1, s) * 100) + '%');
+	fo.setAttribute('height', (1 / Math.min(1, s) * 100) + '%');
+	
+	// Cannot use transform, absolute position and opacity in Safari and foreign object
+	// must be at (0,0) with size 100% x 100% due to repaint bugs in Webkit
+	div.style.paddingLeft = (x + dx + this.state.dx) + 'px';
+	div.style.paddingTop = (y + this.state.dy) + 'px';
 	g.setAttribute('transform',
 		((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ')' : '') +
 		((s != 1) ? 'scale(' + s + ')' : '') +
-		((r != 0) ? ('rotate(' + r + ' ' + (x + dx + this.state.dx) + ' ' + (y + this.state.dy) + ')') : '')
+		((r != 0) ? ('rotate(' + r + ' ' + (x + this.state.dx) + ' ' + (y + this.state.dy) + ')') : '')
 	);
 	
-	div.style.paddingTop = (y + this.state.dy) + 'px';
-	div.style.paddingLeft = (x + dx + this.state.dx) + 'px';
+	if (this.state.alpha < 1)
+	{
+		g.setAttribute('opacity', this.state.alpha);
+	}
 };
 
 /**
