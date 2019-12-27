@@ -376,6 +376,15 @@ var mxClient =
 };
 
 /**
+ * Detects desktop mode on iPad Pro which requires event handling like iOS 12.
+ */
+if (mxClient.IS_SF && mxClient.IS_TOUCH && !mxClient.IS_IOS)
+{
+	mxClient.IOS_VERSION = 12;
+	mxClient.IS_IOS = true;
+}
+
+/**
  * Variable: mxLoadResources
  * 
  * Optional global config variable to toggle loading of the two resource files

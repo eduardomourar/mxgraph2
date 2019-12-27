@@ -1,3 +1,4 @@
+- Fixes event handling for desktop mode in mobile Safari
 - Adds mxGraph.snapDelta, uses raster for moving cells
 - Adds optional cells argument in mxGraphHandler.start
 - Fixes mxGraph.sizeDidChange for negative coordinates
