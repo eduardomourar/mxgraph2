@@ -1189,86 +1189,21 @@ mxSvgCanvas2D.prototype.convertHtml = function(val)
  * 
  * Private helper function to create SVG elements
  */
-mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, whiteSpace)
+mxSvgCanvas2D.prototype.createDiv = function(str)
 {
-	var s = this.state;
-	var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
-		(mxConstants.LINE_HEIGHT * this.lineHeightCorrection);
-	var css = 'font-size: ' + s.fontSize + 'px; font-family: ' + s.fontFamily +
-		'; color: ' + s.fontColor + '; line-height: ' + lh +
-		'; pointer-events: ' + ((this.pointerEvents) ? this.pointerEventsValue : 'none') + '; ';
-	
-	if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
-	{
-		css += 'font-weight: bold; ';
-	}
-
-	if ((s.fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC)
-	{
-		css += 'font-style: italic; ';
-	}
-
-	if (s.fontBackgroundColor != null)
-	{
-		css += 'background-color: ' + mxUtils.htmlEntities(s.fontBackgroundColor) + '; ';
-	}
-	
-	if (s.fontBorderColor != null)
-	{
-		css += 'border: 1px solid ' + mxUtils.htmlEntities(s.fontBorderColor) + '; ';
-	}
-		
-	var txtDecor = [];
-	
-	if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
-	{
-		txtDecor.push('underline');
-	}
-	
-	if ((s.fontStyle & mxConstants.FONT_STRIKETHROUGH) == mxConstants.FONT_STRIKETHROUGH)
-	{
-		txtDecor.push('line-through');
-	}
-	
-	if (txtDecor.length > 0)
-	{
-		css += 'text-decoration: ' + txtDecor.join(' ') + '; ';
-	}
-
-	if (whiteSpace != null)
-	{
-		css += 'white-space: ' + whiteSpace + '; word-wrap: ' + mxConstants.WORD_WRAP + '; ';
-	}
-	else
-	{
-		css += 'white-space: nowrap; ';
-	}
-
-	css += 'text-align: ' + ((align == mxConstants.ALIGN_LEFT) ? 'left' :
-		((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center'))  + ';';
-	
 	var val = str;
 	
 	if (!mxUtils.isNode(val))
 	{
 		// Inner inline block forces width of longest line for text wrapping
-		val = '<div style="' + 'text-align: ' + ((align == mxConstants.ALIGN_LEFT) ? 'left' :
-		((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center'))  + ';">' + 
-		'<div style="display:inline-block; ' + css + '">' + this.convertHtml(val) + '</div></div>';
+		val = '<div><div>' + this.convertHtml(val) + '</div></div>';
 	}
-	
-	// Cannot use opacity, transforms and positions in XHTML due to bugs in Safari
-	var flex = 'display: flex; align-items: unsafe ' + ((valign == mxConstants.ALIGN_TOP) ? 'flex-start' :
-		((valign == mxConstants.ALIGN_BOTTOM) ? 'flex-end' : 'center'))  + '; ' +
-		'justify-content: unsafe ' + ((align == mxConstants.ALIGN_LEFT) ? 'flex-start' :
-		((align == mxConstants.ALIGN_RIGHT) ? 'flex-end' : 'center'))  + '; width: 1px; height: 1px;';
 
 	// Uses DOM API where available. This cannot be used in IE to avoid
-	// an opening and two (!) closing TBODY tags being added to tables.
-	if (!mxClient.IS_IE && document.createElementNS)
+	// an opening and two closing TBODY tags and removed CSS3 styles.
+	if (!mxClient.IS_IE && !mxClient.IS_IE11 && document.createElementNS)
 	{
 		var div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
-		div.setAttribute('style', flex);
 		
 		if (mxUtils.isNode(val))
 		{
@@ -1296,10 +1231,22 @@ mxSvgCanvas2D.prototype.createDiv = function(str, align, valign, overflow, white
 		{
 			val = val.outerHTML;
 		}
+		
+		val = '<div xmlns="http://www.w3.org/1999/xhtml">' + val + '</div>';
 
-		// NOTE: FF 3.6 crashes if content CSS contains "height:100%"
-		return mxUtils.parseXml('<div xmlns="http://www.w3.org/1999/xhtml" ' +
-			'style="' + flex + '">' + val + '</div>').documentElement;
+		// Workaround for removed CSS3 styles is to force XML parsing in IE
+		if ("ActiveXObject" in window)
+		{
+			var doc = mxUtils.createMsXmlDocument();
+			doc.loadXML(val);
+			
+			return doc.documentElement;
+	 	}
+		else
+		{
+			// NOTE: FF 3.6 crashes if content CSS contains "height:100%"
+			return mxUtils.parseXml(val).documentElement;
+		}
 	}
 };
 
@@ -1324,17 +1271,21 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
  */
 mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation, dir, div, root)
 {
-	var group = this.createElement('g');
 	var fo = this.createElement('foreignObject');
+	var group = this.createElement('g');
 
-	// Workarounds for scroll clipping and opacity rendering order bugs in Webkit
-	fo.setAttribute('pointer-events', 'none');
+	// Import neededin older versions of IE
+	if (div.ownerDocument != document)
+	{
+		div = mxUtils.importNodeImplementation(fo.ownerDocument, div, true);
+	}
+
 	fo.appendChild(div);
 	group.appendChild(fo);
-	
+
 	this.updateTextNodes(x, y, w, h, align, valign, wrap, overflow, clip, rotation, group);
 	
-	// Adds alternate content for unsupported foreignObject
+	// Alternate content for unsupported foreignObject
 	if (this.root.ownerDocument != document)
 	{
 		var alt = this.createAlternateContent(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation);
@@ -1357,65 +1308,175 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
  */
 mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, g)
 {
-	var r = ((this.rotateHtml) ? this.state.rotation : 0) + ((rotation != null) ? rotation : 0);
-	var pt = mxUtils.getAlignmentAsPoint(align, valign);
+	var s = this.state.scale;
 	var fo = g.firstChild;
 	var div = fo.firstChild;
 	var box = div.firstChild;
-	var hidden = true;
+	var text = box.firstChild;
+	var block = this.getTextCss();
+	var item = 'box-sizing: border-box; text-align: ' + ((align == mxConstants.ALIGN_LEFT) ? 'left' :
+		((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center')) + '; ';
+	var flex = 'display: flex; align-items: unsafe ' + ((valign == mxConstants.ALIGN_TOP) ? 'flex-start' :
+		((valign == mxConstants.ALIGN_BOTTOM) ? 'flex-end' : 'center'))  + '; ' +
+		'justify-content: unsafe ' + ((align == mxConstants.ALIGN_LEFT) ? 'flex-start' :
+		((align == mxConstants.ALIGN_RIGHT) ? 'flex-end' : 'center'))  + '; ';
+	var pt = mxUtils.getAlignmentAsPoint(align, valign);
+	var ofl = 'overflow: hidden; ';
+	var fw = 'width: 1px; ';
+	var fh = 'height: 1px; ';
+	var dx = pt.x * w;
+	var dy = pt.y * h;
 	
 	if (clip)
 	{
-		box.style.maxHeight = Math.round(h) + 'px';
-		box.style.maxWidth = Math.round(w) + 'px';
+		item += 'max-width: ' + Math.round(w) + 'px; ' +
+			'max-height: ' + Math.round(h) + 'px; ';
 	}
 	else if (overflow == 'fill')
 	{
-		box.style.width = Math.round(w + 1) + 'px';
-		box.style.height = Math.round(h + 1) + 'px';
+		fw = 'width: ' + Math.round(w) + 'px; ';
+		fh = 'height: ' + Math.round(h) + 'px; ';
+		block += 'width: 100%; height: 100%; ';
+		item += fw + fh;
 	}
 	else if (overflow == 'width')
 	{
-		box.style.width = Math.round(w + 1) + 'px';
+		fw = 'width: ' + Math.round(w) + 'px; ';
+		block += 'width: 100%; ';
+		item += fw;
+		dy = 0;
 		
 		if (h > 0)
 		{
-			box.style.maxHeight = Math.round(h) + 'px';
+			item += 'max-height: ' + Math.round(h) + 'px; ';
 		}
 	}
 	else
 	{
-		hidden = false;
+		ofl = '';
+		dy = 0;
 	}
 	
-	box.style.overflow = (hidden) ? 'hidden' : '';
-	var s = this.state.scale;
-	var dx = 0;
+	var bg = '';
 	
+	if (this.state.fontBackgroundColor != null)
+	{
+		bg += 'background-color: ' + mxUtils.htmlEntities(this.state.fontBackgroundColor) + '; ';
+	}
+	
+	if (this.state.fontBorderColor != null)
+	{
+		bg += 'border: 1px solid ' + mxUtils.htmlEntities(this.state.fontBorderColor) + '; ';
+	}
+	
+	if (ofl == '' || clip)
+	{
+		block += bg;
+	}
+	else
+	{
+		item += bg;
+	}
+
 	if (wrap && w > 0)
 	{
-		div.style.width = Math.round(w + 1) + 'px';
-		dx += pt.x * w;
+		block += 'white-space: normal; word-wrap: ' + mxConstants.WORD_WRAP + '; ';
+		fw = 'width: ' + Math.round(w) + 'px; ';
+		
+		if (ofl != '' && overflow != 'fill')
+		{
+			dy = 0;
+		}
+	}
+	else
+	{
+		block += 'white-space: nowrap; ';
+		
+		if (ofl == '')
+		{
+			dx = 0;
+		}
 	}
 	
-	// Fixes foreignObject bbox ignores transform
-	fo.setAttribute('width', (1 / Math.min(1, s) * 100) + '%');
-	fo.setAttribute('height', (1 / Math.min(1, s) * 100) + '%');
+	// Fixes foreignObject bounding box ignores transform
+	fo.setAttribute('width', Math.ceil(1 / Math.min(1, s) * 100) + '%');
+	fo.setAttribute('height', Math.ceil(1 / Math.min(1, s) * 100) + '%');
+	fo.setAttribute('pointer-events', 'none');
 	
-	// Cannot use transform, absolute position and opacity in Safari and foreign object
-	// must be at (0,0) with size 100% x 100% due to repaint bugs in Webkit
-	div.style.paddingLeft = (x + dx + this.state.dx) + 'px';
-	div.style.paddingTop = (y + this.state.dy) + 'px';
-	g.setAttribute('transform',
-		((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ')' : '') +
-		((s != 1) ? 'scale(' + s + ')' : '') +
-		((r != 0) ? ('rotate(' + r + ' ' + (x + this.state.dx) + ' ' + (y + this.state.dy) + ')') : '')
-	);
+	// Cannot use transform, absolute position and opacity in Safari and
+	// foreign object must be at (0,0) with size 100% x 100% in Webkit
+	div.setAttribute('style', flex + fw + fh +
+		'padding-left: ' + (x + dx + this.state.dx) + 'px; ' +
+		'padding-top: ' + (y + dy + this.state.dy) + 'px;');
+	box.setAttribute('style', item + ofl);
+	text.setAttribute('style', block);
 	
-	if (this.state.alpha < 1)
+	var r = ((this.rotateHtml) ? this.state.rotation : 0) + ((rotation != null) ? rotation : 0);
+	var t = ((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ')' : '') +
+		((s != 1) ? 'scale(' + s + ')' : '') + ((r != 0) ? ('rotate(' + r + ' ' +
+		(x + this.state.dx) + ' ' + (y + this.state.dy) + ')') : '');
+	
+	if (t != '')
+	{	
+		g.setAttribute('transform', t);
+	}
+	else
+	{
+		g.removeAttribute('transform');
+	}
+	
+	if (this.state.alpha != 1)
 	{
 		g.setAttribute('opacity', this.state.alpha);
 	}
+	else
+	{
+		g.removeAttribute('opacity');
+	}
+};
+
+/**
+ * Function: getTextCss
+ * 
+ * Private helper function to create SVG elements
+ */
+mxSvgCanvas2D.prototype.getTextCss = function()
+{
+	var s = this.state;
+	var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
+		(mxConstants.LINE_HEIGHT * this.lineHeightCorrection);
+	var css = 'display: inline-block; font-size: ' + s.fontSize + 'px; ' +
+		'font-family: ' + s.fontFamily + '; color: ' + s.fontColor + '; line-height: ' + lh +
+		'; pointer-events: ' + ((this.pointerEvents) ? this.pointerEventsValue : 'none') + '; ';
+	
+	if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
+	{
+		css += 'font-weight: bold; ';
+	}
+
+	if ((s.fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC)
+	{
+		css += 'font-style: italic; ';
+	}
+
+	var deco = [];
+	
+	if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
+	{
+		deco.push('underline');
+	}
+	
+	if ((s.fontStyle & mxConstants.FONT_STRIKETHROUGH) == mxConstants.FONT_STRIKETHROUGH)
+	{
+		deco.push('line-through');
+	}
+	
+	if (deco.length > 0)
+	{
+		css += 'text-decoration: ' + deco.join(' ') + '; ';
+	}
+
+	return css;
 };
 
 /**
@@ -1434,7 +1495,7 @@ mxSvgCanvas2D.prototype.text = function(x, y, w, h, str, align, valign, wrap, fo
 
 		if (this.foEnabled && format == 'html')
 		{
-			var div = this.createDiv(str, align, valign, overflow, (wrap && w > 0) ? 'normal' : null);
+			var div = this.createDiv(str);
 			
 			// Ignores invalid XHTML labels
 			if (div != null)
