@@ -1014,6 +1014,7 @@ mxVertexHandler.prototype.resizeVertex = function(me)
 		}
 	}
 	
+	var old = this.bounds;
 	this.bounds = new mxRectangle(((this.parentState != null) ? this.parentState.x : tr.x * scale) +
 		(this.unscaledBounds.x) * scale, ((this.parentState != null) ? this.parentState.y : tr.y * scale) +
 		(this.unscaledBounds.y) * scale, this.unscaledBounds.width * scale, this.unscaledBounds.height * scale);
@@ -1064,15 +1065,18 @@ mxVertexHandler.prototype.resizeVertex = function(me)
 		this.childOffsetX = 0;
 		this.childOffsetY = 0;
 	}
-	
-	if (this.livePreviewActive)
-	{
-		this.updateLivePreview(me);
-	}
-	
-	if (this.preview != null)
-	{
-		this.drawPreview();
+			
+	if (!old.equals(this.bounds))
+	{	
+		if (this.livePreviewActive)
+		{
+			this.updateLivePreview(me);
+		}
+		
+		if (this.preview != null)
+		{
+			this.drawPreview();
+		}
 	}
 };
 
