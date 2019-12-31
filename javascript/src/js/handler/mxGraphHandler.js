@@ -930,9 +930,12 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 				}
 			}
 
-			this.currentDx = delta.x;
-			this.currentDy = delta.y;
-			this.updatePreview();
+			if (this.currentDx != delta.x || this.currentDy != delta.y)
+			{
+				this.currentDx = delta.x;
+				this.currentDy = delta.y;
+				this.updatePreview();
+			}
 		}
 
 		this.updateHint(me);
