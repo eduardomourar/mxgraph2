@@ -256,7 +256,7 @@ mxText.prototype.paint = function(c, update)
 		
 		if (!realHtml && fmt == 'html')
 		{
-			val =  mxUtils.htmlEntities(val, false);
+			val = mxUtils.htmlEntities(val, false);
 		}
 		
 		if (fmt == 'html' && !mxUtils.isNode(this.value))
