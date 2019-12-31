@@ -12175,9 +12175,9 @@ mxGraph.prototype.selectAll = function(parent, descendants)
  * 
  * Select all vertices inside the given parent or the default parent.
  */
-mxGraph.prototype.selectVertices = function(parent)
+mxGraph.prototype.selectVertices = function(parent, selectGroups)
 {
-	this.selectCells(true, false, parent);
+	this.selectCells(true, false, parent, selectGroups);
 };
 
 /**
@@ -12204,15 +12204,18 @@ mxGraph.prototype.selectEdges = function(parent)
  * edges - Boolean indicating if edges should be selected.
  * parent - Optional <mxCell> that acts as the root of the recursion.
  * Default is <defaultParent>.
+ * selectGroups - Optional boolean that specifies if groups should be
+ * selected. Default is false.
  */
-mxGraph.prototype.selectCells = function(vertices, edges, parent)
+mxGraph.prototype.selectCells = function(vertices, edges, parent, selectGroups)
 {
 	parent = parent || this.getDefaultParent();
 	
 	var filter = mxUtils.bind(this, function(cell)
 	{
 		return this.view.getState(cell) != null &&
-			((this.model.getChildCount(cell) == 0 && this.model.isVertex(cell) && vertices
+			(((selectGroups || this.model.getChildCount(cell) == 0) &&
+			this.model.isVertex(cell) && vertices
 			&& !this.model.isEdge(this.model.getParent(cell))) ||
 			(this.model.isEdge(cell) && edges));
 	});
