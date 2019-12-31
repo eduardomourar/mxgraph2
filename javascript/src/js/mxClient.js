@@ -120,7 +120,14 @@ var mxClient =
   	IS_SF: navigator.userAgent.indexOf('AppleWebKit/') >= 0 &&
   		navigator.userAgent.indexOf('Chrome/') < 0 &&
   		navigator.userAgent.indexOf('Edge/') < 0,
-  	
+  	  	
+	/**
+	 * Variable: IS_ANDROID
+	 * 
+	 * Returns true if the user agent contains Android.
+	 */
+  	IS_ANDROID: navigator.userAgent.indexOf('Android') >= 0,
+
 	/**
 	 * Variable: IS_IOS
 	 * 
