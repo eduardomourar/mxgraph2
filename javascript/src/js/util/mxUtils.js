@@ -570,7 +570,7 @@ var mxUtils =
 				{
 					for (var i = 0; i < node.childNodes.length; i++)
 					{
-						newNode.appendChild(mxUtils.importNode(doc, node.childNodes[i], allChildren));
+						newNode.appendChild(mxUtils.importNodeImplementation(doc, node.childNodes[i], allChildren));
 					}
 				}
 				
