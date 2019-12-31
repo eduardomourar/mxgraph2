@@ -487,14 +487,21 @@ mxText.prototype.updateBoundingBox = function()
 			{
 				// Uses second inner DIV for font metrics
 				node = node.firstChild.firstChild.firstChild.firstChild;
-				ow = node.offsetWidth * this.scale;
 				oh = node.offsetHeight * this.scale;
+				
+				if (this.overflow == 'width')
+				{
+					ow = this.boundingBox.width;
+				}
+				else
+				{
+					ow = node.offsetWidth * this.scale;	
+				}
 			}
 			else
 			{
 				try
 				{
-					// TODO: Check if this is working
 					var b = node.getBBox();
 					
 					// Workaround for bounding box of empty string
