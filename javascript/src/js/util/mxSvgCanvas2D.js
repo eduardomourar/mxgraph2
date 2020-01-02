@@ -1398,9 +1398,10 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		}
 	}
 	
-	// Fixes foreignObject bounding box ignores transform
+	// Fixes foreignObject bounding box ignores transform and clipping in print preview
 	fo.setAttribute('width', Math.ceil(1 / Math.min(1, s) * 100) + '%');
 	fo.setAttribute('height', Math.ceil(1 / Math.min(1, s) * 100) + '%');
+	fo.setAttribute('style', 'overflow: visible;');
 	fo.setAttribute('pointer-events', 'none');
 	
 	// Cannot use transform, absolute position and opacity in Safari and
