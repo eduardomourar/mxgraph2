@@ -2328,6 +2328,7 @@ EditorUi.prototype.initCanvas = function()
 				{
 					if (source == graph.container)
 					{
+						graph.tooltipHandler.hideTooltip();
 						cursorPosition = new mxPoint(mxEvent.getClientX(evt), mxEvent.getClientY(evt));
 						graph.lazyZoom(up);
 						mxEvent.consume(evt);
