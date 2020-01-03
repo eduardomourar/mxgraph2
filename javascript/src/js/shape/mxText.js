@@ -239,7 +239,7 @@ mxText.prototype.paint = function(c, update)
 	
 	this.updateTransform(c, x, y, w, h);
 	this.configureCanvas(c, x, y, w, h);
-
+	
 	if (update)
 	{
 		c.updateText(x, y, w, h, this.align, this.valign, this.wrap, this.overflow,
@@ -316,6 +316,9 @@ mxText.prototype.redraw = function()
 
 			if (canvas != null && canvas.updateText != null)
 			{
+				// Specifies if events should be handled
+				canvas.pointerEvents = this.pointerEvents;
+	
 				this.paint(canvas, true);
 				this.destroyCanvas(canvas);
 				this.updateBoundingBox();

@@ -1036,23 +1036,14 @@ mxGraphHandler.prototype.updateLivePreview = function(dx, dy)
 					
 					state.shape.pointerEvents = false;
 	
-					if (state.text != null && state.text.node != null)
+					if (state.text != null)
 					{
-						var node = state.text.node;
-						
-						if (node.firstChild != null && node.firstChild.firstChild != null &&
-							node.firstChild.firstChild.nodeName == 'foreignObject')
+						if (state.text.originalPointerEvents == null)
 						{
-							//node.firstChild.firstChild.setAttribute('pointer-events', 'none');
+							state.text.originalPointerEvents = state.text.pointerEvents;
 						}
-						else if (node.ownerSVGElement != null)
-						{
-							node.setAttribute('pointer-events', 'none');
-						}
-						else
-						{
-							node.style.pointerEvents = 'none';
-						}
+					
+						state.text.pointerEvents = false;
 					}
 				}
 	
@@ -1071,12 +1062,12 @@ mxGraphHandler.prototype.updateLivePreview = function(dx, dy)
 						// have been updated but avoids update of state
 						state.view.invalidate(state.cell);
 						state.invalid = false;
-					}
-					
-					// Hides folding icon
-					if (state.control != null && state.control.node != null)
-					{
-						state.control.node.style.visibility = 'hidden';
+						
+						// Hides folding icon
+						if (state.control != null && state.control.node != null)
+						{
+							state.control.node.style.visibility = 'hidden';
+						}
 					}
 				}
 			}));
@@ -1258,31 +1249,16 @@ mxGraphHandler.prototype.resetLivePreview = function()
 				state.shape.pointerEvents = state.shape.originalPointerEvents;
 				state.shape.originalPointerEvents = null;
 				
-				// Forces a repaint event if not moved
-				state.shape.bounds = null;
-
-				if (state.text != null && state.text.node != null)
+				if (state.text != null)
 				{
-					var node = state.text.node;
-					
-					if (node.firstChild != null && node.firstChild.firstChild != null &&
-						node.firstChild.firstChild.nodeName == 'foreignObject')
-					{
-						//node.firstChild.firstChild.setAttribute('pointer-events', 'all');
-					}
-					else if (node.ownerSVGElement != null)
-					{
-						node.removeAttribute('pointer-events');
-					}
-					else
-					{
-						node.style.pointerEvents = '';
-					}
+					state.text.pointerEvents = state.text.originalPointerEvents;
+					state.text.originalPointerEvents = null;
 				}
 			}
 
 			// Shows folding icon
-			if (state.control != null && state.control.node != null)
+			if (state.control != null && state.control.node != null &&
+				state.control.node.style.visibility == 'hidden')
 			{
 				state.control.node.style.visibility = '';
 			}

@@ -938,7 +938,7 @@ mxCellRenderer.prototype.redrawLabel = function(state, forced)
 		if (forced || state.text.value != value || state.text.isWrapping != wrapping ||
 			state.text.overflow != overflow || state.text.isClipping != clipping ||
 			state.text.scale != nextScale || state.text.dialect != dialect ||
-			!state.text.bounds.equals(bounds))
+			state.text.bounds == null || !state.text.bounds.equals(bounds))
 		{
 			state.text.dialect = dialect;
 			state.text.value = value;
@@ -1432,7 +1432,7 @@ mxCellRenderer.prototype.getShapesForState = function(state)
 mxCellRenderer.prototype.redraw = function(state, force, rendering)
 {
 	var shapeChanged = this.redrawShape(state, force, rendering);
-	
+
 	if (state.shape != null && (rendering == null || rendering))
 	{
 		this.redrawLabel(state, shapeChanged);
