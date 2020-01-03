@@ -365,22 +365,45 @@ mxSvgCanvas2D.prototype.createElement = function(tagName, namespace)
 };
 
 /**
+ * Function: getAlternateText
+ * 
+ * Returns the alternate text string for the given foreignObject.
+ */
+mxSvgCanvas2D.prototype.getAlternateText = function(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation)
+{
+	return (str != null) ? this.foAltText : null;
+};
+
+/**
  * Function: getAlternateContent
  * 
  * Returns the alternate content for the given foreignObject.
  */
 mxSvgCanvas2D.prototype.createAlternateContent = function(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation)
 {
-	if (this.foAltText != null)
+	var text = this.getAlternateText(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation);
+	var s = this.state;
+
+	if (text != null && s.fontSize > 0)
 	{
-		var s = this.state;
+		var dy = (valign == mxConstants.ALIGN_TOP) ? 1 :
+			(valign == mxConstants.ALIGN_BOTTOM) ? 0 : 0.3;
+		var anchor = (align == mxConstants.ALIGN_RIGHT) ? 'end' :
+			(align == mxConstants.ALIGN_LEFT) ? 'start' :
+			'middle';
+	
 		var alt = this.createElement('text');
-		alt.setAttribute('x', Math.round(w / 2));
-		alt.setAttribute('y', Math.round((h + s.fontSize) / 2));
+		alt.setAttribute('x', Math.round(x + s.dx));
+		alt.setAttribute('y', Math.round(y + s.dy + dy * s.fontSize));
 		alt.setAttribute('fill', s.fontColor || 'black');
-		alt.setAttribute('text-anchor', 'middle');
-		alt.setAttribute('font-size', s.fontSize + 'px');
 		alt.setAttribute('font-family', s.fontFamily);
+		alt.setAttribute('font-size', Math.round(s.fontSize) + 'px');
+
+		// Text-anchor start is default in SVG
+		if (anchor != 'start')
+		{
+			alt.setAttribute('text-anchor', anchor);
+		}
 		
 		if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
 		{
@@ -409,7 +432,7 @@ mxSvgCanvas2D.prototype.createAlternateContent = function(fo, x, y, w, h, str, a
 			alt.setAttribute('text-decoration', txtDecor.join(' '));
 		}
 		
-		mxUtils.write(alt, this.foAltText);
+		mxUtils.write(alt, text);
 		
 		return alt;
 	}

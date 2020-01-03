@@ -6765,67 +6765,45 @@ if (typeof mxVertexHandler != 'undefined')
 					Math.floor((border / scale - bounds.y) / vs));
 				
 				// Convert HTML entities
-				var htmlConverter = document.createElement('textarea');
+				var htmlConverter = document.createElement('div');
 				
 				// Adds simple text fallback for viewers with no support for foreignObjects
-				var createAlternateContent = svgCanvas.createAlternateContent;
-				svgCanvas.createAlternateContent = function(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation)
+				var getAlternateText = svgCanvas.getAlternateText;
+				svgCanvas.getAlternateText = function(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation)
 				{
-					var s = this.state;
-	
-					// Assumes a max character width of 0.2em
-					if (this.foAltText != null && (w == 0 || (s.fontSize != 0 && str.length < (w * 5) / s.fontSize)))
+					// Assumes a max character width of 0.5em
+					if (str != null && this.state.fontSize > 0)
 					{
-						var alt = this.createElement('text');
-						alt.setAttribute('x', Math.round(w / 2));
-						alt.setAttribute('y', Math.round((h + s.fontSize) / 2));
-						alt.setAttribute('fill', s.fontColor || 'black');
-						alt.setAttribute('text-anchor', 'middle');
-						alt.setAttribute('font-size', Math.round(s.fontSize) + 'px');
-						alt.setAttribute('font-family', s.fontFamily);
-						
-						if ((s.fontStyle & mxConstants.FONT_BOLD) == mxConstants.FONT_BOLD)
-						{
-							alt.setAttribute('font-weight', 'bold');
-						}
-						
-						if ((s.fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC)
-						{
-							alt.setAttribute('font-style', 'italic');
-						}
-						
-						var txtDecor = [];
-						
-						if ((s.fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE)
-						{
-							txtDecor.push('underline');
-						}
-						
-						if ((s.fontStyle & mxConstants.FONT_STRIKETHROUGH) == mxConstants.FONT_STRIKETHROUGH)
-						{
-							txtDecor.push('line-through');
-						}
-						
-						if (txtDecor.length > 0)
-						{
-							alt.setAttribute('text-decoration', txtDecor.join(' '));
-						}
-						
 						try
 						{
 							htmlConverter.innerHTML = str;
-							alt.textContent = htmlConverter.value;
+							str = mxUtils.extractTextWithWhitespace(htmlConverter.childNodes);
+							var first = str.toLowerCase().indexOf('\n');
 							
-							return alt;
+							if (first > 0)
+							{
+								str = str.substring(0, first) + '...';
+							}
+							else if (w > 0)
+							{							
+								var exp = 2 * w / this.state.fontSize;
+								
+								if (str.length > exp)
+								{
+									str = str.substring(0, exp) + '...';
+								}
+							}
+							
+							return str;
 						}
 						catch (e)
 						{
-							return createAlternateContent.apply(this, arguments);
+							return getAlternateText.apply(this, arguments);
 						}
 					}
 					else
 					{
-						return createAlternateContent.apply(this, arguments);
+						return getAlternateText.apply(this, arguments);
 					}
 				};
 				
