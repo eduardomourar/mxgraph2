@@ -1818,37 +1818,6 @@ Graph.prototype.getAbsoluteUrl = function(url)
 };
 
 /**
- * 
- */
-Graph.prototype.getTextContentForState = function(state)
-{
-	if (state.text != null && state.text.node != null)
-	{	
-		var node = state.text.node;
-		
-		// Rendered with no foreignObject
-		if (node.ownerSVGElement == null)
-		{
-			// Uses wrapper DIV if clipped
-			if (node.firstChild != null && state.text.overflow != 'fill' &&
-				state.text.overflow != 'width')
-			{
-				node = node.firstChild;
-			}
-			
-			return node;
-		}
-		else
-		{
-			// Innermost DIV that contains the actual content
-			return node.firstChild.firstChild.firstChild.firstChild.firstChild;
-		}
-	}
-	
-	return result;
-};
-
-/**
  * Installs automatic layout via styles
  */
 Graph.prototype.initLayoutManager = function()

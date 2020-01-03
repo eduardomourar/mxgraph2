@@ -427,37 +427,34 @@ mxText.prototype.getAutoDirection = function()
 };
 
 /**
- * Function: getMetricsNode
- *
- * Returns the DIV that should be used for text measuring.
- */
-mxText.prototype.getMetricsNode = function()
-{
-	if (node.firstChild != null && node.firstChild != null &&
-		node.firstChild.nodeName == 'foreignObject' &&
-		node.firstChild.firstChild != null)
-	{
-		return node.firstChild.firstChild.firstChild;
-	}
-	
-	return null;
-};
-
-/**
- * Function: getMetricsNode
- *
- * Returns the DIV that should be used for text measuring.
+ * Function: getContentNode
+ * 
+ * Returns the node that contains the rendered input.
  */
 mxText.prototype.getContentNode = function()
 {
-	if (node.firstChild != null && node.firstChild != null &&
-		node.firstChild.nodeName == 'foreignObject' &&
-		node.firstChild.firstChild != null)
+	var result = this.node;
+	
+	if (result != null)
 	{
-		return node.firstChild.firstChild.firstChild;
+		// Rendered with no foreignObject
+		if (result.ownerSVGElement == null)
+		{
+			// Uses wrapper DIV if clipped
+			if (result.firstChild != null && this.overflow != 'fill' &&
+				this.overflow != 'width')
+			{
+				result = result.firstChild;
+			}
+		}
+		else
+		{
+			// Innermost DIV that contains the actual content
+			result = result.firstChild.firstChild.firstChild.firstChild.firstChild;
+		}
 	}
 	
-	return null;
+	return result;
 };
 
 /**
