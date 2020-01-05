@@ -854,9 +854,11 @@ mxText.prototype.redrawHtmlShapeWithCss3 = function()
 			
 			this.node.setAttribute('style', flex);
 			
+			var html = (mxUtils.isNode(this.value)) ? this.value.outerHTML : this.getHtmlValue();
+			
 			if (this.node.firstChild == null)
 			{
-				this.node.innerHTML = '<div><div>' + this.getHtmlValue() +'</div></div>';
+				this.node.innerHTML = '<div><div>' + html +'</div></div>';
 			}
 
 			this.node.firstChild.firstChild.setAttribute('style', block);

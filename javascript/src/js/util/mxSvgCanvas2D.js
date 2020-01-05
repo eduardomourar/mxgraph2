@@ -1230,15 +1230,22 @@ mxSvgCanvas2D.prototype.createDiv = function(str)
 		
 		if (mxUtils.isNode(val))
 		{
+			var div2 = document.createElement('div');
+			var div3 = div.cloneNode(false);
+			
 			// Creates a copy for export
 			if (this.root.ownerDocument != document)
 			{
-				div.appendChild(val.cloneNode(true));
+				div2.appendChild(val.cloneNode(true));
 			}
 			else
 			{
-				div.appendChild(val);
+				div2.appendChild(val);
 			}
+			
+			
+			div2.appendChild(div3);
+			div.appendChild(div2);
 		}
 		else
 		{
@@ -1249,10 +1256,9 @@ mxSvgCanvas2D.prototype.createDiv = function(str)
 	}
 	else
 	{
-		// Serializes for export
-		if (mxUtils.isNode(val) && this.root.ownerDocument != document)
+		if (mxUtils.isNode(val))
 		{
-			val = val.outerHTML;
+			val = '<div><div>' + mxUtils.getXml(val) + '</div></div>';
 		}
 		
 		val = '<div xmlns="http://www.w3.org/1999/xhtml">' + val + '</div>';
