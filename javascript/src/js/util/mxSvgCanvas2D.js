@@ -1725,7 +1725,7 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 		else
 		{
 			var dy = ((this.matchHtmlAlignment && clip && h > 0) ? Math.min(textHeight, h) : textHeight) / 2;
-			cy -= dy + 2;
+			cy -= dy;
 		}
 	}
 	else if (valign == mxConstants.ALIGN_BOTTOM)
@@ -1737,7 +1737,7 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 		else
 		{
 			var dy = (this.matchHtmlAlignment && clip && h > 0) ? Math.min(textHeight, h) : textHeight;
-			cy -= dy + 4;
+			cy -= dy + 1;
 		}
 	}
 
