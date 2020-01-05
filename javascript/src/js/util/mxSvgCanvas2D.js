@@ -1331,18 +1331,73 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
  */
 mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, g)
 {
+	x += this.state.dx;
+	y += this.state.dy;
+	
 	var s = this.state.scale;
 	var fo = g.firstChild;
 	var div = fo.firstChild;
 	var box = div.firstChild;
 	var text = box.firstChild;
 	var block = this.getTextCss();
-	var item = 'box-sizing: border-box; text-align: ' + ((align == mxConstants.ALIGN_LEFT) ? 'left' :
-		((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center')) + '; ';
+	
+	// Fixes foreignObject bounding box ignores transform and clipping in print preview
+	fo.setAttribute('width', Math.ceil(1 / Math.min(1, s) * 100) + '%');
+	fo.setAttribute('height', Math.ceil(1 / Math.min(1, s) * 100) + '%');
+	fo.setAttribute('style', 'overflow: visible;');
+	fo.setAttribute('pointer-events', 'none');
+	
+	// Must use flex layout for centering in Safari to avoid transforms
 	var flex = 'display: flex; align-items: unsafe ' + ((valign == mxConstants.ALIGN_TOP) ? 'flex-start' :
 		((valign == mxConstants.ALIGN_BOTTOM) ? 'flex-end' : 'center'))  + '; ' +
 		'justify-content: unsafe ' + ((align == mxConstants.ALIGN_LEFT) ? 'flex-start' :
 		((align == mxConstants.ALIGN_RIGHT) ? 'flex-end' : 'center'))  + '; ';
+	
+	mxSvgCanvas2D.createCss(w, h, align, valign, wrap, overflow, clip,
+		(this.state.fontBackgroundColor != null) ? this.state.fontBackgroundColor : null,
+		(this.state.fontBorderColor != null) ? this.state.fontBorderColor : null,
+		flex, block, s, mxUtils.bind(this, function(dx, dy, flex, item, block)
+		{
+			// Cannot use transform, absolute position and opacity in Safari and
+			// foreign object must be at (0,0) with size 100% x 100% in Webkit
+			// for clipping so use padding implement cross browser compatibility
+			div.setAttribute('style', flex +
+				'padding-left: ' + (x + dx) + 'px; ' +
+				'padding-top: ' + (y + dy) + 'px;');
+			box.setAttribute('style', item);
+			text.setAttribute('style', block);
+			
+			var r = ((this.rotateHtml) ? this.state.rotation : 0) + ((rotation != null) ? rotation : 0);
+			var t = ((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ') ' : '') +
+				((s != 1) ? 'scale(' + s + ') ' : '') + ((r != 0) ? ('rotate(' + r + ' ' + x + ' ' + y + ')') : '');
+			
+			if (t != '')
+			{	
+				g.setAttribute('transform', t);
+			}
+			else
+			{
+				g.removeAttribute('transform');
+			}
+			
+			if (this.state.alpha != 1)
+			{
+				g.setAttribute('opacity', this.state.alpha);
+			}
+			else
+			{
+				g.removeAttribute('opacity');
+			}
+		}));
+};
+
+/**
+ * Updates existing DOM nodes for text rendering.
+ */
+mxSvgCanvas2D.createCss = function(w, h, align, valign, wrap, overflow, clip, bg, border, flex, block, s, callback)
+{
+	var item = 'box-sizing: border-box; text-align: ' + ((align == mxConstants.ALIGN_LEFT) ? 'left' :
+		((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center')) + '; ';
 	var pt = mxUtils.getAlignmentAsPoint(align, valign);
 	var ofl = 'overflow: hidden; ';
 	var fw = 'width: 1px; ';
@@ -1380,25 +1435,25 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		dy = 0;
 	}
 	
-	var bg = '';
+	var bgc = '';
 	
-	if (this.state.fontBackgroundColor != null)
+	if (bg != null)
 	{
-		bg += 'background-color: ' + mxUtils.htmlEntities(this.state.fontBackgroundColor) + '; ';
+		bgc += 'background-color: ' + bg + '; ';
 	}
 	
-	if (this.state.fontBorderColor != null)
+	if (border != null)
 	{
-		bg += 'border: 1px solid ' + mxUtils.htmlEntities(this.state.fontBorderColor) + '; ';
+		bgc += 'border: 1px solid ' + border + '; ';
 	}
 	
 	if (ofl == '' || clip)
 	{
-		block += bg;
+		block += bgc;
 	}
 	else
 	{
-		item += bg;
+		item += bgc;
 	}
 
 	if (wrap && w > 0)
@@ -1421,42 +1476,7 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		}
 	}
 	
-	// Fixes foreignObject bounding box ignores transform and clipping in print preview
-	fo.setAttribute('width', Math.ceil(1 / Math.min(1, s) * 100) + '%');
-	fo.setAttribute('height', Math.ceil(1 / Math.min(1, s) * 100) + '%');
-	fo.setAttribute('style', 'overflow: visible;');
-	fo.setAttribute('pointer-events', 'none');
-	
-	// Cannot use transform, absolute position and opacity in Safari and
-	// foreign object must be at (0,0) with size 100% x 100% in Webkit
-	div.setAttribute('style', flex + fw + fh +
-		'padding-left: ' + (x + dx + this.state.dx) + 'px; ' +
-		'padding-top: ' + (y + dy + this.state.dy) + 'px;');
-	box.setAttribute('style', item + ofl);
-	text.setAttribute('style', block);
-	
-	var r = ((this.rotateHtml) ? this.state.rotation : 0) + ((rotation != null) ? rotation : 0);
-	var t = ((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ')' : '') +
-		((s != 1) ? 'scale(' + s + ')' : '') + ((r != 0) ? ('rotate(' + r + ' ' +
-		(x + this.state.dx) + ' ' + (y + this.state.dy) + ')') : '');
-	
-	if (t != '')
-	{	
-		g.setAttribute('transform', t);
-	}
-	else
-	{
-		g.removeAttribute('transform');
-	}
-	
-	if (this.state.alpha != 1)
-	{
-		g.setAttribute('opacity', this.state.alpha);
-	}
-	else
-	{
-		g.removeAttribute('opacity');
-	}
+	callback(dx, dy, flex + fw + fh, item + ofl, block, ofl);
 };
 
 /**
