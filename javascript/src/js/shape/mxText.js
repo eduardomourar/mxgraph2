@@ -827,8 +827,8 @@ mxText.prototype.redrawHtmlShapeWithCss3 = function()
 		flex, block, this.scale, mxUtils.bind(this, function(dx, dy, flex, item, block, ofl)
 		{
 			var tr = 'transform-origin: 0 0; transform: ' +
-				((this.scale != 1) ? 'scale(' + this.scale + ')' : '') +
-				' translate(' + (this.margin.x * 100) + '%,' + (this.margin.y * 100) + '%); '
+				((this.scale != 1) ? 'scale(' + this.scale + ') ' : '') +
+				'translate(' + (this.margin.x * 100) + '%,' + (this.margin.y * 100) + '%); '
 			
 			if (ofl == '')
 			{

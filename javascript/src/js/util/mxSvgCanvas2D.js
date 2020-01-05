@@ -1354,7 +1354,8 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 	fo.setAttribute('pointer-events', 'none');
 	
 	// Must use flex layout for centering in Safari to avoid transforms
-	var flex = 'display: flex; align-items: unsafe ' + ((valign == mxConstants.ALIGN_TOP) ? 'flex-start' :
+	var flex = 'display: flex; align-items: unsafe ' +
+		((valign == mxConstants.ALIGN_TOP) ? 'flex-start' :
 		((valign == mxConstants.ALIGN_BOTTOM) ? 'flex-end' : 'center'))  + '; ' +
 		'justify-content: unsafe ' + ((align == mxConstants.ALIGN_LEFT) ? 'flex-start' :
 		((align == mxConstants.ALIGN_RIGHT) ? 'flex-end' : 'center'))  + '; ';
@@ -1413,8 +1414,9 @@ mxSvgCanvas2D.createCss = function(w, h, align, valign, wrap, overflow, clip, bg
 	
 	if (clip)
 	{
-		item += 'max-width: ' + Math.round(w) + 'px; ' +
-			'max-height: ' + Math.round(h) + 'px; ';
+		fw = 'width: ' + Math.round(w) + 'px; ';
+		item += 'max-height: ' + Math.round(h) + 'px; ';
+		dy = 0;
 	}
 	else if (overflow == 'fill')
 	{
