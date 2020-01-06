@@ -770,7 +770,11 @@ function Dialog(editorUi, elt, w, h, modal, closable, onClose, noScroll, transpa
 	var ds = mxUtils.getDocumentSize();
 	
 	// Workaround for print dialog offset in viewer lightbox
-	ds.height = window.innerHeight;
+	if (window.innerHeight != null)
+	{
+		ds.height = window.innerHeight;
+	}
+	
 	var dh = ds.height;
 	var left = Math.max(1, Math.round((ds.width - w - 64) / 2));
 	var top = Math.max(1, Math.round((dh - h - editorUi.footerHeight) / 3));
