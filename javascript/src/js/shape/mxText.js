@@ -826,10 +826,18 @@ mxText.prototype.redrawHtmlShapeWithCss3 = function()
 		(this.border != null) ? mxUtils.htmlEntities(this.border) : null,
 		flex, block, this.scale, mxUtils.bind(this, function(dx, dy, flex, item, block, ofl)
 		{
-			var tr = 'transform-origin: 0 0; transform: ' +
-				((this.scale != 1) ? 'scale(' + this.scale + ') ' : '') +
-				'translate(' + (this.margin.x * 100) + '%,' + (this.margin.y * 100) + '%); '
+			var r = this.getTextRotation();
+			var tr = ((this.scale != 1) ? 'scale(' + this.scale + ') ' : '') +
+				((r != 0) ? 'rotate(' + r + 'deg) ' : '') +
+				((this.margin.x != 0 || this.margin.y != 0) ?
+					'translate(' + (this.margin.x * 100) + '%,' +
+						(this.margin.y * 100) + '%)' : '');
 			
+			if (tr != '')
+			{
+				tr = 'transform-origin: 0 0; transform: ' + tr + '; ';
+			}
+
 			if (ofl == '')
 			{
 				flex += item;
@@ -837,16 +845,9 @@ mxText.prototype.redrawHtmlShapeWithCss3 = function()
 			}
 			else
 			{
-				item = item + tr;
+				item += tr;
 			}
 
-			var theta = this.getTextRotation();
-			
-			if (theta != 0)
-			{
-				block += 'transform: rotate(' + theta + 'deg); ';
-			}
-			
 			if (this.opacity < 100)
 			{
 				block += 'opacity: ' + (this.opacity / 100) + '; ';
