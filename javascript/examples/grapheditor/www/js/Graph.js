@@ -6786,23 +6786,40 @@ if (typeof mxVertexHandler != 'undefined')
 								str = mxUtils.extractTextWithWhitespace(htmlConverter.childNodes);
 							}
 							
-							// Workaround for possible malformed content in output
-							str = unescape(encodeURIComponent(str));
+							// Workaround for substring breaking double byte UTF
+							var exp = Math.ceil(2 * w / this.state.fontSize);
+							var result = [];
+							var length = 0;
+							var index = 0;
 							
-							var first = str.toLowerCase().indexOf('\n');
-							
-							if (first > 0)
+							while ((exp == 0 || length < exp) && index < str.length)
 							{
-								str = str.substring(0, first) + '...';
-							}
-							else if (w > 0)
-							{							
-								var exp = 2 * w / this.state.fontSize;
+								var char = str.charCodeAt(index);
 								
-								if (str.length > exp)
+								if (char == 10 || char == 13)
 								{
-									str = str.substring(0, exp) + '...';
+									if (length > 0)
+									{
+										break;
+									}
 								}
+								else
+								{
+									result.push(str.charAt(index));
+
+									if (char < 255)
+									{
+										length++;
+									}
+								}
+								
+								index++;
+							}
+							
+							// Uses result and adds ellipsis if more than 1 char remains
+							if (result.length < str.length && str.length - result.length > 1)
+							{
+								str = mxUtils.trim(result.join('')) + '...';
 							}
 							
 							return str;
