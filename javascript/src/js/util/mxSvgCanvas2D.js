@@ -1218,12 +1218,10 @@ mxSvgCanvas2D.prototype.createDiv = function(str)
 	
 	if (!mxUtils.isNode(val))
 	{
-		// Inner inline block forces width of longest line for text wrapping
 		val = '<div><div>' + this.convertHtml(val) + '</div></div>';
 	}
 
-	// Uses DOM API where available. This cannot be used in IE to avoid
-	// an opening and two closing TBODY tags and removed CSS3 styles.
+	// IE uses this code for export as it cannot render foreignObjects
 	if (!mxClient.IS_IE && !mxClient.IS_IE11 && document.createElementNS)
 	{
 		var div = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
@@ -1231,7 +1229,7 @@ mxSvgCanvas2D.prototype.createDiv = function(str)
 		if (mxUtils.isNode(val))
 		{
 			var div2 = document.createElement('div');
-			var div3 = div.cloneNode(false);
+			var div3 = div2.cloneNode(false);
 			
 			// Creates a copy for export
 			if (this.root.ownerDocument != document)
@@ -1243,9 +1241,8 @@ mxSvgCanvas2D.prototype.createDiv = function(str)
 				div2.appendChild(val);
 			}
 			
-			
-			div2.appendChild(div3);
-			div.appendChild(div2);
+			div3.appendChild(div2);
+			div.appendChild(div3);
 		}
 		else
 		{
