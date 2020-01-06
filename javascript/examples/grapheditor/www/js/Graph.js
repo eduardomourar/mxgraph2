@@ -6776,8 +6776,19 @@ if (typeof mxVertexHandler != 'undefined')
 					{
 						try
 						{
-							htmlConverter.innerHTML = str;
-							str = mxUtils.extractTextWithWhitespace(htmlConverter.childNodes);
+							if (mxUtils.isNode(str))
+							{
+								str = str.innerText;
+							}
+							else
+							{
+								htmlConverter.innerHTML = str;
+								str = mxUtils.extractTextWithWhitespace(htmlConverter.childNodes);
+							}
+							
+							// Workaround for possible malformed content in output
+							str = unescape(encodeURIComponent(str));
+							
 							var first = str.toLowerCase().indexOf('\n');
 							
 							if (first > 0)
