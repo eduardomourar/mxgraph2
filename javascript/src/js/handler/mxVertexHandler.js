@@ -1101,9 +1101,6 @@ mxVertexHandler.prototype.updateLivePreview = function(me)
 	this.state.width = this.bounds.width;
 	this.state.height = this.bounds.height;
 	
-	// Needed to force update of text bounds
-//	this.state.unscaledWidth = null;
-	
 	// Redraws cell and handles
 	var off = this.state.absoluteOffset;
 	off = new mxPoint(off.x, off.y);

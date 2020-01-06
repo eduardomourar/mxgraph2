@@ -816,8 +816,8 @@ mxText.prototype.redrawHtmlShapeWithCss3 = function()
 {
 	var w = Math.max(0, Math.round(this.bounds.width / this.scale));
 	var h = Math.max(0, Math.round(this.bounds.height / this.scale));
-	var flex = 'position: absolute; left: ' + this.bounds.x + 'px; ' +
-		'top: ' + this.bounds.y + 'px; pointer-events: none; ';
+	var flex = 'position: absolute; left: ' + Math.round(this.bounds.x) + 'px; ' +
+		'top: ' + Math.round(this.bounds.y) + 'px; pointer-events: none; ';
 	var block = this.getTextCss() + ((this.pointerEvents) ?
 		'pointer-events: all; ' : '');
 	

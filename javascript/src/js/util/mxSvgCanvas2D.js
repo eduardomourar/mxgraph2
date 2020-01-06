@@ -1369,8 +1369,8 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 			// foreign object must be at (0,0) with size 100% x 100% in Webkit
 			// for clipping so use padding implement cross browser compatibility
 			div.setAttribute('style', flex +
-				'padding-left: ' + (x + dx) + 'px; ' +
-				'padding-top: ' + (y + dy) + 'px;');
+				'padding-left: ' + Math.round(x + dx) + 'px; ' +
+				'padding-top: ' + Math.round(y + dy) + 'px;');
 			box.setAttribute('style', item);
 			text.setAttribute('style', block);
 			
