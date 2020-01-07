@@ -8790,7 +8790,19 @@ if (typeof mxVertexHandler != 'undefined')
 		// Invokes turn on single click on rotation handle
 		mxVertexHandler.prototype.rotateClick = function()
 		{
-			this.state.view.graph.turnShapes([this.state.cell]);
+			var stroke = mxUtils.getValue(this.state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
+			var fill = mxUtils.getValue(this.state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
+			
+			if (this.state.view.graph.model.isVertex(this.state.cell) &&
+				stroke == mxConstants.NONE && fill == mxConstants.NONE)
+			{
+				var angle = mxUtils.mod(mxUtils.getValue(this.state.style, mxConstants.STYLE_ROTATION, 0) + 90, 360);
+				this.state.view.graph.setCellStyles(mxConstants.STYLE_ROTATION, angle, [this.state.cell]);
+			}
+			else
+			{
+				this.state.view.graph.turnShapes([this.state.cell]);
+			}
 		};
 
 		var vertexHandlerMouseMove = mxVertexHandler.prototype.mouseMove;
