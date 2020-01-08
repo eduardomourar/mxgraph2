@@ -825,46 +825,46 @@ mxText.prototype.redrawHtmlShapeWithCss3 = function()
 		(this.background != null) ? mxUtils.htmlEntities(this.background) : null,
 		(this.border != null) ? mxUtils.htmlEntities(this.border) : null,
 		flex, block, this.scale, mxUtils.bind(this, function(dx, dy, flex, item, block, ofl)
+	{
+		var r = this.getTextRotation();
+		var tr = ((this.scale != 1) ? 'scale(' + this.scale + ') ' : '') +
+			((r != 0) ? 'rotate(' + r + 'deg) ' : '') +
+			((this.margin.x != 0 || this.margin.y != 0) ?
+				'translate(' + (this.margin.x * 100) + '%,' +
+					(this.margin.y * 100) + '%)' : '');
+		
+		if (tr != '')
 		{
-			var r = this.getTextRotation();
-			var tr = ((this.scale != 1) ? 'scale(' + this.scale + ') ' : '') +
-				((r != 0) ? 'rotate(' + r + 'deg) ' : '') +
-				((this.margin.x != 0 || this.margin.y != 0) ?
-					'translate(' + (this.margin.x * 100) + '%,' +
-						(this.margin.y * 100) + '%)' : '');
-			
-			if (tr != '')
-			{
-				tr = 'transform-origin: 0 0; transform: ' + tr + '; ';
-			}
+			tr = 'transform-origin: 0 0; transform: ' + tr + '; ';
+		}
 
-			if (ofl == '')
-			{
-				flex += item;
-				item = 'display:inline-block; min-width: 100%; ' + tr;
-			}
-			else
-			{
-				item += tr;
-			}
+		if (ofl == '')
+		{
+			flex += item;
+			item = 'display:inline-block; min-width: 100%; ' + tr;
+		}
+		else
+		{
+			item += tr;
+		}
 
-			if (this.opacity < 100)
-			{
-				block += 'opacity: ' + (this.opacity / 100) + '; ';
-			}
-			
-			this.node.setAttribute('style', flex);
-			
-			var html = (mxUtils.isNode(this.value)) ? this.value.outerHTML : this.getHtmlValue();
-			
-			if (this.node.firstChild == null)
-			{
-				this.node.innerHTML = '<div><div>' + html +'</div></div>';
-			}
+		if (this.opacity < 100)
+		{
+			block += 'opacity: ' + (this.opacity / 100) + '; ';
+		}
+		
+		this.node.setAttribute('style', flex);
+		
+		var html = (mxUtils.isNode(this.value)) ? this.value.outerHTML : this.getHtmlValue();
+		
+		if (this.node.firstChild == null)
+		{
+			this.node.innerHTML = '<div><div>' + html +'</div></div>';
+		}
 
-			this.node.firstChild.firstChild.setAttribute('style', block);
-			this.node.firstChild.setAttribute('style', item);
-		}));
+		this.node.firstChild.firstChild.setAttribute('style', block);
+		this.node.firstChild.setAttribute('style', item);
+	}));
 };
 
 /**
