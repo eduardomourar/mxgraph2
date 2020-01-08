@@ -1288,19 +1288,20 @@ mxSvgCanvas2D.prototype.updateText = function(x, y, w, h, align, valign, wrap, o
 };
 
 /**
- * Function: text
+ * Function: addForeignObject
  * 
- * Paints the given text. Possible values for format are empty string for plain
- * text and html for HTML markup. Note that HTML markup is only supported if
- * foreignObject is supported and <foEnabled> is true. (This means IE9 and later
- * does currently not support HTML text as part of shapes.)
+ * Creates a foreignObject for the given string and adds it to the given root.
  */
 mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation, dir, div, root)
 {
-	var fo = this.createElement('foreignObject');
 	var group = this.createElement('g');
-
-	// Import neededin older versions of IE
+	var fo = this.createElement('foreignObject');
+	
+	// Workarounds for print clipping and static position in Safari
+	fo.setAttribute('style', 'overflow: visible; text-align: left;');
+	fo.setAttribute('pointer-events', 'none');
+	
+	// Import needed for older versions of IE
 	if (div.ownerDocument != document)
 	{
 		div = mxUtils.importNodeImplementation(fo.ownerDocument, div, true);
@@ -1311,7 +1312,7 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
 
 	this.updateTextNodes(x, y, w, h, align, valign, wrap, overflow, clip, rotation, group);
 	
-	// Alternate content for unsupported foreignObject
+	// Alternate content if foreignObject not supported
 	if (this.root.ownerDocument != document)
 	{
 		var alt = this.createAlternateContent(fo, x, y, w, h, str, align, valign, wrap, format, overflow, clip, rotation);
@@ -1334,66 +1335,139 @@ mxSvgCanvas2D.prototype.addForeignObject = function(x, y, w, h, str, align, vali
  */
 mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wrap, overflow, clip, rotation, g)
 {
-	x += this.state.dx;
-	y += this.state.dy;
-	
 	var s = this.state.scale;
-	var fo = g.firstChild;
-	var div = fo.firstChild;
-	var box = div.firstChild;
-	var text = box.firstChild;
-	var block = this.getTextCss();
-	
-	// Fixes foreignObject bounding box ignores transform and clipping in print preview
-	fo.setAttribute('width', Math.ceil(1 / Math.min(1, s) * 100) + '%');
-	fo.setAttribute('height', Math.ceil(1 / Math.min(1, s) * 100) + '%');
-	fo.setAttribute('style', 'overflow: visible;');
-	fo.setAttribute('pointer-events', 'none');
-	
-	// Must use flex layout for centering in Safari to avoid transforms
-	var flex = 'display: flex; align-items: unsafe ' +
-		((valign == mxConstants.ALIGN_TOP) ? 'flex-start' :
-		((valign == mxConstants.ALIGN_BOTTOM) ? 'flex-end' : 'center'))  + '; ' +
-		'justify-content: unsafe ' + ((align == mxConstants.ALIGN_LEFT) ? 'flex-start' :
-		((align == mxConstants.ALIGN_RIGHT) ? 'flex-end' : 'center'))  + '; ';
-	
+
 	mxSvgCanvas2D.createCss(w, h, align, valign, wrap, overflow, clip,
 		(this.state.fontBackgroundColor != null) ? this.state.fontBackgroundColor : null,
 		(this.state.fontBorderColor != null) ? this.state.fontBorderColor : null,
-		flex, block, s, mxUtils.bind(this, function(dx, dy, flex, item, block)
+		'display: inline-flex; align-items: unsafe ' +
+		((valign == mxConstants.ALIGN_TOP) ? 'flex-start' :
+		((valign == mxConstants.ALIGN_BOTTOM) ? 'flex-end' : 'center'))  + '; ' +
+		'justify-content: unsafe ' + ((align == mxConstants.ALIGN_LEFT) ? 'flex-start' :
+		((align == mxConstants.ALIGN_RIGHT) ? 'flex-end' : 'center'))  + '; ',
+		this.getTextCss(), s, mxUtils.bind(this, function(dx, dy, flex, item, block)
+	{
+		x += this.state.dx;
+		y += this.state.dy;
+
+		var fo = g.firstChild;
+		var div = fo.firstChild;
+		var box = div.firstChild;
+		var text = box.firstChild;
+		var r = ((this.rotateHtml) ? this.state.rotation : 0) + ((rotation != null) ? rotation : 0);
+		var t = ((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ')' : '') +
+			((s != 1) ? 'scale(' + s + ')' : '');
+		
+		text.setAttribute('style', block);
+		box.setAttribute('style', item);
+		
+		// Workaround for clipping in Webkit with scrolling and zoom
+		fo.setAttribute('width', Math.ceil(1 / Math.min(1, s) * 100) + '%');
+		fo.setAttribute('height', Math.ceil(1 / Math.min(1, s) * 100) + '%');
+		var yp = Math.round(y + dy);
+		
+		// Allows for negative values which are causing problems with
+		// transformed content where the top edge of the foreignObject
+		// limits the text box being moved further up in the diagram.
+		// KNOWN: Possible clipping problems with zoom and scrolling
+		// but this is normally not used with scrollbars as the
+		// coordinates are always positive in that case.
+		if (yp < 0)
 		{
-			// Cannot use transform, absolute position and opacity in Safari and
-			// foreign object must be at (0,0) with size 100% x 100% in Webkit
-			// for clipping so use padding implement cross browser compatibility
-			div.setAttribute('style', flex +
-				'padding-left: ' + Math.round(x + dx) + 'px; ' +
-				'padding-top: ' + Math.round(y + dy) + 'px;');
-			box.setAttribute('style', item);
-			text.setAttribute('style', block);
-			
-			var r = ((this.rotateHtml) ? this.state.rotation : 0) + ((rotation != null) ? rotation : 0);
-			var t = ((this.foOffset != 0) ? 'translate(' + this.foOffset + ' ' + this.foOffset + ') ' : '') +
-				((s != 1) ? 'scale(' + s + ') ' : '') + ((r != 0) ? ('rotate(' + r + ' ' + x + ' ' + y + ')') : '');
-			
-			if (t != '')
-			{	
-				g.setAttribute('transform', t);
-			}
-			else
-			{
-				g.removeAttribute('transform');
-			}
-			
-			if (this.state.alpha != 1)
-			{
-				g.setAttribute('opacity', this.state.alpha);
-			}
-			else
-			{
-				g.removeAttribute('opacity');
-			}
-		}));
+			fo.setAttribute('y', yp);
+		}
+		else
+		{
+			fo.removeAttribute('y');
+		}
+		
+		div.setAttribute('style', flex +
+			'margin-left: ' + Math.round(x + dx) + 'px; ' +
+			((yp > 0) ? 'margin-top: ' + yp + 'px;' : ''));
+		t += ((r != 0) ? ('rotate(' + r + ' ' + x + ' ' + y + ')') : '');
+
+		// Alternative output for Safarithat requires text measuring.
+		// NOTE: Alternate content position needs doing if used.
+//		var size = this.getOffsetSize(div);
+//		var pt = mxUtils.getAlignmentAsPoint(align, valign);
+//		var dw = -pt.x * size.width;
+//		var dh = -pt.y * size.height;
+//		
+//		div.setAttribute('style', flex +
+//			'margin-left: ' + (dx + dw)  + 'px; ' +
+//			((dh > 0) ? 'padding-top: ' + dh  + 'px;' : ''));
+//		fo.setAttribute('width', size.width);
+//		fo.setAttribute('height', size.height);
+//		
+//		t += 'translate(' + Math.round(x - dw) + ' ' + Math.round(y + dy - dh) + ')' +
+//			((r != 0) ? ('rotate(' + r + ' ' + dw + ' ' + dh + ')') : '');
+
+		// Output allows for reflow but Safari cannot use absolute position,
+		// transforms or opacity. https://bugs.webkit.org/show_bug.cgi?id=23113
+		if (t != '')
+		{	
+			g.setAttribute('transform', t);
+		}
+		else
+		{
+			g.removeAttribute('transform');
+		}
+		
+		if (this.state.alpha != 1)
+		{
+			g.setAttribute('opacity', this.state.alpha);
+		}
+		else
+		{
+			g.removeAttribute('opacity');
+		}
+	}));
 };
+
+/**
+ * Updates existing DOM nodes for text rendering. This does not require reflow and uses hardcoded size.
+ * NOTE: Needs testing with older versions of IE if used.
+ */
+//mxSvgCanvas2D.prototype.getOffsetSize = function(div)
+//{
+//	var result = new mxRectangle();
+//
+//	if (mxClient.NO_FO)
+//	{
+//		var elt = document.createElement('div');
+//		elt.innerHTML = mxUtils.getXml(div);
+//		elt.style.position = 'absolute';
+//		elt.style.visibility = 'hidden';
+//		
+//		document.body.appendChild(elt);
+//		
+//		result.width = elt.firstChild.firstChild.firstChild.offsetWidth;
+//		result.height = elt.firstChild.firstChild.firstChild.offsetHeight;
+//
+//		document.body.removeChild(elt);
+//	}
+//	else
+//	{
+//		// Uses foreignObject wrapper to get exact metrics
+//		var div = div.cloneNode(true);
+//		var elt = document.createElementNS(mxConstants.NS_SVG, 'svg');
+//		var fo = this.createElement('foreignObject');
+//		fo.appendChild(div);
+//		elt.appendChild(fo);
+//
+//		elt.style.position = 'absolute';
+//		elt.style.visibility = 'hidden';
+//		
+//		document.body.appendChild(elt);
+//		
+//		result.width = div.firstChild.firstChild.offsetWidth;
+//		result.height = div.firstChild.firstChild.offsetHeight;
+//		
+//		document.body.removeChild(elt);
+//	}
+//	
+//	return result;
+//};
 
 /**
  * Updates existing DOM nodes for text rendering.
