@@ -1385,22 +1385,6 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		div.setAttribute('style', flex + 'margin-left: ' + Math.round(x + dx) + 'px;');
 		t += ((r != 0) ? ('rotate(' + r + ' ' + x + ' ' + y + ')') : '');
 
-		// Alternative output for Safarithat requires text measuring.
-		// NOTE: Alternate content position needs doing if used.
-//		var size = this.getOffsetSize(div);
-//		var pt = mxUtils.getAlignmentAsPoint(align, valign);
-//		var dw = -pt.x * size.width;
-//		var dh = -pt.y * size.height;
-//		
-//		div.setAttribute('style', flex +
-//			'margin-left: ' + (dx + dw)  + 'px; ' +
-//			((dh > 0) ? 'padding-top: ' + dh  + 'px;' : ''));
-//		fo.setAttribute('width', size.width);
-//		fo.setAttribute('height', size.height);
-//		
-//		t += 'translate(' + Math.round(x - dw) + ' ' + Math.round(y + dy - dh) + ')' +
-//			((r != 0) ? ('rotate(' + r + ' ' + dw + ' ' + dh + ')') : '');
-
 		// Output allows for reflow but Safari cannot use absolute position,
 		// transforms or opacity. https://bugs.webkit.org/show_bug.cgi?id=23113
 		if (t != '')
@@ -1422,51 +1406,6 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		}
 	}));
 };
-
-/**
- * Updates existing DOM nodes for text rendering. This does not require reflow and uses hardcoded size.
- * NOTE: Needs testing with older versions of IE if used.
- */
-//mxSvgCanvas2D.prototype.getOffsetSize = function(div)
-//{
-//	var result = new mxRectangle();
-//
-//	if (mxClient.NO_FO)
-//	{
-//		var elt = document.createElement('div');
-//		elt.innerHTML = mxUtils.getXml(div);
-//		elt.style.position = 'absolute';
-//		elt.style.visibility = 'hidden';
-//		
-//		document.body.appendChild(elt);
-//		
-//		result.width = elt.firstChild.firstChild.firstChild.offsetWidth;
-//		result.height = elt.firstChild.firstChild.firstChild.offsetHeight;
-//
-//		document.body.removeChild(elt);
-//	}
-//	else
-//	{
-//		// Uses foreignObject wrapper to get exact metrics
-//		var div = div.cloneNode(true);
-//		var elt = document.createElementNS(mxConstants.NS_SVG, 'svg');
-//		var fo = this.createElement('foreignObject');
-//		fo.appendChild(div);
-//		elt.appendChild(fo);
-//
-//		elt.style.position = 'absolute';
-//		elt.style.visibility = 'hidden';
-//		
-//		document.body.appendChild(elt);
-//		
-//		result.width = div.firstChild.firstChild.offsetWidth;
-//		result.height = div.firstChild.firstChild.offsetHeight;
-//		
-//		document.body.removeChild(elt);
-//	}
-//	
-//	return result;
-//};
 
 /**
  * Updates existing DOM nodes for text rendering.
