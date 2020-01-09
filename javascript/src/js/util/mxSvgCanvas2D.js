@@ -1340,7 +1340,7 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 	mxSvgCanvas2D.createCss(w, h, align, valign, wrap, overflow, clip,
 		(this.state.fontBackgroundColor != null) ? this.state.fontBackgroundColor : null,
 		(this.state.fontBorderColor != null) ? this.state.fontBorderColor : null,
-		'display: inline-flex; align-items: unsafe ' +
+		'display: flex; align-items: unsafe ' +
 		((valign == mxConstants.ALIGN_TOP) ? 'flex-start' :
 		((valign == mxConstants.ALIGN_BOTTOM) ? 'flex-end' : 'center'))  + '; ' +
 		'justify-content: unsafe ' + ((align == mxConstants.ALIGN_LEFT) ? 'flex-start' :
@@ -1371,7 +1371,7 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		// limits the text box being moved further up in the diagram.
 		// KNOWN: Possible clipping problems with zoom and scrolling
 		// but this is normally not used with scrollbars as the
-		// coordinates are always positive in that case.
+		// coordinates are always positive with scrollbars.
 		if (yp < 0)
 		{
 			fo.setAttribute('y', yp);
@@ -1379,11 +1379,10 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		else
 		{
 			fo.removeAttribute('y');
+			flex += 'padding-top: ' + yp + 'px; ';
 		}
 		
-		div.setAttribute('style', flex +
-			'margin-left: ' + Math.round(x + dx) + 'px; ' +
-			((yp > 0) ? 'margin-top: ' + yp + 'px;' : ''));
+		div.setAttribute('style', flex + 'margin-left: ' + Math.round(x + dx) + 'px;');
 		t += ((r != 0) ? ('rotate(' + r + ' ' + x + ' ' + y + ')') : '');
 
 		// Alternative output for Safarithat requires text measuring.
