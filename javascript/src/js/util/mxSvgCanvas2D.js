@@ -1495,7 +1495,7 @@ mxSvgCanvas2D.createCss = function(w, h, align, valign, wrap, overflow, clip, bg
 mxSvgCanvas2D.prototype.getTextCss = function()
 {
 	var s = this.state;
-	var lh = 1.0;//(mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
+	var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
 		(mxConstants.LINE_HEIGHT * this.lineHeightCorrection);
 	var css = 'display: inline-block; font-size: ' + s.fontSize + 'px; ' +
 		'font-family: ' + s.fontFamily + '; color: ' + s.fontColor + '; line-height: ' + lh +
