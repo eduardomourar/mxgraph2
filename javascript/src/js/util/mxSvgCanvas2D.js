@@ -1260,19 +1260,8 @@ mxSvgCanvas2D.prototype.createDiv = function(str)
 		
 		val = '<div xmlns="http://www.w3.org/1999/xhtml">' + val + '</div>';
 
-		// Workaround for removed CSS3 styles is to force XML parsing in IE
-		if ("ActiveXObject" in window)
-		{
-			var doc = mxUtils.createMsXmlDocument();
-			doc.loadXML(val);
-			
-			return doc.documentElement;
-	 	}
-		else
-		{
-			// NOTE: FF 3.6 crashes if content CSS contains "height:100%"
-			return mxUtils.parseXml(val).documentElement;
-		}
+		// NOTE: FF 3.6 crashes if content CSS contains "height:100%"
+		return  mxUtils.parseXml(val).documentElement;
 	}
 };
 
