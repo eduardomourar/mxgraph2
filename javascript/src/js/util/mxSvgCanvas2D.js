@@ -1412,7 +1412,7 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
  */
 mxSvgCanvas2D.createCss = function(w, h, align, valign, wrap, overflow, clip, bg, border, flex, block, s, callback)
 {
-	var item = 'box-sizing: border-box; text-align: ' + ((align == mxConstants.ALIGN_LEFT) ? 'left' :
+	var item = 'box-sizing: border-box; font-size: 0; text-align: ' + ((align == mxConstants.ALIGN_LEFT) ? 'left' :
 		((align == mxConstants.ALIGN_RIGHT) ? 'right' : 'center')) + '; ';
 	var pt = mxUtils.getAlignmentAsPoint(align, valign);
 	var ofl = 'overflow: hidden; ';
@@ -1504,7 +1504,7 @@ mxSvgCanvas2D.createCss = function(w, h, align, valign, wrap, overflow, clip, bg
 mxSvgCanvas2D.prototype.getTextCss = function()
 {
 	var s = this.state;
-	var lh = (mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
+	var lh = 1.0;//(mxConstants.ABSOLUTE_LINE_HEIGHT) ? (s.fontSize * mxConstants.LINE_HEIGHT) + 'px' :
 		(mxConstants.LINE_HEIGHT * this.lineHeightCorrection);
 	var css = 'display: inline-block; font-size: ' + s.fontSize + 'px; ' +
 		'font-family: ' + s.fontFamily + '; color: ' + s.fontColor + '; line-height: ' + lh +
