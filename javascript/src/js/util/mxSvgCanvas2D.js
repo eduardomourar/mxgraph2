@@ -1361,6 +1361,8 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 		// KNOWN: Possible clipping problems with zoom and scrolling
 		// but this is normally not used with scrollbars as the
 		// coordinates are always positive with scrollbars.
+		// Margin-top is ignored in Safari and no negative values allowed
+		// for padding.
 		if (yp < 0)
 		{
 			fo.setAttribute('y', yp);
