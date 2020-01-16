@@ -1467,7 +1467,7 @@ mxSvgCanvas2D.createCss = function(w, h, align, valign, wrap, overflow, clip, bg
 	if (wrap && w > 0)
 	{
 		block += 'white-space: normal; word-wrap: ' + mxConstants.WORD_WRAP + '; ';
-		fw = 'width: ' + Math.round(w) + 'px; ';
+		fw = 'width: ' + Math.round(w + 2) + 'px; ';
 		
 		if (ofl != '' && overflow != 'fill')
 		{
