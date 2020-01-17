@@ -858,7 +858,7 @@ var mxUtils =
 				
 				if (value.length > 0)
 				{
-					result.push(indent + mxUtils.htmlEntities(value) + newline);
+					result.push(indent + mxUtils.htmlEntities(mxUtils.trim(value), false));
 				}
 			}
 			else
