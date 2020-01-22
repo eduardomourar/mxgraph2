@@ -2360,22 +2360,20 @@ Graph.prototype.selectCellsForConnectVertex = function(cells, evt, hoverIcons)
 	if (cells.length == 2 && this.model.isVertex(cells[1]))
 	{
 		this.setSelectionCell(cells[1]);
+		this.scrollCellToVisible(cells[1]);
 		
 		if (hoverIcons != null)
 		{
-			// Adds hover icons to new target vertex for touch devices
+			// Adds hover icons for cloned vertex or hides icons
 			if (mxEvent.isTouchEvent(evt))
 			{
 				hoverIcons.update(hoverIcons.getState(this.view.getState(cells[1])));
 			}
 			else
 			{
-				// Hides hover icons after click with mouse
 				hoverIcons.reset();
 			}
 		}
-		
-		this.scrollCellToVisible(cells[1]);
 	}
 	else
 	{
@@ -3773,31 +3771,8 @@ HoverIcons.prototype.click = function(state, dir, me)
 	}
 	else if (state != null)
 	{
-		var cells = this.graph.connectVertex(state.cell, dir, this.graph.defaultEdgeLength, evt);
-		this.graph.selectCellsForConnectVertex(cells, evt, this);
-		
-		// Selects only target vertex if one exists
-		if (cells.length == 2 && this.graph.model.isVertex(cells[1]))
-		{
-			this.graph.setSelectionCell(cells[1]);
-			
-			// Adds hover icons to new target vertex for touch devices
-			if (mxEvent.isTouchEvent(evt))
-			{
-				this.update(this.getState(this.graph.view.getState(cells[1])));
-			}
-			else
-			{
-				// Hides hover icons after click with mouse
-				this.reset();
-			}
-			
-			this.graph.scrollCellToVisible(cells[1]);
-		}
-		else
-		{
-			this.graph.setSelectionCells(cells);
-		}
+		this.graph.selectCellsForConnectVertex(this.graph.connectVertex(
+			state.cell, dir, this.graph.defaultEdgeLength, evt), evt, this);
 	}
 	
 	me.consume();
