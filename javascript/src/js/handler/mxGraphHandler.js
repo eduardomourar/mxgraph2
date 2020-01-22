@@ -63,7 +63,7 @@ function mxGraphHandler(graph)
 				{
 					if (this.livePreviewUsed)
 					{
-						this.setHandlesVisibleForCells(this.cells, false);
+						this.setHandlesVisibleForCells(this.graph.getSelectionCells(), false);
 						this.updatePreview();
 					}
 				}), 0);
@@ -892,7 +892,7 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			{
 				if (!clone || !this.livePreviewActive)
 				{
-					this.setHandlesVisibleForCells(this.cells, false);
+					this.setHandlesVisibleForCells(this.graph.getSelectionCells(), false);
 					this.livePreviewActive = true;
 					this.livePreviewUsed = true;
 				}
@@ -1395,7 +1395,7 @@ mxGraphHandler.prototype.reset = function()
 	if (this.livePreviewUsed)
 	{
 		this.resetLivePreview();
-		this.setHandlesVisibleForCells(this.cells, true);
+		this.setHandlesVisibleForCells(this.graph.getSelectionCells(), true);
 	}
 	
 	this.destroyShapes();
