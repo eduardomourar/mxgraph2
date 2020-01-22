@@ -6680,7 +6680,8 @@ if (typeof mxVertexHandler != 'undefined')
 				showText = (showText != null) ? showText : true;
 	
 				var bounds = (ignoreSelection || nocrop) ?
-						this.getGraphBounds() : this.getBoundingBox(this.getSelectionCells());
+					this.getGraphBounds() : this.getBoundingBox(
+					this.getSelectionCells());
 	
 				if (bounds == null)
 				{
@@ -6865,7 +6866,7 @@ if (typeof mxVertexHandler != 'undefined')
 	
 				imgExport.drawState(this.getView().getState(this.model.root), svgCanvas);
 				this.updateSvgLinks(root, linkTarget, true);
-			
+				
 				return root;
 			}
 			finally
