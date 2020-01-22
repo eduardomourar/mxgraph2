@@ -1540,24 +1540,17 @@ mxGraphHandler.prototype.moveCells = function(cells, dx, dy, clone, target, evt)
 };
 
 /**
- * Function: moveCells
+ * Function: shouldRemoveParent
  * 
- * Moves the given cells by the specified amount.
+ * Returns true if the given parent should be removed after removal of child cells.
  */
 mxGraphHandler.prototype.shouldRemoveParent = function(parent)
 {
 	var state = this.graph.view.getState(parent);
 	
-	if (state != null && (this.graph.model.isEdge(state.cell) || this.graph.model.isVertex(state.cell)) &&
-		this.graph.isCellDeletable(state.cell) && this.graph.model.getChildCount(state.cell) == 0)
-	{
-		var stroke = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
-		var fill = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
-		
-		return stroke == mxConstants.NONE && fill == mxConstants.NONE;
-	}
-	
-	return false;
+	return state != null && (this.graph.model.isEdge(state.cell) || this.graph.model.isVertex(state.cell)) &&
+		this.graph.isCellDeletable(state.cell) && this.graph.model.getChildCount(state.cell) == 0 &&
+		this.graph.isTransparentState(state);
 };
 
 /**
