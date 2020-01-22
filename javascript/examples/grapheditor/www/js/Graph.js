@@ -2973,6 +2973,18 @@ Graph.prototype.isCellConnectable = function(cell)
 };
 
 /**
+ * Adds labelMovable style.
+ */
+Graph.prototype.isLabelMovable = function(cell)
+{
+	var state = this.view.getState(cell);
+	var style = (state != null) ? state.style : this.getCellStyle(cell);
+	
+	return (style != null && style['movableLabel'] != null) ? style['movableLabel'] != '0' :
+		mxGraph.prototype.isLabelMovable.apply(this, arguments);
+};
+
+/**
  * Function: selectAll
  * 
  * Selects all children of the given parent cell or the children of the
@@ -5861,27 +5873,24 @@ if (typeof mxVertexHandler != 'undefined')
 				{
 					var state = this.view.getState(parents[i]);
 					
-					if (state != null && (this.model.isEdge(state.cell) || this.model.isVertex(state.cell)) && this.isCellDeletable(state.cell))
+					if (state != null && (this.model.isEdge(state.cell) ||
+						this.model.isVertex(state.cell)) &&
+						this.isCellDeletable(state.cell) &&
+						this.isTransparentState(state))
 					{
-						var stroke = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
-						var fill = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
+						var allChildren = true;
 						
-						if (stroke == mxConstants.NONE && fill == mxConstants.NONE)
+						for (var j = 0; j < this.model.getChildCount(state.cell) && allChildren; j++)
 						{
-							var allChildren = true;
-							
-							for (var j = 0; j < this.model.getChildCount(state.cell) && allChildren; j++)
+							if (!dict.get(this.model.getChildAt(state.cell, j)))
 							{
-								if (!dict.get(this.model.getChildAt(state.cell, j)))
-								{
-									allChildren = false;
-								}
+								allChildren = false;
 							}
-							
-							if (allChildren)
-							{
-								cells.push(state.cell);
-							}
+						}
+						
+						if (allChildren)
+						{
+							cells.push(state.cell);
 						}
 					}
 				}
@@ -5899,20 +5908,10 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			for (var i = 0; i < cells.length; i++)
 			{
-				if (this.isCellDeletable(cells[i]))
+				if (this.isCellDeletable(cells[i]) && this.isTransparentState(
+					this.view.getState(cells[i])))
 				{
-					var state = this.view.getState(cells[i]);
-					
-					if (state != null)
-					{
-						var stroke = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
-						var fill = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
-						
-						if (stroke == mxConstants.NONE && fill == mxConstants.NONE)
-						{
-							cellsToRemove.push(cells[i]);
-						}
-					}
+					cellsToRemove.push(cells[i]);
 				}
 			}
 			
@@ -5920,7 +5919,7 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			mxGraph.prototype.removeCellsAfterUngroup.apply(this, arguments);
 		};
-		
+
 		/**
 		 * Sets the link for the given cell.
 		 */
@@ -7928,15 +7927,11 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				mxCellEditorApplyValue.apply(this, arguments);
 				
-				if (this.graph.isCellDeletable(state.cell) && this.graph.model.getChildCount(state.cell) == 0)
+				if (value == '' && this.graph.isCellDeletable(state.cell) &&
+					this.graph.model.getChildCount(state.cell) == 0 &&
+					this.graph.isTransparentState(state))
 				{
-					var stroke = mxUtils.getValue(state.style, mxConstants.STYLE_STROKECOLOR, mxConstants.NONE);
-					var fill = mxUtils.getValue(state.style, mxConstants.STYLE_FILLCOLOR, mxConstants.NONE);
-					
-					if (value == '' && stroke == mxConstants.NONE && fill == mxConstants.NONE)
-					{
-						this.graph.removeCells([state.cell], false);
-					}
+					this.graph.removeCells([state.cell], false);
 				}
 			}
 			finally
