@@ -1823,7 +1823,11 @@ mxVertexHandler.prototype.redrawHandles = function()
 				this.moveSizerTo(this.sizers[7], pt.x, pt.y);
 				this.sizers[7].setCursor(crs[mxUtils.mod(4 + da, crs.length)]);
 				
-				this.moveSizerTo(this.sizers[8], cx + this.state.absoluteOffset.x, cy + this.state.absoluteOffset.y);
+				
+				pt.x = cx + this.state.absoluteOffset.x;
+				pt.y = cy + this.state.absoluteOffset.y;
+				pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
+				this.moveSizerTo(this.sizers[8], pt.x, pt.y);
 			}
 			else if (this.state.width >= 2 && this.state.height >= 2)
 			{
