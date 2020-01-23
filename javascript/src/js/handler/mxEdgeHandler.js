@@ -360,6 +360,17 @@ mxEdgeHandler.prototype.isVirtualBendsEnabled = function(evt)
 };
 
 /**
+ * Function: isCellEnabled
+ * 
+ * Returns true if the given cell allows new connections to be created. This implementation
+ * always returns true.
+ */
+mxEdgeHandler.prototype.isCellEnabled = function(cell)
+{
+	return true;
+};
+
+/**
  * Function: isAddPointEvent
  * 
  * Returns true if the given event is a trigger to add a new point. This
@@ -1136,7 +1147,9 @@ mxEdgeHandler.prototype.getPreviewTerminalState = function(me)
 		{
 			result = this.constraintHandler.currentFocus;
 		}
-		else
+		
+		if (this.error != null || (result != null &&
+			!this.isCellEnabled(result.cell)))
 		{
 			this.constraintHandler.reset();
 		}
@@ -1148,8 +1161,9 @@ mxEdgeHandler.prototype.getPreviewTerminalState = function(me)
 		this.marker.process(me);
 		var state = this.marker.getValidState();
 		
-		if (state != null && this.graph.isCellLocked(state.cell))
+		if (state != null && !this.isCellEnabled(state.cell))
 		{
+			this.constraintHandler.reset();
 			this.marker.reset();
 		}
 		
@@ -1488,7 +1502,7 @@ mxEdgeHandler.prototype.mouseMove = function(sender, me)
 				}
 			}
 			
-			if (terminalState != null && this.graph.isCellLocked(terminalState.cell))
+			if (terminalState != null && !this.isCellEnabled(terminalState.cell))
 			{
 				terminalState = null;
 				this.marker.reset();

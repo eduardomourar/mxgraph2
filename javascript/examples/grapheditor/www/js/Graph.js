@@ -5006,17 +5006,6 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 
 		/**
-		 * Function: isCellLocked
-		 * 
-		 * Returns true if the given cell does not allow new connections to be created.
-		 * This implementation returns false.
-		 */
-		mxConnectionHandler.prototype.isCellEnabled = function(cell)
-		{
-			return !this.graph.isCellLocked(cell);
-		};
-
-		/**
 		 * 
 		 */
 		Graph.prototype.defaultVertexStyle = {};

@@ -1,3 +1,4 @@
+- Adds mxEdgeHandler.isCellEnabled
 - Enables reflow in HTML output
 - Fixes mxUtils.equalPoints
 - Fixes event handling for desktop mode in mobile Safari
