@@ -1,4 +1,4 @@
-24-JAN-22020: 4.1.0
+24-JAN-2020: 4.1.0
 
 - Adds mxEdgeHandler.isCellEnabled
 - Enables reflow in HTML output
