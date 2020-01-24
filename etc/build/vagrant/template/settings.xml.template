@@ -20,7 +20,7 @@
         <repository>
           <id>github</id>
           <name>GitHub JGraph Apache Maven Packages</name>
-          <url>https://maven.pkg.github.com/jgraph</url>
+          <url>https://maven.pkg.github.com/jgraph/mxgraph</url>
         </repository>
       </repositories>
     </profile>
