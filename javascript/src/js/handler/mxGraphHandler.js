@@ -55,18 +55,27 @@ function mxGraphHandler(graph)
 		{
 			if (this.first != null && !this.suspended)
 			{
+				// Updates preview with no translate to compute bounding box
+				var dx = this.currentDx;
+				var dy = this.currentDy;
+				this.currentDx = 0;
+				this.currentDy = 0;
+				this.updatePreview();
 				this.bounds = this.graph.getView().getBounds(this.cells);
 				this.pBounds = this.getPreviewBounds(this.cells);
-				
+
 				if (this.pBounds == null)
 				{
 					this.reset();
 				}
 				else
 				{
+					// Restores translate and updates preview
+					this.currentDx = dx;
+					this.currentDy = dy;
 					this.updatePreview();
 					this.updateHint();
-					
+
 					if (this.livePreviewUsed)
 					{
 						this.setHandlesVisibleForCells(this.graph.getSelectionCells(), false);
@@ -1189,11 +1198,6 @@ mxGraphHandler.prototype.resetPreviewStates = function(states)
 	for (var i = 0; i < states.length; i++)
 	{
 		states[i][0].setState(states[i][1]);
-		
-		if (states[i][0].shape != null)
-		{
-			states[i][0].shape.updateBoundingBox();
-		}
 	}
 };
 
