@@ -5906,9 +5906,10 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.getAttributeForCell = function(cell, attributeName, defaultValue)
 		{
-			return (cell.value != null && typeof cell.value === 'object') ?
-				(cell.value.getAttribute(attributeName) || defaultValue) :
-				defaultValue;
+			var value = (cell.value != null && typeof cell.value === 'object') ?
+				cell.value.getAttribute(attributeName) : null;
+			
+			return (value != null) ? value : defaultValue;
 		};
 
 		/**
