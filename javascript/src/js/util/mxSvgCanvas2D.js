@@ -1326,7 +1326,7 @@ mxSvgCanvas2D.prototype.updateTextNodes = function(x, y, w, h, align, valign, wr
 {
 	var s = this.state.scale;
 
-	mxSvgCanvas2D.createCss(w, h, align, valign, wrap, overflow, clip,
+	mxSvgCanvas2D.createCss(w + 2, h, align, valign, wrap, overflow, clip,
 		(this.state.fontBackgroundColor != null) ? this.state.fontBackgroundColor : null,
 		(this.state.fontBorderColor != null) ? this.state.fontBorderColor : null,
 		'display: flex; align-items: unsafe ' +
@@ -1467,7 +1467,7 @@ mxSvgCanvas2D.createCss = function(w, h, align, valign, wrap, overflow, clip, bg
 	if (wrap && w > 0)
 	{
 		block += 'white-space: normal; word-wrap: ' + mxConstants.WORD_WRAP + '; ';
-		fw = 'width: ' + Math.round(w + 2) + 'px; ';
+		fw = 'width: ' + Math.round(w) + 'px; ';
 		
 		if (ofl != '' && overflow != 'fill')
 		{
