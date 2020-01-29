@@ -805,6 +805,16 @@ mxGraphHandler.prototype.roundLength = function(length)
 };
 
 /**
+ * Function: isValidDropTarget
+ * 
+ * Returns true if the given cell is a valid drop target.
+ */
+mxGraphHandler.prototype.isValidDropTarget = function(target)
+{
+	return this.graph.model.getParent(this.cell) != target;
+};
+
+/**
  * Function: mouseMove
  * 
  * Handles the event by highlighting possible drop targets and updating the
@@ -852,7 +862,7 @@ mxGraphHandler.prototype.mouseMove = function(sender, me)
 			var state = graph.getView().getState(target);
 			var highlight = false;
 			
-			if (state != null && (graph.model.getParent(this.cell) != target || clone))
+			if (state != null && (clone || this.isValidDropTarget(target)))
 			{
 			    if (this.target != target)
 			    {
