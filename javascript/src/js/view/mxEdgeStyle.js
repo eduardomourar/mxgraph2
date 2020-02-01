@@ -579,14 +579,11 @@ var mxEdgeStyle =
 	 * Implements an orthogonal edge style. Use <mxEdgeSegmentHandler>
 	 * as an interactive handler for this style.
 	 */
-	SegmentConnector: function(state, sourceScaled, targetScaled, controlHints, result)
+	SegmentConnector: function(state, source, target, hints, result)
 	{
 		// Creates array of all way- and terminalpoints
-		var scaleRecip = 1 / state.view.scale;
-		var pts = mxEdgeStyle.scalePointArray(state.absolutePoints, scaleRecip);
-		var source = mxEdgeStyle.scaleRect(sourceScaled, scaleRecip);
-		var target = mxEdgeStyle.scaleRect(targetScaled, scaleRecip);
-		var tol = 1;
+		var pts = state.absolutePoints;
+		var tol = Math.max(1, state.view.scale);
 		
 		// Whether the first segment outgoing from the source end is horizontal
 		var lastPushed = (result.length > 0) ? result[0] : null;
@@ -596,9 +593,6 @@ var mxEdgeStyle =
 		// Adds waypoints only if outside of tolerance
 		function pushPoint(pt)
 		{
-			pt.x = Math.round(pt.x * state.view.scale * 10) / 10;
-			pt.y = Math.round(pt.y * state.view.scale * 10) / 10;
-
 			if (lastPushed == null || Math.abs(lastPushed.x - pt.x) >= tol || Math.abs(lastPushed.y - pt.y) >= tol)
 			{
 				result.push(pt);
@@ -626,25 +620,29 @@ var mxEdgeStyle =
 		var lastInx = pts.length - 1;
 
 		// Adds the waypoints
-		if (controlHints != null && controlHints.length > 0)
+		if (hints != null && hints.length > 0)
 		{
 			// Converts all hints and removes nulls
-			var hints = [];
+			var newHints = [];
 			
-			for (var i = 0; i < controlHints.length; i++)
+			for (var i = 0; i < hints.length; i++)
 			{
-				var tmp = state.view.transformControlPoint(state, controlHints[i], true);
+				var tmp = state.view.transformControlPoint(state, hints[i]);
 				
 				if (tmp != null)
 				{
-					hints.push(tmp);
+					tmp.x = Math.round(tmp.x);
+					tmp.y = Math.round(tmp.y);
+					newHints.push(tmp);
 				}
 			}
 			
-			if (hints.length == 0)
+			if (newHints.length == 0)
 			{
 				return;
 			}
+			
+			hints = newHints;
 			
 			// Aligns source and target hint to fixed points
 			if (pt != null && hints[0] != null)
@@ -941,7 +939,7 @@ var mxEdgeStyle =
 	VERTEX_MASK: 3072,
 	// mxEdgeStyle.SOURCE_MASK | mxEdgeStyle.TARGET_MASK,
 	
-	getJettySize: function(state, source, target, isSource)
+	getJettySize: function(state, source, target, points, isSource)
 	{
 		var value = mxUtils.getValue(state.style, (isSource) ? mxConstants.STYLE_SOURCE_JETTY_SIZE :
 			mxConstants.STYLE_TARGET_JETTY_SIZE, mxUtils.getValue(state.style,
@@ -965,76 +963,6 @@ var mxEdgeStyle =
 		
 		return value;
 	},
-	
-	/**
-	 * Function: scalePointArray
-	 * 
-	 * Scales an array of <mxPoint>
-	 * 
-	 * Parameters:
-	 * 
-	 * points - array of <mxPoint> to scale
-	 * scale - the scaling to multiply by
-	 * 
-	 */
-	scalePointArray(points, scale)
-	{
-		var result = [];
-
-		if (points != null)
-		{
-			for (var i = 0; i < points.length; i++)
-			{
-				if (points[i] != null)
-				{
-					var pt = new mxPoint(Math.round(points[i].x * scale * 10) / 10,
-										Math.round(points[i].y * scale * 10) / 10);
-					result[i] = pt;
-				}
-				else
-				{
-					result[i] = null;
-				}
-			}
-		}
-		else
-		{
-			result = null;
-		}
-		
-		return result;
-	},
-	
-	/**
-	 * Function: scaleRect
-	 * 
-	 * Scales an <mxRectangle>
-	 * 
-	 * Parameters:
-	 * 
-	 * rect - <mxRectangle> to scale
-	 * scale - the scaling to multiply by
-	 * 
-	 */
-	scaleRect(rect, scale)
-	{
-		var result = null;
-
-		if (rect != null)
-		{
-			result = new mxRectangle(Math.round(rect.x * scale * 10) / 10,
-										Math.round(rect.y * scale * 10) / 10,
-										Math.round(rect.width * scale * 10) / 10,
-										Math.round(rect.height * scale * 10) / 10);
-		}
-		else
-		{
-			result = null;
-		}
-		
-		return result;
-	},
-
 
 	/**
 	 * Function: OrthConnector
@@ -1045,24 +973,20 @@ var mxEdgeStyle =
 	 * Parameters:
 	 * 
 	 * state - <mxCellState> that represents the edge to be updated.
-	 * sourceScaled - <mxCellState> that represents the source terminal.
-	 * targetScaled - <mxCellState> that represents the target terminal.
-	 * controlHints - List of relative control points.
+	 * source - <mxCellState> that represents the source terminal.
+	 * target - <mxCellState> that represents the target terminal.
+	 * points - List of relative control points.
 	 * result - Array of <mxPoints> that represent the actual points of the
 	 * edge.
 	 * 
 	 */
-	OrthConnector: function(state, sourceScaled, targetScaled, controlHints, result)
+	OrthConnector: function(state, source, target, points, result)
 	{
 		var graph = state.view.graph;
 		var sourceEdge = source == null ? false : graph.getModel().isEdge(source.cell);
 		var targetEdge = target == null ? false : graph.getModel().isEdge(target.cell);
 
-		var scaleRecip = 1 / state.view.scale;
-		var pts = mxEdgeStyle.scalePointArray(state.absolutePoints, scaleRecip);
-		var source = mxEdgeStyle.scaleRect(sourceScaled, scaleRecip);
-		var target = mxEdgeStyle.scaleRect(targetScaled, scaleRecip);
-
+		var pts = state.absolutePoints;
 		var p0 = pts[0];
 		var pe = pts[pts.length-1];
 
@@ -1076,8 +1000,8 @@ var mxEdgeStyle =
 		var targetWidth = target != null ? target.width : 0;
 		var targetHeight = target != null ? target.height : 0;
 
-		var scaledSourceBuffer = state.view.scale * mxEdgeStyle.getJettySize(state, source, target, true);
-		var scaledTargetBuffer = state.view.scale * mxEdgeStyle.getJettySize(state, source, target, false);
+		var scaledSourceBuffer = state.view.scale * mxEdgeStyle.getJettySize(state, source, target, points, true);
+		var scaledTargetBuffer = state.view.scale * mxEdgeStyle.getJettySize(state, source, target, points, false);
 		
 		// Workaround for loop routing within buffer zone
 		if (source != null && target == source)
@@ -1098,10 +1022,10 @@ var mxEdgeStyle =
 			tooShort = dx * dx + dy * dy < totalBuffer * totalBuffer;
 		}
 
-		if (tooShort || (mxEdgeStyle.orthPointsFallback && (controlHints != null &&
-				controlHints.length > 0)) || sourceEdge || targetEdge)
+		if (tooShort || (mxEdgeStyle.orthPointsFallback && (points != null &&
+			points.length > 0)) || sourceEdge || targetEdge)
 		{
-			mxEdgeStyle.SegmentConnector(state, source, target, controlHints, result);
+			mxEdgeStyle.SegmentConnector(state, source, target, points, result);
 			
 			return;
 		}
@@ -1590,8 +1514,7 @@ var mxEdgeStyle =
 				}
 			}
 			
-			result.push(new mxPoint(Math.round(mxEdgeStyle.wayPoints1[i][0] * state.view.scale * 10) / 10,
-									Math.round(mxEdgeStyle.wayPoints1[i][1] * state.view.scale * 10) / 10));
+			result.push(new mxPoint(Math.round(mxEdgeStyle.wayPoints1[i][0]), Math.round(mxEdgeStyle.wayPoints1[i][1])));
 		}
 		
 		// Removes duplicates
