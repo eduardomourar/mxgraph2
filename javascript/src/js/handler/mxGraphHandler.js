@@ -1312,6 +1312,9 @@ mxGraphHandler.prototype.resetLivePreview = function()
 				state.shape.pointerEvents = state.shape.originalPointerEvents;
 				state.shape.originalPointerEvents = null;
 				
+				// Forces repaint even if not moved to update pointer events
+				state.shape.bounds = null;
+				
 				if (state.text != null)
 				{
 					state.text.pointerEvents = state.text.originalPointerEvents;
@@ -1326,7 +1329,7 @@ mxGraphHandler.prototype.resetLivePreview = function()
 				state.control.node.style.visibility = '';
 			}
 			
-			// Forces repaint of state and connected edges
+			// Forces repaint of connected edges
 			state.view.invalidate(state.cell);
 		}));
 
