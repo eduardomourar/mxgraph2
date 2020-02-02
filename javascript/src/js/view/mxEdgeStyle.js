@@ -1118,7 +1118,7 @@ var mxEdgeStyle =
 					mxConstants.DIRECTION_MASK_ALL);
 			rotation = mxUtils.getValue(source.style, mxConstants.STYLE_ROTATION, 0);
 			
-			console.log('source rotation', rotation);
+			//console.log('source rotation', rotation);
 			
 			if (rotation != 0)
 			{
@@ -1136,7 +1136,7 @@ var mxEdgeStyle =
 				mxConstants.DIRECTION_MASK_ALL);
 			rotation = mxUtils.getValue(target.style, mxConstants.STYLE_ROTATION, 0);
 			
-			console.log('target rotation', rotation);
+			//console.log('target rotation', rotation);
 
 			if (rotation != 0)
 			{
@@ -1148,8 +1148,8 @@ var mxEdgeStyle =
 			}
 		}
 
-		console.log('source' , sourceX, sourceY, sourceWidth, sourceHeight);
-		console.log('targetX' , targetX, targetY, targetWidth, targetHeight);
+		//console.log('source' , sourceX, sourceY, sourceWidth, sourceHeight);
+		//console.log('targetX' , targetX, targetY, targetWidth, targetHeight);
 
 		var dir = [0, 0];
 
@@ -1209,7 +1209,7 @@ var mxEdgeStyle =
 			}
 		}
 
-		console.log('quad', quad);
+		//console.log('quad', quad);
 
 		// Check for connection constraints
 		var currentTerm = null;
@@ -1429,7 +1429,7 @@ var mxEdgeStyle =
 
 		var routePattern = mxEdgeStyle.routePatterns[sourceIndex - 1][targetIndex - 1];
 		
-		console.log('routePattern', routePattern);
+		//console.log('routePattern', routePattern);
 
 		mxEdgeStyle.wayPoints1[0][0] = geo[0][0];
 		mxEdgeStyle.wayPoints1[0][1] = geo[0][1];
@@ -1598,7 +1598,7 @@ var mxEdgeStyle =
 									Math.round(mxEdgeStyle.wayPoints1[i][1] * state.view.scale * 10) / 10));
 		}
 		
-		console.log(result);
+		//console.log(result);
 
 		// Removes duplicates
 		var index = 1;
