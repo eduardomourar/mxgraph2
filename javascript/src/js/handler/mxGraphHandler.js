@@ -163,6 +163,13 @@ mxGraphHandler.prototype.moveEnabled = true;
 mxGraphHandler.prototype.guidesEnabled = false;
 
 /**
+ * Variable: handlesVisible
+ * 
+ * Whether the handles of the selection are currently visible.
+ */
+mxGraphHandler.prototype.handlesVisible = true;
+
+/**
  * Variable: guide
  * 
  * Holds the <mxGuide> instance that is used for alignment.
@@ -848,7 +855,6 @@ mxGraphHandler.prototype.checkPreview = function()
 	{
 		if (!this.cloning || !this.livePreviewActive)
 		{
-			this.setHandlesVisibleForCells(this.graph.getSelectionCells(), false);
 			this.livePreviewActive = true;
 			this.livePreviewUsed = true;
 		}
@@ -1030,6 +1036,7 @@ mxGraphHandler.prototype.updatePreview = function(remote)
 	{
 		if (this.cells != null)
 		{
+			this.setHandlesVisibleForCells(this.graph.getSelectionCells(), false);
 			this.updateLivePreview(this.currentDx, this.currentDy);
 		}
 	}
@@ -1345,19 +1352,24 @@ mxGraphHandler.prototype.resetLivePreview = function()
  */
 mxGraphHandler.prototype.setHandlesVisibleForCells = function(cells, visible)
 {
-	for (var i = 0; i < cells.length; i++)
+	if (this.handlesVisible != visible)
 	{
-		var cell = cells[i];
-
-		var handler = this.graph.selectionCellsHandler.getHandler(cell);
+		this.handlesVisible = visible;
 		
-		if (handler != null)
+		for (var i = 0; i < cells.length; i++)
 		{
-			handler.setHandlesVisible(visible);
+			var cell = cells[i];
+	
+			var handler = this.graph.selectionCellsHandler.getHandler(cell);
 			
-			if (visible)
+			if (handler != null)
 			{
-				handler.redraw();
+				handler.setHandlesVisible(visible);
+				
+				if (visible)
+				{
+					handler.redraw();
+				}
 			}
 		}
 	}
