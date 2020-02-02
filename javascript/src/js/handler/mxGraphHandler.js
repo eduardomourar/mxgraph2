@@ -1053,7 +1053,7 @@ mxGraphHandler.prototype.updatePreview = function(remote)
  */
 mxGraphHandler.prototype.updatePreviewShape = function()
 {
-	if (this.shape != null)
+	if (this.shape != null && this.pBounds != null)
 	{
 		this.shape.bounds = new mxRectangle(Math.round(this.pBounds.x + this.currentDx),
 				Math.round(this.pBounds.y + this.currentDy), this.pBounds.width, this.pBounds.height);
