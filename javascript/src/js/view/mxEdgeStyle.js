@@ -95,7 +95,7 @@ var mxEdgeStyle =
 	 * result - Array of <mxPoints> that represent the actual points of the
 	 * edge.
 	 */
-	 EntityRelation: function (state, source, target, points, result)
+	 EntityRelation: function(state, source, target, points, result)
 	 {
 		var view = state.view;
 	 	var graph = view.graph;
@@ -223,7 +223,7 @@ var mxEdgeStyle =
 	 * 
 	 * Implements a self-reference, aka. loop.
 	 */
-	Loop: function (state, source, target, points, result)
+	Loop: function(state, source, target, points, result)
 	{
 		var pts = state.absolutePoints;
 		
@@ -333,7 +333,7 @@ var mxEdgeStyle =
 	 * unspecified. See <EntityRelation> for a description of the
 	 * parameters.
 	 */
-	ElbowConnector: function (state, source, target, points, result)
+	ElbowConnector: function(state, source, target, points, result)
 	{
 		var pt = (points != null && points.length > 0) ? points[0] : null;
 
@@ -393,7 +393,7 @@ var mxEdgeStyle =
 	 * Implements a vertical elbow edge. See <EntityRelation> for a description
 	 * of the parameters.
 	 */
-	SideToSide: function (state, source, target, points, result)
+	SideToSide: function(state, source, target, points, result)
 	{
 		var view = state.view;
 		var pt = (points != null && points.length > 0) ? points[0] : null;
@@ -974,7 +974,7 @@ var mxEdgeStyle =
 	 * scale - the scaling to divide by
 	 * 
 	 */
-	scalePointArray(points, scale)
+	scalePointArray: function(points, scale)
 	{
 		var result = [];
 
@@ -1013,7 +1013,7 @@ var mxEdgeStyle =
 	 * scale - the scaling to divide by
 	 * 
 	 */
-	scaleCellState(state, scale)
+	scaleCellState: function(state, scale)
 	{
 		var result = null;
 
@@ -1032,7 +1032,6 @@ var mxEdgeStyle =
 		
 		return result;
 	},
-
 
 	/**
 	 * Function: OrthConnector
