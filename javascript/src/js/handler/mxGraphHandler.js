@@ -89,9 +89,12 @@ function mxGraphHandler(graph)
 	
 	this.keyHandler = mxUtils.bind(this, function(e)
 	{
-		if (this.graph.container != null && this.graph.container.style.visibility != 'hidden')
+		if (this.graph.container != null && this.graph.container.style.visibility != 'hidden' &&
+			this.first != null && !this.suspended)
 		{
-			var clone = this.graph.isCloneEvent(e) && this.graph.isCellsCloneable() && this.isCloneEnabled();
+			var clone = this.graph.isCloneEvent(e) &&
+				this.graph.isCellsCloneable() &&
+				this.isCloneEnabled();
 			
 			if (clone != this.cloning)
 			{
