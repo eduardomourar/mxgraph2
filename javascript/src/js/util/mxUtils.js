@@ -2132,7 +2132,7 @@ var mxUtils =
             var cos = Math.cos(rad);
             var sin = Math.sin(rad);
 
-            cx = (cx != null) ? cx : new mxPoint(rect.x + rect.width / 2, rect.y  + rect.height / 2);
+            cx = (cx != null) ? cx : new mxPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
 
             var p1 = new mxPoint(rect.x, rect.y);
             var p2 = new mxPoint(rect.x + rect.width, rect.y);

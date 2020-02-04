@@ -7526,6 +7526,19 @@ mxGraph.prototype.getBoundingBoxFromGeometry = function(cells, includeEdges)
 							bbox.x += geo.offset.x;
 							bbox.y += geo.offset.y;
 						}
+
+						var state = this.view.getState(cells[i]);
+						var style = (state != null) ? state.style : this.getCellStyle(cells[i]);
+						
+						if (bbox != null && style != null)
+						{
+							var angle = mxUtils.getValue(style, mxConstants.STYLE_ROTATION, 0);
+							
+							if (angle != 0)
+							{
+								bbox = mxUtils.getBoundingBox(bbox, angle);
+							}
+						}
 					}
 					
 					if (bbox != null)
