@@ -2986,6 +2986,27 @@ Graph.prototype.isContainer = function(cell)
 };
 
 /**
+ * Adds a expand style.
+ */
+Graph.prototype.isExtendParent = function(cell)
+{
+	var parent = this.model.getParent(cell);
+	
+	if (parent != null)
+	{
+		var state = this.view.getState(parent);
+		var style = (state != null) ? state.style : this.getCellStyle(parent);
+		
+		if (style != null && style['expand'] != null)
+		{
+			return style['expand'] != '0';
+		}
+	}
+	
+	return mxGraph.prototype.isExtendParent.apply(this, arguments);
+};
+
+/**
  * Adds a connectable style.
  */
 Graph.prototype.isCellConnectable = function(cell)
