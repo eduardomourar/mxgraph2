@@ -1875,7 +1875,7 @@ mxVertexHandler.prototype.redrawHandles = function()
 			this.edgeHandlers[i].redraw();
 		}
 	}
-
+	
 	if (this.customHandles != null)
 	{
 		for (var i = 0; i < this.customHandles.length; i++)
@@ -1885,11 +1885,23 @@ mxVertexHandler.prototype.redrawHandles = function()
 			this.customHandles[i].shape.node.style.display = temp;
 
 			// Hides custom handles during text editing
-			this.customHandles[i].shape.node.style.visibility = (this.graph.isEditing()) ? 'hidden' : '';
+			this.customHandles[i].shape.node.style.visibility =
+				(this.isCustomHandleVisible(this.customHandles[i])) ?
+				'' : 'hidden';
 		}
 	}
 
 	this.updateParentHighlight();
+};
+
+/**
+ * Function: isCustomHandleVisible
+ * 
+ * Returns true if the given custom handle is visible.
+ */
+mxVertexHandler.prototype.isCustomHandleVisible = function(handle)
+{
+	return !this.graph.isEditing() && this.state.view.graph.getSelectionCount() == 1;
 };
 
 /**

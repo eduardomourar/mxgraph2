@@ -2211,9 +2211,26 @@ mxEdgeHandler.prototype.redrawHandles = function()
 	{
 		for (var i = 0; i < this.customHandles.length; i++)
 		{
+			var temp = this.customHandles[i].shape.node.style.display;
 			this.customHandles[i].redraw();
+			this.customHandles[i].shape.node.style.display = temp;
+
+			// Hides custom handles during text editing
+			this.customHandles[i].shape.node.style.visibility =
+				(this.isCustomHandleVisible(this.customHandles[i])) ?
+				'' : 'hidden';
 		}
 	}
+};
+
+/**
+ * Function: isCustomHandleVisible
+ * 
+ * Returns true if the given custom handle is visible.
+ */
+mxEdgeHandler.prototype.isCustomHandleVisible = function(handle)
+{
+	return !this.graph.isEditing() && this.state.view.graph.getSelectionCount() == 1;
 };
 
 /**
