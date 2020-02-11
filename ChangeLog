@@ -1,3 +1,5 @@
+- Adds support for inherit font color
+
 24-JAN-2020: 4.1.0
 
 - Adds mxEdgeHandler.isCellEnabled

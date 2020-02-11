@@ -221,12 +221,12 @@
  * 
  * Inheriting Styles:
  * 
- * For fill-, stroke-, gradient- and indicatorColors special keywords can be
- * used. The inherit keyword for one of these colors will inherit the color
- * for the same key from the parent cell. The swimlane keyword does the same,
- * but inherits from the nearest swimlane in the ancestor hierarchy. Finally,
- * the indicated keyword will use the color of the indicator as the color for
- * the given key.
+ * For fill-, stroke-, gradient-, font- and indicatorColors special keywords
+ * can be used. The inherit keyword for one of these colors will inherit the
+ * color for the same key from the parent cell. The swimlane keyword does the
+ * same, but inherits from the nearest swimlane in the ancestor hierarchy.
+ * Finally, the indicated keyword will use the color of the indicator as the
+ * color for the given key.
  * 
  * Scrollbars:
  * 
