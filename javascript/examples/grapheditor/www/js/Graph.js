@@ -1749,7 +1749,7 @@ Graph.prototype.openLink = function(href, target, allowOpener)
 			}
 			else
 			{
-				result = window.open(href, target);
+				result = window.open(href, (target != null) ? target : '_blank');
 	
 				if (result != null && !allowOpener)
 				{
