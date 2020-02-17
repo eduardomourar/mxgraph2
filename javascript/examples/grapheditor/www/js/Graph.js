@@ -1114,9 +1114,11 @@ Graph.bytesToString = function(arr)
 /**
  * Returns a base64 encoded version of the compressed outer XML of the given node.
  */
-Graph.compressNode = function(node)
+Graph.compressNode = function(node, checked)
 {
-	return Graph.compress(Graph.zapGremlins(mxUtils.getXml(node)));
+	var xml = mxUtils.getXml(node);
+	
+	return Graph.compress((checked) ? xml : Graph.zapGremlins(xml));
 };
 
 /**
@@ -1140,7 +1142,7 @@ Graph.compress = function(data, deflate)
 /**
  * Returns a decompressed version of the base64 encoded string.
  */
-Graph.decompress = function(data, inflate)
+Graph.decompress = function(data, inflate, checked)
 {
    	if (data == null || data.length == 0 || typeof(pako) === 'undefined')
 	{
@@ -1150,10 +1152,11 @@ Graph.decompress = function(data, inflate)
 	{
 		var tmp = (window.atob) ? atob(data) : Base64.decode(data, true);
 		
-		var inflated = (inflate) ? pako.inflate(tmp, {to: 'string'}) :
-			pako.inflateRaw(tmp, {to: 'string'})
+		var inflated = decodeURIComponent((inflate) ?
+			pako.inflate(tmp, {to: 'string'}) :
+			pako.inflateRaw(tmp, {to: 'string'}));
 
-		return Graph.zapGremlins(decodeURIComponent(inflated));
+		return (checked) ? inflated : Graph.zapGremlins(inflated);
 	}
 };
 
