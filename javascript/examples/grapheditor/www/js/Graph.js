@@ -1114,9 +1114,11 @@ Graph.bytesToString = function(arr)
 /**
  * Returns a base64 encoded version of the compressed outer XML of the given node.
  */
-Graph.compressNode = function(node)
+Graph.compressNode = function(node, checked)
 {
-	return Graph.compress(Graph.zapGremlins(mxUtils.getXml(node)));
+	var xml = mxUtils.getXml(node);
+	
+	return Graph.compress((checked) ? xml : Graph.zapGremlins(xml));
 };
 
 /**
@@ -1140,7 +1142,7 @@ Graph.compress = function(data, deflate)
 /**
  * Returns a decompressed version of the base64 encoded string.
  */
-Graph.decompress = function(data, inflate)
+Graph.decompress = function(data, inflate, checked)
 {
    	if (data == null || data.length == 0 || typeof(pako) === 'undefined')
 	{
@@ -1150,10 +1152,11 @@ Graph.decompress = function(data, inflate)
 	{
 		var tmp = (window.atob) ? atob(data) : Base64.decode(data, true);
 		
-		var inflated = (inflate) ? pako.inflate(tmp, {to: 'string'}) :
-			pako.inflateRaw(tmp, {to: 'string'})
+		var inflated = decodeURIComponent((inflate) ?
+			pako.inflate(tmp, {to: 'string'}) :
+			pako.inflateRaw(tmp, {to: 'string'}));
 
-		return Graph.zapGremlins(decodeURIComponent(inflated));
+		return (checked) ? inflated : Graph.zapGremlins(inflated);
 	}
 };
 
@@ -1749,7 +1752,7 @@ Graph.prototype.openLink = function(href, target, allowOpener)
 			}
 			else
 			{
-				result = window.open(href, target);
+				result = window.open(href, (target != null) ? target : '_blank');
 	
 				if (result != null && !allowOpener)
 				{
@@ -5510,9 +5513,10 @@ if (typeof mxVertexHandler != 'undefined')
 			var state = this.view.getState(cell);
 			var style = (state != null) ? state.style : this.getCellStyle(cell);
 		
-			return mxUtils.getValue(style, 'part', '0') != '1' && (this.isContainer(cell) ||
-				(mxGraph.prototype.isValidDropTarget.apply(this, arguments) &&
-				mxUtils.getValue(style, 'dropTarget', '1') != '0'));
+			return mxUtils.getValue(style, 'part', '0') != '1' &&
+				mxUtils.getValue(style, 'dropTarget', '1') != '0' &&
+				(mxGraph.prototype.isValidDropTarget.apply(this, arguments) ||
+				this.isContainer(cell));
 		};
 	
 		/**
