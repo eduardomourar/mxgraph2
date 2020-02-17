@@ -5253,8 +5253,13 @@ if (typeof mxVertexHandler != 'undefined')
 					{
 						for (var i = 0; i < layers.length; i++)
 						{
-							cells = cells.concat(this.model.getChildren(this.moveCells(
-								[layers[i]], dx, dy, false, this.model.getRoot())[0]));
+							var layerCells = this.model.getChildren(this.moveCells(
+									[layers[i]], dx, dy, false, this.model.getRoot())[0]);
+							
+							if (layerCells != null) //Empty layer has no children to be added
+							{
+								cells = cells.concat(layerCells);
+							}
 						}
 					}
 					
