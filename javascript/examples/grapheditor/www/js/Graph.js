@@ -5505,9 +5505,10 @@ if (typeof mxVertexHandler != 'undefined')
 			var state = this.view.getState(cell);
 			var style = (state != null) ? state.style : this.getCellStyle(cell);
 		
-			return mxUtils.getValue(style, 'part', '0') != '1' && (this.isContainer(cell) ||
-				(mxGraph.prototype.isValidDropTarget.apply(this, arguments) &&
-				mxUtils.getValue(style, 'dropTarget', '1') != '0'));
+			return mxUtils.getValue(style, 'part', '0') != '1' &&
+				mxUtils.getValue(style, 'dropTarget', '1') != '0' &&
+				(mxGraph.prototype.isValidDropTarget.apply(this, arguments) ||
+				this.isContainer(cell));
 		};
 	
 		/**
