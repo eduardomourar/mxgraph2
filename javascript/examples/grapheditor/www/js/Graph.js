@@ -5248,7 +5248,7 @@ if (typeof mxVertexHandler != 'undefined')
 						cells = this.moveCells(tempModel.getChildren(layers[0]),
 							dx, dy, false, this.getDefaultParent());
 						
-						// Imported default default parent maps to local default parent
+						// Imported default parent maps to local default parent
 						cellMapping[tempModel.getChildAt(tempModel.root, 0).getId()] =
 							this.getDefaultParent().getId();
 					}
@@ -5256,33 +5256,36 @@ if (typeof mxVertexHandler != 'undefined')
 					{
 						for (var i = 0; i < layers.length; i++)
 						{
-							var layerCells = this.model.getChildren(this.moveCells(
-									[layers[i]], dx, dy, false, this.model.getRoot())[0]);
+							var children = this.model.getChildren(this.moveCells(
+								[layers[i]], dx, dy, false, this.model.getRoot())[0]);
 							
-							if (layerCells != null) //Empty layer has no children to be added
+							if (children != null)
 							{
-								cells = cells.concat(layerCells);
+								cells = cells.concat(children);
 							}
 						}
 					}
 					
-					// Adds mapping for all cloned entries from imported to local cell ID
-					this.createCellMapping(cloneMap, lookup, cellMapping);
-					this.updateCustomLinks(cellMapping, cells);
-					
-					if (crop)
+					if (cells != null)
 					{
-						if (this.isGridEnabled())
-						{
-							dx = this.snap(dx);
-							dy = this.snap(dy);
-						}
+						// Adds mapping for all cloned entries from imported to local cell ID
+						this.createCellMapping(cloneMap, lookup, cellMapping);
+						this.updateCustomLinks(cellMapping, cells);
 						
-						var bounds = this.getBoundingBoxFromGeometry(cells, true);
-						
-						if (bounds != null)
+						if (crop)
 						{
-							this.moveCells(cells, dx - bounds.x, dy - bounds.y);
+							if (this.isGridEnabled())
+							{
+								dx = this.snap(dx);
+								dy = this.snap(dy);
+							}
+							
+							var bounds = this.getBoundingBoxFromGeometry(cells, true);
+							
+							if (bounds != null)
+							{
+								this.moveCells(cells, dx - bounds.x, dy - bounds.y);
+							}
 						}
 					}
 				}
