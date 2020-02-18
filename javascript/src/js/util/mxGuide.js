@@ -299,7 +299,8 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, clone)
 
 		// Moves cells to the raster if not aligned
 		this.graph.snapDelta(delta, bounds, !gridEnabled, overrideX, overrideY);
-
+		delta = this.getDelta(bounds, stateX, delta.x, stateY, delta.y)
+		
 		// Redraws the guides
 		var c = this.graph.container;
 		
@@ -362,8 +363,6 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, clone)
 			this.guideY.node.style.visibility = 'visible';
 			this.guideY.redraw();
 		}
-
-		delta = this.getDelta(bounds, stateX, delta.x, stateY, delta.y)
 	}
 	
 	return delta;
@@ -380,12 +379,12 @@ mxGuide.prototype.getDelta = function(bounds, stateX, dx, stateY, dy)
 	
 	if (this.rounded || (stateX != null && stateX.cell == null))
 	{
-		dx = (Math.floor((bounds.x + dx) / s * 10) * s / 10) - bounds.x;
+		dx = Math.round((bounds.x + dx) / s) * s - bounds.x;
 	}
 
 	if (this.rounded || (stateY != null && stateY.cell == null))
 	{
-		dy = (Math.floor((bounds.y + dy) / s * 10) * s / 10) - bounds.y;
+		dy = Math.round((bounds.y + dy) / s) * s - bounds.y;
 	}
 	
 	return new mxPoint(dx, dy);

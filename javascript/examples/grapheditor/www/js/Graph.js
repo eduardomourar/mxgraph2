@@ -1949,16 +1949,14 @@ Graph.prototype.getPageLayout = function()
 	}
 	else
 	{
-		// Computes untransformed graph bounds
-		var x = Math.ceil(bounds.x / this.view.scale - this.view.translate.x);
-		var y = Math.ceil(bounds.y / this.view.scale - this.view.translate.y);
-		var w = Math.floor(bounds.width / this.view.scale);
-		var h = Math.floor(bounds.height / this.view.scale);
-		
-		var x0 = Math.floor(x / size.width);
-		var y0 = Math.floor(y / size.height);
-		var w0 = Math.ceil((x + w) / size.width) - x0;
-		var h0 = Math.ceil((y + h) / size.height) - y0;
+		var x0 = Math.floor(Math.ceil(bounds.x / this.view.scale -
+			this.view.translate.x) / size.width);
+		var y0 = Math.floor(Math.ceil(bounds.y / this.view.scale -
+			this.view.translate.y) / size.height);
+		var w0 = Math.ceil((Math.floor((bounds.x + bounds.width) / this.view.scale) -
+			this.view.translate.x) / size.width) - x0;
+		var h0 = Math.ceil((Math.floor((bounds.y + bounds.height) / this.view.scale) -
+			this.view.translate.y) / size.height) - y0;
 		
 		return new mxRectangle(x0, y0, w0, h0);
 	}
