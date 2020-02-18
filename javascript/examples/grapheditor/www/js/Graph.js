@@ -551,13 +551,13 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 						(layout.y * ph + t.y) * s, pw * s, ph * s));
 				}
 				
-				for (var j = 0; j < layout.height; j++)
+				for (var j = 1; j < layout.height; j++)
 				{
 					guides.push(new mxRectangle((layout.x * pw + t.x) * s,
 						((layout.y + j) * ph + t.y) * s, pw * s, ph * s));
 				}
 				
-				// Page center guides have predence over normal guides
+				// Page center guides have precedence over normal guides
 				result = guides.concat(result);
 			}
 			
