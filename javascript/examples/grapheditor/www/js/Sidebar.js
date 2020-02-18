@@ -3259,16 +3259,9 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 	}
 	else
 	{
-		var pt = graph.getFreeInsertPoint();
-		
-		if (mxEvent.isAltDown(evt))
-		{
-			var bounds = graph.getGraphBounds();
-			var tr = graph.view.translate;
-			var s = graph.view.scale;
-			pt.x = bounds.x / s - tr.x + bounds.width / s + graph.gridSize;
-			pt.y = bounds.y / s - tr.y;
-		}
+		var pt = (mxEvent.isAltDown(evt)) ? graph.getCenterInsertPoint(
+			graph.getBoundingBoxFromGeometry(cells, true)) :
+			graph.getFreeInsertPoint();
 		
 		ds.drop(graph, evt, null, pt.x, pt.y, true);
 		

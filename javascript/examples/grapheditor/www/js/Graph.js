@@ -6109,6 +6109,29 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			return new mxPoint(x, y);
 		};
+				
+		/**
+		 * 
+		 */
+		Graph.prototype.getCenterInsertPoint = function(bbox)
+		{
+			if (mxUtils.hasScrollbars(this.container))
+			{
+				return new mxPoint(
+					this.snap((this.container.scrollLeft + this.container.clientWidth / 2) / this.view.scale -
+						this.view.translate.x - bbox.width / 2),
+					this.snap((this.container.scrollTop + this.container.clientHeight / 2) / this.view.scale -
+						this.view.translate.y - bbox.height / 2));
+			}
+			else
+			{
+				return new mxPoint(
+					this.snap(this.container.clientWidth / 2 / this.view.scale -
+						this.view.translate.x - bbox.width / 2),
+					this.snap(this.container.clientHeight / 2 / this.view.scale -
+						this.view.translate.y - bbox.height / 2));
+			}
+		};
 		
 		/**
 		 * Hook for subclassers to return true if the current insert point was defined
