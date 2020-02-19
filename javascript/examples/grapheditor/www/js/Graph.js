@@ -2698,7 +2698,9 @@ Graph.prototype.getIndexableText = function()
  */
 Graph.prototype.convertValueToString = function(cell)
 {
-	if (cell.value != null && typeof(cell.value) == 'object')
+	var value = this.model.getValue(cell);
+	
+	if (value != null && typeof(value) == 'object')
 	{
 		if (this.isReplacePlaceholders(cell) && cell.getAttribute('placeholder') != null)
 		{
@@ -2721,7 +2723,7 @@ Graph.prototype.convertValueToString = function(cell)
 		}
 		else
 		{	
-			return cell.value.getAttribute('label') || '';
+			return value.getAttribute('label') || '';
 		}
 	}
 	
