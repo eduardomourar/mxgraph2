@@ -6142,6 +6142,8 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.getCenterInsertPoint = function(bbox)
 		{
+			bbox = (bbox != null) ? bbox : new mxRectangle();
+			
 			if (mxUtils.hasScrollbars(this.container))
 			{
 				return new mxPoint(
