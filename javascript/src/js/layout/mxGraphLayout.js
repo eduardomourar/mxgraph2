@@ -69,6 +69,21 @@ mxGraphLayout.prototype.parent = null;
 mxGraphLayout.prototype.moveCell = function(cell, x, y) { };
 
 /**
+ * Function: resizeCell
+ * 
+ * Notified when a cell is being resized in a parent that has automatic
+ * layout to update the other cells in the layout.
+ * 
+ * Empty implementation.
+ * 
+ * Parameters:
+ * 
+ * cell - <mxCell> which has been moved.
+ * bounds - <mxRectangle> that represents the new cell bounds.
+ */
+mxGraphLayout.prototype.resizeCell = function(cell, bounds) { };
+
+/**
  * Function: execute
  * 
  * Executes the layout algorithm for the children of the given parent.

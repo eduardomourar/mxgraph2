@@ -1855,67 +1855,83 @@ Graph.prototype.getAbsoluteUrl = function(url)
 Graph.prototype.initLayoutManager = function()
 {
 	this.layoutManager = new mxLayoutManager(this);
+	
+	// Using shared instances for some layouts
+	var organicLayout = new mxFastOrganicLayout(this);
+	var stackLayout = new mxStackLayout(this, true);
+	var treeLayout = new mxCompactTreeLayout(this);
+	var circleLayout = new mxCircleLayout(this);
+	var tableLayout = new TableLayout(this);
 
-	this.layoutManager.getLayout = function(cell)
+	this.layoutManager.getLayout = function(cell, eventName)
 	{
 		// Workaround for possible invalid style after change and before view validation
-		var style = this.graph.getCellStyle(cell);
-		
-		if (style != null)
+		if (eventName != mxEvent.BEGIN_UPDATE)
 		{
-			if (style['childLayout'] == 'stackLayout')
+			var style = this.graph.getCellStyle(cell);
+			
+			if (style != null)
 			{
-				var stackLayout = new mxStackLayout(this.graph, true);
-				stackLayout.resizeParentMax = mxUtils.getValue(style, 'resizeParentMax', '1') == '1';
-				stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
-				stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-				stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', '0') == '1';
-				stackLayout.spacing = style['stackSpacing'] || stackLayout.spacing;
-				stackLayout.border = style['stackBorder'] || stackLayout.border;
-				stackLayout.marginLeft = style['marginLeft'] || 0;
-				stackLayout.marginRight = style['marginRight'] || 0;
-				stackLayout.marginTop = style['marginTop'] || 0;
-				stackLayout.marginBottom = style['marginBottom'] || 0;
-				stackLayout.fill = true;
-				
-				return stackLayout;
-			}
-			else if (style['childLayout'] == 'treeLayout')
-			{
-				var treeLayout = new mxCompactTreeLayout(this.graph);
-				treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', '1') == '1';
-				treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-				treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
-				treeLayout.levelDistance = mxUtils.getValue(style, 'treeLevelDistance', 30);
-				treeLayout.maintainParentLocation = true;
-				treeLayout.edgeRouting = false;
-				treeLayout.resetEdges = false;
-				
-				return treeLayout;
-			}
-			else if (style['childLayout'] == 'flowLayout')
-			{
-				var flowLayout = new mxHierarchicalLayout(this.graph, mxUtils.getValue(style,
+				if (style['childLayout'] == 'stackLayout')
+				{
+					stackLayout.resizeParentMax = mxUtils.getValue(style, 'resizeParentMax', '1') == '1';
+					stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
+					stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+					stackLayout.resizeLast = mxUtils.getValue(style, 'resizeLast', '0') == '1';
+					stackLayout.spacing = style['stackSpacing'] || stackLayout.spacing;
+					stackLayout.border = style['stackBorder'] || stackLayout.border;
+					stackLayout.marginLeft = style['marginLeft'] || 0;
+					stackLayout.marginRight = style['marginRight'] || 0;
+					stackLayout.marginTop = style['marginTop'] || 0;
+					stackLayout.marginBottom = style['marginBottom'] || 0;
+					stackLayout.fill = true;
+					
+					return stackLayout;
+				}
+				else if (style['childLayout'] == 'treeLayout')
+				{
+					treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', '1') == '1';
+					treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+					treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
+					treeLayout.levelDistance = mxUtils.getValue(style, 'treeLevelDistance', 30);
+					treeLayout.maintainParentLocation = true;
+					treeLayout.edgeRouting = false;
+					treeLayout.resetEdges = false;
+					
+					return treeLayout;
+				}
+				else if (style['childLayout'] == 'flowLayout')
+				{
+					var flowLayout = new mxHierarchicalLayout(this.graph, mxUtils.getValue(style,
 						'flowOrientation', mxConstants.DIRECTION_EAST));
-				flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
-				flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
-				flowLayout.maintainParentLocation = true;
-				
-				// Special undocumented styles for changing the hierarchical
-				flowLayout.intraCellSpacing = mxUtils.getValue(style, 'intraCellSpacing', mxHierarchicalLayout.prototype.intraCellSpacing);
-				flowLayout.interRankCellSpacing = mxUtils.getValue(style, 'interRankCellSpacing', mxHierarchicalLayout.prototype.interRankCellSpacing);
-				flowLayout.interHierarchySpacing = mxUtils.getValue(style, 'interHierarchySpacing', mxHierarchicalLayout.prototype.interHierarchySpacing);
-				flowLayout.parallelEdgeSpacing = mxUtils.getValue(style, 'parallelEdgeSpacing', mxHierarchicalLayout.prototype.parallelEdgeSpacing);
-				
-				return flowLayout;
-			}
-			else if (style['childLayout'] == 'circleLayout')
-			{
-				return new mxCircleLayout(this.graph);
-			}
-			else if (style['childLayout'] == 'organicLayout')
-			{
-				return new mxFastOrganicLayout(this.graph);
+					flowLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
+					flowLayout.parentBorder = mxUtils.getValue(style, 'parentPadding', 20);
+					flowLayout.maintainParentLocation = true;
+					
+					// Special undocumented styles for changing the hierarchical
+					flowLayout.intraCellSpacing = mxUtils.getValue(style, 'intraCellSpacing',
+						mxHierarchicalLayout.prototype.intraCellSpacing);
+					flowLayout.interRankCellSpacing = mxUtils.getValue(style, 'interRankCellSpacing',
+						mxHierarchicalLayout.prototype.interRankCellSpacing);
+					flowLayout.interHierarchySpacing = mxUtils.getValue(style, 'interHierarchySpacing',
+						mxHierarchicalLayout.prototype.interHierarchySpacing);
+					flowLayout.parallelEdgeSpacing = mxUtils.getValue(style, 'parallelEdgeSpacing',
+						mxHierarchicalLayout.prototype.parallelEdgeSpacing);
+					
+					return flowLayout;
+				}
+				else if (style['childLayout'] == 'circleLayout')
+				{
+					return circleLayout;
+				}
+				else if (style['childLayout'] == 'organicLayout')
+				{
+					return organicLayout;
+				}
+				else if (style['childLayout'] == 'tableLayout')
+				{
+					return tableLayout;
+				}
 			}
 		}
 		
@@ -3476,6 +3492,8 @@ HoverIcons.prototype.init = function()
 	var graphClick = this.graph.click;
 	this.graph.click = mxUtils.bind(this, function(me)
 	{
+		console.log('click', me);
+		
 		graphClick.apply(this.graph, arguments);
 		
 		if (this.currentState != null && !this.graph.isCellSelected(this.currentState.cell) &&
@@ -4194,6 +4212,288 @@ HoverIcons.prototype.setCurrentState = function(state)
 	this.graph.container.appendChild(this.arrowRight);
 	this.graph.container.appendChild(this.arrowLeft);
 	this.currentState = state;
+};
+
+/**
+ * Table Layout
+ */
+function TableLayout(graph)
+{
+	mxGraphLayout.call(this, graph);
+};
+
+/**
+ * Extends mxGraphLayout
+ */
+TableLayout.prototype = new mxGraphLayout();
+TableLayout.prototype.constructor = TableLayout;
+
+/**
+ * Returns true if the given cell is a table cell.
+ */
+TableLayout.prototype.isTableCell = function(cell)
+{
+	return this.isTableRow(this.graph.model.getParent(cell));
+};
+
+/**
+ * Returns true if the given cell is a table row.
+ */
+TableLayout.prototype.isTableRow = function(cell)
+{
+	return this.isTable(this.graph.model.getParent(cell));
+};
+
+/**
+ * Returns true if the given cell is a table.
+ */
+TableLayout.prototype.isTable = function(cell)
+{
+	var style = this.graph.getCellStyle(cell);
+	
+	return style != null && style['childLayout'] == 'tableLayout';
+};
+
+/**
+ * Reorders rows.
+ */
+TableLayout.prototype.moveCell = function(cell, x, y)
+{
+	console.log('tableLayout.moveCell', cell, x, y);
+};
+
+/**
+ * Updates column width and row height.
+ */
+TableLayout.prototype.resizeCell = function(cell, bounds)
+{
+	if (this.isTable(cell))
+	{
+		this.tableResized(cell, bounds);
+	}
+	else if (this.isTableRow(cell))
+	{
+		this.tableRowResized(cell, bounds);
+	}
+	else if (this.isTableCell(cell))
+	{
+		this.tableCellResized(cell, bounds);
+	}
+};
+
+/**
+ * Updates column width and row height.
+ */
+TableLayout.prototype.tableResized = function(table)
+{
+	console.log('tableLayout.tableResized', table);
+	
+	var model = this.graph.getModel();
+	var rowCount = model.getChildCount(table);
+	var tableGeo = this.graph.getCellGeometry(table);
+	
+	if (tableGeo != null && rowCount > 0)
+	{
+		var tableSize = this.graph.getStartSize(table);
+		var y = tableSize.height;
+		
+		for (var i = 0; i < rowCount; i++)
+		{
+			var row = model.getChildAt(table, i);
+			
+			if (row != null)
+			{
+				var rowGeo = this.graph.getCellGeometry(row);
+				
+				if (rowGeo != null)
+				{
+					if (i == rowCount - 1)
+					{
+						rowGeo = rowGeo.clone();
+						rowGeo.width = tableGeo.width;
+						
+						if (y < tableGeo.height)
+						{
+							rowGeo.height = tableGeo.height - y;
+						}
+						else if (y > tableGeo.height)
+						{
+							tableGeo.height = y + this.graph.gridSize;
+							rowGeo.height = this.graph.gridSize;
+						}
+						
+						model.setGeometry(row, rowGeo);
+						this.tableRowResized(row);
+					}
+					
+					y += rowGeo.height;
+				}
+			}
+		}
+	}
+};
+
+/**
+ * Updates column width and row height.
+ */
+TableLayout.prototype.tableRowResized = function(row)
+{
+	console.log('tableLayout.tableRowResized', row);
+	
+	var model = this.graph.getModel();
+	var cellCount = model.getChildCount(row);
+	var rowGeo = this.graph.getCellGeometry(row);
+	
+	if (rowGeo != null && cellCount > 0)
+	{
+		var x = 0;
+		
+		for (var i = 0; i < cellCount; i++)
+		{
+			var cell = model.getChildAt(row, i);
+	
+			if (cell != null)
+			{
+				var geo = this.graph.getCellGeometry(cell);
+				
+				if (geo != null)
+				{
+					if (i == cellCount - 1)
+					{
+						geo = geo.clone();
+						geo.height = rowGeo.height;
+						
+						if (x < rowGeo.width)
+						{
+							geo.width = rowGeo.width - x;
+						}
+						else if (x > rowGeo.width)
+						{
+							rowGeo.width = x + this.graph.gridSize;
+							geo.width = this.graph.gridSize;
+						}
+						
+						model.setGeometry(cell, geo);
+						this.tableCellResized(cell);
+					}
+					
+					x += geo.width;
+				}
+			}
+		}
+	}
+};
+
+/**
+ * Updates column width and row height.
+ */
+TableLayout.prototype.tableCellResized = function(cell, bounds)
+{
+	var geo = this.graph.getCellGeometry(cell);
+	
+	if (geo != null)
+	{
+		console.log('tableLayout.tableCellResized', cell, bounds, geo);
+	
+		var model = this.graph.getModel();
+		var row = model.getParent(cell);
+		var index = row.getIndex(cell);
+		
+		// Updates row height
+		var rowGeo = this.graph.getCellGeometry(row);
+		
+		if (rowGeo != null)
+		{
+			rowGeo = rowGeo.clone();
+			rowGeo.height = geo.height;
+			model.setGeometry(row, rowGeo);
+		}
+		
+		// Updates column width
+		var table = model.getParent(row);
+
+		for (var i = 0; i < model.getChildCount(table); i++)
+		{
+			var child = model.getChildAt(model.getChildAt(table, i), index);
+			var childGeo = this.graph.getCellGeometry(child);
+			
+			if (childGeo != null)
+			{
+				childGeo = childGeo.clone();
+				childGeo.width = geo.width;
+				model.setGeometry(child, childGeo);
+			}
+		}
+	}
+};
+
+/**
+ * Updates column width and row height.
+ */
+TableLayout.prototype.execute = function(table)
+{
+	console.log('tableLayout.execute', table);
+	
+	var tableSize = this.graph.getStartSize(table);
+	var model = this.graph.getModel();
+	var y = tableSize.height;
+	var x = 0;
+	
+	for (var i = 0; i < model.getChildCount(table); i++)
+	{
+		var row = model.getChildAt(table, i);
+		
+		if (row != null)
+		{
+			var rowGeo = this.graph.getCellGeometry(row);
+			
+			if (rowGeo != null)
+			{
+				x = tableSize.width;
+				
+				for (var j = 0; j < model.getChildCount(row); j++)
+				{
+					var cell = model.getChildAt(row, j);
+					
+					if (cell != null)
+					{
+						var geo = this.graph.getCellGeometry(cell);
+						
+						if (geo != null)
+						{
+							geo = geo.clone();
+							
+							geo.height = rowGeo.height;
+							geo.x = x;
+							geo.y = 0;
+							model.setGeometry(cell, geo);
+							
+							x += geo.width;
+						}
+					}
+				}
+				
+				rowGeo = rowGeo.clone();
+				rowGeo.width = x;
+				rowGeo.y = y;
+				rowGeo.x = 0;
+				model.setGeometry(row, rowGeo);
+				
+				y += rowGeo.height;
+			}
+		}
+	}
+	
+	// Updates table size
+	var tableGeo = this.graph.getCellGeometry(table);
+			
+	if (tableGeo != null)
+	{
+		tableGeo = tableGeo.clone();
+		tableGeo.width = x;
+		tableGeo.height = y;
+		model.setGeometry(table, tableGeo);
+	}
 };
 
 (function()
