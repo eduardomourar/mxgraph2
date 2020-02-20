@@ -3519,8 +3519,6 @@ HoverIcons.prototype.init = function()
 	var graphClick = this.graph.click;
 	this.graph.click = mxUtils.bind(this, function(me)
 	{
-		console.log('click', me);
-		
 		graphClick.apply(this.graph, arguments);
 		
 		if (this.currentState != null && !this.graph.isCellSelected(this.currentState.cell) &&
