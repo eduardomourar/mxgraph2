@@ -4418,20 +4418,41 @@ TableLayout.prototype.tableCellResized = function(cell, bounds)
 	
 	if (geo != null)
 	{
-		console.log('tableLayout.tableCellResized', cell, bounds, geo);
-	
 		var model = this.graph.getModel();
 		var row = model.getParent(cell);
 		var index = row.getIndex(cell);
 		
 		// Updates row height
-		var rowGeo = this.graph.getCellGeometry(row);
 		
-		if (rowGeo != null)
+		// TODO: Handles moving of upper border
+		if (bounds != null && bounds.length == 1 && bounds[0].y != 0)
 		{
-			rowGeo = rowGeo.clone();
-			rowGeo.height = geo.height;
-			model.setGeometry(row, rowGeo);
+			var table = model.getParent(row);
+			var rowIndex = table.getIndex(row);
+			
+			if (rowIndex > 0)
+			{
+				var row2 = table.getChildAt(rowIndex - 1);
+				var rowGeo2 = this.graph.getCellGeometry(row);
+				
+				if (rowGeo2 != null)
+				{
+					rowGeo2 = rowGeo2.clone();
+					rowGeo2.height += bounds[0].y;
+					model.setGeometry(row2, rowGeo2);
+				}
+			}
+		}
+		else
+		{
+			var rowGeo = this.graph.getCellGeometry(row);
+			
+			if (rowGeo != null)
+			{
+				rowGeo = rowGeo.clone();
+				rowGeo.height = geo.height;
+				model.setGeometry(row, rowGeo);
+			}
 		}
 		
 		// Updates column width
