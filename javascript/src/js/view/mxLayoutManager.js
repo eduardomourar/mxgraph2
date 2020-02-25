@@ -56,7 +56,8 @@ function mxLayoutManager(graph)
 	{
 		if (this.isEnabled())
 		{
-			this.cellsResized(evt.getProperty('cells'), evt.getProperty('bounds'));
+			this.cellsResized(evt.getProperty('cells'), evt.getProperty('bounds'),
+				evt.getProperty('previous'));
 		}
 	});
 	
@@ -287,7 +288,7 @@ mxLayoutManager.prototype.cellsMoved = function(cells, evt)
  * cell - Array of <mxCells> that have been resized.
  * bounds - <mxRectangle> taht represents the new bounds.
  */
-mxLayoutManager.prototype.cellsResized = function(cells, bounds)
+mxLayoutManager.prototype.cellsResized = function(cells, bounds, prev)
 {
 	if (cells != null && bounds != null)
 	{
@@ -299,7 +300,7 @@ mxLayoutManager.prototype.cellsResized = function(cells, bounds)
 
 			if (layout != null)
 			{
-				layout.resizeCell(cells[i], bounds);
+				layout.resizeCell(cells[i], bounds[i], prev[i]);
 			}
 		}
 	}

@@ -4254,32 +4254,6 @@ TableLayout.prototype = new mxGraphLayout();
 TableLayout.prototype.constructor = TableLayout;
 
 /**
- * Returns true if the given cell is a table cell.
- */
-TableLayout.prototype.isTableCell = function(cell)
-{
-	return this.isTableRow(this.graph.model.getParent(cell));
-};
-
-/**
- * Returns true if the given cell is a table row.
- */
-TableLayout.prototype.isTableRow = function(cell)
-{
-	return this.isTable(this.graph.model.getParent(cell));
-};
-
-/**
- * Returns true if the given cell is a table.
- */
-TableLayout.prototype.isTable = function(cell)
-{
-	var style = this.graph.getCellStyle(cell);
-	
-	return style != null && style['childLayout'] == 'tableLayout';
-};
-
-/**
  * Reorders rows.
  */
 TableLayout.prototype.moveCell = function(cell, x, y)
@@ -4288,190 +4262,23 @@ TableLayout.prototype.moveCell = function(cell, x, y)
 };
 
 /**
- * Updates column width and row height.
+ * 
  */
-TableLayout.prototype.resizeCell = function(cell, bounds)
+TableLayout.prototype.resizeCell = function(cell, geo, prev)
 {
-	if (this.isTable(cell))
+	if (this.graph.isTable(cell))
 	{
-		this.tableResized(cell, bounds);
+		this.graph.tableResized(cell, geo, prev);
 	}
-	else if (this.isTableRow(cell))
+	else if (this.graph.isTableRow(cell))
 	{
-		this.tableRowResized(cell, bounds);
+		this.graph.tableRowResized(cell, geo, prev);
 	}
-	else if (this.isTableCell(cell))
+	else if (this.graph.isTableCell(cell))
 	{
-		this.tableCellResized(cell, bounds);
-	}
-};
-
-/**
- * Updates column width and row height.
- */
-TableLayout.prototype.tableResized = function(table)
-{
-	console.log('tableLayout.tableResized', table);
-	
-	var model = this.graph.getModel();
-	var rowCount = model.getChildCount(table);
-	var tableGeo = this.graph.getCellGeometry(table);
-	
-	if (tableGeo != null && rowCount > 0)
-	{
-		var tableSize = this.graph.getStartSize(table);
-		var y = tableSize.height;
-		
-		for (var i = 0; i < rowCount; i++)
-		{
-			var row = model.getChildAt(table, i);
-			
-			if (row != null)
-			{
-				var rowGeo = this.graph.getCellGeometry(row);
-				
-				if (rowGeo != null)
-				{
-					if (i == rowCount - 1)
-					{
-						rowGeo = rowGeo.clone();
-						rowGeo.width = tableGeo.width;
-						
-						if (y < tableGeo.height)
-						{
-							rowGeo.height = tableGeo.height - y;
-						}
-						else if (y > tableGeo.height)
-						{
-							tableGeo.height = y + this.graph.gridSize;
-							rowGeo.height = this.graph.gridSize;
-						}
-						
-						model.setGeometry(row, rowGeo);
-						this.tableRowResized(row);
-					}
-					
-					y += rowGeo.height;
-				}
-			}
-		}
-	}
-};
-
-/**
- * Updates column width and row height.
- */
-TableLayout.prototype.tableRowResized = function(row)
-{
-	console.log('tableLayout.tableRowResized', row);
-	
-	var model = this.graph.getModel();
-	var cellCount = model.getChildCount(row);
-	var rowGeo = this.graph.getCellGeometry(row);
-	
-	if (rowGeo != null && cellCount > 0)
-	{
-		var x = 0;
-		
-		for (var i = 0; i < cellCount; i++)
-		{
-			var cell = model.getChildAt(row, i);
-	
-			if (cell != null)
-			{
-				var geo = this.graph.getCellGeometry(cell);
-				
-				if (geo != null)
-				{
-					if (i == cellCount - 1)
-					{
-						geo = geo.clone();
-						geo.height = rowGeo.height;
-						
-						if (x < rowGeo.width)
-						{
-							geo.width = rowGeo.width - x;
-						}
-						else if (x > rowGeo.width)
-						{
-							rowGeo.width = x + this.graph.gridSize;
-							geo.width = this.graph.gridSize;
-						}
-						
-						model.setGeometry(cell, geo);
-						this.tableCellResized(cell);
-					}
-					
-					x += geo.width;
-				}
-			}
-		}
-	}
-};
-
-/**
- * Updates column width and row height.
- */
-TableLayout.prototype.tableCellResized = function(cell, bounds)
-{
-	var geo = this.graph.getCellGeometry(cell);
-	
-	if (geo != null)
-	{
-		var model = this.graph.getModel();
-		var row = model.getParent(cell);
-		var index = row.getIndex(cell);
-		
-		// Updates row height
-		
-		// TODO: Handles moving of upper border
-		if (bounds != null && bounds.length == 1 && bounds[0].y != 0)
-		{
-			var table = model.getParent(row);
-			var rowIndex = table.getIndex(row);
-			
-			if (rowIndex > 0)
-			{
-				var row2 = table.getChildAt(rowIndex - 1);
-				var rowGeo2 = this.graph.getCellGeometry(row);
-				
-				if (rowGeo2 != null)
-				{
-					rowGeo2 = rowGeo2.clone();
-					rowGeo2.height += bounds[0].y;
-					model.setGeometry(row2, rowGeo2);
-				}
-			}
-		}
-		else
-		{
-			var rowGeo = this.graph.getCellGeometry(row);
-			
-			if (rowGeo != null)
-			{
-				rowGeo = rowGeo.clone();
-				rowGeo.height = geo.height;
-				model.setGeometry(row, rowGeo);
-			}
-		}
-		
-		// Updates column width
-		var table = model.getParent(row);
-
-		for (var i = 0; i < model.getChildCount(table); i++)
-		{
-			var child = model.getChildAt(model.getChildAt(table, i), index);
-			var childGeo = this.graph.getCellGeometry(child);
-			
-			if (childGeo != null)
-			{
-				childGeo = childGeo.clone();
-				childGeo.width = geo.width;
-				model.setGeometry(child, childGeo);
-			}
-		}
-	}
-};
+		this.graph.tableCellResized(cell, geo, prev);
+	}			
+}
 
 /**
  * Updates column width and row height.
@@ -7485,7 +7292,199 @@ if (typeof mxVertexHandler != 'undefined')
 		        range.select();
 		    }
 		};
+	
+		/**
+		 * Returns true if the given cell is a table cell.
+		 */
+		Graph.prototype.isTableCell = function(cell)
+		{
+			return this.isTableRow(this.model.getParent(cell));
+		};
 		
+		/**
+		 * Returns true if the given cell is a table row.
+		 */
+		Graph.prototype.isTableRow = function(cell)
+		{
+			return this.isTable(this.model.getParent(cell));
+		};
+		
+		/**
+		 * Returns true if the given cell is a table.
+		 */
+		Graph.prototype.isTable = function(cell)
+		{
+			var style = this.getCellStyle(cell);
+			
+			return style != null && style['childLayout'] == 'tableLayout';
+		};
+	
+		/**
+		 * Updates column width and row height.
+		 */
+		Graph.prototype.tableResized = function(table)
+		{
+			console.log('tableLayout.tableResized', table);
+			
+			var model = this.getModel();
+			var rowCount = model.getChildCount(table);
+			var tableGeo = this.getCellGeometry(table);
+			
+			if (tableGeo != null && rowCount > 0)
+			{
+				var tableSize = this.getStartSize(table);
+				var y = tableSize.height;
+				
+				for (var i = 0; i < rowCount; i++)
+				{
+					var row = model.getChildAt(table, i);
+					
+					if (row != null)
+					{
+						var rowGeo = this.getCellGeometry(row);
+						
+						if (rowGeo != null)
+						{
+							if (i == rowCount - 1)
+							{
+								rowGeo = rowGeo.clone();
+								rowGeo.width = tableGeo.width;
+								
+								if (y < tableGeo.height)
+								{
+									rowGeo.height = tableGeo.height - y;
+								}
+								else if (y > tableGeo.height)
+								{
+									tableGeo.height = y + this.gridSize;
+									rowGeo.height = this.gridSize;
+								}
+								
+								model.setGeometry(row, rowGeo);
+								this.tableRowResized(row);
+							}
+							
+							y += rowGeo.height;
+						}
+					}
+				}
+			}
+		};
+		
+		/**
+		 * Updates column width and row height.
+		 */
+		Graph.prototype.tableRowResized = function(row)
+		{
+			console.log('tableLayout.tableRowResized', row);
+			
+			var model = this.getModel();
+			var cellCount = model.getChildCount(row);
+			var rowGeo = this.getCellGeometry(row);
+			
+			if (rowGeo != null && cellCount > 0)
+			{
+				var x = 0;
+				
+				for (var i = 0; i < cellCount; i++)
+				{
+					var cell = model.getChildAt(row, i);
+			
+					if (cell != null)
+					{
+						var geo = this.getCellGeometry(cell);
+						
+						if (geo != null)
+						{
+							if (i == cellCount - 1)
+							{
+								geo = geo.clone();
+								geo.height = rowGeo.height;
+								
+								if (x < rowGeo.width)
+								{
+									geo.width = rowGeo.width - x;
+								}
+								else if (x > rowGeo.width)
+								{
+									rowGeo.width = x + this.gridSize;
+									geo.width = this.gridSize;
+								}
+								
+								model.setGeometry(cell, geo);
+								this.tableCellResized(cell);
+							}
+							
+							x += geo.width;
+						}
+					}
+				}
+			}
+		};
+		
+		/**
+		 * Updates column width and row height.
+		 */
+		Graph.prototype.tableCellResized = function(cell, bounds, prev)
+		{
+			console.log('resized', cell, bounds, prev);
+			var geo = this.getCellGeometry(cell);
+			
+			if (geo != null)
+			{
+				var model = this.getModel();
+				var row = model.getParent(cell);
+				var index = row.getIndex(cell);
+				
+				// Updates row height
+				if (bounds != null && bounds.length == 1 && bounds[0].y != 0)
+				{
+					var table = model.getParent(row);
+					var rowIndex = table.getIndex(row);
+					
+					if (rowIndex > 0)
+					{
+						var row2 = table.getChildAt(rowIndex - 1);
+						var rowGeo2 = this.getCellGeometry(row);
+						
+						if (rowGeo2 != null)
+						{
+							rowGeo2 = rowGeo2.clone();
+							rowGeo2.height += bounds[0].y;
+							model.setGeometry(row2, rowGeo2);
+						}
+					}
+				}
+				else
+				{
+					var rowGeo = this.getCellGeometry(row);
+					
+					if (rowGeo != null)
+					{
+						rowGeo = rowGeo.clone();
+						rowGeo.height = geo.height;
+						model.setGeometry(row, rowGeo);
+					}
+				}
+				
+				// Updates column width
+				var table = model.getParent(row);
+		
+				for (var i = 0; i < model.getChildCount(table); i++)
+				{
+					var child = model.getChildAt(model.getChildAt(table, i), index);
+					var childGeo = this.getCellGeometry(child);
+					
+					if (childGeo != null)
+					{
+						childGeo = childGeo.clone();
+						childGeo.width = geo.width;
+						model.setGeometry(child, childGeo);
+					}
+				}
+			}
+		};
+
 		/**
 		 * Inserts a new row into the given table.
 		 */
@@ -8611,7 +8610,7 @@ if (typeof mxVertexHandler != 'undefined')
 				this.linkHint.style.display = '';
 			}
 		};
-		
+
 		/**
 		 * Hides link hint while moving cells.
 		 */
