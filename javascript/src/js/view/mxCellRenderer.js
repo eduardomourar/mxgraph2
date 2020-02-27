@@ -1504,6 +1504,27 @@ mxCellRenderer.prototype.redrawShape = function(state, force, rendering)
 		state.view.graph.selectionCellsHandler.updateHandler(state);
 		force = true;
 	}
+	
+	// Updates indicator shape
+	if (state.shape != null && state.shape.indicatorShape !=
+		this.getShape(state.view.graph.getIndicatorShape(state)))
+	{
+		if (state.shape.indicator != null)
+		{
+			state.shape.indicator.destroy();
+			state.shape.indicator = null;
+		}
+		
+		this.createIndicatorShape(state);
+		
+		if (state.shape.indicatorShape != null)
+		{
+			state.shape.indicator = new state.shape.indicatorShape();
+			state.shape.indicator.dialect = state.shape.dialect;
+			state.shape.indicator.init(state.node);
+			force = true;
+		}
+	}
 
 	if (state.shape != null)
 	{
