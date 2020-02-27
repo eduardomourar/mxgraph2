@@ -9197,11 +9197,12 @@ mxGraph.prototype.getCursorForCell = function(cell)
  * Parameters:
  * 
  * swimlane - <mxCell> whose start size should be returned.
+ * ignoreCache - Optional boolean that specifies if cell state should be ignored.
  */
-mxGraph.prototype.getStartSize = function(swimlane)
+mxGraph.prototype.getStartSize = function(swimlane, ignoreState)
 {
 	var result = new mxRectangle();
-	var state = this.view.getState(swimlane);
+	var state = (ignoreState) ? null : this.view.getState(swimlane);
 	var style = (state != null) ? state.style : this.getCellStyle(swimlane);
 	
 	if (style != null)
