@@ -1,3 +1,4 @@
+- Fixes update of indicator shape after style change
 - Adds support for referenced font colors
 
 24-JAN-2020: 4.1.0
