@@ -7325,7 +7325,6 @@ if (typeof mxVertexHandler != 'undefined')
 		Graph.prototype.tableResized = function(table)
 		{
 			console.log('tableLayout.tableResized', table);
-			
 			var model = this.getModel();
 			var rowCount = model.getChildCount(table);
 			var tableGeo = this.getCellGeometry(table);
@@ -7347,21 +7346,21 @@ if (typeof mxVertexHandler != 'undefined')
 						{
 							if (i == rowCount - 1)
 							{
-								rowGeo = rowGeo.clone();
-								rowGeo.width = tableGeo.width;
+								var newRowGeo = rowGeo.clone();
+								newRowGeo.width = tableGeo.width;
 								
 								if (y < tableGeo.height)
 								{
-									rowGeo.height = tableGeo.height - y;
+									newRowGeo.height = tableGeo.height - y;
 								}
 								else if (y > tableGeo.height)
 								{
 									tableGeo.height = y + this.gridSize;
-									rowGeo.height = this.gridSize;
+									newRowGeo.height = this.gridSize;
 								}
 								
-								model.setGeometry(row, rowGeo);
-								this.tableRowResized(row);
+								model.setGeometry(row, newRowGeo);
+								this.tableRowResized(row, newRowGeo, rowGeo);
 							}
 							
 							y += rowGeo.height;
@@ -7374,13 +7373,12 @@ if (typeof mxVertexHandler != 'undefined')
 		/**
 		 * Updates column width and row height.
 		 */
-		Graph.prototype.tableRowResized = function(row)
+		Graph.prototype.tableRowResized = function(row, bounds, prev)
 		{
 			console.log('tableLayout.tableRowResized', row);
-			
 			var model = this.getModel();
-			var cellCount = model.getChildCount(row);
 			var rowGeo = this.getCellGeometry(row);
+			var cellCount = model.getChildCount(row);
 			
 			if (rowGeo != null && cellCount > 0)
 			{
@@ -7398,26 +7396,43 @@ if (typeof mxVertexHandler != 'undefined')
 						{
 							if (i == cellCount - 1)
 							{
-								geo = geo.clone();
-								geo.height = rowGeo.height;
+								var newGeo = geo.clone();
+								newGeo.height = rowGeo.height;
 								
 								if (x < rowGeo.width)
 								{
-									geo.width = rowGeo.width - x;
+									newGeo.width = rowGeo.width - x;
 								}
 								else if (x > rowGeo.width)
 								{
 									rowGeo.width = x + this.gridSize;
-									geo.width = this.gridSize;
+									newGeo.width = this.gridSize;
 								}
 								
-								model.setGeometry(cell, geo);
-								this.tableCellResized(cell);
+								model.setGeometry(cell, newGeo);
+								this.tableCellResized(cell, newGeo, geo);
 							}
 							
 							x += geo.width;
 						}
 					}
+				}
+			}
+			
+			// Update previous row height
+			var table = model.getParent(row);
+			var index = table.getIndex(row);
+			
+			if (bounds.y != prev.y && index > 0)
+			{
+				var previousRow = model.getChildAt(table, index - 1);
+				var prg = this.getCellGeometry(previousRow);
+				
+				if (prg != null)
+				{
+					prg = prg.clone();
+					prg.height -= prev.y - bounds.y;
+					model.setGeometry(previousRow, prg);
 				}
 			}
 		};
@@ -7434,52 +7449,68 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				var model = this.getModel();
 				var row = model.getParent(cell);
+				var table = model.getParent(row);
 				var index = row.getIndex(cell);
 				
 				// Updates row height
-				if (bounds != null && bounds.length == 1 && bounds[0].y != 0)
+				var rowGeo = this.getCellGeometry(row);
+				
+				if (rowGeo != null)
 				{
-					var table = model.getParent(row);
-					var rowIndex = table.getIndex(row);
-					
-					if (rowIndex > 0)
-					{
-						var row2 = table.getChildAt(rowIndex - 1);
-						var rowGeo2 = this.getCellGeometry(row);
-						
-						if (rowGeo2 != null)
-						{
-							rowGeo2 = rowGeo2.clone();
-							rowGeo2.height += bounds[0].y;
-							model.setGeometry(row2, rowGeo2);
-						}
-					}
-				}
-				else
-				{
-					var rowGeo = this.getCellGeometry(row);
-					
-					if (rowGeo != null)
-					{
-						rowGeo = rowGeo.clone();
-						rowGeo.height = geo.height;
-						model.setGeometry(row, rowGeo);
-					}
+					rowGeo = rowGeo.clone();
+					rowGeo.height = geo.height;
+					model.setGeometry(row, rowGeo);
 				}
 				
 				// Updates column width
-				var table = model.getParent(row);
-		
+				var previousRow = null;
+				
 				for (var i = 0; i < model.getChildCount(table); i++)
 				{
-					var child = model.getChildAt(model.getChildAt(table, i), index);
+					var currentRow = model.getChildAt(table, i);
+					var child = model.getChildAt(currentRow, index);
+
+					if (cell != child)
+					{
+						var childGeo = this.getCellGeometry(child);
+						
+						if (childGeo != null)
+						{
+							childGeo = childGeo.clone();
+							childGeo.width = geo.width;
+							model.setGeometry(child, childGeo);
+						}
+					}
+					
+					// Updates previous row height
+					if (bounds.y != prev.y && currentRow == row && previousRow != null)
+					{
+						var prg = this.getCellGeometry(previousRow);
+						
+						if (prg != null)
+						{
+							prg = prg.clone();
+							prg.height -= prev.y - bounds.y;
+							model.setGeometry(previousRow, prg);
+						}
+					}
+					
+					previousRow = currentRow;
+				}
+				
+				// Updates previous column width
+				if (bounds.x != prev.x && index > 0)
+				{
+					var child = model.getChildAt(row, index - 1);
 					var childGeo = this.getCellGeometry(child);
 					
 					if (childGeo != null)
 					{
-						childGeo = childGeo.clone();
-						childGeo.width = geo.width;
-						model.setGeometry(child, childGeo);
+						var newChildGeo = childGeo.clone();
+						newChildGeo.width -= prev.x - bounds.x;
+						model.setGeometry(child, newChildGeo);
+						
+						this.tableCellResized(child, newChildGeo, childGeo);
 					}
 				}
 			}
