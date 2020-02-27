@@ -4296,10 +4296,12 @@ TableLayout.prototype.execute = function(table)
 {
 	console.log('tableLayout.execute', table);
 	
-	var tableSize = this.graph.getStartSize(table);
+	var tableSize = this.graph.getStartSize(table, true);
 	var model = this.graph.getModel();
 	var y = tableSize.height;
 	var x = 0;
+	
+	console.log('tableSize', tableSize);
 	
 	for (var i = 0; i < model.getChildCount(table); i++)
 	{
@@ -4308,10 +4310,11 @@ TableLayout.prototype.execute = function(table)
 		if (row != null)
 		{
 			var rowGeo = this.graph.getCellGeometry(row);
+			var rowSize = this.graph.getStartSize(row, true);
 			
 			if (rowGeo != null)
 			{
-				x = tableSize.width;
+				x = rowSize.width;
 				
 				for (var j = 0; j < model.getChildCount(row); j++)
 				{
@@ -4338,7 +4341,7 @@ TableLayout.prototype.execute = function(table)
 				rowGeo = rowGeo.clone();
 				rowGeo.width = x;
 				rowGeo.y = y;
-				rowGeo.x = 0;
+				rowGeo.x = tableSize.width;
 				model.setGeometry(row, rowGeo);
 				
 				y += rowGeo.height;
@@ -4352,7 +4355,7 @@ TableLayout.prototype.execute = function(table)
 	if (tableGeo != null)
 	{
 		tableGeo = tableGeo.clone();
-		tableGeo.width = x;
+		tableGeo.width = x + tableSize.width;
 		tableGeo.height = y;
 		model.setGeometry(table, tableGeo);
 	}
@@ -7451,7 +7454,7 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.tableCellResized = function(cell, bounds, prev)
 		{
-			console.log('resized', cell, bounds, prev);
+			console.log('tableLayout.tableCellResized', cell, bounds, prev);
 			var geo = this.getCellGeometry(cell);
 			
 			if (geo != null)
