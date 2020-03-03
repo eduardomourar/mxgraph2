@@ -1036,6 +1036,16 @@ Graph.lineJumpsEnabled = true;
 Graph.defaultJumpSize = 6;
 
 /**
+ * Minimum width for table columns.
+ */
+Graph.minTableColumnWidth = 20;
+
+/**
+ * Minimum height for table rows.
+ */
+Graph.minTableRowHeight = 20;
+
+/**
  * Text for foreign object warning.
  */
 Graph.foreignObjectWarningText = 'Viewer does not support full SVG 1.1';
@@ -7304,7 +7314,256 @@ if (typeof mxVertexHandler != 'undefined')
 		        range.select();
 		    }
 		};
+		
+		/**
+		 * 
+		 */
+		Graph.prototype.insertTableColumn = function(cell, before)
+		{
+			var model = this.getModel();
+			model.beginUpdate();
+			
+			try
+			{
+				var table = cell;
+				var index = 0;
+				
+				if (this.isTableCell(cell))
+				{
+					var row = model.getParent(cell);
+					table = model.getParent(row);
+					index = row.getIndex(cell);
+				}
+				else
+				{
+					if (this.isTableRow(cell))
+					{
+						table = model.getParent(cell);
+					}
+					
+					if (!before)
+					{
+						index = model.getChildCount(model.getChildAt(table, 0)) - 1;
+					}
+				}
+					
+				for (var i = 0; i < model.getChildCount(table); i++)
+				{
+					var row = model.getChildAt(table, i);
+					var child = model.getChildAt(row, index);
+					var clone = model.cloneCell(child);
+					var geo = this.getCellGeometry(clone);
+					clone.value = null;
+					
+					if (geo != null)
+					{
+						geo.width = Graph.minTableColumnWidth;
+						var rowGeo = this.getCellGeometry(row);
+						
+						if (rowGeo != null)
+						{
+							geo.height = rowGeo.height;
+						}
+					}
+					
+					model.add(row, clone, index + ((before) ? 0 : 1));
+				}
+				
+				var tableGeo = this.getCellGeometry(table);
+				
+				if (tableGeo != null)
+				{
+					tableGeo = tableGeo.clone();
+					tableGeo.width += Graph.minColumnWidth;
+					
+					model.setGeometry(table, tableGeo);
+				}
+			}
+			finally
+			{
+				model.endUpdate();
+			}
+		};
+		
+		/**
+		 * 
+		 */
+		Graph.prototype.insertTableRow = function(cell, before)
+		{
+			var model = this.getModel();
+			model.beginUpdate();
+			
+			try
+			{
+				var table = cell;
+				var index = 0;
+				
+				if (this.isTableCell(cell))
+				{
+					var row = model.getParent(cell);
+					table = model.getParent(row);
+					index = table.getIndex(row);
+				}
+				else if (this.isTableRow(cell))
+				{
+					table = model.getParent(cell);
+					index = table.getIndex(cell);
+				}
+				else if (!before)
+				{
+					index = model.getChildCount(table) - 1;
+				}
+				
+				var row = model.cloneCell(model.getChildAt(table, index));
+				row.value = null;
+				
+				var rowGeo = this.getCellGeometry(row);
+				
+				if (rowGeo != null)
+				{
+					rowGeo.height = Graph.minTableRowHeight;
+					
+					for (var i = 0; i < model.getChildCount(row); i++)
+					{
+						var cell = model.getChildAt(row, i);
+						cell.value = null;
+						
+						var geo = this.getCellGeometry(cell);
+						
+						if (geo != null)
+						{
+							geo.height = rowGeo.height;
+						}
+					}
+					
+					model.add(table, row, index + ((before) ? 0 : 1));
+					
+					var tableGeo = this.getCellGeometry(table);
+					
+					if (tableGeo != null)
+					{
+						tableGeo = tableGeo.clone();
+						tableGeo.height += rowGeo.height;
+						
+						model.setGeometry(table, tableGeo);
+					}
+				}
+			}
+			finally
+			{
+				model.endUpdate();
+			}
+		};
 	
+		/**
+		 * 
+		 */
+		Graph.prototype.deleteTableColumn = function(cell)
+		{
+			var model = this.getModel();
+			model.beginUpdate();
+			
+			try
+			{
+				var table = cell;
+				var index = 0;
+				
+				if (this.isTableCell(cell))
+				{
+					var row = model.getParent(cell);
+					table = model.getParent(row);
+					index = table.getIndex(row);
+				}
+				else if (this.isTableRow(cell))
+				{
+					table = model.getParent(cell);
+					index = table.getIndex(cell);
+				}
+				else if (!before)
+				{
+					index = model.getChildCount(table) - 1;
+				}
+				
+				var width = 0;
+				
+				for (var i = 0; i < model.getChildCount(table); i++)
+				{
+					var row = model.getChildAt(table, i);
+					var child = model.getChildAt(row, index);
+					model.remove(child);
+					
+					var geo = this.getCellGeometry(child);
+					
+					if (geo != null)
+					{
+						width = Math.max(width, geo.width);
+					}
+				}
+				
+				var tableGeo = this.getCellGeometry(table);
+				
+				if (tableGeo != null)
+				{
+					tableGeo = tableGeo.clone();
+					tableGeo.width -= width;
+					
+					model.setGeometry(table, tableGeo);
+				}
+			}
+			finally
+			{
+				model.endUpdate();
+			}
+		};
+		
+		/**
+		 * 
+		 */
+		Graph.prototype.deleteTableRow = function(cell)
+		{
+			var model = this.getModel();
+			model.beginUpdate();
+			
+			try
+			{
+				var row = cell;
+				
+				if (this.isTableCell(cell))
+				{
+					row = model.getParent(cell);
+				}
+				else if (this.isTable(cell))
+				{
+					row = model.getChildAt(cell, 0);
+				}
+				
+				var table = model.getParent(row);
+				model.remove(row);
+				var height = 0;
+				
+				var geo = this.getCellGeometry(row);
+				
+				if (geo != null)
+				{
+					height = geo.height;
+				}
+				
+				var tableGeo = this.getCellGeometry(table);
+				
+				if (tableGeo != null)
+				{
+					tableGeo = tableGeo.clone();
+					tableGeo.height -= height;
+					
+					model.setGeometry(table, tableGeo);
+				}
+			}
+			finally
+			{
+				model.endUpdate();
+			}
+		};
+		
 		/**
 		 * Returns true if the given cell is a table cell.
 		 */
@@ -7367,8 +7626,8 @@ if (typeof mxVertexHandler != 'undefined')
 								}
 								else if (y > tableGeo.height)
 								{
-									tableGeo.height = y + this.gridSize;
-									newRowGeo.height = this.gridSize;
+									tableGeo.height = y + Graph.minTableRowHeight;
+									newRowGeo.height = Graph.minTableRowHeight;
 								}
 								
 								model.setGeometry(row, newRowGeo);
@@ -7417,8 +7676,8 @@ if (typeof mxVertexHandler != 'undefined')
 								}
 								else if (x > rowGeo.width)
 								{
-									rowGeo.width = x + this.gridSize;
-									newGeo.width = this.gridSize;
+									rowGeo.width = x + Graph.minTableColumnWidth;
+									newGeo.width = Graph.minTableColumnWidth;
 								}
 								
 								model.setGeometry(cell, newGeo);
