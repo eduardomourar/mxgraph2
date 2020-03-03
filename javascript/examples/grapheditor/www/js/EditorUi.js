@@ -4481,7 +4481,6 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(109, true, 'zoomOut'); // Ctrl+Minus
 	keyHandler.bindAction(80, true, 'print'); // Ctrl+P
 	keyHandler.bindAction(79, true, 'outline', true); // Ctrl+Shift+O
-	keyHandler.bindAction(112, false, 'about'); // F1
 
 	if (!this.editor.chromeless || this.editor.editable)
 	{
