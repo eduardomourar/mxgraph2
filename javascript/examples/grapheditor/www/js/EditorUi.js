@@ -262,8 +262,6 @@ EditorUi = function(editor, container, lightbox)
 			{
 				if (node != null)
 				{
-					console.log('node', node, clone, clone.originalNode != node);
-					
 					if (clone.originalNode != node)
 					{
 						cleanNode(node);
