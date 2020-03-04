@@ -47,7 +47,7 @@ EditorUi = function(editor, container, lightbox)
 			return !mxEvent.isPopupTrigger(me.getEvent());
 		};
 	}
-	
+
     // Creates the user interface
 	this.actions = new Actions(this);
 	this.menus = this.createMenus();
@@ -231,7 +231,145 @@ EditorUi = function(editor, container, lightbox)
 				(mxClient.IS_MAC && mxEvent.isMetaDown(evt)) ||
 				(mxClient.IS_SF && mxEvent.isShiftDown(evt))));
 		};
+
+		// Removes formatting in pasted text
+		var ui = this;
+		var cellEditorInstallListeners = graph.cellEditor.installListeners;
+		graph.cellEditor.installListeners = function(elt)
+		{
+			cellEditorInstallListeners.apply(this, arguments);
+	
+			// Adds a reference from the clone to the original node, recursively
+			function reference(node, clone)
+			{
+				clone.originalNode = node;
 				
+				node = node.firstChild;
+				var child = clone.firstChild;
+				
+				while (node != null && child != null)
+				{
+					reference(node, child);
+					node = node.nextSibling;
+					child = child.nextSibling;
+				}
+				
+				return clone;
+			};
+			
+			// Checks the given node for new nodes, recursively
+			function checkNode(node, clone, removeFormatting)
+			{
+				if (node != null)
+				{
+					console.log('node', node, clone, clone.originalNode != node);
+					
+					if (clone.originalNode != node)
+					{
+						cleanNode(node);
+					}
+					else
+					{
+						node = node.firstChild;
+						clone = clone.firstChild;
+						
+						while (node != null)
+						{
+							var nextNode = node.nextSibling;
+							
+							if (clone == null)
+							{
+								cleanNode(node, removeFormatting);
+							}
+							else
+							{
+								checkNode(node, clone);
+								clone = clone.nextSibling;
+							}
+	
+							node = nextNode;
+						}
+					}
+				}
+			};
+	
+			// Removes unused DOM nodes and attributes, recursively
+			function cleanNode(node, removeFormatting)
+			{
+				var child = node.firstChild;
+				
+				while (child != null)
+				{
+					var next = child.nextSibling;
+					cleanNode(child, removeFormatting);
+					child = next;
+				}
+				
+				if ((node.nodeType != 1 || (node.nodeName !== 'BR' && node.firstChild == null)) &&
+					(node.nodeType != 3 || mxUtils.trim(mxUtils.getTextContent(node)).length == 0))
+				{
+					node.parentNode.removeChild(node);
+				}
+				else
+				{
+					// Removes linefeeds
+					if (node.nodeType == 3)
+					{
+						mxUtils.setTextContent(node, mxUtils.getTextContent(node).replace(/\n|\r/g, ''));
+					}
+					
+					// Removes CSS classes and styles (for Word and Excel)
+					if (node.nodeType == 1)
+					{
+						if (removeFormatting)
+						{
+							node.parentNode.replaceChild(node.ownerDocument.createTextNode(
+								mxUtils.getTextContent(node)), node);
+						}
+						else
+						{
+							node.removeAttribute('style');
+							node.removeAttribute('class');
+							node.removeAttribute('width');
+							node.removeAttribute('cellpadding');
+							node.removeAttribute('cellspacing');
+							node.removeAttribute('border');
+						}
+					}
+				}
+			};
+			
+			// Handles paste from Word, Excel etc by removing styles, classnames and unused nodes
+			// LATER: Fix undo/redo for paste
+			if (!mxClient.IS_QUIRKS && document.documentMode !== 7 && document.documentMode !== 8)
+			{
+				mxEvent.addListener(this.textarea, 'paste', mxUtils.bind(this, function(evt)
+				{
+					var clone = reference(this.textarea, this.textarea.cloneNode(true));
+	
+					window.setTimeout(mxUtils.bind(this, function()
+					{
+						// Paste from Word or Excel
+						if (this.textarea != null &&
+							(this.textarea.innerHTML.indexOf('<o:OfficeDocumentSettings>') >= 0 ||
+							this.textarea.innerHTML.indexOf('<!--[if !mso]>') >= 0))
+						{
+							checkNode(this.textarea, clone);
+						}
+						// TODO: Needs more testing for existing text in cell and a check
+						// if there is any formatting in the pasted text
+//						else if (this.textarea != null)
+//						{
+//							ui.confirm(mxResources.get('removeFormat'), mxUtils.bind(this, function()
+//							{
+//								checkNode(this.textarea, clone, true);
+//							}));
+//						}
+					}), 0);
+				}));
+			}
+		};
+
 		// Adds space+wheel for zoom
 		var graphIsZoomWheelEvent = graph.isZoomWheelEvent;
 		
@@ -4481,6 +4619,7 @@ EditorUi.prototype.createKeyHandler = function(editor)
 	keyHandler.bindAction(109, true, 'zoomOut'); // Ctrl+Minus
 	keyHandler.bindAction(80, true, 'print'); // Ctrl+P
 	keyHandler.bindAction(79, true, 'outline', true); // Ctrl+Shift+O
+	keyHandler.bindAction(112, false, 'about'); // F1
 
 	if (!this.editor.chromeless || this.editor.editable)
 	{
