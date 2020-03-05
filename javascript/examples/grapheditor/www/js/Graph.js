@@ -1881,6 +1881,7 @@ Graph.prototype.initLayoutManager = function()
 	var stackLayout = new mxStackLayout(this, true);
 	var treeLayout = new mxCompactTreeLayout(this);
 	var circleLayout = new mxCircleLayout(this);
+	var rowLayout = new TableRowLayout(this);
 	var tableLayout = new TableLayout(this);
 
 	this.layoutManager.getLayout = function(cell, eventName)
@@ -1948,7 +1949,11 @@ Graph.prototype.initLayoutManager = function()
 				{
 					return organicLayout;
 				}
-				else if (style['childLayout'] == 'tableLayout')
+				else if (this.graph.isTableRow(cell))
+				{
+					return rowLayout;
+				}
+				else if (this.graph.isTable(cell))
 				{
 					return tableLayout;
 				}
@@ -4277,6 +4282,7 @@ TableLayout.prototype.constructor = TableLayout;
  */
 TableLayout.prototype.moveCell = function(cell, x, y)
 {
+	// TODO: Reorder rows
 	console.log('tableLayout.moveCell', cell, x, y);
 };
 
@@ -4297,7 +4303,7 @@ TableLayout.prototype.resizeCell = function(cell, geo, prev)
 	{
 		this.graph.tableCellResized(cell, geo, prev);
 	}			
-}
+};
 
 /**
  * Updates column width and row height.
@@ -4364,6 +4370,54 @@ TableLayout.prototype.execute = function(table)
 		tableGeo.width = x + tableSize.width;
 		tableGeo.height = y;
 		model.setGeometry(table, tableGeo);
+	}
+};
+
+/**
+ * Table Layout
+ */
+function TableRowLayout(graph)
+{
+	mxGraphLayout.call(this, graph);
+};
+
+/**
+ * Extends mxGraphLayout
+ */
+TableRowLayout.prototype = new TableLayout();
+TableRowLayout.prototype.constructor = TableRowLayout;
+
+/**
+ * Reorders rows.
+ */
+TableRowLayout.prototype.moveCell = function(cell, x, y)
+{
+	// TODO: Reorder columns
+	console.log('TableRowLayout.moveCell', cell, x, y);
+};
+
+/**
+ * Updates row start sizes.
+ */
+TableRowLayout.prototype.execute = function(row)
+{
+	var size = this.graph.getStartSize(row);
+	var model = this.graph.getModel();
+	var table = model.getParent(row);
+	
+	model.beginUpdate();
+	try
+	{
+		for (var i = 0; i < model.getChildCount(table); i++)
+		{
+			// TODO: Check orientation and horizontal style
+			this.graph.setCellStyles(mxConstants.STYLE_STARTSIZE,
+				size.width, [model.getChildAt(table, i)]);
+		}
+	}
+	finally
+	{
+		model.endUpdate();
 	}
 };
 
