@@ -4304,14 +4304,10 @@ TableLayout.prototype.resizeCell = function(cell, geo, prev)
  */
 TableLayout.prototype.execute = function(table)
 {
-	console.log('tableLayout.execute', table);
-	
 	var tableSize = this.graph.getStartSize(table, true);
 	var model = this.graph.getModel();
 	var y = tableSize.height;
 	var x = 0;
-	
-	console.log('tableSize', tableSize);
 	
 	for (var i = 0; i < model.getChildCount(table); i++)
 	{

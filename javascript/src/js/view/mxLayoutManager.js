@@ -11,11 +11,13 @@
  * 
  * (code)
  * var layoutMgr = new mxLayoutManager(graph);
- * layoutMgr.getLayout = function(cell)
+ * layoutMgr.getLayout = function(cell, eventName)
  * {
  *   return layout;
  * };
  * (end)
+ * 
+ * See <getLayout> for a description of the possible eventNames.
  * 
  * Event: mxEvent.LAYOUT_CELLS
  * 
@@ -93,11 +95,11 @@ mxLayoutManager.prototype.bubbling = true;
 mxLayoutManager.prototype.enabled = true;
 
 /**
- * Variable: updateHandler
+ * Variable: undoHandler
  * 
  * Holds the function that handles the endUpdate event.
  */
-mxLayoutManager.prototype.updateHandler = null;
+mxLayoutManager.prototype.undoHandler = null;
 
 /**
  * Variable: moveHandler
@@ -200,9 +202,13 @@ mxLayoutManager.prototype.setGraph = function(graph)
 /**
  * Function: getLayout
  * 
- * Returns the layout to be executed for the given graph and parent.
+ * Returns the layout for the given cell and eventName. Possible
+ * event names are <mxEvent.MOVE_CELLS> and <mxEvent.RESIZE_CELLS>
+ * for callbacks on when cells are moved or resized and
+ * <mxEvent.BEGIN_UPDATE> and <mxEvent.END_UPDATE> for the capture
+ * and bubble phase of the layout after any changes of the model.
  */
-mxLayoutManager.prototype.getLayout = function(parent, bubble)
+mxLayoutManager.prototype.getLayout = function(cell, eventName)
 {
 	return null;
 };
@@ -210,7 +216,7 @@ mxLayoutManager.prototype.getLayout = function(parent, bubble)
 /**
  * Function: beforeUndo
  * 
- * Called from the undoHandler.
+ * Called from <undoHandler>.
  *
  * Parameters:
  * 
@@ -219,38 +225,13 @@ mxLayoutManager.prototype.getLayout = function(parent, bubble)
  */
 mxLayoutManager.prototype.beforeUndo = function(undoableEdit)
 {
-	var cells = this.getCellsForChanges(undoableEdit.changes);
-	var model = this.getGraph().getModel();
-
-	// Adds all descendants
-	var tmp = [];
-	
-	for (var i = 0; i < cells.length; i++)
-	{
-		tmp = tmp.concat(model.getDescendants(cells[i]));
-	}
-	
-	cells = tmp;
-	
-	// Adds all parent ancestors
-	if (this.isBubbling())
-	{
-		tmp = model.getParents(cells);
-		
-		while (tmp.length > 0)
-		{
-			cells = cells.concat(tmp);
-			tmp = model.getParents(tmp);
-		}
-	}
-	
-	this.executeLayoutForCells(cells);
+	this.executeLayoutForCells(this.getCellsForChanges(undoableEdit.changes));
 };
 
 /**
  * Function: cellsMoved
  * 
- * Called from the <moveHandler>.
+ * Called from <moveHandler>.
  *
  * Parameters:
  * 
@@ -281,7 +262,7 @@ mxLayoutManager.prototype.cellsMoved = function(cells, evt)
 /**
  * Function: cellsResized
  * 
- * Called from the <resizeHandler>.
+ * Called from <resizeHandler>.
  *
  * Parameters:
  * 
@@ -331,13 +312,12 @@ mxLayoutManager.prototype.getAncestorLayout = function(cell, eventName)
 };
 
 /**
- * Function: getCellsForEdit
+ * Function: getCellsForChanges
  * 
- * Returns the cells to be layouted for the given sequence of changes.
+ * Returns the cells for which a layout should be executed.
  */
 mxLayoutManager.prototype.getCellsForChanges = function(changes)
 {
-	var dict = new mxDictionary();
 	var result = [];
 	
 	for (var i = 0; i < changes.length; i++)
@@ -350,16 +330,7 @@ mxLayoutManager.prototype.getCellsForChanges = function(changes)
 		}
 		else
 		{
-			var cells = this.getCellsForChange(change);
-			
-			for (var j = 0; j < cells.length; j++)
-			{
-				if (cells[j] != null && !dict.get(cells[j]))
-				{
-					dict.put(cells[j], true);
-					result.push(cells[j]);
-				}
-			}
+			result = result.concat(this.getCellsForChange(change));
 		}
 	}
 	
@@ -374,22 +345,91 @@ mxLayoutManager.prototype.getCellsForChanges = function(changes)
  */
 mxLayoutManager.prototype.getCellsForChange = function(change)
 {
-	var model = this.getGraph().getModel();
-	
 	if (change instanceof mxChildChange)
 	{
-		return [change.child, change.previous, model.getParent(change.child)];
+		return this.addCellsWithLayout(change.child,
+			this.addCellsWithLayout(change.previous));
 	}
-	else if (change instanceof mxTerminalChange || change instanceof mxGeometryChange)
+	else if (change instanceof mxTerminalChange ||
+		change instanceof mxGeometryChange)
 	{
-		return [change.cell, model.getParent(change.cell)];
+		return this.addCellsWithLayout(change.cell);
 	}
-	else if (change instanceof mxVisibleChange || change instanceof mxStyleChange)
+	else if (change instanceof mxVisibleChange ||
+		change instanceof mxStyleChange)
 	{
-		return [change.cell];
+		return this.addCellsWithLayout(change.cell);
 	}
 	
 	return [];
+};
+
+/**
+ * Function: addCellsWithLayout
+ * 
+ * Adds all ancestors of the given cell that have a layout.
+ */
+mxLayoutManager.prototype.addCellsWithLayout = function(cell, result)
+{
+	return this.addDescendantsWithLayout(cell,
+		this.addAncestorsWithLayout(cell, result));
+};
+
+/**
+ * Function: addAncestorsWithLayout
+ * 
+ * Adds all ancestors of the given cell that have a layout.
+ */
+mxLayoutManager.prototype.addAncestorsWithLayout = function(cell, result)
+{
+	result = (result != null) ? result : [];
+	
+	if (cell != null)
+	{
+		var layout = this.getLayout(cell);
+		
+		if (layout != null)
+		{
+			result.push(cell);
+		}
+		
+		if (this.isBubbling())
+		{
+			var model = this.getGraph().getModel();
+			this.addAncestorsWithLayout(
+				model.getParent(cell), result);
+		}
+	}
+	
+	return result;
+};
+
+/**
+ * Function: addDescendantsWithLayout
+ * 
+ * Adds all descendants of the given cell that have a layout.
+ */
+mxLayoutManager.prototype.addDescendantsWithLayout = function(cell, result)
+{
+	result = (result != null) ? result : [];
+	
+	if (cell != null && this.getLayout(cell) != null)
+	{
+		var model = this.getGraph().getModel();
+		
+		for (var i = 0; i < model.getChildCount(cell); i++)
+		{
+			var child = model.getChildAt(cell, i);
+			
+			if (this.getLayout(child) != null)
+			{
+				result.push(child);
+				this.addDescendantsWithLayout(child, result);
+			}
+		}
+	}
+	
+	return result;
 };
 
 /**
@@ -428,11 +468,8 @@ mxLayoutManager.prototype.layoutCells = function(cells, bubble)
 			{
 				if (cells[i] != model.getRoot() && cells[i] != last)
 				{
-					if (this.executeLayout(this.getLayout(cells[i], (bubble) ?
-						mxEvent.END_UPDATE : mxEvent.BEGIN_UPDATE), cells[i], bubble))
-					{
-						last = cells[i];
-					}
+					this.executeLayout(cells[i], bubble);
+					last = cells[i];
 				}
 			}
 			
@@ -450,17 +487,16 @@ mxLayoutManager.prototype.layoutCells = function(cells, bubble)
  * 
  * Executes the given layout on the given parent.
  */
-mxLayoutManager.prototype.executeLayout = function(layout, parent, bubble)
+mxLayoutManager.prototype.executeLayout = function(cell, bubble)
 {
-	var result = false;
-	
-	if (layout != null && parent != null)
+	var layout = this.getLayout(cell, (bubble) ?
+		mxEvent.END_UPDATE : mxEvent.BEGIN_UPDATE);
+
+	if (layout != null)
 	{
-		layout.execute(parent);
-		result = true;
+		console.log('executeLayout', layout, cell);
+		layout.execute(cell);
 	}
-	
-	return result;
 };
 
 /**
