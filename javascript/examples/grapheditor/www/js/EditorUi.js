@@ -2325,7 +2325,7 @@ EditorUi.prototype.initCanvas = function()
 		if (this.dialogs == null || this.dialogs.length == 0)
 		{
 			// Scrolls with scrollbars turned off
-			if (!graph.scrollbars && !graph.isZoomWheelEvent(evt))
+			if (!graph.scrollbars && graph.isScrollWheelEvent(evt))
             {
                 var t = graph.view.getTranslate();
                 var step = 40 / graph.view.scale;
