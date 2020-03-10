@@ -1036,20 +1036,23 @@ Menus.prototype.addMenuItems = function(menu, keys, parent, trigger, sprites)
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
-Menus.prototype.createPopupMenu = function(menu, cell, evt)
+Menus.prototype.createPopupMenu = function(menu, cell, evt, noEditPart)
 {
 	var graph = this.editorUi.editor.graph;
 	menu.smartSeparators = true;
 	
-	if (graph.isSelectionEmpty())
+	if (!noEditPart)
 	{
-		this.addMenuItems(menu, ['undo', 'redo', 'pasteHere'], null, evt);
+		if (graph.isSelectionEmpty())
+		{
+			this.addMenuItems(menu, ['undo', 'redo', 'pasteHere'], null, evt);
+		}
+		else
+		{
+			this.addMenuItems(menu, ['delete', '-', 'cut', 'copy', '-', 'duplicate'], null, evt);
+		}
 	}
-	else
-	{
-		this.addMenuItems(menu, ['delete', '-', 'cut', 'copy', '-', 'duplicate'], null, evt);
-	}
-
+	
 	if (!graph.isSelectionEmpty())
 	{
 		if (graph.getSelectionCount() == 1)
