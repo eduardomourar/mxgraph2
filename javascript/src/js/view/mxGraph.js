@@ -11098,7 +11098,15 @@ mxGraph.prototype.getSwimlane = function(cell)
  */
 mxGraph.prototype.getSwimlaneAt = function (x, y, parent)
 {
-	parent = parent || this.getDefaultParent();
+	if (parent == null)
+	{
+		parent = this.getCurrentRoot();
+		
+		if (parent == null)
+		{
+			parent = this.model.getRoot();
+		}
+	}
 	
 	if (parent != null)
 	{
@@ -11107,19 +11115,23 @@ mxGraph.prototype.getSwimlaneAt = function (x, y, parent)
 		for (var i = 0; i < childCount; i++)
 		{
 			var child = this.model.getChildAt(parent, i);
-			var result = this.getSwimlaneAt(x, y, child);
 			
-			if (result != null)
+			if (child != null)
 			{
-				return result;
-			}
-			else if (this.isSwimlane(child))
-			{
-				var state = this.view.getState(child);
+				var result = this.getSwimlaneAt(x, y, child);
 				
-				if (this.intersects(state, x, y))
+				if (result != null)
 				{
-					return child;
+					return result;
+				}
+				else if (this.isCellVisible(child) && this.isSwimlane(child))
+				{
+					var state = this.view.getState(child);
+					
+					if (this.intersects(state, x, y))
+					{
+						return child;
+					}
 				}
 			}
 		}
