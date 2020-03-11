@@ -2072,6 +2072,14 @@ Graph.prototype.isZoomWheelEvent = function(evt)
 };
 
 /**
+ * Returns true if the given scroll wheel event should be used for scrolling.
+ */
+Graph.prototype.isScrollWheelEvent = function(evt)
+{
+	return !this.isZoomWheelEvent(evt);
+};
+
+/**
  * Adds Alt+click to select cells behind cells (Shift+Click on Chrome OS).
  */
 Graph.prototype.isTransparentClickEvent = function(evt)
@@ -3162,14 +3170,14 @@ Graph.prototype.selectCells = function(vertices, edges, parent)
  */
 Graph.prototype.getSwimlaneAt = function (x, y, parent)
 {
-	parent = parent || this.getDefaultParent();
-
-	if (!this.isCellLocked(parent))
+	var result = mxGraph.prototype.getSwimlaneAt.apply(this, arguments);
+	
+	if (this.isCellLocked(result))
 	{
-		return mxGraph.prototype.getSwimlaneAt.apply(this, arguments);
+		result = null;
 	}
 	
-	return null;
+	return result;
 };
 
 /**

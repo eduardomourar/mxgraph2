@@ -1,3 +1,4 @@
+- Uses all layers in getSwimlaneAt
 - Fixes update of indicator shape after style change
 - Adds support for referenced font colors
 
