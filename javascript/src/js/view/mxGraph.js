@@ -1904,8 +1904,14 @@ mxGraph.prototype.setSelectionModel = function(selectionModel)
  * Function: getSelectionCellsForChanges
  * 
  * Returns the cells to be selected for the given array of changes.
+ * 
+ * Parameters:
+ * 
+ * ignoreFn - Optional function that takes a change and returns true if the
+ * change should be ignored.
+ * 
  */
-mxGraph.prototype.getSelectionCellsForChanges = function(changes)
+mxGraph.prototype.getSelectionCellsForChanges = function(changes, ignoreFn)
 {
 	var dict = new mxDictionary();
 	var cells = [];
@@ -1935,7 +1941,8 @@ mxGraph.prototype.getSelectionCellsForChanges = function(changes)
 	{
 		var change = changes[i];
 		
-		if (change.constructor != mxRootChange)
+		if (change.constructor != mxRootChange &&
+			(ignoreFn == null || !ignoreFn(change)))
 		{
 			var cell = null;
 
@@ -1943,7 +1950,8 @@ mxGraph.prototype.getSelectionCellsForChanges = function(changes)
 			{
 				cell = change.child;
 			}
-			else if (change.cell != null && change.cell instanceof mxCell)
+			else if (!structureOnly && change.cell != null &&
+				change.cell instanceof mxCell)
 			{
 				cell = change.cell;
 			}
