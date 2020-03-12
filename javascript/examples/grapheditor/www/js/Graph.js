@@ -4301,7 +4301,7 @@ Graph.prototype.isTable = function(cell)
 /**
  * Updates column width and row height.
  */
-Graph.prototype.getActualStartSize = function(cell, ignoreState)
+Graph.prototype.getActualStartSize = function(swimlane, ignoreState)
 {
 	var result = new mxRectangle();
 	var state = (ignoreState) ? null : this.view.getState(swimlane);
@@ -4325,18 +4325,23 @@ Graph.prototype.getActualStartSize = function(cell, ignoreState)
 			result.x = size;
 		}
 		
-		if (dir == mxConstants.DIRECTION_SOUTH || dir == mxConstants.DIRECTION_NORTH)
+		if (dir == mxConstants.DIRECTION_SOUTH || dir == mxConstants.DIRECTION_WEST)
 		{
-			var tmp = size.x;
-			size.y = size.y;
-			size.x = tmp;
+			var tmp = result.y;
+			result.y = result.x;
+			result.x = tmp;
 		}
 		
-		if ((dir == mxConstants.DIRECTION_EAST && !flipV) || (dir == mxConstants.DIRECTION_NORTH && !flipH) ||
-			(dir == mxConstants.DIRECTION_WEST && flipV) || (dir == mxConstants.DIRECTION_SOUTH && flipH))
+		if (flipV)
 		{
-			size.width = size.x;
-			size.height = size.y;
+			result.height = result.y;
+			result.y = 0;
+		}
+		
+		if (flipH)
+		{
+			result.width = result.x;
+			result.x = 0;
 		}
 	}
 	
@@ -4355,8 +4360,8 @@ Graph.prototype.tableResized = function(table)
 	
 	if (tableGeo != null && rowCount > 0)
 	{
-		var tableSize = this.getStartSize(table);
-		var y = tableSize.height;
+		var off = this.getActualStartSize(table);
+		var y = off.y;
 		
 		for (var i = 0; i < rowCount; i++)
 		{
@@ -4402,12 +4407,12 @@ Graph.prototype.tableRowResized = function(row, bounds, prev)
 	console.log('tableLayout.tableRowResized', row);
 	var model = this.getModel();
 	var rowGeo = this.getCellGeometry(row);
-	var startSize = this.getStartSize(row);
 	var cellCount = model.getChildCount(row);
 	
 	if (rowGeo != null && cellCount > 0)
 	{
-		var x = startSize.width;
+		var off = this.getActualStartSize(row);
+		var x = off.x;
 		
 		for (var i = 0; i < cellCount; i++)
 		{
@@ -4444,7 +4449,7 @@ Graph.prototype.tableRowResized = function(row, bounds, prev)
 		}
 	}
 	
-	// Update previous row height
+	// Updates previous row height if upper edge was moved
 	var table = model.getParent(row);
 	var index = table.getIndex(row);
 	
@@ -4588,9 +4593,9 @@ TableLayout.prototype.resizeCell = function(cell, geo, prev)
  */
 TableLayout.prototype.execute = function(table)
 {
-	var tableSize = this.graph.getStartSize(table, true);
+	var off = this.graph.getActualStartSize(table, true);
 	var model = this.graph.getModel();
-	var y = tableSize.height;
+	var y = off.y;
 	var x = 0;
 	
 	for (var i = 0; i < model.getChildCount(table); i++)
@@ -4601,11 +4606,11 @@ TableLayout.prototype.execute = function(table)
 		if (row != null)
 		{
 			var rowGeo = this.graph.getCellGeometry(row);
-			var rowSize = this.graph.getStartSize(row, true);
 			
 			if (rowGeo != null)
 			{
-				x = rowSize.width;
+				var rowOff = this.graph.getActualStartSize(row, true);
+				x = rowOff.x;
 				
 				for (var j = 0; j < model.getChildCount(row); j++)
 				{
@@ -4621,7 +4626,7 @@ TableLayout.prototype.execute = function(table)
 							
 							geo.height = rowGeo.height;
 							geo.x = x;
-							geo.y = 0;
+							geo.y = rowOff.y;
 							model.setGeometry(cell, geo);
 							
 							x += geo.width;
@@ -4632,7 +4637,7 @@ TableLayout.prototype.execute = function(table)
 				rowGeo = rowGeo.clone();
 				rowGeo.width = x;
 				rowGeo.y = y;
-				rowGeo.x = tableSize.width;
+				rowGeo.x = off.x;
 				model.setGeometry(row, rowGeo);
 				
 				y += rowGeo.height;
@@ -4646,8 +4651,8 @@ TableLayout.prototype.execute = function(table)
 	if (tableGeo != null)
 	{
 		tableGeo = tableGeo.clone();
-		tableGeo.width = x + tableSize.width;
-		tableGeo.height = y;
+		tableGeo.width = x + off.x;
+		tableGeo.height = y + off.height;
 		model.setGeometry(table, tableGeo);
 	}
 };
@@ -4680,23 +4685,43 @@ TableRowLayout.prototype.moveCell = function(cell, x, y)
  */
 TableRowLayout.prototype.execute = function(row)
 {
-	var size = this.graph.getStartSize(row);
+	var off = this.graph.getActualStartSize(row, true);
+	var style = this.graph.getCellStyle(row);
 	var model = this.graph.getModel();
 	var table = model.getParent(row);
 	
-	model.beginUpdate();
-	try
+	if (style != null && table != null)
 	{
-		for (var i = 0; i < model.getChildCount(table); i++)
+		var size = parseInt(mxUtils.getValue(style,
+			mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
+		
+		model.beginUpdate();
+		try
 		{
-			// TODO: Check orientation and horizontal style
-			this.graph.setCellStyles(mxConstants.STYLE_STARTSIZE,
-				size.width, [model.getChildAt(table, i)]);
+			for (var i = 0; i < model.getChildCount(table); i++)
+			{
+				var current = model.getChildAt(table, i);
+				
+				if (current != row)
+				{
+					var temp = this.graph.getActualStartSize(current);
+					
+					// Checks if same side is offset
+					if ((off.x > 0 && temp.x > 0) || (off.y > 0 && temp.y > 0) ||
+						(off.width > 0 && temp.width > 0) ||
+						(off.height > 0 && temp.height > 0))
+					{
+						this.graph.setCellStyles(
+							mxConstants.STYLE_STARTSIZE,
+							size, [current]);
+					}
+				}
+			}
 		}
-	}
-	finally
-	{
-		model.endUpdate();
+		finally
+		{
+			model.endUpdate();
+		}
 	}
 };
 
