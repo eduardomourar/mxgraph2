@@ -1239,6 +1239,15 @@ Actions.prototype.init = function()
 			document.execCommand('superscript', false, null);
 		}
 	}), null, null, Editor.ctrlKey + '+.');
+	action = this.addAction('indent', mxUtils.bind(this, function()
+	{
+		// NOTE: Alt+Tab for outdent implemented via special code in
+		// keyHandler.getFunction in EditorUi.js. Ctrl+Tab is reserved.
+	    if (graph.cellEditor.isContentEditing())
+	    {
+			document.execCommand('indent', false, null);
+		}
+	}), null, null, 'Shift+Tab');
 	this.addAction('image...', function()
 	{
 		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
