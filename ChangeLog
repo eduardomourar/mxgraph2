@@ -1,3 +1,6 @@
+- Reduces number of layout runs in mxLayoutManager
+- Adds resizeCell in mxGraphLayout
+- Adds eventName in mxLayoutManager.getLayout
 - Uses all layers in getSwimlaneAt
 - Fixes update of indicator shape after style change
 - Adds support for referenced font colors

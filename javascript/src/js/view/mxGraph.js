@@ -1904,8 +1904,14 @@ mxGraph.prototype.setSelectionModel = function(selectionModel)
  * Function: getSelectionCellsForChanges
  * 
  * Returns the cells to be selected for the given array of changes.
+ * 
+ * Parameters:
+ * 
+ * ignoreFn - Optional function that takes a change and returns true if the
+ * change should be ignored.
+ * 
  */
-mxGraph.prototype.getSelectionCellsForChanges = function(changes)
+mxGraph.prototype.getSelectionCellsForChanges = function(changes, ignoreFn)
 {
 	var dict = new mxDictionary();
 	var cells = [];
@@ -1935,7 +1941,8 @@ mxGraph.prototype.getSelectionCellsForChanges = function(changes)
 	{
 		var change = changes[i];
 		
-		if (change.constructor != mxRootChange)
+		if (change.constructor != mxRootChange &&
+			(ignoreFn == null || !ignoreFn(change)))
 		{
 			var cell = null;
 
@@ -1943,7 +1950,8 @@ mxGraph.prototype.getSelectionCellsForChanges = function(changes)
 			{
 				cell = change.child;
 			}
-			else if (change.cell != null && change.cell instanceof mxCell)
+			else if (!structureOnly && change.cell != null &&
+				change.cell instanceof mxCell)
 			{
 				cell = change.cell;
 			}
@@ -5660,9 +5668,9 @@ mxGraph.prototype.resizeCells = function(cells, bounds, recurse)
 	this.model.beginUpdate();
 	try
 	{
-		this.cellsResized(cells, bounds, recurse);
+		var prev = this.cellsResized(cells, bounds, recurse);
 		this.fireEvent(new mxEventObject(mxEvent.RESIZE_CELLS,
-				'cells', cells, 'bounds', bounds));
+			'cells', cells, 'bounds', bounds, 'previous', prev));
 	}
 	finally
 	{
@@ -5721,7 +5729,8 @@ mxGraph.prototype.resizeCells = function(cells, bounds, recurse)
 mxGraph.prototype.cellsResized = function(cells, bounds, recurse)
 {
 	recurse = (recurse != null) ? recurse : false;
-	
+	var prev = [];
+
 	if (cells != null && bounds != null && cells.length == bounds.length)
 	{
 		this.model.beginUpdate();
@@ -5729,7 +5738,7 @@ mxGraph.prototype.cellsResized = function(cells, bounds, recurse)
 		{
 			for (var i = 0; i < cells.length; i++)
 			{
-				this.cellResized(cells[i], bounds[i], false, recurse);
+				prev.push(this.cellResized(cells[i], bounds[i], false, recurse));
 
 				if (this.isExtendParent(cells[i]))
 				{
@@ -5745,13 +5754,15 @@ mxGraph.prototype.cellsResized = function(cells, bounds, recurse)
 			}
 			
 			this.fireEvent(new mxEventObject(mxEvent.CELLS_RESIZED,
-					'cells', cells, 'bounds', bounds));
+				'cells', cells, 'bounds', bounds, 'previous', prev));
 		}
 		finally
 		{
 			this.model.endUpdate();
 		}
 	}
+	
+	return prev;
 };
 
 /**
@@ -5769,12 +5780,12 @@ mxGraph.prototype.cellsResized = function(cells, bounds, recurse)
  */
 mxGraph.prototype.cellResized = function(cell, bounds, ignoreRelative, recurse)
 {
-	var geo = this.model.getGeometry(cell);
+	var prev = this.model.getGeometry(cell);
 
-	if (geo != null && (geo.x != bounds.x || geo.y != bounds.y ||
-		geo.width != bounds.width || geo.height != bounds.height))
+	if (prev != null && (prev.x != bounds.x || prev.y != bounds.y ||
+		prev.width != bounds.width || prev.height != bounds.height))
 	{
-		geo = geo.clone();
+		var geo = prev.clone();
 
 		if (!ignoreRelative && geo.relative)
 		{
@@ -5817,6 +5828,8 @@ mxGraph.prototype.cellResized = function(cell, bounds, ignoreRelative, recurse)
 			this.model.endUpdate();
 		}
 	}
+	
+	return prev;
 };
 
 /**
@@ -9192,11 +9205,12 @@ mxGraph.prototype.getCursorForCell = function(cell)
  * Parameters:
  * 
  * swimlane - <mxCell> whose start size should be returned.
+ * ignoreCache - Optional boolean that specifies if cell state should be ignored.
  */
-mxGraph.prototype.getStartSize = function(swimlane)
+mxGraph.prototype.getStartSize = function(swimlane, ignoreState)
 {
 	var result = new mxRectangle();
-	var state = this.view.getState(swimlane);
+	var state = (ignoreState) ? null : this.view.getState(swimlane);
 	var style = (state != null) ? state.style : this.getCellStyle(swimlane);
 	
 	if (style != null)
