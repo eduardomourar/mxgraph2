@@ -1344,7 +1344,7 @@ Actions.prototype.init = function()
 		if (this.layersWindow == null)
 		{
 			// LATER: Check outline window for initial placement
-			this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 180);
+			this.layersWindow = new LayersWindow(ui, document.body.offsetWidth - 280, 120, 220, 196);
 			this.layersWindow.window.addListener('show', function()
 			{
 				ui.fireEvent(new mxEventObject('layers'));
@@ -1355,6 +1355,8 @@ Actions.prototype.init = function()
 			});
 			this.layersWindow.window.setVisible(true);
 			ui.fireEvent(new mxEventObject('layers'));
+			
+			this.layersWindow.init();
 		}
 		else
 		{
