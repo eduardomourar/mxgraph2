@@ -6647,6 +6647,11 @@ if (typeof mxVertexHandler != 'undefined')
 						(state != null || (mxClient.IS_VML && src == this.view.getCanvas()) ||
 						(mxClient.IS_SVG && src == this.view.getCanvas().ownerSVGElement)))
 					{
+						if (state == null)
+						{
+							state = this.view.getState(this.getCellAt(pt.x, pt.y));
+						}
+						
 						cell = this.addText(pt.x, pt.y, state);
 					}
 				}
@@ -6734,56 +6739,58 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.addText = function(x, y, state)
 		{
-		  // Creates a new edge label with a predefined text
-		  var label = new mxCell();
-		  label.value = 'Text';
-		  label.style = 'text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];'
-		  label.geometry = new mxGeometry(0, 0, 0, 0);
-		  label.vertex = true;
-		  
-		  if (state != null)
-		  {
-		    label.style += 'labelBackgroundColor=#ffffff;'
-		    label.geometry.relative = true;
-		    label.connectable = false;
+			// Creates a new edge label with a predefined text
+			var label = new mxCell();
+			label.value = 'Text';
+			label.style = 'text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];'
+			label.geometry = new mxGeometry(0, 0, 0, 0);
+			label.vertex = true;
+
+			if (state != null && this.model.isEdge(state.cell))
+			{
+				label.style += 'labelBackgroundColor=#ffffff;'
+				label.geometry.relative = true;
+				label.connectable = false;
 		    
-		    // Resets the relative location stored inside the geometry
-		    var pt2 = this.view.getRelativePoint(state, x, y);
-		    label.geometry.x = Math.round(pt2.x * 10000) / 10000;
-		    label.geometry.y = Math.round(pt2.y);
+				// Resets the relative location stored inside the geometry
+				var pt2 = this.view.getRelativePoint(state, x, y);
+				label.geometry.x = Math.round(pt2.x * 10000) / 10000;
+				label.geometry.y = Math.round(pt2.y);
 		    
-		    // Resets the offset inside the geometry to find the offset from the resulting point
-		    label.geometry.offset = new mxPoint(0, 0);
-		    pt2 = this.view.getPoint(state, label.geometry);
+		    	// Resets the offset inside the geometry to find the offset from the resulting point
+				label.geometry.offset = new mxPoint(0, 0);
+				pt2 = this.view.getPoint(state, label.geometry);
 		  
-		    var scale = this.view.scale;
-		    label.geometry.offset = new mxPoint(Math.round((x - pt2.x) / scale), Math.round((y - pt2.y) / scale));
-		  }
-		  else
-		  {
-		    label.style += 'autosize=1;'
-		
-		    var tr = this.view.translate;
-		    label.geometry.width = 40;
-		    label.geometry.height = 20;
-		    label.geometry.x = Math.round(x / this.view.scale) - tr.x;
-		    label.geometry.y = Math.round(y / this.view.scale) - tr.y;
-		  }
-		    
-		  this.getModel().beginUpdate();
-		  try
-		  {
-		    this.addCells([label], (state != null) ? state.cell : null);
-		    this.fireEvent(new mxEventObject('textInserted', 'cells', [label]));
-		    // Updates size of text after possible change of style via event
-		    this.autoSizeCell(label);
-		  }
-		  finally
-		  {
-		    this.getModel().endUpdate();
-		  }
-		  
-		  return label;
+				var scale = this.view.scale;
+				label.geometry.offset = new mxPoint(Math.round((x - pt2.x) / scale), Math.round((y - pt2.y) / scale));
+			}
+			else
+			{
+				var tr = this.view.translate;
+				label.geometry.width = 40;
+				label.geometry.height = 20;
+				label.geometry.x = Math.round(x / this.view.scale) -
+					tr.x - ((state != null) ? state.origin.x : 0);
+				label.geometry.y = Math.round(y / this.view.scale) -
+					tr.y - ((state != null) ? state.origin.y : 0);
+				label.style += 'autosize=1;'
+			}
+
+			this.getModel().beginUpdate();
+			try
+			{
+				this.addCells([label], (state != null) ? state.cell : null);
+				this.fireEvent(new mxEventObject('textInserted', 'cells', [label]));
+				
+		    	// Updates size of text after possible change of style via event
+				this.autoSizeCell(label);
+			}
+			finally
+			{
+				this.getModel().endUpdate();
+			}
+
+			return label;
 		};
 
 		/**
