@@ -4311,37 +4311,62 @@ Graph.prototype.getActualStartSize = function(swimlane, ignoreState)
 	{
 		var size = parseInt(mxUtils.getValue(style,
 			mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
-		
-		var dir = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
 		var flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, 0) == 1;
 		var flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, 0) == 1;
+		var h = mxUtils.getValue(style, mxConstants.STYLE_HORIZONTAL, true);
+		var n = 0;
 		
-		if (mxUtils.getValue(style, mxConstants.STYLE_HORIZONTAL, true))
+		if (!h)
+		{
+			n++;
+		}
+		
+		var dir = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
+		
+		if (dir == mxConstants.DIRECTION_NORTH)
+		{
+			n++;
+		}
+		else if (dir == mxConstants.DIRECTION_WEST)
+		{
+			n += 2;
+		}
+		else if (dir == mxConstants.DIRECTION_SOUTH)
+		{
+			n += 3;
+		}
+		
+		n = mxUtils.mod(n, 4);
+		
+		if (n == 0)
 		{
 			result.y = size;
 		}
-		else
+		else if (n == 1)
 		{
 			result.x = size;
 		}
-		
-		if (dir == mxConstants.DIRECTION_SOUTH || dir == mxConstants.DIRECTION_WEST)
+		else if (n == 2)
 		{
-			var tmp = result.y;
-			result.y = result.x;
-			result.x = tmp;
+			result.height = size;
+		}
+		else if (n == 3)
+		{
+			result.width = size;
 		}
 		
 		if (flipV)
 		{
-			result.height = result.y;
-			result.y = 0;
+			var tmp = result.y;
+			result.y = result.height;
+			result.height = tmp;
 		}
 		
 		if (flipH)
 		{
-			result.width = result.x;
-			result.x = 0;
+			var tmp = result.x;
+			result.x = result.width;
+			result.width = tmp;
 		}
 	}
 	
@@ -4402,6 +4427,35 @@ Graph.prototype.tableResized = function(table)
 /**
  * Updates column width and row height.
  */
+Graph.prototype.setRowHeight = function(row, height)
+{
+	var model = this.getModel();
+	
+	model.beginUpdate();
+	try
+	{
+		for (var i = 0; i < model.getChildCount(row); i++)
+		{
+			var child = model.getChildAt(row, i);
+			var childGeo = this.getCellGeometry(child);
+			
+			if (childGeo != null)
+			{
+				childGeo = childGeo.clone();
+				childGeo.height = height;
+				model.setGeometry(child, childGeo);
+			}
+		}
+	}
+	finally
+	{
+		model.endUpdate();
+	}
+};
+
+/**
+ * Updates column width and row height.
+ */
 Graph.prototype.tableRowResized = function(row, bounds, prev)
 {
 	console.log('tableLayout.tableRowResized', row);
@@ -4424,11 +4478,12 @@ Graph.prototype.tableRowResized = function(row, bounds, prev)
 				
 				if (geo != null)
 				{
+					var newGeo = geo.clone();
+					newGeo.height = rowGeo.height - off.y;
+					model.setGeometry(cell, newGeo);
+					
 					if (i == cellCount - 1)
 					{
-						var newGeo = geo.clone();
-						newGeo.height = rowGeo.height;
-						
 						if (x < rowGeo.width)
 						{
 							newGeo.width = rowGeo.width - x;
@@ -4439,7 +4494,6 @@ Graph.prototype.tableRowResized = function(row, bounds, prev)
 							newGeo.width = Graph.minTableColumnWidth;
 						}
 						
-						model.setGeometry(cell, newGeo);
 						this.tableCellResized(cell, newGeo, geo);
 					}
 					
@@ -4482,14 +4536,10 @@ Graph.prototype.tableCellResized = function(cell, bounds, prev)
 		var table = model.getParent(row);
 		var index = row.getIndex(cell);
 		
-		// Updates row height
-		var rowGeo = this.getCellGeometry(row);
-		
-		if (rowGeo != null)
+		// Applies new height to all cells in the row
+		if (bounds.height != prev.height)
 		{
-			rowGeo = rowGeo.clone();
-			rowGeo.height = geo.height;
-			model.setGeometry(row, rowGeo);
+			this.setRowHeight(row, geo.height);
 		}
 		
 		// Updates column width
@@ -4519,9 +4569,8 @@ Graph.prototype.tableCellResized = function(cell, bounds, prev)
 				
 				if (prg != null)
 				{
-					prg = prg.clone();
-					prg.height -= prev.y - bounds.y;
-					model.setGeometry(previousRow, prg);
+					this.setRowHeight(previousRow,
+						prg.height - prev.y + bounds.y);
 				}
 			}
 			
@@ -4598,6 +4647,8 @@ TableLayout.prototype.execute = function(table)
 	var y = off.y;
 	var x = 0;
 	
+	console.log('tableLayout.execute', table, off);
+	
 	for (var i = 0; i < model.getChildCount(table); i++)
 	{
 		var row = model.getChildAt(table, i);
@@ -4609,6 +4660,7 @@ TableLayout.prototype.execute = function(table)
 			
 			if (rowGeo != null)
 			{
+				rowGeo = rowGeo.clone();
 				var rowOff = this.graph.getActualStartSize(row, true);
 				x = rowOff.x;
 				
@@ -4624,7 +4676,8 @@ TableLayout.prototype.execute = function(table)
 						{
 							geo = geo.clone();
 							
-							geo.height = rowGeo.height;
+							rowGeo.height = geo.height +
+								rowOff.y + rowOff.height;
 							geo.x = x;
 							geo.y = rowOff.y;
 							model.setGeometry(cell, geo);
@@ -4634,8 +4687,7 @@ TableLayout.prototype.execute = function(table)
 					}
 				}
 				
-				rowGeo = rowGeo.clone();
-				rowGeo.width = x;
+				rowGeo.width = x + rowOff.width;
 				rowGeo.y = y;
 				rowGeo.x = off.x;
 				model.setGeometry(row, rowGeo);
@@ -4651,7 +4703,7 @@ TableLayout.prototype.execute = function(table)
 	if (tableGeo != null)
 	{
 		tableGeo = tableGeo.clone();
-		tableGeo.width = x + off.x;
+		tableGeo.width = x + off.x + off.width;
 		tableGeo.height = y + off.height;
 		model.setGeometry(table, tableGeo);
 	}
@@ -4689,6 +4741,8 @@ TableRowLayout.prototype.execute = function(row)
 	var style = this.graph.getCellStyle(row);
 	var model = this.graph.getModel();
 	var table = model.getParent(row);
+	
+	console.log('tableRowLayout.execute', row, off);
 	
 	if (style != null && table != null)
 	{
