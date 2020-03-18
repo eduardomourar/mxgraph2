@@ -4401,7 +4401,7 @@ Graph.prototype.tableResized = function(table)
 					if (i == rowCount - 1)
 					{
 						var newRowGeo = rowGeo.clone();
-						newRowGeo.width = tableGeo.width;
+						newRowGeo.width = tableGeo.width - off.x;
 						
 						if (y < tableGeo.height)
 						{
