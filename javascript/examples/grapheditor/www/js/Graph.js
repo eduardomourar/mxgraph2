@@ -653,7 +653,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 	    
 	    this.getRubberband = function()
 	    {
-	    		return rubberband;
+	    	return rubberband;
 	    };
 	    
 	    // Timer-based activation of outline connect in connection handler
@@ -4273,6 +4273,41 @@ HoverIcons.prototype.setCurrentState = function(state)
 };
 
 /**
+ * Returns true if the given cell is a table.
+ */
+Graph.prototype.createTable = function(rows, cols)
+{
+	var w = 40;
+	var h = 30;
+	
+	var table = new mxCell('', new mxGeometry(0, 0, cols * w, rows * h),
+		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;');
+    table.vertex = true;
+    
+    for (var i = 0; i < rows; i++)
+    {
+    	var row = new mxCell('', new mxGeometry(0, i * h, cols * w, h),
+			'html=1;whiteSpace=wrap;part=1;container=1;collapsible=0;' +
+			'childLayout=rowLayout;points=[[0,0.5],[1,0.5]];');
+	    row.vertex = true;
+	    
+	    for (var j = 0; j < cols; j++)
+	    {
+	    	var cell = new mxCell('', new mxGeometry(j * w, i * h, w, h),
+				'html=1;whiteSpace=wrap;part=1;connectable=0;');
+		    cell.vertex = true;
+		    row.insert(cell);
+	    }
+	    
+	    table.insert(row);
+    }
+    
+	console.log('createTable', rows, cols, table);
+	
+    return table;
+};
+
+/**
  * Returns true if the given cell is a table cell.
  */
 Graph.prototype.isTableCell = function(cell)
@@ -4304,69 +4339,73 @@ Graph.prototype.isTable = function(cell)
 Graph.prototype.getActualStartSize = function(swimlane, ignoreState)
 {
 	var result = new mxRectangle();
-	var state = (ignoreState) ? null : this.view.getState(swimlane);
-	var style = (state != null) ? state.style : this.getCellStyle(swimlane);
 	
-	if (style != null)
+	if (this.isSwimlane(swimlane))
 	{
-		var size = parseInt(mxUtils.getValue(style,
-			mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
-		var flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, 0) == 1;
-		var flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, 0) == 1;
-		var h = mxUtils.getValue(style, mxConstants.STYLE_HORIZONTAL, true);
-		var n = 0;
+		var state = (ignoreState) ? null : this.view.getState(swimlane);
+		var style = (state != null) ? state.style : this.getCellStyle(swimlane);
 		
-		if (!h)
+		if (style != null)
 		{
-			n++;
-		}
-		
-		var dir = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
-		
-		if (dir == mxConstants.DIRECTION_NORTH)
-		{
-			n++;
-		}
-		else if (dir == mxConstants.DIRECTION_WEST)
-		{
-			n += 2;
-		}
-		else if (dir == mxConstants.DIRECTION_SOUTH)
-		{
-			n += 3;
-		}
-		
-		n = mxUtils.mod(n, 4);
-		
-		if (n == 0)
-		{
-			result.y = size;
-		}
-		else if (n == 1)
-		{
-			result.x = size;
-		}
-		else if (n == 2)
-		{
-			result.height = size;
-		}
-		else if (n == 3)
-		{
-			result.width = size;
-		}
-		
-		if (flipV)
-		{
-			var tmp = result.y;
-			result.y = result.height;
-			result.height = tmp;
-		}
-		
-		if (flipH)
-		{
-			var tmp = result.x;
-			result.x = result.width;
-			result.width = tmp;
+			var size = parseInt(mxUtils.getValue(style,
+				mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
+			var flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, 0) == 1;
+			var flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, 0) == 1;
+			var h = mxUtils.getValue(style, mxConstants.STYLE_HORIZONTAL, true);
+			var n = 0;
+			
+			if (!h)
+			{
+				n++;
+			}
+			
+			var dir = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
+			
+			if (dir == mxConstants.DIRECTION_NORTH)
+			{
+				n++;
+			}
+			else if (dir == mxConstants.DIRECTION_WEST)
+			{
+				n += 2;
+			}
+			else if (dir == mxConstants.DIRECTION_SOUTH)
+			{
+				n += 3;
+			}
+			
+			n = mxUtils.mod(n, 4);
+			
+			if (n == 0)
+			{
+				result.y = size;
+			}
+			else if (n == 1)
+			{
+				result.x = size;
+			}
+			else if (n == 2)
+			{
+				result.height = size;
+			}
+			else if (n == 3)
+			{
+				result.width = size;
+			}
+			
+			if (flipV)
+			{
+				var tmp = result.y;
+				result.y = result.height;
+				result.height = tmp;
+			}
+			
+			if (flipH)
+			{
+				var tmp = result.x;
+				result.x = result.width;
+				result.width = tmp;
+			}
 		}
 	}
 	
@@ -9341,90 +9380,111 @@ if (typeof mxVertexHandler != 'undefined')
 			return this.graph.isEnabled() && !this.graph.isCellLocked(this.graph.getDefaultParent()) &&
 				mxEvent.isControlDown(me.getEvent()) && mxEvent.isShiftDown(me.getEvent());
 		};
-		
+
+		// Cancelled state
+		mxRubberband.prototype.cancelled = false;
+
+		// Cancels ongoing rubberband selection but consumed event to avoid reset of selection
+		mxRubberband.prototype.cancel = function()
+		{
+			if (this.isActive())
+			{
+				this.cancelled = true;
+				this.reset();
+			}
+		};
+
 		// Handles moving of cells in both half panes
 		mxRubberband.prototype.mouseUp = function(sender, me)
 		{
-			var execute = this.div != null && this.div.style.display != 'none';
-
-			var x0 = null;
-			var y0 = null;
-			var dx = null;
-			var dy = null;
-
-			if (this.first != null && this.currentX != null && this.currentY != null)
+			if (this.cancelled)
 			{
-				x0 = this.first.x;
-				y0 = this.first.y;
-				dx = (this.currentX - x0) / this.graph.view.scale;
-				dy = (this.currentY - y0) / this.graph.view.scale;
-
-				if (!mxEvent.isAltDown(me.getEvent()))
-				{
-					dx = this.graph.snap(dx);
-					dy = this.graph.snap(dy);
-					
-					if (!this.graph.isGridEnabled())
-					{
-						if (Math.abs(dx) < this.graph.tolerance)
-						{
-							dx = 0;
-						}
-						
-						if (Math.abs(dy) < this.graph.tolerance)
-						{
-							dy = 0;
-						}
-					}
-				}
+				this.cancelled = false;
+				me.consume();
 			}
-			
-			this.reset();
-			
-			if (execute)
+			else
 			{
-				if (mxEvent.isAltDown(me.getEvent()) && this.graph.isToggleEvent(me.getEvent()))
+				var execute = this.div != null && this.div.style.display != 'none';
+	
+				var x0 = null;
+				var y0 = null;
+				var dx = null;
+				var dy = null;
+	
+				if (this.first != null && this.currentX != null && this.currentY != null)
 				{
-					var rect = new mxRectangle(this.x, this.y, this.width, this.height);
-					var cells = this.graph.getCells(rect.x, rect.y, rect.width, rect.height);
-					
-					this.graph.removeSelectionCells(cells);
-				}
-				else if (this.isSpaceEvent(me))
-				{
-					this.graph.model.beginUpdate();
-					try
+					x0 = this.first.x;
+					y0 = this.first.y;
+					dx = (this.currentX - x0) / this.graph.view.scale;
+					dy = (this.currentY - y0) / this.graph.view.scale;
+	
+					if (!mxEvent.isAltDown(me.getEvent()))
 					{
-						var cells = this.graph.getCellsBeyond(x0, y0, this.graph.getDefaultParent(), true, true);
-
-						for (var i = 0; i < cells.length; i++)
+						dx = this.graph.snap(dx);
+						dy = this.graph.snap(dy);
+						
+						if (!this.graph.isGridEnabled())
 						{
-							if (this.graph.isCellMovable(cells[i]))
+							if (Math.abs(dx) < this.graph.tolerance)
 							{
-								var tmp = this.graph.view.getState(cells[i]);
-								var geo = this.graph.getCellGeometry(cells[i]);
-								
-								if (tmp != null && geo != null)
-								{
-									geo = geo.clone();
-									geo.translate(dx, dy);
-									this.graph.model.setGeometry(cells[i], geo);
-								}
+								dx = 0;
+							}
+							
+							if (Math.abs(dy) < this.graph.tolerance)
+							{
+								dy = 0;
 							}
 						}
 					}
-					finally
-					{
-						this.graph.model.endUpdate();
-					}
-				}
-				else
-				{
-					var rect = new mxRectangle(this.x, this.y, this.width, this.height);
-					this.graph.selectRegion(rect, me.getEvent());
 				}
 				
-				me.consume();
+				this.reset();
+				
+				if (execute)
+				{
+					if (mxEvent.isAltDown(me.getEvent()) && this.graph.isToggleEvent(me.getEvent()))
+					{
+						var rect = new mxRectangle(this.x, this.y, this.width, this.height);
+						var cells = this.graph.getCells(rect.x, rect.y, rect.width, rect.height);
+						
+						this.graph.removeSelectionCells(cells);
+					}
+					else if (this.isSpaceEvent(me))
+					{
+						this.graph.model.beginUpdate();
+						try
+						{
+							var cells = this.graph.getCellsBeyond(x0, y0, this.graph.getDefaultParent(), true, true);
+	
+							for (var i = 0; i < cells.length; i++)
+							{
+								if (this.graph.isCellMovable(cells[i]))
+								{
+									var tmp = this.graph.view.getState(cells[i]);
+									var geo = this.graph.getCellGeometry(cells[i]);
+									
+									if (tmp != null && geo != null)
+									{
+										geo = geo.clone();
+										geo.translate(dx, dy);
+										this.graph.model.setGeometry(cells[i], geo);
+									}
+								}
+							}
+						}
+						finally
+						{
+							this.graph.model.endUpdate();
+						}
+					}
+					else
+					{
+						var rect = new mxRectangle(this.x, this.y, this.width, this.height);
+						this.graph.selectRegion(rect, me.getEvent());
+					}
+					
+					me.consume();
+				}
 			}
 		};
 		
