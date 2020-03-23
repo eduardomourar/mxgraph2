@@ -1133,6 +1133,24 @@ mxVertexHandler.prototype.updateLivePreview = function(me)
 	this.state.view.validate();
 	this.redrawHandles();
 	
+	// Moves live preview to front
+	if ((this.state.text != null && this.state.text.node != null &&
+		this.state.text.node.nextSibling != null) ||
+		(this.state.shape != null && this.state.shape.node != null &&
+		this.state.shape.node.nextSibling != null && (this.state.text == null ||
+		this.state.shape.node.nextSibling != this.state.text.node)))
+	{
+		if (this.state.shape != null && this.state.shape.node != null)
+		{
+			this.state.shape.node.parentNode.appendChild(this.state.shape.node);
+		}
+		
+		if (this.state.text != null && this.state.text.node != null)
+		{
+			this.state.text.node.parentNode.appendChild(this.state.text.node);
+		}
+	}
+	
 	// Hides folding icon
 	if (this.state.control != null && this.state.control.node != null)
 	{
