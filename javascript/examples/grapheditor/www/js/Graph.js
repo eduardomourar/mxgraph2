@@ -4690,6 +4690,8 @@ TableLayout.prototype.execute = function(table)
 	var off = this.graph.getActualStartSize(table, true);
 	var model = this.graph.getModel();
 	var y = off.y;
+	var rows = [];
+	var maxX = 0;
 	var x = 0;
 	
 	console.log('tableLayout.execute', table, off);
@@ -4697,8 +4699,7 @@ TableLayout.prototype.execute = function(table)
 	for (var i = 0; i < model.getChildCount(table); i++)
 	{
 		var row = model.getChildAt(table, i);
-		
-		// TODO: Get maximum row width
+
 		if (row != null)
 		{
 			var rowGeo = this.graph.getCellGeometry(row);
@@ -4707,9 +4708,10 @@ TableLayout.prototype.execute = function(table)
 			{
 				rowGeo = rowGeo.clone();
 				var rowOff = this.graph.getActualStartSize(row, true);
+				var childCount = model.getChildCount(row);
 				x = rowOff.x;
 				
-				for (var j = 0; j < model.getChildCount(row); j++)
+				for (var j = 0; j < childCount; j++)
 				{
 					var cell = model.getChildAt(row, j);
 					
@@ -4728,6 +4730,12 @@ TableLayout.prototype.execute = function(table)
 							model.setGeometry(cell, geo);
 							
 							x += geo.width;
+							
+							if (j == childCount - 1)
+							{
+								rows.push([x, geo, rowGeo]);
+								maxX = Math.max(x, maxX);
+							}
 						}
 					}
 				}
@@ -4751,6 +4759,15 @@ TableLayout.prototype.execute = function(table)
 		tableGeo.width = x + off.x + off.width;
 		tableGeo.height = y + off.height;
 		model.setGeometry(table, tableGeo);
+		
+		for (var i = 0; i < rows.length; i++)
+		{
+			if (rows[i][0] < maxX)
+			{
+				rows[i][1].width += maxX - rows[i][0];
+				rows[i][2].width += maxX - rows[i][0];
+			}
+		}
 	}
 };
 
