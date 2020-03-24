@@ -4733,7 +4733,7 @@ TableLayout.prototype.execute = function(table)
 							
 							if (j == childCount - 1)
 							{
-								rows.push([x, geo, rowGeo]);
+								rows.push([geo, rowGeo, rowOff]);
 								maxX = Math.max(x, maxX);
 							}
 						}
@@ -4762,10 +4762,10 @@ TableLayout.prototype.execute = function(table)
 		
 		for (var i = 0; i < rows.length; i++)
 		{
-			if (rows[i][0] < maxX)
+			if (rows[i][1].width < maxX)
 			{
-				rows[i][1].width += maxX - rows[i][0];
-				rows[i][2].width += maxX - rows[i][0];
+				rows[i][0].width += maxX - rows[i][1].width;
+				rows[i][1].width += maxX - rows[i][1].width;
 			}
 		}
 	}
@@ -4800,12 +4800,13 @@ TableRowLayout.prototype.moveCell = function(cell, x, y)
 TableRowLayout.prototype.execute = function(row)
 {
 	var off = this.graph.getActualStartSize(row, true);
+	var off0 = this.graph.getActualStartSize(row);
 	var style = this.graph.getCellStyle(row);
 	var model = this.graph.getModel();
 	var table = model.getParent(row);
 	
-	console.log('tableRowLayout.execute', row, off);
-	
+	console.log('tableRowLayout.execute', row, off, off0);
+					
 	if (style != null && table != null)
 	{
 		var size = parseInt(mxUtils.getValue(style,
@@ -4814,6 +4815,21 @@ TableRowLayout.prototype.execute = function(row)
 		model.beginUpdate();
 		try
 		{
+			// Swimlane rotation requires resize of last row element
+			if (off.width != off0.width || off.x != off0.x)
+			{
+				var cell = model.getChildAt(row, model.getChildCount(row) - 1);
+				var geo = this.graph.getCellGeometry(cell);
+				
+				if (geo != null)
+				{
+					geo = geo.clone();
+					geo.width += off0.width - off.width - off.x - off0.x;
+					geo.width = Math.max(Graph.minTableColumnWidth, geo.width);
+					model.setGeometry(cell, geo);
+				}
+			}
+			
 			for (var i = 0; i < model.getChildCount(table); i++)
 			{
 				var current = model.getChildAt(table, i);
@@ -4821,7 +4837,7 @@ TableRowLayout.prototype.execute = function(row)
 				if (current != row)
 				{
 					var temp = this.graph.getActualStartSize(current);
-					
+
 					// Checks if same side is offset
 					if ((off.x > 0 && temp.x > 0) ||
 						(off.y > 0 && temp.y > 0) ||
@@ -7839,7 +7855,7 @@ if (typeof mxVertexHandler != 'undefined')
 				if (tableGeo != null)
 				{
 					tableGeo = tableGeo.clone();
-					tableGeo.width += Graph.minColumnWidth;
+					tableGeo.width += Graph.minTableColumnWidth;
 					
 					model.setGeometry(table, tableGeo);
 				}
