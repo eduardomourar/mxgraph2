@@ -4292,6 +4292,7 @@ Graph.prototype.createParent = function(parent, child, childCount)
 	
 	return parent;
 };
+
 /**
  * Returns true if the given cell is a table.
  */
@@ -4309,6 +4310,36 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h)
 				'html=1;whiteSpace=wrap;connectable=0;'),
 			colCount),
 		rowCount);
+};
+
+/**
+ * 
+ */
+Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, h)
+{
+	w = (w != null) ? w : 120;
+	h = (h != null) ? h : 120;
+	
+	var table = this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
+		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;fillColor=none;connectable=0;');
+	var row = this.createVertex(null, null, '', 0, 0, colCount * w, h,
+		'swimlane;horizontal=0;html=1;whiteSpace=wrap;collapsible=0;container=1;' +
+		'childLayout=rowLayout;points=[[0,0.5],[1,0.5]];connectable=0;');
+	table.insert(this.createParent(row, this.createVertex(null, null,  '', 0, 0, w, h,
+		'swimlane;html=1;whiteSpace=wrap;connectable=0;collapsible=0;container=1;'),
+		colCount));
+	
+	if (rowCount > 1)
+	{
+		return this.createParent(table, this.createParent(row,
+			this.createVertex(null, null,  '', 0, 0, w, h,
+			'html=1;whiteSpace=wrap;connectable=0;collapsible=0;container=1;fillColor=none;'),
+			colCount), rowCount - 1);
+	}
+	else
+	{
+		return table;
+	}
 };
 
 /**
