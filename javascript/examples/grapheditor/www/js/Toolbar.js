@@ -604,46 +604,7 @@ Toolbar.prototype.createTextToolbar = function()
 				return html.join('');
 			};
 			
-			this.editorUi.menus.addInsertTableItem(menu, mxUtils.bind(this, function(evt, rows, cols)
-			{
-				var graph = this.editorUi.editor.graph;
-				var td = graph.getParentByName(mxEvent.getSource(evt), 'TD');
-		
-				if (td != null && graph.cellEditor.textarea != null)
-				{
-					var row2 = graph.getParentByName(td, 'TR');
-					
-					// To find the new link, we create a list of all existing links first
-		    		// LATER: Refactor for reuse with code for finding inserted image below
-					var tmp = graph.cellEditor.textarea.getElementsByTagName('table');
-					var oldTables = [];
-					
-					for (var i = 0; i < tmp.length; i++)
-					{
-						oldTables.push(tmp[i]);
-					}
-					
-					// Finding the new table will work with insertHTML, but IE does not support that
-					graph.container.focus();
-					graph.pasteHtmlAtCaret(createTable(rows, cols));
-					
-					// Moves cursor to first table cell
-					var newTables = graph.cellEditor.textarea.getElementsByTagName('table');
-					
-					if (newTables.length == oldTables.length + 1)
-					{
-						// Inverse order in favor of appended tables
-						for (var i = newTables.length - 1; i >= 0; i--)
-						{
-							if (i == 0 || newTables[i] != oldTables[i - 1])
-							{
-								graph.selectNode(newTables[i].rows[0].cells[0]);
-								break;
-							}
-						}
-					}
-				}
-			}));
+			this.editorUi.menus.addInsertTableItem(menu);
     	}
 		else
     	{
