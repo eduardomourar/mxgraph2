@@ -4303,10 +4303,12 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h)
 	return this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
 		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
-    		'html=1;whiteSpace=wrap;part=1;container=1;collapsible=0;' +
+    		'html=1;whiteSpace=wrap;container=1;collapsible=0;' +
 			'childLayout=rowLayout;points=[[0,0.5],[1,0.5]];'),
-			this.createVertex(null, null,  '', 0, 0, w, h,
-				'html=1;whiteSpace=wrap;part=1;connectable=0;'), colCount), rowCount);
+			this.createVertex(null, null, '', 0, 0, w, h,
+				'html=1;whiteSpace=wrap;connectable=0;'),
+			colCount),
+		rowCount);
 };
 
 /**
