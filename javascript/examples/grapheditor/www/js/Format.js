@@ -1996,7 +1996,7 @@ ArrangePanel.prototype.addAngle = function(div)
 
 		btn = mxUtils.button(label, function(evt)
 		{
-			ui.actions.get('turn').funct();
+			ui.actions.get('turn').funct(evt);
 		})
 		
 		btn.setAttribute('title', label + ' (' + this.editorUi.actions.get('turn').shortcut + ')');

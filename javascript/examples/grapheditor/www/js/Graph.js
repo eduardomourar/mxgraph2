@@ -4823,7 +4823,8 @@ TableRowLayout.prototype.execute = function(row)
 					var temp = this.graph.getActualStartSize(current);
 					
 					// Checks if same side is offset
-					if ((off.x > 0 && temp.x > 0) || (off.y > 0 && temp.y > 0) ||
+					if ((off.x > 0 && temp.x > 0) ||
+						(off.y > 0 && temp.y > 0) ||
 						(off.width > 0 && temp.width > 0) ||
 						(off.height > 0 && temp.height > 0))
 					{
@@ -6229,7 +6230,7 @@ if (typeof mxVertexHandler != 'undefined')
 		/**
 		 * Turns the given cells and returns the changed cells.
 		 */
-		Graph.prototype.turnShapes = function(cells)
+		Graph.prototype.turnShapes = function(cells, backwards)
 		{
 			var model = this.getModel();
 			var select = [];
@@ -6304,26 +6305,13 @@ if (typeof mxVertexHandler != 'undefined')
 							
 							if (state != null)
 							{
-								var dir = state.style[mxConstants.STYLE_DIRECTION] || 'east'/*default*/;
-								
-								if (dir == 'east')
-								{
-									dir = 'south';
-								}
-								else if (dir == 'south')
-								{
-									dir = 'west';
-								}
-								else if (dir == 'west')
-								{
-									dir = 'north';
-								}
-								else if (dir == 'north')
-								{
-									dir = 'east';
-								}
-								
-								this.setCellStyles(mxConstants.STYLE_DIRECTION, dir, [cell]);
+								var dirs = [mxConstants.DIRECTION_EAST, mxConstants.DIRECTION_SOUTH,
+									mxConstants.DIRECTION_WEST, mxConstants.DIRECTION_NORTH];
+								var dir = mxUtils.getValue(state.style, mxConstants.STYLE_DIRECTION,
+									mxConstants.DIRECTION_EAST);
+								this.setCellStyles(mxConstants.STYLE_DIRECTION,
+									dirs[mxUtils.mod(mxUtils.indexOf(dirs, dir) +
+									((backwards) ? -1 : 1), dirs.length)], [cell]);
 							}
 		
 							select.push(cell);
