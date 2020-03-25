@@ -1882,11 +1882,7 @@ Graph.prototype.initLayoutManager = function()
 {
 	this.layoutManager = new mxLayoutManager(this);
 	
-	// Using shared instances for some layouts
-	var organicLayout = new mxFastOrganicLayout(this);
-	var stackLayout = new mxStackLayout(this, true);
-	var treeLayout = new mxCompactTreeLayout(this);
-	var circleLayout = new mxCircleLayout(this);
+	// Using shared instances for table layouts
 	var rowLayout = new TableRowLayout(this);
 	var tableLayout = new TableLayout(this);
 
@@ -1901,6 +1897,7 @@ Graph.prototype.initLayoutManager = function()
 			{
 				if (style['childLayout'] == 'stackLayout')
 				{
+					var stackLayout = new mxStackLayout(this.graph, true);
 					stackLayout.resizeParentMax = mxUtils.getValue(style, 'resizeParentMax', '1') == '1';
 					stackLayout.horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
 					stackLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
@@ -1917,6 +1914,7 @@ Graph.prototype.initLayoutManager = function()
 				}
 				else if (style['childLayout'] == 'treeLayout')
 				{
+					var treeLayout = new mxCompactTreeLayout(this.graph);
 					treeLayout.horizontal = mxUtils.getValue(style, 'horizontalTree', '1') == '1';
 					treeLayout.resizeParent = mxUtils.getValue(style, 'resizeParent', '1') == '1';
 					treeLayout.groupPadding = mxUtils.getValue(style, 'parentPadding', 20);
@@ -1949,11 +1947,11 @@ Graph.prototype.initLayoutManager = function()
 				}
 				else if (style['childLayout'] == 'circleLayout')
 				{
-					return circleLayout;
+					return new mxCircleLayout(this.graph);
 				}
 				else if (style['childLayout'] == 'organicLayout')
 				{
-					return organicLayout;
+					return new mxFastOrganicLayout(this.graph);
 				}
 				else if (this.graph.isTableRow(cell))
 				{
