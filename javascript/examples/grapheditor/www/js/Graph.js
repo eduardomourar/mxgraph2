@@ -4319,10 +4319,11 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	h = (h != null) ? h : 120;
 	
 	var table = this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
-		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;fillColor=none;connectable=0;');
+		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;' +
+		'fillColor=none;connectable=0;recursiveResize=0;');
 	var row = this.createVertex(null, null, '', 0, 0, colCount * w, h,
 		'swimlane;horizontal=0;html=1;whiteSpace=wrap;collapsible=0;container=1;' +
-		'childLayout=rowLayout;points=[[0,0.5],[1,0.5]];connectable=0;');
+		'childLayout=rowLayout;points=[[0,0.5],[1,0.5]];connectable=0;recursiveResize=0;');
 	table.insert(this.createParent(row, this.createVertex(null, null,  '', 0, 0, w, h,
 		'swimlane;html=1;whiteSpace=wrap;connectable=0;collapsible=0;container=1;'),
 		colCount));
@@ -4331,7 +4332,8 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	{
 		return this.createParent(table, this.createParent(row,
 			this.createVertex(null, null,  '', 0, 0, w, h,
-			'html=1;whiteSpace=wrap;connectable=0;collapsible=0;container=1;fillColor=none;'),
+			'html=1;whiteSpace=wrap;connectable=0;collapsible=0;' +
+			'container=1;fillColor=none;recursiveResize=0;'),
 			colCount), rowCount - 1);
 	}
 	else
@@ -6403,25 +6405,33 @@ if (typeof mxVertexHandler != 'undefined')
 			if (change instanceof mxValueChange && change.cell != null &&
 				change.cell.value != null && typeof(change.cell.value) == 'object')
 			{
-				// Invalidates all descendants with placeholders
-				var desc = this.model.getDescendants(change.cell);
-				
-				// LATER: Check if only label or tooltip have changed
-				if (desc.length > 0)
+				this.invalidateDescendantsWithPlaceholders(change.cell);
+			}
+		};
+		
+		/**
+		 * Replaces the given element with a span.
+		 */
+		Graph.prototype.invalidateDescendantsWithPlaceholders = function(cell)
+		{
+			// Invalidates all descendants with placeholders
+			var desc = this.model.getDescendants(cell);
+			
+			// LATER: Check if only label or tooltip have changed
+			if (desc.length > 0)
+			{
+				for (var i = 0; i < desc.length; i++)
 				{
-					for (var i = 0; i < desc.length; i++)
+					var state = this.view.getState(desc[i]);
+					
+					if (state != null && state.shape != null && state.shape.stencil != null &&
+						this.stencilHasPlaceholders(state.shape.stencil))
 					{
-						var state = this.view.getState(desc[i]);
-						
-						if (state != null && state.shape != null && state.shape.stencil != null &&
-							this.stencilHasPlaceholders(state.shape.stencil))
-						{
-							this.removeStateForCell(desc[i]);
-						}
-						else if (this.isReplacePlaceholders(desc[i]))
-						{
-							this.view.invalidate(desc[i], false, false);
-						}
+						this.removeStateForCell(desc[i]);
+					}
+					else if (this.isReplacePlaceholders(desc[i]))
+					{
+						this.view.invalidate(desc[i], false, false);
 					}
 				}
 			}
