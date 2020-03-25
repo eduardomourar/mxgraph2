@@ -599,9 +599,17 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 		    	
 				if (mxUtils.getValue(style, 'part', '0') == '1')
 				{
-			        var parent = this.graph.model.getParent(cells[i]);
-		
-			        if (this.graph.model.isVertex(parent) && mxUtils.indexOf(cells, parent) < 0)
+			        var parent = cells[i];
+			        
+			        do
+			        {
+			        	parent = this.graph.model.getParent(parent);
+				        state = this.graph.view.getState(parent);
+				        style = (state != null) ? state.style : this.graph.getCellStyle(parent);
+			        } while (parent != null && mxUtils.getValue(style, 'part', '0') == '1')
+			        
+			        if (this.graph.model.isVertex(parent) &&
+			        	mxUtils.indexOf(cells, parent) < 0)
 			        {
 			            newCells.push(parent);
 			        }
@@ -4302,12 +4310,10 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h)
 	return this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
 		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
-    		'html=1;whiteSpace=wrap;container=1;collapsible=0;' +
-			'childLayout=rowLayout;points=[[0,0.5],[1,0.5]];'),
+    		'html=1;whiteSpace=wrap;container=1;collapsible=0;points=[[0,0.5],[1,0.5]];'),
 			this.createVertex(null, null, '', 0, 0, w, h,
 				'html=1;whiteSpace=wrap;connectable=0;'),
-			colCount),
-		rowCount);
+				colCount), rowCount);
 };
 
 /**
@@ -4318,22 +4324,21 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	w = (w != null) ? w : 120;
 	h = (h != null) ? h : 120;
 	
-	var table = this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
-		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;' +
-		'fillColor=none;connectable=0;recursiveResize=0;');
+	var s = 'swimlane;html=1;whiteSpace=wrap;container=1;collapsible=0;recursiveResize=0;'
+	
+	var table = this.createVertex(null, null, '',
+		0, 0, colCount * w, rowCount * h,
+		s + 'childLayout=tableLayout;');
 	var row = this.createVertex(null, null, '', 0, 0, colCount * w, h,
-		'swimlane;horizontal=0;html=1;whiteSpace=wrap;collapsible=0;container=1;' +
-		'childLayout=rowLayout;points=[[0,0.5],[1,0.5]];connectable=0;recursiveResize=0;');
-	table.insert(this.createParent(row, this.createVertex(null, null,  '', 0, 0, w, h,
-		'swimlane;html=1;whiteSpace=wrap;connectable=0;collapsible=0;container=1;'),
-		colCount));
+		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];part=1;');
+	table.insert(this.createParent(row, this.createVertex(null, null, '',
+		0, 0, w, h, s + 'connectable=0;part=1;'), colCount));
 	
 	if (rowCount > 1)
 	{
 		return this.createParent(table, this.createParent(row,
 			this.createVertex(null, null,  '', 0, 0, w, h,
-			'html=1;whiteSpace=wrap;connectable=0;collapsible=0;' +
-			'container=1;fillColor=none;recursiveResize=0;'),
+			s + 'connectable=0;part=1;startSize=0;'),
 			colCount), rowCount - 1);
 	}
 	else
@@ -9093,7 +9098,7 @@ if (typeof mxVertexHandler != 'undefined')
 				this.hint = null;
 			}
 		};
-		
+
 		/**
 		 * Moves rotation handle to top, right corner.
 		 */
@@ -9916,6 +9921,38 @@ if (typeof mxVertexHandler != 'undefined')
 				this.rotationShape.node.setAttribute('title', mxResources.get('rotateTooltip'));
 			}
 			
+			this.rowState = null;
+			
+			if (this.graph.isTableRow(this.state.cell))
+			{
+				this.rowState = this.state;
+			}
+			else if (this.graph.isTableCell(this.state.cell))
+			{
+				this.rowState = this.graph.view.getState(
+					this.graph.model.getParent(this.state.cell));
+			}
+				
+			if (this.rowState != null)
+			{
+				this.rowMoveHandle = mxUtils.createImage(Editor.moveImage);
+				this.rowMoveHandle.style.position = 'absolute';
+				this.rowMoveHandle.style.cursor = 'pointer';
+				this.rowMoveHandle.style.width = '18px';
+				this.rowMoveHandle.style.height = '18px';
+				this.graph.container.appendChild(this.rowMoveHandle);
+				
+				mxEvent.addGestureListeners(this.rowMoveHandle, mxUtils.bind(this, function(evt)
+				{
+					this.graph.graphHandler.start(this.state.cell,
+						mxEvent.getClientX(evt), mxEvent.getClientY(evt), [this.rowState.cell]);
+					this.graph.graphHandler.cellWasClicked = true;
+					this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+					this.graph.isMouseDown = true;
+					mxEvent.consume(evt);
+				}));
+			}
+			
 			var update = mxUtils.bind(this, function()
 			{
 				if (this.specialHandle != null)
@@ -9958,7 +9995,19 @@ if (typeof mxVertexHandler != 'undefined')
 				this.redrawHandles();
 			}
 		};
-	
+		
+		var vertexHandlerSetHandlesVisible = mxVertexHandler.prototype.setHandlesVisible;
+
+		mxVertexHandler.prototype.setHandlesVisible = function(visible)
+		{
+			vertexHandlerSetHandlesVisible.apply(this, arguments);
+			
+			if (this.rowMoveHandle != null)
+			{
+				this.rowMoveHandle.style.display = (visible) ? '' : 'none';
+			}
+		};
+		
 		mxVertexHandler.prototype.updateLinkHint = function(link, links)
 		{
 			try
@@ -10070,7 +10119,9 @@ if (typeof mxVertexHandler != 'undefined')
 				
 				if (this.labelShape != null)
 				{
-					this.labelShape.node.style.display = (this.graph.isEnabled() && this.graph.getSelectionCount() < this.graph.graphHandler.maxCells) ? '' : 'none';
+					this.labelShape.node.style.display = (this.graph.isEnabled() &&
+						this.graph.getSelectionCount() < this.graph.graphHandler.maxCells) ?
+						'' : 'none';
 				}
 			});
 			
@@ -10110,14 +10161,21 @@ if (typeof mxVertexHandler != 'undefined')
 	
 		var vertexHandlerRedrawHandles = mxVertexHandler.prototype.redrawHandles;
 		mxVertexHandler.prototype.redrawHandles = function()
-		{
+		{		
+			if (this.rowMoveHandle != null && this.rowState != null)
+			{
+				this.rowMoveHandle.style.left = (this.rowState.x + this.rowState.width) + 'px';
+				this.rowMoveHandle.style.top = (this.rowState.y + this.rowState.height) + 'px';
+			}
+			
 			// Shows rotation handle only if one vertex is selected
 			if (this.rotationShape != null && this.rotationShape.node != null)
 			{
-				this.rotationShape.node.style.display = (this.graph.getSelectionCount() == 1 &&
-					(this.index == null || this.index == mxEvent.ROTATION_HANDLE)) ? '' : 'none';
+				this.rotationShape.node.style.display = (this.rowMoveHandle == null &&
+					(this.graph.getSelectionCount() == 1 && (this.index == null ||
+					this.index == mxEvent.ROTATION_HANDLE))) ? '' : 'none';
 			}
-			
+
 			vertexHandlerRedrawHandles.apply(this);
 
 			if (this.state != null && this.linkHint != null)
@@ -10150,6 +10208,13 @@ if (typeof mxVertexHandler != 'undefined')
 		mxVertexHandler.prototype.destroy = function()
 		{
 			vertexHandlerDestroy.apply(this, arguments);
+			
+			if (this.rowMoveHandle != null)
+			{
+				this.rowMoveHandle.parentNode.removeChild(this.rowMoveHandle);
+				this.rowMoveHandle = null;
+				this.rowState = null;
+			}
 			
 			if (this.linkHint != null)
 			{
