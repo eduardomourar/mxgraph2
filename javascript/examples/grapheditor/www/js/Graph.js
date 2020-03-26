@@ -9158,8 +9158,37 @@ if (typeof mxVertexHandler != 'undefined')
 				name = mxConstants.SHAPE_RECTANGLE;
 			}
 			
-			if (this.graph.cellEditor.getEditingCell() == this.state.cell && 
-				this.sizers != null && this.sizers.length > 0 && this.sizers[0] != null)
+			// Checks if custom handles are overlapping with the shape border
+			var handlePadding = this.graph.cellEditor.getEditingCell() == this.state.cell;
+			
+			if (!handlePadding)
+			{
+				if (this.customHandles != null)
+				{
+					for (var i = 0; i < this.customHandles.length; i++)
+					{
+						if (this.customHandles[i].shape != null &&
+							this.customHandles[i].shape.bounds != null)
+						{
+							var b = this.customHandles[i].shape.bounds;
+							var px = b.getCenterX();
+							var py = b.getCenterY();
+							
+							if ((Math.abs(this.state.x - px) < b.width / 2) ||
+								(Math.abs(this.state.y - py) < b.height / 2) ||
+								(Math.abs(this.state.x + this.state.width - px) < b.width / 2) ||
+								(Math.abs(this.state.y + this.state.height - py) < b.height / 2))
+							{
+								handlePadding = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			if (handlePadding && this.sizers != null &&
+				this.sizers.length > 0 && this.sizers[0] != null)
 			{
 				tol /= 2;
 				
