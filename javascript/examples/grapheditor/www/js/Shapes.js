@@ -89,6 +89,7 @@
 	};
 	
 	mxCellRenderer.registerShape('cube', CubeShape);
+	Graph.handlePadding['cube'] = true;
 	
 	var tan30 = Math.tan(mxUtils.toRadians(30));
 	var tan30Dx = (0.5 - tan30) / 2;
@@ -269,6 +270,7 @@
 	};
 
 	mxCellRenderer.registerShape('note', NoteShape);
+	Graph.handlePadding['note'] = true;
 
 	// Note Shape, supports size style
 	function SwitchShape()
@@ -347,6 +349,7 @@
 	};
 
 	mxCellRenderer.registerShape('folder', FolderShape);
+	Graph.handlePadding['folder'] = true;
 
 	// Card shape
 	function CardShape()
@@ -369,6 +372,7 @@
 	};
 
 	mxCellRenderer.registerShape('card', CardShape);
+	Graph.handlePadding['card'] = true;
 
 	// Tape shape
 	function TapeShape()
@@ -421,6 +425,7 @@
 	};
 	
 	mxCellRenderer.registerShape('tape', TapeShape);
+	Graph.handlePadding['tape'] = true;
 
 	// Document shape
 	function DocumentShape()
@@ -943,7 +948,8 @@
 	};
 
 	mxCellRenderer.registerShape('callout', CalloutShape);
-
+	Graph.handlePadding['callout'] = true;
+	
 	// Step shape
 	function StepShape()
 	{
@@ -968,6 +974,7 @@
 	};
 
 	mxCellRenderer.registerShape('step', StepShape);
+	Graph.handlePadding['step'] = true;
 
 	// Hexagon shape
 	function HexagonShape()
@@ -989,7 +996,8 @@
 	};
 
 	mxCellRenderer.registerShape('hexagon', HexagonShape);
-
+	Graph.handlePadding['hexagon'] = true;
+	
 	// Plus Shape
 	function PlusShape()
 	{
@@ -2183,7 +2191,8 @@
 	};
 
 	mxCellRenderer.registerShape('internalStorage', InternalStorageShape);
-
+	Graph.handlePadding['internalStorage'] = true;
+	
 	// Internal storage
 	function CornerShape()
 	{
@@ -2207,6 +2216,7 @@
 	};
 
 	mxCellRenderer.registerShape('corner', CornerShape);
+	Graph.handlePadding['corner'] = true;
 
 	// Crossbar shape
 	function CrossbarShape()
@@ -2257,6 +2267,7 @@
 	};
 
 	mxCellRenderer.registerShape('tee', TeeShape);
+	Graph.handlePadding['tee'] = true;
 
 	// Arrow
 	function SingleArrowShape()
@@ -2281,6 +2292,7 @@
 	};
 
 	mxCellRenderer.registerShape('singleArrow', SingleArrowShape);
+	Graph.handlePadding['singleArrow'] = true;
 
 	// Arrow
 	function DoubleArrowShape()
@@ -2304,6 +2316,7 @@
 	};
 
 	mxCellRenderer.registerShape('doubleArrow', DoubleArrowShape);
+	Graph.handlePadding['doubleArrow'] = true;
 
 	// Data storage
 	function DataStorageShape()
@@ -2326,6 +2339,7 @@
 	};
 
 	mxCellRenderer.registerShape('dataStorage', DataStorageShape);
+	Graph.handlePadding['dataStorage'] = true;
 
 	// Or
 	function OrShape()
@@ -2383,6 +2397,7 @@
 	};
 
 	mxCellRenderer.registerShape('loopLimit', LoopLimitShape);
+	Graph.handlePadding['loopLimit'] = true;
 
 	// Off page connector
 	function OffPageConnectorShape()
@@ -2405,6 +2420,7 @@
 	};
 
 	mxCellRenderer.registerShape('offPageConnector', OffPageConnectorShape);
+	Graph.handlePadding['offPageConnector'] = true;
 
 	// Internal storage
 	function TapeDataShape()
@@ -2704,6 +2720,7 @@
 	};
 
 	mxCellRenderer.registerShape('cross', CrossShape);
+	Graph.handlePadding['cross'] = true;
 
 	// Display
 	function DisplayShape()
@@ -2728,6 +2745,7 @@
 	};
 
 	mxCellRenderer.registerShape('display', DisplayShape);
+	Graph.handlePadding['display'] = true;
 	
 	// FilledEdge shape
 	function FilledEdge()
