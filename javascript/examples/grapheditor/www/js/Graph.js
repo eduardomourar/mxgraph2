@@ -1064,12 +1064,6 @@ Graph.foreignObjectWarningText = 'Viewer does not support full SVG 1.1';
 Graph.foreignObjectWarningLink = 'https://desk.draw.io/support/solutions/articles/16000042487';
 
 /**
- * Maps from shape name to boolean for handle padding override,
- * eg. Graph.handlePadding['mxgraph.basic.polygon'] = true
- */
-Graph.handlePadding = {};
-
-/**
  * Helper function for creating SVG data URI.
  */
 Graph.createSvgImage = function(w, h, data, coordWidth, coordHeight)
@@ -9164,7 +9158,7 @@ if (typeof mxVertexHandler != 'undefined')
 				name = mxConstants.SHAPE_RECTANGLE;
 			}
 			
-			if ((this.graph.cellEditor.getEditingCell() == this.state.cell || Graph.handlePadding[name]) && 
+			if (this.graph.cellEditor.getEditingCell() == this.state.cell && 
 				this.sizers != null && this.sizers.length > 0 && this.sizers[0] != null)
 			{
 				tol /= 2;
