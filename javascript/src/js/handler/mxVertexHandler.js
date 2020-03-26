@@ -1730,6 +1730,21 @@ mxVertexHandler.prototype.redrawHandles = function()
 	this.horizontalOffset = 0;
 	this.verticalOffset = 0;
 	var s = this.bounds;
+	
+	if (this.customHandles != null)
+	{
+		for (var i = 0; i < this.customHandles.length; i++)
+		{
+			var temp = this.customHandles[i].shape.node.style.display;
+			this.customHandles[i].redraw();
+			this.customHandles[i].shape.node.style.display = temp;
+
+			// Hides custom handles during text editing
+			this.customHandles[i].shape.node.style.visibility =
+				(this.isCustomHandleVisible(this.customHandles[i])) ?
+				'' : 'hidden';
+		}
+	}
 
 	if (this.sizers != null && this.sizers.length > 0 && this.sizers[0] != null)
 	{
@@ -1891,21 +1906,6 @@ mxVertexHandler.prototype.redrawHandles = function()
 		for (var i = 0; i < this.edgeHandlers.length; i++)
 		{
 			this.edgeHandlers[i].redraw();
-		}
-	}
-	
-	if (this.customHandles != null)
-	{
-		for (var i = 0; i < this.customHandles.length; i++)
-		{
-			var temp = this.customHandles[i].shape.node.style.display;
-			this.customHandles[i].redraw();
-			this.customHandles[i].shape.node.style.display = temp;
-
-			// Hides custom handles during text editing
-			this.customHandles[i].shape.node.style.visibility =
-				(this.isCustomHandleVisible(this.customHandles[i])) ?
-				'' : 'hidden';
 		}
 	}
 
