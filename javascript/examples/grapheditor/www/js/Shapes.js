@@ -2611,7 +2611,7 @@
 			
 			if (mxUtils.getValue(this.style, 'left', '1') == '1')
 			{
-				c.lineTo(x, y - this.strokewidth / 2);
+				c.lineTo(x, y);
 			}
 						
 			c.end();
