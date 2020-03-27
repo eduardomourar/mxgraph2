@@ -1,3 +1,4 @@
+- Fixes use of userAgent to detect browsers and platforms
 - Reduces number of layout runs in mxLayoutManager
 - Adds resizeCell in mxGraphLayout
 - Adds eventName in mxLayoutManager.getLayout

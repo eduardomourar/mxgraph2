@@ -3957,7 +3957,8 @@ EditorUi.prototype.executeLayout = function(exec, animate, post)
 		{
 			// Animates the changes in the graph model except
 			// for Camino, where animation is too slow
-			if (this.allowAnimation && animate && navigator.userAgent.indexOf('Camino') < 0)
+			if (this.allowAnimation && animate && (navigator.userAgent == null ||
+				navigator.userAgent.indexOf('Camino') < 0))
 			{
 				// New API for animating graph layout results asynchronously
 				var morph = new mxMorphing(graph);
