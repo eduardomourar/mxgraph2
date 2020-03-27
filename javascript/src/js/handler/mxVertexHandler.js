@@ -360,7 +360,9 @@ mxVertexHandler.prototype.createParentHighlightShape = function(bounds)
  */
 mxVertexHandler.prototype.createSelectionShape = function(bounds)
 {
-	var shape = new mxRectangleShape(bounds, null, this.getSelectionColor());
+	var shape = new mxRectangleShape(
+		mxRectangle.fromRectangle(bounds),
+		null, this.getSelectionColor());
 	shape.strokewidth = this.getSelectionStrokeWidth();
 	shape.isDashed = this.isSelectionDashed();
 	
@@ -1077,6 +1079,10 @@ mxVertexHandler.prototype.resizeVertex = function(me)
 		if (this.preview != null)
 		{
 			this.drawPreview();
+		}
+		else
+		{
+			this.updateParentHighlight();
 		}
 	}
 };
@@ -1908,8 +1914,6 @@ mxVertexHandler.prototype.redrawHandles = function()
 			this.edgeHandlers[i].redraw();
 		}
 	}
-
-	this.updateParentHighlight();
 };
 
 /**
@@ -1954,7 +1958,7 @@ mxVertexHandler.prototype.updateParentHighlight = function()
 				if (pstate != null && (b.x != pstate.x || b.y != pstate.y ||
 					b.width != pstate.width || b.height != pstate.height))
 				{
-					this.parentHighlight.bounds = pstate;
+					this.parentHighlight.bounds = mxRectangle.fromRectangle(pstate);
 					this.parentHighlight.redraw();
 				}
 			}
@@ -1980,6 +1984,7 @@ mxVertexHandler.prototype.updateParentHighlight = function()
 					this.parentHighlight.pointerEvents = false;
 					this.parentHighlight.rotation = Number(pstate.style[mxConstants.STYLE_ROTATION] || '0');
 					this.parentHighlight.init(this.graph.getView().getOverlayPane());
+					this.parentHighlight.redraw();
 				}
 			}
 		}
@@ -2009,11 +2014,7 @@ mxVertexHandler.prototype.drawPreview = function()
 	
 	this.selectionBorder.bounds = this.bounds;
 	this.selectionBorder.redraw();
-	
-	if (this.parentHighlight != null)
-	{
-		this.parentHighlight.redraw();
-	}
+	this.updateParentHighlight();
 };
 
 /**
