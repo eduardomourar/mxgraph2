@@ -123,10 +123,7 @@ mxGraphLayout.prototype.getGraph = function()
  */
 mxGraphLayout.prototype.getConstraint = function(key, cell, edge, source)
 {
-	var state = this.graph.view.getState(cell);
-	var style = (state != null) ? state.style : this.graph.getCellStyle(cell);
-	
-	return (style != null) ? style[key] : null;
+	return this.graph.getCurrentCellStyle(cell)[key]
 };
 
 /**

@@ -4264,8 +4264,8 @@ EditorUi.prototype.createKeyHandler = function(editor)
 						
 					    for (var i = 0; i < cells.length; i++)
 					    {
-							var state = graph.view.getState(cells[i]);
-							var style = (state != null) ? state.style : graph.getCellStyle(cells[i]);
+					    	// TODO: Use getCompositeParent
+							var style = graph.getCurrentCellStyle(cells[i]);
 					    	
 							if (mxUtils.getValue(style, 'part', '0') == '1')
 							{

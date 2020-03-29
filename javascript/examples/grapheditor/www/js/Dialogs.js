@@ -2537,8 +2537,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 			btn.style.padding = '4px';
 			btn.setAttribute('title', mxResources.get('lockUnlock'));
 
-			var state = graph.view.getState(child);
-    			var style = (state != null) ? state.style : graph.getCellStyle(child);
+			var style = graph.getCurrentCellStyle(child);
 
 			if (mxUtils.getValue(style, 'locked', '0') == '1')
 			{

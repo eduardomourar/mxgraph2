@@ -1279,14 +1279,9 @@ mxVertexHandler.prototype.rotateCell = function(cell, angle, parent)
 		{
 			if (!model.isEdge(cell))
 			{
-				var state = this.graph.view.getState(cell);
-				var style = (state != null) ? state.style : this.graph.getCellStyle(cell);
-		
-				if (style != null)
-				{
-					var total = (style[mxConstants.STYLE_ROTATION] || 0) + angle;
-					this.graph.setCellStyles(mxConstants.STYLE_ROTATION, total, [cell]);
-				}
+				var style = this.graph.getCurrentCellStyle(cell);
+				var total = (style[mxConstants.STYLE_ROTATION] || 0) + angle;
+				this.graph.setCellStyles(mxConstants.STYLE_ROTATION, total, [cell]);
 			}
 			
 			var geo = this.graph.getCellGeometry(cell);
