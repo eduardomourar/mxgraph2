@@ -3265,10 +3265,11 @@ mxGraph.prototype.updatePageBreaks = function(visible, width, height)
  * Parameters:
  * 
  * cell - <mxCell> whose style should be returned as an array.
+ * ignoreState - Optional boolean that specifies if the cell state should be ignored.
  */
-mxGraph.prototype.getCurrentCellStyle = function(cell)
+mxGraph.prototype.getCurrentCellStyle = function(cell, ignoreState)
 {
-	var state = this.view.getState(cell);
+	var state = (ignoreState) ? null : this.view.getState(cell);
 	
 	return (state != null) ? state.style : this.getCellStyle(cell);
 };
@@ -9192,12 +9193,12 @@ mxGraph.prototype.getCursorForCell = function(cell)
  * Parameters:
  * 
  * swimlane - <mxCell> whose start size should be returned.
- * ignoreCache - Optional boolean that specifies if cell state should be ignored.
+ * ignoreState - Optional boolean that specifies if cell state should be ignored.
  */
 mxGraph.prototype.getStartSize = function(swimlane, ignoreState)
 {
 	var result = new mxRectangle();
-	var style = this.getCurrentCellStyle(swimlane);
+	var style = this.getCurrentCellStyle(swimlane, ignoreState);
 	var size = parseInt(mxUtils.getValue(style,
 		mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
 	

@@ -4351,69 +4351,65 @@ Graph.prototype.getActualStartSize = function(swimlane, ignoreState)
 	
 	if (this.isSwimlane(swimlane))
 	{
-		var style = this.getCurrentCellStyle(swimlane);
+		var style = this.getCurrentCellStyle(swimlane, ignoreState);
+		var size = parseInt(mxUtils.getValue(style,
+			mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
+		var flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, 0) == 1;
+		var flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, 0) == 1;
+		var h = mxUtils.getValue(style, mxConstants.STYLE_HORIZONTAL, true);
+		var n = 0;
 		
-		if (style != null)
+		if (!h)
 		{
-			var size = parseInt(mxUtils.getValue(style,
-				mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
-			var flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, 0) == 1;
-			var flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, 0) == 1;
-			var h = mxUtils.getValue(style, mxConstants.STYLE_HORIZONTAL, true);
-			var n = 0;
-			
-			if (!h)
-			{
-				n++;
-			}
-			
-			var dir = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
-			
-			if (dir == mxConstants.DIRECTION_NORTH)
-			{
-				n++;
-			}
-			else if (dir == mxConstants.DIRECTION_WEST)
-			{
-				n += 2;
-			}
-			else if (dir == mxConstants.DIRECTION_SOUTH)
-			{
-				n += 3;
-			}
-			
-			n = mxUtils.mod(n, 4);
-			
-			if (n == 0)
-			{
-				result.y = size;
-			}
-			else if (n == 1)
-			{
-				result.x = size;
-			}
-			else if (n == 2)
-			{
-				result.height = size;
-			}
-			else if (n == 3)
-			{
-				result.width = size;
-			}
-			
-			if (flipV)
-			{
-				var tmp = result.y;
-				result.y = result.height;
-				result.height = tmp;
-			}
-			
-			if (flipH)
-			{
-				var tmp = result.x;
-				result.x = result.width;
-				result.width = tmp;
-			}
+			n++;
+		}
+		
+		var dir = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
+		
+		if (dir == mxConstants.DIRECTION_NORTH)
+		{
+			n++;
+		}
+		else if (dir == mxConstants.DIRECTION_WEST)
+		{
+			n += 2;
+		}
+		else if (dir == mxConstants.DIRECTION_SOUTH)
+		{
+			n += 3;
+		}
+		
+		n = mxUtils.mod(n, 4);
+		
+		if (n == 0)
+		{
+			result.y = size;
+		}
+		else if (n == 1)
+		{
+			result.x = size;
+		}
+		else if (n == 2)
+		{
+			result.height = size;
+		}
+		else if (n == 3)
+		{
+			result.width = size;
+		}
+		
+		if (flipV)
+		{
+			var tmp = result.y;
+			result.y = result.height;
+			result.height = tmp;
+		}
+		
+		if (flipH)
+		{
+			var tmp = result.x;
+			result.x = result.width;
+			result.width = tmp;
 		}
 	}
 	
