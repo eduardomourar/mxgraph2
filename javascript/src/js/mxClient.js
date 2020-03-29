@@ -165,7 +165,7 @@ var mxClient =
 	 *
 	 * True if the current browser is Google Chrome.
 	 */
-  	IS_GC: !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime),
+  	IS_GC: /Google Inc/.test(navigator.vendor),
 	
 	/**
 	 * Variable: IS_CHROMEAPP
