@@ -2649,9 +2649,39 @@ mxGraph.prototype.click = function(me)
 			// Selects the swimlane and consumes the event
 			if (swimlane != null)
 			{
+				var temp = swimlane;
+				var swimlanes = [];
+				
+				while (temp != null)
+				{
+					temp = this.model.getParent(temp);
+					var state = this.view.getState(temp);
+					
+					if (this.isSwimlane(temp) && state != null &&
+						this.intersects(state, me.getGraphX(), me.getGraphY()))
+					{
+						swimlanes.push(temp);
+					}
+				}
+				
+				// Selects ancestors for selected swimlanes
+				if (swimlanes.length > 0)
+				{
+					swimlanes = swimlanes.reverse();
+					swimlanes.splice(0, 0, swimlane);
+					swimlanes.push(swimlane);
+					
+					for (var i = 0; i < swimlanes.length - 2; i++)
+					{
+						if (this.isCellSelected(swimlanes[i]))
+						{
+							swimlane = swimlanes[i + 1];
+						}
+					}
+				}
+
 				this.selectCellForEvent(swimlane, evt);
 			}
-			
 			// Ignores the event if the control key is pressed
 			else if (!this.isToggleEvent(evt))
 			{
