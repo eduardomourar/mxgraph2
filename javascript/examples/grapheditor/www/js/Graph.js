@@ -9068,6 +9068,20 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 
 		/**
+		 * Creates the shape used to draw the selection border.
+		 */
+		var vertexHandlerCreateParentHighlightShape = mxVertexHandler.prototype.createParentHighlightShape;
+		
+		mxVertexHandler.prototype.createParentHighlightShape = function(bounds)
+		{
+			var shape = vertexHandlerCreateParentHighlightShape.apply(this, arguments);
+			
+			shape.stroke = '#C0C0C0';
+			
+			return shape;
+		};
+
+		/**
 		 * Moves rotation handle to top, right corner.
 		 */
 		mxVertexHandler.prototype.rotationHandleVSpacing = -12;
