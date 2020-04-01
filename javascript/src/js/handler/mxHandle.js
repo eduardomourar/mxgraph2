@@ -204,7 +204,8 @@ mxHandle.prototype.initShape = function(html)
 	}
 	else
 	{
-		this.shape.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_MIXEDHTML : mxConstants.DIALECT_SVG;
+		this.shape.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ?
+			mxConstants.DIALECT_MIXEDHTML : mxConstants.DIALECT_SVG;
 		
 		if (this.cursor != null)
 		{
