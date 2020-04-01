@@ -114,7 +114,7 @@ Format.prototype.initSelectionState = function()
 	return {vertices: [], edges: [], x: null, y: null, width: null, height: null, style: {},
 		containsImage: false, containsLabel: false, fill: true, glass: true, rounded: true,
 		comic: true, autoSize: false, image: true, shadow: true, lineJumps: true,
-		resizable: true, movable: true};
+		resizable: true, movable: true, rotatable: true};
 };
 
 /**
@@ -127,6 +127,7 @@ Format.prototype.updateSelectionStateForCell = function(result, cell, cells)
 	if (graph.getModel().isVertex(cell))
 	{
 		result.resizable = result.resizable && graph.isCellResizable(cell);
+		result.rotatable = result.rotatable && graph.isCellRotatable(cell);
 		result.movable = result.movable && graph.isCellMovable(cell);
 		result.vertices.push(cell);
 		var geo = graph.getCellGeometry(cell);
@@ -194,6 +195,7 @@ Format.prototype.updateSelectionStateForCell = function(result, cell, cells)
 	{
 		result.edges.push(cell);
 		result.resizable = false;
+		result.rotatable = false;
 		result.movable = false;
 	}
 
@@ -1968,7 +1970,7 @@ ArrangePanel.prototype.addAngle = function(div)
 	var update = null;
 	var btn = null;
 	
-	if (ss.edges.length == 0)
+	if (ss.rotatable)
 	{
 		mxUtils.write(span, mxResources.get('angle'));
 		div.appendChild(span);
