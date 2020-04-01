@@ -824,9 +824,8 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 			else
 			{
 				this.resizeVertex(me);
+				this.updateHint(me);
 			}
-
-			this.updateHint(me);
 		}
 		
 		me.consume();

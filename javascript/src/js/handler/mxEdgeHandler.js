@@ -1520,12 +1520,12 @@ mxEdgeHandler.prototype.mouseMove = function(sender, me)
 			this.setPreviewColor(color);
 			this.abspoints = clone.absolutePoints;
 			this.active = true;
+			this.updateHint(me, this.currentPoint);
 		}
 
 		// This should go before calling isOutlineConnectEvent above. As a workaround
 		// we add an offset of gridSize to the hint to avoid problem with hit detection
 		// in highlight.isHighlightAt (which uses comonentFromPoint)
-		this.updateHint(me, this.currentPoint);
 		this.drawPreview();
 		mxEvent.consume(me.getEvent());
 		me.consume();
