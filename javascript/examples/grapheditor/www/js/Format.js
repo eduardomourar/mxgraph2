@@ -128,7 +128,8 @@ Format.prototype.updateSelectionStateForCell = function(result, cell, cells)
 	{
 		result.resizable = result.resizable && graph.isCellResizable(cell);
 		result.rotatable = result.rotatable && graph.isCellRotatable(cell);
-		result.movable = result.movable && graph.isCellMovable(cell);
+		result.movable = result.movable && graph.isCellMovable(cell) &&
+			!graph.isTableRow(cell) && !graph.isTableCell(cell);
 		result.vertices.push(cell);
 		var geo = graph.getCellGeometry(cell);
 		
