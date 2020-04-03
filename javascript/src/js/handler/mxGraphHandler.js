@@ -78,7 +78,9 @@ function mxGraphHandler(graph)
 
 					if (this.livePreviewUsed)
 					{
-						this.setHandlesVisibleForCells(this.graph.getSelectionCells(), false);
+						this.setHandlesVisibleForCells(
+							this.graph.selectionCellsHandler.
+							getHandledSelectionCells(), false);
 					}
 				}
 			}
@@ -1039,7 +1041,9 @@ mxGraphHandler.prototype.updatePreview = function(remote)
 	{
 		if (this.cells != null)
 		{
-			this.setHandlesVisibleForCells(this.graph.getSelectionCells(), false);
+			this.setHandlesVisibleForCells(
+				this.graph.selectionCellsHandler.
+				getHandledSelectionCells(), false);
 			this.updateLivePreview(this.currentDx, this.currentDy);
 		}
 	}
@@ -1358,12 +1362,10 @@ mxGraphHandler.prototype.setHandlesVisibleForCells = function(cells, visible)
 	if (this.handlesVisible != visible)
 	{
 		this.handlesVisible = visible;
-		
+	
 		for (var i = 0; i < cells.length; i++)
 		{
-			var cell = cells[i];
-	
-			var handler = this.graph.selectionCellsHandler.getHandler(cell);
+			var handler = this.graph.selectionCellsHandler.getHandler(cells[i]);
 			
 			if (handler != null)
 			{
@@ -1476,7 +1478,9 @@ mxGraphHandler.prototype.reset = function()
 	if (this.livePreviewUsed)
 	{
 		this.resetLivePreview();
-		this.setHandlesVisibleForCells(this.graph.getSelectionCells(), true);
+		this.setHandlesVisibleForCells(
+			this.graph.selectionCellsHandler.
+			getHandledSelectionCells(), true);
 	}
 	
 	this.destroyShapes();
