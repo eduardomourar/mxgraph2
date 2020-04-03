@@ -8838,19 +8838,6 @@ if (typeof mxVertexHandler != 'undefined')
 				!this.graph.isTableRow(this.state.cell) &&
 				!this.graph.isTableCell(this.state.cell) ? 1 : 2;
 		};
-		
-		/**
-		 * Uses green for table handlers.
-		 */
-		mxVertexHandler.prototype.getSelectionColor = function()
-		{
-			return (this.graph.isTable(this.state.cell) &&
-				this.graph.isCellSelected(this.state.cell)) ||
-				this.graph.isTableRow(this.state.cell) ||
-				this.graph.isTableCell(this.state.cell) ?
-					mxConstants.DROP_TARGET_COLOR :
-					mxConstants.VERTEX_SELECTION_COLOR;
-		};
 
 		/**
 		 * Moves rotation handle to top, right corner.
