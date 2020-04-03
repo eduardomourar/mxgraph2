@@ -268,8 +268,7 @@ mxVertexHandler.prototype.init = function()
 mxVertexHandler.prototype.isRotationHandleVisible = function()
 {
 	return this.graph.isEnabled() && this.rotationEnabled && this.graph.isCellRotatable(this.state.cell) &&
-		(mxGraphHandler.prototype.maxCells <= 0 || this.graph.getSelectionCount() < mxGraphHandler.prototype.maxCells) &&
-		this.state.width >= 2 && this.state.height >= 2;
+		(mxGraphHandler.prototype.maxCells <= 0 || this.graph.getSelectionCount() < mxGraphHandler.prototype.maxCells);
 };
 
 /**
@@ -577,9 +576,7 @@ mxVertexHandler.prototype.isCustomHandleEvent = function(me)
  */
 mxVertexHandler.prototype.mouseDown = function(sender, me)
 {
-	var tol = (!mxEvent.isMouseEvent(me.getEvent())) ? this.tolerance : 0;
-	
-	if (!me.isConsumed() && this.graph.isEnabled() && (tol > 0 || me.getState() == this.state))
+	if (!me.isConsumed() && this.graph.isEnabled())
 	{
 		var handle = this.getHandleForEvent(me);
 
@@ -1707,6 +1704,16 @@ mxVertexHandler.prototype.getHandlePadding = function()
 };
 
 /**
+ * Function: getSizerBounds
+ * 
+ * Returns the bounds used to paint the resize handles.
+ */
+mxVertexHandler.prototype.getSizerBounds = function()
+{
+	return this.bounds;
+};
+
+/**
  * Function: redrawHandles
  * 
  * Redraws the handles. To hide certain handles the following code can be used.
@@ -1726,10 +1733,10 @@ mxVertexHandler.prototype.getHandlePadding = function()
  */
 mxVertexHandler.prototype.redrawHandles = function()
 {
+	var s = this.getSizerBounds();
 	var tol = this.tolerance;
 	this.horizontalOffset = 0;
 	this.verticalOffset = 0;
-	var s = this.bounds;
 	
 	if (this.customHandles != null)
 	{
@@ -1931,6 +1938,17 @@ mxVertexHandler.prototype.getRotationHandlePosition = function()
 };
 
 /**
+ * Function: isParentHighlightVisible
+ * 
+ * Returns true if the parent highlight should be visible. This implementation
+ * always returns true.
+ */
+mxVertexHandler.prototype.isParentHighlightVisible = function()
+{
+	return true;
+};
+
+/**
  * Function: updateParentHighlight
  * 
  * Updates the highlight of the parent if <parentHighlightEnabled> is true.
@@ -1938,7 +1956,7 @@ mxVertexHandler.prototype.getRotationHandlePosition = function()
 mxVertexHandler.prototype.updateParentHighlight = function()
 {
 	// If not destroyed
-	if (this.selectionBorder != null)
+	if (this.selectionBorder != null && this.isParentHighlightVisible())
 	{
 		if (this.parentHighlight != null)
 		{
@@ -2006,9 +2024,19 @@ mxVertexHandler.prototype.drawPreview = function()
 		this.preview.redraw();
 	}
 	
-	this.selectionBorder.bounds = this.bounds;
+	this.selectionBorder.bounds = this.getSelectionBorderBounds();
 	this.selectionBorder.redraw();
 	this.updateParentHighlight();
+};
+
+/**
+ * Function: getSelectionBorderBounds
+ * 
+ * Returns the bounds for the selection border.
+ */
+mxVertexHandler.prototype.getSelectionBorderBounds = function()
+{
+	return this.bounds;
 };
 
 /**
