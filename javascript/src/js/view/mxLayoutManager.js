@@ -200,13 +200,29 @@ mxLayoutManager.prototype.setGraph = function(graph)
 };
 
 /**
+ * Function: hasLayout
+ * 
+ * Returns true if the given cell has a layout. This implementation invokes
+ * <getLayout> with <mxEvent.LAYOUT_CELLS> as the eventName. Override this
+ * if creating layouts in <getLayout> is expensive and return true if
+ * <getLayout> will return a layout for the given cell for
+ * <mxEvent.BEGIN_UPDATE> or <mxEvent.END_UPDATE>.
+ */
+mxLayoutManager.prototype.hasLayout = function(cell)
+{
+	return this.getLayout(cell, mxEvent.LAYOUT_CELLS);
+};
+
+/**
  * Function: getLayout
  * 
  * Returns the layout for the given cell and eventName. Possible
  * event names are <mxEvent.MOVE_CELLS> and <mxEvent.RESIZE_CELLS>
- * for callbacks on when cells are moved or resized and
- * <mxEvent.BEGIN_UPDATE> and <mxEvent.END_UPDATE> for the capture
- * and bubble phase of the layout after any changes of the model.
+ * when cells are moved or resized and <mxEvent.BEGIN_UPDATE> or
+ * <mxEvent.END_UPDATE> for the capture and bubble phase of the
+ * layout after any changes of the model. Finally, <mxEvent.LAYOUT_CELLS>
+ * is used to check if a layout exists for the given cell.
+ * This is called from <hasLayout> which can be overriden alternatively.
  */
 mxLayoutManager.prototype.getLayout = function(cell, eventName)
 {
@@ -386,7 +402,7 @@ mxLayoutManager.prototype.addAncestorsWithLayout = function(cell, result)
 	
 	if (cell != null)
 	{
-		var layout = this.getLayout(cell);
+		var layout = this.hasLayout(cell);
 		
 		if (layout != null)
 		{
@@ -413,7 +429,7 @@ mxLayoutManager.prototype.addDescendantsWithLayout = function(cell, result)
 {
 	result = (result != null) ? result : [];
 	
-	if (cell != null && this.getLayout(cell) != null)
+	if (cell != null && this.hasLayout(cell))
 	{
 		var model = this.getGraph().getModel();
 		
@@ -421,7 +437,7 @@ mxLayoutManager.prototype.addDescendantsWithLayout = function(cell, result)
 		{
 			var child = model.getChildAt(cell, i);
 			
-			if (this.getLayout(child) != null)
+			if (this.hasLayout(child))
 			{
 				result.push(child);
 				this.addDescendantsWithLayout(child, result);
