@@ -15,12 +15,13 @@
  * 
  * state - <mxCellState> of the cell to be handled.
  */
-function mxHandle(state, cursor, image)
+function mxHandle(state, cursor, image, shape)
 {
 	this.graph = state.view.graph;
 	this.state = state;
 	this.cursor = (cursor != null) ? cursor : this.cursor;
 	this.image = (image != null) ? image : this.image;
+	this.shape = (shape != null) ? shape : null;
 	this.init();
 };
 
@@ -170,7 +171,7 @@ mxHandle.prototype.init = function()
 		this.shape = new mxImageShape(new mxRectangle(0, 0, this.image.width, this.image.height), this.image.src);
 		this.shape.preserveImageAspect = false;
 	}
-	else
+	else if (this.shape == null)
 	{
 		this.shape = this.createShape(html);
 	}
