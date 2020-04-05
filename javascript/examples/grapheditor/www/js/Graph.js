@@ -1469,8 +1469,7 @@ Graph.prototype.init = function(container)
 	 */
 	Graph.prototype.isPart = function(cell)
 	{
-		return (!this.model.isVertex(cell)) ? false :
-			mxUtils.getValue(this.getCurrentCellStyle(cell), 'part', '0') == '1';
+		return mxUtils.getValue(this.getCurrentCellStyle(cell), 'part', '0') == '1';
 	};
 	
 	/**
@@ -1480,7 +1479,14 @@ Graph.prototype.init = function(container)
 	{
 		while (this.isPart(cell))
 		{
-			cell = this.model.getParent(cell);
+			var temp = this.model.getParent(cell);
+			
+			if (!this.model.isVertex(temp))
+			{
+				break;
+			}
+			
+			cell = temp;
 		}
 		
 		return cell;
