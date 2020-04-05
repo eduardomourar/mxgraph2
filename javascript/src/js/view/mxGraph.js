@@ -5568,8 +5568,9 @@ mxGraph.prototype.cellSizeUpdated = function(cell, ignoreChildren)
  * Parameters:
  * 
  * cell - <mxCell> for which the preferred size should be returned.
+ * textWidth - Optional maximum text width for word wrapping.
  */
-mxGraph.prototype.getPreferredSizeForCell = function(cell)
+mxGraph.prototype.getPreferredSizeForCell = function(cell, textWidth)
 {
 	var result = null;
 	
@@ -5633,7 +5634,7 @@ mxGraph.prototype.getPreferredSizeForCell = function(cell)
 				value = value.replace(/\n/g, '<br>');
 				
 				var size = mxUtils.getSizeForString(value, fontSize,
-					style[mxConstants.STYLE_FONTFAMILY], null,
+					style[mxConstants.STYLE_FONTFAMILY], textWidth,
 					style[mxConstants.STYLE_FONTSTYLE]);
 				var width = size.width + dx;
 				var height = size.height + dy;
