@@ -1145,6 +1145,27 @@ Graph.decompress = function(data, inflate, checked)
 		return (checked) ? inflated : Graph.zapGremlins(inflated);
 	}
 };
+	
+/**
+ * Removes formatting from pasted HTML.
+ */
+Graph.removePasteFormatting = function(elt)
+{
+	while (elt != null)
+	{
+		if (elt.firstChild != null)
+		{
+			Graph.removePasteFormatting(elt.firstChild);
+		}
+		
+		if (elt.nodeType == mxConstants.NODETYPE_ELEMENT && elt.style != null)
+		{
+			elt.style.whiteSpace = '';
+		}
+		
+		elt = elt.nextSibling;
+	}
+};
 
 /**
  * Graph inherits from mxGraph.
@@ -8363,12 +8384,18 @@ if (typeof mxVertexHandler != 'undefined')
 	
 					window.setTimeout(mxUtils.bind(this, function()
 					{
-						// Paste from Word or Excel
-						if (this.textarea != null &&
-							(this.textarea.innerHTML.indexOf('<o:OfficeDocumentSettings>') >= 0 ||
-							this.textarea.innerHTML.indexOf('<!--[if !mso]>') >= 0))
+						if (this.textarea != null)
 						{
-							checkNode(this.textarea, clone);
+							// Paste from Word or Excel
+							if (this.textarea.innerHTML.indexOf('<o:OfficeDocumentSettings>') >= 0 ||
+								this.textarea.innerHTML.indexOf('<!--[if !mso]>') >= 0)
+							{
+								checkNode(this.textarea, clone);
+							}
+							else
+							{
+								Graph.removePasteFormatting(this.textarea);
+							}
 						}
 					}), 0);
 				}));
