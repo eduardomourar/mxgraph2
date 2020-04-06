@@ -49,7 +49,7 @@
 - Adds mxGraphHandler.maxLivePreview
 - Adds mxGuide.isStateIgnored hook
 
-20-JUL-2019: 4.0.4
+20-AUG-2019: 4.0.4
 
 - Moved PHP code to own repo
 - Adds DPI support in advanced dialog
