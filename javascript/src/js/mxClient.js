@@ -121,9 +121,7 @@ var mxClient =
 	 *
 	 * True if the current browser is Safari.
 	 */
-  	IS_SF: /constructor/i.test(window.HTMLElement) || (function (p) {
-  		return p.toString() === "[object SafariRemoteNotification]";
-  		})(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification)),
+  	IS_SF: /Apple Computer, Inc/.test(navigator.vendor),
 
 	/**
 	 * Variable: IS_ANDROID
