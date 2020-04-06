@@ -4294,16 +4294,14 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h)
 	w = (w != null) ? w : 40;
 	h = (h != null) ? h : 30;
 	
-	
-	
 	return this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
-		'html=1;whiteSpace=wrap;container=1;collapsible=0;containerType=table;' +
+		'html=1;whiteSpace=wrap;container=1;collapsible=0;containerType=table;fillColor=none;' +
 		'childLayout=stackLayout;resizeLast=1;resizeParent=0;horizontalStack=0;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
-    		'html=1;whiteSpace=wrap;container=1;collapsible=0;points=[[0,0.5],[1,0.5]];part=1;portConstraint=eastwest;' +
-    		'childLayout=stackLayout;resizeLast=1;resizeParent=0;'),
+    		'html=1;whiteSpace=wrap;container=1;collapsible=0;points=[[0,0.5],[1,0.5]];fillColor=none;' +
+    		'portConstraint=eastwest;childLayout=stackLayout;resizeLast=1;resizeParent=0;part=1;'),
 			this.createVertex(null, null, '', 0, 0, w, h,
-				'html=1;whiteSpace=wrap;connectable=0;part=1;'),
+				'html=1;whiteSpace=wrap;connectable=0;part=1;fillColor=none;'),
 				colCount, w, 0), rowCount, 0, h);
 };
 
