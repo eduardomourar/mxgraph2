@@ -9246,6 +9246,90 @@ mxGraph.prototype.getStartSize = function(swimlane, ignoreState)
 };
 
 /**
+ * Function: getActualStartSize
+ * 
+ * Returns the actual start size of the given swimlane taking into account
+ * direction and horizontal and vertial flip styles. The start size is
+ * returned as an <mxRectangle> where top, left, bottom, right start sizes
+ * are returned as x, y, height and width, respectively.
+ * 
+ * Parameters:
+ * 
+ * swimlane - <mxCell> whose start size should be returned.
+ * ignoreState - Optional boolean that specifies if cell state should be ignored.
+ */
+mxGraph.prototype.getActualStartSize = function(swimlane, ignoreState)
+{
+	var result = new mxRectangle();
+	
+	if (this.isSwimlane(swimlane))
+	{
+		var style = this.getCurrentCellStyle(swimlane, ignoreState);
+		var size = parseInt(mxUtils.getValue(style,
+			mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
+		var flipH = mxUtils.getValue(style, mxConstants.STYLE_FLIPH, 0) == 1;
+		var flipV = mxUtils.getValue(style, mxConstants.STYLE_FLIPV, 0) == 1;
+		var h = mxUtils.getValue(style, mxConstants.STYLE_HORIZONTAL, true);
+		var n = 0;
+		
+		if (!h)
+		{
+			n++;
+		}
+		
+		var dir = mxUtils.getValue(style, mxConstants.STYLE_DIRECTION, mxConstants.DIRECTION_EAST);
+		
+		if (dir == mxConstants.DIRECTION_NORTH)
+		{
+			n++;
+		}
+		else if (dir == mxConstants.DIRECTION_WEST)
+		{
+			n += 2;
+		}
+		else if (dir == mxConstants.DIRECTION_SOUTH)
+		{
+			n += 3;
+		}
+		
+		n = mxUtils.mod(n, 4);
+		
+		if (n == 0)
+		{
+			result.y = size;
+		}
+		else if (n == 1)
+		{
+			result.x = size;
+		}
+		else if (n == 2)
+		{
+			result.height = size;
+		}
+		else if (n == 3)
+		{
+			result.width = size;
+		}
+		
+		if (flipV)
+		{
+			var tmp = result.y;
+			result.y = result.height;
+			result.height = tmp;
+		}
+		
+		if (flipH)
+		{
+			var tmp = result.x;
+			result.x = result.width;
+			result.width = tmp;
+		}
+	}
+	
+	return result;
+};
+
+/**
  * Function: getImage
  * 
  * Returns the image URL for the given cell state. This implementation
