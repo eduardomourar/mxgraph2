@@ -670,7 +670,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 	    var isToggleEvent = this.isToggleEvent;
 	    this.isToggleEvent = function(evt)
 	    {
-	    		return isToggleEvent.apply(this, arguments) || (!mxClient.IS_CHROMEOS && mxEvent.isShiftDown(evt));
+	    	return isToggleEvent.apply(this, arguments) || (!mxClient.IS_CHROMEOS && mxEvent.isShiftDown(evt));
 	    };
 	    
 	    // Workaround for Firefox where first mouse down is received
@@ -679,10 +679,10 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 	    var isForceRubberBandEvent = rubberband.isForceRubberbandEvent;
 	    rubberband.isForceRubberbandEvent = function(me)
 	    {
-		    	return (isForceRubberBandEvent.apply(this, arguments) && !mxEvent.isShiftDown(me.getEvent()) &&
-		    		!mxEvent.isControlDown(me.getEvent())) || (mxClient.IS_CHROMEOS && mxEvent.isShiftDown(me.getEvent())) ||
-		    		(mxUtils.hasScrollbars(this.graph.container) && mxClient.IS_FF &&
-		    		mxClient.IS_WIN && me.getState() == null && mxEvent.isTouchEvent(me.getEvent()));
+	    	return (isForceRubberBandEvent.apply(this, arguments) && !mxEvent.isShiftDown(me.getEvent()) &&
+	    		!mxEvent.isControlDown(me.getEvent())) || (mxClient.IS_CHROMEOS && mxEvent.isShiftDown(me.getEvent())) ||
+	    		(mxUtils.hasScrollbars(this.graph.container) && mxClient.IS_FF &&
+	    		mxClient.IS_WIN && me.getState() == null && mxEvent.isTouchEvent(me.getEvent()));
 	    };
 	    
 	    // Shows hand cursor while panning
