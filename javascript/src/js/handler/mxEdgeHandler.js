@@ -1551,7 +1551,7 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 		var edge = this.state.cell;
 		var index = this.index;
 		this.index = null;
-		
+
 		// Ignores event if mouse has not been moved
 		if (me.getX() != this.startX || me.getY() != this.startY)
 		{
@@ -1672,7 +1672,11 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 				this.graph.getView().validate(this.state.cell);						
 			}
 		}
-		
+		else if (this.graph.isToggleEvent(me.getEvent()))
+		{
+			this.graph.selectCellForEvent(this.state.cell, me.getEvent());
+		}
+
 		// Resets the preview color the state of the handler if this
 		// handler has not been recreated
 		if (this.marker != null)
