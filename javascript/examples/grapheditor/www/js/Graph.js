@@ -8863,11 +8863,12 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		mxVertexHandler.prototype.getSelectionStrokeWidth = function(bounds)
 		{
-			return this.graph.isCellResizable(this.state.cell) &&
+			return this.graph.cellEditor.getEditingCell() == this.state.cell ||
+				(this.graph.isCellResizable(this.state.cell) &&
 				(!this.graph.isTable(this.state.cell) ||
 				!this.graph.isCellSelected(this.state.cell)) &&
 				!this.graph.isTableRow(this.state.cell) &&
-				!this.graph.isTableCell(this.state.cell) ? 1 : 2;
+				!this.graph.isTableCell(this.state.cell)) ? 1 : 2;
 		};
 
 		/**
