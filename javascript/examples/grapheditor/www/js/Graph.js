@@ -8782,9 +8782,25 @@ if (typeof mxVertexHandler != 'undefined')
 			return shape;
 		};
 		
+		
+		/**
+		 * Creates the shape used to draw the selection border.
+		 */
+		var edgeHandlerCreateParentHighlightShape = mxEdgeHandler.prototype.createParentHighlightShape;
+		mxEdgeHandler.prototype.createParentHighlightShape = function(bounds)
+		{
+			var shape = edgeHandlerCreateParentHighlightShape.apply(this, arguments);
+			
+			shape.stroke = '#C0C0C0';
+			shape.strokewidth = 1;
+			
+			return shape;
+		};
+		
 		/**
 		 * Non resizable shapes have stronger selection shape.
 		 */
+		var vertexHandlerGetSelectionStrokeWidth = mxVertexHandler.prototype.getSelectionStrokeWidth;
 		mxVertexHandler.prototype.getSelectionStrokeWidth = function(bounds)
 		{
 			return this.graph.cellEditor.getEditingCell() == this.state.cell ||
@@ -8792,7 +8808,8 @@ if (typeof mxVertexHandler != 'undefined')
 				(!this.graph.isTable(this.state.cell) ||
 				!this.graph.isCellSelected(this.state.cell)) &&
 				!this.graph.isTableRow(this.state.cell) &&
-				!this.graph.isTableCell(this.state.cell)) ? 1 : 2;
+				!this.graph.isTableCell(this.state.cell)) ?
+				vertexHandlerGetSelectionStrokeWidth.apply(this, arguments) : 2;
 		};
 
 		/**
