@@ -4295,10 +4295,10 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h)
 	h = (h != null) ? h : 30;
 	
 	return this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
-		'html=1;whiteSpace=wrap;container=1;collapsible=0;containerType=table;fillColor=none;' +
-		'childLayout=stackLayout;resizeLast=1;resizeParent=0;horizontalStack=0;'),
+		'html=1;whiteSpace=wrap;container=0;collapsible=0;containerType=table;fillColor=none;' +
+		'childLayout=stackLayout;resizeLast=1;resizeParent=0;horizontalStack=0;dropTarget=0;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
-    		'html=1;whiteSpace=wrap;container=1;collapsible=0;points=[[0,0.5],[1,0.5]];fillColor=none;' +
+    		'html=1;whiteSpace=wrap;container=0;collapsible=0;points=[[0,0.5],[1,0.5]];fillColor=none;' +
     		'portConstraint=eastwest;childLayout=stackLayout;resizeLast=1;resizeParent=0;part=1;'),
 			this.createVertex(null, null, '', 0, 0, w, h,
 				'html=1;whiteSpace=wrap;connectable=0;part=1;fillColor=none;'),
@@ -4313,11 +4313,11 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	w = (w != null) ? w : 120;
 	h = (h != null) ? h : 120;
 	
-	var s = 'swimlane;html=1;whiteSpace=wrap;container=1;' +
+	var s = 'swimlane;html=1;whiteSpace=wrap;' +
 		'collapsible=0;recursiveResize=0;expand=0;';
 	
 	var table = this.createVertex(null, null, '', 0, 0,
-		colCount * w, rowCount * h, s + 'containerType=table;' +
+		colCount * w, rowCount * h, s + 'containerType=table;container=0;dropTarget=0;' +
 		'childLayout=stackLayout;resizeLast=1;resizeParent=0;horizontalStack=0;');
 	var t = mxUtils.getValue(this.getCellStyle(table), mxConstants.STYLE_STARTSIZE,
 		mxConstants.DEFAULT_STARTSIZE);
@@ -4326,7 +4326,7 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	
 	var row = this.createVertex(null, null, '', 0, t, colCount * w + t, h,
 		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];part=1;portConstraint=eastwest;' +
-    	'childLayout=stackLayout;resizeLast=1;resizeParent=0;');
+    	'childLayout=stackLayout;resizeLast=1;resizeParent=0;container=0;');
 	table.insert(this.createParent(row, this.createVertex(null, null, '',
 		t, 0, w, h, s + 'connectable=0;part=1;'), colCount, w, 0));
 	
