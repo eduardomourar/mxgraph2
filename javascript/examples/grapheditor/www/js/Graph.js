@@ -1967,6 +1967,10 @@ Graph.prototype.initLayoutManager = function()
 		{
 			return new mxFastOrganicLayout(this.graph);
 		}
+		else if (style['childLayout'] == 'tableLayout')
+		{
+			return new TableLayout(this.graph);
+		}
 		
 		return null;
 	};
@@ -4296,10 +4300,10 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h)
 	
 	return this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
 		'html=1;whiteSpace=wrap;container=0;collapsible=0;containerType=table;fillColor=none;' +
-		'childLayout=stackLayout;resizeLast=1;resizeParent=0;horizontalStack=0;dropTarget=0;'),
+		'childLayout=tableLayout;resizeLast=1;resizeParent=0;horizontalStack=0;dropTarget=0;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
     		'html=1;whiteSpace=wrap;container=0;collapsible=0;points=[[0,0.5],[1,0.5]];fillColor=none;' +
-    		'portConstraint=eastwest;childLayout=stackLayout;resizeLast=1;resizeParent=0;part=1;'),
+    		'portConstraint=eastwest;resizeLast=1;resizeParent=0;part=1;'),
 			this.createVertex(null, null, '', 0, 0, w, h,
 				'html=1;whiteSpace=wrap;connectable=0;part=1;fillColor=none;'),
 				colCount, w, 0), rowCount, 0, h);
@@ -4318,7 +4322,7 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	
 	var table = this.createVertex(null, null, '', 0, 0,
 		colCount * w, rowCount * h, s + 'containerType=table;container=0;dropTarget=0;' +
-		'childLayout=stackLayout;resizeLast=1;resizeParent=0;horizontalStack=0;');
+		'childLayout=tableLayout;resizeLast=1;resizeParent=0;horizontalStack=0;');
 	var t = mxUtils.getValue(this.getCellStyle(table), mxConstants.STYLE_STARTSIZE,
 		mxConstants.DEFAULT_STARTSIZE);
 	table.geometry.width += t;
@@ -4326,7 +4330,7 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	
 	var row = this.createVertex(null, null, '', 0, t, colCount * w + t, h,
 		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];part=1;portConstraint=eastwest;' +
-    	'childLayout=stackLayout;resizeLast=1;resizeParent=0;container=0;');
+    	'resizeLast=1;resizeParent=0;container=0;');
 	table.insert(this.createParent(row, this.createVertex(null, null, '',
 		t, 0, w, h, s + 'connectable=0;part=1;'), colCount, w, 0));
 	
@@ -4372,77 +4376,33 @@ Graph.prototype.isTable = function(cell)
 };
 
 /**
- * Updates column width and row height.
+ * Updates the row and table heights.
  */
-Graph.prototype.setTableRowHeight = function(row, height)
+Graph.prototype.updateTableRowHeight = function(row, dy)
 {
 	var model = this.getModel();
-	var table = model.getParent(row);
-	var index = table.getIndex(row);
 	
 	model.beginUpdate();
 	try
 	{
-		var geo = this.getCellGeometry(row);
-		var dy = 0;
+		var rgeo = this.getCellGeometry(row);
 	
 		// Gets delta and sets height of row
-		if (geo != null)
+		if (rgeo != null)
 		{
-			dy = height - geo.height;
+			rgeo = rgeo.clone();
+			rgeo.height += dy;
+			model.setGeometry(row, rgeo);
 			
-			geo = geo.clone();
-			geo.height = height;
-			model.setGeometry(row, geo);
-		}
-
-		// Sets height of child cells in row
-		for (var i = 0; i < model.getChildCount(row); i++)
-		{
-			var cell = model.getChildAt(row, i);
+			// Updates height of table
+			var table = model.getParent(row);
+			var tgeo = this.getCellGeometry(table);
 			
-			if (model.isVertex(cell))
+			if (tgeo != null)
 			{
-				geo = this.getCellGeometry(cell);
-				
-				if (geo != null)
-				{
-					geo = geo.clone();
-					geo.height = height;
-					model.setGeometry(cell, geo);
-				}
-			}
-		}
-		
-		// Shifts and resizes neighbor row
-		if (index < model.getChildCount(table) - 1)
-		{
-			row = model.getChildAt(table, index + 1);
-			geo = this.getCellGeometry(row);
-		
-			if (geo != null)
-			{
-				geo = geo.clone();
-				geo.y += dy;
-				geo.height -= dy;
-				model.setGeometry(row, geo);
-				
-				for (var i = 0; i < model.getChildCount(row); i++)
-				{
-					var cell = model.getChildAt(row, i);
-					
-					if (model.isVertex(cell))
-					{
-						var geo2 = this.getCellGeometry(cell);
-						
-						if (geo2 != null)
-						{
-							geo2 = geo2.clone();
-							geo2.height = geo.height;
-							model.setGeometry(cell, geo2);
-						}
-					}
-				}
+				tgeo = tgeo.clone();
+				tgeo.height += dy;
+				model.setGeometry(table, tgeo);
 			}
 		}
 	}
@@ -4520,6 +4480,121 @@ Graph.prototype.setTableColumnWidth = function(col, width)
 	finally
 	{
 		model.endUpdate();
+	}
+};
+
+/**
+ * Special Layout for tables.
+ */
+function TableLayout(graph)
+{
+	mxGraphLayout.call(this, graph);
+};
+
+/**
+ * Extends mxGraphLayout.
+ */
+TableLayout.prototype = new mxGraphLayout();
+TableLayout.prototype.constructor = TableLayout;
+
+/**
+ * Function: getLayout
+ * 
+ * Implements <mxGraphLayout.execute>.
+ */
+TableLayout.prototype.getLayout = function(parent, vertical)
+{
+	var model = this.graph.getModel();
+	var cells = [];
+	var sum = 0;
+	
+	for (var i = 0; i < model.getChildCount(parent); i++)
+	{
+		var cell = model.getChildAt(parent, i);
+		
+		if (!this.isVertexIgnored(cell))
+		{
+			var geo = this.graph.getCellGeometry(cell);
+			
+			if (geo != null)
+			{
+				sum += (vertical) ? geo.height : geo.width;
+				cells.push(cell);
+			}
+		}
+	}
+	
+	return [cells, sum];
+};
+
+/**
+ * Function: execute
+ * 
+ * Implements <mxGraphLayout.execute>.
+ */
+TableLayout.prototype.execute = function(parent)
+{
+	// FIXME: Invoked twice
+	if (parent != null)
+	{
+		var offset = this.graph.getActualStartSize(parent);
+		var table = this.graph.getCellGeometry(parent);
+		var model = this.graph.getModel();
+
+		model.beginUpdate();
+		try
+		{
+			var tableLayout = this.getLayout(parent, true);
+			var rows = tableLayout[0];
+			var sh = tableLayout[1];
+			var y = offset.y;
+			
+			// Updates rows
+			for (var i = 0; i < rows.length; i++)
+			{
+				var h = table.height - offset.y - offset.height;
+				var row = this.graph.getCellGeometry(rows[i]);
+			
+				// Updates row geometry
+				row = row.clone();
+				
+				row.height = (row.height / sh) * h;
+				row.width = table.width;
+				row.x = offset.x;
+				row.y = y;
+				
+				model.setGeometry(rows[i], row);
+				y += row.height;
+				
+				// Updates cells
+				var off = this.graph.getActualStartSize(rows[i]);
+				var rowLayout = this.getLayout(rows[i], false);
+				var cells = rowLayout[0];
+				var sw = rowLayout[1];
+				var x = off.x;
+				
+				for (var j = 0; j < cells.length; j++)
+				{
+					var cell = this.graph.getCellGeometry(cells[j]);
+					var w = row.width - off.x - off.width;
+					
+					// Updates cell geometry
+					cell = cell.clone();
+					
+					cell.width = (cell.width / sw) * w;
+					cell.height = row.height;
+					cell.y = 0;
+					cell.x = x;
+					
+					model.setGeometry(cells[j], cell);
+					x += cell.width;
+				}
+			}
+		}
+		finally
+		{
+			model.endUpdate();
+		}
 	}
 };
 
@@ -8972,8 +9047,7 @@ if (typeof mxVertexHandler != 'undefined')
 							
 							handle.execute = function()
 							{
-								var geo = graph.model.getGeometry(this.state.cell);
-								graph.setTableRowHeight(this.state.cell, geo.height + dy);
+								graph.updateTableRowHeight(this.state.cell, dy);
 								dy = 0;
 							};
 							
