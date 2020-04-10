@@ -5783,6 +5783,7 @@ if (typeof mxVertexHandler != 'undefined')
 				var index = null;
 				var cells = [];
 				
+				// LATER: Reverse traverse order for !isNext
 				var flatten = mxUtils.bind(this, function(temp)
 				{
 					if (this.view.getState(temp) != null &&
@@ -6659,12 +6660,13 @@ if (typeof mxVertexHandler != 'undefined')
 			// Creates a new edge label with a predefined text
 			var label = new mxCell();
 			label.value = 'Text';
-			label.style = 'text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];'
 			label.geometry = new mxGeometry(0, 0, 0, 0);
 			label.vertex = true;
+			var style = 'html=1;align=center;verticalAlign=middle;resizable=0;points=[];';
 
 			if (state != null && this.model.isEdge(state.cell))
 			{
+				label.style = 'edgeLabel;' + style;
 				label.geometry.relative = true;
 				label.connectable = false;
 		    
@@ -6683,6 +6685,7 @@ if (typeof mxVertexHandler != 'undefined')
 			else
 			{
 				var tr = this.view.translate;
+				label.style = 'text;' + style;
 				label.geometry.width = 40;
 				label.geometry.height = 20;
 				label.geometry.x = Math.round(x / this.view.scale) -
@@ -8966,7 +8969,6 @@ if (typeof mxVertexHandler != 'undefined')
 			return shape;
 		};
 		
-		
 		/**
 		 * Creates the shape used to draw the selection border.
 		 */
@@ -8987,6 +8989,7 @@ if (typeof mxVertexHandler != 'undefined')
 		var vertexHandlerGetSelectionStrokeWidth = mxVertexHandler.prototype.getSelectionStrokeWidth;
 		mxVertexHandler.prototype.getSelectionStrokeWidth = function(bounds)
 		{
+			// LATER: Use strokewidth 1 when active
 			return this.graph.cellEditor.getEditingCell() == this.state.cell ||
 				(this.graph.isCellResizable(this.state.cell) &&
 				(!this.graph.isTable(this.state.cell) ||
