@@ -8991,11 +8991,10 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			// LATER: Use strokewidth 1 when active
 			return this.graph.cellEditor.getEditingCell() == this.state.cell ||
-				(this.graph.isCellResizable(this.state.cell) &&
 				(!this.graph.isTable(this.state.cell) ||
 				!this.graph.isCellSelected(this.state.cell)) &&
 				!this.graph.isTableRow(this.state.cell) &&
-				!this.graph.isTableCell(this.state.cell)) ?
+				!this.graph.isTableCell(this.state.cell) ?
 				vertexHandlerGetSelectionStrokeWidth.apply(this, arguments) : 2;
 		};
 
