@@ -1950,7 +1950,7 @@ mxGraph.prototype.getSelectionCellsForChanges = function(changes, ignoreFn)
 			{
 				cell = change.child;
 			}
-			else if (!structureOnly && change.cell != null &&
+			else if (change.cell != null &&
 				change.cell instanceof mxCell)
 			{
 				cell = change.cell;
