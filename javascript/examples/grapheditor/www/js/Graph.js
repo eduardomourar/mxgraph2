@@ -1162,7 +1162,6 @@ Graph.removePasteFormatting = function(elt)
 		{
 			elt.style.whiteSpace = '';
 			elt.style.background = '';
-			elt.style.color = '';
 		}
 		
 		elt = elt.nextSibling;
