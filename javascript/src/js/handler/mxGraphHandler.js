@@ -775,7 +775,8 @@ mxGraphHandler.prototype.isCellMoving = function(cell)
  */
 mxGraphHandler.prototype.useGuidesForEvent = function(me)
 {
-	return (this.guide != null) ? this.guide.isEnabledForEvent(me.getEvent()) : true;
+	return (this.guide != null) ? this.guide.isEnabledForEvent(me.getEvent()) &&
+		!this.graph.isConstrainedEvent(me.getEvent()) : true;
 };
 
 
