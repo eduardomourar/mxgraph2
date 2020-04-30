@@ -1,3 +1,4 @@
+- Removes mxClient.IOS_VERSION and workaround for event handling
 - Fixes mxClient.IS_SF for iframe
 - Adds optional textWidth for mxGraph.getPreferredSizeForCell
 - Adds vertical switch for mxLine

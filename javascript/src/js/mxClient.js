@@ -138,27 +138,6 @@ var mxClient =
   	IS_IOS: (/iP(hone|od|ad)/.test(navigator.platform)),
 
 	/**
-	 * Variable: IOS_VERSION
-	 * 
-	 * Returns the major version number for iOS devices or 0 if the
-	 * device is not an iOS device.
-	 */
-  	IOS_VERSION: (function()
-  	{
-  		if ((/iP(hone|od|ad)/.test(navigator.platform)))
-  		{
-  			var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
-  			
-  			if (v != null && v.length > 0)
-  			{
-  				return parseInt(v[1]);
-  			}
-  		}
-  		
-  		return 0;
-  	})(),
- 
-	/**
 	 * Variable: IS_GC
 	 *
 	 * True if the current browser is Google Chrome.
@@ -382,15 +361,6 @@ var mxClient =
 		document.write('<script src="'+src+'"></script>');
 	}
 };
-
-/**
- * Detects desktop mode on iPad Pro which should block event handling like iOS 12.
- */
-if (mxClient.IS_SF && mxClient.IS_TOUCH && !mxClient.IS_IOS)
-{
-	mxClient.IOS_VERSION = 13;
-	mxClient.IOS = true;
-}
 
 /**
  * Variable: mxLoadResources
