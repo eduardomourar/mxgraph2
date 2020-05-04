@@ -2713,28 +2713,35 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 	var graphHandlerIsDelayedSelection = mxGraphHandler.prototype.isDelayedSelection;
 	mxGraphHandler.prototype.isDelayedSelection = function(cell, me)
 	{
-		var result = graphHandlerIsDelayedSelection.apply(this, arguments);
-		
-		if (!result)
+		if (this.graph.cellEditor.getEditingCell() == cell)
 		{
-			var model = this.graph.getModel();
-			var parent = model.getParent(cell);
-			
-			while (parent != null)
-			{
-				// Inconsistency for unselected parent swimlane is intended for easier moving
-				// of stack layouts where the container title section is too far away
-				if (this.graph.isCellSelected(parent) && model.isVertex(parent))
-				{
-					result = true;
-					break;
-				}
-				
-				parent = model.getParent(parent);
-			}
+			return false;
 		}
-		
-		return result;
+		else
+		{
+			var result = graphHandlerIsDelayedSelection.apply(this, arguments);
+			
+			if (!result)
+			{
+				var model = this.graph.getModel();
+				var parent = model.getParent(cell);
+				
+				while (parent != null)
+				{
+					// Inconsistency for unselected parent swimlane is intended for easier moving
+					// of stack layouts where the container title section is too far away
+					if (this.graph.isCellSelected(parent) && model.isVertex(parent))
+					{
+						result = true;
+						break;
+					}
+					
+					parent = model.getParent(parent);
+				}
+			}
+			
+			return result;
+		}
 	};
 	
 	// Delayed selection of parent group
