@@ -8997,21 +8997,6 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			return shape;
 		};
-		
-		/**
-		 * Non resizable shapes have stronger selection shape.
-		 */
-		var vertexHandlerGetSelectionStrokeWidth = mxVertexHandler.prototype.getSelectionStrokeWidth;
-		mxVertexHandler.prototype.getSelectionStrokeWidth = function(bounds)
-		{
-			// LATER: Use strokewidth 1 when active
-			return this.graph.cellEditor.getEditingCell() == this.state.cell ||
-				(!this.graph.isTable(this.state.cell) ||
-				!this.graph.isCellSelected(this.state.cell)) &&
-				!this.graph.isTableRow(this.state.cell) &&
-				!this.graph.isTableCell(this.state.cell) ?
-				vertexHandlerGetSelectionStrokeWidth.apply(this, arguments) : 2;
-		};
 
 		/**
 		 * Moves rotation handle to top, right corner.
@@ -9107,11 +9092,11 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			if (this.graph.isTableRow(this.state.cell))
 			{
-				bounds.grow(-1);
+				bounds.grow(-2);
 			}
 			else if (this.graph.isTableCell(this.state.cell))
 			{
-				bounds.grow(-2);
+				bounds.grow(-3);
 			}
 			
 			return bounds;
@@ -9160,9 +9145,9 @@ if (typeof mxVertexHandler != 'undefined')
 								{
 									this.shape.bounds.x = this.state.x;
 									this.shape.bounds.width = this.state.width;
-									this.shape.bounds.y = this.state.y + this.state.height + dy;
+									this.shape.bounds.y = this.state.y + this.state.height +
+										dy * this.graph.view.scale;
 									this.shape.bounds.height = 1;
-									this.shape.node.style.zOrder = -1;
 									this.shape.redraw();
 								}
 							};
@@ -9203,10 +9188,12 @@ if (typeof mxVertexHandler != 'undefined')
 							{
 								if (this.shape != null && this.state.shape != null)
 								{
-									this.shape.bounds.x = this.state.x + this.state.width + dx;
+									this.shape.bounds.x = this.state.x + this.state.width +
+										dx * this.graph.view.scale;
 									this.shape.bounds.width = 1;
-									this.shape.bounds.y = tableState.y + start.y;
-									this.shape.bounds.height = tableState.height - start.y - start.height;
+									this.shape.bounds.y = tableState.y + start.y * this.graph.view.scale;
+									this.shape.bounds.height = tableState.height -
+										(start.height + start.y) * this.graph.view.scale;
 									this.shape.redraw();
 								}
 							};
@@ -10087,7 +10074,7 @@ if (typeof mxVertexHandler != 'undefined')
 							// Adds handle to move row
 							var moveHandle = mxUtils.createImage(Editor.rowMoveImage);
 							moveHandle.style.position = 'absolute';
-							moveHandle.style.cursor = 'pointer';
+							moveHandle.style.cursor = 'move';
 							moveHandle.style.width = '7px';
 							moveHandle.style.height = '4px';
 							moveHandle.rowState = rowState;
