@@ -4329,13 +4329,13 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h)
 	h = (h != null) ? h : 30;
 	
 	return this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
-		'html=1;whiteSpace=wrap;container=0;collapsible=0;containerType=table;fillColor=none;' +
+		'swimlane;startSize=0;html=1;whiteSpace=wrap;container=0;collapsible=0;containerType=table;fillColor=none;' +
 		'childLayout=tableLayout;resizeLast=1;resizeParent=0;horizontalStack=0;dropTarget=0;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
-    		'html=1;whiteSpace=wrap;container=0;collapsible=0;points=[[0,0.5],[1,0.5]];fillColor=none;' +
-    		'portConstraint=eastwest;resizeLast=1;resizeParent=0;part=1;'),
+    		'shape=partialRectangle;html=1;whiteSpace=wrap;container=0;collapsible=0;points=[[0,0.5],[1,0.5]];' +
+    		'fillColor=none;strokeColor=none;portConstraint=eastwest;resizeLast=1;resizeParent=0;part=1;'),
 			this.createVertex(null, null, '', 0, 0, w, h,
-				'html=1;whiteSpace=wrap;connectable=0;part=1;fillColor=none;'),
+				'shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;part=1;fillColor=none;left=0;top=0;'),
 				colCount, w, 0), rowCount, 0, h);
 };
 
@@ -4384,7 +4384,7 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
  */
 Graph.prototype.isTableCell = function(cell)
 {
-	return this.isTableRow(this.model.getParent(cell));
+	return this.model.isVertex(cell) && this.isTableRow(this.model.getParent(cell));
 };
 
 /**
@@ -4392,7 +4392,7 @@ Graph.prototype.isTableCell = function(cell)
  */
 Graph.prototype.isTableRow = function(cell)
 {
-	return this.isTable(this.model.getParent(cell));
+	return this.model.isVertex(cell) && this.isTable(this.model.getParent(cell));
 };
 
 /**
@@ -8842,17 +8842,18 @@ if (typeof mxVertexHandler != 'undefined')
 			return new mxRectangle(0, 0, (state.text == null) ? 30 :  state.text.size * scale + 20, 30);
 		};
 		
-		// Hold alt to ignore drop target
-		var mxGraphHandlerMoveCells = mxGraphHandler.prototype.moveCells;
-		
-		mxGraphHandler.prototype.moveCells = function(cells, dx, dy, clone, target, evt)
+		/**
+		 * Function: isValidDropTarget
+		 * 
+		 * Returns true if the given cell is a valid drop target.
+		 */
+		mxGraphHandlerIsValidDropTarget = mxGraphHandler.prototype.isValidDropTarget;
+		mxGraphHandler.prototype.isValidDropTarget = function(target, me)
 		{
-			if (mxEvent.isAltDown(evt))
-			{
-				target = null;
-			}
-			
-			mxGraphHandlerMoveCells.apply(this, arguments);
+			return mxGraphHandlerIsValidDropTarget.apply(this, arguments) &&
+				!mxEvent.isAltDown(me.getEvent) && (this.cells.length > 1 ||
+				!this.graph.isTableRow(this.cells[0]) ||
+				this.graph.isTable(target));
 		};
 
 		/**
