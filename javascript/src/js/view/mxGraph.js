@@ -2614,16 +2614,30 @@ mxGraph.prototype.click = function(me)
 	{
 		if (cell != null)
 		{
-			cell = (this.isTransparentClickEvent(evt)) ?
-				this.getCellToSelect(cell, me.getGraphX(),
-				me.getGraphY()) : cell;
+			if (this.isTransparentClickEvent(evt))
+			{
+				var active = false;
+				
+				// TODO: Do not select ancestors first
+				var tmp = this.getCellAt(me.graphX, me.graphY, null, null, null, mxUtils.bind(this, function(state)
+				{
+					var selected = this.isCellSelected(state.cell);
+					active = active || selected;
+					
+					return !active || selected;
+					//return (!active || selected) && !this.model.isAncestor(state.cell, cell);
+				}));
+				
+				if (tmp != null)
+				{
+					cell = tmp;
+				}
+			}
 		}
 		else if (this.isSwimlaneSelectionEnabled())
 		{
-			cell = this.getCellToSelect(
-				this.getSwimlaneAt(me.getGraphX(),
-				me.getGraphY()), me.getGraphX(),
-				me.getGraphY(), true);
+			cell = this.getCellToSelect(this.getSwimlaneAt(
+				me.getGraphX(), me.getGraphY()));
 		}
 			
 		if (cell != null)
@@ -2640,32 +2654,65 @@ mxGraph.prototype.click = function(me)
 /**
  * Function: getCellToSelect
  * 
- * Returns the cell or swimlane to be selected.
+ * Returns the cell to be selected for a delayed selection
+ * or click event on the given cell.
  */
-mxGraph.prototype.getCellToSelect = function(cell, x, y, swimlane)
+mxGraph.prototype.getCellToSelect = function(cell)
 {
-	var temp = cell;
+	var current = cell;
 	
-	if (temp != null)
+	while (current != null)
 	{
-		var active = false;
-		
-		while (temp != null && !active)
+		if (this.cellEditor.getEditingCell() == current)
 		{
-			active = this.isCellSelected(temp);
-			temp = this.model.getParent(temp);
-			var state = this.view.getState(temp);
-			
-			if ((swimlane && !this.isSwimlane(temp)) || state == null ||
-				!this.intersects(state, x, y))
-			{
-				temp = null;
-			}
+			cell = current;
+			current = null;
 		}
-		
-		if (temp != null && (active || (!active && !swimlane)))
+		else
 		{
-			cell = temp;
+			var parent = this.model.getParent(current);
+			var state = this.view.getState(parent);
+			
+			if (parent != null && state != null)
+			{
+				if (this.model.isVertex(parent) ||
+					this.model.isEdge(parent))
+				{
+					if (this.isCellSelected(current) &&
+						!this.isCellSelected(parent))/*
+						mxUtils.indexOf(this.selectionCellsHandler.
+						getHandledSelectionCells(), parent) < 0)*/
+					{
+						cell = parent;
+						current = null;
+					}
+					else
+					{
+						current = parent;	
+					}
+				}
+				else
+				{
+					if (mxUtils.indexOf(this.selectionCellsHandler.
+						getHandledSelectionCells(), current) < 0)
+					{
+						cell = current;
+					}
+					
+					break;
+				}
+			}
+			else
+			{
+				if (!this.isSwimlane(current) && mxUtils.indexOf(
+					this.selectionCellsHandler.getHandledSelectionCells(),
+					current) < 0)
+				{
+					cell = current;
+				}
+				
+				current = null;
+			}
 		}
 	}
 	

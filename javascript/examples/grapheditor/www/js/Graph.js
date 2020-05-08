@@ -3977,6 +3977,13 @@ HoverIcons.prototype.repaint = function()
 			bds.grow(this.arrowSpacing);
 			
 			var handler = this.graph.selectionCellsHandler.getHandler(this.currentState.cell);
+			
+			if (this.graph.isTableRow(this.currentState.cell))
+			{
+				handler = this.graph.selectionCellsHandler.getHandler(
+					this.graph.model.getParent(this.currentState.cell));
+			}
+			
 			var rotationBbox = null;
 			
 			if (handler != null)
@@ -4329,13 +4336,12 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h)
 	h = (h != null) ? h : 30;
 	
 	return this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
-		'swimlane;startSize=0;html=1;whiteSpace=wrap;container=0;collapsible=0;containerType=table;fillColor=none;' +
-		'childLayout=tableLayout;resizeLast=1;resizeParent=0;horizontalStack=0;dropTarget=0;'),
+		'collapsible=0;html=1;whiteSpace=wrap;container=1;childLayout=tableLayout;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
-    		'shape=partialRectangle;html=1;whiteSpace=wrap;container=0;collapsible=0;points=[[0,0.5],[1,0.5]];' +
-    		'fillColor=none;strokeColor=none;portConstraint=eastwest;resizeLast=1;resizeParent=0;part=1;'),
+    		'container=0;collapsible=0;dropTarget=0;pointerEvents=0;part=1;fillColor=none;strokeColor=none;' +
+    		'points=[[0,0.5],[1,0.5]];portConstraint=eastwest;'),
 			this.createVertex(null, null, '', 0, 0, w, h,
-				'shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;part=1;fillColor=none;left=0;top=0;'),
+				'shape=partialRectangle;html=1;whiteSpace=wrap;part=1;connectable=0;'),
 				colCount, w, 0), rowCount, 0, h);
 };
 
@@ -4401,7 +4407,7 @@ Graph.prototype.isTable = function(cell)
 {
 	var style = this.getCellStyle(cell);
 	
-	return style != null && style['containerType'] == 'table';
+	return style != null && style['childLayout'] == 'tableLayout';
 };
 
 /**
@@ -6447,8 +6453,9 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			for (var i = 0; i < cells.length; i++)
 			{
-				if (this.isCellDeletable(cells[i]) && this.isTransparentState(
-					this.view.getState(cells[i])))
+				if (this.isCellDeletable(cells[i]) &&
+					this.isTransparentState(
+						this.view.getState(cells[i])))
 				{
 					cellsToRemove.push(cells[i]);
 				}
@@ -9092,11 +9099,11 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			if (this.graph.isTableRow(this.state.cell))
 			{
-				bounds.grow(-2);
+				bounds.grow(-1);
 			}
 			else if (this.graph.isTableCell(this.state.cell))
 			{
-				bounds.grow(-3);
+				bounds.grow(-2);
 			}
 			
 			return bounds;
