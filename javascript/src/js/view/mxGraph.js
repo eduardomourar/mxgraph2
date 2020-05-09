@@ -2655,8 +2655,8 @@ mxGraph.prototype.click = function(me)
 /**
  * Function: getCellToSelect
  * 
- * Returns the cell to be selected for a delayed selection
- * or click event on the given cell.
+ * Returns the cell to be selected after a delayed selection
+ * or a click event on the given cell.
  */
 mxGraph.prototype.getCellToSelect = function(cell)
 {
@@ -2674,40 +2674,25 @@ mxGraph.prototype.getCellToSelect = function(cell)
 			var parent = this.model.getParent(current);
 			var state = this.view.getState(parent);
 			
-			if (parent != null && state != null)
+			if (parent != null && state != null &&
+				(this.model.isVertex(parent) ||
+				this.model.isEdge(parent)))
 			{
-				if (this.model.isVertex(parent) ||
-					this.model.isEdge(parent))
+				if (this.isCellSelected(current) &&
+					!this.isCellSelected(parent))
 				{
-					if (this.isCellSelected(current) &&
-						!this.isCellSelected(parent))/*
-						mxUtils.indexOf(this.selectionCellsHandler.
-						getHandledSelectionCells(), parent) < 0)*/
-					{
-						cell = parent;
-						current = null;
-					}
-					else
-					{
-						current = parent;	
-					}
+					current = null;
+					cell = parent;
 				}
 				else
 				{
-					if (mxUtils.indexOf(this.selectionCellsHandler.
-						getHandledSelectionCells(), current) < 0)
-					{
-						cell = current;
-					}
-					
-					break;
+					current = parent;	
 				}
 			}
 			else
 			{
-				if (!this.isSwimlane(current) && mxUtils.indexOf(
-					this.selectionCellsHandler.getHandledSelectionCells(),
-					current) < 0)
+				if (!this.selectionCellsHandler.isHandled(current) &&
+					!this.isSwimlane(current))
 				{
 					cell = current;
 				}
