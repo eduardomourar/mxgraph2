@@ -120,6 +120,16 @@ mxSelectionCellsHandler.prototype.getHandler = function(cell)
 };
 
 /**
+ * Function: isHandled
+ * 
+ * Returns true if the given cell has a handler.
+ */
+mxSelectionCellsHandler.prototype.isHandled = function(cell)
+{
+	return this.getHandler(cell) != null;
+};
+
+/**
  * Function: reset
  * 
  * Resets all handlers.
