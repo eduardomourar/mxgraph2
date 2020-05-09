@@ -238,32 +238,29 @@ mxSwimlane.prototype.paintSwimlane = function(c, x, y, w, h, start, fill, swimla
 		c.lineTo(w, 0);
 		c.lineTo(w, start);
 		c.fillAndStroke();
+		
+		c.pointerEvents = false;
 
 		if (start < h)
 		{
-			if (fill == mxConstants.NONE)
-			{
-				c.pointerEvents = false;
-			}
-			else
+			if (fill != mxConstants.NONE)
 			{
 				c.setFillColor(fill);
+
+				c.begin();
+				c.moveTo(0, start);
+				c.lineTo(0, h);
+				c.lineTo(w, h);
+				c.lineTo(w, start);
+				c.fill();
 			}
-			
+
 			c.begin();
 			c.moveTo(0, start);
 			c.lineTo(0, h);
 			c.lineTo(w, h);
 			c.lineTo(w, start);
-			
-			if (fill == mxConstants.NONE)
-			{
-				c.stroke();
-			}
-			else
-			{
-				c.fillAndStroke();
-			}
+			c.stroke();
 		}
 	}
 	else
@@ -274,33 +271,33 @@ mxSwimlane.prototype.paintSwimlane = function(c, x, y, w, h, start, fill, swimla
 		c.lineTo(start, h);
 		c.fillAndStroke();
 		
+		c.pointerEvents = false;
+		
 		if (start < w)
 		{
-			if (fill == mxConstants.NONE)
-			{
-				c.pointerEvents = false;
-			}
-			else
+			if (fill != mxConstants.NONE)
 			{
 				c.setFillColor(fill);
+				
+				c.begin();
+				c.moveTo(start, 0);
+				c.lineTo(w, 0);
+				c.lineTo(w, h);
+				c.lineTo(start, h);
+				c.fill();
 			}
 			
+			c.setFillColor(null);
 			c.begin();
 			c.moveTo(start, 0);
 			c.lineTo(w, 0);
 			c.lineTo(w, h);
 			c.lineTo(start, h);
-			
-			if (fill == mxConstants.NONE)
-			{
-				c.stroke();
-			}
-			else
-			{
-				c.fillAndStroke();
-			}
+			c.stroke();
 		}
 	}
+	
+	c.pointerEvents = true;
 	
 	if (swimlaneLine)
 	{
@@ -327,17 +324,24 @@ mxSwimlane.prototype.paintRoundedSwimlane = function(c, x, y, w, h, start, r, fi
 		c.lineTo(0, start);
 		c.fillAndStroke();
 		
+		c.pointerEvents = false;
+		
 		if (start < h)
 		{
-			if (fill == mxConstants.NONE)
-			{
-				c.pointerEvents = false;
-			}
-			else
+			if (fill != mxConstants.NONE)
 			{
 				c.setFillColor(fill);
+				
+				c.begin();
+				c.moveTo(0, start);
+				c.lineTo(0, h - r);
+				c.quadTo(0, h, Math.min(w / 2, r), h);
+				c.lineTo(w - Math.min(w / 2, r), h);
+				c.quadTo(w, h, w, h - r);
+				c.lineTo(w, start);
+				c.fill();
 			}
-			
+
 			c.begin();
 			c.moveTo(0, start);
 			c.lineTo(0, h - r);
@@ -345,15 +349,7 @@ mxSwimlane.prototype.paintRoundedSwimlane = function(c, x, y, w, h, start, r, fi
 			c.lineTo(w - Math.min(w / 2, r), h);
 			c.quadTo(w, h, w, h - r);
 			c.lineTo(w, start);
-			
-			if (fill == mxConstants.NONE)
-			{
-				c.stroke();
-			}
-			else
-			{
-				c.fillAndStroke();
-			}
+			c.stroke();
 		}
 	}
 	else
@@ -365,16 +361,23 @@ mxSwimlane.prototype.paintRoundedSwimlane = function(c, x, y, w, h, start, r, fi
 		c.quadTo(0, h, r, h);
 		c.lineTo(start, h);
 		c.fillAndStroke();
-
+		
+		c.pointerEvents = false;
+		
 		if (start < w)
 		{
-			if (fill == mxConstants.NONE)
-			{
-				c.pointerEvents = false;
-			}
-			else
+			if (fill != mxConstants.NONE)
 			{
 				c.setFillColor(fill);
+				
+				c.begin();
+				c.moveTo(start, h);
+				c.lineTo(w - r, h);
+				c.quadTo(w, h, w, h - Math.min(h / 2, r));
+				c.lineTo(w, Math.min(h / 2, r));
+				c.quadTo(w, 0, w - r, 0);
+				c.lineTo(start, 0);
+				c.fill();
 			}
 			
 			c.begin();
@@ -384,18 +387,12 @@ mxSwimlane.prototype.paintRoundedSwimlane = function(c, x, y, w, h, start, r, fi
 			c.lineTo(w, Math.min(h / 2, r));
 			c.quadTo(w, 0, w - r, 0);
 			c.lineTo(start, 0);
-			
-			if (fill == mxConstants.NONE)
-			{
-				c.stroke();
-			}
-			else
-			{
-				c.fillAndStroke();
-			}
+			c.stroke();
 		}
 	}
 
+	c.pointerEvents = true;
+	
 	if (swimlaneLine)
 	{
 		this.paintDivider(c, x, y, w, h, start, fill == mxConstants.NONE);
