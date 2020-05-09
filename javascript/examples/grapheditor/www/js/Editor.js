@@ -2687,13 +2687,12 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 	/**
 	 * Selects tables before cells and rows.
 	 */
-	var mxGraphHandlerPropagateSelection = mxGraphHandler.prototype.propagateSelection;
-	mxGraphHandler.prototype.propagateSelection = function(state)
+	var mxGraphHandlerIsPropagateSelectionCell = mxGraphHandler.prototype.isPropagateSelectionCell;
+	mxGraphHandler.prototype.isPropagateSelectionCell = function(cell)
 	{
-		return mxGraphHandlerPropagateSelection.apply(this, arguments) &&
-			(!this.graph.isContainer(state.cell) ||
-			this.graph.isTable(state.cell) ||
-			this.graph.isTableRow(state.cell));
+		return mxGraphHandlerIsPropagateSelectionCell.apply(this, arguments) &&
+			(!this.graph.isContainer(cell) || this.graph.isTable(cell) ||
+			this.graph.isTableRow(cell));
 	};
 
 	// Returns last selected ancestor
