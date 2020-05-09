@@ -1,3 +1,8 @@
+- Adds selection handling for cell hierarchies
+- Adds event transparency for filled swimlane content
+- Adds mxSelectionCellsHandler.isHandled
+- Adds mxGraph.getCellToSelect
+- Adds mxGraphHandler.isPropagateSelectionCell
 - Removes mxClient.IOS_VERSION and workaround for event handling
 - Fixes mxClient.IS_SF for iframe
 - Adds optional textWidth for mxGraph.getPreferredSizeForCell
