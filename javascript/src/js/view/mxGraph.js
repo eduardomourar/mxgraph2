@@ -2679,9 +2679,10 @@ mxGraph.prototype.getCellToSelect = function(cell)
 				this.model.isEdge(parent)))
 			{
 				var geo = this.getCellGeometry(current);
+				var cs = this.isCellSelected(current);
+				var ps = this.isCellSelected(parent);
 				
-				if (this.isCellSelected(current) &&
-					!this.isCellSelected(parent))
+				if (cs && !ps)
 				{
 					current = null;
 					cell = parent;
@@ -2691,16 +2692,16 @@ mxGraph.prototype.getCellToSelect = function(cell)
 					!this.graphHandler.isPropagateSelectionCell(parent) &&
 					!this.isSwimlane(current)) ||
 					// Selects unselected relative children in selected parents
-					(geo != null && geo.relative &&
-					!this.isCellSelected(current) &&
-					this.isCellSelected(parent)))
+					(geo != null && geo.relative && !cs && ps) ||
+					// Stops propagation if child and parent are selected
+					(cs && ps))
 				{
 					// Selects unselected parent for relative initial cells
 					if (current != cell)
 					{
 						geo = this.getCellGeometry(cell);
 						
-						if (geo != null && geo.relative && !this.isCellSelected(current))
+						if (geo != null && geo.relative && !cs)
 						{
 							cell = current;
 						}
