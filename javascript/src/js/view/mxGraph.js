@@ -2614,8 +2614,7 @@ mxGraph.prototype.click = function(me)
 	{
 		if (cell != null)
 		{
-			if (this.isTransparentClickEvent(evt) &&
-				this.isCellSelected(cell))
+			if (this.isTransparentClickEvent(evt))
 			{
 				var active = false;
 				
@@ -2625,8 +2624,8 @@ mxGraph.prototype.click = function(me)
 					var selected = this.isCellSelected(state.cell);
 					active = active || selected;
 					
-					return !active || selected ||
-						this.model.isAncestor(state.cell, cell);
+					return !active || selected || (state.cell != cell &&
+						this.model.isAncestor(state.cell, cell));
 				}));
 				
 				if (tmp != null)
