@@ -2690,9 +2690,8 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 	var mxGraphHandlerIsPropagateSelectionCell = mxGraphHandler.prototype.isPropagateSelectionCell;
 	mxGraphHandler.prototype.isPropagateSelectionCell = function(cell)
 	{
-		return mxGraphHandlerIsPropagateSelectionCell.apply(this, arguments) &&
-			(!this.graph.isContainer(cell) || this.graph.isTable(cell) ||
-			this.graph.isTableRow(cell));
+		return mxGraphHandlerIsPropagateSelectionCell.apply(this, arguments) ||
+			(this.graph.isPart(cell) && !this.graph.isSwimlane(cell));
 	};
 
 	// Returns last selected ancestor

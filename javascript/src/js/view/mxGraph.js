@@ -2678,11 +2678,24 @@ mxGraph.prototype.getCellToSelect = function(cell)
 				(this.model.isVertex(parent) ||
 				this.model.isEdge(parent)))
 			{
+				var geo = this.getCellGeometry(current);
+				
 				if (this.isCellSelected(current) &&
 					!this.isCellSelected(parent))
 				{
 					current = null;
 					cell = parent;
+				}
+				// Propagates selection for shapes in tables and not in swimlanes
+				else if ((!this.graphHandler.isPropagateSelectionCell(current) &&
+					!this.graphHandler.isPropagateSelectionCell(parent) &&
+					!this.isSwimlane(current)) ||
+				// and selects unselected relative children in selected parents
+					(geo != null && geo.relative &&
+					!this.isCellSelected(current) &&
+					this.isCellSelected(parent)))
+				{
+					current = null;
 				}
 				else
 				{

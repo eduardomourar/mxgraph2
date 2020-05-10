@@ -413,8 +413,9 @@ mxGraphHandler.prototype.setRemoveCellsFromParent = function(value)
  */
 mxGraphHandler.prototype.isPropagateSelectionCell = function(cell)
 {
-	return !this.graph.isCellSelected(cell) &&
-		!this.graph.isSwimlane(cell);
+	var geo = this.graph.getCellGeometry(cell);
+	
+	return geo == null || geo.relative;
 };
 
 /**
@@ -425,25 +426,18 @@ mxGraphHandler.prototype.isPropagateSelectionCell = function(cell)
  */
 mxGraphHandler.prototype.getInitialCellForEvent = function(me)
 {
-	var model = this.graph.model;
 	var state = me.getState();
 	
-	if (!this.graph.isToggleEvent(me.getEvent()) &&
-		this.isPropagateSelectionCell(state.cell))
+	if (!this.graph.isToggleEvent(me.getEvent()))
 	{
-		while (state != null)
+		var model = this.graph.model;
+		var next = state;
+		
+		while (this.isPropagateSelectionCell(state.cell) && next != null &&
+			!this.graph.isSwimlane(next.cell) && model.isVertex(next.cell))
 		{
-			var next = this.graph.view.getState(model.getParent(state.cell));
-			
-			if (next != null && this.isPropagateSelectionCell(next.cell) &&
-				(model.isVertex(next.cell) || model.isEdge(next.cell)))
-			{
-				state = next;
-			}
-			else
-			{
-				break;
-			}
+			state = next;
+			next = this.graph.view.getState(model.getParent(state.cell));
 		}
 	}
 	
