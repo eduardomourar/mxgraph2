@@ -2690,11 +2690,22 @@ mxGraph.prototype.getCellToSelect = function(cell)
 				else if ((!this.graphHandler.isPropagateSelectionCell(current) &&
 					!this.graphHandler.isPropagateSelectionCell(parent) &&
 					!this.isSwimlane(current)) ||
-				// and selects unselected relative children in selected parents
+					// Selects unselected relative children in selected parents
 					(geo != null && geo.relative &&
 					!this.isCellSelected(current) &&
 					this.isCellSelected(parent)))
 				{
+					// Selects unselected parent for relative initial cells
+					if (current != cell)
+					{
+						geo = this.getCellGeometry(cell);
+						
+						if (geo != null && geo.relative && !this.isCellSelected(current))
+						{
+							cell = current;
+						}
+					}
+					 
 					current = null;
 				}
 				else
