@@ -942,10 +942,13 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			this.graph.setSelectionCell(target || edge);
 		};
 		
-		// Shows connection points only if cell not selected
+		// Shows connection points only if cell not selected and parent table not handled
 		this.connectionHandler.constraintHandler.isStateIgnored = function(state, source)
 		{
-			return source && state.view.graph.isCellSelected(state.cell);
+			var graph = state.view.graph;
+
+			return source && (graph.isCellSelected(state.cell) || (graph.isTableRow(state.cell) &&
+				graph.selectionCellsHandler.isHandled(graph.model.getParent(state.cell))));
 		};
 		
 		// Updates constraint handler if the selection changes
