@@ -9088,6 +9088,25 @@ if (typeof mxVertexHandler != 'undefined')
 				(!this.graph.isTable(this.state.cell) ||
 				this.graph.isCellSelected(this.state.cell)));
 		};
+				
+		/**
+		 * Adds selection border inset for table cells and rows.
+		 */
+		mxVertexHandler.prototype.getSelectionBorderInset = function()
+		{
+			var result = 0;
+			
+			if (this.graph.isTableRow(this.state.cell))
+			{
+				result = 1;
+			}
+			else if (this.graph.isTableCell(this.state.cell))
+			{
+				result = 2;
+			}
+			
+			return result;
+		};
 		
 		/**
 		 * Adds custom handles for table cells.
@@ -9095,18 +9114,8 @@ if (typeof mxVertexHandler != 'undefined')
 		var vertexHandlerGetSelectionBorderBounds = mxVertexHandler.prototype.getSelectionBorderBounds;
 		mxVertexHandler.prototype.getSelectionBorderBounds = function()
 		{
-			var bounds = vertexHandlerGetSelectionBorderBounds.apply(this, arguments);
-			
-			if (this.graph.isTableRow(this.state.cell))
-			{
-				bounds.grow(-1);
-			}
-			else if (this.graph.isTableCell(this.state.cell))
-			{
-				bounds.grow(-2);
-			}
-			
-			return bounds;
+			return vertexHandlerGetSelectionBorderBounds.apply(this, arguments).grow(
+					-this.getSelectionBorderInset());
 		};
 		
 		/**
@@ -9237,6 +9246,14 @@ if (typeof mxVertexHandler != 'undefined')
 				for (var i = 0; i < this.moveHandles.length; i++)
 				{
 					this.moveHandles[i].style.visibility = (visible) ? '' : 'hidden';
+				}
+			}
+			
+			if (this.cornerHandles != null)
+			{
+				for (var i = 0; i < this.cornerHandles.length; i++)
+				{
+					this.cornerHandles[i].node.style.visibility = (visible) ? '' : 'hidden';
 				}
 			}
 		};
@@ -10104,6 +10121,23 @@ if (typeof mxVertexHandler != 'undefined')
 					}))(this.graph.view.getState(model.getChildAt(this.state.cell, i)));
 				}
 			}
+			// Draws corner rectangles for single selected table cells and rows
+			else if (this.graph.getSelectionCount() == 1 &&
+				(this.graph.isTableCell(this.state.cell) ||
+				this.graph.isTableRow(this.state.cell)))
+			{
+				this.cornerHandles = []; 
+				
+				for (var i = 0; i < 4; i++)
+				{
+					var shape = new mxRectangleShape(new mxRectangle(0, 0, 4, 4),
+						'#ffffff', mxConstants.HANDLE_STROKECOLOR);
+					shape.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ?
+						mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
+					shape.init(this.graph.view.getOverlayPane());
+					this.cornerHandles.push(shape);
+				}
+			}
 
 			var update = mxUtils.bind(this, function()
 			{
@@ -10241,6 +10275,7 @@ if (typeof mxVertexHandler != 'undefined')
 
 		mxEdgeHandler.prototype.updateLinkHint = mxVertexHandler.prototype.updateLinkHint;
 		
+		// Creates special handles
 		var edgeHandlerInit = mxEdgeHandler.prototype.init;
 		mxEdgeHandler.prototype.init = function()
 		{
@@ -10301,6 +10336,7 @@ if (typeof mxVertexHandler != 'undefined')
 			});
 		};
 	
+		// Updates special handles
 		var vertexHandlerRedrawHandles = mxVertexHandler.prototype.redrawHandles;
 		mxVertexHandler.prototype.redrawHandles = function()
 		{
@@ -10309,10 +10345,31 @@ if (typeof mxVertexHandler != 'undefined')
 				for (var i = 0; i < this.moveHandles.length; i++)
 				{
 					this.moveHandles[i].style.left = (this.moveHandles[i].rowState.x +
-						this.moveHandles[i].rowState.width + 10) + 'px';
+						this.moveHandles[i].rowState.width + 4) + 'px';
 					this.moveHandles[i].style.top = (this.moveHandles[i].rowState.y +
 						this.moveHandles[i].rowState.height * 3 / 4) + 'px';
 				}
+			}
+			
+			if (this.cornerHandles != null)
+			{
+				var inset = this.getSelectionBorderInset();
+				var ch = this.cornerHandles;
+				var w = ch[0].bounds.width / 2;
+				var h = ch[0].bounds.height / 2;
+				
+				ch[0].bounds.x = this.state.x - w + inset;
+				ch[0].bounds.y = this.state.y - h + inset;
+				ch[0].redraw();
+				ch[1].bounds.x = ch[0].bounds.x + this.state.width - 2 * inset;
+				ch[1].bounds.y = ch[0].bounds.y;
+				ch[1].redraw();
+				ch[2].bounds.x = ch[0].bounds.x;
+				ch[2].bounds.y = this.state.y + this.state.height - 2 * inset;
+				ch[2].redraw();
+				ch[3].bounds.x = ch[1].bounds.x;
+				ch[3].bounds.y = ch[2].bounds.y;
+				ch[3].redraw();
 			}
 			
 			// Shows rotation handle only if one vertex is selected
@@ -10351,6 +10408,7 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 		};
 		
+		// Destroys special handles
 		var vertexHandlerDestroy = mxVertexHandler.prototype.destroy;
 		mxVertexHandler.prototype.destroy = function()
 		{
@@ -10364,6 +10422,16 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 				
 				this.moveHandles = null;
+			}
+			
+			if (this.cornerHandles != null)
+			{
+				for (var i = 0; i < this.cornerHandles.length; i++)
+				{
+					this.cornerHandles[i].node.parentNode.removeChild(this.cornerHandles[i].node);
+				}
+				
+				this.cornerHandles = null;
 			}
 			
 			if (this.linkHint != null)
