@@ -1520,7 +1520,8 @@ Graph.prototype.init = function(container)
 	 */
 	Graph.prototype.isPart = function(cell)
 	{
-		return mxUtils.getValue(this.getCurrentCellStyle(cell), 'part', '0') == '1';
+		return mxUtils.getValue(this.getCurrentCellStyle(cell), 'part', '0') == '1' ||
+			this.isTableCell(cell) || this.isTableRow(cell);
 	};
 	
 	/**
@@ -4341,10 +4342,10 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h)
 	return this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
 		'collapsible=0;html=1;whiteSpace=wrap;container=1;childLayout=tableLayout;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
-    		'container=0;collapsible=0;dropTarget=0;pointerEvents=0;part=1;fillColor=none;strokeColor=none;' +
+    		'collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;strokeColor=none;' +
     		'points=[[0,0.5],[1,0.5]];portConstraint=eastwest;'),
 			this.createVertex(null, null, '', 0, 0, w, h,
-				'shape=partialRectangle;html=1;whiteSpace=wrap;part=1;connectable=0;'),
+				'shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;'),
 				colCount, w, 0), rowCount, 0, h);
 };
 
@@ -4367,10 +4368,10 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	table.geometry.height += t;
 	
 	var row = this.createVertex(null, null, '', 0, t, colCount * w + t, h,
-		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];part=1;portConstraint=eastwest;' +
+		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;' +
     	'resizeLast=1;resizeParent=0;container=0;');
 	table.insert(this.createParent(row, this.createVertex(null, null, '',
-		t, 0, w, h, s + 'connectable=0;part=1;'), colCount, w, 0));
+		t, 0, w, h, s + 'connectable=0;'), colCount, w, 0));
 	
 	if (rowCount > 1)
 	{
@@ -4378,7 +4379,7 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 		
 		return this.createParent(table, this.createParent(row,
 			this.createVertex(null, null,  '', t, 0, w, h,
-			s + 'connectable=0;part=1;startSize=0;'),
+			s + 'connectable=0;startSize=0;'),
 			colCount, w, 0), rowCount - 1, 0, h);
 	}
 	else
@@ -9291,7 +9292,8 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 			
 			// Checks if custom handles are overlapping with the shape border
-			var handlePadding = this.graph.isTable(this.state.cell) || this.graph.cellEditor.getEditingCell() == this.state.cell;
+			var handlePadding = this.graph.isTable(this.state.cell) ||
+				this.graph.cellEditor.getEditingCell() == this.state.cell;
 			
 			if (!handlePadding)
 			{
@@ -9323,6 +9325,12 @@ if (typeof mxVertexHandler != 'undefined')
 				this.sizers.length > 0 && this.sizers[0] != null)
 			{
 				tol /= 2;
+				
+				// Makes room for row move handle
+				if (this.graph.isTable(this.state.cell))
+				{
+					tol += 7;
+				}
 				
 				result.x = this.sizers[0].bounds.width + tol;
 				result.y = this.sizers[0].bounds.height + tol;
@@ -10101,13 +10109,14 @@ if (typeof mxVertexHandler != 'undefined')
 							// Adds handle to move row
 							var moveHandle = mxUtils.createImage(Editor.rowMoveImage);
 							moveHandle.style.position = 'absolute';
-							moveHandle.style.cursor = 'move';
+							moveHandle.style.cursor = 'pointer';
 							moveHandle.style.width = '7px';
 							moveHandle.style.height = '4px';
 							moveHandle.rowState = rowState;
 							
 							mxEvent.addGestureListeners(moveHandle, mxUtils.bind(this, function(evt)
 							{
+								this.graph.setSelectionCell(rowState.cell);
 								this.graph.graphHandler.start(this.state.cell,
 									mxEvent.getClientX(evt), mxEvent.getClientY(evt),
 									[rowState.cell]);
@@ -10348,9 +10357,9 @@ if (typeof mxVertexHandler != 'undefined')
 				for (var i = 0; i < this.moveHandles.length; i++)
 				{
 					this.moveHandles[i].style.left = (this.moveHandles[i].rowState.x +
-						this.moveHandles[i].rowState.width + 4) + 'px';
+						this.moveHandles[i].rowState.width - 3) + 'px';
 					this.moveHandles[i].style.top = (this.moveHandles[i].rowState.y +
-						this.moveHandles[i].rowState.height * 3 / 4) + 'px';
+						this.moveHandles[i].rowState.height / 2 - 2) + 'px';
 				}
 			}
 			

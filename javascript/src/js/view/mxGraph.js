@@ -2636,8 +2636,12 @@ mxGraph.prototype.click = function(me)
 		}
 		else if (this.isSwimlaneSelectionEnabled())
 		{
-			cell = this.getCellToSelect(this.getSwimlaneAt(
-				me.getGraphX(), me.getGraphY()));
+			cell = this.getSwimlaneAt(me.getGraphX(), me.getGraphY());
+				
+			if (!this.isToggleEvent(evt))
+			{
+				cell = this.getCellToSelect(cell);
+			}
 		}
 			
 		if (cell != null)
@@ -2686,14 +2690,11 @@ mxGraph.prototype.getCellToSelect = function(cell)
 					current = null;
 					cell = parent;
 				}
-				// Propagates selection for shapes in tables and not in swimlanes
-				else if ((!this.graphHandler.isPropagateSelectionCell(current) &&
-					!this.graphHandler.isPropagateSelectionCell(parent) &&
-					!this.isSwimlane(current)) ||
-					// Selects unselected relative children in selected parents
-					(geo != null && geo.relative && !cs && ps) ||
-					// Stops propagation if child and parent are selected
-					(cs && ps))
+				// Stops propagation for cells in swimlanes, unselected relative children
+				// in selected ancestors and if child and parent are both selected
+				else if ((!this.graphHandler.isPropagateSelectionCell(current, parent) &&
+					!this.isSwimlane(current)) || (geo != null && geo.relative &&
+					!cs && ps) || (cs && ps))
 				{
 					// Selects unselected parent for relative initial cells
 					if (current != cell)
@@ -2715,12 +2716,6 @@ mxGraph.prototype.getCellToSelect = function(cell)
 			}
 			else
 			{
-				if (!this.selectionCellsHandler.isHandled(current) &&
-					!this.isSwimlane(current))
-				{
-					cell = current;
-				}
-				
 				current = null;
 			}
 		}

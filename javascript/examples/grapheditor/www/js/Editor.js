@@ -2688,10 +2688,9 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 	 * Selects tables before cells and rows.
 	 */
 	var mxGraphHandlerIsPropagateSelectionCell = mxGraphHandler.prototype.isPropagateSelectionCell;
-	mxGraphHandler.prototype.isPropagateSelectionCell = function(cell)
+	mxGraphHandler.prototype.isPropagateSelectionCell = function(cell, parent)
 	{
-		return mxGraphHandlerIsPropagateSelectionCell.apply(this, arguments) ||
-			(this.graph.isPart(cell) && !this.graph.isSwimlane(cell));
+		return mxGraphHandlerIsPropagateSelectionCell.apply(this, arguments) || this.graph.isPart(cell);
 	};
 
 	// Returns last selected ancestor
@@ -2700,8 +2699,9 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 		var cell = me.getCell();
 		var model = this.graph.getModel();
 		var parent = model.getParent(cell);
+		var state = this.graph.view.getState(parent);
 		
-		while (model.isVertex(parent) && !this.graph.isContainer(parent))
+		while (state != null && (model.isVertex(parent) || model.isEdge(parent)))
 		{
 			if (this.graph.isCellSelected(parent))
 			{

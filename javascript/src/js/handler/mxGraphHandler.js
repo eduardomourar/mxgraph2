@@ -409,9 +409,10 @@ mxGraphHandler.prototype.setRemoveCellsFromParent = function(value)
 /**
  * Function: isPropagateSelectionCell
  * 
- * Returns true if the given <mxCell> should propagate selection state.
+ * Returns true if the given cell and parent should propagate
+ * selection state to the parent.
  */
-mxGraphHandler.prototype.isPropagateSelectionCell = function(cell)
+mxGraphHandler.prototype.isPropagateSelectionCell = function(cell, parent)
 {
 	var geo = this.graph.getCellGeometry(cell);
 	
@@ -433,8 +434,8 @@ mxGraphHandler.prototype.getInitialCellForEvent = function(me)
 		var model = this.graph.model;
 		var next = state;
 		
-		while (this.isPropagateSelectionCell(state.cell) && next != null &&
-			!this.graph.isSwimlane(next.cell) && model.isVertex(next.cell))
+		while (next != null && model.isVertex(next.cell) &&
+			this.isPropagateSelectionCell(state.cell, next.cell))
 		{
 			state = next;
 			next = this.graph.view.getState(model.getParent(state.cell));
