@@ -2700,10 +2700,15 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 		var model = this.graph.getModel();
 		var parent = model.getParent(cell);
 		var state = this.graph.view.getState(parent);
+		var selected = this.graph.isCellSelected(cell);
 		
 		while (state != null && (model.isVertex(parent) || model.isEdge(parent)))
 		{
-			if (this.graph.isCellSelected(parent))
+			var temp = this.graph.isCellSelected(parent);
+			selected = selected || temp;
+			
+			if (temp || (!selected && (this.graph.isTableCell(cell) ||
+				this.graph.isTableRow(cell))))
 			{
 				cell = parent;
 			}

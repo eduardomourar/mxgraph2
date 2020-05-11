@@ -5884,8 +5884,7 @@ if (typeof mxVertexHandler != 'undefined')
 				// Clears labels on table cells
 				for (var i = 0; i < cells.length; i++)
 				{
-					if (this.isTableCell(cells[i]) ||
-						this.isTableRow(cells[i]))
+					if (this.isTableCell(cells[i]))
 					{
 						this.labelChanged(cells[i], '');
 					}
@@ -8357,6 +8356,20 @@ if (typeof mxVertexHandler != 'undefined')
 		var mxCellEditorStartEditing = mxCellEditor.prototype.startEditing;
 		mxCellEditor.prototype.startEditing = function(cell, trigger)
 		{
+			// Redirect editing for tables
+			if (this.graph.isTable(cell) && !this.graph.isSwimlane(cell) &&
+				this.graph.model.getChildCount(cell) > 0)
+			{
+				cell = this.graph.model.getChildAt(cell, 0);
+			}
+			
+			// Redirect editing for table rows
+			if (this.graph.isTableRow(cell) && !this.graph.isSwimlane(cell) &&
+				this.graph.model.getChildCount(cell) > 0)
+			{
+				cell = this.graph.model.getChildAt(cell, 0);
+			}
+			
 			mxCellEditorStartEditing.apply(this, arguments);
 			
 			// Overrides class in case of HTML content to add
