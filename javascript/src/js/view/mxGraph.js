@@ -2638,9 +2638,37 @@ mxGraph.prototype.click = function(me)
 		{
 			cell = this.getSwimlaneAt(me.getGraphX(), me.getGraphY());
 				
-			if (!this.isToggleEvent(evt))
+			if (!this.isToggleEvent(evt) && cell != null)
 			{
-				cell = this.getCellToSelect(cell);
+				var temp = cell;
+				var swimlanes = [];
+				
+				while (temp != null)
+				{
+					temp = this.model.getParent(temp);
+					var state = this.view.getState(temp);
+					
+					if (this.isSwimlane(temp) && state != null)
+					{
+						swimlanes.push(temp);
+					}
+				}
+				
+				// Selects ancestors for selected swimlanes
+				if (swimlanes.length > 0)
+				{
+					swimlanes = swimlanes.reverse();
+					swimlanes.splice(0, 0, cell);
+					swimlanes.push(cell);
+					
+					for (var i = 0; i < swimlanes.length - 2; i++)
+					{
+						if (this.isCellSelected(swimlanes[i]))
+						{
+							cell = swimlanes[i + 1];
+						}
+					}
+				}
 			}
 		}
 			
@@ -2656,73 +2684,29 @@ mxGraph.prototype.click = function(me)
 };
 
 /**
- * Function: getCellToSelect
+ * Function: isSiblingSelected
  * 
- * Returns the cell to be selected after a delayed selection
- * or a click event on the given cell.
+ * Returns true if any sibling of the given cell is selected.
  */
-mxGraph.prototype.getCellToSelect = function(cell)
+mxGraph.prototype.isSiblingSelected = function(cell)
 {
-	var current = cell;
+	var model = this.model;
+	var parent = model.getParent(cell);
+	var childCount = model.getChildCount(parent);
 	
-	while (current != null)
+	for (var i = 0; i < childCount; i++)
 	{
-		if (this.cellEditor.getEditingCell() == current)
+		var child = model.getChildAt(parent, i);
+		
+		if (cell != child && this.isCellSelected(child))
 		{
-			cell = current;
-			current = null;
-		}
-		else
-		{
-			var parent = this.model.getParent(current);
-			var state = this.view.getState(parent);
-			
-			if (parent != null && state != null &&
-				(this.model.isVertex(parent) ||
-				this.model.isEdge(parent)))
-			{
-				var geo = this.getCellGeometry(current);
-				var cs = this.isCellSelected(current);
-				var ps = this.isCellSelected(parent);
-				
-				if (cs && !ps)
-				{
-					current = null;
-					cell = parent;
-				}
-				// Stops propagation for cells in swimlanes, unselected relative children
-				// in selected ancestors and if child and parent are both selected
-				else if ((!this.graphHandler.isPropagateSelectionCell(current, parent) &&
-					!this.isSwimlane(current)) || (geo != null && geo.relative &&
-					!cs && ps) || (cs && ps))
-				{
-					// Selects unselected parent for relative initial cells
-					if (current != cell)
-					{
-						geo = this.getCellGeometry(cell);
-						
-						if (geo != null && geo.relative && !cs)
-						{
-							cell = current;
-						}
-					}
-					 
-					current = null;
-				}
-				else
-				{
-					current = parent;	
-				}
-			}
-			else
-			{
-				current = null;
-			}
+			return true;
 		}
 	}
 	
-	return cell;
+	return false;
 };
+
 
 /**
  * Function: dblClick

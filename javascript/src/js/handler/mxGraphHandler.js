@@ -412,11 +412,24 @@ mxGraphHandler.prototype.setRemoveCellsFromParent = function(value)
  * Returns true if the given cell and parent should propagate
  * selection state to the parent.
  */
-mxGraphHandler.prototype.isPropagateSelectionCell = function(cell, parent)
+mxGraphHandler.prototype.isPropagateSelectionCell = function(cell, immediate)
 {
-	var geo = this.graph.getCellGeometry(cell);
-	
-	return geo == null || geo.relative;
+	var parent = this.graph.model.getParent(cell);
+
+	if (immediate)
+	{
+		var geo = this.graph.getCellGeometry(cell);
+		
+		return !this.graph.model.isEdge(cell) &&
+			!this.graph.model.isEdge(parent) &&
+			!this.graph.isSiblingSelected(cell) &&
+			(geo == null || geo.relative ||
+			!this.graph.isSwimlane(parent));
+	}
+	else
+	{
+		return !this.graph.isCellSelected(parent);
+	}
 };
 
 /**
@@ -429,16 +442,18 @@ mxGraphHandler.prototype.getInitialCellForEvent = function(me)
 {
 	var state = me.getState();
 	
-	if (!this.graph.isToggleEvent(me.getEvent()))
+	if (!this.graph.isToggleEvent(me.getEvent()) && state != null &&
+		!this.graph.isCellSelected(state.cell))
 	{
 		var model = this.graph.model;
-		var next = state;
-		
-		while (next != null && model.isVertex(next.cell) &&
-			this.isPropagateSelectionCell(state.cell, next.cell))
+		var next = this.graph.view.getState(model.getParent(state.cell));
+
+		while (next != null && !this.graph.isCellSelected(next.cell) &&
+			(model.isVertex(next.cell) || model.isEdge(next.cell)) &&
+			this.isPropagateSelectionCell(state.cell, true))
 		{
 			state = next;
-			next = this.graph.view.getState(model.getParent(state.cell));
+			next = this.graph.view.getState(this.graph.getModel().getParent(state.cell));
 		}
 	}
 	
@@ -466,6 +481,50 @@ mxGraphHandler.prototype.isDelayedSelection = function(cell, me)
 	}
 	
 	return false;
+};
+
+/**
+ * Function: selectDelayed
+ * 
+ * Implements the delayed selection for the given mouse event.
+ */
+mxGraphHandler.prototype.selectDelayed = function(me)
+{
+	if (!this.graph.popupMenuHandler.isPopupTrigger(me))
+	{
+		var cell = me.getCell();
+		
+		if (cell == null)
+		{
+			cell = this.cell;
+		}
+
+		// Selects folded cell for hit on folding icon
+		var state = this.graph.view.getState(cell)
+		
+		if (state != null)
+		{
+			if (me.isSource(state.control))
+			{
+				this.graph.selectCellForEvent(cell, me.getEvent());
+			}
+			else
+			{
+				var model = this.graph.getModel();
+				var parent = model.getParent(cell);
+				
+				while (this.graph.view.getState(parent) != null &&
+					(model.isVertex(parent) || model.isEdge(parent)) &&
+					this.isPropagateSelectionCell(cell, false))
+				{
+					cell = parent;
+					parent = model.getParent(cell);
+				}
+	
+				this.graph.selectCellForEvent(cell, me.getEvent());
+			}
+		}
+	}
 };
 
 /**
@@ -1496,19 +1555,6 @@ mxGraphHandler.prototype.mouseUp = function(sender, me)
 	}
 
 	this.reset();
-};
-
-/**
- * Function: selectDelayed
- * 
- * Implements the delayed selection for the given mouse event.
- */
-mxGraphHandler.prototype.selectDelayed = function(me)
-{
-	if (!this.graph.popupMenuHandler.isPopupTrigger(me))
-	{
-		this.graph.selectCellForEvent(this.graph.getCellToSelect(me.getCell()));
-	}
 };
 
 /**
