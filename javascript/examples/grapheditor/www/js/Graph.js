@@ -253,6 +253,46 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 				    			}
 	    					}
 			    		}
+			    		else if (this.isTableCell(state.cell))
+			    		{
+			    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
+		    				box.grow(1);
+	    					
+	    					var table = this.model.getParent(this.model.getParent(state.cell));
+			    			
+			    			if (mxUtils.intersects(box, new mxRectangle(state.x, state.y, 1, state.height)) ||
+			    				mxUtils.intersects(box, new mxRectangle(state.x + state.width, state.y, 1, state.height)))
+	    					{
+			    				this.setSelectionCell(table);
+			    				start.point = new mxPoint(me.getGraphX(), me.getGraphY());
+				    			start.selected = this.isCellSelected(state.cell);
+				    			start.state = this.view.getState(table);
+				    			start.event = me;
+				    			
+				    			var handler = this.selectionCellsHandler.getHandler(table);
+	
+				    			if (handler != null)
+				    			{
+				    				start.handle = handler.getHandleForEvent(me);
+				    			}
+	    					}
+			    			else if (mxUtils.intersects(box, new mxRectangle(state.x, state.y, state.width, 1)) ||
+			    				mxUtils.intersects(box, new mxRectangle(state.x, state.y + state.height, state.width, 1)))
+	    					{
+			    				this.setSelectionCell(table);
+			    				start.point = new mxPoint(me.getGraphX(), me.getGraphY());
+				    			start.selected = this.isCellSelected(state.cell);
+				    			start.state = this.view.getState(table);
+				    			start.event = me;
+				    			
+				    			var handler = this.selectionCellsHandler.getHandler(table);
+	
+				    			if (handler != null)
+				    			{
+				    				start.handle = handler.getHandleForEvent(me);
+				    			}
+	    					}
+			    		}
 			    	}
 		    	}
 			}
@@ -400,6 +440,16 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			    					this.graphHandler.reset();
 	    							me.consume();
 	    						}
+	    						else if (handler != null && this.isTable(state.cell))
+	    						{
+	    							handler.start(me.getGraphX(), me.getGraphX(), start.handle);
+			    					start.state = null;
+			    					start.event = null;
+			    					start.point = null;
+			    					start.handle = null;
+			    					start.selected = false;
+			    					me.consume();
+	    						}
 			    			}
 			    		}
 			    	}
@@ -410,17 +460,17 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 				    	
 				    	if (state != null)
 				    	{
+				    		var cursor = null;
+				    		
 				    		// Checks if state was removed in call to stopEditing above
 				    		if (this.model.isEdge(state.cell))
 				    		{
-				    			var cursor = null;
+				    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
+		    					box.grow(mxEdgeHandler.prototype.handleImage.width / 2);
 			    				var pts = state.absolutePoints;
 			    				
 			    				if (pts != null)
 			    				{
-			    					var box = new mxRectangle(me.getGraphX(), me.getGraphY());
-			    					box.grow(mxEdgeHandler.prototype.handleImage.width / 2);
-			    					
 			    					if (state.text != null && state.text.boundingBox != null &&
 			    						mxUtils.contains(state.text.boundingBox, me.getGraphX(), me.getGraphY()))
 			    					{
@@ -449,12 +499,28 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 						    			}
 			    					}
 			    				}
-			    				
-			    				if (cursor != null)
-			    				{
-			    					state.setCursor(cursor);
-			    				}
 				    		}
+				    		else if (this.isTableCell(state.cell))
+				    		{
+				    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
+		    					box.grow(1);
+		    					
+				    			if (mxUtils.intersects(box, new mxRectangle(state.x, state.y, 1, state.height)) ||
+				    				mxUtils.intersects(box, new mxRectangle(state.x + state.width, state.y, 1, state.height)))
+		    					{
+				    				cursor ='col-resize';
+		    					}
+				    			else if (mxUtils.intersects(box, new mxRectangle(state.x, state.y, state.width, 1)) ||
+				    				mxUtils.intersects(box, new mxRectangle(state.x, state.y + state.height, state.width, 1)))
+		    					{
+				    				cursor ='row-resize';
+		    					}
+				    		}
+		    				
+		    				if (cursor != null)
+		    				{
+		    					state.setCursor(cursor);
+		    				}
 				    	}
 			    	}
 		    	}
