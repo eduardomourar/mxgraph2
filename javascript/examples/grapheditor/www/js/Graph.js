@@ -256,7 +256,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			    		else if (this.isTableCell(state.cell))
 			    		{
 			    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
-		    				box.grow(mxShape.prototype.svgStrokeTolerance / 2);
+		    				box.grow(mxShape.prototype.svgStrokeTolerance - 1);
 	    					
 		    				var row = this.model.getParent(state.cell);
 		    				var table = this.model.getParent(row);
@@ -510,7 +510,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 					    		else if (this.isTableCell(state.cell))
 					    		{
 					    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
-				    				box.grow(mxShape.prototype.svgStrokeTolerance / 2);
+				    				box.grow(mxShape.prototype.svgStrokeTolerance - 1);
 	
 				    				var row = this.model.getParent(state.cell);
 			    					var table = this.model.getParent(row);
