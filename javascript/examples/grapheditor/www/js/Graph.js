@@ -259,7 +259,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 		    				var table = this.model.getParent(row);
 			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
 
-			    			// Custom handles have precendence
+			    			// Custom handles have precedence
 			    			if (handler == null || handler.getHandleForEvent(me) == null)
 			    			{
 				    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
