@@ -260,13 +260,13 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 	    					
 		    				var row = this.model.getParent(state.cell);
 		    				var table = this.model.getParent(row);
-		    				var rhit = mxUtils.intersects(box, new mxRectangle(state.x + state.width - 1, state.y, 1, state.height));
+		    				var bhit = mxUtils.intersects(box, new mxRectangle(state.x, state.y + state.height - 1, state.width, 1));
 
 		    				if ((mxUtils.intersects(box, new mxRectangle(state.x, state.y - 1, state.width, 1)) &&
-		    					this.model.getChildAt(table, 0) != row) ||
-			    				mxUtils.intersects(box, new mxRectangle(state.x, state.y + state.height - 1, state.width, 1)) ||
+		    					this.model.getChildAt(table, 0) != row) || bhit ||
 			    				(mxUtils.intersects(box, new mxRectangle(state.x - 1, state.y, 1, state.height)) &&
-			    				this.model.getChildAt(row, 0) != state.cell) || rhit)
+			    				this.model.getChildAt(row, 0) != state.cell) ||
+			    				mxUtils.intersects(box, new mxRectangle(state.x + state.width - 1, state.y, 1, state.height)))
 	    					{
 			    				start.point = new mxPoint(me.getGraphX(), me.getGraphY());
 				    			start.state = this.view.getState(table);
@@ -278,7 +278,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 	
 				    			if (handler != null)
 				    			{
-				    				if (rhit && this.model.getChildAt(row, this.model.getChildCount(row) - 1) == state.cell)
+				    				if (!bhit && this.model.getChildAt(row, this.model.getChildCount(row) - 1) == state.cell)
 					    			{
 					    				start.handle = 4;
 					    			}
@@ -325,7 +325,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			    			
 		    			if (handler != null)
 		    			{
-							handler.start(me.getGraphX(), me.getGraphX(), start.handle);
+							handler.start(me.getGraphX(), me.getGraphY(), start.handle);
 	    					start.state = null;
 	    					start.event = null;
 	    					start.point = null;
