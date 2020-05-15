@@ -255,43 +255,47 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			    		}
 			    		else if (this.isTableCell(state.cell))
 			    		{
-			    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
-		    				box.grow(mxShape.prototype.svgStrokeTolerance - 1);
-	    					
 		    				var row = this.model.getParent(state.cell);
 		    				var table = this.model.getParent(row);
-		    				var bhit = mxUtils.intersects(box, new mxRectangle(state.x, state.y + state.height - 1, state.width, 1));
+			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
 
-		    				if ((mxUtils.intersects(box, new mxRectangle(state.x, state.y - 1, state.width, 1)) &&
-		    					this.model.getChildAt(table, 0) != row) || bhit ||
-			    				(mxUtils.intersects(box, new mxRectangle(state.x - 1, state.y, 1, state.height)) &&
-			    				this.model.getChildAt(row, 0) != state.cell) ||
-			    				mxUtils.intersects(box, new mxRectangle(state.x + state.width - 1, state.y, 1, state.height)))
-	    					{
-			    				start.point = new mxPoint(me.getGraphX(), me.getGraphY());
-				    			start.state = this.view.getState(table);
-				    			start.selected = true;
-				    			start.event = me;
-				    			
-			    				this.setSelectionCell(table);
-				    			var handler = this.selectionCellsHandler.getHandler(table);
+			    			// Custom handles have precendence
+			    			if (handler == null || handler.getHandleForEvent(me) == null)
+			    			{
+				    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
+			    				box.grow(mxShape.prototype.svgStrokeTolerance - 1);var bhit = mxUtils.intersects(box, new mxRectangle(state.x, state.y + state.height - 1, state.width, 1));
 	
-				    			if (handler != null)
-				    			{
-				    				if (!bhit && this.model.getChildAt(row, this.model.getChildCount(row) - 1) == state.cell)
+			    				if ((mxUtils.intersects(box, new mxRectangle(state.x, state.y - 1, state.width, 1)) &&
+			    					this.model.getChildAt(table, 0) != row) || bhit ||
+				    				(mxUtils.intersects(box, new mxRectangle(state.x - 1, state.y, 1, state.height)) &&
+				    				this.model.getChildAt(row, 0) != state.cell) ||
+				    				mxUtils.intersects(box, new mxRectangle(state.x + state.width - 1, state.y, 1, state.height)))
+		    					{
+				    				start.point = new mxPoint(me.getGraphX(), me.getGraphY());
+					    			start.state = this.view.getState(table);
+					    			start.selected = true;
+					    			start.event = me;
+					    			
+				    				this.setSelectionCell(table);
+					    			handler = this.selectionCellsHandler.getHandler(table);
+		
+					    			if (handler != null)
 					    			{
-					    				start.handle = 4;
+					    				if (!bhit && this.model.getChildAt(row, this.model.getChildCount(row) - 1) == state.cell)
+						    			{
+						    				start.handle = 4;
+						    			}
+					    				else if (this.model.getChildAt(table, this.model.getChildCount(table) - 1) == row)
+						    			{
+						    				start.handle = 6;
+						    			}
+						    			else
+						    			{					    			
+						    				start.handle = handler.getHandleForEvent(me);
+						    			}
 					    			}
-				    				else if (this.model.getChildAt(table, this.model.getChildCount(table) - 1) == row)
-					    			{
-					    				start.handle = 6;
-					    			}
-					    			else
-					    			{					    			
-					    				start.handle = handler.getHandleForEvent(me);
-					    			}
-				    			}
-	    					}
+		    					}
+			    			}
 			    		}
 			    	}
 		    	}
