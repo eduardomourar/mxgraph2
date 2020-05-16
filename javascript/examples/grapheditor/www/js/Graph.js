@@ -259,19 +259,18 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 		    				var table = this.model.getParent(row);
 			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
 
-			    			// Custom handles have precedence
+			    			// Cell custom handles have precedence over row and col resize
 			    			if (handler == null || handler.getHandleForEvent(me) == null)
 			    			{
 				    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
 			    				box.grow(mxShape.prototype.svgStrokeTolerance - 1);
-			    				var rhit = mxUtils.intersects(box, new mxRectangle(
-			    					state.x + state.width - 1, state.y, 1, state.height));
-	
+
 			    				if ((mxUtils.intersects(box, new mxRectangle(state.x, state.y - 1, state.width, 1)) &&
-			    					this.model.getChildAt(table, 0) != row) || mxUtils.intersects(box,
-			    					new mxRectangle(state.x, state.y + state.height - 1, state.width, 1)) ||
+			    					this.model.getChildAt(table, 0) != row) || mxUtils.intersects(box, new mxRectangle(
+			    					state.x, state.y + state.height - 1, state.width, 1)) ||
 				    				(mxUtils.intersects(box, new mxRectangle(state.x - 1, state.y, 1, state.height)) &&
-				    				this.model.getChildAt(row, 0) != state.cell) || rhit)
+				    				this.model.getChildAt(row, 0) != state.cell) || mxUtils.intersects(box, new mxRectangle(
+			    					state.x + state.width - 1, state.y, 1, state.height)))
 		    					{
 				    				this.setSelectionCell(table);
 					    			handler = this.selectionCellsHandler.getHandler(table);
@@ -279,16 +278,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 					    			if (handler != null)
 					    			{
 					    				var handle = handler.getHandleForEvent(me);
-					    				
-					    				if (!rhit && this.model.getChildAt(table, this.model.getChildCount(table) - 1) == row)
-						    			{
-						    				handle = 6;
-						    			}
-					    				else if (this.model.getChildAt(row, this.model.getChildCount(row) - 1) == state.cell)
-						    			{
-						    				handle = 4;
-						    			}
-					    				
+
 					    				if (handle != null)
 					    				{
 					    					handler.start(me.getGraphX(), me.getGraphY(), handle);
@@ -4483,7 +4473,7 @@ Graph.prototype.isTable = function(cell)
 /**
  * Updates the row and table heights.
  */
-Graph.prototype.updateTableRowHeight = function(row, dy)
+Graph.prototype.setTableRowHeight = function(row, dy)
 {
 	var model = this.getModel();
 	
@@ -4492,7 +4482,7 @@ Graph.prototype.updateTableRowHeight = function(row, dy)
 	{
 		var rgeo = this.getCellGeometry(row);
 	
-		// Gets delta and sets height of row
+		// Sets height of row
 		if (rgeo != null)
 		{
 			rgeo = rgeo.clone();
@@ -4520,13 +4510,13 @@ Graph.prototype.updateTableRowHeight = function(row, dy)
 /**
  * Updates column width and row height.
  */
-Graph.prototype.updateTableColumnWidth = function(col, dx)
+Graph.prototype.setTableColumnWidth = function(col, dx)
 {
 	var model = this.getModel();
 	var row = model.getParent(col);
 	var table = model.getParent(row);
 	var index = row.getIndex(col);
-	var lastColumn = false;
+	var lastColumn = index == model.getChildCount(row) - 1;
 	
 	model.beginUpdate();
 	try
@@ -4570,6 +4560,19 @@ Graph.prototype.updateTableColumnWidth = function(col, dx)
 						}
 					}
 				}
+			}
+		}
+		
+		if (lastColumn)
+		{
+			// Updates height of table
+			var tgeo = this.getCellGeometry(table);
+			
+			if (tgeo != null)
+			{
+				tgeo = tgeo.clone();
+				tgeo.width += dx;
+				model.setGeometry(table, tgeo);
 			}
 		}
 	}
@@ -9223,7 +9226,7 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 				
 				// TODO: Apply Graph.minTableColWidth
-				for (var i = 0; i < model.getChildCount(row) - 1; i++)
+				for (var i = 0; i < model.getChildCount(row); i++)
 				{
 					(mxUtils.bind(this, function(colState)
 					{
@@ -9262,7 +9265,7 @@ if (typeof mxVertexHandler != 'undefined')
 							
 							handle.execute = function()
 							{
-								graph.updateTableColumnWidth(this.state.cell, dx);
+								graph.setTableColumnWidth(this.state.cell, dx);
 								dx = 0;
 							};
 							
@@ -9272,7 +9275,7 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 				
 				// TODO: Apply Graph.minTableRowHeight
-				for (var i = 0; i < model.getChildCount(this.state.cell) - 1; i++)
+				for (var i = 0; i < model.getChildCount(this.state.cell); i++)
 				{
 					(mxUtils.bind(this, function(rowState)
 					{
@@ -9309,7 +9312,7 @@ if (typeof mxVertexHandler != 'undefined')
 							
 							handle.execute = function()
 							{
-								graph.updateTableRowHeight(this.state.cell, dy);
+								graph.setTableRowHeight(this.state.cell, dy);
 								dy = 0;
 							};
 							
