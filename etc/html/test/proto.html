@@ -97,6 +97,8 @@
 					{
 						temp = msg.xml;
 						
+						localStorage.setItem('embedFile', temp);
+						
 						if (msg.exit)
 						{
 							msg.event = 'exit';
@@ -138,6 +140,17 @@
 					}
 				}
 			};
+			
+			window.addEventListener('storage', function(evt)
+			{
+				console.log('evt', evt, evt.newValue);
+				
+				if (evt.key == 'embedFile')
+				{
+					iframe.contentWindow.postMessage(JSON.stringify(
+						{action: 'merge', xml: evt.newValue}), '*');
+				}
+			});
 
 			window.addEventListener('message', receive);
 			iframe.setAttribute('src', editor);
