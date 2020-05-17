@@ -253,7 +253,9 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 				    			}
 	    					}
 			    		}
-			    		else if (this.isTableCell(state.cell))
+			    		else if (this.isTableCell(state.cell) && this.isEnabled() && !this.panningHandler.isActive() &&
+			    			!mxEvent.isControlDown(me.getEvent()) && !mxEvent.isShiftDown(me.getEvent()) &&
+			    			!mxEvent.isAltDown(me.getEvent()))
 			    		{
 		    				var row = this.model.getParent(state.cell);
 		    				var table = this.model.getParent(row);
@@ -2598,29 +2600,32 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 	
 	ignoreCellAt = (ignoreCellAt) ? ignoreCellAt : false;
 	
+	var composite = this.getCompositeParent(source);
+	
 	var pt = (source.geometry.relative && source.parent.geometry != null) ?
-			new mxPoint(source.parent.geometry.width * source.geometry.x, source.parent.geometry.height * source.geometry.y) :
-			new mxPoint(source.geometry.x, source.geometry.y);
+			new mxPoint(source.parent.geometry.width * source.geometry.x,
+				source.parent.geometry.height * source.geometry.y) :
+			new mxPoint(composite.geometry.x, composite.geometry.y);
 		
 	if (direction == mxConstants.DIRECTION_NORTH)
 	{
-		pt.x += source.geometry.width / 2;
+		pt.x += composite.geometry.width / 2;
 		pt.y -= length ;
 	}
 	else if (direction == mxConstants.DIRECTION_SOUTH)
 	{
-		pt.x += source.geometry.width / 2;
-		pt.y += source.geometry.height + length;
+		pt.x += composite.geometry.width / 2;
+		pt.y += composite.geometry.height + length;
 	}
 	else if (direction == mxConstants.DIRECTION_WEST)
 	{
 		pt.x -= length;
-		pt.y += source.geometry.height / 2;
+		pt.y += composite.geometry.height / 2;
 	}
 	else
 	{
-		pt.x += source.geometry.width + length;
-		pt.y += source.geometry.height / 2;
+		pt.x += composite.geometry.width + length;
+		pt.y += composite.geometry.height / 2;
 	}
 
 	var parentState = this.view.getState(this.model.getParent(source));
@@ -2735,7 +2740,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 				geo = this.getCellGeometry(cellToClone);
 			}
 			
-			// Handle consistuents for cloning
+			// Handles composite cells for cloning
 			cellToClone = this.getCompositeParent(cellToClone);
 			realTarget = this.duplicateCells([cellToClone], false)[0];
 			
