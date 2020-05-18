@@ -9230,7 +9230,7 @@ if (typeof mxVertexHandler != 'undefined')
 					handles = [];
 				}
 				
-				// TODO: Apply Graph.minTableColWidth
+				// Adds col height handles
 				for (var i = 0; i < model.getChildCount(row); i++)
 				{
 					(mxUtils.bind(this, function(colState)
@@ -9265,7 +9265,8 @@ if (typeof mxVertexHandler != 'undefined')
 							
 							handle.setPosition = function(bounds, pt, me)
 							{
-								dx = pt.x - bounds.x - bounds.width;
+								dx = Math.max(Graph.minTableColumnWidth - bounds.width,
+									pt.x - bounds.x - bounds.width);
 							};
 							
 							handle.execute = function()
@@ -9279,7 +9280,7 @@ if (typeof mxVertexHandler != 'undefined')
 					}))(this.graph.view.getState(model.getChildAt(row, i)));
 				}
 				
-				// TODO: Apply Graph.minTableRowHeight
+				// Adds row width handles
 				for (var i = 0; i < model.getChildCount(this.state.cell); i++)
 				{
 					(mxUtils.bind(this, function(rowState)
@@ -9312,7 +9313,8 @@ if (typeof mxVertexHandler != 'undefined')
 							
 							handle.setPosition = function(bounds, pt, me)
 							{
-								dy = pt.y - bounds.y - bounds.height;
+								dy = Math.max(Graph.minTableRowHeight - bounds.height,
+									pt.y - bounds.y - bounds.height);
 							};
 							
 							handle.execute = function()
