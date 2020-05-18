@@ -9357,15 +9357,79 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * Creates or updates special handles for moving rows.
+		 */
+		mxVertexHandler.prototype.refreshMoveHandles = function()
+		{
+			var graph = this.graph;
+			var model = graph.model;
+			
+			// Destroys existing handles
+			if (this.moveHandles != null)
+			{
+				for (var i = 0; i < this.moveHandles.length; i++)
+				{
+					this.moveHandles[i].parentNode.removeChild(this.moveHandles[i]);
+				}
+				
+				this.moveHandles = null;
+			}
+
+			// Creates new handles
+			this.moveHandles = [];
+			
+			for (var i = 0; i < model.getChildCount(this.state.cell); i++)
+			{
+				(mxUtils.bind(this, function(rowState)
+				{
+					if (rowState != null && model.isVertex(rowState.cell))
+					{
+						// Adds handle to move row
+						var moveHandle = mxUtils.createImage(Editor.rowMoveImage);
+						moveHandle.style.position = 'absolute';
+						moveHandle.style.cursor = 'pointer';
+						moveHandle.style.width = '7px';
+						moveHandle.style.height = '4px';
+						moveHandle.rowState = rowState;
+						
+						mxEvent.addGestureListeners(moveHandle, mxUtils.bind(this, function(evt)
+						{
+							this.graph.setSelectionCell(rowState.cell);
+							this.graph.graphHandler.start(this.state.cell,
+								mxEvent.getClientX(evt), mxEvent.getClientY(evt),
+								[rowState.cell]);
+							this.graph.graphHandler.cellWasClicked = true;
+							this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+							this.graph.isMouseDown = true;
+							mxEvent.consume(evt);
+						}));
+						
+						this.moveHandles.push(moveHandle);
+						this.graph.container.appendChild(moveHandle);
+	
+					}
+				}))(this.graph.view.getState(model.getChildAt(this.state.cell, i)));
+			}
+		};
+		
+		/**
 		 * Adds handle padding for editing cells and exceptions.
 		 */
 		mxVertexHandler.prototype.refresh = function()
 		{
-			if (this.selectionBorder != null)
+			if (this.customHandles != null)
 			{
-				this.selectionBorder.stroke = this.getSelectionColor();
-				this.selectionBorder.strokewidth = this.getSelectionStrokeWidth();
-				this.selectionBorder.redraw();
+				for (var i = 0; i < this.customHandles.length; i++)
+				{
+					this.customHandles[i].destroy();
+				}
+				
+				this.customHandles = this.createCustomHandles();
+			}
+			
+			if (this.graph.isTable(this.state.cell))
+			{
+				this.refreshMoveHandles();
 			}
 		};
 		
@@ -10188,44 +10252,7 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			if (this.graph.isTable(this.state.cell))
 			{
-				var graph = this.graph;
-				var model = graph.model;
-
-				// Special handles for moving rows
-				this.moveHandles = [];
-				
-				for (var i = 0; i < model.getChildCount(this.state.cell); i++)
-				{
-					(mxUtils.bind(this, function(rowState)
-					{
-						if (rowState != null && model.isVertex(rowState.cell))
-						{
-							// Adds handle to move row
-							var moveHandle = mxUtils.createImage(Editor.rowMoveImage);
-							moveHandle.style.position = 'absolute';
-							moveHandle.style.cursor = 'pointer';
-							moveHandle.style.width = '7px';
-							moveHandle.style.height = '4px';
-							moveHandle.rowState = rowState;
-							
-							mxEvent.addGestureListeners(moveHandle, mxUtils.bind(this, function(evt)
-							{
-								this.graph.setSelectionCell(rowState.cell);
-								this.graph.graphHandler.start(this.state.cell,
-									mxEvent.getClientX(evt), mxEvent.getClientY(evt),
-									[rowState.cell]);
-								this.graph.graphHandler.cellWasClicked = true;
-								this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-								this.graph.isMouseDown = true;
-								mxEvent.consume(evt);
-							}));
-							
-							this.moveHandles.push(moveHandle);
-							this.graph.container.appendChild(moveHandle);
-
-						}
-					}))(this.graph.view.getState(model.getChildAt(this.state.cell, i)));
-				}
+				this.refreshMoveHandles();
 			}
 			// Draws corner rectangles for single selected table cells and rows
 			else if (this.graph.getSelectionCount() == 1 &&
