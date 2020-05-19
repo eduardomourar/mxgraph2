@@ -6624,7 +6624,28 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			}
 			
-			return mxGraph.prototype.getDropTarget.apply(this, arguments);
+			var target = mxGraph.prototype.getDropTarget.apply(this, arguments);
+			
+			// Always drops rows to tables
+			if (cells.length == 1 && this.isTableRow(cells[0]))
+			{
+				if (this.isTableCell(target))
+				{
+					target = this.model.getParent(target);
+				}
+				
+				if (this.isTableRow(target))
+				{
+					target = this.model.getParent(target);
+				}
+				
+				if (!this.isTable(target))
+				{
+					target = null;
+				}
+			}
+			
+			return target;
 		};
 	
 		/**
@@ -8948,9 +8969,10 @@ if (typeof mxVertexHandler != 'undefined')
 		mxGraphHandler.prototype.isValidDropTarget = function(target, me)
 		{
 			return mxGraphHandlerIsValidDropTarget.apply(this, arguments) &&
-				!mxEvent.isAltDown(me.getEvent) && (this.cells.length > 1 ||
-				!this.graph.isTableRow(this.cells[0]) ||
-				this.graph.isTable(target));
+				!this.graph.isTableRow(target) && !mxEvent.isAltDown(me.getEvent) &&
+				(this.cells.length > 1 || ((this.graph.isTableRow(this.cells[0]) &&
+				this.graph.isTable(target)) || (this.graph.isTable(this.cells[0]) &&
+				!this.graph.isTable(target))));
 		};
 
 		/**
@@ -9357,8 +9379,6 @@ if (typeof mxVertexHandler != 'undefined')
 						handles.push(handle);
 					}))(i);
 				}
-				
-				console.log('handles', handles);
 			}
 			
 			// Reserve gives point handles precedence over line handles
