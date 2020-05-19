@@ -9221,7 +9221,6 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				var graph = this.graph;
 				var model = graph.model;
-				var row = model.getChildAt(this.state.cell, 0);
 				var tableState = this.state;
 				var sel = this.selectionBorder;
 				
@@ -9230,103 +9229,136 @@ if (typeof mxVertexHandler != 'undefined')
 					handles = [];
 				}
 				
-				// Adds col height handles
-				for (var i = 0; i < model.getChildCount(row); i++)
-				{
-					(mxUtils.bind(this, function(colState)
-					{
-						if (colState != null)
-						{
-							// Adds handle to change column width
-							var shape = new mxLine(new mxRectangle(), mxConstants.NONE, 1, true);
-							shape.isDashed = sel.isDashed;
-							var handle = new mxHandle(colState, 'col-resize', null, shape);
-							handle.tableHandle = true;
-							var dx = 0;
-							
-							handle.shape.node.parentNode.insertBefore(handle.shape.node,
-								handle.shape.node.parentNode.firstChild);
-
-							handle.redraw = function()
-							{
-								if (this.shape != null && this.state.shape != null)
-								{
-									var start = graph.getActualStartSize(tableState.cell);
-									this.shape.stroke = (dx == 0) ? mxConstants.NONE : sel.stroke;
-									this.shape.bounds.x = this.state.x + this.state.width +
-										dx * this.graph.view.scale;
-									this.shape.bounds.width = 1;
-									this.shape.bounds.y = tableState.y + start.y * this.graph.view.scale;
-									this.shape.bounds.height = tableState.height -
-										(start.height + start.y) * this.graph.view.scale;
-									this.shape.redraw();
-								}
-							};
-							
-							handle.setPosition = function(bounds, pt, me)
-							{
-								dx = Math.max(Graph.minTableColumnWidth - bounds.width,
-									pt.x - bounds.x - bounds.width);
-							};
-							
-							handle.execute = function()
-							{
-								graph.setTableColumnWidth(this.state.cell, dx);
-								dx = 0;
-							};
-							
-							handles.push(handle);
-						}
-					}))(this.graph.view.getState(model.getChildAt(row, i)));
-				}
+				// Finds rows
+				var rows = [];
 				
-				// Adds row width handles
 				for (var i = 0; i < model.getChildCount(this.state.cell); i++)
 				{
-					(mxUtils.bind(this, function(rowState)
+					var row = this.graph.view.getState(model.getChildAt(this.state.cell, i));
+					
+					if (row != null && model.isVertex(row.cell))
 					{
-						if (rowState != null && model.isVertex(rowState.cell))
-						{
-							// Adds handle to change row height
-							var shape = new mxLine(new mxRectangle(), mxConstants.NONE, 1);
-							shape.isDashed = sel.isDashed;
-							var handle = new mxHandle(rowState, 'row-resize', null, shape);
-							handle.tableHandle = true;
-							var dy = 0;
-
-							handle.shape.node.parentNode.insertBefore(handle.shape.node,
-								handle.shape.node.parentNode.firstChild);
-							
-							handle.redraw = function()
-							{
-								if (this.shape != null && this.state.shape != null)
-								{
-									this.shape.stroke = (dy == 0) ? mxConstants.NONE : sel.stroke;;
-									this.shape.bounds.x = this.state.x;
-									this.shape.bounds.width = this.state.width;
-									this.shape.bounds.y = this.state.y + this.state.height +
-										dy * this.graph.view.scale;
-									this.shape.bounds.height = 1;
-									this.shape.redraw();
-								}
-							};
-							
-							handle.setPosition = function(bounds, pt, me)
-							{
-								dy = Math.max(Graph.minTableRowHeight - bounds.height,
-									pt.y - bounds.y - bounds.height);
-							};
-							
-							handle.execute = function()
-							{
-								graph.setTableRowHeight(this.state.cell, dy);
-								dy = 0;
-							};
-							
-							handles.push(handle);
-						}
-					}))(this.graph.view.getState(model.getChildAt(this.state.cell, i)));
+						rows.push(row); 
+					}
 				}
+				
+				// Finds columns in row
+				var cols = [];
+				
+				for (var i = 0; i < model.getChildCount(rows[0].cell); i++)
+				{
+					var col = this.graph.view.getState(model.getChildAt(rows[0].cell, i));
+					
+					if (col != null && model.isVertex(col.cell))
+					{
+						cols.push(col); 
+					}
+				}
+				
+				// Adds col width handles
+				for (var i = 0; i < cols.length; i++)
+				{
+					(mxUtils.bind(this, function(index)
+					{
+						var colState = cols[index];
+						var nextCol = (index < cols.length - 1) ? cols[index + 1] : null;
+						
+						// Adds handle to change column width
+						var shape = new mxLine(new mxRectangle(), mxConstants.NONE, 1, true);
+						shape.isDashed = sel.isDashed;
+						var handle = new mxHandle(colState, 'col-resize', null, shape);
+						handle.tableHandle = true;
+						var dx = 0;
+						
+						handle.shape.node.parentNode.insertBefore(handle.shape.node,
+							handle.shape.node.parentNode.firstChild);
+
+						handle.redraw = function()
+						{
+							if (this.shape != null && this.state.shape != null)
+							{
+								var start = graph.getActualStartSize(tableState.cell);
+								this.shape.stroke = (dx == 0) ? mxConstants.NONE : sel.stroke;
+								this.shape.bounds.x = this.state.x + this.state.width +
+									dx * this.graph.view.scale;
+								this.shape.bounds.width = 1;
+								this.shape.bounds.y = tableState.y + start.y * this.graph.view.scale;
+								this.shape.bounds.height = tableState.height -
+									(start.height + start.y) * this.graph.view.scale;
+								this.shape.redraw();
+							}
+						};
+						
+						handle.setPosition = function(bounds, pt, me)
+						{
+							dx = Math.max(Graph.minTableColumnWidth - bounds.width,
+								pt.x - bounds.x - bounds.width);
+							
+							if (nextCol != null)
+							{
+								dx = Math.min(nextCol.x + nextCol.width - colState.x -
+									colState.width - Graph.minTableColumnWidth, dx);
+							}
+						};
+						
+						handle.execute = function()
+						{
+							graph.setTableColumnWidth(this.state.cell, dx);
+							dx = 0;
+						};
+						
+						handles.push(handle);
+					}))(i);
+				}
+				
+				// Adds row height handles
+				for (var i = 0; i < rows.length; i++)
+				{
+					(mxUtils.bind(this, function(index)
+					{
+						var rowState = rows[index];
+
+						// Adds handle to change row height
+						var shape = new mxLine(new mxRectangle(), mxConstants.NONE, 1);
+						shape.isDashed = sel.isDashed;
+						var handle = new mxHandle(rowState, 'row-resize', null, shape);
+						handle.tableHandle = true;
+						var dy = 0;
+
+						handle.shape.node.parentNode.insertBefore(handle.shape.node,
+							handle.shape.node.parentNode.firstChild);
+						
+						handle.redraw = function()
+						{
+							if (this.shape != null && this.state.shape != null)
+							{
+								this.shape.stroke = (dy == 0) ? mxConstants.NONE : sel.stroke;;
+								this.shape.bounds.x = this.state.x;
+								this.shape.bounds.width = this.state.width;
+								this.shape.bounds.y = this.state.y + this.state.height +
+									dy * this.graph.view.scale;
+								this.shape.bounds.height = 1;
+								this.shape.redraw();
+							}
+						};
+						
+						handle.setPosition = function(bounds, pt, me)
+						{
+							dy = Math.max(Graph.minTableRowHeight - bounds.height,
+								pt.y - bounds.y - bounds.height);
+						};
+						
+						handle.execute = function()
+						{
+							graph.setTableRowHeight(this.state.cell, dy);
+							dy = 0;
+						};
+						
+						handles.push(handle);
+					}))(i);
+				}
+				
+				console.log('handles', handles);
 			}
 			
 			// Reserve gives point handles precedence over line handles
