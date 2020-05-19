@@ -8970,9 +8970,9 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			return mxGraphHandlerIsValidDropTarget.apply(this, arguments) &&
 				!this.graph.isTableRow(target) && !mxEvent.isAltDown(me.getEvent) &&
-				(this.cells.length > 1 || ((this.graph.isTableRow(this.cells[0]) &&
-				this.graph.isTable(target)) || (this.graph.isTable(this.cells[0]) &&
-				!this.graph.isTable(target))));
+				(this.cells.length > 1 || !this.graph.isTable(target) ||
+				((this.graph.isTableRow(this.cells[0]) && this.graph.isTable(target)) ||
+				(this.graph.isTable(this.cells[0]) && !this.graph.isTable(target))));
 		};
 
 		/**
