@@ -6601,9 +6601,20 @@ if (typeof mxVertexHandler != 'undefined')
 			this.model.setValue(cell, value);
 		};
 		
+		
+		/**
+		 * Overridden to stop extending tables.
+		 */
+		var graphIsExtendParent = Graph.prototype.isExtendParent; 
+		Graph.prototype.isExtendParent = function(cell)
+		{
+			return graphIsExtendParent.apply(this, arguments) && !this.isTable(cell);
+		};
+		
 		/**
 		 * Overridden to stop moving edge labels between cells.
 		 */
+		var graphGetDropTarget = Graph.prototype.getDropTarget;
 		Graph.prototype.getDropTarget = function(cells, evt, cell, clone)
 		{
 			var model = this.getModel();
@@ -6623,7 +6634,7 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			}
 			
-			var target = mxGraph.prototype.getDropTarget.apply(this, arguments);
+			var target = graphGetDropTarget.apply(this, arguments);
 			
 			// Always drops rows to tables
 			var rows = true;
@@ -9447,6 +9458,7 @@ if (typeof mxVertexHandler != 'undefined')
 						
 						mxEvent.addGestureListeners(moveHandle, mxUtils.bind(this, function(evt)
 						{
+							this.graph.stopEditing(false);
 							this.graph.selectCellForEvent(rowState.cell, evt);
 							this.graph.graphHandler.start(this.state.cell,
 								mxEvent.getClientX(evt), mxEvent.getClientY(evt),
