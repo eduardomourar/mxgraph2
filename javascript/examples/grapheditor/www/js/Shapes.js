@@ -3449,7 +3449,16 @@
 			},
 			'swimlane': function(state)
 			{
-				var handles = [createHandle(state, [mxConstants.STYLE_STARTSIZE], function(bounds)
+				var handles = [];
+				
+				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED))
+				{
+					var size = parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
+					handles.push(createArcHandle(state, size / 2));
+				}
+				
+				// Start size handle must be last handle for hover to work in tables (see mouse event handler in Graph)
+				handles.push(createHandle(state, [mxConstants.STYLE_STARTSIZE], function(bounds)
 				{
 					var size = parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
 					
@@ -3467,13 +3476,7 @@
 						(mxUtils.getValue(this.state.style, mxConstants.STYLE_HORIZONTAL, 1) == 1) ?
 							Math.round(Math.max(0, Math.min(bounds.height, pt.y - bounds.y))) :
 							Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x)));
-				}, false)];
-				
-				if (mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED))
-				{
-					var size = parseFloat(mxUtils.getValue(state.style, mxConstants.STYLE_STARTSIZE, mxConstants.DEFAULT_STARTSIZE));
-					handles.push(createArcHandle(state, size / 2));
-				}
+				}, false));
 				
 				return handles;
 			},
