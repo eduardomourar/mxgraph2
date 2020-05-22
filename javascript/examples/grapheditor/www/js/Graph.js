@@ -2556,7 +2556,11 @@ Graph.prototype.replacePlaceholders = function(cell, str)
 					var name = val.substring(1, val.length - 1);
 					
 					// Workaround for invalid char for getting attribute in older versions of IE
-					if (name.indexOf('{') < 0)
+					if (name == 'id')
+					{
+						tmp = cell.id;
+					}
+					else if (name.indexOf('{') < 0)
 					{
 						var current = cell;
 						
