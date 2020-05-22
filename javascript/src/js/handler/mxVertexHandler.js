@@ -812,6 +812,11 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 				{
 					this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].processEvent(me);
 					this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].active = true;
+					
+					if (this.isMoveCustomHandlePreviewToFront(this.customHandles[mxEvent.CUSTOM_HANDLE - this.index]))
+					{					
+						this.moveToFront();
+					}
 				}
 			}
 			else if (this.index == mxEvent.LABEL_HANDLE)
@@ -836,6 +841,16 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 	{
 		me.consume(false);
 	}
+};
+
+/**
+ * Function: isMoveCustomHandlePreviewToFront
+ * 
+ * Returns true if the preview for the given custom handle should be moved to front.
+ */
+mxVertexHandler.prototype.isMoveCustomHandlePreviewToFront = function(handle)
+{
+	return true;
 };
 
 /**
