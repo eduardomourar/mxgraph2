@@ -4484,18 +4484,16 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	var s = 'swimlane;html=1;whiteSpace=wrap;collapsible=0;recursiveResize=0;expand=0;';
 	
 	var table = this.createVertex(null, null, '', 0, 0,
-		colCount * w, rowCount * h, s + 'containerType=table;container=0;dropTarget=0;' +
-		'childLayout=tableLayout;resizeLast=1;resizeParent=0;horizontalStack=0;');
+		colCount * w, rowCount * h, s + 'childLayout=tableLayout;startSize=40;');
 	var t = mxUtils.getValue(this.getCellStyle(table), mxConstants.STYLE_STARTSIZE,
 		mxConstants.DEFAULT_STARTSIZE);
 	table.geometry.width += t;
 	table.geometry.height += t;
 	
 	var row = this.createVertex(null, null, '', 0, t, colCount * w + t, h,
-		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;' +
-    	'resizeLast=1;resizeParent=0;container=0;');
+		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;startSize=40;');
 	table.insert(this.createParent(row, this.createVertex(null, null, '',
-		t, 0, w, h, s + 'connectable=0;'), colCount, w, 0));
+		t, 0, w, h, s + 'connectable=0;startSize=30;'), colCount, w, 0));
 	
 	if (rowCount > 1)
 	{
@@ -4700,6 +4698,65 @@ TableLayout.prototype.getSize = function(cells, horizontal)
 };
 
 /**
+ * Function: getRowLayout
+ * 
+ * Returns the column positions for the given row and table width.
+ */
+TableLayout.prototype.getRowLayout = function(row, width)
+{
+	var cells = this.graph.model.getChildCells(row, true);
+	var off = this.graph.getActualStartSize(row, true);
+	var sw = this.getSize(cells, true);
+	var rw = width - off.x - off.width;
+	var result = [];
+	var x = off.x;
+	
+	for (var i = 0; i < cells.length; i++)
+	{
+		var cell = this.graph.getCellGeometry(cells[i]);
+		
+		if (cell != null)
+		{
+			x += cell.width * rw / sw;
+			result.push(Math.round(x));
+		}
+	}
+	
+	return result;
+};
+
+/**
+ * Function: layoutRow
+ * 
+ * Places the cells at the given positions in the given row.
+ */
+TableLayout.prototype.layoutRow = function(row, positions, height)
+{
+	var model = this.graph.getModel();
+	var cells = model.getChildCells(row, true);
+	var off = this.graph.getActualStartSize(row, true);
+	positions = positions.slice();
+	positions.splice(0, 0, off.x);
+	
+	for (var i = 0; i < cells.length; i++)
+	{
+		var cell = this.graph.getCellGeometry(cells[i]);
+		
+		if (cell != null)
+		{
+			cell = cell.clone();
+			
+			cell.y = 0;
+			cell.height = height;
+			cell.x = positions[i];
+			cell.width = positions[i + 1] - cell.x;
+			
+			model.setGeometry(cells[i], cell);
+		}
+	}
+};
+
+/**
  * Function: execute
  * 
  * Implements <mxGraphLayout.execute>.
@@ -4711,62 +4768,37 @@ TableLayout.prototype.execute = function(parent)
 		var offset = this.graph.getActualStartSize(parent, true);
 		var table = this.graph.getCellGeometry(parent);
 		var model = this.graph.getModel();
-
+		
 		model.beginUpdate();
 		try
 		{
+			var th = table.height - offset.y - offset.height;
+			var tw = table.width - offset.x - offset.width;
 			var rows = model.getChildCells(parent, true);
+			var pos = this.getRowLayout(rows[0], tw);
 			var sh = this.getSize(rows, false);
 			
-			if (sh > 0)
+			if (th > 0 && tw > 0 && rows.length > 0 && sh > 0)
 			{
 				var y = offset.y;
 				
-				// Updates rows
+				// Updates row geometries
 				for (var i = 0; i < rows.length; i++)
 				{
-					var h = table.height - offset.y - offset.height;
 					var row = this.graph.getCellGeometry(rows[i]);
 				
-					// Updates row geometry
 					row = row.clone();
 					row.x = offset.x;
 					row.y = Math.round(y);
-					row.width = table.width;
+					row.width = tw;
 	
-					var rh = (row.height / sh) * h;
-					y += rh;
+					y += (row.height / sh) * th;
 					row.height = Math.round(y) - row.y;
 					
 					model.setGeometry(rows[i], row);
 					
-					// Updates cells
-					var off = this.graph.getActualStartSize(rows[i], true);
-					var cells = model.getChildCells(rows[i], true);
-					var sw = this.getSize(cells, true);
-					
-					if (sw > 0)
-					{
-						var x = off.x;
-						
-						for (var j = 0; j < cells.length; j++)
-						{
-							var cell = this.graph.getCellGeometry(cells[j]);
-							var w = row.width - off.x - off.width;
-							
-							// Updates cell geometry
-							cell = cell.clone();
-							cell.x = Math.round(x);
-							cell.y = 0;
-							cell.height = Math.round(rh);
-		
-							var cw = (cell.width / sw) * w;
-							x += cw;
-							cell.width = Math.round(x) - cell.x;
-							
-							model.setGeometry(cells[j], cell);
-						}
-					}
+					// Updates cell geometries
+					this.layoutRow(rows[i], pos, row.height);
 				}
 			}
 		}
@@ -7190,6 +7222,20 @@ if (typeof mxVertexHandler != 'undefined')
 						var index = parent.getIndex(cells[i]);
 						model.add(parent, clones[i], index + 1);
 					}
+					
+					// Extends tables	
+					if (this.isTable(parent))
+					{
+						var row = this.getCellGeometry(clones[i]);
+						var table = this.getCellGeometry(parent);
+						
+						if (row != null && table != null)
+						{
+							table = table.clone();
+							table.height += row.height;
+							model.setGeometry(parent, table);
+						}
+					}
 				}
 			}
 			finally
@@ -7855,6 +7901,65 @@ if (typeof mxVertexHandler != 'undefined')
 		        range.setEndPoint('StartToStart', originalRange);
 		        range.select();
 		    }
+		};
+		
+		/**
+		 * Deletes the given cells  and returns the cells to be selected.
+		 */
+		Graph.prototype.deleteCells = function(cells, includeEdges)
+		{
+			var select = null;
+
+			if (cells != null && cells.length > 0)
+			{
+				this.model.beginUpdate();
+				try
+				{
+					// Shrinks tables	
+					for (var i = 0; i < cells.length; i++)
+					{
+						var parent = this.model.getParent(cells[i]);
+						
+						if (this.isTable(parent))
+						{
+							var row = this.getCellGeometry(cells[i]);
+							var table = this.getCellGeometry(parent);
+							
+							if (row != null && table != null)
+							{
+								table = table.clone();
+								table.height -= row.height;
+								this.model.setGeometry(parent, table);
+							}
+						}
+					}
+					
+					var parents = (this.selectParentAfterDelete) ? this.model.getParents(cells) : null;
+					this.removeCells(cells, includeEdges);
+				}
+				finally
+				{
+					this.model.endUpdate();
+				}
+	
+				// Selects parents for easier editing of groups
+				if (parents != null)
+				{
+					select = [];
+					
+					for (var i = 0; i < parents.length; i++)
+					{
+						if (this.model.contains(parents[i]) &&
+							(this.model.isVertex(parents[i]) ||
+							this.model.isEdge(parents[i])))
+						{
+							select.push(parents[i]);
+						}
+					}
+				}
+			}
+			
+			return select;
 		};
 		
 		/**
