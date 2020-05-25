@@ -4665,41 +4665,28 @@ TableLayout.prototype = new mxStackLayout();
 TableLayout.prototype.constructor = TableLayout;
 
 /**
- * Table layout is always vertical.
- */
-TableLayout.prototype.isHorizontal = function()
-{
-	return false;
-};
-
-/**
- * Function: getLayout
+ * Function: getSize
  * 
- * Returns the child cells and sum of their widths or heights.
+ * Returns the total vertical or horizontal size of the given cells.
  */
-TableLayout.prototype.getLayout = function(parent, vertical)
+TableLayout.prototype.getSize = function(cells, horizontal)
 {
-	var model = this.graph.getModel();
-	var cells = [];
-	var sum = 0;
+	var total = 0;
 	
-	for (var i = 0; i < model.getChildCount(parent); i++)
+	for (var i = 0; i < cells.length; i++)
 	{
-		var cell = model.getChildAt(parent, i);
-		
-		if (!this.isVertexIgnored(cell))
+		if (!this.isVertexIgnored(cells[i]))
 		{
-			var geo = this.graph.getCellGeometry(cell);
+			var geo = this.graph.getCellGeometry(cells[i]);
 			
 			if (geo != null)
 			{
-				sum += (vertical) ? geo.height : geo.width;
-				cells.push(cell);
+				total += (horizontal) ? geo.width : geo.height;
 			}
 		}
 	}
 	
-	return [cells, sum];
+	return total;
 };
 
 /**
@@ -4718,52 +4705,58 @@ TableLayout.prototype.execute = function(parent)
 		model.beginUpdate();
 		try
 		{
-			var tableLayout = this.getLayout(parent, true);
-			var rows = tableLayout[0];
-			var sh = tableLayout[1];
-			var y = offset.y;
+			var rows = model.getChildCells(parent, true);
+			var sh = this.getSize(rows, false);
 			
-			// Updates rows
-			for (var i = 0; i < rows.length; i++)
+			if (sh > 0)
 			{
-				var h = table.height - offset.y - offset.height;
-				var row = this.graph.getCellGeometry(rows[i]);
-			
-				// Updates row geometry
-				row = row.clone();
-				row.x = offset.x;
-				row.y = Math.round(y);
-				row.width = table.width;
-
-				var rh = (row.height / sh) * h;
-				y += rh;
-				row.height = Math.round(y) - row.y;
+				var y = offset.y;
 				
-				model.setGeometry(rows[i], row);
-				
-				// Updates cells
-				var off = this.graph.getActualStartSize(rows[i]);
-				var rowLayout = this.getLayout(rows[i], false);
-				var cells = rowLayout[0];
-				var sw = rowLayout[1];
-				var x = off.x;
-				
-				for (var j = 0; j < cells.length; j++)
+				// Updates rows
+				for (var i = 0; i < rows.length; i++)
 				{
-					var cell = this.graph.getCellGeometry(cells[j]);
-					var w = row.width - off.x - off.width;
+					var h = table.height - offset.y - offset.height;
+					var row = this.graph.getCellGeometry(rows[i]);
+				
+					// Updates row geometry
+					row = row.clone();
+					row.x = offset.x;
+					row.y = Math.round(y);
+					row.width = table.width;
+	
+					var rh = (row.height / sh) * h;
+					y += rh;
+					row.height = Math.round(y) - row.y;
 					
-					// Updates cell geometry
-					cell = cell.clone();
-					cell.x = Math.round(x);
-					cell.y = 0;
-					cell.height = Math.round(rh);
-
-					var cw = (cell.width / sw) * w;
-					x += cw;
-					cell.width = Math.round(x) - cell.x;
+					model.setGeometry(rows[i], row);
 					
-					model.setGeometry(cells[j], cell);
+					// Updates cells
+					var off = this.graph.getActualStartSize(rows[i]);
+					var cells = model.getChildCells(rows[i], true);
+					var sw = this.getSize(cells, true);
+					
+					if (sw > 0)
+					{
+						var x = off.x;
+						
+						for (var j = 0; j < cells.length; j++)
+						{
+							var cell = this.graph.getCellGeometry(cells[j]);
+							var w = row.width - off.x - off.width;
+							
+							// Updates cell geometry
+							cell = cell.clone();
+							cell.x = Math.round(x);
+							cell.y = 0;
+							cell.height = Math.round(rh);
+		
+							var cw = (cell.width / sw) * w;
+							x += cw;
+							cell.width = Math.round(x) - cell.x;
+							
+							model.setGeometry(cells[j], cell);
+						}
+					}
 				}
 			}
 		}
@@ -9136,7 +9129,6 @@ if (typeof mxVertexHandler != 'undefined')
 		 * Shows handle for table instead of rows and cells.
 		 */
 		var selectionCellsHandlerGetHandledSelectionCells = mxSelectionCellsHandler.prototype.getHandledSelectionCells;
-		
 		mxSelectionCellsHandler.prototype.getHandledSelectionCells = function()
 		{
 			var cells = selectionCellsHandlerGetHandledSelectionCells.apply(this, arguments);
@@ -9172,6 +9164,19 @@ if (typeof mxVertexHandler != 'undefined')
 			return result;
 		};
 
+		/**
+		 * Creates the shape used to draw the selection border.
+		 */
+		var vertexHandlerIsMoveCustomHandlePreviewToFront = mxVertexHandler.prototype.isMoveCustomHandlePreviewToFront;
+		mxVertexHandler.prototype.isMoveCustomHandlePreviewToFront = function(handle)
+		{
+			return vertexHandlerIsMoveCustomHandlePreviewToFront.apply(this, arguments) ||
+				(this.graph.isTable(this.state.cell) && (mxUtils.getValue(this.state.style,
+				mxConstants.STYLE_FILLCOLOR, mxConstants.NONE) == mxConstants.NONE ||
+				(this.graph.isSwimlane(this.state.cell) && mxUtils.getValue(this.state.style,
+				mxConstants.STYLE_SWIMLANE_FILLCOLOR, mxConstants.NONE) == mxConstants.NONE)));
+		};
+		
 		/**
 		 * Creates the shape used to draw the selection border.
 		 */
