@@ -65,7 +65,7 @@ mxHandle.prototype.setPosition = function(bounds, pt, me) { };
  * 
  * Hook for subclassers to execute the handle.
  */
-mxHandle.prototype.execute = function() { };
+mxHandle.prototype.execute = function(me) { };
 
 /**
  * Function: copyStyle

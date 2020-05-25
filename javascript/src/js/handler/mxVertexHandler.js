@@ -850,7 +850,7 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
  */
 mxVertexHandler.prototype.isMoveCustomHandlePreviewToFront = function(handle)
 {
-	return true;
+	return false;
 };
 
 /**
@@ -1217,7 +1217,7 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 				if (this.customHandles != null)
 				{
 					this.customHandles[mxEvent.CUSTOM_HANDLE - index].active = false;
-					this.customHandles[mxEvent.CUSTOM_HANDLE - index].execute();
+					this.customHandles[mxEvent.CUSTOM_HANDLE - index].execute(me);
 				}
 			}
 			else if (index == mxEvent.ROTATION_HANDLE)

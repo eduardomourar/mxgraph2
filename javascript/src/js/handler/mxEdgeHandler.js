@@ -1576,7 +1576,7 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 					model.beginUpdate();
 					try
 					{
-						this.customHandles[mxEvent.CUSTOM_HANDLE - index].execute();
+						this.customHandles[mxEvent.CUSTOM_HANDLE - index].execute(me);
 					}
 					finally
 					{
