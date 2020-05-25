@@ -4493,7 +4493,7 @@ Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, 
 	var row = this.createVertex(null, null, '', 0, t, colCount * w + t, h,
 		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;startSize=40;');
 	table.insert(this.createParent(row, this.createVertex(null, null, '',
-		t, 0, w, h, s + 'connectable=0;startSize=30;'), colCount, w, 0));
+		t, 0, w, h, s + 'connectable=0;startSize=40;'), colCount, w, 0));
 	
 	if (rowCount > 1)
 	{
