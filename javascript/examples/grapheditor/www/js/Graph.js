@@ -252,15 +252,15 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 		    		}
 		    		else if (!this.panningHandler.isActive())
 		    		{
-			    		var box = new mxRectangle(me.getGraphX(), me.getGraphY());
-		    			box.grow(mxShape.prototype.svgStrokeTolerance - 1);
-		    			
-		    			if (this.isTableCell(state.cell))
+			   			var handler = this.selectionCellsHandler.getHandler(state.cell);
+
+			   			// Cell custom handles have precedence over row and col resize
+		    			if (handler == null || handler.getHandleForEvent(me) == null)
 		    			{
-			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
-			
-			    			// Cell custom handles have precedence over row and col resize
-			    			if (handler == null || handler.getHandleForEvent(me) == null)
+				    		var box = new mxRectangle(me.getGraphX(), me.getGraphY());
+			    			box.grow(mxShape.prototype.svgStrokeTolerance - 1);
+			    			
+			    			if (this.isTableCell(state.cell))
 			    			{
 			    				var row = this.model.getParent(state.cell);
 			    				var table = this.model.getParent(row);
@@ -272,7 +272,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 				    				this.model.getChildAt(row, 0) != state.cell) || mxUtils.intersects(box, new mxRectangle(
 			    					state.x + state.width - 1, state.y, 1, state.height)))
 		    					{
-				    				this.selectCellForEvent(table, me.getEvent());
+			    					this.selectCellForEvent(table, me.getEvent());
 					    			handler = this.selectionCellsHandler.getHandler(table);
 		
 					    			if (handler != null)
@@ -286,40 +286,40 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 					    				}
 					    			}
 		    					}
-			    			}
-		    			}
-		    			
-		    			// Hover for swimlane start sizes inside tables
-			    		var current = state;
-			    		
-			    		while (!me.isConsumed() && current != null && (this.isTableCell(current.cell) ||
-			    			this.isTableRow(current.cell) || this.isTable(current.cell)))
-			    		{
-				    		if (this.isSwimlane(current.cell))
-				    		{
-				    			var offset = this.getActualStartSize(current.cell);
-				    			
-	    						if (((offset.x > 0 || offset.width > 0) && mxUtils.intersects(box, new mxRectangle(
-	    							current.x + offset.x - offset.width - 1 + ((offset.x == 0) ? current.width : 0),
-	    							current.y, 1, current.height))) || ((offset.y > 0 || offset.height > 0) &&
-	    							mxUtils.intersects(box, new mxRectangle(current.x, current.y + offset.y -
-	    							offset.height - 1 + ((offset.y == 0) ? current.height : 0), current.width, 1))))
-	    						{
-		    						this.selectCellForEvent(current.cell, me.getEvent());
-					    			handler = this.selectionCellsHandler.getHandler(current.cell);
-		
-					    			if (handler != null)
-					    			{
-					    				// Swimlane start size handle is last custom handle
-					    				var handle = mxEvent.CUSTOM_HANDLE - handler.customHandles.length + 1;
-				    					handler.start(me.getGraphX(), me.getGraphY(), handle);
-				    					me.consume();
-					    			}
-	    						}
-				    		}
+		    				}
+
+			    			// Hover for swimlane start sizes inside tables
+				    		var current = state;
 				    		
-				    		current = this.view.getState(this.model.getParent(current.cell));
-			    		}
+				    		while (!me.isConsumed() && current != null && (this.isTableCell(current.cell) ||
+				    			this.isTableRow(current.cell) || this.isTable(current.cell)))
+				    		{
+					    		if (this.isSwimlane(current.cell))
+					    		{
+					    			var offset = this.getActualStartSize(current.cell);
+					    			
+		    						if (((offset.x > 0 || offset.width > 0) && mxUtils.intersects(box, new mxRectangle(
+		    							current.x + offset.x - offset.width - 1 + ((offset.x == 0) ? current.width : 0),
+		    							current.y, 1, current.height))) || ((offset.y > 0 || offset.height > 0) &&
+		    							mxUtils.intersects(box, new mxRectangle(current.x, current.y + offset.y -
+		    							offset.height - 1 + ((offset.y == 0) ? current.height : 0), current.width, 1))))
+		    						{
+		    							this.selectCellForEvent(current.cell, me.getEvent());
+						    			handler = this.selectionCellsHandler.getHandler(current.cell);
+			
+						    			if (handler != null)
+						    			{
+						    				// Swimlane start size handle is last custom handle
+						    				var handle = mxEvent.CUSTOM_HANDLE - handler.customHandles.length + 1;
+					    					handler.start(me.getGraphX(), me.getGraphY(), handle);
+					    					me.consume();
+						    			}
+		    						}
+					    		}
+					    		
+					    		current = this.view.getState(this.model.getParent(current.cell));
+				    		}
+		    			}
 		    		}
 		    	}
 			}
@@ -4708,7 +4708,7 @@ TableLayout.prototype.execute = function(parent)
 {
 	if (parent != null)
 	{
-		var offset = this.graph.getActualStartSize(parent);
+		var offset = this.graph.getActualStartSize(parent, true);
 		var table = this.graph.getCellGeometry(parent);
 		var model = this.graph.getModel();
 
@@ -4741,7 +4741,7 @@ TableLayout.prototype.execute = function(parent)
 					model.setGeometry(rows[i], row);
 					
 					// Updates cells
-					var off = this.graph.getActualStartSize(rows[i]);
+					var off = this.graph.getActualStartSize(rows[i], true);
 					var cells = model.getChildCells(rows[i], true);
 					var sw = this.getSize(cells, true);
 					
