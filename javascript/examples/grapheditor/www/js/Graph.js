@@ -4665,6 +4665,16 @@ TableLayout.prototype = new mxStackLayout();
 TableLayout.prototype.constructor = TableLayout;
 
 /**
+ * Function: isHorizontal
+ * 
+ * Overrides stack layout to handle row reorder.
+ */
+TableLayout.prototype.isHorizontal = function()	
+{	
+	return false;	
+};
+
+/**
  * Function: getSize
  * 
  * Returns the total vertical or horizontal size of the given cells.
