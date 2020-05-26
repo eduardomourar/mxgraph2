@@ -1537,7 +1537,8 @@ mxGraphHandler.prototype.mouseUp = function(sender, me)
 				
 				if (graph.isSplitEnabled() && graph.isSplitTarget(target, this.cells, me.getEvent()))
 				{
-					graph.splitEdge(target, this.cells, null, dx, dy);
+					graph.splitEdge(target, this.cells, null, dx, dy,
+						me.getGraphX(), me.getGraphY());
 				}
 				else
 				{

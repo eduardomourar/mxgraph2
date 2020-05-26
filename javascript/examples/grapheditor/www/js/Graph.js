@@ -5966,6 +5966,25 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * Overridden to use table cell instead of table as parent.
+		 */
+		var graphSplitEdge = Graph.prototype.splitEdge;
+		Graph.prototype.splitEdge = function(edge, cells, newEdge, dx, dy, x, y, parent)
+		{
+			if (parent == null)
+			{
+				parent = this.model.getParent(edge);
+				
+				if (this.isTable(parent))
+				{
+					parent = this.getCellAt(x, y, null, true, false);
+				}
+			}			
+			
+			graphSplitEdge.apply(this, [edge, cells, newEdge, dx, dy, x, y, parent]);
+		};
+		
+		/**
 		 * Overridden to flatten cell hierarchy for selecting next and previous.
 		 */
 		var graphSelectCell = Graph.prototype.selectCell;

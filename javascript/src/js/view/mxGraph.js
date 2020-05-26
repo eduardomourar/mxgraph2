@@ -5028,15 +5028,19 @@ mxGraph.prototype.cellsRemoved = function(cells)
  * newEdge - <mxCell> that represents the edge to be inserted.
  * dx - Optional integer that specifies the vector to move the cells.
  * dy - Optional integer that specifies the vector to move the cells.
+ * x - Integer that specifies the x-coordinate of the drop location.
+ * y - Integer that specifies the y-coordinate of the drop location.
+ * parent - Optional parent to insert the cell. If null the parent of
+ * the edge is used.
  */
-mxGraph.prototype.splitEdge = function(edge, cells, newEdge, dx, dy)
+mxGraph.prototype.splitEdge = function(edge, cells, newEdge, dx, dy, x, y, parent)
 {
 	dx = dx || 0;
 	dy = dy || 0;
 
-	var parent = this.model.getParent(edge);
+	parent = (parent != null) ? parent : this.model.getParent(edge);
 	var source = this.model.getTerminal(edge, true);
-
+	
 	this.model.beginUpdate();
 	try
 	{
