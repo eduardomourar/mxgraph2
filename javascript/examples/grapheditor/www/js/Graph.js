@@ -2768,7 +2768,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 	}
 
 	// Uses connectable parent vertex if one exists
-	if (target != null && !this.isCellConnectable(target))
+	if (target != null && !this.isCellConnectable(target) && !this.isSwimlane(target))
 	{
 		var parent = this.getModel().getParent(target);
 		
