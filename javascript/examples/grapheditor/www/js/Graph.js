@@ -2768,6 +2768,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 	}
 
 	// Uses connectable parent vertex if one exists
+	// TODO: Fix using target as parent for swimlane
 	if (target != null && !this.isCellConnectable(target) && !this.isSwimlane(target))
 	{
 		var parent = this.getModel().getParent(target);
@@ -2778,7 +2779,8 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 		}
 	}
 	
-	if (target == source || this.model.isEdge(target) || !this.isCellConnectable(target))
+	if (target == source || this.model.isEdge(target) || !this.isCellConnectable(target) &&
+		!this.isSwimlane(target))
 	{
 		target = null;
 	}
