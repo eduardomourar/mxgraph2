@@ -4737,9 +4737,14 @@ TableLayout.prototype.layoutRow = function(row, positions, height)
 	var model = this.graph.getModel();
 	var cells = model.getChildCells(row, true);
 	var off = this.graph.getActualStartSize(row, true);
-	positions = positions.slice();
-	positions.splice(0, 0, off.x);
+	var sw = 0;
 	
+	if (positions != null)
+	{
+		positions = positions.slice();
+		positions.splice(0, 0, off.x);
+	}
+
 	for (var i = 0; i < cells.length; i++)
 	{
 		var cell = this.graph.getCellGeometry(cells[i]);
@@ -4750,9 +4755,29 @@ TableLayout.prototype.layoutRow = function(row, positions, height)
 			
 			cell.y = 0;
 			cell.height = height;
-			cell.x = positions[i];
-			cell.width = positions[i + 1] - cell.x;
 			
+			if (positions != null)
+			{
+				cell.x = positions[i];
+				cell.width = positions[i + 1] - cell.x;
+			}
+			else
+			{
+				if (i == cells.length - 1)
+				{
+					var geo = this.graph.getCellGeometry(row);
+	
+					if (geo != null)
+					{
+						cell.width = geo.width - off.x - off.width - sw;
+					}
+				}
+				else
+				{	
+					sw += cell.width;
+				}
+			}
+		
 			model.setGeometry(cells[i], cell);
 		}
 	}
@@ -4769,6 +4794,11 @@ TableLayout.prototype.execute = function(parent)
 	{
 		var offset = this.graph.getActualStartSize(parent, true);
 		var table = this.graph.getCellGeometry(parent);
+		var style = this.graph.getCellStyle(parent);
+		var resizeLastRow = mxUtils.getValue(style,
+			'resizeLastRow', '0') == '1';
+		var resizeLast = mxUtils.getValue(style,
+			'resizeLast', '0') == '1';
 		var model = this.graph.getModel();
 		
 		model.beginUpdate();
@@ -4777,27 +4807,45 @@ TableLayout.prototype.execute = function(parent)
 			var th = table.height - offset.y - offset.height;
 			var tw = table.width - offset.x - offset.width;
 			var rows = model.getChildCells(parent, true);
-			var pos = this.getRowLayout(rows[0], tw);
 			var sh = this.getSize(rows, false);
 			
 			if (th > 0 && tw > 0 && rows.length > 0 && sh > 0)
 			{
+				if (resizeLastRow)
+				{
+					var row = this.graph.getCellGeometry(rows[rows.length - 1]);
+					
+					if (row != null)
+					{
+						row = row.clone();
+						row.height = th - sh + row.height;
+						model.setGeometry(rows[rows.length - 1], row);
+					}
+				}
+
+				var pos = (resizeLast) ? null : this.getRowLayout(rows[0], tw);
 				var y = offset.y;
-				
+			
 				// Updates row geometries
 				for (var i = 0; i < rows.length; i++)
 				{
 					var row = this.graph.getCellGeometry(rows[i]);
-				
-					row = row.clone();
-					row.x = offset.x;
-					row.y = Math.round(y);
-					row.width = tw;
-	
-					y += (row.height / sh) * th;
-					row.height = Math.round(y) - row.y;
 					
-					model.setGeometry(rows[i], row);
+					if (row != null)
+					{
+						row = row.clone();
+						row.x = offset.x;
+						row.width = tw;
+						
+						if (!resizeLastRow)
+						{
+							row.y = Math.round(y);
+							y += (row.height / sh) * th;
+							row.height = Math.round(y) - row.y;
+						}	
+						
+						model.setGeometry(rows[i], row);
+					}
 					
 					// Updates cell geometries
 					this.layoutRow(rows[i], pos, row.height);
