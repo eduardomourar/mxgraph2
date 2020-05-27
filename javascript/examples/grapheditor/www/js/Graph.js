@@ -5975,7 +5975,7 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				parent = this.model.getParent(edge);
 				
-				if (this.isTable(parent))
+				if (this.isTable(parent) || this.isTableRow(parent))
 				{
 					parent = this.getCellAt(x, y, null, true, false);
 				}
@@ -7984,7 +7984,7 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
-		 * 
+		 * Inserts a column in the table for the given cell.
 		 */
 		Graph.prototype.insertTableColumn = function(cell, before)
 		{
@@ -8000,7 +8000,7 @@ if (typeof mxVertexHandler != 'undefined')
 				{
 					var row = model.getParent(cell);
 					table = model.getParent(row);
-					index = row.getIndex(cell);
+					index = mxUtils.indexOf(model.getChildCells(row, true), cell);
 				}
 				else
 				{
@@ -8011,22 +8011,24 @@ if (typeof mxVertexHandler != 'undefined')
 					
 					if (!before)
 					{
-						index = model.getChildCount(model.getChildAt(table, 0)) - 1;
+						index = model.getChildCells(cell, true).length;
 					}
 				}
-					
-				for (var i = 0; i < model.getChildCount(table); i++)
+				
+				var rows = model.getChildCells(table, true);
+				var dw = Graph.minTableColumnWidth;
+				
+				for (var i = 0; i < rows.length; i++)
 				{
-					var row = model.getChildAt(table, i);
-					var child = model.getChildAt(row, index);
-					var clone = model.cloneCell(child);
+					var child = model.getChildAt(rows[i], index);
+					var clone = model.cloneCell(child, false);
 					var geo = this.getCellGeometry(clone);
 					clone.value = null;
 					
 					if (geo != null)
 					{
-						geo.width = Graph.minTableColumnWidth;
-						var rowGeo = this.getCellGeometry(row);
+						dw = geo.width;
+						var rowGeo = this.getCellGeometry(rows[i]);
 						
 						if (rowGeo != null)
 						{
@@ -8034,7 +8036,7 @@ if (typeof mxVertexHandler != 'undefined')
 						}
 					}
 					
-					model.add(row, clone, index + ((before) ? 0 : 1));
+					model.add(rows[i], clone, index + ((before) ? 0 : 1));
 				}
 				
 				var tableGeo = this.getCellGeometry(table);
@@ -8042,7 +8044,7 @@ if (typeof mxVertexHandler != 'undefined')
 				if (tableGeo != null)
 				{
 					tableGeo = tableGeo.clone();
-					tableGeo.width += Graph.minTableColumnWidth;
+					tableGeo.width += dw;
 					
 					model.setGeometry(table, tableGeo);
 				}
@@ -8054,7 +8056,7 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
-		 * 
+		 * Inserts a row in the table for the given cell.
 		 */
 		Graph.prototype.insertTableRow = function(cell, before)
 		{
@@ -8064,36 +8066,36 @@ if (typeof mxVertexHandler != 'undefined')
 			try
 			{
 				var table = cell;
-				var index = 0;
+				var row = cell;
 				
 				if (this.isTableCell(cell))
 				{
-					var row = model.getParent(cell);
+					row = model.getParent(cell);
 					table = model.getParent(row);
-					index = table.getIndex(row);
 				}
 				else if (this.isTableRow(cell))
 				{
 					table = model.getParent(cell);
-					index = table.getIndex(cell);
 				}
-				else if (!before)
+				else
 				{
-					index = model.getChildCount(table) - 1;
+					var rows = model.getChildCells(table, true);
+					row = rows[(before) ? 0 : rows.length - 1];
 				}
 				
-				var row = model.cloneCell(model.getChildAt(table, index));
+				var cells = model.getChildCells(row, true);
+				var index = table.getIndex(row);
+				row = model.cloneCell(row, false);
 				row.value = null;
 				
 				var rowGeo = this.getCellGeometry(row);
 				
 				if (rowGeo != null)
 				{
-					rowGeo.height = Graph.minTableRowHeight;
-					
-					for (var i = 0; i < model.getChildCount(row); i++)
+					for (var i = 0; i < cells.length; i++)
 					{
-						var cell = model.getChildAt(row, i);
+						var cell = model.cloneCell(cells[i], false);
+						row.insert(cell);
 						cell.value = null;
 						
 						var geo = this.getCellGeometry(cell);
@@ -8103,7 +8105,7 @@ if (typeof mxVertexHandler != 'undefined')
 							geo.height = rowGeo.height;
 						}
 					}
-					
+
 					model.add(table, row, index + ((before) ? 0 : 1));
 					
 					var tableGeo = this.getCellGeometry(table);
