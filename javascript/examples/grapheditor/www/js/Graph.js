@@ -8060,6 +8060,10 @@ if (typeof mxVertexHandler != 'undefined')
 					{
 						table = model.getParent(cell);
 					}
+					else
+					{
+						cell = model.getChildCells(table, true)[0];
+					}
 					
 					if (!before)
 					{
@@ -8072,7 +8076,7 @@ if (typeof mxVertexHandler != 'undefined')
 				
 				for (var i = 0; i < rows.length; i++)
 				{
-					var child = model.getChildAt(rows[i], index);
+					var child = model.getChildCells(rows[i], true)[index];
 					var clone = model.cloneCell(child, false);
 					var geo = this.getCellGeometry(clone);
 					clone.value = null;
