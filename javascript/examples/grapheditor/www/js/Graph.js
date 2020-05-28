@@ -8063,7 +8063,7 @@ if (typeof mxVertexHandler != 'undefined')
 					
 					if (!before)
 					{
-						index = model.getChildCells(cell, true).length;
+						index = model.getChildCells(cell, true).length - 1;
 					}
 				}
 				
