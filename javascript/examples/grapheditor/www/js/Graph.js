@@ -4587,57 +4587,49 @@ Graph.prototype.setTableColumnWidth = function(col, dx)
 	var model = this.getModel();
 	var row = model.getParent(col);
 	var table = model.getParent(row);
-	var index = row.getIndex(col);
-	var lastColumn = index == model.getChildCount(row) - 1;
+	var cells = model.getChildCells(row, true);
+	var index = mxUtils.indexOf(cells, col);
+	var lastColumn = index == cells.length - 1;
 	
 	model.beginUpdate();
 	try
 	{
 		// Sets width of child cell
-		for (var i = 0; i < model.getChildCount(table); i++)
+		var rows = model.getChildCells(table, true);
+		
+		for (var i = 0; i < rows.length; i++)
 		{
-			row = model.getChildAt(table, i);
-			
-			if (model.isVertex(row))
+			row = rows[i];
+			cells = model.getChildCells(row, true);
+			var cell = cells[index];
+			var geo = this.getCellGeometry(cell);
+		
+			if (geo != null)
 			{
-				var cell = model.getChildAt(row, index);
-				
-				if (model.isVertex(cell))
+				geo = geo.clone();
+				geo.width += dx;
+				model.setGeometry(cell, geo);
+			}
+			
+			// Shifts and resizes neighbor column
+			if (index < cells.length - 1)
+			{
+				cell = cells[index + 1];
+				var geo = this.getCellGeometry(cell);
+			
+				if (geo != null)
 				{
-					var geo = this.getCellGeometry(cell);
-				
-					if (geo != null)
-					{
-						geo = geo.clone();
-						geo.width += dx;
-						model.setGeometry(cell, geo);
-					}
-				}
-				
-				// Shifts and resizes neighbor column
-				if (index < model.getChildCount(row) - 1)
-				{
-					cell = model.getChildAt(row, index + 1);
-					
-					if (model.isVertex(cell))
-					{
-						var geo = this.getCellGeometry(cell);
-					
-						if (geo != null)
-						{
-							geo = geo.clone();
-							geo.x += dx;
-							geo.width -= dx;
-							model.setGeometry(cell, geo);
-						}
-					}
+					geo = geo.clone();
+					geo.x += dx;
+					geo.width -= dx;
+					model.setGeometry(cell, geo);
 				}
 			}
 		}
 		
 		if (lastColumn)
 		{
-			// Updates height of table
+			// Updates width of table
 			var tgeo = this.getCellGeometry(table);
 			
 			if (tgeo != null)
