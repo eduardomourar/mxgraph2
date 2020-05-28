@@ -4460,13 +4460,15 @@ Graph.prototype.createParent = function(parent, child, childCount, dx, dy)
 /**
  * Returns true if the given cell is a table.
  */
-Graph.prototype.createTable = function(rowCount, colCount, w, h, title)
+Graph.prototype.createTable = function(rowCount, colCount, w, h, title, startSize)
 {
 	w = (w != null) ? w : 60;
 	h = (h != null) ? h : 40;
+	startSize = (startSize != null) ? startSize : 30;
 	
 	return this.createParent(this.createVertex(null, null, (title != null) ? title : '',
-		0, 0, colCount * w, rowCount * h, ((title != null) ? 'swimlane;' : '') +
+		0, 0, colCount * w, rowCount * h + ((title != null) ? startSize : 0),
+		((title != null) ? 'swimlane;startSize=' + startSize + ';' : '') +
 		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
     		'html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;' +
