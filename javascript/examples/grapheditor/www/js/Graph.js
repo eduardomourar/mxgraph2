@@ -9579,9 +9579,11 @@ if (typeof mxVertexHandler != 'undefined')
 								this.shape.bounds.x = this.state.x + this.state.width +
 									dx * this.graph.view.scale;
 								this.shape.bounds.width = 1;
-								this.shape.bounds.y = tableState.y + start.y * this.graph.view.scale;
+								this.shape.bounds.y = tableState.y + ((index == cols.length - 1) ?
+									0 : start.y * this.graph.view.scale);
 								this.shape.bounds.height = tableState.height -
-									(start.height + start.y) * this.graph.view.scale;
+									((index == cols.length - 1) ? 0 :
+									(start.height + start.y) * this.graph.view.scale);
 								this.shape.redraw();
 							}
 						};
