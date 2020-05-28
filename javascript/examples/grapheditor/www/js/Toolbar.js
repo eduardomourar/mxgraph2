@@ -192,9 +192,10 @@ Toolbar.prototype.addTableDropDown = function()
 		{
 			this.editorUi.menus.addInsertTableItem(menu, mxUtils.bind(this, function(evt, rows, cols)
 			{
-				var table = (mxEvent.isShiftDown(evt)) ? graph.createCrossFunctionalSwimlane(rows, cols) :
-					graph.createTable(rows, cols, null, null, (mxEvent.isControlDown(evt) ||
-					mxEvent.isMetaDown(evt)) ? 'Table' : null);
+				var table = (mxEvent.isControlDown(evt) || mxEvent.isMetaDown(evt)) ?
+					graph.createCrossFunctionalSwimlane(rows, cols) :
+					graph.createTable(rows, cols, null, null,
+					(mxEvent.isShiftDown(evt)) ? 'Table' : null);
 				var pt = (mxEvent.isAltDown(evt)) ? graph.getFreeInsertPoint() :
 					graph.getCenterInsertPoint(graph.getBoundingBoxFromGeometry([table], true));
 				var select = graph.importCells([table], pt.x, pt.y);
