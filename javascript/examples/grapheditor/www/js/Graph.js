@@ -4460,40 +4460,42 @@ Graph.prototype.createParent = function(parent, child, childCount, dx, dy)
 /**
  * Returns true if the given cell is a table.
  */
-Graph.prototype.createTable = function(rowCount, colCount, w, h)
+Graph.prototype.createTable = function(rowCount, colCount, w, h, title)
 {
-	w = (w != null) ? w : 40;
-	h = (h != null) ? h : 30;
+	w = (w != null) ? w : 60;
+	h = (h != null) ? h : 40;
 	
-	return this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, rowCount * h,
-		'collapsible=0;html=1;whiteSpace=wrap;container=1;childLayout=tableLayout;'),
+	return this.createParent(this.createVertex(null, null, (title != null) ? title : '',
+		0, 0, colCount * w, rowCount * h, ((title != null) ? 'swimlane;' : '') +
+		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
-    		'collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;strokeColor=none;' +
-    		'points=[[0,0.5],[1,0.5]];portConstraint=eastwest;'),
+    		'html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;' +
+    		'strokeColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;'),
 			this.createVertex(null, null, '', 0, 0, w, h,
-				'shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;'),
+				'shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;'),
 				colCount, w, 0), rowCount, 0, h);
 };
 
 /**
  * 
  */
-Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, h)
+Graph.prototype.createCrossFunctionalSwimlane = function(rowCount, colCount, w, h, startSize)
 {
 	w = (w != null) ? w : 120;
 	h = (h != null) ? h : 120;
+	startSize = (startSize != null) ? startSize : 40;
 	
 	var s = 'swimlane;html=1;whiteSpace=wrap;collapsible=0;recursiveResize=0;expand=0;pointerEvents=0;';
 	
 	var table = this.createVertex(null, null, '', 0, 0,
-		colCount * w, rowCount * h, s + 'childLayout=tableLayout;startSize=40;');
+		colCount * w, rowCount * h, s + 'childLayout=tableLayout;startSize=' + startSize + ';');
 	var t = mxUtils.getValue(this.getCellStyle(table), mxConstants.STYLE_STARTSIZE,
 		mxConstants.DEFAULT_STARTSIZE);
 	table.geometry.width += t;
 	table.geometry.height += t;
 	
 	var row = this.createVertex(null, null, '', 0, t, colCount * w + t, h,
-		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;startSize=40;');
+		s + 'horizontal=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;startSize=' + startSize + ';');
 	table.insert(this.createParent(row, this.createVertex(null, null, '',
 		t, 0, w, h, s + 'connectable=0;startSize=40;'), colCount, w, 0));
 	
@@ -9598,7 +9600,16 @@ if (typeof mxVertexHandler != 'undefined')
 						
 						handle.execute = function()
 						{
-							graph.setTableColumnWidth(this.state.cell, dx);
+							if (dx != 0)
+							{
+								graph.setTableColumnWidth(this.state.cell, dx);
+							}
+							
+							dx = 0;
+						};
+						
+						handle.reset = function()
+						{
 							dx = 0;
 						};
 						
@@ -9645,7 +9656,16 @@ if (typeof mxVertexHandler != 'undefined')
 						
 						handle.execute = function()
 						{
-							graph.setTableRowHeight(this.state.cell, dy);
+							if (dy != 0)
+							{
+								graph.setTableRowHeight(this.state.cell, dy);
+							}
+							
+							dy = 0;
+						};
+						
+						handle.reset = function()
+						{
 							dy = 0;
 						};
 						
