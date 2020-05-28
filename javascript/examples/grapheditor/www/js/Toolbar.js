@@ -190,22 +190,7 @@ Toolbar.prototype.addTableDropDown = function()
 
 		if (!graph.isTableCell(cell) && !graph.isTableRow(cell) && !graph.isTable(cell))
 		{
-			this.editorUi.menus.addInsertTableItem(menu, mxUtils.bind(this, function(evt, rows, cols)
-			{
-				var table = (mxEvent.isControlDown(evt) || mxEvent.isMetaDown(evt)) ?
-					graph.createCrossFunctionalSwimlane(rows, cols) :
-					graph.createTable(rows, cols, null, null,
-					(mxEvent.isShiftDown(evt)) ? 'Table' : null);
-				var pt = (mxEvent.isAltDown(evt)) ? graph.getFreeInsertPoint() :
-					graph.getCenterInsertPoint(graph.getBoundingBoxFromGeometry([table], true));
-				var select = graph.importCells([table], pt.x, pt.y);
-				
-				if (select != null && select.length > 0)
-				{
-					graph.scrollCellToVisible(select[0]);
-					graph.setSelectionCells(select);
-				}
-			}));
+			this.editorUi.menus.addInsertTableCellItem(menu);
     	}
 		else
     	{
