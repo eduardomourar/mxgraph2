@@ -4832,14 +4832,18 @@ TableLayout.prototype.execute = function(parent)
 						row = row.clone();
 						row.x = offset.x;
 						row.width = tw;
+						row.y = Math.round(y);
 						
-						if (!resizeLastRow)
+						if (resizeLastRow)
 						{
-							row.y = Math.round(y);
+							y += row.height;
+						}
+						else
+						{
 							y += (row.height / sh) * th;
-							row.height = Math.round(y) - row.y;
-						}	
+						}
 						
+						row.height = Math.round(y) - row.y;
 						model.setGeometry(rows[i], row);
 					}
 					
