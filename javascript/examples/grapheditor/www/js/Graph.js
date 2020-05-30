@@ -6936,18 +6936,18 @@ if (typeof mxVertexHandler != 'undefined')
 			if (mxUtils.hasScrollbars(this.container))
 			{
 				return new mxPoint(
-					this.snap((this.container.scrollLeft + this.container.clientWidth / 2) / this.view.scale -
-						this.view.translate.x - bbox.width / 2),
-					this.snap((this.container.scrollTop + this.container.clientHeight / 2) / this.view.scale -
-						this.view.translate.y - bbox.height / 2));
+					this.snap(Math.round((this.container.scrollLeft + this.container.clientWidth / 2) /
+						this.view.scale - this.view.translate.x - bbox.width / 2)),
+					this.snap(Math.round((this.container.scrollTop + this.container.clientHeight / 2) /
+						this.view.scale - this.view.translate.y - bbox.height / 2)));
 			}
 			else
 			{
 				return new mxPoint(
-					this.snap(this.container.clientWidth / 2 / this.view.scale -
-						this.view.translate.x - bbox.width / 2),
-					this.snap(this.container.clientHeight / 2 / this.view.scale -
-						this.view.translate.y - bbox.height / 2));
+					this.snap(Math.round(this.container.clientWidth / 2 / this.view.scale -
+						this.view.translate.x - bbox.width / 2)),
+					this.snap(Math.round(this.container.clientHeight / 2 / this.view.scale -
+						this.view.translate.y - bbox.height / 2)));
 			}
 		};
 		
