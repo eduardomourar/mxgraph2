@@ -3225,26 +3225,6 @@ Graph.prototype.isContainer = function(cell)
 };
 
 /**
- * Adds a expand style.
- */
-Graph.prototype.isExtendParent = function(cell)
-{
-	var parent = this.model.getParent(cell);
-	
-	if (parent != null)
-	{
-		var style = this.getCurrentCellStyle(parent);
-		
-		if (style['expand'] != null)
-		{
-			return style['expand'] != '0';
-		}
-	}
-	
-	return mxGraph.prototype.isExtendParent.apply(this, arguments);
-};
-
-/**
  * Adds a connectable style.
  */
 Graph.prototype.isCellConnectable = function(cell)
@@ -6016,6 +5996,28 @@ if (typeof mxVertexHandler != 'undefined')
 		};
 		
 		/**
+		 * Overridden to add expand style.
+		 */
+		var graphIsExtendParent = Graph.prototype.isExtendParent;
+		Graph.prototype.isExtendParent = function(cell)
+		{
+			var parent = this.model.getParent(cell);
+			
+			if (parent != null)
+			{
+				var style = this.getCurrentCellStyle(parent);
+				
+				if (style['expand'] != null)
+				{
+					return style['expand'] != '0';
+				}
+			}
+			
+			return graphIsExtendParent.apply(this, arguments) &&
+				(parent == null || !this.isTable(parent));
+		};
+		
+		/**
 		 * Overridden to use table cell instead of table as parent.
 		 */
 		var graphSplitEdge = Graph.prototype.splitEdge;
@@ -6102,6 +6104,44 @@ if (typeof mxVertexHandler != 'undefined')
 		Graph.prototype.moveCells = function(cells, dx, dy, clone, target, evt, mapping)
 		{
 			mapping = (mapping != null) ? mapping : new Object();
+			
+			// Updates source and target table heights for moving rows
+			for (var i = 0; i < cells.length; i++)
+			{
+				if (target != null && this.isTableRow(cells[i]))
+				{
+					var parent = this.model.getParent(cells[i]);
+					var row = this.getCellGeometry(cells[i]);
+					
+					if (parent != null && row != null &&
+						this.isTable(parent) &&
+						this.isTable(target) &&
+						(clone || parent != target))
+					{
+						if (!clone)
+						{
+							var table = this.getCellGeometry(parent);
+					
+							if (table != null)
+							{
+								table = table.clone();
+								table.height -= row.height;
+								this.model.setGeometry(parent, table);
+							}
+						}
+
+						var table = this.getCellGeometry(target);
+				
+						if (table != null)
+						{
+							table = table.clone();
+							table.height += row.height;
+							this.model.setGeometry(target, table);
+						}
+					}
+				}
+			}
+			
 			var result = graphMoveCells.apply(this, arguments);
 			
 			if (clone)
@@ -6801,16 +6841,6 @@ if (typeof mxVertexHandler != 'undefined')
 			}
 			
 			this.model.setValue(cell, value);
-		};
-		
-		
-		/**
-		 * Overridden to stop extending tables.
-		 */
-		var graphIsExtendParent = Graph.prototype.isExtendParent; 
-		Graph.prototype.isExtendParent = function(cell)
-		{
-			return graphIsExtendParent.apply(this, arguments) && !this.isTable(cell);
 		};
 		
 		/**
