@@ -4527,8 +4527,9 @@ Graph.prototype.isTable = function(cell)
 /**
  * Updates the row and table heights.
  */
-Graph.prototype.setTableRowHeight = function(row, dy)
+Graph.prototype.setTableRowHeight = function(row, dy, extend)
 {
+	extend = (extend != null) ? extend : true;
 	var model = this.getModel();
 	
 	model.beginUpdate();
@@ -4549,9 +4550,19 @@ Graph.prototype.setTableRowHeight = function(row, dy)
 			
 			if (tgeo != null)
 			{
-				tgeo = tgeo.clone();
-				tgeo.height += dy;
-				model.setGeometry(table, tgeo);
+				// Always extends for last row
+				if (!extend)
+				{
+					var rows = model.getChildCells(table, true);
+					extend = row == rows[rows.length - 1];
+				}
+				
+				if (extend)
+				{
+					tgeo = tgeo.clone();
+					tgeo.height += dy;
+					model.setGeometry(table, tgeo);
+				}
 			}
 		}
 	}
@@ -4564,8 +4575,10 @@ Graph.prototype.setTableRowHeight = function(row, dy)
 /**
  * Updates column width and row height.
  */
-Graph.prototype.setTableColumnWidth = function(col, dx)
+Graph.prototype.setTableColumnWidth = function(col, dx, extend)
 {
+	extend = (extend != null) ? extend : false;
+	
 	var model = this.getModel();
 	var row = model.getParent(col);
 	var table = model.getParent(row);
@@ -4609,7 +4622,7 @@ Graph.prototype.setTableColumnWidth = function(col, dx)
 			}
 		}
 		
-		if (lastColumn)
+		if (lastColumn || extend)
 		{
 			// Updates width of table
 			var tgeo = this.getCellGeometry(table);
@@ -9679,11 +9692,12 @@ if (typeof mxVertexHandler != 'undefined')
 								}
 							};
 							
-							handle.execute = function()
+							handle.execute = function(me)
 							{
 								if (dx != 0)
 								{
-									graph.setTableColumnWidth(this.state.cell, dx);
+									graph.setTableColumnWidth(this.state.cell, dx,
+										mxEvent.isShiftDown(me.getEvent()));
 								}
 								
 								dx = 0;
@@ -9735,11 +9749,12 @@ if (typeof mxVertexHandler != 'undefined')
 									pt.y - bounds.y - bounds.height);
 							};
 							
-							handle.execute = function()
+							handle.execute = function(me)
 							{
 								if (dy != 0)
 								{
-									graph.setTableRowHeight(this.state.cell, dy);
+									graph.setTableRowHeight(this.state.cell, dy,
+										!mxEvent.isShiftDown(me.getEvent()));
 								}
 								
 								dy = 0;
