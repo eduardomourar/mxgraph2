@@ -258,7 +258,9 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 		    			if (handler == null || handler.getHandleForEvent(me) == null)
 		    			{
 				    		var box = new mxRectangle(me.getGraphX(), me.getGraphY());
-			    			box.grow(mxShape.prototype.svgStrokeTolerance - 1);
+			    			box.grow(mxEvent.isTouchEvent(me.getEvent()) ?
+			    				mxShape.prototype.svgStrokeTolerance - 1 :
+			    				mxShape.prototype.svgStrokeTolerance / 2);
 			    			
 			    			if (this.isTableCell(state.cell))
 			    			{
@@ -519,7 +521,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 				    		else
 				    		{
 				    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
-			    				box.grow(mxShape.prototype.svgStrokeTolerance - 1);
+			    				box.grow(mxShape.prototype.svgStrokeTolerance / 2);
 	
 					    		if (this.isTableCell(state.cell))
 					    		{
@@ -6131,6 +6133,32 @@ if (typeof mxVertexHandler != 'undefined')
 					}
 					else
 					{
+						// Deletes table if all rows are removed
+						if (this.isTableRow(cells[i]))
+						{
+							var table = this.model.getParent(cells[i]);
+							
+							if (mxUtils.indexOf(cells, table) < 0 &&
+								mxUtils.indexOf(result, table) < 0)
+							{
+								var rows = this.model.getChildCells(table, true);
+								var deleteCount = 0;
+								
+								for (var j = 0; j < rows.length; j++)
+								{
+									if (mxUtils.indexOf(cells, rows[j]) >= 0)
+									{
+										deleteCount++;
+									}
+								}
+								
+								if (deleteCount == rows.length)
+								{
+									result.push(table);
+								}
+							}
+						}
+						
 						result.push(cells[i]);
 					}
 				}
