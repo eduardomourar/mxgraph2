@@ -4744,8 +4744,8 @@ TableLayout.prototype.layoutRow = function(row, positions, height)
 		{
 			cell = cell.clone();
 			
-			cell.y = 0;
-			cell.height = height;
+			cell.y = off.y;
+			cell.height = height - off.y - off.height;
 			
 			if (positions != null)
 			{
@@ -6503,13 +6503,17 @@ if (typeof mxVertexHandler != 'undefined')
 						if (geo != null)
 						{
 							// Rotates the size and position in the geometry
-							geo = geo.clone();
-							geo.x += geo.width / 2 - geo.height / 2;
-							geo.y += geo.height / 2 - geo.width / 2;
-							var tmp = geo.width;
-							geo.width = geo.height;
-							geo.height = tmp;
-							model.setGeometry(cell, geo);
+							if (!this.isTable(cell) && !this.isTableRow(cell) &&
+								!this.isTableCell(cell))
+							{
+								geo = geo.clone();
+								geo.x += geo.width / 2 - geo.height / 2;
+								geo.y += geo.height / 2 - geo.width / 2;
+								var tmp = geo.width;
+								geo.width = geo.height;
+								geo.height = tmp;
+								model.setGeometry(cell, geo);
+							}
 							
 							// Reads the current direction and advances by 90 degrees
 							var state = this.view.getState(cell);
