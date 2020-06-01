@@ -6219,7 +6219,23 @@ if (typeof mxVertexHandler != 'undefined')
 				{
 					if (this.isTableCell(cells[i]))
 					{
-						this.labelChanged(cells[i], '');
+						var row = this.model.getParent(cells[i]);
+						var table = this.model.getParent(row);
+						
+						// Removes table if one cell in one row left
+						if (this.model.getChildCount(row) == 1 &&
+							this.model.getChildCount(table) == 1)
+						{
+							if (mxUtils.indexOf(cells, table) < 0 &&
+								mxUtils.indexOf(result, table) < 0)
+							{
+								result.push(table);
+							}
+						}
+						else
+						{
+							this.labelChanged(cells[i], '');
+						}
 					}
 					else
 					{
