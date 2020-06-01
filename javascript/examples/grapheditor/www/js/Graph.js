@@ -9464,7 +9464,46 @@ if (typeof mxVertexHandler != 'undefined')
 				this.hint = null;
 			}
 		};
-		
+								
+		/**
+		 * Overridden to allow for shrinking pools when lanes are resized.
+		 */
+		var stackLayoutResizeCell = mxStackLayout.prototype.resizeCell;
+		mxStackLayout.prototype.resizeCell = function(cell, bounds)
+		{
+			stackLayoutResizeCell.apply(this, arguments);
+			var style = this.graph.getCellStyle(cell);
+				
+			if (style['childLayout'] == null)
+			{
+				var parent = this.graph.model.getParent(cell);
+				var geo = (parent != null) ? this.graph.getCellGeometry(parent) : null;
+			
+				if (geo != null)
+				{
+					style = this.graph.getCellStyle(parent);
+					
+					if (style['childLayout'] == 'stackLayout')
+					{
+						var horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
+						geo = geo.clone();
+						
+						if (horizontal)
+						{
+							geo.height = bounds.height;
+						}
+						else
+						{
+							geo.width = bounds.width;
+							
+						}
+			
+						this.graph.model.setGeometry(parent, geo);			
+					}
+				}
+			}
+		};
+
 		/**
 		 * Shows handle for table instead of rows and cells.
 		 */
