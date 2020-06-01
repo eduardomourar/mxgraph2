@@ -4581,8 +4581,31 @@ Graph.prototype.setTableRowHeight = function(row, dy, extend)
 			rgeo.height += dy;
 			model.setGeometry(row, rgeo);
 			
-			// Updates height of table
 			var table = model.getParent(row);
+			var rows = model.getChildCells(table, true);
+			
+			// Shifts and resizes neighbor row
+			if (!extend)
+			{
+				var index = mxUtils.indexOf(rows, row);
+	
+				if (index < rows.length - 1)
+				{
+					var nextRow = rows[index + 1];
+					var geo = this.getCellGeometry(nextRow);
+				
+					if (geo != null)
+					{
+						geo = geo.clone();
+						geo.y += dy;
+						geo.height -= dy;
+						
+						model.setGeometry(nextRow, geo);
+					}
+				}
+			}
+			
+			// Updates height of table
 			var tgeo = this.getCellGeometry(table);
 			
 			if (tgeo != null)
@@ -4590,7 +4613,6 @@ Graph.prototype.setTableRowHeight = function(row, dy, extend)
 				// Always extends for last row
 				if (!extend)
 				{
-					var rows = model.getChildCells(table, true);
 					extend = row == rows[rows.length - 1];
 				}
 				
@@ -4653,7 +4675,12 @@ Graph.prototype.setTableColumnWidth = function(col, dx, extend)
 				{
 					geo = geo.clone();
 					geo.x += dx;
-					geo.width -= dx;
+					
+					if (!extend)
+					{
+						geo.width -= dx;
+					}
+					
 					model.setGeometry(cell, geo);
 				}
 			}
