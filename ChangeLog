@@ -1,3 +1,4 @@
+- Executes bottom to top before top to bottom in mxLayoutManager
 - Adds selection handling for cell hierarchies
 - Adds event transparency for filled swimlane content
 - Adds mxSelectionCellsHandler.isHandled

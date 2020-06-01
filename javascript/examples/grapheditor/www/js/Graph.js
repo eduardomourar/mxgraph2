@@ -2057,7 +2057,12 @@ Graph.prototype.initLayoutManager = function()
 	
 	this.layoutManager.getLayout = function(cell, eventName)
 	{
-		if (eventName != mxEvent.BEGIN_UPDATE)
+		var parent = this.graph.model.getParent(cell);
+		
+		// Executes layouts from top to bottom except for nested layouts where
+		// child layouts are executed before and after the parent layout runs
+		// in case the layout changes the size of the child cell
+		if (eventName != mxEvent.BEGIN_UPDATE || this.hasLayout(parent, eventName))
 		{
 			var style = this.graph.getCellStyle(cell);
 	
@@ -3002,7 +3007,8 @@ Graph.prototype.getLinkForCell = function(cell)
 };
 
 /**
- * Overrides label orientation for collapsed swimlanes inside stack.
+ * Overrides label orientation for collapsed swimlanes inside stack and
+ * for partial rectangles inside tables.
  */
 Graph.prototype.getCellStyle = function(cell)
 {
@@ -4453,11 +4459,42 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h, title, startSiz
 		((title != null) ? 'swimlane;startSize=' + startSize + ';' : '') +
 		'html=1;whiteSpace=wrap;container=1;collapsible=0;childLayout=tableLayout;'),
 		this.createParent(this.createVertex(null, null, '', 0, 0, colCount * w, h,
-    		'html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;' +
-    		'strokeColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;'),
+    		'shape=partialRectangle;html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;' +
+    		'fillColor=none;strokeColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;'),
 			this.createVertex(null, null, '', 0, 0, w, h,
 				'shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;'),
 				colCount, w, 0), rowCount, 0, h);
+};
+
+/**
+ * Sets the values for the cells and rows in the given table and returns the table.
+ */
+Graph.prototype.setTableValues = function(table, values, rowValues)
+{
+	var rows = this.model.getChildCells(table, true);
+	
+	for (var i = 0; i < rows.length; i++)
+	{
+		if (rowValues != null)
+		{
+			rows[i].value = rowValues[i];
+		}	
+		
+		if (values != null)
+		{
+			var cells = this.model.getChildCells(rows[i], true);
+			
+			for (var j = 0; j < cells.length; j++)
+			{
+				if (values[i][j] != null)
+				{
+					cells[j].value = values[i][j];
+				}
+			}
+		}
+	}
+	
+	return table;
 };
 
 /**

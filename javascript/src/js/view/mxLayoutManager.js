@@ -219,10 +219,10 @@ mxLayoutManager.prototype.hasLayout = function(cell)
  * Returns the layout for the given cell and eventName. Possible
  * event names are <mxEvent.MOVE_CELLS> and <mxEvent.RESIZE_CELLS>
  * when cells are moved or resized and <mxEvent.BEGIN_UPDATE> or
- * <mxEvent.END_UPDATE> for the capture and bubble phase of the
- * layout after any changes of the model. Finally, <mxEvent.LAYOUT_CELLS>
- * is used to check if a layout exists for the given cell.
- * This is called from <hasLayout> which can be overriden alternatively.
+ * <mxEvent.END_UPDATE> for the bottom up and top down phases after
+ * changes to the graph model. <mxEvent.LAYOUT_CELLS> is used to
+ * check if a layout exists for the given cell. This is called
+ * from <hasLayout>.
  */
 mxLayoutManager.prototype.getLayout = function(cell, eventName)
 {
@@ -451,16 +451,16 @@ mxLayoutManager.prototype.addDescendantsWithLayout = function(cell, result)
 /**
  * Function: executeLayoutForCells
  * 
- * Executes the given layout on the given parent.
+ * Executes all layouts for the given cells in two phases: In the first phase
+ * layouts for child cells are executed before layouts for parent cells with
+ * <mxEvent.BEGIN_UPDATE>, in the second phase layouts for parent cells are
+ * executed before layouts for child cells with <mxEvent.END_UPDATE>.
  */
 mxLayoutManager.prototype.executeLayoutForCells = function(cells)
 {
-	// Adds reverse to this array to avoid duplicate execution of leaves
-	// Works like capture/bubble for events, first executes all layout
-	// from top to bottom and in reverse order and removes duplicates.
-	var sorted = mxUtils.sortCells(cells, true);
-	this.layoutCells(sorted, false);
-	this.layoutCells(sorted.reverse(), true);
+	var sorted = mxUtils.sortCells(cells, false);
+	this.layoutCells(sorted, true);
+	this.layoutCells(sorted.reverse(), false);
 };
 
 /**
@@ -506,7 +506,7 @@ mxLayoutManager.prototype.layoutCells = function(cells, bubble)
 mxLayoutManager.prototype.executeLayout = function(cell, bubble)
 {
 	var layout = this.getLayout(cell, (bubble) ?
-		mxEvent.END_UPDATE : mxEvent.BEGIN_UPDATE);
+		mxEvent.BEGIN_UPDATE : mxEvent.END_UPDATE);
 
 	if (layout != null)
 	{
