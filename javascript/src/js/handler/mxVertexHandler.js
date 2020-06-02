@@ -524,6 +524,15 @@ mxVertexHandler.prototype.getHandleForEvent = function(me)
 			shape.node.style.display != 'none' && shape.node.style.visibility != 'hidden'));
 	});
 	
+	if (checkShape(this.rotationShape))
+	{
+		return mxEvent.ROTATION_HANDLE;
+	}
+	else if (checkShape(this.labelShape))
+	{
+		return mxEvent.LABEL_HANDLE;
+	}
+
 	if (this.sizers != null)
 	{
 		for (var i = 0; i < this.sizers.length; i++)
@@ -533,15 +542,6 @@ mxVertexHandler.prototype.getHandleForEvent = function(me)
 				return i;
 			}
 		}
-	}
-
-	if (checkShape(this.rotationShape))
-	{
-		return mxEvent.ROTATION_HANDLE;
-	}
-	else if (checkShape(this.labelShape))
-	{
-		return mxEvent.LABEL_HANDLE;
 	}
 
 	if (this.customHandles != null && this.isCustomHandleEvent(me))
