@@ -254,7 +254,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 		    		{
 			   			var handler = this.selectionCellsHandler.getHandler(state.cell);
 
-			   			// Cell custom handles have precedence over row and col resize
+			   			// Cell handles have precedence over row and col resize
 		    			if (handler == null || handler.getHandleForEvent(me) == null)
 		    			{
 				    		var box = new mxRectangle(me.getGraphX(), me.getGraphY());

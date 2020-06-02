@@ -523,16 +523,14 @@ mxVertexHandler.prototype.getHandleForEvent = function(me)
 		return shape != null && (me.isSource(shape) || (real != null && mxUtils.intersects(shape.bounds, real) &&
 			shape.node.style.display != 'none' && shape.node.style.visibility != 'hidden'));
 	});
-
-	if (this.customHandles != null && this.isCustomHandleEvent(me))
+	
+	if (this.sizers != null)
 	{
-		// Inverse loop order to match display order
-		for (var i = this.customHandles.length - 1; i >= 0; i--)
+		for (var i = 0; i < this.sizers.length; i++)
 		{
-			if (checkShape(this.customHandles[i].shape))
+			if (checkShape(this.sizers[i]))
 			{
-				// LATER: Return reference to active shape
-				return mxEvent.CUSTOM_HANDLE - i;
+				return i;
 			}
 		}
 	}
@@ -545,14 +543,16 @@ mxVertexHandler.prototype.getHandleForEvent = function(me)
 	{
 		return mxEvent.LABEL_HANDLE;
 	}
-	
-	if (this.sizers != null)
+
+	if (this.customHandles != null && this.isCustomHandleEvent(me))
 	{
-		for (var i = 0; i < this.sizers.length; i++)
+		// Inverse loop order to match display order
+		for (var i = this.customHandles.length - 1; i >= 0; i--)
 		{
-			if (checkShape(this.sizers[i]))
+			if (checkShape(this.customHandles[i].shape))
 			{
-				return i;
+				// LATER: Return reference to active shape
+				return mxEvent.CUSTOM_HANDLE - i;
 			}
 		}
 	}
