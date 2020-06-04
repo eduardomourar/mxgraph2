@@ -4854,6 +4854,10 @@ TableLayout.prototype.execute = function(parent)
 			'resizeLastRow', '0') == '1';
 		var resizeLast = mxUtils.getValue(style,
 			'resizeLast', '0') == '1';
+		var fixedRows = mxUtils.getValue(style,
+			'fixedRows', '0') == '1';
+		var resizeParentMax = mxUtils.getValue(style,
+			'resizeParentMax', '0') == '1';
 		var model = this.graph.getModel();
 		
 		model.beginUpdate();
@@ -4893,7 +4897,7 @@ TableLayout.prototype.execute = function(parent)
 						row.width = tw;
 						row.y = Math.round(y);
 						
-						if (resizeLastRow)
+						if (resizeLastRow || fixedRows)
 						{
 							y += row.height;
 						}
@@ -4909,6 +4913,13 @@ TableLayout.prototype.execute = function(parent)
 					// Updates cell geometries
 					this.layoutRow(rows[i], pos, row.height);
 				}
+				
+				if (fixedRows && resizeParentMax && th < sh)
+				{
+					table = table.clone();
+					table.height = y + offset.height;
+					model.setGeometry(parent, table);
+				}
 			}
 		}
 		finally
@@ -4921,10 +4932,29 @@ TableLayout.prototype.execute = function(parent)
 (function()
 {
 	/**
+	 * Invalidates table for rows and cells.
+	 */
+	// TODO: invalidate tablef for invalid cells and rows
+//	var mxGraphViewInvalidate = mxGraphView.prototype.invalidate;
+//	mxGraphView.prototype.invalidate = function(cell, recurse, includeEdges)
+//	{
+//		if (this.graph.isTableCell(cell))
+//		{
+//			cell = this.graph.model.getParent(cell);
+//		}
+//		
+//		if (this.graph.isTableRow(cell))
+//		{
+//			cell = this.graph.model.getParent(cell);
+//		}
+//		
+//		return mxGraphViewInvalidate.apply(this, arguments);
+//	};
+	
+	/**
 	 * Reset the list of processed edges.
 	 */
 	var mxGraphViewResetValidationState = mxGraphView.prototype.resetValidationState;
-	
 	mxGraphView.prototype.resetValidationState = function()
 	{
 		mxGraphViewResetValidationState.apply(this, arguments);
@@ -4936,7 +4966,6 @@ TableLayout.prototype.execute = function(parent)
 	 * Updates jumps for valid edges and repaints if needed.
 	 */
 	var mxGraphViewValidateCellState = mxGraphView.prototype.validateCellState;
-	
 	mxGraphView.prototype.validateCellState = function(cell, recurse)
 	{
 		recurse = (recurse != null) ? recurse : true;
@@ -4967,7 +4996,6 @@ TableLayout.prototype.execute = function(parent)
 	 * Forces repaint if routed points have changed.
 	 */
 	var mxCellRendererIsShapeInvalid = mxCellRenderer.prototype.isShapeInvalid;
-	
 	mxCellRenderer.prototype.isShapeInvalid = function(state, shape)
 	{
 		return mxCellRendererIsShapeInvalid.apply(this, arguments) ||
@@ -4979,7 +5007,6 @@ TableLayout.prototype.execute = function(parent)
 	 * Updates jumps for invalid edges.
 	 */
 	var mxGraphViewUpdateCellState = mxGraphView.prototype.updateCellState;
-	
 	mxGraphView.prototype.updateCellState = function(state)
 	{
 		mxGraphViewUpdateCellState.apply(this, arguments);
