@@ -6065,9 +6065,15 @@ if (typeof mxVertexHandler != 'undefined')
 				dict.put(cells[i], true);
 			}
 			
-			// Checks for orphaned relative children and makes absolute
+			var codec = new mxCodec();
+			var model = new mxGraphModel();
+			var parent = model.getChildAt(model.getRoot(), 0);
+			
 			for (var i = 0; i < clones.length; i++)
 			{
+				model.add(parent, clones[i]);
+			
+				// Checks for orphaned relative children and makes absolute
 				var state = this.view.getState(cells[i]);
 				
 				if (state != null)
@@ -6083,15 +6089,6 @@ if (typeof mxVertexHandler != 'undefined')
 						geo.y = state.y / state.view.scale - state.view.translate.y;
 					}
 				}
-			}
-			
-			var codec = new mxCodec();
-			var model = new mxGraphModel();
-			var parent = model.getChildAt(model.getRoot(), 0);
-			
-			for (var i = 0; i < clones.length; i++)
-			{
-				model.add(parent, clones[i]);
 			}
 
 			this.updateCustomLinks(this.createCellMapping(cloneMap,
