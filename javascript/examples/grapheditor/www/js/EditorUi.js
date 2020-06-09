@@ -1375,6 +1375,23 @@ EditorUi.prototype.initClipboard = function()
 			for (var i = 0; i < clones.length; i++)
 			{
 				model.add(parent, clones[i]);
+				
+				// Checks for orphaned relative children and makes absolute				
+				var state = graph.view.getState(result[i]);
+				
+				if (state != null)
+				{
+					var geo = graph.getCellGeometry(clones[i]);
+				
+					if (geo != null && geo.relative && !model.isEdge(result[i]) &&
+						lookup[mxObjectIdentity.get(model.getParent(result[i]))] == null)
+					{
+						geo.offset = null;
+						geo.relative = false;
+						geo.x = state.x / state.view.scale - state.view.translate.x;
+						geo.y = state.y / state.view.scale - state.view.translate.y;
+					}
+				}
 			}
 			
 			graph.updateCustomLinks(graph.createCellMapping(cloneMap, lookup), clones);

@@ -6075,8 +6075,9 @@ if (typeof mxVertexHandler != 'undefined')
 					var geo = this.getCellGeometry(clones[i]);
 					
 					if (geo != null && geo.relative && !this.model.isEdge(cells[i]) &&
-						!dict.get(this.model.getParent(cells[i])))
+						dict.get(this.model.getParent(cells[i])) == null)
 					{
+						geo.offset = null;
 						geo.relative = false;
 						geo.x = state.x / state.view.scale - state.view.translate.x;
 						geo.y = state.y / state.view.scale - state.view.translate.y;
