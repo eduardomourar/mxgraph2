@@ -1297,6 +1297,29 @@ Graph.removePasteFormatting = function(elt)
 };
 
 /**
+ * Sanitizes the given HTML markup.
+ */
+Graph.sanitizeHtml = function(value, editing)
+{
+	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
+	// NOTE: Original minimized sanitizer was modified to support
+	// data URIs for images, mailto and special data:-links.
+	// LATER: Add MathML to whitelisted tags
+	function urlX(link)
+	{
+		if (link != null && link.toString().toLowerCase().substring(0, 11) !== 'javascript:')
+		{
+			return link;
+		}
+		
+		return null;
+	};
+    function idX(id) { return id };
+	
+	return html_sanitize(value, urlX, idX);
+};
+
+/**
  * Returns true if the given string is a link.
  * 
  * See https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
@@ -2178,22 +2201,7 @@ Graph.prototype.getPageLayout = function()
  */
 Graph.prototype.sanitizeHtml = function(value, editing)
 {
-	// Uses https://code.google.com/p/google-caja/wiki/JsHtmlSanitizer
-	// NOTE: Original minimized sanitizer was modified to support
-	// data URIs for images, mailto and special data:-links.
-	// LATER: Add MathML to whitelisted tags
-	function urlX(link)
-	{
-		if (link != null && link.toString().toLowerCase().substring(0, 11) !== 'javascript:')
-		{
-			return link;
-		}
-		
-		return null;
-	};
-    function idX(id) { return id };
-	
-	return html_sanitize(value, urlX, idX);
+	return Graph.sanitizeHtml(value, editing);
 };
 
 /**
