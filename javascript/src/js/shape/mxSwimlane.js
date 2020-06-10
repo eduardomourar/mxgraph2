@@ -162,7 +162,7 @@ mxSwimlane.prototype.getArcSize = function(w, h, start)
 };
 
 /**
- * Function: paintVertexShape
+ * Function: isHorizontal
  *
  * Paints the swimlane vertex shape.
  */
