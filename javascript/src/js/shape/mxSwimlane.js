@@ -142,11 +142,11 @@ mxSwimlane.prototype.getGradientBounds = function(c, x, y, w, h)
 };
 
 /**
- * Function: getArcSize
+ * Function: getSwimlaneArcSize
  * 
  * Returns the arcsize for the swimlane.
  */
-mxSwimlane.prototype.getArcSize = function(w, h, start)
+mxSwimlane.prototype.getSwimlaneArcSize = function(w, h, start)
 {
 	if (mxUtils.getValue(this.style, mxConstants.STYLE_ABSOLUTE_ARCSIZE, 0) == '1')
 	{
@@ -200,7 +200,7 @@ mxSwimlane.prototype.paintVertexShape = function(c, x, y, w, h)
 	}
 	else
 	{
-		r = this.getArcSize(w, h, start);
+		r = this.getSwimlaneArcSize(w, h, start);
 		r = Math.min(((this.isHorizontal()) ? h : w) - start, Math.min(start, r));
 		this.paintRoundedSwimlane(c, x, y, w, h, start, r, fill, swimlaneLine);
 	}

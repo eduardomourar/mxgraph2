@@ -1216,8 +1216,15 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 			{
 				if (this.customHandles != null)
 				{
+					// Create style before changing cell state
+					var style = this.state.view.graph.getCellStyle(this.state.cell);
+					
 					this.customHandles[mxEvent.CUSTOM_HANDLE - index].active = false;
 					this.customHandles[mxEvent.CUSTOM_HANDLE - index].execute(me);
+					
+					// Set style and apply on shape to force repaint
+					this.state.style = style;
+					this.customHandles[mxEvent.CUSTOM_HANDLE - index].positionChanged();
 				}
 			}
 			else if (index == mxEvent.ROTATION_HANDLE)
