@@ -9015,7 +9015,16 @@ if (typeof mxVertexHandler != 'undefined')
 				size == 0) && this.graph.getLabel(cell) == '' &&
 				this.graph.model.getChildCount(cell) > 0)
 			{
-				cell = this.graph.model.getChildAt(cell, 0);
+				for (var i = 0; i < this.graph.model.getChildCount(cell); i++)
+				{
+					var temp = this.graph.model.getChildAt(cell, i);
+					
+					if (this.graph.isCellEditable(temp))
+					{
+						cell = temp;
+						break;
+					}
+				}
 			}
 			
 			mxCellEditorStartEditing.apply(this, arguments);
@@ -10045,19 +10054,34 @@ if (typeof mxVertexHandler != 'undefined')
 						moveHandle.style.cursor = 'pointer';
 						moveHandle.style.width = '7px';
 						moveHandle.style.height = '4px';
+						moveHandle.style.padding = '4px 2px 4px 2px';
 						moveHandle.rowState = rowState;
 						
 						mxEvent.addGestureListeners(moveHandle, mxUtils.bind(this, function(evt)
 						{
+							this.graph.popupMenuHandler.hideMenu();
 							this.graph.stopEditing(false);
 							this.graph.selectCellForEvent(rowState.cell, evt);
-							this.graph.graphHandler.start(this.state.cell,
-								mxEvent.getClientX(evt), mxEvent.getClientY(evt),
-								this.graph.getSelectionCells());
-							this.graph.graphHandler.cellWasClicked = true;
-							this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
-							this.graph.isMouseDown = true;
+							
+							if (!mxEvent.isPopupTrigger(evt))
+							{
+								this.graph.graphHandler.start(this.state.cell,
+									mxEvent.getClientX(evt), mxEvent.getClientY(evt),
+									this.graph.getSelectionCells());
+								this.graph.graphHandler.cellWasClicked = true;
+								this.graph.isMouseTrigger = mxEvent.isMouseEvent(evt);
+								this.graph.isMouseDown = true;
+							}
+							
 							mxEvent.consume(evt);
+						}), null, mxUtils.bind(this, function(evt)
+						{
+							if (mxEvent.isPopupTrigger(evt))
+							{
+								this.graph.popupMenuHandler.popup(mxEvent.getClientX(evt),
+									mxEvent.getClientY(evt), rowState.cell, evt);
+								mxEvent.consume(evt);
+							}
 						}));
 						
 						this.moveHandles.push(moveHandle);
@@ -11128,9 +11152,9 @@ if (typeof mxVertexHandler != 'undefined')
 				for (var i = 0; i < this.moveHandles.length; i++)
 				{
 					this.moveHandles[i].style.left = (this.moveHandles[i].rowState.x +
-						this.moveHandles[i].rowState.width - 3) + 'px';
+						this.moveHandles[i].rowState.width - 5) + 'px';
 					this.moveHandles[i].style.top = (this.moveHandles[i].rowState.y +
-						this.moveHandles[i].rowState.height / 2 - 2) + 'px';
+						this.moveHandles[i].rowState.height / 2 - 6) + 'px';
 				}
 			}
 			
