@@ -112,9 +112,9 @@ Format.prototype.createSelectionState = function()
 Format.prototype.initSelectionState = function()
 {
 	return {vertices: [], edges: [], x: null, y: null, width: null, height: null, style: {},
-		containsImage: false, containsLabel: false, fill: true, glass: true, rounded: true,
-		comic: true, autoSize: false, image: true, shadow: true, lineJumps: true,
-		resizable: true, cell: false, row: false, movable: true, rotatable: true};
+		containsImage: false, containsLabel: false, fill: true, glass: true, rounded: true,  comic: true,
+		autoSize: false, image: true, shadow: true, lineJumps: true, resizable: true,
+		table: false, cell: false, row: false, movable: true, rotatable: true};
 };
 
 /**
@@ -130,6 +130,7 @@ Format.prototype.updateSelectionStateForCell = function(result, cell, cells)
 		result.rotatable = result.rotatable && graph.isCellRotatable(cell);
 		result.movable = result.movable && graph.isCellMovable(cell) &&
 			!graph.isTableRow(cell) && !graph.isTableCell(cell);
+		result.table = result.table || graph.isTable(cell);
 		result.cell = result.cell || graph.isTableCell(cell);
 		result.row = result.row || graph.isTableRow(cell);
 		result.vertices.push(cell);
@@ -1495,7 +1496,7 @@ ArrangePanel.prototype.init = function()
 	this.addGeometry(this.container);
 	this.addEdgeGeometry(this.container);
 
-	if ((!ss.containsLabel || ss.edges.length == 0) && !ss.row && !ss.cell)
+	if (!ss.containsLabel || ss.edges.length == 0)
 	{
 		this.container.appendChild(this.addAngle(this.createPanel()));
 	}
@@ -1973,7 +1974,7 @@ ArrangePanel.prototype.addAngle = function(div)
 	var update = null;
 	var btn = null;
 	
-	if (ss.rotatable)
+	if (ss.rotatable && !ss.table && !ss.row && !ss.cell)
 	{
 		mxUtils.write(span, mxResources.get('angle'));
 		div.appendChild(span);

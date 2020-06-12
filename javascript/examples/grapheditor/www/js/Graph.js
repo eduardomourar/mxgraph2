@@ -4810,11 +4810,12 @@ TableLayout.prototype.getRowLayout = function(row, width)
  * 
  * Places the cells at the given positions in the given row.
  */
-TableLayout.prototype.layoutRow = function(row, positions, height)
+TableLayout.prototype.layoutRow = function(row, positions, height, tw)
 {
 	var model = this.graph.getModel();
 	var cells = model.getChildCells(row, true);
 	var off = this.graph.getActualStartSize(row, true);
+	var x = off.x;
 	var sw = 0;
 	
 	if (positions != null)
@@ -4838,17 +4839,21 @@ TableLayout.prototype.layoutRow = function(row, positions, height)
 			{
 				cell.x = positions[i];
 				cell.width = positions[i + 1] - cell.x;
+				
+				// Fills with last cell if not enough cells
+				if (i == cells.length - 1 && i < positions.length - 2)
+				{
+					cell.width = tw - cell.x - off.x - off.width;
+				}
 			}
 			else
 			{
+				cell.x = x;
+				x += cell.width;
+				
 				if (i == cells.length - 1)
 				{
-					var geo = this.graph.getCellGeometry(row);
-	
-					if (geo != null)
-					{
-						cell.width = geo.width - off.x - off.width - sw;
-					}
+					cell.width = tw - off.x - off.width - sw;
 				}
 				else
 				{	
@@ -4935,7 +4940,7 @@ TableLayout.prototype.execute = function(parent)
 					}
 					
 					// Updates cell geometries
-					sw = Math.max(sw, this.layoutRow(rows[i], pos, row.height));
+					sw = Math.max(sw, this.layoutRow(rows[i], pos, row.height, tw));
 				}
 				
 				if (fixedRows && th < sh)
@@ -6235,7 +6240,8 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			mapping = (mapping != null) ? mapping : new Object();
 			
-			// Updates source and target table heights for moving rows
+			// Updates source and target table heights and matches
+			// column count for moving rows between tables
 			for (var i = 0; i < cells.length; i++)
 			{
 				if (target != null && this.isTableRow(cells[i]))
@@ -6268,6 +6274,34 @@ if (typeof mxVertexHandler != 'undefined')
 							table.height += row.height;
 							this.model.setGeometry(target, table);
 						}
+						
+						// Matches column count
+						var rows = this.model.getChildCells(target, true);
+						
+						if (rows.length > 0)
+						{
+							var sourceCols = this.model.getChildCells(cells[i], true);
+							var cols = this.model.getChildCells(rows[0], true);
+							var count = cols.length - sourceCols.length;
+							
+							if (count > 0)
+							{
+								for (var j = 0; j < count; j++)
+								{
+									var cell = this.cloneCell(sourceCols[sourceCols.length - 1]);
+									cell.value = '';
+									
+									this.model.add(cells[i], cell);
+								}
+							}
+							else if (count < 0)
+							{
+								for (var j = 0; j > count; j--)
+								{
+									this.model.remove(sourceCols[sourceCols.length - count - 1]);
+								}
+							}	 
+						}
 					}
 				}
 			}
@@ -6277,7 +6311,7 @@ if (typeof mxVertexHandler != 'undefined')
 			if (clone)
 			{
 				this.updateCustomLinks(this.createCellMapping(mapping,
-						this.createCellLookup(cells)), result);
+					this.createCellLookup(cells)), result);
 			}
 			
 			return result;
