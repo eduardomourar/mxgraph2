@@ -101,15 +101,14 @@ mxHandle.prototype.processEvent = function(me)
 	pt = this.flipPoint(this.rotatePoint(this.snapPoint(this.rotatePoint(pt, alpha1),
 			this.ignoreGrid || !this.graph.isGridEnabledEvent(me.getEvent())), alpha2));
 	this.setPosition(this.state.getPaintBounds(), pt, me);
-	this.positionChanged();
 	this.redraw();
 };
 
 /**
  * Function: positionChanged
  * 
- * Called after <setPosition> has been called in <processEvent>. This repaints
- * the state using <mxCellRenderer>.
+ * Should be called after <setPosition> in <processEvent>.
+ * This repaints the state using <mxCellRenderer>.
  */
 mxHandle.prototype.positionChanged = function()
 {

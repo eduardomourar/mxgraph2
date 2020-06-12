@@ -1468,6 +1468,7 @@ mxEdgeHandler.prototype.mouseMove = function(sender, me)
 			if (this.customHandles != null)
 			{
 				this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].processEvent(me);
+				this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].positionChanged();
 			}
 		}
 		else if (this.isLabel)
