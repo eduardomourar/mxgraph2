@@ -4464,9 +4464,9 @@ Graph.prototype.createTable = function(rowCount, colCount, w, h, title, startSiz
 	tableStyle = (tableStyle != null) ? tableStyle : 'shape=table;html=1;whiteSpace=wrap;startSize=' +
 		((title != null) ? startSize : '0') + ';container=1;collapsible=0;childLayout=tableLayout;';
 	rowStyle = (rowStyle != null) ? rowStyle : 'shape=partialRectangle;html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;' +
-    	'pointerEvents=0;fillColor=none;strokeColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;left=0;right=0;';
+    	'pointerEvents=0;fillColor=none;top=0;left=0;bottom=0;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;';
 	cellStyle = (cellStyle != null) ? cellStyle : 'shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;' +
-		'strokeColor=none;fillColor=none;';
+		'fillColor=none;top=0;left=0;bottom=0;right=0;';
 	
 	return this.createParent(this.createVertex(null, null, (title != null) ? title : '',
 		0, 0, colCount * w, rowCount * h + ((title != null) ? startSize : 0), tableStyle),
