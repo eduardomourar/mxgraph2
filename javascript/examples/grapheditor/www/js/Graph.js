@@ -7501,6 +7501,15 @@ if (typeof mxVertexHandler != 'undefined')
 			cells = (cells != null) ? cells : this.getSelectionCells();
 			append = (append != null) ? append : true;
 			
+			// Duplicates rows for table cells
+			for (var i = 0; i < cells.length; i++)
+			{
+				if (this.isTableCell(cells[i]))
+				{
+					cells[i] = this.model.getParent(cells[i]);
+				}
+			}
+			
 			cells = this.model.getTopmostCells(cells);
 			
 			var model = this.getModel();
