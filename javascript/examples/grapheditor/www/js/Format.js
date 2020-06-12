@@ -2195,7 +2195,7 @@ ArrangePanel.prototype.addGeometry = function(container)
 	{
 		if (graph.isTableCell(cell))
 		{
-			graph.setTableColumnWidth(cell, value - geo.width);
+			graph.setTableColumnWidth(cell, value - geo.width, true);
 			
 			// Blocks processing in caller
 			return true;
