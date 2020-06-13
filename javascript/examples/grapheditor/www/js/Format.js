@@ -5588,7 +5588,7 @@ DiagramFormatPanel.prototype.addView = function(div)
 		{
 			var btn = mxUtils.button(mxResources.get('image'), function(evt)
 			{
-				ui.showBackgroundImageDialog();
+				ui.showBackgroundImageDialog(null, ui.editor.graph.backgroundImage);
 				mxEvent.consume(evt);
 			})
 		
