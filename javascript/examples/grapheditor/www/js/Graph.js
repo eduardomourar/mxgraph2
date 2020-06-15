@@ -274,6 +274,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 				    				this.model.getChildAt(row, 0) != state.cell) || mxUtils.intersects(box, new mxRectangle(
 			    					state.x + state.width - 1, state.y, 1, state.height)))
 		    					{
+			    					var wasSelected = this.selectionCellsHandler.isHandled(table);
 			    					this.selectCellForEvent(table, me.getEvent());
 					    			handler = this.selectionCellsHandler.getHandler(table);
 		
@@ -284,6 +285,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 					    				if (handle != null)
 					    				{
 					    					handler.start(me.getGraphX(), me.getGraphY(), handle);
+					    					handler.blockDelayedSelection = !wasSelected;
 					    					me.consume();
 					    				}
 					    			}
@@ -9896,6 +9898,7 @@ if (typeof mxVertexHandler != 'undefined')
 				var model = graph.model;
 				var tableState = this.state;
 				var sel = this.selectionBorder;
+				var self = this;
 				
 				if (handles == null)
 				{
@@ -9968,7 +9971,7 @@ if (typeof mxVertexHandler != 'undefined')
 									graph.setTableColumnWidth(this.state.cell,
 										dx, shiftPressed);
 								}
-								else
+								else if (!self.blockDelayedSelection)
 								{
 									graph.selectCellForEvent(
 										graph.getCellAt(me.getGraphX(), me.getGraphY()),
@@ -10031,7 +10034,7 @@ if (typeof mxVertexHandler != 'undefined')
 									graph.setTableRowHeight(this.state.cell, dy,
 										!mxEvent.isShiftDown(me.getEvent()));
 								}
-								else
+								else if (!self.blockDelayedSelection)
 								{
 									graph.selectCellForEvent(
 										graph.getCellAt(me.getGraphX(), me.getGraphY()),
@@ -10971,6 +10974,9 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				this.linkHint.style.display = '';
 			}
+			
+			// Resets state after gesture
+			this.blockDelayedSelection = null;
 		};
 	
 		var vertexHandlerInit = mxVertexHandler.prototype.init;
