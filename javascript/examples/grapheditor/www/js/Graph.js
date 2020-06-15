@@ -9968,6 +9968,12 @@ if (typeof mxVertexHandler != 'undefined')
 									graph.setTableColumnWidth(this.state.cell,
 										dx, shiftPressed);
 								}
+								else
+								{
+									graph.selectCellForEvent(
+										graph.getCellAt(me.getGraphX(), me.getGraphY()),
+										me.getEvent());
+								}
 								
 								dx = 0;
 							};
@@ -10024,6 +10030,12 @@ if (typeof mxVertexHandler != 'undefined')
 								{
 									graph.setTableRowHeight(this.state.cell, dy,
 										!mxEvent.isShiftDown(me.getEvent()));
+								}
+								else
+								{
+									graph.selectCellForEvent(
+										graph.getCellAt(me.getGraphX(), me.getGraphY()),
+										me.getEvent());
 								}
 								
 								dy = 0;
