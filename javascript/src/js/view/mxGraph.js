@@ -2638,7 +2638,8 @@ mxGraph.prototype.click = function(me)
 		{
 			cell = this.getSwimlaneAt(me.getGraphX(), me.getGraphY());
 				
-			if (!this.isToggleEvent(evt) && cell != null)
+			if (cell != null && (!this.isToggleEvent(evt) ||
+				!mxEvent.isAltDown(evt)))
 			{
 				var temp = cell;
 				var swimlanes = [];
@@ -2661,11 +2662,12 @@ mxGraph.prototype.click = function(me)
 					swimlanes.splice(0, 0, cell);
 					swimlanes.push(cell);
 					
-					for (var i = 0; i < swimlanes.length - 2; i++)
+					for (var i = 0; i < swimlanes.length - 1; i++)
 					{
 						if (this.isCellSelected(swimlanes[i]))
 						{
-							cell = swimlanes[i + 1];
+							cell = swimlanes[(this.isToggleEvent(evt)) ?
+								i : i + 1];
 						}
 					}
 				}
