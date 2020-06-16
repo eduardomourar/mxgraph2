@@ -442,8 +442,8 @@ mxGraphHandler.prototype.getInitialCellForEvent = function(me)
 {
 	var state = me.getState();
 	
-	if (!this.graph.isToggleEvent(me.getEvent()) && state != null &&
-		!this.graph.isCellSelected(state.cell))
+	if ((!this.graph.isToggleEvent(me.getEvent()) || !mxEvent.isAltDown(me.getEvent())) &&
+		state != null && !this.graph.isCellSelected(state.cell))
 	{
 		var model = this.graph.model;
 		var next = this.graph.view.getState(model.getParent(state.cell));
@@ -467,7 +467,7 @@ mxGraphHandler.prototype.getInitialCellForEvent = function(me)
  */
 mxGraphHandler.prototype.isDelayedSelection = function(cell, me)
 {
-	if (!this.graph.isToggleEvent(me.getEvent()))
+	if (!this.graph.isToggleEvent(me.getEvent()) || !mxEvent.isAltDown(me.getEvent()))
 	{
 		while (cell != null)
 		{
@@ -510,14 +510,16 @@ mxGraphHandler.prototype.selectDelayed = function(me)
 			}
 			else
 			{
-				if (!this.graph.isToggleEvent(me.getEvent()))
+				if (!this.graph.isToggleEvent(me.getEvent()) ||
+					!mxEvent.isAltDown(me.getEvent()))
 				{
 					var model = this.graph.getModel();
 					var parent = model.getParent(cell);
 					
 					while (this.graph.view.getState(parent) != null &&
 						(model.isVertex(parent) || model.isEdge(parent)) &&
-						this.isPropagateSelectionCell(cell, false))
+						(this.isPropagateSelectionCell(cell, false) ||
+						this.graph.isToggleEvent(me.getEvent())))
 					{
 						cell = parent;
 						parent = model.getParent(cell);
