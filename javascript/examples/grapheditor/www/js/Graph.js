@@ -9973,9 +9973,8 @@ if (typeof mxVertexHandler != 'undefined')
 								}
 								else if (!self.blockDelayedSelection)
 								{
-									graph.selectCellForEvent(
-										graph.getCellAt(me.getGraphX(), me.getGraphY()),
-										me.getEvent());
+									var temp = graph.getCellAt(me.getGraphX(), me.getGraphY()) || tableState.cell; 
+									graph.selectCellForEvent(temp, me.getEvent());
 								}
 								
 								dx = 0;
@@ -10036,9 +10035,8 @@ if (typeof mxVertexHandler != 'undefined')
 								}
 								else if (!self.blockDelayedSelection)
 								{
-									graph.selectCellForEvent(
-										graph.getCellAt(me.getGraphX(), me.getGraphY()),
-										me.getEvent());
+									var temp = graph.getCellAt(me.getGraphX(), me.getGraphY()) || tableState.cell; 
+									graph.selectCellForEvent(temp, me.getEvent());
 								}
 								
 								dy = 0;
@@ -11243,6 +11241,11 @@ if (typeof mxVertexHandler != 'undefined')
 				ch[3].bounds.x = ch[1].bounds.x;
 				ch[3].bounds.y = ch[2].bounds.y;
 				ch[3].redraw();
+				
+				for (var i = 0; i < this.cornerHandles.length; i++)
+				{
+					this.cornerHandles[i].node.style.display = (this.graph.getSelectionCount() == 1) ? '' : 'none';
+				}
 			}
 			
 			// Shows rotation handle only if one vertex is selected

@@ -412,7 +412,7 @@ mxGraphHandler.prototype.setRemoveCellsFromParent = function(value)
  * Returns true if the given cell and parent should propagate
  * selection state to the parent.
  */
-mxGraphHandler.prototype.isPropagateSelectionCell = function(cell, immediate)
+mxGraphHandler.prototype.isPropagateSelectionCell = function(cell, immediate, me)
 {
 	var parent = this.graph.model.getParent(cell);
 
@@ -428,7 +428,13 @@ mxGraphHandler.prototype.isPropagateSelectionCell = function(cell, immediate)
 	}
 	else
 	{
-		return !this.graph.isCellSelected(parent);
+		return (!this.graph.isToggleEvent(me.getEvent()) ||
+			(!this.graph.isSiblingSelected(cell) &&
+			!this.graph.isCellSelected(cell) &&
+			(!this.graph.isSwimlane(parent)) ||
+			this.graph.isCellSelected(parent))) &&
+			(this.graph.isToggleEvent(me.getEvent()) ||
+			!this.graph.isCellSelected(parent));
 	}
 };
 
@@ -450,7 +456,7 @@ mxGraphHandler.prototype.getInitialCellForEvent = function(me)
 
 		while (next != null && !this.graph.isCellSelected(next.cell) &&
 			(model.isVertex(next.cell) || model.isEdge(next.cell)) &&
-			this.isPropagateSelectionCell(state.cell, true))
+			this.isPropagateSelectionCell(state.cell, true, me))
 		{
 			state = next;
 			next = this.graph.view.getState(this.graph.getModel().getParent(state.cell));
@@ -480,7 +486,7 @@ mxGraphHandler.prototype.isDelayedSelection = function(cell, me)
 		}
 	}
 	
-	return this.graph.isToggleEvent(me.getEvent());
+	return this.graph.isToggleEvent(me.getEvent()) && !mxEvent.isAltDown(me.getEvent());
 };
 
 /**
@@ -518,8 +524,7 @@ mxGraphHandler.prototype.selectDelayed = function(me)
 					
 					while (this.graph.view.getState(parent) != null &&
 						(model.isVertex(parent) || model.isEdge(parent)) &&
-						(this.isPropagateSelectionCell(cell, false) ||
-						this.graph.isToggleEvent(me.getEvent())))
+						this.isPropagateSelectionCell(cell, false, me))
 					{
 						cell = parent;
 						parent = model.getParent(cell);
