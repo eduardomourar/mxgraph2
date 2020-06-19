@@ -8,7 +8,7 @@
 1. Run `vagrant up`. It will take longer the first time only.
 1. Now, run `vagrant ssh` to login to the VM
 1. In the VM shell, run `npm adduser` in order to be able to deploy to npmjs.com. This is needed only once. It will be remembered.
-1. We can now start the building process. Run `rm -rf mxgraph2; git clone https://github.com/jgraph/mxgraph2.git; cd mxgraph2; git checkout mxgraph-4_0_4; chmod 777 build.sh; ./build.sh`. Note, change `checkout mxgraph-4_0_4` to match the version you want to build.
+1. We can now start the building process. Run `rm -rf mxgraph2; git clone https://github.com/jgraph/mxgraph2.git; cd mxgraph2; git checkout mxgraph-M_N_R; chmod 777 build.sh; ./build.sh`. Note, change `checkout mxgraph-4_0_4` to match the version you want to build.
 1. Now, deploy using `build/deploy.sh`
 
 Note: You can shutdown the VM using `vagrant halt`
