@@ -15,7 +15,7 @@ Note: You can shutdown the VM using `vagrant halt`
 
 # Using the same VM to deploy again
 
-1. Start Vagrant VM `vagrant up`
+1. Start Vagrant VM in etc/build/vargant `vagrant up`
 1. Login to the VM using `vagrant ssh`
-1. Only last two steps are needed (`rm -rf mxgraph2; git clone https://github.com/jgraph/mxgraph2.git; cd mxgraph2; git checkout mxgraph-4_0_4; chmod 777 build.sh; ./build.sh` followed by `build/deploy.sh`) in addition to `ssh-add /opt/system/ssh_key/id_rsa` in the beginning if the SSH key is protected by a passphrase.
+1. Only last two steps are needed (`rm -rf mxgraph2; git clone https://github.com/jgraph/mxgraph2.git; cd mxgraph2; git checkout mxgraph-M_N_R; chmod 777 build.sh; ./build.sh` followed by `build/deploy.sh`) in addition to `ssh-add /opt/system/ssh_key/id_rsa` in the beginning if the SSH key is protected by a passphrase.
 1. Then type `exit` and `vagrant halt`

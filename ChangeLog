@@ -1,3 +1,5 @@
+19-JUN-2020: 4.2.0
+
 - Adds ghost preview in mxVertexHandler
 - Makes mxHandle.positionChanged optional
 - Executes bottom to top before top to bottom in mxLayoutManager
