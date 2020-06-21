@@ -3459,10 +3459,12 @@ Graph.prototype.zoomOut = function()
  * 
  * Sets the current visible rectangle of the window in graph coordinates.
  */
-Graph.prototype.fitWindow = function(bounds)
+Graph.prototype.fitWindow = function(bounds, border)
 {
-	var cw = this.container.clientWidth - 10;
-	var ch = this.container.clientHeight - 10;
+	border = (border != null) ? border : 10;
+	
+	var cw = this.container.clientWidth - border;
+	var ch = this.container.clientHeight - border;
 	var scale = Math.floor(20 * Math.min(cw / bounds.width, ch / bounds.height)) / 20;
 	this.zoomTo(scale);
 
@@ -3470,9 +3472,9 @@ Graph.prototype.fitWindow = function(bounds)
 	{
 		var t = this.view.translate;
 		this.container.scrollTop = (bounds.y + t.y) * scale -
-			Math.max((ch - bounds.height * scale) / 2 + 5, 0);
+			Math.max((ch - bounds.height * scale) / 2 + border / 2, 0);
 		this.container.scrollLeft = (bounds.x + t.x) * scale -
-			Math.max((cw - bounds.width * scale) / 2 + 5, 0);
+			Math.max((cw - bounds.width * scale) / 2 + border / 2, 0);
 	}
 };
 
