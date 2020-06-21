@@ -3455,6 +3455,28 @@ Graph.prototype.zoomOut = function()
 };
 
 /**
+ * Function: fitWindow
+ * 
+ * Sets the current visible rectangle of the window in graph coordinates.
+ */
+Graph.prototype.fitWindow = function(bounds)
+{
+	var cw = this.container.clientWidth - 10;
+	var ch = this.container.clientHeight - 10;
+	var scale = Math.floor(20 * Math.min(cw / bounds.width, ch / bounds.height)) / 20;
+	this.zoomTo(scale);
+
+	if (mxUtils.hasScrollbars(this.container))
+	{
+		var t = this.view.translate;
+		this.container.scrollTop = (bounds.y + t.y) * scale -
+			Math.max((ch - bounds.height * scale) / 2 + 5, 0);
+		this.container.scrollLeft = (bounds.x + t.x) * scale -
+			Math.max((cw - bounds.width * scale) / 2 + 5, 0);
+	}
+};
+
+/**
  * Overrides tooltips to show custom tooltip or metadata.
  */
 Graph.prototype.getTooltipForCell = function(cell)
