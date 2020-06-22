@@ -3231,6 +3231,16 @@ TextFormatPanel.prototype.addFont = function(container)
 	var borderPanel = this.createCellColorOption(mxResources.get('borderColor'), mxConstants.STYLE_LABEL_BORDERCOLOR, '#000000');
 	borderPanel.style.fontWeight = 'bold';
 	
+	var defs = graph.stylesheet.getDefaultVertexStyle();
+//	var fillPanel = this.createCellColorOption(label, fillKey, (defs[fillKey] != null) ? defs[fillKey] : '#ffffff', null, mxUtils.bind(this, function(color)
+//	{
+//		if (color != null && color == defs[fillKey])
+//		{
+//			graph.setCellStyles(fillKey, null, graph.getSelectionCells());
+//		}
+//	}));
+
+	
 	var panel = (graph.cellEditor.isContentEditing()) ? this.createColorOption(mxResources.get('fontColor'), function()
 	{
 		return currentFontColor;
@@ -3295,13 +3305,14 @@ TextFormatPanel.prototype.addFont = function(container)
 			document.execCommand('forecolor', false, (color != mxConstants.NONE) ?
 				color : 'transparent');
 		}
-	}, '#000000',
+	}, (defs[mxConstants.STYLE_FONTCOLOR] != null) ? defs[mxConstants.STYLE_FONTCOLOR] : '#000000',
 	{
 		install: function(apply) { fontColorApply = apply; },
 		destroy: function() { fontColorApply = null; }
-	}, null, true) : this.createCellColorOption(mxResources.get('fontColor'), mxConstants.STYLE_FONTCOLOR, '#000000', function(color)
+	}, null, true) : this.createCellColorOption(mxResources.get('fontColor'), mxConstants.STYLE_FONTCOLOR,
+		(defs[mxConstants.STYLE_FONTCOLOR] != null) ? defs[mxConstants.STYLE_FONTCOLOR] : '#000000', function(color)
 	{
-		if (color == null || color == mxConstants.NONE)
+		if (color == mxConstants.NONE)
 		{
 			bgPanel.style.display = 'none';
 		}
@@ -3313,7 +3324,7 @@ TextFormatPanel.prototype.addFont = function(container)
 		borderPanel.style.display = bgPanel.style.display;
 	}, function(color)
 	{
-		if (color == null || color == mxConstants.NONE)
+		if (color == mxConstants.NONE)
 		{
 			graph.setCellStyles(mxConstants.STYLE_NOLABEL, '1', graph.getSelectionCells());
 		}
@@ -3322,6 +3333,11 @@ TextFormatPanel.prototype.addFont = function(container)
 			graph.setCellStyles(mxConstants.STYLE_NOLABEL, null, graph.getSelectionCells());
 		}
 
+		if (color != null && color == defs[mxConstants.STYLE_FONTCOLOR])
+		{
+			graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, null, graph.getSelectionCells());
+		}
+		
 		graph.updateLabelElements(graph.getSelectionCells(), function(elt)
 		{
 			elt.removeAttribute('color');
