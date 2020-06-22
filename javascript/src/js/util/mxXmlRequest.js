@@ -252,16 +252,6 @@ mxXmlRequest.prototype.getXml = function()
 };
 
 /**
- * Function: getText
- * 
- * Returns the response as a string.
- */
-mxXmlRequest.prototype.getText = function()
-{
-	return this.request.responseText;
-};
-
-/**
  * Function: getStatus
  * 
  * Returns the status as a number, eg. 404 for "Not found" or 200 for "OK".
