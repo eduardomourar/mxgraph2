@@ -3324,11 +3324,12 @@ TextFormatPanel.prototype.addFont = function(container)
 			graph.setCellStyles(mxConstants.STYLE_NOLABEL, null, graph.getSelectionCells());
 		}
 
+//		// TODO: Does not work with styles that inherit fill/stroke none
 		// Based on the assumption that default text color is never set to none in a style
-		if (color != null && color == defs[mxConstants.STYLE_FONTCOLOR])
-		{
-			graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, null, graph.getSelectionCells());
-		}
+//		if (color != null && color == defs[mxConstants.STYLE_FONTCOLOR])
+//		{
+//			graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, null, graph.getSelectionCells());
+//		}
 		
 		graph.updateLabelElements(graph.getSelectionCells(), function(elt)
 		{
