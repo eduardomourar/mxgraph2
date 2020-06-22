@@ -287,13 +287,7 @@ Format.prototype.isLineJumpState = function(state)
  */
 Format.prototype.isComicState = function(state)
 {
-	var shape = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
-	
-	return mxUtils.indexOf(['label', 'rectangle', 'internalStorage', 'corner', 'parallelogram', 'note', 'collate',
-	                        'swimlane', 'triangle', 'trapezoid', 'ext', 'step', 'tee', 'process', 'link', 'rhombus',
-	                        'offPageConnector', 'loopLimit', 'hexagon', 'manualInput', 'singleArrow', 'doubleArrow',
-	                        'flexArrow', 'filledEdge', 'card', 'umlLifeline', 'connector', 'folder', 'component', 'sortShape',
-	                        'cross', 'umlFrame', 'cube', 'isoCube', 'isoRectangle', 'partialRectangle'], shape) >= 0;
+	return true;
 };
 
 /**
@@ -5438,7 +5432,7 @@ StyleFormatPanel.prototype.addEffects = function(div)
 
 		if (ss.comic)
 		{
-			addOption(mxResources.get('comic'), 'comic', 0);
+			addOption(mxResources.get('rough'), 'comic', 0);
 		}
 		
 		if (count == 0)
