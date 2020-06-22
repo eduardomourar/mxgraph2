@@ -3231,16 +3231,7 @@ TextFormatPanel.prototype.addFont = function(container)
 	var borderPanel = this.createCellColorOption(mxResources.get('borderColor'), mxConstants.STYLE_LABEL_BORDERCOLOR, '#000000');
 	borderPanel.style.fontWeight = 'bold';
 	
-	var defs = graph.stylesheet.getDefaultVertexStyle();
-//	var fillPanel = this.createCellColorOption(label, fillKey, (defs[fillKey] != null) ? defs[fillKey] : '#ffffff', null, mxUtils.bind(this, function(color)
-//	{
-//		if (color != null && color == defs[fillKey])
-//		{
-//			graph.setCellStyles(fillKey, null, graph.getSelectionCells());
-//		}
-//	}));
-
-	
+	var defs = (ss.vertices.length >= 1) ? graph.stylesheet.getDefaultVertexStyle() : graph.stylesheet.getDefaultEdgeStyle();
 	var panel = (graph.cellEditor.isContentEditing()) ? this.createColorOption(mxResources.get('fontColor'), function()
 	{
 		return currentFontColor;
@@ -3333,6 +3324,7 @@ TextFormatPanel.prototype.addFont = function(container)
 			graph.setCellStyles(mxConstants.STYLE_NOLABEL, null, graph.getSelectionCells());
 		}
 
+		// Based on the assumption that default text color is never set to none in a style
 		if (color != null && color == defs[mxConstants.STYLE_FONTCOLOR])
 		{
 			graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, null, graph.getSelectionCells());
@@ -4484,13 +4476,14 @@ StyleFormatPanel.prototype.addFill = function(container)
 	var fillKey = (ss.style.shape == 'image') ? mxConstants.STYLE_IMAGE_BACKGROUND : mxConstants.STYLE_FILLCOLOR;
 	var label = (ss.style.shape == 'image') ? mxResources.get('background') : mxResources.get('fill');
 	
-	var defs = graph.stylesheet.getDefaultVertexStyle();
+	var defs = (ss.vertices.length >= 1) ? graph.stylesheet.getDefaultVertexStyle() : graph.stylesheet.getDefaultEdgeStyle();
 	var fillPanel = this.createCellColorOption(label, fillKey, (defs[fillKey] != null) ? defs[fillKey] : '#ffffff', null, mxUtils.bind(this, function(color)
 	{
-		if (color != null && color == defs[fillKey])
-		{
-			graph.setCellStyles(fillKey, null, graph.getSelectionCells());
-		}
+		// TODO: Does not work with styles that inherit fill/stroke none like text
+//		if (color != null && color == defs[fillKey])
+//		{
+//			graph.setCellStyles(fillKey, null, graph.getSelectionCells());
+//		}
 	}));
 	fillPanel.style.fontWeight = 'bold';
 
@@ -4653,13 +4646,14 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	var strokeKey = (ss.style.shape == 'image') ? mxConstants.STYLE_IMAGE_BORDER : mxConstants.STYLE_STROKECOLOR;
 	var label = (ss.style.shape == 'image') ? mxResources.get('border') : mxResources.get('line');
 	
-	var defs = graph.stylesheet.getDefaultVertexStyle();
+	var defs = (ss.vertices.length >= 1) ? graph.stylesheet.getDefaultVertexStyle() : graph.stylesheet.getDefaultEdgeStyle();
 	var lineColor = this.createCellColorOption(label, strokeKey, (defs[strokeKey] != null) ? defs[strokeKey] : '#000000', null, mxUtils.bind(this, function(color)
 	{
-		if (color != null && color == defs[strokeKey])
-		{
-			graph.setCellStyles(strokeKey, null, graph.getSelectionCells());
-		}
+//		// TODO: Does not work with styles that inherit fill/stroke none like text
+//		if (color != null && color == defs[strokeKey])
+//		{
+//			graph.setCellStyles(strokeKey, null, graph.getSelectionCells());
+//		}
 	}));
 	
 	lineColor.appendChild(styleSelect);
