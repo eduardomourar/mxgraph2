@@ -224,6 +224,7 @@ Actions.prototype.init = function()
 		try
 		{
 			graph.setSelectionCells(graph.duplicateCells());
+			graph.scrollCellToVisible(graph.getSelectionCell());
 		}
 		catch (e)
 		{
