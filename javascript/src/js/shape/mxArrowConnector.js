@@ -57,6 +57,16 @@ mxUtils.extend(mxArrowConnector, mxShape);
 mxArrowConnector.prototype.useSvgBoundingBox = true;
 
 /**
+ * Function: isRoundable
+ * 
+ * Hook for subclassers.
+ */
+mxArrowConnector.prototype.isRoundable = function()
+{
+	return true;
+};
+
+/**
  * Variable: resetStyles
  * 
  * Overrides mxShape to reset spacing.
