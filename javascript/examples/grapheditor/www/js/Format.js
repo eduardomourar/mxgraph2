@@ -1181,12 +1181,13 @@ BaseFormatPanel.prototype.createCellColorOption = function(label, colorKey, defa
 		graph.getModel().beginUpdate();
 		try
 		{
+			graph.setCellStyles(colorKey, color, graph.getSelectionCells());
+
 			if (setStyleFn != null)
 			{
 				setStyleFn(color);
 			}
 			
-			graph.setCellStyles(colorKey, color, graph.getSelectionCells());
 			ui.fireEvent(new mxEventObject('styleChanged', 'keys', [colorKey],
 				'values', [color], 'cells', graph.getSelectionCells()));
 		}
@@ -4467,7 +4468,14 @@ StyleFormatPanel.prototype.addFill = function(container)
 	var fillKey = (ss.style.shape == 'image') ? mxConstants.STYLE_IMAGE_BACKGROUND : mxConstants.STYLE_FILLCOLOR;
 	var label = (ss.style.shape == 'image') ? mxResources.get('background') : mxResources.get('fill');
 	
-	var fillPanel = this.createCellColorOption(label, fillKey, '#ffffff');
+	var defs = graph.stylesheet.getDefaultVertexStyle();
+	var fillPanel = this.createCellColorOption(label, fillKey, (defs[fillKey] != null) ? defs[fillKey] : '#ffffff', null, mxUtils.bind(this, function(color)
+	{
+		if (color != null && color == defs[fillKey])
+		{
+			graph.setCellStyles(fillKey, null, graph.getSelectionCells());
+		}
+	}));
 	fillPanel.style.fontWeight = 'bold';
 
 	var tmpColor = mxUtils.getValue(ss.style, fillKey, null);
@@ -4629,7 +4637,15 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	var strokeKey = (ss.style.shape == 'image') ? mxConstants.STYLE_IMAGE_BORDER : mxConstants.STYLE_STROKECOLOR;
 	var label = (ss.style.shape == 'image') ? mxResources.get('border') : mxResources.get('line');
 	
-	var lineColor = this.createCellColorOption(label, strokeKey, '#000000');
+	var defs = graph.stylesheet.getDefaultVertexStyle();
+	var lineColor = this.createCellColorOption(label, strokeKey, (defs[strokeKey] != null) ? defs[strokeKey] : '#000000', null, mxUtils.bind(this, function(color)
+	{
+		if (color != null && color == defs[strokeKey])
+		{
+			graph.setCellStyles(strokeKey, null, graph.getSelectionCells());
+		}
+	}));
+	
 	lineColor.appendChild(styleSelect);
 	colorPanel.appendChild(lineColor);
 	

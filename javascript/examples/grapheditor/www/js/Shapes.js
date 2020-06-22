@@ -939,8 +939,8 @@
 	mxShape.prototype.paint = function(c)
 	{
 		// NOTE: getValue does not return a boolean value so !('0') would return true here and below
-		if (c.handHiggle == null && (urlParams['rough'] == '1' || (this.style != null &&
-			mxUtils.getValue(this.style, 'comic', '0') != '0')))
+		if (c.handHiggle == null && this.style != null && mxUtils.getValue(this.style,
+			'comic', (urlParams['rough'] == '1') ? '1' : '0') != '0')
 		{
 			c.handJiggle = this.createHandJiggle(c);
 		}
