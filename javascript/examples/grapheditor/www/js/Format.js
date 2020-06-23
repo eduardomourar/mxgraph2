@@ -4456,12 +4456,18 @@ StyleFormatPanel.prototype.addFill = function(container)
 	gradientSelect.style.right = (mxClient.IS_QUIRKS) ? '52px' : '72px';
 	gradientSelect.style.width = '70px';
 	
+	var fillStyleSelect = gradientSelect.cloneNode(false);
+	
 	// Stops events from bubbling to color option event handler
 	mxEvent.addListener(gradientSelect, 'click', function(evt)
 	{
 		mxEvent.consume(evt);
 	});
-
+	mxEvent.addListener(fillStyleSelect, 'click', function(evt)
+	{
+		mxEvent.consume(evt);
+	});
+	
 	var gradientPanel = this.createCellColorOption(mxResources.get('gradient'), mxConstants.STYLE_GRADIENTCOLOR, '#ffffff', function(color)
 	{
 		if (color == null || color == mxConstants.NONE)
@@ -4504,11 +4510,22 @@ StyleFormatPanel.prototype.addFill = function(container)
 	}
 	
 	gradientPanel.appendChild(gradientSelect);
+	
+	for (var i = 0; i < Editor.roughFillStyles.length; i++)
+	{
+		var fillStyleOption = document.createElement('option');
+		fillStyleOption.setAttribute('value', Editor.roughFillStyles[i].val);
+		mxUtils.write(fillStyleOption, Editor.roughFillStyles[i].dispName);
+		fillStyleSelect.appendChild(fillStyleOption);
+	}
+	
+	fillPanel.appendChild(fillStyleSelect);
 
 	var listener = mxUtils.bind(this, function()
 	{
 		ss = this.format.getSelectionState();
 		var value = mxUtils.getValue(ss.style, mxConstants.STYLE_GRADIENT_DIRECTION, mxConstants.DIRECTION_SOUTH);
+		var fillStyle = mxUtils.getValue(ss.style, 'fillStyle', 'auto');
 		
 		// Handles empty string which is not allowed as a value
 		if (value == '')
@@ -4517,17 +4534,20 @@ StyleFormatPanel.prototype.addFill = function(container)
 		}
 		
 		gradientSelect.value = value;
+		fillStyleSelect.value = fillStyle;
 		container.style.display = (ss.fill) ? '' : 'none';
 		
 		var fillColor = mxUtils.getValue(ss.style, mxConstants.STYLE_FILLCOLOR, null);
-
+			
 		if (!ss.fill || ss.containsImage || fillColor == null || fillColor == mxConstants.NONE || ss.style.shape == 'filledEdge')
 		{
+			fillStyleSelect.style.display = 'none';
 			gradientPanel.style.display = 'none';
 		}
 		else
 		{
-			gradientPanel.style.display = '';
+			fillStyleSelect.style.display = (ss.style.comic == '1') ? '' : 'none';
+			gradientPanel.style.display = (ss.style.comic != '1' || fillStyle == 'solid' || fillStyle == 'auto') ? '' : 'none';
 		}
 	});
 	
@@ -4538,6 +4558,12 @@ StyleFormatPanel.prototype.addFill = function(container)
 	mxEvent.addListener(gradientSelect, 'change', function(evt)
 	{
 		graph.setCellStyles(mxConstants.STYLE_GRADIENT_DIRECTION, gradientSelect.value, graph.getSelectionCells());
+		mxEvent.consume(evt);
+	});
+	
+	mxEvent.addListener(fillStyleSelect, 'change', function(evt)
+	{
+		graph.setCellStyles('fillStyle', fillStyleSelect.value, graph.getSelectionCells());
 		mxEvent.consume(evt);
 	});
 	
