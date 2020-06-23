@@ -3323,14 +3323,9 @@ TextFormatPanel.prototype.addFont = function(container)
 		{
 			graph.setCellStyles(mxConstants.STYLE_NOLABEL, null, graph.getSelectionCells());
 		}
-
-//		// TODO: Does not work with styles that inherit fill/stroke none
-		// Based on the assumption that default text color is never set to none in a style
-//		if (color != null && color == defs[mxConstants.STYLE_FONTCOLOR])
-//		{
-//			graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, null, graph.getSelectionCells());
-//		}
 		
+		graph.updateCellStyles(mxConstants.STYLE_FONTCOLOR, color, graph.getSelectionCells());
+
 		graph.updateLabelElements(graph.getSelectionCells(), function(elt)
 		{
 			elt.removeAttribute('color');
@@ -4470,6 +4465,8 @@ StyleFormatPanel.prototype.addFill = function(container)
 	
 	var gradientPanel = this.createCellColorOption(mxResources.get('gradient'), mxConstants.STYLE_GRADIENTCOLOR, '#ffffff', function(color)
 	{
+		graph.updateCellStyles(mxConstants.STYLE_GRADIENTCOLOR, color, graph.getSelectionCells());
+		
 		if (color == null || color == mxConstants.NONE)
 		{
 			gradientSelect.style.display = 'none';
@@ -4486,11 +4483,7 @@ StyleFormatPanel.prototype.addFill = function(container)
 	var defs = (ss.vertices.length >= 1) ? graph.stylesheet.getDefaultVertexStyle() : graph.stylesheet.getDefaultEdgeStyle();
 	var fillPanel = this.createCellColorOption(label, fillKey, (defs[fillKey] != null) ? defs[fillKey] : '#ffffff', null, mxUtils.bind(this, function(color)
 	{
-		// TODO: Does not work with styles that inherit fill/stroke none like text
-//		if (color != null && color == defs[fillKey])
-//		{
-//			graph.setCellStyles(fillKey, null, graph.getSelectionCells());
-//		}
+		graph.updateCellStyles(fillKey, color, graph.getSelectionCells());
 	}));
 	fillPanel.style.fontWeight = 'bold';
 
@@ -4676,11 +4669,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	var defs = (ss.vertices.length >= 1) ? graph.stylesheet.getDefaultVertexStyle() : graph.stylesheet.getDefaultEdgeStyle();
 	var lineColor = this.createCellColorOption(label, strokeKey, (defs[strokeKey] != null) ? defs[strokeKey] : '#000000', null, mxUtils.bind(this, function(color)
 	{
-//		// TODO: Does not work with styles that inherit fill/stroke none like text
-//		if (color != null && color == defs[strokeKey])
-//		{
-//			graph.setCellStyles(strokeKey, null, graph.getSelectionCells());
-//		}
+		graph.updateCellStyles(strokeKey, color, graph.getSelectionCells());
 	}));
 	
 	lineColor.appendChild(styleSelect);

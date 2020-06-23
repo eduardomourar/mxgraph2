@@ -5972,7 +5972,36 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			return style;
 		};
-	
+			
+		/**
+		 * Removes implicit styles from cell styles so that dark mode works using the
+		 * default values from the stylesheet.
+		 */
+		Graph.prototype.updateCellStyles = function(key, value, cells)
+		{
+			this.model.beginUpdate();
+			try
+			{
+				for (var i = 0; i < cells.length; i++)
+				{
+					if (this.model.isVertex(cells[i]) || this.model.isEdge(cells[i]))
+					{
+						this.setCellStyles(key, null, [cells[i]]);
+						var style = this.getCellStyle(cells[i]);
+						
+						if (style[key] != value)
+						{
+							this.setCellStyles(key, value, [cells[i]]);
+						}
+					}
+				}
+			}
+			finally
+			{
+				this.model.endUpdate();
+			}
+		};
+
 		/**
 		 * Hook for subclassers.
 		 */
