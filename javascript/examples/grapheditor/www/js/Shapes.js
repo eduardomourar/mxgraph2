@@ -952,8 +952,8 @@
 	// Overrides to avoid call to rect
 	mxShape.prototype.createHandJiggle = function(c)
 	{
-		if (c.handHiggle == null && this.style != null && mxUtils.getValue(this.style,
-			'comic', (urlParams['rough'] == '1') ? '1' : '0') != '0')
+		if (!this.outline && c.handHiggle == null && this.style != null &&
+			mxUtils.getValue(this.style, 'comic', '0') != '0')
 		{
 			return new HandJiggle(c, mxUtils.getValue(this.style, 'jiggle', this.defaultJiggle));
 		}
@@ -968,7 +968,7 @@
 	var mxRectangleShapeIsHtmlAllowed0 = mxRectangleShape.prototype.isHtmlAllowed;
 	mxRectangleShape.prototype.isHtmlAllowed = function()
 	{
-		return (this.style == null || (mxUtils.getValue(this.style, 'comic', '0') == '0' &&
+		return !this.outline && (this.style == null || (mxUtils.getValue(this.style, 'comic', '0') == '0' &&
 			mxUtils.getValue(this.style, 'sketch', (urlParams['rough'] == '1') ? '1' : '0') == '0')) &&
 			mxRectangleShapeIsHtmlAllowed0.apply(this, arguments);
 	};
