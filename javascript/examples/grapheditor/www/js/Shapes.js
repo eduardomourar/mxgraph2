@@ -3717,7 +3717,7 @@
 							Math.round(Math.max(0, Math.min(bounds.width, pt.x - bounds.x)));
 				}, false, null, function(me)
 				{
-					if (mxEvent.isShiftDown(me.getEvent()))
+					if (mxEvent.isControlDown(me.getEvent()))
 					{
 						var graph = state.view.graph;
 						
