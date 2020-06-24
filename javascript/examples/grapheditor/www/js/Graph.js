@@ -702,7 +702,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			
 			return mxGraphHandler.prototype.createPreviewShape.apply(this, arguments);
 		};
-		
+
 		// Handles parts of cells by checking if part=1 is in the style and returning the parent
 		// if the parent is not already in the list of cells. container style is used to disable
 		// step into swimlanes and dropTarget style is used to disable acting as a drop target.
@@ -717,9 +717,11 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 
 		    for (var i = 0; i < cells.length; i++)
 		    {
-		    	// Moves composite parent with exception of selected table rows
-		    	var cell = (!this.graph.isTableRow(cells[i]) || !this.graph.isCellSelected(cells[i])) ?
-		    		this.graph.getCompositeParent(cells[i]) : cells[i];
+		    	// Propagates to composite parents or moves selected table rows
+		    	var cell = (this.graph.isTableRow(initialCell) &&
+		    		this.graph.isTableRow(cells[i]) &&
+		    		this.graph.isCellSelected(cells[i])) ?
+		    		cells[i] : this.graph.getCompositeParent(cells[i]);
 		    	
 		    	if (cell != null && !lookup.get(cell))
 		    	{
@@ -730,14 +732,23 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 		
 		    return newCells;
 		};
-		
-		// Handles parts of cells for drag and drop
+
+		// Handles parts and selected rows in tables of cells for drag and drop
 		var graphHandlerStart = this.graphHandler.start;
 		
 		this.graphHandler.start = function(cell, x, y, cells)
 		{
-			cell = this.graph.getCompositeParent(cell);
-			
+			// Propagates to selected table row to start move
+		    if (this.graph.isTableCell(cell))
+		    {
+		    	cell = this.graph.model.getParent(cell);
+		    }
+		    
+		    if (!this.graph.isTableRow(cell) || !this.graph.isCellSelected(cell))
+		    {
+		    	cell = this.graph.getCompositeParent(cell);
+		    }
+
 			graphHandlerStart.apply(this, arguments);
 		};
 		
