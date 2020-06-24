@@ -939,12 +939,7 @@
 	mxShape.prototype.paint = function(c)
 	{
 		// NOTE: getValue does not return a boolean value so !('0') would return true here and below
-		if (c.handHiggle == null && this.style != null && mxUtils.getValue(this.style,
-			'comic', (urlParams['rough'] == '1') ? '1' : '0') != '0')
-		{
-			c.handJiggle = this.createHandJiggle(c);
-		}
-		
+		c.handJiggle = this.createHandJiggle(c);
 		mxShapePaint0.apply(this, arguments);
 		
 		if (c.handJiggle != null)
@@ -957,7 +952,13 @@
 	// Overrides to avoid call to rect
 	mxShape.prototype.createHandJiggle = function(c)
 	{
-		return new HandJiggle(c, mxUtils.getValue(this.style, 'jiggle', this.defaultJiggle));
+		if (c.handHiggle == null && this.style != null && mxUtils.getValue(this.style,
+			'comic', (urlParams['rough'] == '1') ? '1' : '0') != '0')
+		{
+			return new HandJiggle(c, mxUtils.getValue(this.style, 'jiggle', this.defaultJiggle));
+		}
+		
+		return null;
 	};
 	
 	// Sets default jiggle for diamond
@@ -967,7 +968,8 @@
 	var mxRectangleShapeIsHtmlAllowed0 = mxRectangleShape.prototype.isHtmlAllowed;
 	mxRectangleShape.prototype.isHtmlAllowed = function()
 	{
-		return (this.style == null || mxUtils.getValue(this.style, 'comic', '0') == '0') &&
+		return (this.style == null || (mxUtils.getValue(this.style, 'comic', '0') == '0' &&
+			mxUtils.getValue(this.style, 'sketch', (urlParams['rough'] == '1') ? '1' : '0') == '0')) &&
 			mxRectangleShapeIsHtmlAllowed0.apply(this, arguments);
 	};
 	

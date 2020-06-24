@@ -112,7 +112,7 @@ Format.prototype.createSelectionState = function()
 Format.prototype.initSelectionState = function()
 {
 	return {vertices: [], edges: [], x: null, y: null, width: null, height: null, style: {},
-		containsImage: false, containsLabel: false, fill: true, glass: true, rounded: true,  comic: true,
+		containsImage: false, containsLabel: false, fill: true, glass: true, rounded: true,
 		autoSize: false, image: true, shadow: true, lineJumps: true, resizable: true,
 		table: false, cell: false, row: false, movable: true, rotatable: true};
 };
@@ -211,7 +211,6 @@ Format.prototype.updateSelectionStateForCell = function(result, cell, cells)
 		result.glass = result.glass && this.isGlassState(state);
 		result.rounded = result.rounded && this.isRoundedState(state);
 		result.lineJumps = result.lineJumps && this.isLineJumpState(state);
-		result.comic = result.comic && this.isComicState(state);
 		result.image = result.image && this.isImageState(state);
 		result.shadow = result.shadow && this.isShadowState(state);
 		result.fill = result.fill && this.isFillState(state);
@@ -280,14 +279,6 @@ Format.prototype.isLineJumpState = function(state)
 	var curved = mxUtils.getValue(state.style, mxConstants.STYLE_CURVED, false);
 	
 	return !curved && (shape == 'connector' || shape == 'filledEdge');
-};
-
-/**
- * Returns information about the current selection.
- */
-Format.prototype.isComicState = function(state)
-{
-	return true;
 };
 
 /**
@@ -4539,8 +4530,8 @@ StyleFormatPanel.prototype.addFill = function(container)
 		}
 		else
 		{
-			fillStyleSelect.style.display = (ss.style.comic == '1') ? '' : 'none';
-			gradientPanel.style.display = (ss.style.comic != '1' || fillStyle == 'solid' || fillStyle == 'auto') ? '' : 'none';
+			fillStyleSelect.style.display = (ss.style.sketch == '1') ? '' : 'none';
+			gradientPanel.style.display = (ss.style.sketch != '1' || fillStyle == 'solid' || fillStyle == 'auto') ? '' : 'none';
 		}
 	});
 	
@@ -5472,15 +5463,7 @@ StyleFormatPanel.prototype.addEffects = function(div)
 			addOption(mxResources.get('glass'), mxConstants.STYLE_GLASS, 0);
 		}
 
-		if (ss.comic)
-		{
-			addOption(mxResources.get('rough'), 'comic', 0);
-		}
-		
-		if (count == 0)
-		{
-			div.style.display = 'none';
-		}
+		addOption(mxResources.get('sketch'), 'sketch', 0);
 	});
 	
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
