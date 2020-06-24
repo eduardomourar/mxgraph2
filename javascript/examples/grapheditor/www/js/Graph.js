@@ -11349,8 +11349,7 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				for (var i = 0; i < this.moveHandles.length; i++)
 				{
-					if (this.moveHandles[i] != null && this.moveHandles[i].node != null &&
-						this.moveHandles[i].node.parentNode != null)
+					if (this.moveHandles[i] != null && this.moveHandles[i].parentNode != null)
 					{
 						this.moveHandles[i].parentNode.removeChild(this.moveHandles[i]);
 					}
