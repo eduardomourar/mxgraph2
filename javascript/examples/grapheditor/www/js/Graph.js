@@ -11349,7 +11349,11 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				for (var i = 0; i < this.moveHandles.length; i++)
 				{
-					this.moveHandles[i].parentNode.removeChild(this.moveHandles[i]);
+					if (this.moveHandles[i] != null && this.moveHandles[i].node != null &&
+						this.moveHandles[i].node.parentNode != null)
+					{
+						this.moveHandles[i].parentNode.removeChild(this.moveHandles[i]);
+					}
 				}
 				
 				this.moveHandles = null;
@@ -11359,7 +11363,11 @@ if (typeof mxVertexHandler != 'undefined')
 			{
 				for (var i = 0; i < this.cornerHandles.length; i++)
 				{
-					this.cornerHandles[i].node.parentNode.removeChild(this.cornerHandles[i].node);
+					if (this.cornerHandles[i] != null && this.cornerHandles[i].node != null &&
+						this.cornerHandles[i].node.parentNode != null)
+					{
+						this.cornerHandles[i].node.parentNode.removeChild(this.cornerHandles[i].node);
+					}
 				}
 				
 				this.cornerHandles = null;
@@ -11367,7 +11375,11 @@ if (typeof mxVertexHandler != 'undefined')
 			
 			if (this.linkHint != null)
 			{
-				this.linkHint.parentNode.removeChild(this.linkHint);
+				if (this.linkHint.parentNode != null)
+				{
+					this.linkHint.parentNode.removeChild(this.linkHint);
+				}
+				
 				this.linkHint = null;
 			}
 
