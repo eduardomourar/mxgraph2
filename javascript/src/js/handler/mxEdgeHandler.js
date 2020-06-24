@@ -1469,6 +1469,11 @@ mxEdgeHandler.prototype.mouseMove = function(sender, me)
 			{
 				this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].processEvent(me);
 				this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].positionChanged();
+				
+				if (this.shape != null && this.shape.node != null)
+				{
+					this.shape.node.style.display = 'none';
+				}
 			}
 		}
 		else if (this.isLabel)
@@ -1549,6 +1554,11 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 	// Workaround for wrong event source in Webkit
 	if (this.index != null && this.marker != null)
 	{
+		if (this.shape != null && this.shape.node != null)
+		{
+			this.shape.node.style.display = '';
+		}
+		
 		var edge = this.state.cell;
 		var index = this.index;
 		this.index = null;
@@ -1578,6 +1588,12 @@ mxEdgeHandler.prototype.mouseUp = function(sender, me)
 					try
 					{
 						this.customHandles[mxEvent.CUSTOM_HANDLE - index].execute(me);
+										
+						if (this.shape != null && this.shape.node != null)
+						{
+							this.shape.apply(this.state);
+							this.shape.redraw();
+						}
 					}
 					finally
 					{
