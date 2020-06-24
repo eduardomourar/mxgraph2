@@ -948,6 +948,12 @@
 			delete c.handJiggle;
 		}
 	};
+		
+	// Returns a new HandJiggle canvas
+	mxShape.prototype.createComicCanvas = function(c)
+	{
+		return new HandJiggle(c, mxUtils.getValue(this.style, 'jiggle', this.defaultJiggle));
+	};
 	
 	// Overrides to avoid call to rect
 	mxShape.prototype.createHandJiggle = function(c)
@@ -955,7 +961,7 @@
 		if (!this.outline && c.handHiggle == null && this.style != null &&
 			mxUtils.getValue(this.style, 'comic', '0') != '0')
 		{
-			return new HandJiggle(c, mxUtils.getValue(this.style, 'jiggle', this.defaultJiggle));
+			return this.createComicCanvas(c);
 		}
 		
 		return null;
