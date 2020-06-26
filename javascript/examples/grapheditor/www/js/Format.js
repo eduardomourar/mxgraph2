@@ -112,7 +112,7 @@ Format.prototype.createSelectionState = function()
 Format.prototype.initSelectionState = function()
 {
 	return {vertices: [], edges: [], x: null, y: null, width: null, height: null, style: {},
-		containsImage: false, containsLabel: false, fill: true, glass: true, rounded: true,  comic: true,
+		containsImage: false, containsLabel: false, fill: true, glass: true, rounded: true,
 		autoSize: false, image: true, shadow: true, lineJumps: true, resizable: true,
 		table: false, cell: false, row: false, movable: true, rotatable: true};
 };
@@ -211,7 +211,6 @@ Format.prototype.updateSelectionStateForCell = function(result, cell, cells)
 		result.glass = result.glass && this.isGlassState(state);
 		result.rounded = result.rounded && this.isRoundedState(state);
 		result.lineJumps = result.lineJumps && this.isLineJumpState(state);
-		result.comic = result.comic && this.isComicState(state);
 		result.image = result.image && this.isImageState(state);
 		result.shadow = result.shadow && this.isShadowState(state);
 		result.fill = result.fill && this.isFillState(state);
@@ -280,14 +279,6 @@ Format.prototype.isLineJumpState = function(state)
 	var curved = mxUtils.getValue(state.style, mxConstants.STYLE_CURVED, false);
 	
 	return !curved && (shape == 'connector' || shape == 'filledEdge');
-};
-
-/**
- * Returns information about the current selection.
- */
-Format.prototype.isComicState = function(state)
-{
-	return true;
 };
 
 /**
@@ -3323,14 +3314,9 @@ TextFormatPanel.prototype.addFont = function(container)
 		{
 			graph.setCellStyles(mxConstants.STYLE_NOLABEL, null, graph.getSelectionCells());
 		}
-
-//		// TODO: Does not work with styles that inherit fill/stroke none
-		// Based on the assumption that default text color is never set to none in a style
-//		if (color != null && color == defs[mxConstants.STYLE_FONTCOLOR])
-//		{
-//			graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, null, graph.getSelectionCells());
-//		}
 		
+		graph.updateCellStyles(mxConstants.STYLE_FONTCOLOR, color, graph.getSelectionCells());
+
 		graph.updateLabelElements(graph.getSelectionCells(), function(elt)
 		{
 			elt.removeAttribute('color');
@@ -4456,14 +4442,25 @@ StyleFormatPanel.prototype.addFill = function(container)
 	gradientSelect.style.right = (mxClient.IS_QUIRKS) ? '52px' : '72px';
 	gradientSelect.style.width = '70px';
 	
+	var fillStyleSelect = gradientSelect.cloneNode(false);
+	
 	// Stops events from bubbling to color option event handler
 	mxEvent.addListener(gradientSelect, 'click', function(evt)
 	{
 		mxEvent.consume(evt);
 	});
-
-	var gradientPanel = this.createCellColorOption(mxResources.get('gradient'), mxConstants.STYLE_GRADIENTCOLOR, '#ffffff', function(color)
+	mxEvent.addListener(fillStyleSelect, 'click', function(evt)
 	{
+		mxEvent.consume(evt);
+	});
+	
+	var defs = (ss.vertices.length >= 1) ? graph.stylesheet.getDefaultVertexStyle() : graph.stylesheet.getDefaultEdgeStyle();
+	var gradientPanel = this.createCellColorOption(mxResources.get('gradient'), mxConstants.STYLE_GRADIENTCOLOR,
+		(defs[mxConstants.STYLE_GRADIENTCOLOR] != null) ? defs[mxConstants.STYLE_GRADIENTCOLOR] : '#ffffff', function(color)
+	{
+		// TODO: Check side effects for adding selection cells for selection cell with gradient
+		//graph.updateCellStyles(mxConstants.STYLE_GRADIENTCOLOR, color, graph.getSelectionCells());
+		
 		if (color == null || color == mxConstants.NONE)
 		{
 			gradientSelect.style.display = 'none';
@@ -4480,11 +4477,7 @@ StyleFormatPanel.prototype.addFill = function(container)
 	var defs = (ss.vertices.length >= 1) ? graph.stylesheet.getDefaultVertexStyle() : graph.stylesheet.getDefaultEdgeStyle();
 	var fillPanel = this.createCellColorOption(label, fillKey, (defs[fillKey] != null) ? defs[fillKey] : '#ffffff', null, mxUtils.bind(this, function(color)
 	{
-		// TODO: Does not work with styles that inherit fill/stroke none like text
-//		if (color != null && color == defs[fillKey])
-//		{
-//			graph.setCellStyles(fillKey, null, graph.getSelectionCells());
-//		}
+		graph.updateCellStyles(fillKey, color, graph.getSelectionCells());
 	}));
 	fillPanel.style.fontWeight = 'bold';
 
@@ -4504,11 +4497,22 @@ StyleFormatPanel.prototype.addFill = function(container)
 	}
 	
 	gradientPanel.appendChild(gradientSelect);
+	
+	for (var i = 0; i < Editor.roughFillStyles.length; i++)
+	{
+		var fillStyleOption = document.createElement('option');
+		fillStyleOption.setAttribute('value', Editor.roughFillStyles[i].val);
+		mxUtils.write(fillStyleOption, Editor.roughFillStyles[i].dispName);
+		fillStyleSelect.appendChild(fillStyleOption);
+	}
+	
+	fillPanel.appendChild(fillStyleSelect);
 
 	var listener = mxUtils.bind(this, function()
 	{
 		ss = this.format.getSelectionState();
 		var value = mxUtils.getValue(ss.style, mxConstants.STYLE_GRADIENT_DIRECTION, mxConstants.DIRECTION_SOUTH);
+		var fillStyle = mxUtils.getValue(ss.style, 'fillStyle', 'auto');
 		
 		// Handles empty string which is not allowed as a value
 		if (value == '')
@@ -4517,17 +4521,20 @@ StyleFormatPanel.prototype.addFill = function(container)
 		}
 		
 		gradientSelect.value = value;
+		fillStyleSelect.value = fillStyle;
 		container.style.display = (ss.fill) ? '' : 'none';
 		
 		var fillColor = mxUtils.getValue(ss.style, mxConstants.STYLE_FILLCOLOR, null);
-
+			
 		if (!ss.fill || ss.containsImage || fillColor == null || fillColor == mxConstants.NONE || ss.style.shape == 'filledEdge')
 		{
+			fillStyleSelect.style.display = 'none';
 			gradientPanel.style.display = 'none';
 		}
 		else
 		{
-			gradientPanel.style.display = '';
+			fillStyleSelect.style.display = (ss.style.sketch == '1') ? '' : 'none';
+			gradientPanel.style.display = (ss.style.sketch != '1' || fillStyle == 'solid' || fillStyle == 'auto') ? '' : 'none';
 		}
 	});
 	
@@ -4538,6 +4545,12 @@ StyleFormatPanel.prototype.addFill = function(container)
 	mxEvent.addListener(gradientSelect, 'change', function(evt)
 	{
 		graph.setCellStyles(mxConstants.STYLE_GRADIENT_DIRECTION, gradientSelect.value, graph.getSelectionCells());
+		mxEvent.consume(evt);
+	});
+	
+	mxEvent.addListener(fillStyleSelect, 'change', function(evt)
+	{
+		graph.setCellStyles('fillStyle', fillStyleSelect.value, graph.getSelectionCells());
 		mxEvent.consume(evt);
 	});
 	
@@ -4650,11 +4663,7 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	var defs = (ss.vertices.length >= 1) ? graph.stylesheet.getDefaultVertexStyle() : graph.stylesheet.getDefaultEdgeStyle();
 	var lineColor = this.createCellColorOption(label, strokeKey, (defs[strokeKey] != null) ? defs[strokeKey] : '#000000', null, mxUtils.bind(this, function(color)
 	{
-//		// TODO: Does not work with styles that inherit fill/stroke none like text
-//		if (color != null && color == defs[strokeKey])
-//		{
-//			graph.setCellStyles(strokeKey, null, graph.getSelectionCells());
-//		}
+		graph.updateCellStyles(strokeKey, color, graph.getSelectionCells());
 	}));
 	
 	lineColor.appendChild(styleSelect);
@@ -5108,60 +5117,67 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		
 		// Updates toolbar icon for edge style
 		var edgeStyleDiv = edgeStyle.getElementsByTagName('div')[0];
-		var es = mxUtils.getValue(ss.style, mxConstants.STYLE_EDGE, null);
 		
-		if (mxUtils.getValue(ss.style, mxConstants.STYLE_NOEDGESTYLE, null) == '1')
+		if (edgeStyleDiv != null)
 		{
-			es = null;
-		}
-
-		if (es == 'orthogonalEdgeStyle' && mxUtils.getValue(ss.style, mxConstants.STYLE_CURVED, null) == '1')
-		{
-			edgeStyleDiv.className = 'geSprite geSprite-curved';
-		}
-		else if (es == 'straight' || es == 'none' || es == null)
-		{
-			edgeStyleDiv.className = 'geSprite geSprite-straight';
-		}
-		else if (es == 'entityRelationEdgeStyle')
-		{
-			edgeStyleDiv.className = 'geSprite geSprite-entity';
-		}
-		else if (es == 'elbowEdgeStyle')
-		{
-			edgeStyleDiv.className = 'geSprite ' + ((mxUtils.getValue(ss.style,
-				mxConstants.STYLE_ELBOW, null) == 'vertical') ?
-				'geSprite-verticalelbow' : 'geSprite-horizontalelbow');
-		}
-		else if (es == 'isometricEdgeStyle')
-		{
-			edgeStyleDiv.className = 'geSprite ' + ((mxUtils.getValue(ss.style,
-				mxConstants.STYLE_ELBOW, null) == 'vertical') ?
-				'geSprite-verticalisometric' : 'geSprite-horizontalisometric');
-		}
-		else
-		{
-			edgeStyleDiv.className = 'geSprite geSprite-orthogonal';
+			var es = mxUtils.getValue(ss.style, mxConstants.STYLE_EDGE, null);
+			
+			if (mxUtils.getValue(ss.style, mxConstants.STYLE_NOEDGESTYLE, null) == '1')
+			{
+				es = null;
+			}
+			
+			if (es == 'orthogonalEdgeStyle' && mxUtils.getValue(ss.style, mxConstants.STYLE_CURVED, null) == '1')
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-curved';
+			}
+			else if (es == 'straight' || es == 'none' || es == null)
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-straight';
+			}
+			else if (es == 'entityRelationEdgeStyle')
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-entity';
+			}
+			else if (es == 'elbowEdgeStyle')
+			{
+				edgeStyleDiv.className = 'geSprite ' + ((mxUtils.getValue(ss.style,
+					mxConstants.STYLE_ELBOW, null) == 'vertical') ?
+					'geSprite-verticalelbow' : 'geSprite-horizontalelbow');
+			}
+			else if (es == 'isometricEdgeStyle')
+			{
+				edgeStyleDiv.className = 'geSprite ' + ((mxUtils.getValue(ss.style,
+					mxConstants.STYLE_ELBOW, null) == 'vertical') ?
+					'geSprite-verticalisometric' : 'geSprite-horizontalisometric');
+			}
+			else
+			{
+				edgeStyleDiv.className = 'geSprite geSprite-orthogonal';
+			}
 		}
 		
 		// Updates icon for edge shape
 		var edgeShapeDiv = edgeShape.getElementsByTagName('div')[0];
 		
-		if (ss.style.shape == 'link')
+		if (edgeShapeDiv != null)
 		{
-			edgeShapeDiv.className = 'geSprite geSprite-linkedge';
-		}
-		else if (ss.style.shape == 'flexArrow')
-		{
-			edgeShapeDiv.className = 'geSprite geSprite-arrow';
-		}
-		else if (ss.style.shape == 'arrow')
-		{
-			edgeShapeDiv.className = 'geSprite geSprite-simplearrow';
-		}
-		else
-		{
-			edgeShapeDiv.className = 'geSprite geSprite-connection';
+			if (ss.style.shape == 'link')
+			{
+				edgeShapeDiv.className = 'geSprite geSprite-linkedge';
+			}
+			else if (ss.style.shape == 'flexArrow')
+			{
+				edgeShapeDiv.className = 'geSprite geSprite-arrow';
+			}
+			else if (ss.style.shape == 'arrow')
+			{
+				edgeShapeDiv.className = 'geSprite geSprite-simplearrow';
+			}
+			else
+			{
+				edgeShapeDiv.className = 'geSprite geSprite-connection';
+			}
 		}
 		
 		if (ss.edges.length == graph.getSelectionCount())
@@ -5179,18 +5195,21 @@ StyleFormatPanel.prototype.addStroke = function(container)
 		{
 			var markerDiv = elt.getElementsByTagName('div')[0];
 			
-			markerDiv.className = ui.getCssClassForMarker(prefix, ss.style.shape, marker, fill);
-			
-			if (markerDiv.className == 'geSprite geSprite-noarrow')
+			if (markerDiv != null)
 			{
-				markerDiv.innerHTML = mxUtils.htmlEntities(mxResources.get('none'));
-				markerDiv.style.backgroundImage = 'none';
-				markerDiv.style.verticalAlign = 'top';
-				markerDiv.style.marginTop = '5px';
-				markerDiv.style.fontSize = '10px';
-				markerDiv.style.filter = 'none';
-				markerDiv.style.color = this.defaultStrokeColor;
-				markerDiv.nextSibling.style.marginTop = '0px';
+				markerDiv.className = ui.getCssClassForMarker(prefix, ss.style.shape, marker, fill);
+				
+				if (markerDiv.className == 'geSprite geSprite-noarrow')
+				{
+					markerDiv.innerHTML = mxUtils.htmlEntities(mxResources.get('none'));
+					markerDiv.style.backgroundImage = 'none';
+					markerDiv.style.verticalAlign = 'top';
+					markerDiv.style.marginTop = '5px';
+					markerDiv.style.fontSize = '10px';
+					markerDiv.style.filter = 'none';
+					markerDiv.style.color = this.defaultStrokeColor;
+					markerDiv.nextSibling.style.marginTop = '0px';
+				}
 			}
 			
 			return markerDiv;
@@ -5202,15 +5221,18 @@ StyleFormatPanel.prototype.addStroke = function(container)
 				mxUtils.getValue(ss.style, 'endFill', '1'), lineEnd, 'end');
 
 		// Special cases for markers
-		if (ss.style.shape == 'arrow')
+		if (sourceDiv != null && targetDiv != null)
 		{
-			sourceDiv.className = 'geSprite geSprite-noarrow';
-			targetDiv.className = 'geSprite geSprite-endblocktrans';
-		}
-		else if (ss.style.shape == 'link')
-		{
-			sourceDiv.className = 'geSprite geSprite-noarrow';
-			targetDiv.className = 'geSprite geSprite-noarrow';
+			if (ss.style.shape == 'arrow')
+			{
+				sourceDiv.className = 'geSprite geSprite-noarrow';
+				targetDiv.className = 'geSprite geSprite-endblocktrans';
+			}
+			else if (ss.style.shape == 'link')
+			{
+				sourceDiv.className = 'geSprite geSprite-noarrow';
+				targetDiv.className = 'geSprite geSprite-noarrow';
+			}
 		}
 
 		mxUtils.setOpacity(edgeStyle, (ss.style.shape == 'arrow') ? 30 : 100);			
@@ -5457,15 +5479,7 @@ StyleFormatPanel.prototype.addEffects = function(div)
 			addOption(mxResources.get('glass'), mxConstants.STYLE_GLASS, 0);
 		}
 
-		if (ss.comic)
-		{
-			addOption(mxResources.get('rough'), 'comic', 0);
-		}
-		
-		if (count == 0)
-		{
-			div.style.display = 'none';
-		}
+		addOption(mxResources.get('sketch'), 'sketch', 0);
 	});
 	
 	graph.getModel().addListener(mxEvent.CHANGE, listener);
