@@ -4831,6 +4831,17 @@ TableLayout.prototype.isHorizontal = function()
 };
 
 /**
+ * Function: isVertexIgnored
+ * 
+ * Overrides to allow for table rows and cells.
+ */
+TableLayout.prototype.isVertexIgnored = function(vertex)
+{
+	return !this.graph.getModel().isVertex(vertex) ||
+		!this.graph.isCellVisible(vertex);
+};
+
+/**
  * Function: getSize
  * 
  * Returns the total vertical or horizontal size of the given cells.
@@ -5826,6 +5837,14 @@ if (typeof mxVertexHandler != 'undefined')
 			return !mxEvent.isAltDown(evt);
 		};
 		
+		// Ignores all table cells in layouts
+		var graphLayoutIsVertexIgnored = mxGraphLayout.prototype.isVertexIgnored; 
+		mxGraphLayout.prototype.isVertexIgnored = function(vertex)
+		{
+			return graphLayoutIsVertexIgnored.apply(this, arguments) ||
+				this.graph.isTableRow(vertex) || this.graph.isTableCell(vertex);
+		};
+		
 		// Extends connection handler to enable ctrl+drag for cloning source cell
 		// since copyOnConnect is now disabled by default
 		var mxConnectionHandlerCreateTarget = mxConnectionHandler.prototype.isCreateTarget;
@@ -6004,8 +6023,9 @@ if (typeof mxVertexHandler != 'undefined')
 					{
 						this.setCellStyles(key, null, [cells[i]]);
 						var style = this.getCellStyle(cells[i]);
+						var temp = style[key];
 						
-						if (style[key] != value)
+						if (value != ((temp == null) ? mxConstants.NONE : temp))
 						{
 							this.setCellStyles(key, value, [cells[i]]);
 						}
