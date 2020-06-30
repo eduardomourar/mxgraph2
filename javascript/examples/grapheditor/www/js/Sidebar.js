@@ -2033,7 +2033,7 @@ Sidebar.prototype.updateShapes = function(source, targets)
 		              'html', 'part', 'noEdgeStyle', 'edgeStyle', 'elbow', 'childLayout', 'recursiveResize',
 		              'container', 'collapsible', 'connectable', 'comic', 'sketch', 'fillWeight', 'hachureGap',
 		              'hachureAngle', 'jiggle', 'disableMultiStroke', 'disableMultiStrokeFill',
-		              'fillStyle', 'curveFitting', 'simplification', 'comicStyle'];
+		              'fillStyle', 'curveFitting', 'simplification', 'sketchStyle'];
 		
 		for (var i = 0; i < targets.length; i++)
 		{
