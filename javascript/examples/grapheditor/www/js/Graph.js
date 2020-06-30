@@ -6372,82 +6372,109 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			mapping = (mapping != null) ? mapping : new Object();
 			
-			// Updates source and target table heights and matches
-			// column count for moving rows between tables
-			for (var i = 0; i < cells.length; i++)
+			this.model.beginUpdate();
+			try
 			{
-				if (target != null && this.isTableRow(cells[i]))
+				// Updates source and target table heights and matches
+				// column count for moving rows between tables
+				var sourceTables = [];
+				
+				for (var i = 0; i < cells.length; i++)
 				{
-					var parent = this.model.getParent(cells[i]);
-					var row = this.getCellGeometry(cells[i]);
-					
-					if (parent != null && row != null &&
-						this.isTable(parent) &&
-						this.isTable(target) &&
-						(clone || parent != target))
+					if (target != null && this.isTableRow(cells[i]))
 					{
-						if (!clone)
+						var parent = this.model.getParent(cells[i]);
+						var row = this.getCellGeometry(cells[i]);
+						
+						if (this.isTable(parent))
 						{
-							var table = this.getCellGeometry(parent);
+							sourceTables.push(parent);
+						}
+						
+						if (parent != null && row != null &&
+							this.isTable(parent) &&
+							this.isTable(target) &&
+							(clone || parent != target))
+						{
+							if (!clone)
+							{
+								var table = this.getCellGeometry(parent);
+						
+								if (table != null)
+								{
+									table = table.clone();
+									table.height -= row.height;
+									this.model.setGeometry(parent, table);
+								}
+							}
+	
+							var table = this.getCellGeometry(target);
 					
 							if (table != null)
 							{
 								table = table.clone();
-								table.height -= row.height;
-								this.model.setGeometry(parent, table);
+								table.height += row.height;
+								this.model.setGeometry(target, table);
 							}
-						}
-
-						var table = this.getCellGeometry(target);
-				
-						if (table != null)
-						{
-							table = table.clone();
-							table.height += row.height;
-							this.model.setGeometry(target, table);
-						}
-						
-						// Matches column count
-						var rows = this.model.getChildCells(target, true);
-						
-						if (rows.length > 0)
-						{
-							var sourceCols = this.model.getChildCells(cells[i], true);
-							var cols = this.model.getChildCells(rows[0], true);
-							var count = cols.length - sourceCols.length;
 							
-							if (count > 0)
+							// Matches column count
+							var rows = this.model.getChildCells(target, true);
+							
+							if (rows.length > 0)
 							{
-								for (var j = 0; j < count; j++)
+								var cell = (clone) ? this.cloneCell(cells[i]) : cells[i];
+								
+								var sourceCols = this.model.getChildCells(cell, true);
+								var cols = this.model.getChildCells(rows[0], true);
+								var count = cols.length - sourceCols.length;
+								
+								if (count > 0)
 								{
-									var cell = this.cloneCell(sourceCols[sourceCols.length - 1]);
-									
-									if (cell != null)
+									for (var j = 0; j < count; j++)
 									{
-										cell.value = '';
+										var cell = this.cloneCell(sourceCols[sourceCols.length - 1]);
 										
-										this.model.add(cells[i], cell);
+										if (cell != null)
+										{
+											cell.value = '';
+											
+											this.model.add(cell, cell);
+										}
 									}
 								}
-							}
-							else if (count < 0)
-							{
-								for (var j = 0; j > count; j--)
+								else if (count < 0)
 								{
-									this.model.remove(sourceCols[sourceCols.length - count - 1]);
-								}
-							}	 
+									for (var j = 0; j > count; j--)
+									{
+										this.model.remove(sourceCols[sourceCols.length - count - 1]);
+									}
+								}	 
+							}
 						}
 					}
 				}
+				
+				var result = graphMoveCells.apply(this, arguments);
+				
+				// Removes empty tables
+				for (var i = 0; i < sourceTables.length; i++)
+				{
+					if (!clone && this.model.contains(sourceTables[i]) &&
+						this.model.getChildCount(sourceTables[i]) == 0)
+					{
+						this.model.remove(sourceTables[i]);	
+					}
+				}
+				
+				if (clone)
+				{
+					this.updateCustomLinks(this.createCellMapping(mapping,
+						this.createCellLookup(cells)), result);
+				}
 			}
-			
-			var result = graphMoveCells.apply(this, arguments);
-			
-			if (clone)
+			finally
 			{
-				this.updateCustomLinks(this.createCellMapping(mapping,
-					this.createCellLookup(cells)), result);
+				this.model.endUpdate();
 			}
 			
 			return result;
@@ -10217,7 +10244,12 @@ if (typeof mxVertexHandler != 'undefined')
 						{
 							this.graph.popupMenuHandler.hideMenu();
 							this.graph.stopEditing(false);
-							this.graph.selectCellForEvent(rowState.cell, evt);
+							
+							if (this.graph.isToggleEvent(evt) ||
+								!this.graph.isCellSelected(rowState.cell))
+							{
+								this.graph.selectCellForEvent(rowState.cell, evt);
+							}
 							
 							if (!mxEvent.isPopupTrigger(evt))
 							{
