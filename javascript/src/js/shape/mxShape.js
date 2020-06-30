@@ -553,7 +553,9 @@ mxShape.prototype.redrawShape = function()
 		// Specifies if events should be handled
 		canvas.pointerEvents = this.pointerEvents;
 	
+		this.beforePaint(canvas);
 		this.paint(canvas);
+		this.afterPaint(canvas);
 	
 		if (this.node != canvas.root)
 		{
@@ -870,6 +872,20 @@ mxShape.prototype.destroyCanvas = function(canvas)
 		this.oldGradients = canvas.gradients;
 	}
 };
+
+/**
+ * Function: beforePaint
+ * 
+ * Invoked before paint is called.
+ */
+mxShape.prototype.beforePaint = function(c) { }
+
+/**
+ * Function: afterPaint
+ * 
+ * Invokes after paint was called.
+ */
+mxShape.prototype.afterPaint = function(c) { }
 
 /**
  * Function: paint
