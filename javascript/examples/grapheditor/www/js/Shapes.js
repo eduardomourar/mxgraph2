@@ -2822,7 +2822,7 @@
 
 		if (this.style != null)
 		{
-			
+			var pointerEvents = c.pointerEvents;
 			var events = mxUtils.getValue(this.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1';
 			
 			if (!events && (this.fill == null || this.fill == mxConstants.NONE))
@@ -2833,8 +2833,8 @@
 			c.rect(x, y, w, h);
 			c.fill();
 
+			c.pointerEvents = pointerEvents;
 			c.setStrokeColor(this.stroke);
-			c.pointerEvents = true;
 			c.begin();
 			c.moveTo(x, y);
 			
