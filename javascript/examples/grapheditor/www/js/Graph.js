@@ -1825,7 +1825,6 @@ Graph.prototype.init = function(container)
 	 * current state to CSS transform.
 	 */
 	var graphViewValidate = mxGraphView.prototype.validate;
-	
 	mxGraphView.prototype.validate = function(cell)
 	{
 		if (this.graph.useCssTransforms)
@@ -1926,7 +1925,6 @@ Graph.prototype.init = function(container)
 	};
 	
 	var graphViewValidateBackgroundPage = mxGraphView.prototype.validateBackgroundPage;
-	
 	mxGraphView.prototype.validateBackgroundPage = function()
 	{
 		var useCssTranforms = this.graph.useCssTransforms, scale = this.scale, 
@@ -1948,7 +1946,6 @@ Graph.prototype.init = function(container)
 	};
 
 	var graphUpdatePageBreaks = mxGraph.prototype.updatePageBreaks;
-	
 	mxGraph.prototype.updatePageBreaks = function(visible, width, height)
 	{
 		var useCssTranforms = this.useCssTransforms, scale = this.view.scale, 
@@ -1970,7 +1967,6 @@ Graph.prototype.init = function(container)
 			this.useCssTransforms = true;
 		}
 	};
-	
 })();
 
 /**
@@ -6382,7 +6378,7 @@ if (typeof mxVertexHandler != 'undefined')
 				}
 			}
 		};
-	
+
 		/**
 		 * Overrides cloning cells in moveCells.
 		 */
@@ -6390,6 +6386,26 @@ if (typeof mxVertexHandler != 'undefined')
 		Graph.prototype.moveCells = function(cells, dx, dy, clone, target, evt, mapping)
 		{
 			mapping = (mapping != null) ? mapping : new Object();
+			
+			// Replaces source tables with rows
+			if (this.isTable(target))
+			{
+				var newCells = [];
+				
+				for (var i = 0; i < cells.length; i++)
+				{
+					if (this.isTable(cells[i]))
+					{
+						newCells = newCells.concat(this.model.getChildCells(cells[i], true).reverse());
+					}
+					else
+					{
+						newCells.push(cells[i]);
+					}
+				}
+				
+				cells = newCells;
+			}
 			
 			this.model.beginUpdate();
 			try
@@ -6465,7 +6481,7 @@ if (typeof mxVertexHandler != 'undefined')
 								{
 									for (var j = 0; j > count; j--)
 									{
-										this.model.remove(sourceCols[sourceCols.length - count - 1]);
+										this.model.remove(sourceCols[sourceCols.length + j - 1]);
 									}
 								}
 								
@@ -6731,10 +6747,12 @@ if (typeof mxVertexHandler != 'undefined')
 		Graph.prototype.isValidDropTarget = function(cell, cells, evt)
 		{
 			var style = this.getCurrentCellStyle(cell);
+			var tables = true;
 			var rows = true;
 			
 			for (var i = 0; i < cells.length && rows; i++)
 			{
+				tables = tables && this.isTable(cells[i]);
 				rows = rows && this.isTableRow(cells[i]);
 			}
 			
@@ -6742,7 +6760,7 @@ if (typeof mxVertexHandler != 'undefined')
 				mxUtils.getValue(style, 'dropTarget', '1') != '0' &&
 				(mxGraph.prototype.isValidDropTarget.apply(this, arguments) ||
 				this.isContainer(cell)) && !this.isTableRow(cell) &&
-				(!this.isTable(cell) || rows);
+				(!this.isTable(cell) || rows || tables);
 		};
 	
 		/**

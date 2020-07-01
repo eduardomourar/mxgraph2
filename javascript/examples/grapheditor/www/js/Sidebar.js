@@ -2198,6 +2198,7 @@ Sidebar.prototype.createDropHandler = function(cells, allowSplit, allowCellsInse
 				// Holding alt while mouse is released ignores drop target
 				var validDropTarget = (target != null && !mxEvent.isAltDown(evt)) ?
 					graph.isValidDropTarget(target, cells, evt) : false;
+					
 				var select = null;
 
 				if (target != null && !validDropTarget)
@@ -2618,7 +2619,8 @@ Sidebar.prototype.isDropStyleEnabled = function(cells, firstVertex)
  */
 Sidebar.prototype.isDropStyleTargetIgnored = function(state)
 {
-	return this.graph.isSwimlane(state.cell);
+	return this.graph.isSwimlane(state.cell) || this.graph.isTableCell(state.cell) ||
+		this.graph.isTableRow(state.cell) || this.graph.isTable(state.cell);
 };
 
 /**
