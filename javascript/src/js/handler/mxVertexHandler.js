@@ -516,10 +516,11 @@ mxVertexHandler.prototype.getHandleForEvent = function(me)
 
 	var checkShape = mxUtils.bind(this, function(shape)
 	{
-		var real = (shape != null && shape.constructor != mxImageShape && this.allowHandleBoundsCheck) ?
-			new mxRectangle(me.getGraphX() - shape.svgStrokeTolerance, me.getGraphY() - shape.svgStrokeTolerance,
-				2 * shape.svgStrokeTolerance, 2 * shape.svgStrokeTolerance) : hit;
-		
+		var st = (shape != null && shape.constructor != mxImageShape &&
+			this.allowHandleBoundsCheck) ? shape.strokewidth + shape.svgStrokeTolerance : null;
+		var real = (st != null) ? new mxRectangle(me.getGraphX() - Math.floor(st / 2),
+			me.getGraphY() - Math.floor(st / 2), st, st) : hit;
+
 		return shape != null && (me.isSource(shape) || (real != null && mxUtils.intersects(shape.bounds, real) &&
 			shape.node.style.display != 'none' && shape.node.style.visibility != 'hidden'));
 	});

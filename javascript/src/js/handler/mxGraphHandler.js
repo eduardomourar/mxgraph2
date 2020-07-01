@@ -504,37 +504,48 @@ mxGraphHandler.prototype.selectDelayed = function(me)
 		{
 			cell = this.cell;
 		}
-
-		// Selects folded cell for hit on folding icon
-		var state = this.graph.view.getState(cell)
 		
-		if (state != null)
-		{
-			if (me.isSource(state.control))
-			{
-				this.graph.selectCellForEvent(cell, me.getEvent());
-			}
-			else
-			{
-				if (!this.graph.isToggleEvent(me.getEvent()) ||
-					!mxEvent.isAltDown(me.getEvent()))
-				{
-					var model = this.graph.getModel();
-					var parent = model.getParent(cell);
-					
-					while (this.graph.view.getState(parent) != null &&
-						(model.isVertex(parent) || model.isEdge(parent)) &&
-						this.isPropagateSelectionCell(cell, false, me))
-					{
-						cell = parent;
-						parent = model.getParent(cell);
-					}
-				}
+		this.selectCellForEvent(cell, me);
+	}
+};
+
+/**
+ * Function: selectCellForEvent
+ * 
+ * Selects the given cell for the given <mxMouseEvent>.
+ */
+mxGraphHandler.prototype.selectCellForEvent = function(cell, me)
+{
+	var state = this.graph.view.getState(cell);
 	
-				this.graph.selectCellForEvent(cell, me.getEvent());
+	if (state != null)
+	{
+		if (me.isSource(state.control))
+		{
+			this.graph.selectCellForEvent(cell, me.getEvent());
+		}
+		else
+		{
+			if (!this.graph.isToggleEvent(me.getEvent()) ||
+				!mxEvent.isAltDown(me.getEvent()))
+			{
+				var model = this.graph.getModel();
+				var parent = model.getParent(cell);
+				
+				while (this.graph.view.getState(parent) != null &&
+					(model.isVertex(parent) || model.isEdge(parent)) &&
+					this.isPropagateSelectionCell(cell, false, me))
+				{
+					cell = parent;
+					parent = model.getParent(cell);
+				}
 			}
+
+			this.graph.selectCellForEvent(cell, me.getEvent());
 		}
 	}
+	
+	return cell;
 };
 
 /**

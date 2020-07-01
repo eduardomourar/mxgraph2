@@ -250,46 +250,49 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			    			}
     					}
 		    		}
-		    		else if (!this.panningHandler.isActive())
+		    		else if (!this.panningHandler.isActive() && !mxEvent.isControlDown(me.getEvent()))
 		    		{
 			   			var handler = this.selectionCellsHandler.getHandler(state.cell);
 
 			   			// Cell handles have precedence over row and col resize
 		    			if (handler == null || handler.getHandleForEvent(me) == null)
 		    			{
-				    		var box = new mxRectangle(me.getGraphX(), me.getGraphY());
+				    		var box = new mxRectangle(me.getGraphX() - 1, me.getGraphY() - 1);
 			    			box.grow(mxEvent.isTouchEvent(me.getEvent()) ?
 			    				mxShape.prototype.svgStrokeTolerance - 1 :
-			    				mxShape.prototype.svgStrokeTolerance / 2);
+			    				(mxShape.prototype.svgStrokeTolerance + 1) / 2);
 			    			
 			    			if (this.isTableCell(state.cell))
 			    			{
 			    				var row = this.model.getParent(state.cell);
 			    				var table = this.model.getParent(row);
 			    				
-			    				if ((mxUtils.intersects(box, new mxRectangle(state.x, state.y - 1, state.width, 1)) &&
-			    					this.model.getChildAt(table, 0) != row) || mxUtils.intersects(box, new mxRectangle(
-			    					state.x, state.y + state.height - 1, state.width, 1)) ||
-				    				(mxUtils.intersects(box, new mxRectangle(state.x - 1, state.y, 1, state.height)) &&
-				    				this.model.getChildAt(row, 0) != state.cell) || mxUtils.intersects(box, new mxRectangle(
-			    					state.x + state.width - 1, state.y, 1, state.height)))
-		    					{
-			    					var wasSelected = this.selectionCellsHandler.isHandled(table);
-			    					this.selectCellForEvent(table, me.getEvent());
-					    			handler = this.selectionCellsHandler.getHandler(table);
-		
-					    			if (handler != null)
-					    			{
-					    				var handle = handler.getHandleForEvent(me);
-			    				
-					    				if (handle != null)
-					    				{
-					    					handler.start(me.getGraphX(), me.getGraphY(), handle);
-					    					handler.blockDelayedSelection = !wasSelected;
-					    					me.consume();
-					    				}
-					    			}
-		    					}
+			    				if (!this.isCellSelected(table))
+			    				{
+				    				if ((mxUtils.intersects(box, new mxRectangle(state.x, state.y - 2, state.width, 3)) &&
+				    					this.model.getChildAt(table, 0) != row) || mxUtils.intersects(box, new mxRectangle(
+				    					state.x, state.y + state.height - 2, state.width, 3)) ||
+					    				(mxUtils.intersects(box, new mxRectangle(state.x - 2, state.y, 2, state.height)) &&
+					    				this.model.getChildAt(row, 0) != state.cell) || mxUtils.intersects(box, new mxRectangle(
+				    					state.x + state.width - 2, state.y, 2, state.height)))
+			    					{
+				    					var wasSelected = this.selectionCellsHandler.isHandled(table);
+				    					this.selectCellForEvent(table, me.getEvent());
+						    			handler = this.selectionCellsHandler.getHandler(table);
+			
+						    			if (handler != null)
+						    			{
+						    				var handle = handler.getHandleForEvent(me);
+				    				
+						    				if (handle != null)
+						    				{
+						    					handler.start(me.getGraphX(), me.getGraphY(), handle);
+						    					handler.blockDelayedSelection = !wasSelected;
+						    					me.consume();
+						    				}
+						    			}
+			    					}
+			    				}
 		    				}
 
 			    			// Hover for swimlane start sizes inside tables
@@ -521,27 +524,30 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			    					}
 			    				}
 				    		}
-				    		else
+				    		else if (!mxEvent.isControlDown(me.getEvent()))
 				    		{
-				    			var box = new mxRectangle(me.getGraphX(), me.getGraphY());
+				    			var box = new mxRectangle(me.getGraphX() - 1, me.getGraphY() - 1);
 			    				box.grow(mxShape.prototype.svgStrokeTolerance / 2);
 	
 					    		if (this.isTableCell(state.cell))
 					    		{
 				    				var row = this.model.getParent(state.cell);
 			    					var table = this.model.getParent(row);
-	
-			    					if ((mxUtils.intersects(box, new mxRectangle(state.x - 1, state.y, 1, state.height)) &&
-					    				this.model.getChildAt(row, 0) != state.cell) || mxUtils.intersects(box,
-					    				new mxRectangle(state.x + state.width - 1, state.y, 1, state.height)))
+			    					
+			    					if (!this.isCellSelected(table))
 			    					{
-					    				cursor ='col-resize';
-			    					}
-			    					else if ((mxUtils.intersects(box, new mxRectangle(state.x, state.y - 1, state.width, 1)) &&
-				    					this.model.getChildAt(table, 0) != row) || mxUtils.intersects(box,
-				    					new mxRectangle(state.x, state.y + state.height - 1, state.width, 1)))
-			    					{
-					    				cursor ='row-resize';
+				    					if ((mxUtils.intersects(box, new mxRectangle(state.x - 2, state.y, 2, state.height)) &&
+						    				this.model.getChildAt(row, 0) != state.cell) || mxUtils.intersects(box,
+						    				new mxRectangle(state.x + state.width - 2, state.y, 2, state.height)))
+				    					{
+						    				cursor ='col-resize';
+				    					}
+				    					else if ((mxUtils.intersects(box, new mxRectangle(state.x, state.y - 2, state.width, 3)) &&
+					    					this.model.getChildAt(table, 0) != row) || mxUtils.intersects(box,
+					    					new mxRectangle(state.x, state.y + state.height - 2, state.width, 3)))
+				    					{
+						    				cursor ='row-resize';
+				    					}
 			    					}
 					    		}
 					    		
@@ -718,18 +724,22 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 		    for (var i = 0; i < cells.length; i++)
 		    {
 		    	// Propagates to composite parents or moves selected table rows
-		    	var cell = (this.graph.isTableRow(initialCell) &&
+		    	var cell = (this.graph.isTableCell(initialCell) &&
+		    		this.graph.isTableCell(cells[i]) &&
+		    		this.graph.isCellSelected(cells[i])) ?
+		    		this.graph.model.getParent(cells[i]) :
+		    		((this.graph.isTableRow(initialCell) &&
 		    		this.graph.isTableRow(cells[i]) &&
 		    		this.graph.isCellSelected(cells[i])) ?
-		    		cells[i] : this.graph.getCompositeParent(cells[i]);
-		    	
+		    		cells[i] : this.graph.getCompositeParent(cells[i]));
+
 		    	if (cell != null && !lookup.get(cell))
 		    	{
 		    		lookup.put(cell, true);
 		            newCells.push(cell);
 		        }
 		    }
-		
+
 		    return newCells;
 		};
 
@@ -739,16 +749,25 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 		this.graphHandler.start = function(cell, x, y, cells)
 		{
 			// Propagates to selected table row to start move
+			var ignoreParent = false;
+			
 		    if (this.graph.isTableCell(cell))
 		    {
-		    	cell = this.graph.model.getParent(cell);
+		    	if (!this.graph.isCellSelected(cell))
+		    	{
+		    		cell = this.graph.model.getParent(cell);
+		    	}
+		    	else
+		    	{
+		    		ignoreParent = true;
+		    	}
 		    }
 		    
-		    if (!this.graph.isTableRow(cell) || !this.graph.isCellSelected(cell))
+		    if (!ignoreParent && (!this.graph.isTableRow(cell) || !this.graph.isCellSelected(cell)))
 		    {
 		    	cell = this.graph.getCompositeParent(cell);
 		    }
-
+		    
 			graphHandlerStart.apply(this, arguments);
 		};
 		
@@ -10051,7 +10070,7 @@ if (typeof mxVertexHandler != 'undefined')
 							
 							handle.shape.node.parentNode.insertBefore(handle.shape.node,
 								handle.shape.node.parentNode.firstChild);
-	
+							
 							handle.redraw = function()
 							{
 								if (this.shape != null && this.state.shape != null)
@@ -10095,8 +10114,8 @@ if (typeof mxVertexHandler != 'undefined')
 								}
 								else if (!self.blockDelayedSelection)
 								{
-									var temp = graph.getCellAt(me.getGraphX(), me.getGraphY()) || tableState.cell; 
-									graph.selectCellForEvent(temp, me.getEvent());
+									var temp = graph.getCellAt(me.getGraphX(), me.getGraphY()) || tableState.cell;
+									graph.graphHandler.selectCellForEvent(temp, me);
 								}
 								
 								dx = 0;
@@ -10158,7 +10177,7 @@ if (typeof mxVertexHandler != 'undefined')
 								else if (!self.blockDelayedSelection)
 								{
 									var temp = graph.getCellAt(me.getGraphX(), me.getGraphY()) || tableState.cell; 
-									graph.selectCellForEvent(temp, me.getEvent());
+									graph.graphHandler.selectCellForEvent(temp, me);
 								}
 								
 								dy = 0;
