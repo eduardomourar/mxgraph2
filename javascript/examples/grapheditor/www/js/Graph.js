@@ -262,7 +262,7 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			    				mxShape.prototype.svgStrokeTolerance - 1 :
 			    				(mxShape.prototype.svgStrokeTolerance + 1) / 2);
 			    			
-			    			if (this.isTableCell(state.cell))
+			    			if (this.isTableCell(state.cell) && !this.isCellSelected(state.cell))
 			    			{
 			    				var row = this.model.getParent(state.cell);
 			    				var table = this.model.getParent(row);
@@ -10081,6 +10081,9 @@ if (typeof mxVertexHandler != 'undefined')
 							var shape = new mxLine(new mxRectangle(), mxConstants.NONE, 1, true);
 							shape.isDashed = sel.isDashed;
 							
+							// Workaround for event handling on overlapping cells with tolerance
+							shape.svgStrokeTolerance++;
+							
 							var handle = new mxHandle(colState, 'col-resize', null, shape);
 							handle.tableHandle = true;
 							var dx = 0;
@@ -10156,6 +10159,7 @@ if (typeof mxVertexHandler != 'undefined')
 	
 							var shape = new mxLine(new mxRectangle(), mxConstants.NONE, 1);
 							shape.isDashed = sel.isDashed;
+							shape.svgStrokeTolerance++;
 							
 							var handle = new mxHandle(rowState, 'row-resize', null, shape);
 							handle.tableHandle = true;
