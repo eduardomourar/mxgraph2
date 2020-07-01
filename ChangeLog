@@ -1,3 +1,4 @@
+- Fixes ignored pointerEvents flag for text in SVG
 - Adds mxShape.beforePaint and afterPaint hooks
 
 19-JUN-2020: 4.2.0

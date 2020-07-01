@@ -1594,7 +1594,13 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 	var node = this.createElement('g');
 	var tr = s.transform || '';
 	this.updateFont(node);
-	
+				
+	// Ignores pointer events
+	if (!this.pointerEvents && this.originalRoot == null)
+	{
+		node.setAttribute('pointer-events', 'none');
+	}
+		
 	// Non-rotated text
 	if (rotation != 0)
 	{
@@ -1724,7 +1730,7 @@ mxSvgCanvas2D.prototype.plainText = function(x, y, w, h, str, align, valign, wra
 			// LATER: Match horizontal HTML alignment
 			text.setAttribute('x', this.format(x * s.scale) + this.textOffset);
 			text.setAttribute('y', this.format(cy * s.scale) + this.textOffset);
-			
+	
 			mxUtils.write(text, lines[i]);
 			node.appendChild(text);
 		}
