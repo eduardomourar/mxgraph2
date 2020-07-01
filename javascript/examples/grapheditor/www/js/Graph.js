@@ -6451,13 +6451,13 @@ if (typeof mxVertexHandler != 'undefined')
 								{
 									for (var j = 0; j < count; j++)
 									{
-										var cell = this.cloneCell(sourceCols[sourceCols.length - 1]);
+										var col = this.cloneCell(sourceCols[sourceCols.length - 1]);
 										
-										if (cell != null)
+										if (col != null)
 										{
-											cell.value = '';
+											col.value = '';
 											
-											this.model.add(cell, cell);
+											this.model.add(cell, col);
 										}
 									}
 								}
@@ -6467,7 +6467,24 @@ if (typeof mxVertexHandler != 'undefined')
 									{
 										this.model.remove(sourceCols[sourceCols.length - count - 1]);
 									}
-								}	 
+								}
+								
+								// Updates column widths
+								sourceCols = this.model.getChildCells(cell, true);
+								
+								for (var j = 0; j < cols.length; j++)
+								{
+									var geo = this.getCellGeometry(cols[j]);
+									var geo2 = this.getCellGeometry(sourceCols[j]);
+									
+									if (geo != null && geo2 != null)
+									{
+										geo2 = geo2.clone();
+										geo2.width = geo.width;
+										
+										this.model.setGeometry(sourceCols[j], geo2);
+									}
+								}
 							}
 						}
 					}
