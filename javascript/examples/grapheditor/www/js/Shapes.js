@@ -2820,14 +2820,21 @@
 			c.setStrokeColor(null);
 		}
 
-		mxRectangleShape.prototype.paintBackground.apply(this, arguments);
-		
 		if (this.style != null)
 		{
-			c.setStrokeColor(this.stroke);
+			
+			var events = mxUtils.getValue(this.style, mxConstants.STYLE_POINTER_EVENTS, '1') == '1';
+			
+			if (!events && (this.fill == null || this.fill == mxConstants.NONE))
+			{
+				c.pointerEvents = false;
+			}
+
 			c.rect(x, y, w, h);
 			c.fill();
 
+			c.setStrokeColor(this.stroke);
+			c.pointerEvents = true;
 			c.begin();
 			c.moveTo(x, y);
 			
