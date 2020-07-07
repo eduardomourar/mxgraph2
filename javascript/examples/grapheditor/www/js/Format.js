@@ -876,7 +876,7 @@ BaseFormatPanel.prototype.createStepper = function(input, update, step, height, 
 /**
  * Adds the given option.
  */
-BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setCheckedFn, listener)
+BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setCheckedFn, listener, fn)
 {
 	var div = document.createElement('div');
 	div.style.padding = '6px 0px 1px 0px';
@@ -953,6 +953,11 @@ BaseFormatPanel.prototype.createOption = function(label, isCheckedFn, setChecked
 	{
 		listener.install(apply);
 		this.listeners.push(listener);
+	}
+	
+	if (fn != null)
+	{
+		fn(div);
 	}
 
 	return div;
@@ -5564,7 +5569,68 @@ DiagramThemePanel.prototype.addView = function(div)
 	var editor = ui.editor;
 	var graph = editor.graph;
 	var model = graph.getModel();
+
 	div.style.whiteSpace = 'normal';
+
+	var cells = graph.getCells();
+	var rounded = true;
+	var sketch = true;
+	var curved = true;
+	
+	for (var i = 0; i < cells.length; i++)
+	{
+		var style = graph.getCurrentCellStyle(cells[i]);
+		
+		sketch = sketch && mxUtils.getValue(style, 'sketch', '0') == '1';
+		rounded = rounded && (!model.isVertex(cells[i]) || mxUtils.getValue(style, 'rounded', '0') == '1');
+		curved = curved && (!model.isEdge(cells[i]) || mxUtils.getValue(style, 'curved', '0') == '1');
+	}
+	
+	var opts = document.createElement('div');
+	opts.style.paddingBottom = '12px';
+	opts.style.marginRight = '12px';
+	opts.style.textAlign = 'center';
+	
+	// Sketch
+	opts.appendChild(this.createOption(mxResources.get('sketch'), function()
+	{
+		return sketch;
+	}, function(checked)
+	{
+		graph.updateCellStyles('sketch', (checked) ? '1' : null, graph.getCells());
+	}, null, function(div)
+	{
+		div.style.display = 'inline';
+		div.getElementsByTagName('input')[0].style.margin = '0 2px 0px 0';
+	}));
+	
+	// Rounded
+	opts.appendChild(this.createOption(mxResources.get('rounded'), function()
+	{
+		return rounded;
+	}, function(checked)
+	{
+		graph.updateCellStyles('rounded', (checked) ? '1' : null, graph.getCells(true, false));
+	}, null, function(div)
+	{
+		div.style.display = 'inline';
+		div.getElementsByTagName('input')[0].style.margin = '0 2px 0px 6px';
+	}));
+		
+	// Curved
+	opts.appendChild(this.createOption(mxResources.get('curved'), function()
+	{
+		return curved;
+	}, function(checked)
+	{
+		graph.updateCellStyles('curved', (checked) ? '1' : null, graph.getCells(false, true));
+	}, null, function(div)
+	{
+		div.style.display = 'inline';
+		div.getElementsByTagName('input')[0].style.margin = '0 2px 0px 6px';
+	}));
+	
+	div.appendChild(opts);
 
 	// Stores initial empty styles
 	if (ui.initialDefaultEdgeStyle == null)
@@ -5573,14 +5639,11 @@ DiagramThemePanel.prototype.addView = function(div)
 		ui.initialDefaultEdgeStyle = mxUtils.clone(graph.defaultEdgeStyle);
 	}
 	
-	var defaultStyles = ['fillColor', 'strokeColor', 'fontColor', 'rounded', 'curved', 'sketch'];
+	var defaultStyles = ['fillColor', 'strokeColor', 'fontColor', 'gradientColor'];
 	
 	var updateCells = mxUtils.bind(this, function(styles, graphStyle)
 	{
-		var cells = model.filterDescendants(function(cell)
-		{
-			return model.isVertex(cell) || model.isEdge(cell);
-		}, model.getRoot());
+		var cells = graph.getCells();
 		
 		model.beginUpdate();
 		try
@@ -5643,10 +5706,21 @@ DiagramThemePanel.prototype.addView = function(div)
 			if (cell != null)
 			{
 				// Handles special label background color
-				if (result['labelBackgroundColor'] != null && graphStyle != null &&
-					graphStyle.background != null)
+				if (result['labelBackgroundColor'] != null)
 				{
-					result['labelBackgroundColor'] = graphStyle.background;
+					var bg = (graphStyle != null) ? graphStyle.background : null;
+					
+					if (bg == null)
+					{
+						bg = graph.background;
+					}
+					
+					if (bg == null)
+					{
+						bg = graph.defaultPageBackgroundColor;
+					}
+					
+					result['labelBackgroundColor'] = bg;
 				}
 			}
 			
@@ -5665,7 +5739,12 @@ DiagramThemePanel.prototype.addView = function(div)
 	
 	var renderTheme = mxUtils.bind(this, function(commonStyle, vertexStyle, edgeStyle, graphStyle, container)
 	{
-		var graph2 = new Graph(container, null, null, graph.getStylesheet());
+		// Wrapper needed to catch events
+		var div = document.createElement('div');
+		div.style.cssText = 'position:absolute;display:inline-block;position:relative;width:100%;height:100%;overflow:hidden;pointer-events:none;';
+		container.appendChild(div);
+		
+		var graph2 = new Graph(div, null, null, graph.getStylesheet());
 		graph2.view.translate = new mxPoint(-10, -15);
 		graph2.resetViewOnRootChange = false;
 		graph2.foldingEnabled = false;
@@ -5698,10 +5777,10 @@ DiagramThemePanel.prototype.addView = function(div)
 		graph2.model.beginUpdate();
 		try
 		{
-			var v1 = graph2.insertVertex(graph2.getDefaultParent(), null, 'Process', 0, 0, 70, 50, 'shape=process;whiteSpace=wrap;html=1;strokeWidth=2;');
-			var v2 = graph2.insertVertex(graph2.getDefaultParent(), null, '', 65, 60, 70, 40, 'rhombus;whiteSpace=wrap;html=1;strokeWidth=2;');
+			var v1 = graph2.insertVertex(graph2.getDefaultParent(), null, 'Process', 0, 0, 70, 50, 'shape=process;strokeWidth=2;');
+			var v2 = graph2.insertVertex(graph2.getDefaultParent(), null, '', 65, 60, 70, 40, 'rhombus;strokeWidth=2;');
 			var e1 = graph2.insertEdge(graph2.getDefaultParent(), null, 'yes', v1, v2,
-				'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;')
+				'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;strokeWidth=2;')
 			e1.geometry.x = -0.5;
 			e1.geometry.points = [new mxPoint(35, 80)];
 		}
