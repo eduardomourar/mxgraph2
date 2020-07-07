@@ -1836,7 +1836,8 @@ mxSvgCanvas2D.prototype.addTextBackground = function(node, str, x, y, w, h, alig
 				// Ignores NS_ERROR_FAILURE in FF if container display is none.
 			}
 		}
-		else
+		
+		if (bbox == null || bbox.width == 0 || bbox.height == 0)
 		{
 			// Computes size if not in document or no getBBox available
 			var div = document.createElement('div');

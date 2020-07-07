@@ -5598,6 +5598,18 @@ DiagramThemePanel.prototype.addView = function(div)
 	}, function(checked)
 	{
 		graph.updateCellStyles('sketch', (checked) ? '1' : null, graph.getCells());
+		sketch = checked;
+		
+		if (checked)
+		{
+			graph.currentEdgeStyle['sketch'] = '1';
+			graph.currentVertexStyle['sketch'] = '1';
+		}
+		else
+		{
+			delete graph.currentEdgeStyle['sketch'];
+			delete graph.currentVertexStyle['sketch'];
+		}
 	}, null, function(div)
 	{
 		div.style.display = 'inline';
@@ -5611,6 +5623,16 @@ DiagramThemePanel.prototype.addView = function(div)
 	}, function(checked)
 	{
 		graph.updateCellStyles('rounded', (checked) ? '1' : null, graph.getCells(true, false));
+		rounded = checked;
+		
+		if (checked)
+		{
+			graph.currentVertexStyle['rounded'] = '1';
+		}
+		else
+		{
+			delete graph.currentVertexStyle['rounded'];
+		}
 	}, null, function(div)
 	{
 		div.style.display = 'inline';
@@ -5624,6 +5646,16 @@ DiagramThemePanel.prototype.addView = function(div)
 	}, function(checked)
 	{
 		graph.updateCellStyles('curved', (checked) ? '1' : null, graph.getCells(false, true));
+		curved = checked;
+		
+		if (checked)
+		{
+			graph.currentEdgeStyle['curved'] = '1';
+		}
+		else
+		{
+			delete graph.currentEdgeStyle['curved'];
+		}
 	}, null, function(div)
 	{
 		div.style.display = 'inline';
@@ -5699,7 +5731,7 @@ DiagramThemePanel.prototype.addView = function(div)
 		}
 	});
 
-	var applyStyle = mxUtils.bind(this, function(style, result, cell, graphStyle)
+	var applyStyle = mxUtils.bind(this, function(style, result, cell, graphStyle, theGraph)
 	{
 		if (style != null)
 		{
@@ -5709,15 +5741,16 @@ DiagramThemePanel.prototype.addView = function(div)
 				if (result['labelBackgroundColor'] != null)
 				{
 					var bg = (graphStyle != null) ? graphStyle.background : null;
+					theGraph = (theGraph != null) ? theGraph : graph;
 					
 					if (bg == null)
 					{
-						bg = graph.background;
+						bg = theGraph.background;
 					}
 					
 					if (bg == null)
 					{
-						bg = graph.defaultPageBackgroundColor;
+						bg = theGraph.defaultPageBackgroundColor;
 					}
 					
 					result['labelBackgroundColor'] = bg;
@@ -5768,12 +5801,13 @@ DiagramThemePanel.prototype.addView = function(div)
 			}
 			
 			removeStyles(result, defaultStyles, defaultStyle);
-			applyStyle(commonStyle, result, cell, graphStyle);
-			applyStyle(appliedStyle, result, cell, graphStyle);
+			applyStyle(commonStyle, result, cell, graphStyle, graph2);
+			applyStyle(appliedStyle, result, cell, graphStyle, graph2);
 			
 			return result;
 		}
 		
+		// Avoid HTML labels to capture events in bubble phase
 		graph2.model.beginUpdate();
 		try
 		{
@@ -5818,6 +5852,35 @@ DiagramThemePanel.prototype.addView = function(div)
 				applyStyle(commonStyle, graph.defaultVertexStyle);
 				applyStyle(commonStyle, graph.defaultEdgeStyle);
 				
+				if (sketch)
+				{
+					graph.currentEdgeStyle['sketch'] = '1';
+					graph.currentVertexStyle['sketch'] = '1';
+				}
+				else
+				{
+					graph.currentEdgeStyle['sketch'] = '0';
+					graph.currentVertexStyle['sketch'] = '0';
+				}
+					
+				if (rounded)
+				{
+					graph.currentVertexStyle['rounded'] = '1';
+				}
+				else
+				{
+					graph.currentVertexStyle['rounded'] = '0';
+				}
+				
+				if (curved)
+				{
+					graph.currentEdgeStyle['curved'] = '1';
+				}
+				else
+				{
+					graph.currentEdgeStyle['curved'] = '0';
+				}
+
 				model.beginUpdate();
 				try
 				{
