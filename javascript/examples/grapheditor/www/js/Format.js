@@ -5588,7 +5588,7 @@ DiagramThemePanel.prototype.addView = function(div)
 	
 	var opts = document.createElement('div');
 	opts.style.paddingBottom = '12px';
-	opts.style.marginRight = '12px';
+	opts.style.marginRight = '16px';
 	opts.style.textAlign = 'center';
 	
 	// Sketch
@@ -5778,7 +5778,6 @@ DiagramThemePanel.prototype.addView = function(div)
 		container.appendChild(div);
 		
 		var graph2 = new Graph(div, null, null, graph.getStylesheet());
-		graph2.view.translate = new mxPoint(-10, -15);
 		graph2.resetViewOnRootChange = false;
 		graph2.foldingEnabled = false;
 		graph2.gridEnabled = false;
@@ -5811,12 +5810,11 @@ DiagramThemePanel.prototype.addView = function(div)
 		graph2.model.beginUpdate();
 		try
 		{
-			var v1 = graph2.insertVertex(graph2.getDefaultParent(), null, 'Process', 0, 0, 70, 50, 'shape=process;strokeWidth=2;');
-			var v2 = graph2.insertVertex(graph2.getDefaultParent(), null, '', 65, 60, 70, 40, 'rhombus;strokeWidth=2;');
-			var e1 = graph2.insertEdge(graph2.getDefaultParent(), null, 'yes', v1, v2,
-				'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;strokeWidth=2;')
-			e1.geometry.x = -0.5;
-			e1.geometry.points = [new mxPoint(35, 80)];
+			var v1 = graph2.insertVertex(graph2.getDefaultParent(), null, 'Shape', 14, 8, 70, 40, 'strokeWidth=2;');
+			var e1 = graph2.insertEdge(graph2.getDefaultParent(), null, 'Connector', v1, v1,
+				'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;strokeWidth=2;endSize=5;')
+			e1.geometry.points = [new mxPoint(32, 70)];
+			e1.geometry.offset = new mxPoint(0, 8);
 		}
 		finally
 		{
@@ -5827,8 +5825,8 @@ DiagramThemePanel.prototype.addView = function(div)
 	var addTheme = mxUtils.bind(this, function(commonStyle, vertexStyle, edgeStyle, graphStyle)
 	{
 		var theme = document.createElement('div');
-		theme.style.cssText = 'display:inline-block;position:relative;width:100px;height:90px;' +
-			'cursor:pointer;border:1px solid gray;margin:2px;overflow:hidden;transition:all 300ms ease-in;';
+		theme.style.cssText = 'display:inline-block;position:relative;width:96px;height:90px;' +
+			'cursor:pointer;border:1px solid gray;margin:2px;overflow:hidden;transition:all 50ms ease;';
 
 		if (graphStyle != null && graphStyle.background != null)
 		{
@@ -5839,66 +5837,70 @@ DiagramThemePanel.prototype.addView = function(div)
 
 		mxEvent.addListener(theme, 'click', mxUtils.bind(this, function(evt)
 		{
-			theme.style.transform = 'scale(3)';
-			theme.style.opacity = 0;
+			theme.style.transform = 'scale(0.9)';
 
 			window.setTimeout(function()
 			{
-				graph.defaultVertexStyle = mxUtils.clone(ui.initialDefaultVertexStyle);
-				graph.defaultEdgeStyle = mxUtils.clone(ui.initialDefaultEdgeStyle);
-				
-				applyStyle(vertexStyle, graph.defaultVertexStyle);
-				applyStyle(edgeStyle, graph.defaultEdgeStyle);
-				applyStyle(commonStyle, graph.defaultVertexStyle);
-				applyStyle(commonStyle, graph.defaultEdgeStyle);
-				
-				if (sketch)
-				{
-					graph.currentEdgeStyle['sketch'] = '1';
-					graph.currentVertexStyle['sketch'] = '1';
-				}
-				else
-				{
-					graph.currentEdgeStyle['sketch'] = '0';
-					graph.currentVertexStyle['sketch'] = '0';
-				}
+				theme.style.transform = 'scale(1)';
 					
-				if (rounded)
+				window.setTimeout(function()
 				{
-					graph.currentVertexStyle['rounded'] = '1';
-				}
-				else
-				{
-					graph.currentVertexStyle['rounded'] = '0';
-				}
-				
-				if (curved)
-				{
-					graph.currentEdgeStyle['curved'] = '1';
-				}
-				else
-				{
-					graph.currentEdgeStyle['curved'] = '0';
-				}
-
-				model.beginUpdate();
-				try
-				{
-					ui.clearDefaultStyle();
-					updateCells(defaultStyles, graphStyle);
+					graph.defaultVertexStyle = mxUtils.clone(ui.initialDefaultVertexStyle);
+					graph.defaultEdgeStyle = mxUtils.clone(ui.initialDefaultEdgeStyle);
 					
-					var change = new ChangePageSetup(ui, (graphStyle != null) ? graphStyle.background : null);
-					change.ignoreImage = true;
-					model.execute(change);
+					applyStyle(vertexStyle, graph.defaultVertexStyle);
+					applyStyle(edgeStyle, graph.defaultEdgeStyle);
+					applyStyle(commonStyle, graph.defaultVertexStyle);
+					applyStyle(commonStyle, graph.defaultEdgeStyle);
 					
-					model.execute(new ChangeGridColor(ui, (graphStyle != null) ? graphStyle.gridColor ||
-						graph.view.defaultGridColor : graph.view.defaultGridColor));
-				}
-				finally
-				{
-					model.endUpdate();
-				}
-			}, 300);
+					if (sketch)
+					{
+						graph.currentEdgeStyle['sketch'] = '1';
+						graph.currentVertexStyle['sketch'] = '1';
+					}
+					else
+					{
+						graph.currentEdgeStyle['sketch'] = '0';
+						graph.currentVertexStyle['sketch'] = '0';
+					}
+						
+					if (rounded)
+					{
+						graph.currentVertexStyle['rounded'] = '1';
+					}
+					else
+					{
+						graph.currentVertexStyle['rounded'] = '0';
+					}
+					
+					if (curved)
+					{
+						graph.currentEdgeStyle['curved'] = '1';
+					}
+					else
+					{
+						graph.currentEdgeStyle['curved'] = '0';
+					}
+	
+					model.beginUpdate();
+					try
+					{
+						ui.clearDefaultStyle();
+						updateCells(defaultStyles, graphStyle);
+						
+						var change = new ChangePageSetup(ui, (graphStyle != null) ? graphStyle.background : null);
+						change.ignoreImage = true;
+						model.execute(change);
+						
+						model.execute(new ChangeGridColor(ui, (graphStyle != null) ? graphStyle.gridColor ||
+							graph.view.defaultGridColor : graph.view.defaultGridColor));
+					}
+					finally
+					{
+						model.endUpdate();
+					}
+				}, 50);
+			}, 50);
 		}));
 		
 		mxEvent.addListener(theme, 'mouseenter', mxUtils.bind(this, function(evt)
