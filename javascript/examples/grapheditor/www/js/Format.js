@@ -369,7 +369,67 @@ Format.prototype.refresh = function()
 	{
 		evt.preventDefault();
 	}));
+
+	var containsLabel = this.getSelectionState().containsLabel;
+	var currentLabel = null;
+	var currentPanel = null;
 	
+	var addClickHandler = mxUtils.bind(this, function(elt, panel, index)
+	{
+		var clickHandler = mxUtils.bind(this, function(evt)
+		{
+			if (currentLabel != elt)
+			{
+				if (containsLabel)
+				{
+					this.labelIndex = index;
+				}
+				else
+				{
+					this.currentIndex = index;
+				}
+				
+				if (currentLabel != null)
+				{
+					currentLabel.style.backgroundColor = this.inactiveTabBackgroundColor;
+					currentLabel.style.borderBottomWidth = '1px';
+				}
+
+				currentLabel = elt;
+				currentLabel.style.backgroundColor = '';
+				currentLabel.style.borderBottomWidth = '0px';
+				
+				if (currentPanel != panel)
+				{
+					if (currentPanel != null)
+					{
+						currentPanel.style.display = 'none';
+					}
+					
+					currentPanel = panel;
+					currentPanel.style.display = '';
+				}
+			}
+		});
+		
+		mxEvent.addListener(elt, 'click', clickHandler);
+		
+		// Prevents text selection
+	    mxEvent.addListener(elt, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
+        	mxUtils.bind(this, function(evt)
+    	{
+			evt.preventDefault();
+		}));
+		
+		if (index == ((containsLabel) ? this.labelIndex : this.currentIndex))
+		{
+			// Invokes handler directly as a workaround for no click on DIV in KHTML.
+			clickHandler();
+		}
+	});
+	
+	var idx = 0;
+
 	if (graph.isSelectionEmpty())
 	{
 		mxUtils.write(label, mxResources.get('diagram'));
@@ -390,7 +450,7 @@ Format.prototype.refresh = function()
 			img.style.top = '8px';
 			img.style.cursor = 'pointer';
 			img.style.marginTop = '1px';
-			img.style.marginRight = '17px';
+			img.style.marginRight = '10px';
 			img.style.border = '1px solid transparent';
 			img.style.padding = '1px';
 			img.style.opacity = 0.5;
@@ -403,7 +463,31 @@ Format.prototype.refresh = function()
 		}
 		
 		div.appendChild(label);
-		this.panels.push(new DiagramFormatPanel(this, ui, div));
+		var diagramPanel = div.cloneNode(false);
+		this.panels.push(new DiagramFormatPanel(this, ui, diagramPanel));
+		this.container.appendChild(diagramPanel);
+		
+		if (Editor.themes != null)
+		{
+			diagramPanel.style.display = 'none';
+			label.style.width = '50%';
+			label.style.cursor = 'pointer';
+			label.style.backgroundColor = this.inactiveTabBackgroundColor;
+			var label2 = label.cloneNode(false);
+			label2.style.borderLeftWidth = '1px';
+			label2.style.backgroundColor = this.inactiveTabBackgroundColor;
+			
+			addClickHandler(label, diagramPanel, idx++);
+			
+			var themePanel = div.cloneNode(false);
+			themePanel.style.display = 'none';
+			mxUtils.write(label2, mxResources.get('theme'));
+			div.appendChild(label2);
+			this.panels.push(new DiagramThemePanel(this, ui, themePanel));
+			this.container.appendChild(themePanel);
+			
+			addClickHandler(label2, themePanel, idx++);
+		}
 	}
 	else if (graph.isEditing())
 	{
@@ -413,70 +497,9 @@ Format.prototype.refresh = function()
 	}
 	else
 	{
-		var containsLabel = this.getSelectionState().containsLabel;
-		var currentLabel = null;
-		var currentPanel = null;
-		
-		var addClickHandler = mxUtils.bind(this, function(elt, panel, index)
-		{
-			var clickHandler = mxUtils.bind(this, function(evt)
-			{
-				if (currentLabel != elt)
-				{
-					if (containsLabel)
-					{
-						this.labelIndex = index;
-					}
-					else
-					{
-						this.currentIndex = index;
-					}
-					
-					if (currentLabel != null)
-					{
-						currentLabel.style.backgroundColor = this.inactiveTabBackgroundColor;
-						currentLabel.style.borderBottomWidth = '1px';
-					}
-	
-					currentLabel = elt;
-					currentLabel.style.backgroundColor = '';
-					currentLabel.style.borderBottomWidth = '0px';
-					
-					if (currentPanel != panel)
-					{
-						if (currentPanel != null)
-						{
-							currentPanel.style.display = 'none';
-						}
-						
-						currentPanel = panel;
-						currentPanel.style.display = '';
-					}
-				}
-			});
-			
-			mxEvent.addListener(elt, 'click', clickHandler);
-			
-			// Prevents text selection
-		    mxEvent.addListener(elt, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
-	        	mxUtils.bind(this, function(evt)
-	    	{
-				evt.preventDefault();
-			}));
-			
-			if (index == ((containsLabel) ? this.labelIndex : this.currentIndex))
-			{
-				// Invokes handler directly as a workaround for no click on DIV in KHTML.
-				clickHandler();
-			}
-		});
-		
-		var idx = 0;
-
 		label.style.backgroundColor = this.inactiveTabBackgroundColor;
 		label.style.borderLeftWidth = '1px';
 		label.style.cursor = 'pointer';
-		label.style.width = (containsLabel) ? '50%' : '33.3%';
 		label.style.width = (containsLabel) ? '50%' : '33.3%';
 		var label2 = label.cloneNode(false);
 		var label3 = label2.cloneNode(false);
@@ -5506,6 +5529,286 @@ StyleFormatPanel.prototype.addStyleOps = function(div)
 	btn.style.width = '202px';
 	div.appendChild(btn);
 
+	return div;
+};
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+DiagramThemePanel = function(format, editorUi, container)
+{
+	BaseFormatPanel.call(this, format, editorUi, container);
+	this.init();
+};
+
+mxUtils.extend(DiagramThemePanel, BaseFormatPanel);
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+DiagramThemePanel.prototype.init = function()
+{
+	var ui = this.editorUi;
+	var editor = ui.editor;
+	var graph = editor.graph;
+
+	this.container.appendChild(this.addView(this.createPanel()));
+};
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+DiagramThemePanel.prototype.addView = function(div)
+{
+	var ui = this.editorUi;
+	var editor = ui.editor;
+	var graph = editor.graph;
+	var model = graph.getModel();
+	div.style.whiteSpace = 'normal';
+
+	// Stores initial empty styles
+	if (ui.initialDefaultEdgeStyle == null)
+	{
+		ui.initialDefaultVertexStyle = mxUtils.clone(graph.defaultVertexStyle);
+		ui.initialDefaultEdgeStyle = mxUtils.clone(graph.defaultEdgeStyle);
+	}
+	
+	var defaultStyles = ['fillColor', 'strokeColor', 'fontColor', 'rounded', 'curved', 'sketch'];
+	
+	var updateCells = mxUtils.bind(this, function(styles, graphStyle)
+	{
+		var cells = model.filterDescendants(function(cell)
+		{
+			return model.isVertex(cell) || model.isEdge(cell);
+		}, model.getRoot());
+		
+		model.beginUpdate();
+		try
+		{
+			for (var i = 0; i < cells.length; i++)
+			{
+				var style = graph.getCellStyle(cells[i]);
+				
+				// Handles special label background color
+				if (style['labelBackgroundColor'] != null)
+				{
+					graph.updateCellStyles('labelBackgroundColor', (graphStyle != null) ?
+						graphStyle.background : null, [cells[i]]);
+				}
+				
+				var edge = model.isEdge(cells[i]);
+				var newStyle = model.getStyle(cells[i]);
+				var current = (edge) ? graph.currentEdgeStyle : graph.currentVertexStyle;
+
+				for (var j = 0; j < styles.length; j++)
+				{
+					if ((style[styles[j]] != null && style[styles[j]] != mxConstants.NONE) ||
+						(styles[j] != mxConstants.STYLE_FILLCOLOR &&
+						styles[j] != mxConstants.STYLE_STROKECOLOR))
+					{
+						newStyle = mxUtils.setStyle(newStyle, styles[j], current[styles[j]]);
+					}
+				}
+				
+				model.setStyle(cells[i], newStyle);
+			}
+		}
+		finally
+		{
+			model.endUpdate();
+		}
+	});
+			
+	var removeStyles = mxUtils.bind(this, function(style, styles, defaultStyle)
+	{
+		if (style != null)
+		{
+			for (var j = 0; j < styles.length; j++)
+			{
+				if (((style[styles[j]] != null &&
+					style[styles[j]] != mxConstants.NONE) ||
+					(styles[j] != mxConstants.STYLE_FILLCOLOR &&
+					styles[j] != mxConstants.STYLE_STROKECOLOR)))
+				{
+					style[styles[j]] = defaultStyle[styles[j]];
+				}
+			}
+		}
+	});
+
+	var applyStyle = mxUtils.bind(this, function(style, result, cell, graphStyle)
+	{
+		if (style != null)
+		{
+			if (cell != null)
+			{
+				// Handles special label background color
+				if (result['labelBackgroundColor'] != null && graphStyle != null &&
+					graphStyle.background != null)
+				{
+					result['labelBackgroundColor'] = graphStyle.background;
+				}
+			}
+			
+			for (var key in style)
+			{
+				if (cell == null || ((result[key] != null &&
+					result[key] != mxConstants.NONE) ||
+					(key != mxConstants.STYLE_FILLCOLOR &&
+					key != mxConstants.STYLE_STROKECOLOR)))
+				{
+					result[key] = style[key];
+				}
+			}
+		}
+	});
+	
+	var renderTheme = mxUtils.bind(this, function(commonStyle, vertexStyle, edgeStyle, graphStyle, container)
+	{
+		var graph2 = new Graph(container, null, null, graph.getStylesheet());
+		graph2.view.translate = new mxPoint(-10, -15);
+		graph2.resetViewOnRootChange = false;
+		graph2.foldingEnabled = false;
+		graph2.gridEnabled = false;
+		graph2.autoScroll = false;
+		graph2.setTooltips(false);
+		graph2.setConnectable(false);
+		graph2.setPanning(false);
+		graph2.setEnabled(false);
+		
+		graph2.getCellStyle = function(cell)
+		{
+			var result = mxUtils.clone(Graph.prototype.getCellStyle.apply(this, arguments));
+			var defaultStyle = graph.stylesheet.getDefaultVertexStyle();
+			var appliedStyle = (vertexStyle != null) ? vertexStyle : mxUtils.clone(ui.initialDefaultVertexStyle);
+			
+			if (model.isEdge(cell))
+			{
+				defaultStyle = graph.stylesheet.getDefaultEdgeStyle();
+				appliedStyle = (edgeStyle != null) ? edgeStyle : mxUtils.clone(ui.initialDefaultEdgeStyle);	
+			}
+			
+			removeStyles(result, defaultStyles, defaultStyle);
+			applyStyle(commonStyle, result, cell, graphStyle);
+			applyStyle(appliedStyle, result, cell, graphStyle);
+			
+			return result;
+		}
+		
+		graph2.model.beginUpdate();
+		try
+		{
+			var v1 = graph2.insertVertex(graph2.getDefaultParent(), null, 'Process', 0, 0, 70, 50, 'shape=process;whiteSpace=wrap;html=1;strokeWidth=2;');
+			var v2 = graph2.insertVertex(graph2.getDefaultParent(), null, '', 65, 60, 70, 40, 'rhombus;whiteSpace=wrap;html=1;strokeWidth=2;');
+			var e1 = graph2.insertEdge(graph2.getDefaultParent(), null, 'yes', v1, v2,
+				'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;')
+			e1.geometry.x = -0.5;
+			e1.geometry.points = [new mxPoint(35, 80)];
+		}
+		finally
+		{
+			graph2.model.endUpdate();
+		}
+	});
+
+	var addTheme = mxUtils.bind(this, function(commonStyle, vertexStyle, edgeStyle, graphStyle)
+	{
+		var theme = document.createElement('div');
+		theme.style.cssText = 'display:inline-block;position:relative;width:100px;height:90px;' +
+			'cursor:pointer;border:1px solid gray;margin:2px;overflow:hidden;transition:all 300ms ease-in;';
+
+		if (graphStyle != null && graphStyle.background != null)
+		{
+			theme.style.backgroundColor = graphStyle.background;
+		}
+		
+		renderTheme(commonStyle, vertexStyle, edgeStyle, graphStyle, theme); 
+
+		mxEvent.addListener(theme, 'click', mxUtils.bind(this, function(evt)
+		{
+			theme.style.transform = 'scale(3)';
+			theme.style.opacity = 0;
+
+			window.setTimeout(function()
+			{
+				graph.defaultVertexStyle = mxUtils.clone(ui.initialDefaultVertexStyle);
+				graph.defaultEdgeStyle = mxUtils.clone(ui.initialDefaultEdgeStyle);
+				
+				applyStyle(vertexStyle, graph.defaultVertexStyle);
+				applyStyle(edgeStyle, graph.defaultEdgeStyle);
+				applyStyle(commonStyle, graph.defaultVertexStyle);
+				applyStyle(commonStyle, graph.defaultEdgeStyle);
+				
+				model.beginUpdate();
+				try
+				{
+					ui.clearDefaultStyle();
+					updateCells(defaultStyles, graphStyle);
+					
+					var change = new ChangePageSetup(ui, (graphStyle != null) ? graphStyle.background : null);
+					change.ignoreImage = true;
+					model.execute(change);
+					
+					model.execute(new ChangeGridColor(ui, (graphStyle != null) ? graphStyle.gridColor ||
+						graph.view.defaultGridColor : graph.view.defaultGridColor));
+				}
+				finally
+				{
+					model.endUpdate();
+				}
+			}, 300);
+		}));
+		
+		mxEvent.addListener(theme, 'mouseenter', mxUtils.bind(this, function(evt)
+		{
+			var prev = graph.getCellStyle;
+			var prevBg = graph.background;
+			var prevGrid = graph.view.gridColor;
+
+			graph.background = (graphStyle != null) ? graphStyle.background : null;
+			graph.view.gridColor = (graphStyle != null) ? graphStyle.gridColor ||
+				graph.view.defaultGridColor : graph.view.defaultGridColor;
+			
+			graph.getCellStyle = function(cell)
+			{
+				var result = mxUtils.clone(prev.apply(this, arguments));
+				
+				var defaultStyle = graph.stylesheet.getDefaultVertexStyle();
+				var appliedStyle = (vertexStyle != null) ? vertexStyle : mxUtils.clone(ui.initialDefaultVertexStyle);
+				
+				if (model.isEdge(cell))
+				{
+					defaultStyle = graph.stylesheet.getDefaultEdgeStyle();
+					appliedStyle = (edgeStyle != null) ? edgeStyle : mxUtils.clone(ui.initialDefaultEdgeStyle);	
+				}
+				
+				removeStyles(result, defaultStyles, defaultStyle);
+				applyStyle(commonStyle, result, cell, graphStyle);
+				applyStyle(appliedStyle, result, cell, graphStyle);
+				
+				return result;
+			}
+			
+			graph.refresh();
+			graph.getCellStyle = prev;
+			graph.background = prevBg;
+			graph.view.gridColor = prevGrid;
+		}));
+		
+		mxEvent.addListener(theme, 'mouseleave', mxUtils.bind(this, function(evt)
+		{
+			graph.refresh();
+		}));
+		
+		div.appendChild(theme);
+	});
+	
+	for (var i = 0; i < Editor.themes.length; i++)
+	{
+		var t = Editor.themes[i];
+		addTheme(t.commonStyle, t.vertexStyle, t.edgeStyle, t.graph);
+	}
+	
 	return div;
 };
 

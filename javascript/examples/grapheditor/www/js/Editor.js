@@ -227,7 +227,12 @@ Editor.fullscreenLargeImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACA
 Editor.roughFillStyles = [{val: 'auto', dispName: 'Auto'}, {val: 'hachure', dispName: 'Hachure'}, {val: 'solid', dispName: 'Solid'},
 	{val: 'zigzag', dispName: 'ZigZag'}, {val: 'cross-hatch', dispName: 'Cross Hatch'}, {val: 'dots', dispName: 'Dots'},
 	{val: 'dashed', dispName: 'Dashed'}, {val: 'zigzag-line', dispName: 'ZigZag Line'}];
-	
+
+/**
+ * Graph themes for the format panel.
+ */
+Editor.themes = null;
+
 /**
  * Specifies the image URL to be used for the transparent background.
  */
