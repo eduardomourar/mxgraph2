@@ -15,6 +15,11 @@ Format.prototype.labelIndex = 0;
 /**
  * Returns information about the current selection.
  */
+Format.prototype.diagramIndex = 0;
+
+/**
+ * Returns information about the current selection.
+ */
 Format.prototype.currentIndex = 0;
 
 /**
@@ -384,6 +389,10 @@ Format.prototype.refresh = function()
 				{
 					this.labelIndex = index;
 				}
+				else if (graph.isSelectionEmpty())
+				{
+					this.diagramIndex = index;
+				}
 				else
 				{
 					this.currentIndex = index;
@@ -421,7 +430,8 @@ Format.prototype.refresh = function()
 			evt.preventDefault();
 		}));
 		
-		if (index == ((containsLabel) ? this.labelIndex : this.currentIndex))
+		if (index == ((containsLabel) ? this.labelIndex : ((graph.isSelectionEmpty()) ?
+			this.diagramIndex : this.currentIndex)))
 		{
 			// Invokes handler directly as a workaround for no click on DIV in KHTML.
 			clickHandler();
