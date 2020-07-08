@@ -294,7 +294,6 @@ targetSpacing=Målmellanrum
 text=Text
 textAlignment=Textjustering
 textOpacity=Texttransparens
-design=Design
 toBack=Placera längst bak
 toFront=Placera längst fram
 tooltips=Tooltips

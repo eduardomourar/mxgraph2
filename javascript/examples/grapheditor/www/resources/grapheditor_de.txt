@@ -296,7 +296,6 @@ targetSpacing=Endabstand
 text=Text
 textAlignment=Text Ausrichtung
 textOpacity=Text Deckkraft
-design=Design
 toBack=Nach hinten
 toFront=Nach vorne
 tooltips=Tooltips

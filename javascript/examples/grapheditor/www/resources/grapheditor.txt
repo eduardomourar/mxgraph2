@@ -296,7 +296,6 @@ targetSpacing=Target Spacing
 text=Text
 textAlignment=Text Alignment
 textOpacity=Text Opacity
-design=Design
 toBack=To Back
 toFront=To Front
 tooltips=Tooltips

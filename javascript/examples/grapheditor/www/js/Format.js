@@ -444,12 +444,51 @@ Format.prototype.refresh = function()
 	{
 		mxUtils.write(label, mxResources.get('diagram'));
 		label.style.borderLeftWidth = '0px';
+
+		div.appendChild(label);
+		var diagramPanel = div.cloneNode(false);
+		this.panels.push(new DiagramFormatPanel(this, ui, diagramPanel));
+		this.container.appendChild(diagramPanel);
+		
+		if (Editor.styles != null)
+		{
+			diagramPanel.style.display = 'none';
+			label.style.width = '106px';
+			label.style.cursor = 'pointer';
+			label.style.backgroundColor = this.inactiveTabBackgroundColor;
+			
+			var label2 = label.cloneNode(false);
+			label2.style.borderLeftWidth = '1px';
+			label2.style.borderRightWidth = '1px';
+			label2.style.backgroundColor = this.inactiveTabBackgroundColor;
+			
+			addClickHandler(label, diagramPanel, idx++);
+			
+			var stylePanel = div.cloneNode(false);
+			stylePanel.style.display = 'none';
+			mxUtils.write(label2, mxResources.get('style'));
+			div.appendChild(label2);
+			this.panels.push(new DiagramStylePanel(this, ui, stylePanel));
+			this.container.appendChild(stylePanel);
+			
+			addClickHandler(label2, stylePanel, idx++);
+		}
 		
 		// Adds button to hide the format panel since
 		// people don't seem to find the toolbar button
 		// and the menu item in the format menu
 		if (this.showCloseButton)
 		{
+			var label2 = label.cloneNode(false);
+			label2.style.borderLeftWidth = '1px';
+			label2.style.borderRightWidth = '1px';
+			label2.style.borderBottomWidth = '1px';
+			label2.style.backgroundColor = this.inactiveTabBackgroundColor;
+			label2.style.position = 'absolute';
+			label2.style.right = '0px';
+			label2.style.top = '0px';
+			label2.style.width = '25px';
+			
 			var img = document.createElement('img');
 			img.setAttribute('border', '0');
 			img.setAttribute('src', Dialog.prototype.closeImage);
@@ -460,44 +499,20 @@ Format.prototype.refresh = function()
 			img.style.top = '8px';
 			img.style.cursor = 'pointer';
 			img.style.marginTop = '1px';
-			img.style.marginRight = '10px';
+			img.style.marginRight = '6px';
 			img.style.border = '1px solid transparent';
 			img.style.padding = '1px';
 			img.style.opacity = 0.5;
-			label.appendChild(img)
+			label2.appendChild(img)
 			
 			mxEvent.addListener(img, 'click', function()
 			{
 				ui.actions.get('formatPanel').funct();
 			});
-		}
-		
-		div.appendChild(label);
-		var diagramPanel = div.cloneNode(false);
-		this.panels.push(new DiagramFormatPanel(this, ui, diagramPanel));
-		this.container.appendChild(diagramPanel);
-		
-		if (Editor.designs != null)
-		{
-			diagramPanel.style.display = 'none';
-			label.style.width = '50%';
-			label.style.cursor = 'pointer';
-			label.style.backgroundColor = this.inactiveTabBackgroundColor;
-			var label2 = label.cloneNode(false);
-			label2.style.borderLeftWidth = '1px';
-			label2.style.backgroundColor = this.inactiveTabBackgroundColor;
 			
-			addClickHandler(label, diagramPanel, idx++);
-			
-			var designPanel = div.cloneNode(false);
-			designPanel.style.display = 'none';
-			mxUtils.write(label2, mxResources.get('design'));
 			div.appendChild(label2);
-			this.panels.push(new DiagramDesignPanel(this, ui, designPanel));
-			this.container.appendChild(designPanel);
-			
-			addClickHandler(label2, designPanel, idx++);
 		}
+		
 	}
 	else if (graph.isEditing())
 	{
@@ -5550,18 +5565,18 @@ StyleFormatPanel.prototype.addStyleOps = function(div)
 /**
  * Adds the label menu items to the given menu and parent.
  */
-DiagramDesignPanel = function(format, editorUi, container)
+DiagramStylePanel = function(format, editorUi, container)
 {
 	BaseFormatPanel.call(this, format, editorUi, container);
 	this.init();
 };
 
-mxUtils.extend(DiagramDesignPanel, BaseFormatPanel);
+mxUtils.extend(DiagramStylePanel, BaseFormatPanel);
 
 /**
  * Adds the label menu items to the given menu and parent.
  */
-DiagramDesignPanel.prototype.init = function()
+DiagramStylePanel.prototype.init = function()
 {
 	var ui = this.editorUi;
 	var editor = ui.editor;
@@ -5573,7 +5588,7 @@ DiagramDesignPanel.prototype.init = function()
 /**
  * Adds the label menu items to the given menu and parent.
  */
-DiagramDesignPanel.prototype.addView = function(div)
+DiagramStylePanel.prototype.addView = function(div)
 {
 	var ui = this.editorUi;
 	var editor = ui.editor;
@@ -5599,10 +5614,36 @@ DiagramDesignPanel.prototype.addView = function(div)
 	var opts = document.createElement('div');
 	opts.style.paddingBottom = '12px';
 	opts.style.marginRight = '16px';
-	opts.style.textAlign = 'center';
+	
+	
+	var table = document.createElement('table');
+
+	if (mxClient.IS_QUIRKS)
+	{
+		table.style.fontSize = '1em';
+	}
+
+	table.style.width = '100%';
+	table.style.fontWeight = 'bold';
+	
+	var tbody = document.createElement('tbody');
+	var row = document.createElement('tr');
+	row.style.padding = '0px';
+	
+	var left = document.createElement('td');
+	left.style.padding = '0px';
+	left.style.width = '50%';
+	left.setAttribute('valign', 'middle');
+	
+	var right = left.cloneNode(true);
+	right.style.paddingLeft = '8px';
+	row.appendChild(left);
+	row.appendChild(right);
+	tbody.appendChild(row);
+	table.appendChild(tbody);
 	
 	// Sketch
-	opts.appendChild(this.createOption(mxResources.get('sketch'), function()
+	left.appendChild(this.createOption(mxResources.get('sketch'), function()
 	{
 		return sketch;
 	}, function(checked)
@@ -5622,12 +5663,11 @@ DiagramDesignPanel.prototype.addView = function(div)
 		}
 	}, null, function(div)
 	{
-		div.style.display = 'inline';
-		div.getElementsByTagName('input')[0].style.margin = '0 2px 0px 0';
+		div.style.width = 'auto';
 	}));
 	
 	// Rounded
-	opts.appendChild(this.createOption(mxResources.get('rounded'), function()
+	right.appendChild(this.createOption(mxResources.get('rounded'), function()
 	{
 		return rounded;
 	}, function(checked)
@@ -5645,12 +5685,18 @@ DiagramDesignPanel.prototype.addView = function(div)
 		}
 	}, null, function(div)
 	{
-		div.style.display = 'inline';
-		div.getElementsByTagName('input')[0].style.margin = '0 2px 0px 6px';
+		div.style.width = 'auto';
 	}));
-		
+
+	left = left.cloneNode(false);
+	right = left.cloneNode(false);
+	row = row.cloneNode(false);
+	row.appendChild(left);
+	row.appendChild(right);
+	tbody.appendChild(row);
+	
 	// Curved
-	opts.appendChild(this.createOption(mxResources.get('curved'), function()
+	left.appendChild(this.createOption(mxResources.get('curved'), function()
 	{
 		return curved;
 	}, function(checked)
@@ -5668,10 +5714,10 @@ DiagramDesignPanel.prototype.addView = function(div)
 		}
 	}, null, function(div)
 	{
-		div.style.display = 'inline';
-		div.getElementsByTagName('input')[0].style.margin = '0 2px 0px 6px';
+		div.style.width = 'auto';
 	}));
 	
+	opts.appendChild(table);
 	div.appendChild(opts);
 
 	// Stores initial empty styles
@@ -5780,7 +5826,7 @@ DiagramDesignPanel.prototype.addView = function(div)
 		}
 	});
 	
-	var renderDesign = mxUtils.bind(this, function(commonStyle, vertexStyle, edgeStyle, graphStyle, container)
+	var createPreview = mxUtils.bind(this, function(commonStyle, vertexStyle, edgeStyle, graphStyle, container)
 	{
 		// Wrapper needed to catch events
 		var div = document.createElement('div');
@@ -5822,7 +5868,7 @@ DiagramDesignPanel.prototype.addView = function(div)
 		{
 			var v1 = graph2.insertVertex(graph2.getDefaultParent(), null, 'Shape', 14, 8, 70, 40, 'strokeWidth=2;');
 			var e1 = graph2.insertEdge(graph2.getDefaultParent(), null, 'Connector', v1, v1,
-				graph.createCurrentEdgeStyle() + 'strokeWidth=2;endSize=5;')
+				'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endSize=5;strokeWidth=2;')
 			e1.geometry.points = [new mxPoint(32, 70)];
 			e1.geometry.offset = new mxPoint(0, 8);
 		}
@@ -5832,7 +5878,7 @@ DiagramDesignPanel.prototype.addView = function(div)
 		}
 	});
 
-	var addDesign = mxUtils.bind(this, function(commonStyle, vertexStyle, edgeStyle, graphStyle)
+	var addEntry = mxUtils.bind(this, function(commonStyle, vertexStyle, edgeStyle, graphStyle)
 	{
 		var panel = document.createElement('div');
 		panel.style.cssText = 'display:inline-block;position:relative;width:96px;height:90px;' +
@@ -5843,7 +5889,7 @@ DiagramDesignPanel.prototype.addView = function(div)
 			panel.style.backgroundColor = graphStyle.background;
 		}
 		
-		renderDesign(commonStyle, vertexStyle, edgeStyle, graphStyle, panel); 
+		createPreview(commonStyle, vertexStyle, edgeStyle, graphStyle, panel); 
 
 		mxEvent.addGestureListeners(panel, mxUtils.bind(this, function(evt)
 		{
@@ -5951,10 +5997,10 @@ DiagramDesignPanel.prototype.addView = function(div)
 		div.appendChild(panel);
 	});
 	
-	for (var i = 0; i < Editor.designs.length; i++)
+	for (var i = 0; i < Editor.styles.length; i++)
 	{
-		var d = Editor.designs[i];
-		addDesign(d.commonStyle, d.vertexStyle, d.edgeStyle, d.graph);
+		var s = Editor.styles[i];
+		addEntry(s.commonStyle, s.vertexStyle, s.edgeStyle, s.graph);
 	}
 	
 	return div;
