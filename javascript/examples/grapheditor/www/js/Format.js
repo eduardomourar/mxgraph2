@@ -5720,13 +5720,6 @@ DiagramStylePanel.prototype.addView = function(div)
 	opts.appendChild(table);
 	div.appendChild(opts);
 
-	// Stores initial empty styles
-	if (ui.initialDefaultEdgeStyle == null)
-	{
-		ui.initialDefaultVertexStyle = mxUtils.clone(graph.defaultVertexStyle);
-		ui.initialDefaultEdgeStyle = mxUtils.clone(graph.defaultEdgeStyle);
-	}
-	
 	var defaultStyles = ['fillColor', 'strokeColor', 'fontColor', 'gradientColor'];
 	
 	var updateCells = mxUtils.bind(this, function(styles, graphStyle)

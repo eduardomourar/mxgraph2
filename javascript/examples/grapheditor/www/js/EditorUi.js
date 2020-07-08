@@ -14,6 +14,8 @@ EditorUi = function(editor, container, lightbox)
 	
 	var graph = this.editor.graph;
 	graph.lightbox = lightbox;
+	this.initialDefaultVertexStyle = mxUtils.clone(graph.defaultVertexStyle);
+	this.initialDefaultEdgeStyle = mxUtils.clone(graph.defaultEdgeStyle);
 
 	// Faster scrollwheel zoom is possible with CSS transforms
 	if (graph.useCssTransforms)
