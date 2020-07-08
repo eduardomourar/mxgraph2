@@ -5791,12 +5791,12 @@ DiagramDesignPanel.prototype.addView = function(div)
 		{
 			var result = mxUtils.clone(Graph.prototype.getCellStyle.apply(this, arguments));
 			var defaultStyle = graph.stylesheet.getDefaultVertexStyle();
-			var appliedStyle = (vertexStyle != null) ? vertexStyle : mxUtils.clone(ui.initialDefaultVertexStyle);
+			var appliedStyle = vertexStyle;
 			
 			if (model.isEdge(cell))
 			{
 				defaultStyle = graph.stylesheet.getDefaultEdgeStyle();
-				appliedStyle = (edgeStyle != null) ? edgeStyle : mxUtils.clone(ui.initialDefaultEdgeStyle);	
+				appliedStyle = edgeStyle;	
 			}
 			
 			removeStyles(result, defaultStyles, defaultStyle);
@@ -5804,7 +5804,7 @@ DiagramDesignPanel.prototype.addView = function(div)
 			applyStyle(appliedStyle, result, cell, graphStyle, graph2);
 			
 			return result;
-		}
+		};
 		
 		// Avoid HTML labels to capture events in bubble phase
 		graph2.model.beginUpdate();
@@ -5812,7 +5812,7 @@ DiagramDesignPanel.prototype.addView = function(div)
 		{
 			var v1 = graph2.insertVertex(graph2.getDefaultParent(), null, 'Shape', 14, 8, 70, 40, 'strokeWidth=2;');
 			var e1 = graph2.insertEdge(graph2.getDefaultParent(), null, 'Connector', v1, v1,
-				'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;strokeWidth=2;endSize=5;')
+				graph.createCurrentEdgeStyle() + 'strokeWidth=2;endSize=5;')
 			e1.geometry.points = [new mxPoint(32, 70)];
 			e1.geometry.offset = new mxPoint(0, 8);
 		}
@@ -5912,12 +5912,12 @@ DiagramDesignPanel.prototype.addView = function(div)
 				var result = mxUtils.clone(prev.apply(this, arguments));
 				
 				var defaultStyle = graph.stylesheet.getDefaultVertexStyle();
-				var appliedStyle = (vertexStyle != null) ? vertexStyle : mxUtils.clone(ui.initialDefaultVertexStyle);
+				var appliedStyle = vertexStyle;
 				
 				if (model.isEdge(cell))
 				{
 					defaultStyle = graph.stylesheet.getDefaultEdgeStyle();
-					appliedStyle = (edgeStyle != null) ? edgeStyle : mxUtils.clone(ui.initialDefaultEdgeStyle);	
+					appliedStyle = edgeStyle;	
 				}
 				
 				removeStyles(result, defaultStyles, defaultStyle);
@@ -5925,7 +5925,7 @@ DiagramDesignPanel.prototype.addView = function(div)
 				applyStyle(appliedStyle, result, cell, graphStyle);
 				
 				return result;
-			}
+			};
 			
 			graph.refresh();
 			graph.getCellStyle = prev;
