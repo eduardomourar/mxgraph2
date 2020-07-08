@@ -5937,8 +5937,11 @@ DiagramStylePanel.prototype.addView = function(div)
 				change.ignoreImage = true;
 				model.execute(change);
 				
-				model.execute(new ChangeGridColor(ui, (graphStyle != null) ? graphStyle.gridColor ||
-					graph.view.defaultGridColor : graph.view.defaultGridColor));
+				if (graphStyle != null && graphStyle.background != null)
+				{
+					model.execute(new ChangeGridColor(ui, (graphStyle != null) ? graphStyle.gridColor ||
+						graph.view.defaultGridColor : graph.view.defaultGridColor));
+				}
 			}
 			finally
 			{
@@ -5953,8 +5956,12 @@ DiagramStylePanel.prototype.addView = function(div)
 			var prevGrid = graph.view.gridColor;
 
 			graph.background = (graphStyle != null) ? graphStyle.background : null;
-			graph.view.gridColor = (graphStyle != null) ? graphStyle.gridColor ||
-				graph.view.defaultGridColor : graph.view.defaultGridColor;
+			
+			if (graphStyle != null && graphStyle.background != null)
+			{
+				graph.view.gridColor = (graphStyle != null) ? graphStyle.gridColor ||
+					graph.view.defaultGridColor : graph.view.defaultGridColor;
+			}
 			
 			graph.getCellStyle = function(cell)
 			{
