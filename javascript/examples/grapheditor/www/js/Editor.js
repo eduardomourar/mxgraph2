@@ -2591,13 +2591,17 @@ FilenameDialog.createFileTypes = function(editorUi, nameInput, types)
 		drawPageBreaks(this.verticalPageBreaks);
 	};
 	
-	// Disables removing relative children from parents
+	// Disables removing relative children and table rows and cells from parents
 	var mxGraphHandlerShouldRemoveCellsFromParent = mxGraphHandler.prototype.shouldRemoveCellsFromParent;
 	mxGraphHandler.prototype.shouldRemoveCellsFromParent = function(parent, cells, evt)
 	{
 		for (var i = 0; i < cells.length; i++)
 		{
-			if (this.graph.getModel().isVertex(cells[i]))
+			if (this.graph.isTableCell(cells[i]) || this.graph.isTableRow(cells[i]))
+			{
+				return false;
+			}
+			else if (this.graph.getModel().isVertex(cells[i]))
 			{
 				var geo = this.graph.getCellGeometry(cells[i]);
 				
