@@ -5844,10 +5844,10 @@ DiagramDesignPanel.prototype.addView = function(div)
 			graph.defaultVertexStyle = mxUtils.clone(ui.initialDefaultVertexStyle);
 			graph.defaultEdgeStyle = mxUtils.clone(ui.initialDefaultEdgeStyle);
 			
-			applyStyle(vertexStyle, graph.defaultVertexStyle);
-			applyStyle(edgeStyle, graph.defaultEdgeStyle);
 			applyStyle(commonStyle, graph.defaultVertexStyle);
 			applyStyle(commonStyle, graph.defaultEdgeStyle);
+			applyStyle(vertexStyle, graph.defaultVertexStyle);
+			applyStyle(edgeStyle, graph.defaultEdgeStyle);
 			
 			if (sketch)
 			{
