@@ -453,7 +453,7 @@ Format.prototype.refresh = function()
 		if (Editor.styles != null)
 		{
 			diagramPanel.style.display = 'none';
-			label.style.width = '106px';
+			label.style.width = (this.showCloseButton) ? '106px' : '50%';
 			label.style.cursor = 'pointer';
 			label.style.backgroundColor = this.inactiveTabBackgroundColor;
 			
@@ -512,7 +512,6 @@ Format.prototype.refresh = function()
 			
 			div.appendChild(label2);
 		}
-		
 	}
 	else if (graph.isEditing())
 	{
