@@ -1068,7 +1068,7 @@ EditorUi.prototype.init = function()
 	
 	if (!graph.standalone)
 	{
-		if (urlParams['shape-picker'] == '1')
+		if (urlParams['shape-picker'] != '0')
 		{
 			this.installShapePicker();
 		}
@@ -1195,43 +1195,43 @@ EditorUi.prototype.installShapePicker = function()
 		}
 	};
 	
-	if (this.hoverIcons != null)
-	{
-		// Adds hover icons handling
-		var hoverIconsExecute = this.hoverIcons.execute;
-		
-		this.hoverIcons.execute = function(state, dir, me)
-		{
-			var evt = me.getEvent();
-			
-			if (!mxEvent.isControlDown(evt) && !mxEvent.isShiftDown(evt))
-			{
-				var x = me.getGraphX();
-				var y = me.getGraphY();
-
-				var temp = graph.getCompositeParent(state.cell);
-				var geo = graph.getCellGeometry(temp);
-				
-				while (temp != null && graph.model.isVertex(temp) && geo != null && geo.relative)
-				{
-					cell = temp;
-					temp = graph.model.getParent(cell)
-					geo = graph.getCellGeometry(temp);
-				}
-				
-				ui.showShapePicker(x, y, temp, mxUtils.bind(this, function(cell)
-				{
-					graph.selectCellsForConnectVertex(this.graph.connectVertex(
-						state.cell, dir, graph.defaultEdgeLength, evt, null, null,
-						cell, cell == null), evt, graph);
-				}));
-			}
-			else
-			{
-				hoverIconsExecute.apply(this, arguments);
-			}
-		};
-	}
+//	if (this.hoverIcons != null)
+//	{
+//		// Adds hover icons handling
+//		var hoverIconsExecute = this.hoverIcons.execute;
+//		
+//		this.hoverIcons.execute = function(state, dir, me)
+//		{
+//			var evt = me.getEvent();
+//			
+//			if (!mxEvent.isControlDown(evt) && !mxEvent.isShiftDown(evt))
+//			{
+//				var x = me.getGraphX();
+//				var y = me.getGraphY();
+//
+//				var temp = graph.getCompositeParent(state.cell);
+//				var geo = graph.getCellGeometry(temp);
+//				
+//				while (temp != null && graph.model.isVertex(temp) && geo != null && geo.relative)
+//				{
+//					cell = temp;
+//					temp = graph.model.getParent(cell)
+//					geo = graph.getCellGeometry(temp);
+//				}
+//				
+//				ui.showShapePicker(x, y, temp, mxUtils.bind(this, function(cell)
+//				{
+//					graph.selectCellsForConnectVertex(this.graph.connectVertex(
+//						state.cell, dir, graph.defaultEdgeLength, evt, null, null,
+//						cell, cell == null), evt, graph);
+//				}));
+//			}
+//			else
+//			{
+//				hoverIconsExecute.apply(this, arguments);
+//			}
+//		};
+//	}
 };
 
 /**
