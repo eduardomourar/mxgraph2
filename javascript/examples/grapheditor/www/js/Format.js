@@ -5596,9 +5596,8 @@ DiagramStylePanel.prototype.addView = function(div)
 
 	div.style.whiteSpace = 'normal';
 
-	var cells = graph.getCells();
+	var sketch = graph.currentVertexStyle['sketch'] == '1' && graph.currentEdgeStyle['sketch'] == '1';
 	var rounded = graph.currentVertexStyle['rounded'] == '1';
-	var sketch = graph.currentVertexStyle['sketch'] == '1';
 	var curved = graph.currentEdgeStyle['curved'] == '1';
 
 	var opts = document.createElement('div');
@@ -5892,31 +5891,31 @@ DiagramStylePanel.prototype.addView = function(div)
 			
 			if (sketch)
 			{
-				graph.currentEdgeStyle['sketch'] = '1';
-				graph.currentVertexStyle['sketch'] = '1';
+				graph.defaultEdgeStyle['sketch'] = '1';
+				graph.defaultVertexStyle['sketch'] = '1';
 			}
 			else
 			{
-				graph.currentEdgeStyle['sketch'] = '0';
-				graph.currentVertexStyle['sketch'] = '0';
+				graph.defaultEdgeStyle['sketch'] = '0';
+				graph.defaultVertexStyle['sketch'] = '0';
 			}
 				
 			if (rounded)
 			{
-				graph.currentVertexStyle['rounded'] = '1';
+				graph.defaultVertexStyle['rounded'] = '1';
 			}
 			else
 			{
-				graph.currentVertexStyle['rounded'] = '0';
+				graph.defaultVertexStyle['rounded'] = '0';
 			}
 			
 			if (curved)
 			{
-				graph.currentEdgeStyle['curved'] = '1';
+				graph.defaultEdgeStyle['curved'] = '1';
 			}
 			else
 			{
-				graph.currentEdgeStyle['curved'] = '0';
+				graph.defaultEdgeStyle['curved'] = '0';
 			}
 
 			model.beginUpdate();
