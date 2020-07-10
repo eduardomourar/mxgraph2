@@ -450,7 +450,7 @@ Format.prototype.refresh = function()
 		this.panels.push(new DiagramFormatPanel(this, ui, diagramPanel));
 		this.container.appendChild(diagramPanel);
 		
-		if (Editor.styles != null)
+		if (Editor.styles != null && !ui.isDiagramEmpty())
 		{
 			diagramPanel.style.display = 'none';
 			label.style.width = (this.showCloseButton) ? '106px' : '50%';
@@ -5601,123 +5601,143 @@ DiagramStylePanel.prototype.addView = function(div)
 	var sketch = true;
 	var curved = true;
 	
+	var edgeCount = 0;
+	var vertexCount = 0;
+	
 	for (var i = 0; i < cells.length; i++)
 	{
 		var style = graph.getCurrentCellStyle(cells[i]);
 		
-		sketch = sketch && mxUtils.getValue(style, 'sketch', '0') == '1';
+		if (model.isVertex(cells[i]))
+		{
+			vertexCount++;
+		}
+		else if (model.isEdge(cells[i]))
+		{
+			edgeCount++;
+		}
+		
 		rounded = rounded && (!model.isVertex(cells[i]) || mxUtils.getValue(style, 'rounded', '0') == '1');
 		curved = curved && (!model.isEdge(cells[i]) || mxUtils.getValue(style, 'curved', '0') == '1');
+		sketch = sketch && mxUtils.getValue(style, 'sketch', '0') == '1';
 	}
 	
-	var opts = document.createElement('div');
-	opts.style.paddingBottom = '12px';
-	opts.style.marginRight = '16px';
-	
-	
-	var table = document.createElement('table');
-
-	if (mxClient.IS_QUIRKS)
+	if (edgeCount > 0 || vertexCount > 0)
 	{
-		table.style.fontSize = '1em';
+		var opts = document.createElement('div');
+		opts.style.paddingBottom = '12px';
+		opts.style.marginRight = '16px';
+		
+		var table = document.createElement('table');
+	
+		if (mxClient.IS_QUIRKS)
+		{
+			table.style.fontSize = '1em';
+		}
+	
+		table.style.width = '100%';
+		table.style.fontWeight = 'bold';
+		
+		var tbody = document.createElement('tbody');
+		var row = document.createElement('tr');
+		row.style.padding = '0px';
+		
+		var left = document.createElement('td');
+		left.style.padding = '0px';
+		left.style.width = '50%';
+		left.setAttribute('valign', 'middle');
+		
+		var right = left.cloneNode(true);
+		right.style.paddingLeft = '8px';
+		row.appendChild(left);
+		row.appendChild(right);
+		tbody.appendChild(row);
+		table.appendChild(tbody);
+		
+		// Sketch
+		left.appendChild(this.createOption(mxResources.get('sketch'), function()
+		{
+			return sketch;
+		}, function(checked)
+		{
+			graph.updateCellStyles('sketch', (checked) ? '1' : null, graph.getCells());
+			sketch = checked;
+			
+			if (checked)
+			{
+				graph.currentEdgeStyle['sketch'] = '1';
+				graph.currentVertexStyle['sketch'] = '1';
+			}
+			else
+			{
+				delete graph.currentEdgeStyle['sketch'];
+				delete graph.currentVertexStyle['sketch'];
+			}
+		}, null, function(div)
+		{
+			div.style.width = 'auto';
+		}));
+		
+		// Rounded
+		if (vertexCount > 0)
+		{
+			right.appendChild(this.createOption(mxResources.get('rounded'), function()
+			{
+				return rounded;
+			}, function(checked)
+			{
+				graph.updateCellStyles('rounded', (checked) ? '1' : null, graph.getCells(true, false));
+				rounded = checked;
+				
+				if (checked)
+				{
+					graph.currentVertexStyle['rounded'] = '1';
+				}
+				else
+				{
+					delete graph.currentVertexStyle['rounded'];
+				}
+			}, null, function(div)
+			{
+				div.style.width = 'auto';
+			}));
+		}
+		
+		// Curved
+		if (edgeCount > 0)
+		{
+			left = left.cloneNode(false);
+			right = left.cloneNode(false);
+			row = row.cloneNode(false);
+			row.appendChild(left);
+			row.appendChild(right);
+			tbody.appendChild(row);
+	
+			left.appendChild(this.createOption(mxResources.get('curved'), function()
+			{
+				return curved;
+			}, function(checked)
+			{
+				graph.updateCellStyles('curved', (checked) ? '1' : null, graph.getCells(false, true));
+				curved = checked;
+				
+				if (checked)
+				{
+					graph.currentEdgeStyle['curved'] = '1';
+				}
+				else
+				{
+					delete graph.currentEdgeStyle['curved'];
+				}
+			}, null, function(div)
+			{
+				div.style.width = 'auto';
+			}));
+		}
+	
+		opts.appendChild(table);
+		div.appendChild(opts);
 	}
-
-	table.style.width = '100%';
-	table.style.fontWeight = 'bold';
-	
-	var tbody = document.createElement('tbody');
-	var row = document.createElement('tr');
-	row.style.padding = '0px';
-	
-	var left = document.createElement('td');
-	left.style.padding = '0px';
-	left.style.width = '50%';
-	left.setAttribute('valign', 'middle');
-	
-	var right = left.cloneNode(true);
-	right.style.paddingLeft = '8px';
-	row.appendChild(left);
-	row.appendChild(right);
-	tbody.appendChild(row);
-	table.appendChild(tbody);
-	
-	// Sketch
-	left.appendChild(this.createOption(mxResources.get('sketch'), function()
-	{
-		return sketch;
-	}, function(checked)
-	{
-		graph.updateCellStyles('sketch', (checked) ? '1' : null, graph.getCells());
-		sketch = checked;
-		
-		if (checked)
-		{
-			graph.currentEdgeStyle['sketch'] = '1';
-			graph.currentVertexStyle['sketch'] = '1';
-		}
-		else
-		{
-			delete graph.currentEdgeStyle['sketch'];
-			delete graph.currentVertexStyle['sketch'];
-		}
-	}, null, function(div)
-	{
-		div.style.width = 'auto';
-	}));
-	
-	// Rounded
-	right.appendChild(this.createOption(mxResources.get('rounded'), function()
-	{
-		return rounded;
-	}, function(checked)
-	{
-		graph.updateCellStyles('rounded', (checked) ? '1' : null, graph.getCells(true, false));
-		rounded = checked;
-		
-		if (checked)
-		{
-			graph.currentVertexStyle['rounded'] = '1';
-		}
-		else
-		{
-			delete graph.currentVertexStyle['rounded'];
-		}
-	}, null, function(div)
-	{
-		div.style.width = 'auto';
-	}));
-
-	left = left.cloneNode(false);
-	right = left.cloneNode(false);
-	row = row.cloneNode(false);
-	row.appendChild(left);
-	row.appendChild(right);
-	tbody.appendChild(row);
-	
-	// Curved
-	left.appendChild(this.createOption(mxResources.get('curved'), function()
-	{
-		return curved;
-	}, function(checked)
-	{
-		graph.updateCellStyles('curved', (checked) ? '1' : null, graph.getCells(false, true));
-		curved = checked;
-		
-		if (checked)
-		{
-			graph.currentEdgeStyle['curved'] = '1';
-		}
-		else
-		{
-			delete graph.currentEdgeStyle['curved'];
-		}
-	}, null, function(div)
-	{
-		div.style.width = 'auto';
-	}));
-	
-	opts.appendChild(table);
-	div.appendChild(opts);
 
 	var defaultStyles = ['fillColor', 'strokeColor', 'fontColor', 'gradientColor'];
 	
@@ -5822,7 +5842,7 @@ DiagramStylePanel.prototype.addView = function(div)
 	{
 		// Wrapper needed to catch events
 		var div = document.createElement('div');
-		div.style.cssText = 'position:absolute;display:inline-block;position:relative;width:100%;height:100%;overflow:hidden;pointer-events:none;';
+		div.style.cssText = 'position:absolute;display:inline-block;width:100%;height:100%;overflow:hidden;pointer-events:none;';
 		container.appendChild(div);
 		
 		var graph2 = new Graph(div, null, null, graph.getStylesheet());
