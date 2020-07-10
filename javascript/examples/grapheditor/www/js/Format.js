@@ -5685,7 +5685,7 @@ DiagramStylePanel.prototype.addView = function(div)
 	
 	// Curved
 	left = left.cloneNode(false);
-	right = left.cloneNode(false);
+	right = right.cloneNode(false);
 	row = row.cloneNode(false);
 	row.appendChild(left);
 	row.appendChild(right);
@@ -5815,6 +5815,18 @@ DiagramStylePanel.prototype.addView = function(div)
 		}
 	});
 	
+	var btn = mxUtils.button(mxResources.get('reset'), mxUtils.bind(this, function(evt)
+	{
+		graph.defaultVertexStyle = mxUtils.clone(ui.initialDefaultVertexStyle);
+		graph.defaultEdgeStyle = mxUtils.clone(ui.initialDefaultEdgeStyle);
+		ui.clearDefaultStyle();
+	}));
+	
+	btn.setAttribute('title', mxResources.get('reset'));
+	btn.style.textOverflow = 'ellipsis';
+	btn.style.maxWidth = '90px';
+	right.appendChild(btn);
+	
 	var createPreview = mxUtils.bind(this, function(commonStyle, vertexStyle, edgeStyle, graphStyle, container)
 	{
 		// Wrapper needed to catch events
@@ -5893,40 +5905,40 @@ DiagramStylePanel.prototype.addView = function(div)
 			applyStyle(commonStyle, graph.defaultEdgeStyle);
 			applyStyle(vertexStyle, graph.defaultVertexStyle);
 			applyStyle(edgeStyle, graph.defaultEdgeStyle);
+			ui.clearDefaultStyle();
 			
 			if (sketch)
 			{
-				graph.defaultEdgeStyle['sketch'] = '1';
-				graph.defaultVertexStyle['sketch'] = '1';
+				graph.currentEdgeStyle['sketch'] = '1';
+				graph.currentVertexStyle['sketch'] = '1';
 			}
 			else
 			{
-				graph.defaultEdgeStyle['sketch'] = '0';
-				graph.defaultVertexStyle['sketch'] = '0';
+				graph.currentEdgeStyle['sketch'] = '0';
+				graph.currentVertexStyle['sketch'] = '0';
 			}
 				
 			if (rounded)
 			{
-				graph.defaultVertexStyle['rounded'] = '1';
+				graph.currentVertexStyle['rounded'] = '1';
 			}
 			else
 			{
-				graph.defaultVertexStyle['rounded'] = '0';
+				graph.currentVertexStyle['rounded'] = '0';
 			}
 			
 			if (curved)
 			{
-				graph.defaultEdgeStyle['curved'] = '1';
+				graph.currentEdgeStyle['curved'] = '1';
 			}
 			else
 			{
-				graph.defaultEdgeStyle['curved'] = '0';
+				graph.currentEdgeStyle['curved'] = '0';
 			}
 
 			model.beginUpdate();
 			try
 			{
-				ui.clearDefaultStyle();
 				updateCells(defaultStyles, graphStyle);
 				
 				var change = new ChangePageSetup(ui, (graphStyle != null) ? graphStyle.background : null);
