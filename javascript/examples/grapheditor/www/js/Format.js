@@ -66,6 +66,11 @@ Format.prototype.init = function()
 		this.refresh();
 	}));
 	
+	ui.addListener('styleChanged', mxUtils.bind(this, function(sender, evt)
+	{
+		this.refresh();
+	}));
+	
 	editor.addListener('autosaveChanged', mxUtils.bind(this, function()
 	{
 		this.refresh();
