@@ -1323,24 +1323,20 @@ EditorUi.prototype.getCellsForShapePicker = function(cell)
 	return [(cell != null) ? this.editor.graph.cloneCell(cell) :
 			createVertex('text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;', 40, 20, 'Text'),
 		createVertex('whiteSpace=wrap;html=1;'),
-		createVertex('rounded=1;whiteSpace=wrap;html=1;'),
 		createVertex('ellipse;whiteSpace=wrap;html=1;', 120, 80),
-		createVertex('shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;'),
 		createVertex('rhombus;whiteSpace=wrap;html=1;', 80, 80),
 		createVertex('shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;'),
-		createVertex('shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;', 120, 80),
-		createVertex('triangle;whiteSpace=wrap;html=1;', 60, 80),
-		createVertex('shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;', 60, 80),
-		createVertex('ellipse;shape=cloud;whiteSpace=wrap;html=1;', 120, 80),
-		createVertex('shape=document;whiteSpace=wrap;html=1;boundedLbl=1;', 120, 80),
-		createVertex('shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;', 120, 80),
-		createVertex('shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;', 120, 80),
 		createVertex('shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;', 120, 60),
-		createVertex('shape=tape;whiteSpace=wrap;html=1;', 120, 100),
+		createVertex('shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;', 120, 80),
+		createVertex('shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;', 120, 80),
+		createVertex('shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;'),
+		createVertex('shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;', 120, 80),
 		createVertex('shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;', 80, 100),
-		createVertex('shape=card;whiteSpace=wrap;html=1;', 80, 100),
-		createVertex('shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;', 120, 80),
-		createVertex('shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;', 30, 60)];
+		createVertex('triangle;whiteSpace=wrap;html=1;', 60, 80),
+		createVertex('shape=document;whiteSpace=wrap;html=1;boundedLbl=1;', 120, 80),
+		createVertex('shape=tape;whiteSpace=wrap;html=1;', 120, 100),
+		createVertex('ellipse;shape=cloud;whiteSpace=wrap;html=1;', 120, 80),
+		createVertex('shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;', 60, 80)];
 };
 
 /**
