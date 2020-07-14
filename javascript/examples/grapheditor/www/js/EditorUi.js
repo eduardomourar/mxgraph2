@@ -1219,6 +1219,11 @@ EditorUi.prototype.installShapePicker = function()
 					
 					ui.showShapePicker(me.getGraphX(), me.getGraphY(), temp, mxUtils.bind(this, function(cell)
 					{
+//						cell.geometry.x = graph.snap(Math.round(x / graph.view.scale) -
+//							graph.view.translate.x - cell.geometry.width / 2);
+//						cell.geometry.y = graph.snap(Math.round(y / graph.view.scale) -
+//							graph.view.translate.y - cell.geometry.height / 2);
+						
 						execute(cell);
 					}));
 				}), mxUtils.bind(this, function(result)
@@ -1267,30 +1272,27 @@ EditorUi.prototype.showShapePicker = function(x, y, cell, callback)
 
 			mxEvent.addListener(node, 'click', function()
 			{
-				cell.geometry.x = graph.snap(Math.round(x / graph.view.scale) -
-					graph.view.translate.x - cell.geometry.width / 2);
-				cell.geometry.y = graph.snap(Math.round(y / graph.view.scale) -
-					graph.view.translate.y - cell.geometry.height / 2);
-				
-				graph.model.beginUpdate();
-				try
+				if (callback != null)
 				{
-					if (callback != null)
-					{
-						callback(cell);
-					}
-					else
+					callback(cell);
+				}
+				else
+				{
+					cell.geometry.x = graph.snap(Math.round(x / graph.view.scale) -
+						graph.view.translate.x - cell.geometry.width / 2);
+					cell.geometry.y = graph.snap(Math.round(y / graph.view.scale) -
+						graph.view.translate.y - cell.geometry.height / 2);
+					
+					graph.model.beginUpdate();
+					try
 					{
 						graph.addCell(cell);
 					}
-				}
-				finally
-				{
-					graph.model.endUpdate();
-				}
-				
-				if (callback == null)
-				{
+					finally
+					{
+						graph.model.endUpdate();
+					}
+					
 					graph.setSelectionCell(cell);
 					graph.scrollCellToVisible(graph.getSelectionCell());
 					graph.startEditingAtCell(cell);
