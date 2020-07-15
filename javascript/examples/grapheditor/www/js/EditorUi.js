@@ -999,17 +999,6 @@ mxUtils.extend(EditorUi, mxEventSource);
 EditorUi.compactUi = true;
 
 /**
- * Minimum height for table rows.
- */
-EditorUi.pasteStyles = ['rounded', 'shadow', 'dashed', 'dashPattern', 'fontFamily', 'fontSize', 'fontColor', 'fontStyle',
-					'align', 'verticalAlign', 'strokeColor', 'strokeWidth', 'fillColor', 'gradientColor', 'swimlaneFillColor',
-					'textOpacity', 'gradientDirection', 'glass', 'labelBackgroundColor', 'labelBorderColor', 'opacity',
-					'spacing', 'spacingTop', 'spacingLeft', 'spacingBottom', 'spacingRight', 'endFill', 'endArrow',
-					'endSize', 'targetPerimeterSpacing', 'startFill', 'startArrow', 'startSize', 'sourcePerimeterSpacing',
-					'arcSize', 'comic', 'sketch', 'fillWeight', 'hachureGap', 'hachureAngle', 'jiggle', 'disableMultiStroke',
-					'disableMultiStrokeFill', 'fillStyle', 'curveFitting', 'simplification', 'comicStyle'];
-
-/**
  * Specifies the size of the split bar.
  */
 EditorUi.prototype.splitSize = (mxClient.IS_TOUCH || mxClient.IS_POINTER) ? 12 : 8;
@@ -1208,6 +1197,14 @@ EditorUi.prototype.installShapePicker = function()
 	
 	if (this.hoverIcons != null)
 	{
+		var hoverIconsDrag = this.hoverIcons.drag;
+		
+		this.hoverIcons.drag = function()
+		{
+			ui.hideShapePicker();
+			hoverIconsDrag.apply(this, arguments);
+		};
+		
 		var hoverIconsExecute = this.hoverIcons.execute;
 		
 		this.hoverIcons.execute = function(state, dir, me)
@@ -1257,12 +1254,18 @@ EditorUi.prototype.showShapePicker = function(x, y, source, callback)
 		var ui = this;
 		var graph = this.editor.graph;
 		var div = document.createElement('div');
-		var style = (source != null) ? ui.copyStyle(source) : null;
+		var style = (source != null) ? graph.copyStyle(source) : null;
 	
 		div.className = 'geToolbarContainer geSidebarContainer geSidebar';
 		div.style.cssText = 'position:absolute;left:' + (x - 22) + 'px;top:' +
 			(y - 22) + 'px;width:140px;border-radius:10px;padding:4px;text-align:center;' +
 			'box-shadow:0px 0px 3px 1px #d1d1d1;padding: 6px 0 8px 0;';
+		
+		if (graph.background != null && graph.background != mxConstants.NONE)
+		{
+			div.style.backgroundColor = graph.background;
+		}
+		
 		graph.container.appendChild(div);
 		
 		var addCell = mxUtils.bind(this, function(cell)
@@ -1276,7 +1279,7 @@ EditorUi.prototype.showShapePicker = function(x, y, source, callback)
 			
 			if (style != null)
 			{
-				ui.pasteStyle(style, [cell], null, new mxGraphModel());
+				this.sidebar.graph.pasteStyle(style, [cell]);
 			}
 
 			ui.insertHandler([cell], cell.value != '', this.sidebar.graph.model);
@@ -1373,75 +1376,6 @@ EditorUi.prototype.hideShapePicker = function(cancel)
 		}
 		
 		this.shapePickerCallback = null;
-	}
-};
-
-/**
- * Returns true if fast zoom preview should be used.
- */
-EditorUi.prototype.copyStyle = function(cell)
-{
-	var style = null;
-	
-	if (cell != null)
-	{
-		style = mxUtils.clone(this.editor.graph.getCurrentCellStyle(cell));
-		
-		// Handles special case for value "none"
-		var cellStyle = this.editor.graph.model.getStyle(cell);
-		var tokens = (cellStyle != null) ? cellStyle.split(';') : [];
-		
-		for (var j = 0; j < tokens.length; j++)
-		{
-			var tmp = tokens[j];
-	 		var pos = tmp.indexOf('=');
-	 					 		
-	 		if (pos >= 0)
-	 		{
-	 			var key = tmp.substring(0, pos);
-	 			var value = tmp.substring(pos + 1);
-	 			
-	 			if (style[key] == null && value == mxConstants.NONE)
-	 			{
-	 				style[key] = mxConstants.NONE;
-	 			}
-	 		}
-		}
-	}
-	
-	return style;
-};
-
-/**
- * Returns true if fast zoom preview should be used.
- */
-EditorUi.prototype.pasteStyle = function(style, cells, keys, model)
-{
-	keys = (keys != null) ? keys : EditorUi.pasteStyles;
-	model = (model != null) ? model : this.editor.graph.model;
-	
-	model.beginUpdate();
-	try
-	{
-		for (var i = 0; i < cells.length; i++)
-		{
-			var temp = this.editor.graph.getCurrentCellStyle(cells[i]);
-
-			for (var j = 0; j < keys.length; j++)
-			{
-				var current = temp[keys[j]];
-				var value = style[keys[j]];
-				
-				if (current != value && (current != null || value != mxConstants.NONE))
-				{
-					mxUtils.setCellStyles(model, cells, keys[j], value);
-				}
-			}
-		}
-	}
-	finally
-	{
-		model.endUpdate();
 	}
 };
 

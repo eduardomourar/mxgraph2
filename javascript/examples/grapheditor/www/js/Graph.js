@@ -1189,6 +1189,17 @@ Graph.foreignObjectWarningText = 'Viewer does not support full SVG 1.1';
 Graph.foreignObjectWarningLink = 'https://desk.draw.io/support/solutions/articles/16000042487';
 
 /**
+ * Minimum height for table rows.
+ */
+Graph.pasteStyles = ['rounded', 'shadow', 'dashed', 'dashPattern', 'fontFamily', 'fontSize', 'fontColor', 'fontStyle',
+					'align', 'verticalAlign', 'strokeColor', 'strokeWidth', 'fillColor', 'gradientColor', 'swimlaneFillColor',
+					'textOpacity', 'gradientDirection', 'glass', 'labelBackgroundColor', 'labelBorderColor', 'opacity',
+					'spacing', 'spacingTop', 'spacingLeft', 'spacingBottom', 'spacingRight', 'endFill', 'endArrow',
+					'endSize', 'targetPerimeterSpacing', 'startFill', 'startArrow', 'startSize', 'sourcePerimeterSpacing',
+					'arcSize', 'comic', 'sketch', 'fillWeight', 'hachureGap', 'hachureAngle', 'jiggle', 'disableMultiStroke',
+					'disableMultiStrokeFill', 'fillStyle', 'curveFitting', 'simplification', 'comicStyle'];
+
+/**
  * Helper function for creating SVG data URI.
  */
 Graph.createSvgImage = function(w, h, data, coordWidth, coordHeight)
@@ -1649,7 +1660,75 @@ Graph.prototype.init = function(container)
 		
 		return cell;
 	};
+		
+	/**
+	 * Returns true if fast zoom preview should be used.
+	 */
+	Graph.prototype.copyStyle = function(cell)
+	{
+		var style = null;
+		
+		if (cell != null)
+		{
+			style = mxUtils.clone(this.getCurrentCellStyle(cell));
+			
+			// Handles special case for value "none"
+			var cellStyle = this.model.getStyle(cell);
+			var tokens = (cellStyle != null) ? cellStyle.split(';') : [];
+			
+			for (var j = 0; j < tokens.length; j++)
+			{
+				var tmp = tokens[j];
+		 		var pos = tmp.indexOf('=');
+		 					 		
+		 		if (pos >= 0)
+		 		{
+		 			var key = tmp.substring(0, pos);
+		 			var value = tmp.substring(pos + 1);
+		 			
+		 			if (style[key] == null && value == mxConstants.NONE)
+		 			{
+		 				style[key] = mxConstants.NONE;
+		 			}
+		 		}
+			}
+		}
+		
+		return style;
+	};
 	
+	/**
+	 * Returns true if fast zoom preview should be used.
+	 */
+	Graph.prototype.pasteStyle = function(style, cells, keys)
+	{
+		keys = (keys != null) ? keys : Graph.pasteStyles;
+		
+		this.model.beginUpdate();
+		try
+		{
+			for (var i = 0; i < cells.length; i++)
+			{
+				var temp = this.getCurrentCellStyle(cells[i]);
+	
+				for (var j = 0; j < keys.length; j++)
+				{
+					var current = temp[keys[j]];
+					var value = style[keys[j]];
+					
+					if (current != value && (current != null || value != mxConstants.NONE))
+					{
+						this.setCellStyles(keys[j], value, [cells[i]]);
+					}
+				}
+			}
+		}
+		finally
+		{
+			this.model.endUpdate();
+		}
+	};
+
 	/**
 	 * Returns true if fast zoom preview should be used.
 	 */

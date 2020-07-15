@@ -5608,6 +5608,7 @@ DiagramStylePanel.prototype.addView = function(div)
 	var opts = document.createElement('div');
 	opts.style.paddingBottom = '12px';
 	opts.style.marginRight = '16px';
+	div.style.paddingTop = '8px';
 	
 	var table = document.createElement('table');
 
@@ -6032,6 +6033,8 @@ DiagramStylePanel.prototype.addView = function(div)
 		switcher.style.whiteSpace = 'nowrap';
 		switcher.style.position = 'relative';
 		switcher.style.textAlign = 'center';
+		switcher.style.paddingTop = '4px';
+		div.style.paddingBottom = '8px';
 		
 		for (var i = 0; i < pageCount; i++)
 		{
