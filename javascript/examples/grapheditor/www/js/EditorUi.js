@@ -2705,7 +2705,8 @@ EditorUi.prototype.isPagesEnabled = function()
  */
 EditorUi.prototype.createTemporaryGraph = function(stylesheet)
 {
-	var graph = new Graph(document.createElement('div'), null, null, stylesheet);
+	var graph = new Graph(document.createElement('div'));
+	graph.stylesheet.styles = mxUtils.clone(stylesheet.styles);
 	graph.resetViewOnRootChange = false;
 	graph.setConnectable(false);
 	graph.gridEnabled = false;
