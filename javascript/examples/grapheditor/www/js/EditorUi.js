@@ -1286,8 +1286,11 @@ EditorUi.prototype.showShapePicker = function(x, y, source, callback)
 			{
 				this.sidebar.graph.pasteStyle(style, [cell]);
 			}
-
-			ui.insertHandler([cell], cell.value != '', this.sidebar.graph.model);
+			else
+			{
+				ui.insertHandler([cell], cell.value != '', this.sidebar.graph.model);
+			}
+			
 			this.sidebar.createThumb([cell], 25, 25, node, null, true, false, cell.geometry.width, cell.geometry.height);
 
 			mxEvent.addListener(node, 'click', function()
