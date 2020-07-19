@@ -1342,7 +1342,12 @@ EditorUi.prototype.showShapePicker = function(x, y, source, callback)
 		{
 			addCell(cells[i]);
 		}
-
+		
+		if (ui.hoverIcons != null)
+		{
+			ui.hoverIcons.reset();
+		}
+		
 		graph.popupMenuHandler.hideMenu();
 		graph.tooltipHandler.hideTooltip();
 		this.hideCurrentMenu();
