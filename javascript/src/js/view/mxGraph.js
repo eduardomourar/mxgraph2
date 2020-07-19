@@ -11753,7 +11753,7 @@ mxGraph.prototype.getEdgesBetween = function(source, target, directed)
 	p.y = this.snap(p.y / s - tr.y - off);
 	
 	return p;
- };
+};
 
 /**
  * Function: getCells
@@ -11772,12 +11772,13 @@ mxGraph.prototype.getEdgesBetween = function(source, target, directed)
  * parent - <mxCell> that should be used as the root of the recursion.
  * Default is current root of the view or the root of the model.
  * result - Optional array to store the result in.
+ * intersection - Optional <mxRectangle> to check vertices for intersection.
  */
-mxGraph.prototype.getCells = function(x, y, width, height, parent, result)
+mxGraph.prototype.getCells = function(x, y, width, height, parent, result, intersection)
 {
 	result = (result != null) ? result : [];
 	
-	if (width > 0 || height > 0)
+	if (width > 0 || height > 0 || intersection != null)
 	{
 		var model = this.getModel();
 		var right = x + width;
@@ -11812,15 +11813,16 @@ mxGraph.prototype.getCells = function(x, y, width, height, parent, result)
 						box = mxUtils.getBoundingBox(box, deg);
 					}
 					
-					if ((model.isEdge(cell) || model.isVertex(cell)) &&
+					if ((intersection != null && model.isVertex(cell) && mxUtils.intersects(intersection, box)) ||
+						(intersection == null && (model.isEdge(cell) || model.isVertex(cell)) &&
 						box.x >= x && box.y + box.height <= bottom &&
-						box.y >= y && box.x + box.width <= right)
+						box.y >= y && box.x + box.width <= right))
 					{
 						result.push(cell);
 					}
 					else
 					{
-						this.getCells(x, y, width, height, cell, result);
+						this.getCells(x, y, width, height, cell, result, intersection);
 					}
 				}
 			}
