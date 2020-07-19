@@ -3096,7 +3096,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 	}
 	else
 	{
-		return execute();
+		return execute(realTarget);
 	}
 };
 
