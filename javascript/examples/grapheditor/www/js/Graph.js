@@ -362,13 +362,12 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			    		if (Math.abs(start.point.x - me.getGraphX()) > tol ||
 			    			Math.abs(start.point.y - me.getGraphY()) > tol)
 			    		{
-			    			// Lazy selection for edges inside groups
-			    			if (!this.isCellSelected(state.cell))
-			    			{
-			    				this.selectCellForEvent(state.cell, me.getEvent());
-			    			}
-			    			
 			    			var handler = this.selectionCellsHandler.getHandler(state.cell);
+			    			
+			    			if (handler == null && this.model.isEdge(state.cell))
+			    			{
+			    				handler = this.createHandler(state);
+			    			}
 			    			
 			    			if (handler != null && handler.bends != null && handler.bends.length > 0)
 			    			{
@@ -455,13 +454,8 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 						    					handle = mxEvent.VIRTUAL_HANDLE;
 						    				}
 				    					}
-					    				
+				    					
 				    					handler.start(me.getGraphX(), me.getGraphX(), handle);
-				    					start.state = null;
-				    					start.event = null;
-				    					start.point = null;
-				    					start.handle = null;
-				    					start.selected = false;
 				    					me.consume();
 	
 				    					// Removes preview rectangle in graph handler
@@ -475,6 +469,31 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 	    							me.consume();
 	    						}
 			    			}
+			    			
+			    			if (handler != null)
+			    			{
+				    			// Lazy selection for edges inside groups
+			    				if (this.selectionCellsHandler.isHandlerActive(handler))
+			    				{
+					    			if (!this.isCellSelected(state.cell))
+					    			{
+					    				this.selectionCellsHandler.handlers.put(state.cell, handler);
+					    				this.selectCellForEvent(state.cell, me.getEvent());
+					    			}
+			    				}
+				    			else if (!this.isCellSelected(state.cell))
+				    			{
+				    				// Destroy temporary handler
+				    				handler.destroy();
+				    			}
+			    			}
+			    
+			    			// Reset start state
+		    				start.selected = false;
+		    				start.handle = null;
+	    					start.state = null;
+		    				start.event = null;
+		    				start.point = null;
 			    		}
 			    	}
 			    	else
