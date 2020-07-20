@@ -666,7 +666,7 @@ mxVertexHandler.prototype.start = function(x, y, index)
 				var dx = pos.x - this.state.getCenterX();
 				var dy = pos.y - this.state.getCenterY();
 				
-				this.startAngle = (dx != 0) ? Math.atan(dy / dx) * 180 / Math.PI + 90 : ((dy < 0) ? 180 : 0);
+				this.startAngle = (dx != 0) ? Math.atan(dy / dx) * 180 / Math.PI + 90 : 0;
 				this.startDist = Math.sqrt(dx * dx + dy * dy);
 			}
 	
