@@ -943,69 +943,16 @@ Graph = function(container, model, renderHint, stylesheet, themes, standalone)
 			return getCursorForCell.apply(this, arguments);
 		};
 		
-		// Changes rubberband selection to be recursive
+		// Changes rubberband selection ignore locked cells
 		this.selectRegion = function(rect, evt)
 		{
-			var cells = this.getAllCells(rect.x, rect.y, rect.width, rect.height);
+			var cells = this.getCells(rect.x, rect.y, rect.width, rect.height, null, null, null, function(state)
+			{
+				return mxUtils.getValue(state.style, 'locked', '0') == '1';
+			});
 			this.selectCellsForEvent(cells, evt);
 			
 			return cells;
-		};
-		
-		// Recursive implementation for rubberband selection
-		this.getAllCells = function(x, y, width, height, parent, result)
-		{
-			result = (result != null) ? result : [];
-			
-			if (width > 0 || height > 0)
-			{
-				var model = this.getModel();
-				var right = x + width;
-				var bottom = y + height;
-	
-				if (parent == null)
-				{
-					parent = this.getCurrentRoot();
-					
-					if (parent == null)
-					{
-						parent = model.getRoot();
-					}
-				}
-				
-				if (parent != null)
-				{
-					var childCount = model.getChildCount(parent);
-					
-					for (var i = 0; i < childCount; i++)
-					{
-						var cell = model.getChildAt(parent, i);
-						var state = this.view.getState(cell);
-						
-						if (state != null && this.isCellVisible(cell) && mxUtils.getValue(state.style, 'locked', '0') != '1')
-						{
-							var deg = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION) || 0;
-							var box = state;
-							
-							if (deg != 0)
-							{
-								box = mxUtils.getBoundingBox(box, deg);
-							}
-							
-							if ((model.isEdge(cell) || model.isVertex(cell)) &&
-								box.x >= x && box.y + box.height <= bottom &&
-								box.y >= y && box.x + box.width <= right)
-							{
-								result.push(cell);
-							}
-	
-							this.getAllCells(x, y, width, height, cell, result);
-						}
-					}
-				}
-			}
-			
-			return result;
 		};
 
 		// Never removes cells from parents that are being moved

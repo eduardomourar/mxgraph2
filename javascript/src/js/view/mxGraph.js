@@ -11773,8 +11773,9 @@ mxGraph.prototype.getEdgesBetween = function(source, target, directed)
  * Default is current root of the view or the root of the model.
  * result - Optional array to store the result in.
  * intersection - Optional <mxRectangle> to check vertices for intersection.
+ * ignoreFn - Optional function to check if a cell state is ignored.
  */
-mxGraph.prototype.getCells = function(x, y, width, height, parent, result, intersection)
+mxGraph.prototype.getCells = function(x, y, width, height, parent, result, intersection, ignoreFn)
 {
 	result = (result != null) ? result : [];
 	
@@ -11803,7 +11804,8 @@ mxGraph.prototype.getCells = function(x, y, width, height, parent, result, inter
 				var cell = model.getChildAt(parent, i);
 				var state = this.view.getState(cell);
 				
-				if (state != null && this.isCellVisible(cell))
+				if (state != null && this.isCellVisible(cell) &&
+					(ignoreFn == null || !ignoreFn(state)))
 				{
 					var deg = mxUtils.getValue(state.style, mxConstants.STYLE_ROTATION) || 0;
 					var box = state;
@@ -11822,7 +11824,7 @@ mxGraph.prototype.getCells = function(x, y, width, height, parent, result, inter
 					}
 					else
 					{
-						this.getCells(x, y, width, height, cell, result, intersection);
+						this.getCells(x, y, width, height, cell, result, intersection, ignoreFn);
 					}
 				}
 			}
