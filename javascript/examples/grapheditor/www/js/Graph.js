@@ -2857,7 +2857,7 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 	// Checks actual end point of edge for target cell
 	var rect = (!ignoreCellAt) ? new mxRectangle(dx + pt.x * s, dy + pt.y * s).grow(40) : null;
 	var tempCells = (rect != null) ? this.getCells(0, 0, 0, 0, null, null, rect) : null;
-	var target = (tempCells != null && tempCells.length > 0) ? tempCells[0] : null;
+	var target = (tempCells != null && tempCells.length > 0) ? tempCells.reverse()[0] : null;
 	var keepParent = false;
 	
 	if (target != null && this.model.isAncestor(target, source))
