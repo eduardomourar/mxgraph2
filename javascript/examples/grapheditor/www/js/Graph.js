@@ -10605,8 +10605,8 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			edgeHandlerMouseMove.apply(this, arguments);
 			
-			if (this.graph.graphHandler != null && this.graph.graphHandler.first != null &&
-				this.linkHint != null && this.linkHint.style.display != 'none')
+			if (this.linkHint != null && this.linkHint.style.display != 'none' &&
+				this.graph.graphHandler != null && this.graph.graphHandler.first != null)
 			{
 				this.linkHint.style.display = 'none';
 			}
