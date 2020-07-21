@@ -1264,7 +1264,10 @@ EditorUi.prototype.showShapePicker = function(x, y, source, callback)
 		var ui = this;
 		var graph = this.editor.graph;
 		var div = document.createElement('div');
-		var style = (source != null) ? graph.copyStyle(source) : null;
+		var sourceState = graph.view.getState(source);
+		var style = (source != null && (sourceState == null ||
+			!graph.isTransparentState(sourceState))) ?
+			graph.copyStyle(source) : null;
 		
 		// Do not place entry under pointer for touch devices
 		var off = -4;
