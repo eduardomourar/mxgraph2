@@ -2821,6 +2821,12 @@ Graph.prototype.connectVertex = function(source, direction, length, evt, forceCl
 		return [];
 	}
 	
+	// Uses parent for relative child cells
+	while (source.geometry.relative && this.model.isVertex(source.parent))
+	{
+		source = source.parent;
+	}
+	
 	ignoreCellAt = (ignoreCellAt) ? ignoreCellAt : false;
 		
 	// Handles clone connect sources
