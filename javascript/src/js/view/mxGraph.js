@@ -4118,7 +4118,8 @@ mxGraph.prototype.ungroupCells = function(cells)
 		
 		for (var i = 0; i < cells.length; i++)
 		{
-			if (this.model.getChildCount(cells[i]) > 0)
+			if (this.model.isVertex(cells[i]) &&
+				this.model.getChildCount(cells[i]) > 0)
 			{
 				tmp.push(cells[i]);
 			}
