@@ -2329,7 +2329,6 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 
 			// Handles special case where target should be ignored for stack layouts
 			var targetParent = graph.model.getParent(source);
-			var ignoreParent = false;
 			var validLayout = true;
 			
 			// Ignores parent if it has a stack layout or if it is a table or row
@@ -2345,15 +2344,14 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			}
 			
 			// Checks if another container is at the drop location
+			var tmp = (graph.model.isEdge(source)) ? null : graph.view.getState(targetParent);
 			var dx = 0;
 			var dy = 0;
-			var tmp = graph.view.getState(targetParent);
 			
 			// Offsets by parent position
 			if (tmp != null)
 			{
-				var offset = new mxPoint((tmp.x / graph.view.scale - graph.view.translate.x),
-					(tmp.y / graph.view.scale - graph.view.translate.y));
+				var offset = tmp.origin;
 				dx = offset.x;
 				dy = offset.y;
 
@@ -2369,23 +2367,29 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			var useParent = !graph.isTableRow(source) && !graph.isTableCell(source) &&
 				(graph.model.isEdge(source) || (sourceGeo != null &&
 				!sourceGeo.relative && validLayout));
-			var tempTarget = graph.getCellAt((geo.x + dx + graph.view.translate.x) * graph.view.scale,
-				(geo.y + dy + graph.view.translate.y) * graph.view.scale);
 			
-			if (tempTarget != null && tempTarget != targetParent && graph.isContainer(tempTarget))
+			var tempTarget = graph.getCellAt((geo.x + dx + graph.view.translate.x) * graph.view.scale,
+				(geo.y + dy + graph.view.translate.y) * graph.view.scale, null, null, null, function(state, x, y)
+				{
+					return !graph.isContainer(state.cell);
+				});
+			
+			if (tempTarget != null && tempTarget != targetParent)
 			{
 				tmp = graph.view.getState(tempTarget);
 			
 				// Offsets by new parent position
 				if (tmp != null)
 				{
-					var offset = new mxPoint((tmp.x / graph.view.scale - graph.view.translate.x),
-						(tmp.y / graph.view.scale - graph.view.translate.y));
+					var offset = tmp.origin;
 					targetParent = tempTarget;
-					
-					geo.x -= offset.x - dx;
-					geo.y -= offset.y - dy;
 					useParent = true;
+					
+					if (!graph.model.isEdge(source))
+					{
+						geo.x -= offset.x - dx;
+						geo.y -= offset.y - dy;
+					}
 				}
 			}
 			else if (!validLayout || graph.isTableRow(source) || graph.isTableCell(source))
@@ -2412,7 +2416,8 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			{
 				// Adds new terminal to edge
 				// LATER: Push new terminal out radially from edge start point
-				graph.model.setTerminal(source, targets[dropCellIndex], direction == mxConstants.DIRECTION_NORTH);
+				graph.model.setTerminal(source, targets[dropCellIndex],
+					direction == mxConstants.DIRECTION_NORTH);
 			}
 			else if (graph.model.isEdge(targets[dropCellIndex]))
 			{
@@ -2430,8 +2435,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 					// Adds parent offset to other nodes
 					var tmpState = graph.view.getState(targetParent);
 					var offset = (tmpState.cell != graph.view.currentRoot) ?
-						new mxPoint((tmpState.x / graph.view.scale - graph.view.translate.x),
-						(tmpState.y / graph.view.scale - graph.view.translate.y)) : new mxPoint(0, 0);
+						tmpState.origin : new mxPoint(0, 0);
 
 					graph.cellsMoved(targets, offset.x, offset.y, null, null, true);
 				}
@@ -2524,7 +2528,8 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 			var length = graph.defaultEdgeLength;
 			
 			// Maintains edge length
-			if (graph.model.isEdge(target) && geo2.getTerminalPoint(true) != null && geo2.getTerminalPoint(false) != null)
+			if (graph.model.isEdge(target) && geo2.getTerminalPoint(true) != null &&
+				geo2.getTerminalPoint(false) != null)
 			{
 				var p0 = geo2.getTerminalPoint(true);
 				var pe = geo2.getTerminalPoint(false);
@@ -2595,7 +2600,8 @@ Sidebar.prototype.getDropAndConnectGeometry = function(source, target, direction
 				}
 				
 				// Adds offset to match cells without connecting edge
-				if (graph.model.isEdge(target) && geo2.getTerminalPoint(true) != null && target.getTerminal(false) != null)
+				if (graph.model.isEdge(target) && geo2.getTerminalPoint(true) != null &&
+					target.getTerminal(false) != null)
 				{
 					var targetGeo = graph.getCellGeometry(target.getTerminal(false));
 					
@@ -2674,12 +2680,12 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 	
 	for (var i = 0; i < cells.length; i++)
 	{
-		if (firstVertex == null && this.editorUi.editor.graph.model.isVertex(cells[i]))
+		if (firstVertex == null && graph.model.isVertex(cells[i]))
 		{
 			firstVertex = i;
 		}
-		else if (freeSourceEdge == null && this.editorUi.editor.graph.model.isEdge(cells[i]) &&
-				this.editorUi.editor.graph.model.getTerminal(cells[i], true) == null)
+		else if (freeSourceEdge == null && graph.model.isEdge(cells[i]) &&
+				graph.model.getTerminal(cells[i], true) == null)
 		{
 			freeSourceEdge = i;
 		}
@@ -2692,7 +2698,7 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 	
 	var dropStyleEnabled = this.isDropStyleEnabled(cells, firstVertex);
 	
-	var dragSource = mxUtils.makeDraggable(elt, this.editorUi.editor.graph, mxUtils.bind(this, function(graph, evt, target, x, y)
+	var dragSource = mxUtils.makeDraggable(elt, graph, mxUtils.bind(this, function(graph, evt, target, x, y)
 	{
 		if (this.updateThread != null)
 		{
@@ -2962,14 +2968,20 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 	{
 		// Alt means no targets at all
 		// LATER: Show preview where result will go
-		var cell = (!mxEvent.isAltDown(evt) && cells != null) ? graph.getCellAt(x, y) : null;
+		var cell = (!mxEvent.isAltDown(evt) && cells != null) ?
+			graph.getCellAt(x, y, null, null, null, function(state, x, y)
+			{
+				return graph.isContainer(state.cell);
+			}) : null;
 		
 		// Uses connectable parent vertex if one exists
-		if (cell != null && !this.graph.isCellConnectable(cell))
+		if (cell != null && !this.graph.isCellConnectable(cell) &&
+			!this.graph.model.isEdge(cell))
 		{
 			var parent = this.graph.getModel().getParent(cell);
 			
-			if (this.graph.getModel().isVertex(parent) && this.graph.isCellConnectable(parent))
+			if (this.graph.getModel().isVertex(parent) &&
+				this.graph.isCellConnectable(parent))
 			{
 				cell = parent;
 			}
@@ -2988,9 +3000,9 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 		// Time on target
 		if (prev != state)
 		{
-			prev = state;
 			startTime = new Date().getTime();
 			timeOnTarget = 0;
+			prev = state;
 
 			if (this.updateThread != null)
 			{
@@ -3171,7 +3183,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 			(timeOnTarget > 500 && activeArrow == null && validTarget))))
 		{
 			activeTarget = false;
-			currentTargetState = ((timeOnTarget < 5000 && timeOnTarget > this.dropTargetDelay) || graph.model.isEdge(cell)) ? state : null;
+			currentTargetState = ((timeOnTarget < 5000 && timeOnTarget > this.dropTargetDelay) ||
+				graph.model.isEdge(cell)) ? state : null;
 
 			if (currentTargetState != null && validTarget)
 			{
@@ -3310,7 +3323,8 @@ Sidebar.prototype.createDragSource = function(elt, dropHandler, preview, cells, 
 			if (activeArrow != null || !graph.isSplitTarget(target, cells, evt))
 			{
 				// Selects parent group as drop target
-				while (target != null && !graph.isValidDropTarget(target, cells, evt) && model.isVertex(model.getParent(target)))
+				while (target != null && !graph.isValidDropTarget(target, cells, evt) &&
+					model.isVertex(model.getParent(target)))
 				{
 					target = model.getParent(target);
 				}
@@ -3367,7 +3381,8 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 	graph.container.focus();
 	
 	// Alt+Click inserts and connects
-	if (mxEvent.isAltDown(evt) && graph.getSelectionCount() == 1 && graph.model.isVertex(graph.getSelectionCell()))
+	if (mxEvent.isAltDown(evt) && graph.getSelectionCount() == 1 &&
+		graph.model.isVertex(graph.getSelectionCell()))
 	{
 		var firstVertex = null;
 		
@@ -3381,7 +3396,8 @@ Sidebar.prototype.itemClicked = function(cells, ds, evt, elt)
 		
 		if (firstVertex != null)
 		{
-			graph.setSelectionCells(this.dropAndConnect(graph.getSelectionCell(), cells, (mxEvent.isMetaDown(evt) || mxEvent.isControlDown(evt)) ?
+			graph.setSelectionCells(this.dropAndConnect(graph.getSelectionCell(), cells,
+				(mxEvent.isMetaDown(evt) || mxEvent.isControlDown(evt)) ?
 				(mxEvent.isShiftDown(evt) ? mxConstants.DIRECTION_WEST : mxConstants.DIRECTION_NORTH) : 
 				(mxEvent.isShiftDown(evt) ? mxConstants.DIRECTION_EAST : mxConstants.DIRECTION_SOUTH),
 				firstVertex, evt));
