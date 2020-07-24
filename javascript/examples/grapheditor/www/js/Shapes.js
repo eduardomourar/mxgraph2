@@ -2015,6 +2015,11 @@
 			size = mxUtils.getValue(vertex.style, 'size', size);
 		}
 		
+		if (fixed)
+		{
+			size *= vertex.view.scale;
+		}
+		
 		var x = bounds.x;
 		var y = bounds.y;
 		var w = bounds.width;
