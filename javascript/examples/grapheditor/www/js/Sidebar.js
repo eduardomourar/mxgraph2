@@ -2372,8 +2372,7 @@ Sidebar.prototype.dropAndConnect = function(source, targets, direction, dropCell
 			var tempTarget = graph.getCellAt((geo.x + dx + graph.view.translate.x) * graph.view.scale,
 				(geo.y + dy + graph.view.translate.y) * graph.view.scale);
 			
-			if (tempTarget != null && tempTarget != targetParent &&
-				(graph.isContainer(tempTarget) || graph.isSwimlane(tempTarget)))
+			if (tempTarget != null && tempTarget != targetParent && graph.isContainer(tempTarget))
 			{
 				tmp = graph.view.getState(tempTarget);
 			

@@ -418,10 +418,11 @@ mxGraphHandler.prototype.isPropagateSelectionCell = function(cell, immediate, me
 
 	if (immediate)
 	{
-		var geo = this.graph.getCellGeometry(cell);
+		var geo = (this.graph.model.isEdge(cell)) ? null :
+			this.graph.getCellGeometry(cell);
 		
 		return !this.graph.isSiblingSelected(cell) &&
-			(geo == null || geo.relative ||
+			((geo != null && geo.relative) ||
 			!this.graph.isSwimlane(parent));
 	}
 	else
