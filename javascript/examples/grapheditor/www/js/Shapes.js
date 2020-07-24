@@ -532,6 +532,49 @@
 	
 	mxCellRenderer.registerShape('isoCube2', IsoCubeShape2);
 	
+	// Flexible cube Shape
+	function CylinderShape()
+	{
+		mxShape.call(this);
+	};
+	mxUtils.extend(CylinderShape, mxShape);
+	CylinderShape.prototype.size = 15;
+	
+	CylinderShape.prototype.paintVertexShape = function(c, x, y, w, h)
+	{
+		var size = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+
+		c.translate(x,y);
+
+		if (size == 0)
+		{
+			c.rect(0, 0, w, h);
+			c.fillAndStroke();
+		}
+		else
+		{
+			c.begin();
+			c.moveTo(0, size);
+			c.arcTo(w * 0.5, size, 0, 0, 1, w * 0.5, 0);
+			c.arcTo(w * 0.5, size, 0, 0, 1, w, size);
+			c.lineTo(w, h - size);
+			c.arcTo(w * 0.5, size, 0, 0, 1, w * 0.5, h);
+			c.arcTo(w * 0.5, size, 0, 0, 1, 0, h - size);
+			c.close();
+			c.fillAndStroke();
+			
+			c.setShadow(false);
+			
+			c.begin();
+			c.moveTo(w, size);
+			c.arcTo(w * 0.5, size, 0, 0, 1, w * 0.5, 2 * size);
+			c.arcTo(w * 0.5, size, 0, 0, 1, 0, size);
+			c.stroke();
+		}
+	};
+	
+	mxCellRenderer.registerShape('cylinder2', CylinderShape);
+	
 	// Switch Shape, supports size style
 	function SwitchShape()
 	{
@@ -4132,6 +4175,18 @@
 				}, function(bounds, pt)
 				{
 					this.state.style['isoAngle'] = Math.max(0, (pt.y - bounds.y) * 50 / bounds.height);
+				}, true)];
+			},
+			'cylinder2' : function(state)
+			{
+				return [createHandle(state, ['size'], function(bounds)
+				{
+					var size = Math.max(0, Math.min(bounds.height * 0.5, parseFloat(mxUtils.getValue(this.state.style, 'size', CylinderShape.size))));
+
+					return new mxPoint(bounds.x, bounds.y + size);
+				}, function(bounds, pt)
+				{
+					this.state.style['size'] = Math.max(0, pt.y - bounds.y);
 				}, true)];
 			},
 			'offPageConnector': function(state)
