@@ -11775,8 +11775,10 @@ mxGraph.prototype.getEdgesBetween = function(source, target, directed)
  * result - Optional array to store the result in.
  * intersection - Optional <mxRectangle> to check vertices for intersection.
  * ignoreFn - Optional function to check if a cell state is ignored.
+ * includeDescendants - Optional boolean flag to add descendants to the result.
+ * Default is false.
  */
-mxGraph.prototype.getCells = function(x, y, width, height, parent, result, intersection, ignoreFn)
+mxGraph.prototype.getCells = function(x, y, width, height, parent, result, intersection, ignoreFn, includeDescendants)
 {
 	result = (result != null) ? result : [];
 	
@@ -11816,16 +11818,19 @@ mxGraph.prototype.getCells = function(x, y, width, height, parent, result, inter
 						box = mxUtils.getBoundingBox(box, deg);
 					}
 					
-					if ((intersection != null && model.isVertex(cell) && mxUtils.intersects(intersection, box)) ||
+					var hit = (intersection != null && model.isVertex(cell) && mxUtils.intersects(intersection, box)) ||
 						(intersection == null && (model.isEdge(cell) || model.isVertex(cell)) &&
 						box.x >= x && box.y + box.height <= bottom &&
-						box.y >= y && box.x + box.width <= right))
+						box.y >= y && box.x + box.width <= right);
+					
+					if (hit)
 					{
 						result.push(cell);
 					}
-					else
+					
+					if (!hit || includeDescendants)
 					{
-						this.getCells(x, y, width, height, cell, result, intersection, ignoreFn);
+						this.getCells(x, y, width, height, cell, result, intersection, ignoreFn, includeDescendants);
 					}
 				}
 			}

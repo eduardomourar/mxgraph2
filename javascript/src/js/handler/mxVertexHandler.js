@@ -2049,8 +2049,7 @@ mxVertexHandler.prototype.isParentHighlightVisible = function()
  */
 mxVertexHandler.prototype.updateParentHighlight = function()
 {
-	// If not destroyed
-	if (this.selectionBorder != null && this.isParentHighlightVisible())
+	if (!this.isDestroyed() && this.isParentHighlightVisible())
 	{
 		if (this.parentHighlight != null)
 		{
@@ -2131,6 +2130,16 @@ mxVertexHandler.prototype.drawPreview = function()
 mxVertexHandler.prototype.getSelectionBorderBounds = function()
 {
 	return this.bounds;
+};
+
+/**
+ * Function: isDestroyed
+ * 
+ * Returns true if this handler was destroyed or not initialized.
+ */
+mxVertexHandler.prototype.isDestroyed = function()
+{
+	return this.selectionBorder == null;
 };
 
 /**

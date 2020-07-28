@@ -288,28 +288,7 @@ mxEdgeHandler.prototype.init = function()
 			}
 		}
 	}
-	
-	// Adds highlight for parent group
-	if (this.parentHighlightEnabled)
-	{
-		var parent = this.graph.model.getParent(this.state.cell);
-		
-		if (this.graph.model.isVertex(parent))
-		{
-			var pstate = this.graph.view.getState(parent);
-			
-			if (pstate != null)
-			{
-				this.parentHighlight = this.createParentHighlightShape(pstate);
-				// VML dialect required here for event transparency in IE
-				this.parentHighlight.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
-				this.parentHighlight.pointerEvents = false;
-				this.parentHighlight.rotation = Number(pstate.style[mxConstants.STYLE_ROTATION] || '0');
-				this.parentHighlight.init(this.graph.getView().getOverlayPane());
-			}
-		}
-	}
-	
+
 	// Creates bends for the non-routed absolute points
 	// or bends that don't correspond to points
 	if (this.graph.getSelectionCount() < mxGraphHandler.prototype.maxCells ||
@@ -331,8 +310,28 @@ mxEdgeHandler.prototype.init = function()
 	
 	this.customHandles = this.createCustomHandles();
 	
+	this.updateParentHighlight();
 	this.redraw();
 };
+
+
+/**
+ * Function: isParentHighlightVisible
+ * 
+ * Returns true if the parent highlight should be visible. This implementation
+ * always returns true.
+ */
+mxEdgeHandler.prototype.isParentHighlightVisible = function()
+{
+	return true;
+};
+
+/**
+ * Function: updateParentHighlight
+ * 
+ * Updates the highlight of the parent if <parentHighlightEnabled> is true.
+ */
+mxEdgeHandler.prototype.updateParentHighlight = mxVertexHandler.prototype.updateParentHighlight;
 
 /**
  * Function: createCustomHandles
@@ -2404,10 +2403,7 @@ mxEdgeHandler.prototype.drawPreview = function()
 		this.shape.redraw();
 	}
 	
-	if (this.parentHighlight != null)
-	{
-		this.parentHighlight.redraw();
-	}
+	this.updateParentHighlight();
 };
 
 /**
@@ -2446,6 +2442,16 @@ mxEdgeHandler.prototype.refresh = function()
 			this.labelShape.node.parentNode.appendChild(this.labelShape.node);
 		}
 	}
+};
+
+/**
+ * Function: isDestroyed
+ * 
+ * Returns true if <destroy> was called.
+ */
+mxEdgeHandler.prototype.isDestroyed = function()
+{
+	return this.shape == null;
 };
 
 /**

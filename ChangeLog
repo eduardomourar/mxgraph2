@@ -1,3 +1,4 @@
+- Adds optional arguments, redraw of parent highlight
 - Fixes ignored pointerEvents flag for text in SVG
 - Adds mxShape.beforePaint and afterPaint hooks
 
