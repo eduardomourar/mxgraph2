@@ -408,7 +408,8 @@ mxEdgeHandler.prototype.getSelectionPoints = function(state)
  */
 mxEdgeHandler.prototype.createParentHighlightShape = function(bounds)
 {
-	var shape = new mxRectangleShape(bounds, null, this.getSelectionColor());
+	var shape = new mxRectangleShape(mxRectangle.fromRectangle(bounds),
+		null, this.getSelectionColor());
 	shape.strokewidth = this.getSelectionStrokeWidth();
 	shape.isDashed = this.isSelectionDashed();
 	
