@@ -1677,9 +1677,10 @@ mxGraph.prototype.init = function(container)
 	this.sizeDidChange();
 	
 	// Hides tooltips and resets tooltip timer if mouse leaves container
-	mxEvent.addListener(container, 'mouseleave', mxUtils.bind(this, function()
+	mxEvent.addListener(container, 'mouseleave', mxUtils.bind(this, function(evt)
 	{
-		if (this.tooltipHandler != null)
+		if (this.tooltipHandler != null && this.tooltipHandler.div != null &&
+			this.tooltipHandler.div != evt.relatedTarget)
 		{
 			this.tooltipHandler.hide();
 		}
