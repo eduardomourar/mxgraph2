@@ -36,11 +36,9 @@ Format.prototype.inactiveTabBackgroundColor = '#f1f3f4';
  * Background color for inactive tabs.
  */
 Format.prototype.roundableShapes = ['label', 'rectangle', 'internalStorage', 'corner',
-	'parallelogram', 'swimlane', 'triangle', 'trapezoid',
-	'ext', 'step', 'tee', 'process', 'link',
-	'rhombus', 'offPageConnector', 'loopLimit', 'hexagon',
-	'manualInput', 'curlyBracket', 'singleArrow', 'callout',
-	'doubleArrow', 'flexArrow', 'card', 'umlLifeline'];
+	'parallelogram', 'swimlane', 'triangle', 'trapezoid', 'ext', 'step', 'tee', 'process',
+	'link', 'rhombus', 'offPageConnector', 'loopLimit', 'hexagon', 'manualInput', 'card',
+	'curlyBracket', 'singleArrow', 'callout', 'doubleArrow', 'flexArrow', 'umlLifeline'];
 
 /**
  * Adds the label menu items to the given menu and parent.
@@ -124,7 +122,7 @@ Format.prototype.initSelectionState = function()
 	return {vertices: [], edges: [], x: null, y: null, width: null, height: null, style: {},
 		containsImage: false, containsLabel: false, fill: true, glass: true, rounded: true,
 		autoSize: false, image: true, shadow: true, lineJumps: true, resizable: true,
-		table: false, cell: false, row: false, movable: true, rotatable: true};
+		table: false, cell: false, row: false, movable: true, rotatable: true, stroke: true};
 };
 
 /**
@@ -224,6 +222,7 @@ Format.prototype.updateSelectionStateForCell = function(result, cell, cells)
 		result.image = result.image && this.isImageState(state);
 		result.shadow = result.shadow && this.isShadowState(state);
 		result.fill = result.fill && this.isFillState(state);
+		result.stroke = result.stroke && this.isStrokeState(state);
 		
 		var shape = mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null);
 		result.containsImage = result.containsImage || shape == 'image';
@@ -252,10 +251,29 @@ Format.prototype.updateSelectionStateForCell = function(result, cell, cells)
  */
 Format.prototype.isFillState = function(state)
 {
-	return state.view.graph.model.isVertex(state.cell) ||
+	return !this.isSpecialColor(state.style[mxConstants.STYLE_FILLCOLOR]) &&
+		(state.view.graph.model.isVertex(state.cell) ||
 		mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null) == 'arrow' ||
 		mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null) == 'filledEdge' ||
-		mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null) == 'flexArrow';
+		mxUtils.getValue(state.style, mxConstants.STYLE_SHAPE, null) == 'flexArrow');
+};
+
+/**
+ * Returns information about the current selection.
+ */
+Format.prototype.isStrokeState = function(state)
+{
+	return !this.isSpecialColor(state.style[mxConstants.STYLE_STROKECOLOR]);
+};
+
+/**
+ * Returns information about the current selection.
+ */
+Format.prototype.isSpecialColor = function(color)
+{
+	return mxUtils.indexOf([mxConstants.STYLE_STROKECOLOR,
+		mxConstants.STYLE_FILLCOLOR, 'inherit', 'swimlane',
+		'indicated'], color) >= 0;
 };
 
 /**
@@ -4283,7 +4301,11 @@ StyleFormatPanel.prototype.init = function()
 			this.container.appendChild(this.addFill(this.createPanel()));
 		}
 	
-		this.container.appendChild(this.addStroke(this.createPanel()));
+		if (ss.stroke)
+		{
+			this.container.appendChild(this.addStroke(this.createPanel()));
+		}
+		
 		this.container.appendChild(this.addLineJumps(this.createPanel()));
 		var opacityPanel = this.createRelativeOption(mxResources.get('opacity'), mxConstants.STYLE_OPACITY, 41);
 		opacityPanel.style.paddingTop = '8px';
