@@ -4301,11 +4301,7 @@ StyleFormatPanel.prototype.init = function()
 			this.container.appendChild(this.addFill(this.createPanel()));
 		}
 	
-		if (ss.stroke)
-		{
-			this.container.appendChild(this.addStroke(this.createPanel()));
-		}
-		
+		this.container.appendChild(this.addStroke(this.createPanel()));
 		this.container.appendChild(this.addLineJumps(this.createPanel()));
 		var opacityPanel = this.createRelativeOption(mxResources.get('opacity'), mxConstants.STYLE_OPACITY, 41);
 		opacityPanel.style.paddingTop = '8px';
@@ -4678,6 +4674,11 @@ StyleFormatPanel.prototype.addStroke = function(container)
 	
 	var colorPanel = document.createElement('div');
 	colorPanel.style.fontWeight = 'bold';
+	
+	if (!ss.stroke)
+	{
+		colorPanel.style.display = 'none';
+	}
 	
 	// Adds gradient direction option
 	var styleSelect = document.createElement('select');
