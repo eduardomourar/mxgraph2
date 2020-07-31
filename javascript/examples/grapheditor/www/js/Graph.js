@@ -4334,7 +4334,8 @@ HoverIcons.prototype.execute = function(state, dir, me)
 	var evt = me.getEvent();
 
 	this.graph.selectCellsForConnectVertex(this.graph.connectVertex(
-		state.cell, dir, this.graph.defaultEdgeLength, evt), evt, this);
+		state.cell, dir, this.graph.defaultEdgeLength, evt, mxEvent.isControlDown(evt),
+		mxEvent.isControlDown(evt)), evt, this);
 };
 
 /**
