@@ -862,13 +862,17 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 			{
 				this.moveLabel(me);
 			}
-			else if (this.index == mxEvent.ROTATION_HANDLE)
-			{
-				this.rotateVertex(me);
-			}
 			else
 			{
-				this.resizeVertex(me);
+				if (this.index == mxEvent.ROTATION_HANDLE)
+				{
+					this.rotateVertex(me);
+				}
+				else
+				{
+					this.resizeVertex(me);
+				}
+
 				this.updateHint(me);
 			}
 		}
