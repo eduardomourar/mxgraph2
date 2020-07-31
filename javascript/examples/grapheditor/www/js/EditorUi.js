@@ -3249,6 +3249,14 @@ ChangeGridColor.prototype.execute = function()
 	this.color = temp;
 };
 
+// Registers codec for ChangePageSetup
+(function()
+{
+	var codec = new mxObjectCodec(new ChangeGridColor(), ['ui']);
+
+	mxCodecRegistry.register(codec);
+})();
+
 /**
  * Change types
  */
