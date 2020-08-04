@@ -1436,6 +1436,8 @@
 	STYLE_DASHED: 'dashed',
 
 	/**
+	 * Variable: STYLE_DASH_PATTERN
+	 * 
 	 * Defines the key for the dashed pattern style in SVG and image exports.
 	 * The type of this value is a space separated list of numbers that specify
 	 * a custom-defined dash pattern. Dash styles are defined in terms of the
