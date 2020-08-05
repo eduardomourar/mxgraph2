@@ -407,14 +407,14 @@ var mxEvent =
 				// Adds basic listeners for graph event dispatching
 				mxEvent.addGestureListeners(target, mxUtils.bind(this, function(evt)
 				{
-					if (evt.pointerId != null)
+					if (!mxEvent.isMouseEvent(evt) && evt.pointerId != null)
 					{
 						evtCache.push(evt);
 					}
 				}),
 				mxUtils.bind(this, function(evt)
 				{
-					if (evtCache.length == 2)
+					if (!mxEvent.isMouseEvent(evt) && evtCache.length == 2)
 					{
 						// Find this event in the cache and update its record with this event
 						for (var i = 0; i < evtCache.length; i++)
