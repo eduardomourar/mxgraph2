@@ -1109,10 +1109,10 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 			edge.geometry.relative = true;
 			edge.edge = true;
 			
-	    	var cell = new mxCell('', new mxGeometry(0, 0, 30, 20), 'shape=cloud;html=1;outlineConnect=0;');
+	    	var cell = new mxCell('', new mxGeometry(0, 0, 20, 14), 'shape=message;html=1;outlineConnect=0;');
 	    	cell.geometry.relative = true;
 	    	cell.vertex = true;
-	    	cell.geometry.offset = new mxPoint(-15, -10);
+	    	cell.geometry.offset = new mxPoint(-10, -7);
 	    	edge.insert(cell);
 
 			return this.createEdgeTemplateFromCells([edge], 100, 0, 'Connector with Symbol');
