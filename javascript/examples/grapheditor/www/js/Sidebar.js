@@ -681,6 +681,14 @@ Sidebar.prototype.cloneCell = function(cell, value)
 /**
  * Adds shape search UI.
  */
+Sidebar.prototype.showPopupMenuForEntry = function(elt, libs, evt)
+{												
+	// Hook for subclassers
+};
+
+/**
+ * Adds shape search UI.
+ */
 Sidebar.prototype.addSearchPalette = function(expand)
 {
 	var elt = document.createElement('div');
@@ -876,57 +884,16 @@ Sidebar.prototype.addSearchPalette = function(expand)
 										{
 											hash[elt.innerHTML] = hash[elt.innerHTML].concat(result.parentLibraries);
 										}
-										
-										var libs = hash[elt.innerHTML];
 
-										if (urlParams['dev'] == 1 && libs != null && libs.length > 0)
+										mxEvent.addGestureListeners(elt, null, null, mxUtils.bind(this, function(evt)
 										{
-											// TODO: Move to draw.io, add translations, add all setCurrentSearchEntryLibrary
-											mxEvent.addGestureListeners(elt, null, null, mxUtils.bind(this, function(evt)
+											var libs = hash[elt.innerHTML];
+	
+											if (mxEvent.isPopupTrigger(evt))
 											{
-												if (mxEvent.isRightMouseButton(evt) && libs != null)
-												{
-													var offset = mxUtils.getOffset(elt);
-				
-													this.editorUi.showPopupMenu(mxUtils.bind(this, function(menu, parent)
-													{
-														menu.addItem(mxResources.get('openLibrary'), null, mxUtils.bind(this, function()
-														{
-															for (var i = 0; i < libs.length; i++)
-															{
-																(mxUtils.bind(this, function(lib)
-																{
-																	var config = this.getConfigurationById(lib.id);
-																	
-																	if (config != null)
-																	{
-																		this.showPalettes(config.prefix || '', config.libs || [config.id], true);
-																		var elts = this.showPalette(result.parentLibraries[0].lib ||
-																			result.parentLibraries[0].id, true);
-																		
-																		console.log('here', lib.id, elts);
-																		
-																		if (elts != null && elts.length > 1 && elts[1].firstChild != null &&
-																			(elts[1].firstChild.firstChild == null ||
-																			elts[1].firstChild.style.display == 'none'))
-																		{
-																			elts[0].click();
-																		}
-																		
-																		window.setTimeout(function()
-																		{
-																			elts[1].scrollIntoView(true);
-																		}, 0);
-																		
-																		mxEvent.consume(evt);
-																	}
-																}))(libs[i]);
-															}
-														}));
-													}), offset.x, offset.y + elt.offsetHeight, evt);
-												}
-											}));
-										}
+												this.showPopupMenuForEntry(elt, libs, evt);
+											}
+										}));
 										
 										// Disables the built-in context menu
 										mxEvent.disableContextMenu(elt);
