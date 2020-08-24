@@ -2089,9 +2089,9 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	{
 		if (graph.isEnabled() && !graph.isSelectionEmpty())
 		{
-			editorUi.editor.graph.popupMenuHandler.hideMenu();
+			var offset = mxUtils.getOffset(insertLink);
 			
-			var menu = new mxPopupMenu(mxUtils.bind(this, function(menu, parent)
+			editorUi.showPopupMenu(mxUtils.bind(this, function(menu, parent)
 			{
 				for (var i = layerCount - 1; i >= 0; i--)
 				{
@@ -2110,24 +2110,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 						
 					}))(graph.model.getChildAt(graph.model.root, i));
 				}
-			}));
-			menu.div.className += ' geMenubarMenu';
-			menu.smartSeparators = true;
-			menu.showDisabled = true;
-			menu.autoExpand = true;
-			
-			// Disables autoexpand and destroys menu when hidden
-			menu.hideMenu = mxUtils.bind(this, function()
-			{
-				mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
-				menu.destroy();
-			});
-	
-			var offset = mxUtils.getOffset(insertLink);
-			menu.popup(offset.x, offset.y + insertLink.offsetHeight, null, evt);
-			
-			// Allows hiding by clicking on document
-			editorUi.setCurrentMenu(menu);
+			}), offset.x, offset.y + insertLink.offsetHeight, evt);
 		}
 	});
 
