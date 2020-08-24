@@ -98,6 +98,7 @@ edit=Bearbeiten
 editData=Metadaten bearbeiten
 editDiagram=Diagramm bearbeiten
 editImage=Bild bearbeiten
+editLayer=Ebene bearbeiten
 editLink=Link bearbeiten
 editStyle=Style bearbeiten
 editTooltip=Tooltip bearbeiten

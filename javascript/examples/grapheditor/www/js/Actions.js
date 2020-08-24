@@ -1350,7 +1350,7 @@ Actions.prototype.init = function()
 			}, graph.cellEditor.isContentEditing(), !graph.cellEditor.isContentEditing());
 		}
 	}).isEnabled = isGraphEnabled;
-	action = this.addAction('layers', mxUtils.bind(this, function()
+	var layersAction = this.addAction('layers', mxUtils.bind(this, function()
 	{
 		if (this.layersWindow == null)
 		{
@@ -1374,8 +1374,34 @@ Actions.prototype.init = function()
 			this.layersWindow.window.setVisible(!this.layersWindow.window.isVisible());
 		}
 	}), null, null, Editor.ctrlKey + '+Shift+L');
-	action.setToggleAction(true);
-	action.setSelectedCallback(mxUtils.bind(this, function() { return this.layersWindow != null && this.layersWindow.window.isVisible(); }));
+	layersAction.setToggleAction(true);
+	layersAction.setSelectedCallback(mxUtils.bind(this, function() { return this.layersWindow != null && this.layersWindow.window.isVisible(); }));
+	this.addAction('editLayer...', mxUtils.bind(this, function()
+	{
+		if (graph.isEnabled() && graph.getSelectionCount() == 1)
+		{
+			var layer = graph.getSelectionCell();
+			var temp = graph.model.getParent(layer);
+			
+			while (temp != graph.model.root)
+			{
+				layer = temp;
+				temp = graph.model.getParent(layer);
+			}
+			
+			graph.setDefaultParent(layer);
+			graph.view.setCurrentRoot(null);
+
+			if (this.layersWindow != null)
+			{
+				this.layersWindow.window.setVisible(true);
+			}
+			else
+			{
+				layersAction.funct();
+			}
+		}
+	}));
 	action = this.addAction('formatPanel', mxUtils.bind(this, function()
 	{
 		ui.toggleFormatPanel();

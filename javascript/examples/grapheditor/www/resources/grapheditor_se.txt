@@ -98,6 +98,7 @@ editData=Redigera data
 editDiagram=Redigera diagram
 editImage=Redigera bild
 editLink=Redigera länk
+editLayer=Redigera lager
 editStyle=Redigera stil
 editTooltip=Redigera verktygstips 
 enterGroup=Ange grupp

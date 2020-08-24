@@ -2082,7 +2082,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	ldiv.appendChild(removeLink);
 
 	var insertLink = link.cloneNode();
-	insertLink.setAttribute('title', mxUtils.trim(mxResources.get('moveSelectionTo', [''])));
+	insertLink.setAttribute('title', mxUtils.trim(mxResources.get('moveSelectionTo', ['...'])));
 	insertLink.innerHTML = '<div class="geSprite geSprite-insert" style="display:inline-block;"></div>';
 	
 	mxEvent.addListener(insertLink, 'click', function(evt)
@@ -2478,7 +2478,6 @@ var LayersWindow = function(editorUi, x, y, w, h)
 					{
 						graph.setDefaultParent(defaultParent);
 						graph.view.setCurrentRoot(null);
-						refresh();
 					}
 				});
 			}
@@ -2508,10 +2507,8 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	};
 
 	refresh();
-	graph.model.addListener(mxEvent.CHANGE, function()
-	{
-		refresh();
-	});
+	graph.model.addListener(mxEvent.CHANGE, refresh);
+	graph.addListener('defaultParentChanged', refresh);
 
 	graph.selectionModel.addListener(mxEvent.CHANGE, function()
 	{

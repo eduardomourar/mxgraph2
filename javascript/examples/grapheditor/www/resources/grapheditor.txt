@@ -98,6 +98,7 @@ edit=Edit
 editData=Edit Data
 editDiagram=Edit Diagram
 editImage=Edit Image
+editLayer=Edit Layer
 editLink=Edit Link
 editStyle=Edit Style
 editTooltip=Edit Tooltip
