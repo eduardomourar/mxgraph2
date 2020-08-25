@@ -512,64 +512,65 @@ Sidebar.prototype.setCurrentSearchEntryLibrary = function(id, lib)
 Sidebar.prototype.addEntry = function(tags, fn)
 {
 	if (this.taglist != null && tags != null && tags.length > 0)
-	{
+	{					
+		if (this.currentSearchEntryLibrary != null)
+		{				
+			fn.parentLibraries = [this.currentSearchEntryLibrary];
+		}
+		
 		// Replaces special characters
 		var tmp = tags.toLowerCase().replace(/[\/\,\(\)]/g, ' ').split(' ');
+		var tagList = [];
+		var hash = {};
 
-		var doAddEntry = mxUtils.bind(this, function(tag)
-		{
-			if (tag != null && tag.length > 1)
-			{
-				var entry = this.taglist[tag];
-				
-				if (typeof entry !== 'object')
-				{
-					entry = {entries: [], dict: new mxDictionary()};
-					this.taglist[tag] = entry;
-				}
-				
-				// Adds current library to entry
-				if (fn.parentLibraries == null)
-				{
-					fn.parentLibraries = [];
-				}
-
-				var existing = entry.dict.get(fn);
-				
-				if (this.currentSearchEntryLibrary != null)
-				{
-					var tmp = (existing != null) ? existing : fn;
-					
-					if (mxUtils.indexOf(tmp.parentLibraries, this.currentSearchEntryLibrary) < 0)
-					{
-						tmp.parentLibraries.push(this.currentSearchEntryLibrary);
-					}
-				}
-				
-				// Ignores duplicates
-				if (existing == null)
-				{
-					entry.dict.put(fn, fn);
-					entry.entries.push(fn);
-				}
-			}
-		});
-		
+		// Finds unique tags
 		for (var i = 0; i < tmp.length; i++)
 		{
-			doAddEntry(tmp[i]);
+			if (hash[tmp[i]] == null)
+			{
+				hash[tmp[i]] = true;
+				tagList.push(tmp[i]);
+			}
 			
 			// Adds additional entry with removed trailing numbers
 			var normalized = tmp[i].replace(/\.*\d*$/, '');
 			
 			if (normalized != tmp[i])
 			{
-				doAddEntry(normalized);
+				if (hash[normalized] == null)
+				{
+					hash[normalized] = true;
+					tagList.push(normalized);
+				}
 			}
 		}
+
+		for (var i = 0; i < tagList.length; i++)
+		{
+			this.addEntryForTag(tagList[i], fn);
+		}
 	}
-	
+
 	return fn;
+};
+
+/**
+ * Hides the current tooltip.
+ */
+Sidebar.prototype.addEntryForTag = function(tag, fn)
+{
+	if (tag != null && tag.length > 1)
+	{
+		var entry = this.taglist[tag];
+		
+		if (typeof entry !== 'object')
+		{
+			entry = {entries: []};
+			this.taglist[tag] = entry;
+		}
+
+		entry.entries.push(fn);
+	}
 };
 
 /**
