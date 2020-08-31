@@ -522,9 +522,9 @@ Sidebar.prototype.setCurrentSearchEntryLibrary = function(id, lib)
 Sidebar.prototype.addEntry = function(tags, fn)
 {
 	if (this.taglist != null && tags != null && tags.length > 0)
-	{					
+	{
 		if (this.currentSearchEntryLibrary != null)
-		{				
+		{
 			fn.parentLibraries = [this.currentSearchEntryLibrary];
 		}
 		
@@ -554,7 +554,7 @@ Sidebar.prototype.addEntry = function(tags, fn)
 				}
 			}
 		}
-
+		
 		for (var i = 0; i < tagList.length; i++)
 		{
 			this.addEntryForTag(tagList[i], fn);
@@ -3851,7 +3851,7 @@ Sidebar.prototype.getTagsForStencil = function(packageName, stencilName, moreTag
 /**
  * Adds the given stencil palette.
  */
-Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ignore, onInit, scale, tags, customFns)
+Sidebar.prototype.addStencilPalette = function(id, title, stencilFile, style, ignore, onInit, scale, tags, customFns, groupId)
 {
 	scale = (scale != null) ? scale : 1;
 
