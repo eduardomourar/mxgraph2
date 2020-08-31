@@ -86,12 +86,21 @@ Sidebar.prototype.init = function()
 	this.addMiscPalette(false);
 	this.addAdvancedPalette(false);
 	this.addBasicPalette(dir);
+	
+	this.setCurrentSearchEntryLibrary('arrows');
 	this.addStencilPalette('arrows', mxResources.get('arrows'), dir + '/arrows.xml',
 		';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2');
+	this.setCurrentSearchEntryLibrary();
+	
 	this.addUmlPalette(false);
 	this.addBpmnPalette(dir, false);
+	
+	this.setCurrentSearchEntryLibrary('flowchart');
 	this.addStencilPalette('flowchart', 'Flowchart', dir + '/flowchart.xml',
 		';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2');
+	this.setCurrentSearchEntryLibrary();
+	
+	this.setCurrentSearchEntryLibrary('clipart');
 	this.addImagePalette('clipart', mxResources.get('clipart'), dir + '/clipart/', '_128x128.png',
 		['Earth_globe', 'Empty_Folder', 'Full_Folder', 'Gear', 'Lock', 'Software', 'Virus', 'Email',
 		 'Database', 'Router_Icon', 'iPad', 'iMac', 'Laptop', 'MacBook', 'Monitor_Tower', 'Printer',
@@ -100,6 +109,7 @@ Sidebar.prototype.init = function()
 		 'Worker1', 'Soldier1', 'Doctor1', 'Tech1', 'Security1', 'Telesales1'], null,
 		 {'Wireless_Router_N': 'wireless router switch wap wifi access point wlan',
 		  'Router_Icon': 'router switch'});
+	this.setCurrentSearchEntryLibrary();
 };
 
 /**
@@ -1039,9 +1049,9 @@ Sidebar.prototype.insertSearchHint = function(div, searchTerm, count, page, resu
  */
 Sidebar.prototype.addGeneralPalette = function(expand)
 {
-	this.setCurrentSearchEntryLibrary('general', 'general');
 	var lineTags = 'line lines connector connectors connection connections arrow arrows ';
-	
+	this.setCurrentSearchEntryLibrary('general', 'general');
+
 	var fns = [
 	 	this.createVertexTemplateEntry('rounded=0;whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', null, null, 'rect rectangle box'),
 	 	this.createVertexTemplateEntry('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', null, null, 'rounded rect rectangle box'),
@@ -1189,7 +1199,7 @@ Sidebar.prototype.addMiscPalette = function(expand)
 	var sb = this;
 	var lineTags = 'line lines connector connectors connection connections arrow arrows '
 	this.setCurrentSearchEntryLibrary('general', 'misc');
-	
+
 	var fns = [
    	 	this.createVertexTemplateEntry('text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;', 100, 40, 'Title', 'Title', null, null, 'text heading title'),
 	 	this.createVertexTemplateEntry('text;strokeColor=none;fillColor=none;html=1;whiteSpace=wrap;verticalAlign=middle;overflow=hidden;', 100, 80,
@@ -1399,6 +1409,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	
 	// Default tags
 	var dt = 'uml static class ';
+	this.setCurrentSearchEntryLibrary('uml');
 	
 	var fns = [
    		this.createVertexTemplateEntry('html=1;', 110, 50, 'Object', 'Object', null, null, dt + 'object instance'),
@@ -1815,6 +1826,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 	];
 	
 	this.addPaletteFunctions('uml', mxResources.get('uml'), expand || false, fns);
+	this.setCurrentSearchEntryLibrary();
 };
 
 /**
@@ -1823,8 +1835,8 @@ Sidebar.prototype.addUmlPalette = function(expand)
 Sidebar.prototype.addBpmnPalette = function(dir, expand)
 {
 	// Avoids having to bind all functions to "this"
-	this.setCurrentSearchEntryLibrary('bpmn', 'bpmn');
 	var sb = this;
+	this.setCurrentSearchEntryLibrary('bpmn');
 
 	var fns =
 	[
