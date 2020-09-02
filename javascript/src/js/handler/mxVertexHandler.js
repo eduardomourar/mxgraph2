@@ -135,6 +135,13 @@ mxVertexHandler.prototype.rotationCursor = 'crosshair';
 mxVertexHandler.prototype.livePreview = false;
 
 /**
+ * Variable: movePreviewToFront
+ * 
+ * Specifies if the live preview should be moved to the front.
+ */
+mxVertexHandler.prototype.movePreviewToFront = false;
+
+/**
  * Variable: manageSizers
  * 
  * Specifies if sizers should be hidden and spaced if the vertex is small.
@@ -853,7 +860,11 @@ mxVertexHandler.prototype.mouseMove = function(sender, me)
 					}
 					else
 					{
-						this.moveToFront();
+						if (this.movePreviewToFront)
+						{
+							this.moveToFront();
+						}
+						
 						this.customHandles[mxEvent.CUSTOM_HANDLE - this.index].positionChanged();
 					}
 				}
@@ -1198,7 +1209,10 @@ mxVertexHandler.prototype.updateLivePreview = function(me)
 	this.redrawHandles();
 	
 	// Moves live preview to front
-	this.moveToFront();
+	if (this.movePreviewToFront)
+	{
+		this.moveToFront();
+	}
 	
 	// Hides folding icon
 	if (this.state.control != null && this.state.control.node != null)
