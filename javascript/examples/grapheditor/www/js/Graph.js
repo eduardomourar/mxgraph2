@@ -1386,6 +1386,37 @@ Graph.sanitizeHtml = function(value, editing)
 };
 
 /**
+ * Returns the CSS font family from the given computed style.
+ */
+Graph.stripQuotes = function(text)
+{
+	if (text != null)
+	{
+		if (text.charAt(0) == '\'')
+		{
+			text = text.substring(1);
+		}
+		
+		if (text.charAt(text.length - 1) == '\'')
+		{
+			text = text.substring(0, text.length - 1);
+		}
+	
+		if (text.charAt(0) == '"')
+		{
+			text = text.substring(1);
+		}
+		
+		if (text.charAt(text.length - 1) == '"')
+		{
+			text = text.substring(0, text.length - 1);
+		}
+	}
+	
+	return text;
+};
+
+/**
  * Returns true if the given string is a link.
  * 
  * See https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
@@ -8571,6 +8602,31 @@ if (typeof mxVertexHandler != 'undefined')
 			else if (document.selection)
 			{
 				node = document.selection.createRange().parentElement();
+			}
+			
+			return node;
+		};
+			
+		/**
+		 * Returns the text editing element.
+		 */
+		Graph.prototype.getSelectedEditingElement = function()
+		{
+			var node = this.getSelectedElement();
+
+			while (node != null && node.nodeType != mxConstants.NODETYPE_ELEMENT)
+			{
+				node = node.parentNode;
+			}
+
+			if (node != null)
+			{
+				// Workaround for commonAncestor on range in IE11 returning parent of common ancestor
+				if (node == this.cellEditor.textarea && this.cellEditor.textarea.children.length == 1 &&
+					this.cellEditor.textarea.firstChild.nodeType == mxConstants.NODETYPE_ELEMENT)
+				{
+					node = this.cellEditor.textarea.firstChild;
+				}
 			}
 			
 			return node;

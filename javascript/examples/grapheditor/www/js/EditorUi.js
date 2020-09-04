@@ -332,34 +332,15 @@ EditorUi = function(editor, container, lightbox)
 					
 						window.setTimeout(function()
 						{
-							var selectedElement = graph.getSelectedElement();
-							var node = selectedElement;
-							
-							while (node != null && node.nodeType != mxConstants.NODETYPE_ELEMENT)
-							{
-								node = node.parentNode;
-							}
-							
+							var node = graph.getSelectedEditingElement();
+
 							if (node != null)
 							{
 								var css = mxUtils.getCurrentStyle(node);
 		
 								if (css != null && ui.toolbar != null)
 								{
-									// Strips leading and trailing quotes
-									var ff = css.fontFamily;
-									
-									if (ff.charAt(0) == '\'')
-									{
-										ff = ff.substring(1);
-									}
-									
-									if (ff.charAt(ff.length - 1) == '\'')
-									{
-										ff = ff.substring(0, ff.length - 1);
-									}
-									
-									ui.toolbar.setFontName(ff);
+									ui.toolbar.setFontName(Graph.stripQuotes(css.fontFamily));
 									ui.toolbar.setFontSize(parseInt(css.fontSize));
 								}
 							}
