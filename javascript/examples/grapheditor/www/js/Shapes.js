@@ -842,7 +842,7 @@
 		{
 			var size = mxUtils.getValue(this.style, 'size', 15);
 			
-			return new mxRectangle(0, Math.min(rect.height * this.scale, size * 2 * this.scale), 0, Math.max(0, size * 0.1 * this.scale));
+			return new mxRectangle(0, Math.min(rect.height * this.scale, size * 2 * this.scale), 0, Math.max(0, size * 0.3 * this.scale));
 		}
 		
 		return null;
