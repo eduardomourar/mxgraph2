@@ -774,7 +774,7 @@ mxShape.prototype.updateHtmlFilters = function(node)
 };
 
 /**
- * Function: mixedModeHtml
+ * Function: updateHtmlColors
  *
  * Allow optimization by replacing VML with HTML.
  */
@@ -824,7 +824,7 @@ mxShape.prototype.updateHtmlColors = function(node)
 };
 
 /**
- * Function: mixedModeHtml
+ * Function: updateHtmlBounds
  *
  * Allow optimization by replacing VML with HTML.
  */

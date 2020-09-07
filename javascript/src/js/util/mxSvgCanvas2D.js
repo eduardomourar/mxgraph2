@@ -1581,7 +1581,7 @@ mxSvgCanvas2D.prototype.createClip = function(x, y, w, h)
 };
 
 /**
- * Function: text
+ * Function: plainText
  * 
  * Paints the given text. Possible values for format are empty string for
  * plain text and html for HTML markup.

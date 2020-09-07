@@ -897,9 +897,9 @@ mxVertexHandler.prototype.isGhostPreview = function()
 };
 
 /**
- * Function: rotateVertex
+ * Function: moveLabel
  * 
- * Rotates the vertex.
+ * Moves the label.
  */
 mxVertexHandler.prototype.moveLabel = function(me)
 {
@@ -973,9 +973,9 @@ mxVertexHandler.prototype.rotateVertex = function(me)
 };
 
 /**
- * Function: rotateVertex
+ * Function: resizeVertex
  * 
- * Rotates the vertex.
+ * Risizes the vertex.
  */
 mxVertexHandler.prototype.resizeVertex = function(me)
 {
@@ -1328,9 +1328,15 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 };
 
 /**
- * Function: rotateCell
+ * Function: isRecursiveResize
  * 
- * Rotates the given cell to the given rotation.
+ * Returns the recursiveResize of the give state.
+ * 
+ * Parameters:
+ * 
+ * state - the given <mxCellState>. This implementation takes 
+ * the value of this state.
+ * me - the mouse event.
  */
 mxVertexHandler.prototype.isRecursiveResize = function(state, me)
 {

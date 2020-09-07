@@ -528,12 +528,14 @@ mxStackLayout.prototype.execute = function(parent)
 };
 
 /**
- * Function: execute
+ * Function: setChildGeometry
  * 
- * Implements <mxGraphLayout.execute>.
+ * Sets the specific geometry to the given child cell.
  * 
- * Only children where <isVertexIgnored> returns false are taken into
- * account.
+ * Parameters:
+ * 
+ * child - The given child of <mxCell>.
+ * geo - The specific geometry of <mxGeometry>.
  */
 mxStackLayout.prototype.setChildGeometry = function(child, geo)
 {
@@ -547,12 +549,15 @@ mxStackLayout.prototype.setChildGeometry = function(child, geo)
 };
 
 /**
- * Function: execute
+ * Function: updateParentGeometry
  * 
- * Implements <mxGraphLayout.execute>.
+ * Updates the geometry of the given parent cell.
  * 
- * Only children where <isVertexIgnored> returns false are taken into
- * account.
+ * Parameters:
+ * 
+ * parent - The given parent of <mxCell>.
+ * pgeo - The new <mxGeometry> for parent.
+ * last - The last <mxGeometry>.
  */
 mxStackLayout.prototype.updateParentGeometry = function(parent, pgeo, last)
 {

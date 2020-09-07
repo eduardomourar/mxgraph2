@@ -67,9 +67,9 @@ mxImageExport.prototype.drawState = function(state, canvas)
 };
 
 /**
- * Function: drawState
+ * Function: visitStatesRecursive
  * 
- * Draws the given state and all its descendants to the given canvas.
+ * Visits the given state and all its descendants to the given canvas recursively.
  */
 mxImageExport.prototype.visitStatesRecursive = function(state, canvas, visitor)
 {
