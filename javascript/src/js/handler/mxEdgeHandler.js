@@ -402,7 +402,7 @@ mxEdgeHandler.prototype.getSelectionPoints = function(state)
 };
 
 /**
- * Function: createSelectionShape
+ * Function: createParentHighlightShape
  * 
  * Creates the shape used to draw the selection border.
  */

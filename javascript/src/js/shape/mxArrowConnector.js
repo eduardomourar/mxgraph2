@@ -396,9 +396,9 @@ mxArrowConnector.prototype.paintEdgeShape = function(c, pts)
 };
 
 /**
- * Function: paintEdgeShape
+ * Function: paintMarker
  * 
- * Paints the line shape.
+ * Paints the marker.
  */
 mxArrowConnector.prototype.paintMarker = function(c, ptX, ptY, nx, ny, size, arrowWidth, edgeWidth, spacing, initialMove)
 {

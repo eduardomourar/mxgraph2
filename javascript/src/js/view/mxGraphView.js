@@ -2696,7 +2696,7 @@ mxGraphView.prototype.installListeners = function()
 };
 
 /**
- * Function: create
+ * Function: createHtml
  *
  * Creates the DOM nodes for the HTML display.
  */
@@ -2801,7 +2801,7 @@ mxGraphView.prototype.createHtmlPane = function(width, height)
 };
 
 /**
- * Function: create
+ * Function: createVml
  *
  * Creates the DOM nodes for the VML display.
  */
@@ -2855,7 +2855,7 @@ mxGraphView.prototype.createVmlPane = function(width, height)
 };
 
 /**
- * Function: create
+ * Function: createSvg
  *
  * Creates and returns the DOM nodes for the SVG display.
  */

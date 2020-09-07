@@ -1475,9 +1475,14 @@ mxGraphHandler.prototype.resetLivePreview = function()
 };
 
 /**
- * Function: reset
+ * Function: setHandlesVisibleForCells
  * 
- * Resets the state of this handler.
+ * Sets wether the handles attached to the given cells are visible.
+ * 
+ * Parameters:
+ * 
+ * cells - Array of <mxCells>.
+ * visible - Boolean that specifies if the handles should be visible.
  */
 mxGraphHandler.prototype.setHandlesVisibleForCells = function(cells, visible)
 {
