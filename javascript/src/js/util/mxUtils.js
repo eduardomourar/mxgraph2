@@ -880,11 +880,11 @@ var mxUtils =
 			}
 			else if (node.nodeType == mxConstants.NODETYPE_TEXT)
 			{
-				var value = mxUtils.getTextContent(node);
+				var value = mxUtils.trim(mxUtils.getTextContent(node));
 				
 				if (value.length > 0)
 				{
-					result.push(indent + mxUtils.htmlEntities(mxUtils.trim(value), false) + newline);
+					result.push(indent + mxUtils.htmlEntities(value, false) + newline);
 				}
 			}
 			else if (node.nodeType == mxConstants.NODETYPE_CDATA)
