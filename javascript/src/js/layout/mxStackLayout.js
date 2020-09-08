@@ -289,7 +289,9 @@ mxStackLayout.prototype.getLayoutCells = function(parent)
 			var geo1 = this.graph.getCellGeometry(c1);
 			var geo2 = this.graph.getCellGeometry(c2);
 			
-			return (geo1.y == geo2.y) ? 0 : ((geo1.y > geo2.y > 0) ? 1 : -1);
+			return (this.horizontal) ?
+				((geo1.x == geo2.x) ? 0 : ((geo1.x > geo2.x > 0) ? 1 : -1)) :
+				((geo1.y == geo2.y) ? 0 : ((geo1.y > geo2.y > 0) ? 1 : -1));
 		}));
 	}
 	
