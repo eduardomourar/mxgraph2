@@ -2317,7 +2317,13 @@ Graph.prototype.initLayoutManager = function()
 				stackLayout.marginRight = style['marginRight'] || 0;
 				stackLayout.marginTop = style['marginTop'] || 0;
 				stackLayout.marginBottom = style['marginBottom'] || 0;
+				stackLayout.allowGaps = style['allowGaps'] || 0;
 				stackLayout.fill = true;
+				
+				if (stackLayout.allowGaps)
+				{
+					stackLayout.gridSize = parseFloat(mxUtils.getValue(style, 'stackUnitSize', 20));
+				}
 				
 				return stackLayout;
 			}
