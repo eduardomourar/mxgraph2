@@ -10107,19 +10107,20 @@ if (typeof mxVertexHandler != 'undefined')
 					
 					if (style['childLayout'] == 'stackLayout')
 					{
+						var border = parseFloat(mxUtils.getValue(style, 'stackBorder', mxStackLayout.prototype.border));
 						var horizontal = mxUtils.getValue(style, 'horizontalStack', '1') == '1';
+						var start = this.graph.getActualStartSize(parent);
 						geo = geo.clone();
 						
 						if (horizontal)
 						{
-							geo.height = bounds.height;
+							geo.height = bounds.height + start.y + start.height + 2 * border;
 						}
 						else
 						{
-							geo.width = bounds.width;
-							
+							geo.width = bounds.width + start.x + start.width + 2 * border;
 						}
-			
+						
 						this.graph.model.setGeometry(parent, geo);			
 					}
 				}
