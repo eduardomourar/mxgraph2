@@ -2379,32 +2379,39 @@ mxEdgeHandler.prototype.checkLabelHandle = function(b)
  */
 mxEdgeHandler.prototype.drawPreview = function()
 {
-	if (this.isLabel)
+	try
 	{
-		var b = this.labelShape.bounds;
-		var bounds = new mxRectangle(Math.round(this.label.x - b.width / 2),
-			Math.round(this.label.y - b.height / 2), b.width, b.height);
-		
-		if (!this.labelShape.bounds.equals(bounds))
+		if (this.isLabel)
 		{
-			this.labelShape.bounds = bounds;
-			this.labelShape.redraw();
+			var b = this.labelShape.bounds;
+			var bounds = new mxRectangle(Math.round(this.label.x - b.width / 2),
+				Math.round(this.label.y - b.height / 2), b.width, b.height);
+			
+			if (!this.labelShape.bounds.equals(bounds))
+			{
+				this.labelShape.bounds = bounds;
+				this.labelShape.redraw();
+			}
 		}
+		
+		if (this.shape != null && !mxUtils.equalPoints(this.shape.points, this.abspoints))
+		{
+			this.shape.apply(this.state);
+			this.shape.points = this.abspoints.slice();
+			this.shape.scale = this.state.view.scale;
+			this.shape.isDashed = this.isSelectionDashed();
+			this.shape.stroke = this.getSelectionColor();
+			this.shape.strokewidth = this.getSelectionStrokeWidth() / this.shape.scale / this.shape.scale;
+			this.shape.isShadow = false;
+			this.shape.redraw();
+		}
+		
+		this.updateParentHighlight();
 	}
-	
-	if (this.shape != null && !mxUtils.equalPoints(this.shape.points, this.abspoints))
+	catch (e)
 	{
-		this.shape.apply(this.state);
-		this.shape.points = this.abspoints.slice();
-		this.shape.scale = this.state.view.scale;
-		this.shape.isDashed = this.isSelectionDashed();
-		this.shape.stroke = this.getSelectionColor();
-		this.shape.strokewidth = this.getSelectionStrokeWidth() / this.shape.scale / this.shape.scale;
-		this.shape.isShadow = false;
-		this.shape.redraw();
+		// ignore
 	}
-	
-	this.updateParentHighlight();
 };
 
 /**
