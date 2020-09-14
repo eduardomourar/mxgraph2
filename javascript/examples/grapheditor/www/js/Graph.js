@@ -6368,12 +6368,17 @@ if (typeof mxVertexHandler != 'undefined')
 					// Merges into unlocked current layer if one layer is pasted
 					if (layers.length == 1 && !this.isCellLocked(this.getDefaultParent()))
 					{
-						cells = this.moveCells(tempModel.getChildren(layers[0]),
-							dx, dy, false, this.getDefaultParent());
+						var children = tempModel.getChildren(layers[0]);
 						
-						// Imported default parent maps to local default parent
-						cellMapping[tempModel.getChildAt(tempModel.root, 0).getId()] =
-							this.getDefaultParent().getId();
+						if (children != null)
+						{
+							cells = this.moveCells(children,
+								dx, dy, false, this.getDefaultParent());
+							
+							// Imported default parent maps to local default parent
+							cellMapping[tempModel.getChildAt(tempModel.root, 0).getId()] =
+								this.getDefaultParent().getId();
+						}
 					}
 					else
 					{
