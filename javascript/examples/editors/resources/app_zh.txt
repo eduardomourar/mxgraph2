@@ -1,4 +1,3 @@
-// Use http://centricle.com/tools/ascii-hex/ for hex codes
 urlHelp=help/index.html
 lastSaved=上次保存
 currentFile=当前文件
