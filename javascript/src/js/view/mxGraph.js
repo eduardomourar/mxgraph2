@@ -5904,8 +5904,8 @@ mxGraph.prototype.cellResized = function(cell, bounds, ignoreRelative, recurse)
 mxGraph.prototype.resizeChildCells = function(cell, newGeo)
 {
 	var geo = this.model.getGeometry(cell);
-	var dx = newGeo.width / geo.width;
-	var dy = newGeo.height / geo.height;
+	var dx = (geo.width != 0) ? newGeo.width / geo.width : 1;
+	var dy = (geo.height != 0) ? newGeo.height / geo.height : 1;
 	var childCount = this.model.getChildCount(cell);
 	
 	for (var i = 0; i < childCount; i++)
