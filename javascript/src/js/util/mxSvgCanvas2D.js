@@ -141,7 +141,7 @@ function mxSvgCanvas2D(root, styleEnabled)
 mxUtils.extend(mxSvgCanvas2D, mxAbstractCanvas2D);
 
 /**
- * Capability check for DOM parser.
+ * Capability check for DOM parser and checks if base tag is used.
  */
 (function()
 {
@@ -161,6 +161,10 @@ mxUtils.extend(mxSvgCanvas2D, mxAbstractCanvas2D);
 			mxSvgCanvas2D.prototype.useDomParser = false;
 		}
 	}
+	
+	// Activates workaround for gradient ID resolution if base tag is used.
+	mxSvgCanvas2D.prototype.useAbsoluteIds = !mxClient.IS_CHROMEAPP && !mxClient.IS_IE && !mxClient.IS_IE11 &&
+		!mxClient.IS_EDGE && document.getElementsByTagName('base').length > 0;
 })();
 
 /**
@@ -702,10 +706,9 @@ mxSvgCanvas2D.prototype.updateFill = function()
 			var id = this.getSvgGradient(String(s.fillColor), String(s.gradientColor),
 				s.gradientFillAlpha, s.gradientAlpha, s.gradientDirection);
 			
-			if (!mxClient.IS_CHROMEAPP && !mxClient.IS_IE && !mxClient.IS_IE11 &&
-				!mxClient.IS_EDGE && this.root.ownerDocument == document)
+			if (this.root.ownerDocument == document && this.useAbsoluteIds)
 			{
-				// Workaround for potential base tag and brackets must be escaped
+				// Workaround for no fill with base tag in page (escape brackets)
 				var base = this.getBaseUrl().replace(/([\(\)])/g, '\\$1');
 				this.node.setAttribute('fill', 'url(' + base + '#' + id + ')');
 			}
