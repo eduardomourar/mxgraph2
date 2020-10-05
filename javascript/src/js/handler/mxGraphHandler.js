@@ -1259,6 +1259,24 @@ mxGraphHandler.prototype.updateLivePreview = function(dx, dy)
 								state.control.node.style.visibility = 'hidden';
 							}
 						}
+						// Clone live preview may use text bounds
+						else if (state.text != null)
+						{
+							state.text.updateBoundingBox();
+							
+							// Fixes preview box for edge labels
+							if (state.text.boundingBox != null)
+							{
+								state.text.boundingBox.x += dx;
+								state.text.boundingBox.y += dy;
+							}
+							
+							if (state.text.unrotatedBoundingBox != null)
+							{
+								state.text.unrotatedBoundingBox.x += dx;
+								state.text.unrotatedBoundingBox.y += dy;
+							}
+						}
 					}
 				}
 			}));
@@ -1463,6 +1481,15 @@ mxGraphHandler.prototype.resetLivePreview = function()
 				state.control.node.style.visibility == 'hidden')
 			{
 				state.control.node.style.visibility = '';
+			}
+			
+			// Fixes preview box for edge labels
+			if (!this.cloning)
+			{
+				if (state.text != null)
+				{
+					state.text.updateBoundingBox();
+				}
 			}
 			
 			// Forces repaint of connected edges

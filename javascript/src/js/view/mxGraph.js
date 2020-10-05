@@ -6100,6 +6100,7 @@ mxGraph.prototype.moveCells = function(cells, dx, dy, clone, target, evt, mappin
 	{
 		// Removes descendants with ancestors in cells to avoid multiple moving
 		cells = this.model.getTopmostCells(cells);
+		var origCells = cells;
 		
 		this.model.beginUpdate();
 		try
@@ -6177,6 +6178,23 @@ mxGraph.prototype.moveCells = function(cells, dx, dy, clone, target, evt, mappin
 			{
 				var index = this.model.getChildCount(target);
 				this.cellsAdded(cells, target, index, null, null, true);
+				
+				// Restores parent edge on cloned edge labels
+				if (clone)
+				{
+					for (var i = 0; i < cells.length; i++)
+					{
+						var geo = this.getCellGeometry(cells[i]);
+						var parent = this.model.getParent(origCells[i]);
+						
+						if (geo != null && geo.relative &&
+							this.model.isEdge(parent) &&
+							this.model.contains(parent))
+						{
+							this.model.add(parent, cells[i]);
+						}
+					}
+				}
 			}
 
 			// Dispatches a move event
