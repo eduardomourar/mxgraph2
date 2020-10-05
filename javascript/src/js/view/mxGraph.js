@@ -4146,6 +4146,23 @@ mxGraph.prototype.ungroupCells = function(cells)
 
 					this.cellsAdded(children, parent, index, null, null, true);
 					result = result.concat(children);
+					
+					// Fix relative child cells
+					for (var j = 0; j < children.length; j++)
+					{
+						var state = this.view.getState(children[j]);
+						var geo = this.getCellGeometry(children[j]);
+						
+						if (state != null && geo != null && geo.relative)
+						{
+							geo = geo.clone();
+							geo.x = state.origin.x;
+							geo.y = state.origin.y;
+							geo.relative = false;
+							
+							this.model.setGeometry(children[j], geo);
+						}
+					}
 				}
 			}
 
