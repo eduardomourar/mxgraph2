@@ -378,7 +378,18 @@ Actions.prototype.init = function()
 			
 			if (mxUtils.isNode(cell.value))
 			{
-				var tmp = cell.value.getAttribute('tooltip');
+				var tmp = null;
+				
+				if (mxClient.language != null && Graph.translateDiagram &&
+					cell.value.hasAttribute('tooltip_' + mxClient.language))
+				{
+					tmp = cell.value.getAttribute('tooltip_' + mxClient.language);
+				}
+				
+				if (tmp == null)
+				{
+					tmp = cell.value.getAttribute('tooltip');
+				}
 				
 				if (tmp != null)
 				{

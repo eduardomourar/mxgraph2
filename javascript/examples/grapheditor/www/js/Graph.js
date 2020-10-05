@@ -1153,6 +1153,11 @@ Graph.fileSupport = window.File != null && window.FileReader != null && window.F
 	(window.urlParams == null || urlParams['filesupport'] != '0');
 
 /**
+ * Shortcut for capability check.
+ */
+Graph.translateDiagram = urlParams['translate-diagram'] == '1';
+
+/**
  * Default size for line jumps.
  */
 Graph.lineJumpsEnabled = true;
@@ -2778,7 +2783,7 @@ Graph.prototype.createLayersDialog = function()
 /**
  * Private helper method.
  */
-Graph.prototype.replacePlaceholders = function(cell, str, vars)
+Graph.prototype.replacePlaceholders = function(cell, str, vars, translate)
 {
 	var result = [];
 	
@@ -2815,8 +2820,18 @@ Graph.prototype.replacePlaceholders = function(cell, str, vars)
 						{
 							if (current.value != null && typeof(current.value) == 'object')
 							{
-								tmp = (current.hasAttribute(name)) ? ((current.getAttribute(name) != null) ?
+								if (mxClient.language != null && Graph.translateDiagram)
+								{
+									var tempName = name + '_' + mxClient.language;
+									
+									tmp = (current.hasAttribute(tempName)) ? current.getAttribute(tempName) : null;
+								}
+								
+								if (tmp == null)
+								{
+									tmp = (current.hasAttribute(name)) ? ((current.getAttribute(name) != null) ?
 										current.getAttribute(name) : '') : null;
+								}
 							}
 							
 							current = this.model.getParent(current);
@@ -3252,11 +3267,12 @@ Graph.prototype.convertValueToString = function(cell)
 	
 	if (value != null && typeof(value) == 'object')
 	{
+		var result = null;
+		
 		if (this.isReplacePlaceholders(cell) && cell.getAttribute('placeholder') != null)
 		{
 			var name = cell.getAttribute('placeholder');
 			var current = cell;
-			var result = null;
 					
 			while (result == null && current != null)
 			{
@@ -3268,13 +3284,24 @@ Graph.prototype.convertValueToString = function(cell)
 				
 				current = this.model.getParent(current);
 			}
-			
-			return result || '';
 		}
 		else
-		{	
-			return value.getAttribute('label') || '';
+		{
+			var result = null;
+			
+			if (mxClient.language != null && Graph.translateDiagram)
+			{
+				var tempName = 'label_' + mxClient.language;
+				result = (value.hasAttribute(tempName)) ? value.getAttribute(tempName) : null;
+			}
+			
+			if (result == null)
+			{
+				result = value.getAttribute('label') || '';
+			}
 		}
+
+		return result || '';
 	}
 	
 	return mxGraph.prototype.convertValueToString.apply(this, arguments);
@@ -3747,7 +3774,18 @@ Graph.prototype.getTooltipForCell = function(cell)
 	
 	if (mxUtils.isNode(cell.value))
 	{
-		var tmp = cell.value.getAttribute('tooltip');
+		var tmp = null;
+
+		if (mxClient.language != null && Graph.translateDiagram &&
+			cell.value.hasAttribute('tooltip_' + mxClient.language))
+		{
+			tmp = cell.value.getAttribute('tooltip_' + mxClient.language);
+		}
+		
+		if (tmp == null)
+		{
+			tmp = cell.value.getAttribute('tooltip');
+		}
 		
 		if (tmp != null)
 		{
@@ -7346,7 +7384,17 @@ if (typeof mxVertexHandler != 'undefined')
 					}
 					
 					var tmp = cell.value.cloneNode(true);
-					tmp.setAttribute('label', value);
+					
+					if (mxClient.language != null && Graph.translateDiagram &&
+						tmp.hasAttribute('label_' + mxClient.language))
+					{
+						tmp.setAttribute('label_' + mxClient.language, value);
+					}
+					else
+					{
+						tmp.setAttribute('label', value);
+					}
+					
 					value = tmp;
 				}
 
@@ -7451,7 +7499,16 @@ if (typeof mxVertexHandler != 'undefined')
 		 */
 		Graph.prototype.setTooltipForCell = function(cell, link)
 		{
-			this.setAttributeForCell(cell, 'tooltip', link);
+			var key = 'tooltip';
+			
+			if (mxClient.language != null && Graph.translateDiagram &&
+				mxUtils.isNode(cell.value) &&
+				cell.value.hasAttribute('tooltip_' + mxClient.language))
+			{
+				key = 'tooltip_' + mxClient.language;
+			}
+			
+			this.setAttributeForCell(cell, key, link);
 		};
 		
 		/**
