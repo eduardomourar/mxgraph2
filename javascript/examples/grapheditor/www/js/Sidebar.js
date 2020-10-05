@@ -1466,7 +1466,7 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		    var cell = new mxCell('&laquo;Annotation&raquo;<br/><b>Component</b>', new mxGeometry(0, 0, 180, 90), 'html=1;dropTarget=0;');
 		    cell.vertex = true;
 		    
-			var symbol = new mxCell('', new mxGeometry(1, 0, 20, 20), 'shape=component;jettyWidth=8;jettyHeight=4;');
+			var symbol = new mxCell('', new mxGeometry(1, 0, 20, 20), 'shape=module;jettyWidth=8;jettyHeight=4;');
 			symbol.vertex = true;
 			symbol.geometry.relative = true;
 			symbol.geometry.offset = new mxPoint(-27, 7);
