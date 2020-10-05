@@ -90,6 +90,13 @@ mxVertexHandler.prototype.allowHandleBoundsCheck = true;
 mxVertexHandler.prototype.handleImage = null;
 
 /**
+ * Variable: handlesVisible
+ * 
+ * If handles are currently visible.
+ */
+mxVertexHandler.prototype.handlesVisible = true;
+
+/**
  * Variable: tolerance
  * 
  * Optional tolerance for hit-detection in <getHandleForEvent>. Default is 0.
@@ -740,6 +747,8 @@ mxVertexHandler.prototype.createGhostPreview = function()
  */
 mxVertexHandler.prototype.setHandlesVisible = function(visible)
 {
+	this.handlesVisible = visible;
+	
 	if (this.sizers != null)
 	{
 		for (var i = 0; i < this.sizers.length; i++)
@@ -1338,6 +1347,7 @@ mxVertexHandler.prototype.mouseUp = function(sender, me)
 
 		me.consume();
 		this.reset();
+		this.redrawHandles();
 	}
 };
 
@@ -1495,6 +1505,7 @@ mxVertexHandler.prototype.reset = function()
 	this.removeHint();
 	this.redrawHandles();
 	this.edgeHandlers = null;
+	this.handlesVisible = true;
 	this.unscaledBounds = null;
 	this.livePreviewActive = null;
 };
@@ -1866,8 +1877,8 @@ mxVertexHandler.prototype.redrawHandles = function()
 
 			// Hides custom handles during text editing
 			this.customHandles[i].shape.node.style.visibility =
-				(this.isCustomHandleVisible(this.customHandles[i])) ?
-				'' : 'hidden';
+				(this.handlesVisible && this.isCustomHandleVisible(
+					this.customHandles[i])) ? '' : 'hidden';
 		}
 	}
 
@@ -1900,7 +1911,7 @@ mxVertexHandler.prototype.redrawHandles = function()
 					this.sizers[5].node.style.display = 'none';
 					this.sizers[7].node.style.display = 'none';
 				}
-				else
+				else if (this.handlesVisible)
 				{
 					this.sizers[0].node.style.display = '';
 					this.sizers[2].node.style.display = '';
@@ -2017,7 +2028,8 @@ mxVertexHandler.prototype.redrawHandles = function()
 			this.moveSizerTo(this.rotationShape, pt.x, pt.y);
 
 			// Hides rotation handle during text editing
-			this.rotationShape.node.style.visibility = (this.state.view.graph.isEditing()) ? 'hidden' : '';
+			this.rotationShape.node.style.visibility = (this.state.view.graph.isEditing() ||
+				!this.handlesVisible) ? 'hidden' : '';
 		}
 	}
 	
