@@ -1158,6 +1158,11 @@ Graph.fileSupport = window.File != null && window.FileReader != null && window.F
 Graph.translateDiagram = urlParams['translate-diagram'] == '1';
 
 /**
+ * Shortcut for capability check.
+ */
+Graph.diagramLanguage = (urlParams['diagram-language'] != null) ? urlParams['diagram-language'] : mxClient.language;
+
+/**
  * Default size for line jumps.
  */
 Graph.lineJumpsEnabled = true;
@@ -2820,11 +2825,9 @@ Graph.prototype.replacePlaceholders = function(cell, str, vars, translate)
 						{
 							if (current.value != null && typeof(current.value) == 'object')
 							{
-								if (mxClient.language != null && Graph.translateDiagram)
+								if (Graph.translateDiagram && Graph.diagramLanguage != null)
 								{
-									var tempName = name + '_' + mxClient.language;
-									
-									tmp = (current.hasAttribute(tempName)) ? current.getAttribute(tempName) : null;
+									tmp = current.getAttribute(name + '_' + Graph.diagramLanguage);
 								}
 								
 								if (tmp == null)
@@ -3289,10 +3292,9 @@ Graph.prototype.convertValueToString = function(cell)
 		{
 			var result = null;
 			
-			if (mxClient.language != null && Graph.translateDiagram)
+			if (Graph.translateDiagram && Graph.diagramLanguage != null)
 			{
-				var tempName = 'label_' + mxClient.language;
-				result = (value.hasAttribute(tempName)) ? value.getAttribute(tempName) : null;
+				result = value.getAttribute('label_' + Graph.diagramLanguage);
 			}
 			
 			if (result == null)
@@ -3776,10 +3778,9 @@ Graph.prototype.getTooltipForCell = function(cell)
 	{
 		var tmp = null;
 
-		if (mxClient.language != null && Graph.translateDiagram &&
-			cell.value.hasAttribute('tooltip_' + mxClient.language))
+		if (Graph.translateDiagram && Graph.diagramLanguage != null)
 		{
-			tmp = cell.value.getAttribute('tooltip_' + mxClient.language);
+			tmp = cell.value.getAttribute('tooltip_' + Graph.diagramLanguage);
 		}
 		
 		if (tmp == null)
@@ -7385,10 +7386,10 @@ if (typeof mxVertexHandler != 'undefined')
 					
 					var tmp = cell.value.cloneNode(true);
 					
-					if (mxClient.language != null && Graph.translateDiagram &&
-						tmp.hasAttribute('label_' + mxClient.language))
+					if (Graph.translateDiagram && Graph.diagramLanguage != null &&
+						tmp.hasAttribute('label_' + Graph.diagramLanguage))
 					{
-						tmp.setAttribute('label_' + mxClient.language, value);
+						tmp.setAttribute('label_' + Graph.diagramLanguage, value);
 					}
 					else
 					{
@@ -7501,11 +7502,10 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 			var key = 'tooltip';
 			
-			if (mxClient.language != null && Graph.translateDiagram &&
-				mxUtils.isNode(cell.value) &&
-				cell.value.hasAttribute('tooltip_' + mxClient.language))
+			if (Graph.translateDiagram && Graph.diagramLanguage != null &&
+				mxUtils.isNode(cell.value) && cell.value.hasAttribute('tooltip_' + Graph.diagramLanguage))
 			{
-				key = 'tooltip_' + mxClient.language;
+				key = 'tooltip_' + Graph.diagramLanguage;
 			}
 			
 			this.setAttributeForCell(cell, key, link);
