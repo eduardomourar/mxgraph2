@@ -1169,7 +1169,7 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	    	
 			return this.createEdgeTemplateFromCells([edge], 160, 0, 'Connector with 3 Labels');
 		})),
-	 	this.addEntry(lineTags + 'edge shape', mxUtils.bind(this, function()
+	 	this.addEntry(lineTags + 'edge shape symbol message mail email', mxUtils.bind(this, function()
 		{
 			var edge = new mxCell('', new mxGeometry(0, 0, 0, 0), 'endArrow=classic;html=1;');
 			edge.geometry.setTerminalPoint(new mxPoint(0, 0), true);
