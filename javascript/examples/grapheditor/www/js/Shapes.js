@@ -590,6 +590,7 @@
 	CylinderShape3.prototype.paintVertexShape = function(c, x, y, w, h)
 	{
 		var size = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+		var lid = mxUtils.getValue(this.style, 'lid', true);
 
 		c.translate(x,y);
 
@@ -601,9 +602,20 @@
 		else
 		{
 			c.begin();
-			c.moveTo(0, size);
-			c.arcTo(w * 0.5, size, 0, 0, 1, w * 0.5, 0);
-			c.arcTo(w * 0.5, size, 0, 0, 1, w, size);
+			
+			if (lid)
+			{
+				c.moveTo(0, size);
+				c.arcTo(w * 0.5, size, 0, 0, 1, w * 0.5, 0);
+				c.arcTo(w * 0.5, size, 0, 0, 1, w, size);
+			}
+			else
+			{
+				c.moveTo(0, 0);
+				c.arcTo(w * 0.5, size, 0, 0, 0, w * 0.5, size);
+				c.arcTo(w * 0.5, size, 0, 0, 0, w, 0);
+			}
+
 			c.lineTo(w, h - size);
 			c.arcTo(w * 0.5, size, 0, 0, 1, w * 0.5, h);
 			c.arcTo(w * 0.5, size, 0, 0, 1, 0, h - size);
@@ -612,11 +624,14 @@
 			
 			c.setShadow(false);
 			
-			c.begin();
-			c.moveTo(w, size);
-			c.arcTo(w * 0.5, size, 0, 0, 1, w * 0.5, 2 * size);
-			c.arcTo(w * 0.5, size, 0, 0, 1, 0, size);
-			c.stroke();
+			if (lid)
+			{
+				c.begin();
+				c.moveTo(w, size);
+				c.arcTo(w * 0.5, size, 0, 0, 1, w * 0.5, 2 * size);
+				c.arcTo(w * 0.5, size, 0, 0, 1, 0, size);
+				c.stroke();
+			}
 		}
 	};
 
@@ -841,6 +856,11 @@
 		if (mxUtils.getValue(this.style, 'boundedLbl', false))
 		{
 			var size = mxUtils.getValue(this.style, 'size', 15);
+			
+			if (!mxUtils.getValue(this.style, 'lid', true))
+			{
+				size /= 2;
+			}
 			
 			return new mxRectangle(0, Math.min(rect.height * this.scale, size * 2 * this.scale), 0, Math.max(0, size * 0.3 * this.scale));
 		}
