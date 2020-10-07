@@ -537,7 +537,9 @@
 	{
 		mxShape.call(this);
 	};
+	
 	mxUtils.extend(CylinderShape, mxShape);
+	
 	CylinderShape.prototype.size = 15;
 	
 	CylinderShape.prototype.paintVertexShape = function(c, x, y, w, h)
@@ -587,6 +589,8 @@
 	
 	mxUtils.extend(CylinderShape3, mxCylinder);
 
+	CylinderShape3.prototype.size = 15;
+	
 	CylinderShape3.prototype.paintVertexShape = function(c, x, y, w, h)
 	{
 		var size = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
