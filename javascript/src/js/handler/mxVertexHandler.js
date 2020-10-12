@@ -2075,7 +2075,7 @@ mxVertexHandler.prototype.getRotationHandlePosition = function()
  */
 mxVertexHandler.prototype.isParentHighlightVisible = function()
 {
-	return true;
+	return !this.graph.isCellSelected(this.graph.model.getParent(this.state.cell));
 };
 
 /**
@@ -2085,15 +2085,16 @@ mxVertexHandler.prototype.isParentHighlightVisible = function()
  */
 mxVertexHandler.prototype.updateParentHighlight = function()
 {
-	if (!this.isDestroyed() && this.isParentHighlightVisible())
+	if (!this.isDestroyed())
 	{
+		var visible = this.isParentHighlightVisible();
+		var parent = this.graph.model.getParent(this.state.cell);
+		var pstate = this.graph.view.getState(parent);
+
 		if (this.parentHighlight != null)
 		{
-			var parent = this.graph.model.getParent(this.state.cell);
-	
-			if (this.graph.model.isVertex(parent))
+			if (this.graph.model.isVertex(parent) && visible)
 			{
-				var pstate = this.graph.view.getState(parent);
 				var b = this.parentHighlight.bounds;
 				
 				if (pstate != null && (b.x != pstate.x || b.y != pstate.y ||
@@ -2105,28 +2106,30 @@ mxVertexHandler.prototype.updateParentHighlight = function()
 			}
 			else
 			{
+				if (pstate != null && pstate.parentHighlight == this.parentHighlight)
+				{
+					pstate.parentHighlight = null;
+				}
+				
 				this.parentHighlight.destroy();
 				this.parentHighlight = null;
 			}
 		}
-		else if (this.parentHighlightEnabled)
+		else if (this.parentHighlightEnabled && visible)
 		{
-			var parent = this.graph.model.getParent(this.state.cell);
-			
-			if (this.graph.model.isVertex(parent))
+			if (this.graph.model.isVertex(parent) && pstate != null &&
+				pstate.parentHighlight == null)
 			{
-				var pstate = this.graph.view.getState(parent);
+				this.parentHighlight = this.createParentHighlightShape(pstate);
+				// VML dialect required here for event transparency in IE
+				this.parentHighlight.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
+				this.parentHighlight.pointerEvents = false;
+				this.parentHighlight.rotation = Number(pstate.style[mxConstants.STYLE_ROTATION] || '0');
+				this.parentHighlight.init(this.graph.getView().getOverlayPane());
+				this.parentHighlight.redraw();
 				
-				if (pstate != null)
-				{
-					this.parentHighlight = this.createParentHighlightShape(pstate);
-					// VML dialect required here for event transparency in IE
-					this.parentHighlight.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
-					this.parentHighlight.pointerEvents = false;
-					this.parentHighlight.rotation = Number(pstate.style[mxConstants.STYLE_ROTATION] || '0');
-					this.parentHighlight.init(this.graph.getView().getOverlayPane());
-					this.parentHighlight.redraw();
-				}
+				// Shows highlight once per parent
+				pstate.parentHighlight = this.parentHighlight;
 			}
 		}
 	}
@@ -2199,6 +2202,14 @@ mxVertexHandler.prototype.destroy = function()
 	
 	if (this.parentHighlight != null)
 	{
+		var parent = this.graph.model.getParent(this.state.cell);
+		var pstate = this.graph.view.getState(parent);
+
+		if (pstate != null && pstate.parentHighlight == this.parentHighlight)
+		{
+			pstate.parentHighlight = null;
+		}
+		
 		this.parentHighlight.destroy();
 		this.parentHighlight = null;
 	}

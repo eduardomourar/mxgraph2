@@ -321,10 +321,7 @@ mxEdgeHandler.prototype.init = function()
  * Returns true if the parent highlight should be visible. This implementation
  * always returns true.
  */
-mxEdgeHandler.prototype.isParentHighlightVisible = function()
-{
-	return true;
-};
+mxEdgeHandler.prototype.isParentHighlightVisible = mxVertexHandler.prototype.isParentHighlightVisible;
 
 /**
  * Function: updateParentHighlight
@@ -2510,6 +2507,14 @@ mxEdgeHandler.prototype.destroy = function()
 	
 	if (this.parentHighlight != null)
 	{
+		var parent = this.graph.model.getParent(this.state.cell);
+		var pstate = this.graph.view.getState(parent);
+
+		if (pstate != null && pstate.parentHighlight == this.parentHighlight)
+		{
+			pstate.parentHighlight = null;
+		}
+		
 		this.parentHighlight.destroy();
 		this.parentHighlight = null;
 	}
