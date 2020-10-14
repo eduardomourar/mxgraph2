@@ -4277,31 +4277,23 @@ mxGraph.prototype.updateGroupBounds = function(cells, border, moveGroup, topBord
 					
 					if (bounds != null && bounds.width > 0 && bounds.height > 0)
 					{
-						var left = 0;
-						var top = 0;
-						
 						// Adds the size of the title area for swimlanes
-						if (this.isSwimlane(cells[i]))
-						{
-							var size = this.getStartSize(cells[i]);
-							left = size.width;
-							top = size.height;
-						}
-						
+						var size = (this.isSwimlane(cells[i])) ?
+							this.getActualStartSize(cells[i], true) : new mxRectangle();
 						geo = geo.clone();
 						
 						if (moveGroup)
 						{
-							geo.x = Math.round(geo.x + bounds.x - border - left - leftBorder);
-							geo.y = Math.round(geo.y + bounds.y - border - top - topBorder);
+							geo.x = Math.round(geo.x + bounds.x - border - size.x - leftBorder);
+							geo.y = Math.round(geo.y + bounds.y - border - size.y - topBorder);
 						}
 						
-						geo.width = Math.round(bounds.width + 2 * border + left + leftBorder + rightBorder);
-						geo.height = Math.round(bounds.height + 2 * border + top + topBorder + bottomBorder);
+						geo.width = Math.round(bounds.width + 2 * border + size.x + leftBorder + rightBorder + size.width);
+						geo.height = Math.round(bounds.height + 2 * border + size.y + topBorder + bottomBorder + size.height);
 						
 						this.model.setGeometry(cells[i], geo);
-						this.moveCells(children, border + left - bounds.x + leftBorder,
-								border + top - bounds.y + topBorder);
+						this.moveCells(children, border + size.x - bounds.x + leftBorder,
+								border + size.y - bounds.y + topBorder);
 					}
 				}
 			}

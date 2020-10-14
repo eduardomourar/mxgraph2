@@ -7151,7 +7151,7 @@ if (typeof mxVertexHandler != 'undefined')
 						{
 							// Rotates the size and position in the geometry
 							if (!this.isTable(cell) && !this.isTableRow(cell) &&
-								!this.isTableCell(cell))
+								!this.isTableCell(cell) && !this.isSwimlane(cell))
 							{
 								geo = geo.clone();
 								geo.x += geo.width / 2 - geo.height / 2;
