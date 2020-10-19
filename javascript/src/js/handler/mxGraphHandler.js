@@ -1219,11 +1219,20 @@ mxGraphHandler.prototype.updateLivePreview = function(dx, dy)
 				var realState = this.graph.view.getState(state.cell);
 				
 				// Checks if cell was removed or replaced
-				if (realState == null || realState != state)
+				if (realState != state)
 				{
 					state.destroy();
+					
+					if (realState != null)
+					{
+						this.allCells.put(state.cell, realState);
+					}
+					else
+					{
+						this.allCells.remove(state.cell);
+					}
+					
 					state = realState;
-					this.allCells.put(state.cell, state);
 				}
 				
 				if (state != null)
