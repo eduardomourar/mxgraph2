@@ -6147,7 +6147,7 @@ if (typeof mxVertexHandler != 'undefined')
 		var mxConnectionHandlerCreateTarget = mxConnectionHandler.prototype.isCreateTarget;
 		mxConnectionHandler.prototype.isCreateTarget = function(evt)
 		{
-			return mxEvent.isControlDown(evt) || mxConnectionHandlerCreateTarget.apply(this, arguments);
+			return this.graph.isCloneEvent(evt) || mxConnectionHandlerCreateTarget.apply(this, arguments);
 		};
 
 		// Overrides highlight shape for connection points
