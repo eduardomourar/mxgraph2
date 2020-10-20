@@ -3961,7 +3961,7 @@ mxGraph.prototype.groupCells = function(group, border, cells)
 
 	var bounds = this.getBoundsForGroup(group, cells, border);
 
-	if (cells.length > 0 && bounds != null)
+	if (cells.length > 1 && bounds != null)
 	{
 		// Uses parent of group or previous parent of first child
 		var parent = this.model.getParent(group);
@@ -4112,21 +4112,7 @@ mxGraph.prototype.ungroupCells = function(cells)
 	
 	if (cells == null)
 	{
-		cells = this.getSelectionCells();
-
-		// Finds the cells with children
-		var tmp = [];
-		
-		for (var i = 0; i < cells.length; i++)
-		{
-			if (this.model.isVertex(cells[i]) &&
-				this.model.getChildCount(cells[i]) > 0)
-			{
-				tmp.push(cells[i]);
-			}
-		}
-
-		cells = tmp;
+		cells = this.getCellsForUngroup();
 	}
 	
 	if (cells != null && cells.length > 0)
@@ -4176,6 +4162,30 @@ mxGraph.prototype.ungroupCells = function(cells)
 	}
 	
 	return result;
+};
+
+/**
+ * Function: getCellsForUngroup
+ * 
+ * Returns the selection cells that can be ungrouped.
+ */
+mxGraph.prototype.getCellsForUngroup = function()
+{
+	var cells = this.getSelectionCells();
+
+	// Finds the cells with children
+	var tmp = [];
+	
+	for (var i = 0; i < cells.length; i++)
+	{
+		if (this.model.isVertex(cells[i]) &&
+			this.model.getChildCount(cells[i]) > 0)
+		{
+			tmp.push(cells[i]);
+		}
+	}
+
+	return tmp;
 };
 
 /**

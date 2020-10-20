@@ -1957,8 +1957,6 @@ Graph.prototype.init = function(container)
 	};
 	
 	/**
-	 * Function: viewStateChanged
-	 * 
 	 * Overrides to bypass full cell tree validation.
 	 * TODO: Check if this improves performance
 	 */
@@ -1977,8 +1975,6 @@ Graph.prototype.init = function(container)
 	};
 
 	/**
-	 * Function: validate
-	 * 
 	 * Overrides validate to normalize validation view state and pass
 	 * current state to CSS transform.
 	 */
@@ -2006,6 +2002,51 @@ Graph.prototype.init = function(container)
 			this.translate.x = this.graph.currentTranslate.x;
 			this.translate.y = this.graph.currentTranslate.y;
 		}
+	};
+
+	/**
+	 * Overrides function to exclude table cells and rows from groups.
+	 */
+	var graphGetCellsForGroup = mxGraph.prototype.getCellsForGroup;
+	Graph.prototype.getCellsForGroup = function(cells)
+	{
+		cells = graphGetCellsForGroup.apply(this, arguments);
+		var result = [];
+		
+		// Filters selection cells with the same parent
+		for (var i = 0; i < cells.length; i++)
+		{
+			if (!this.isTableRow(cells[i]) &&
+				!this.isTableCell(cells[i]))
+			{
+				result.push(cells[i]);
+			}
+		}
+		
+		return result;
+	};
+	
+	/**
+	 * Overrides function to exclude tables, rows and cells from ungrouping.
+	 */
+	var graphGetCellsForUngroup = mxGraph.prototype.getCellsForUngroup;
+	Graph.prototype.getCellsForUngroup = function(cells)
+	{
+		cells = graphGetCellsForGroup.apply(this, arguments);
+		var result = [];
+		
+		// Filters selection cells with the same parent
+		for (var i = 0; i < cells.length; i++)
+		{
+			if (!this.isTable(cells[i]) &&
+				!this.isTableRow(cells[i]) &&
+				!this.isTableCell(cells[i]))
+			{
+				result.push(cells[i]);
+			}
+		}
+		
+		return result;
 	};
 
 	/**
