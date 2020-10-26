@@ -50,9 +50,17 @@ function mxGraphHandler(graph)
 	// Updates the preview box for remote changes
 	this.refreshHandler = mxUtils.bind(this, function(sender, evt)
 	{
-		// Waits for the states and handlers to be updated
-		window.setTimeout(mxUtils.bind(this, function()
+		// Merges multiple pending calls
+		if (this.refreshThread)
 		{
+			window.clearTimeout(this.refreshThread);
+		}
+
+		// Waits for the states and handlers to be updated
+		this.refreshThread = window.setTimeout(mxUtils.bind(this, function()
+		{
+			this.refreshThread = null;
+			
 			if (this.first != null && !this.suspended)
 			{
 				// Updates preview with no translate to compute bounding box
@@ -64,7 +72,7 @@ function mxGraphHandler(graph)
 				this.bounds = this.graph.getView().getBounds(this.cells);
 				this.pBounds = this.getPreviewBounds(this.cells);
 
-				if (this.pBounds == null)
+				if (this.pBounds == null && !this.livePreviewUsed)
 				{
 					this.reset();
 				}
@@ -78,9 +86,11 @@ function mxGraphHandler(graph)
 
 					if (this.livePreviewUsed)
 					{
+						// Forces update to ignore last visible state
 						this.setHandlesVisibleForCells(
 							this.graph.selectionCellsHandler.
-							getHandledSelectionCells(), false);
+							getHandledSelectionCells(), false, true);
+						this.updatePreview();
 					}
 				}
 			}
@@ -88,6 +98,7 @@ function mxGraphHandler(graph)
 	});
 	
 	this.graph.getModel().addListener(mxEvent.CHANGE, this.refreshHandler);
+	this.graph.addListener(mxEvent.REFRESH, this.refreshHandler);
 	
 	this.keyHandler = mxUtils.bind(this, function(e)
 	{
@@ -1205,12 +1216,26 @@ mxGraphHandler.prototype.updateLivePreview = function(dx, dy)
 		{
 			this.allCells.visit(mxUtils.bind(this, function(key, state)
 			{
-				// Checks if cell was removed
-				if (this.graph.view.getState(state.cell) == null)
+				var realState = this.graph.view.getState(state.cell);
+				
+				// Checks if cell was removed or replaced
+				if (realState != state)
 				{
 					state.destroy();
+					
+					if (realState != null)
+					{
+						this.allCells.put(state.cell, realState);
+					}
+					else
+					{
+						this.allCells.remove(state.cell);
+					}
+					
+					state = realState;
 				}
-				else
+				
+				if (state != null)
 				{
 					// Saves current state
 					var tempState = state.clone();
@@ -1510,10 +1535,11 @@ mxGraphHandler.prototype.resetLivePreview = function()
  * 
  * cells - Array of <mxCells>.
  * visible - Boolean that specifies if the handles should be visible.
+ * force - Forces an update of the handler regardless of the last used value.
  */
-mxGraphHandler.prototype.setHandlesVisibleForCells = function(cells, visible)
+mxGraphHandler.prototype.setHandlesVisibleForCells = function(cells, visible, force)
 {
-	if (this.handlesVisible != visible)
+	if (force || this.handlesVisible != visible)
 	{
 		this.handlesVisible = visible;
 	
@@ -1827,6 +1853,7 @@ mxGraphHandler.prototype.destroy = function()
 	if (this.refreshHandler != null)
 	{
 		this.graph.getModel().removeListener(this.refreshHandler);
+		this.graph.removeListener(this.refreshHandler);
 		this.refreshHandler = null;
 	}
 	

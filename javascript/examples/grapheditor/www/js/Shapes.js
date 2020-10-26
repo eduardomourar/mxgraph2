@@ -3251,7 +3251,7 @@
 			c.begin();
 			c.moveTo(x, y);
 			
-			if (mxUtils.getValue(this.style, 'top', '1') == '1')
+			if (this.outline || mxUtils.getValue(this.style, 'top', '1') == '1')
 			{
 				c.lineTo(x + w, y);
 			}
@@ -3260,7 +3260,7 @@
 				c.moveTo(x + w, y);
 			}
 			
-			if (mxUtils.getValue(this.style, 'right', '1') == '1')
+			if (this.outline || mxUtils.getValue(this.style, 'right', '1') == '1')
 			{
 				c.lineTo(x + w, y + h);
 			}
@@ -3269,7 +3269,7 @@
 				c.moveTo(x + w, y + h);
 			}
 			
-			if (mxUtils.getValue(this.style, 'bottom', '1') == '1')
+			if (this.outline || mxUtils.getValue(this.style, 'bottom', '1') == '1')
 			{
 				c.lineTo(x, y + h);
 			}
@@ -3278,7 +3278,7 @@
 				c.moveTo(x, y + h);
 			}
 			
-			if (mxUtils.getValue(this.style, 'left', '1') == '1')
+			if (this.outline || mxUtils.getValue(this.style, 'left', '1') == '1')
 			{
 				c.lineTo(x, y);
 			}
