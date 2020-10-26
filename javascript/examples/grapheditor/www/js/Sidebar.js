@@ -2104,14 +2104,69 @@ Sidebar.prototype.addUmlPalette = function(expand)
 		this.createVertexTemplateEntry('html=1;align=center;verticalAlign=top;rounded=1;absoluteArcSize=1;arcSize=10;dashed=0;', 140, 40,
 			   	'State1, State2, ...', 'State', null, null, dt + 'state'),
 					   	
-		this.createVertexTemplateEntry('shape=umlState;rounded=1;verticalAlign=top;spacingTop=5;umlStateSymbol=collapseState;absoluteArcSize=1;arcSize=10;', 140, 80,
+		this.createVertexTemplateEntry('shape=umlState;rounded=1;verticalAlign=top;spacingTop=5;umlStateSymbol=collapseState;absoluteArcSize=1;arcSize=10;', 140, 60,
 			   	'State1', 'State', null, null, dt + 'state'),
 					   	
-		this.createVertexTemplateEntry('shape=umlState;rounded=1;verticalAlign=middle;spacingTop=0;absoluteArcSize=1;arcSize=10;umlStateConnection=connPointRefEntry;boundedLbl=1;', 140, 50,
-			   	'State1', 'State', null, null, dt + 'state'),
+	 	this.addEntry(dt + 'State', function()
+		{
+	 		var cell1 = new mxCell('State1', new mxGeometry(40, 0, 140, 50),
+	 			'shape=umlState;rounded=1;verticalAlign=middle;align=center;absoluteArcSize=1;arcSize=10;umlStateConnection=connPointRefEntry;boundedLbl=1;');
+			cell1.vertex = true;
+			
+	 		var field1 = new mxCell('Entry1', 
+	 				new mxGeometry(0, 40, 50, 20), 'text;verticalAlign=middle;align=center;');
+	 		field1.vertex = true;
+	 		cell1.insert(field1);
+	 		
+			return sb.createVertexTemplateFromCells([cell1, field1], 180, 60, 'State'); 
+		}),
+	 			
+	 	this.addEntry(dt + 'State', function()
+		{
+	 		var cell1 = new mxCell('State1', new mxGeometry(40, 0, 140, 50),
+	 			'shape=umlState;rounded=1;verticalAlign=middle;spacingTop=0;absoluteArcSize=1;arcSize=10;umlStateConnection=connPointRefExit;boundedLbl=1;');
+			cell1.vertex = true;
+			
+	 		var field1 = new mxCell('Exit1', 
+	 				new mxGeometry(0, 40, 50, 20), 'text;verticalAlign=middle;align=center;');
+	 		field1.vertex = true;
+	 		cell1.insert(field1);
+	 		
+			return sb.createVertexTemplateFromCells([cell1, field1], 180, 60, 'State'); 
+		}),
+	 			
+		this.createVertexTemplateEntry('ellipse;fillColor=#000000;strokeColor=none;', 30, 30,
+			   	'', 'Initial state', null, null, dt + 'initial state'),
 					   	
-		this.createVertexTemplateEntry('shape=umlState;rounded=1;verticalAlign=middle;spacingTop=0;absoluteArcSize=1;arcSize=10;umlStateConnection=connPointRefExit;boundedLbl=1;', 140, 50,
-			   	'State1', 'State', null, null, dt + 'state'),
+		this.createVertexTemplateEntry('ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;', 30, 30,
+			   	'', 'Final state', null, null, dt + 'final state'),
+					   	
+		this.createVertexTemplateEntry('ellipse;fillColor=#ffffff;strokeColor=#000000;', 30, 30,
+			   	'H', 'Shallow History', null, null, dt + 'shallow history'),
+					   	
+		this.createVertexTemplateEntry('ellipse;fillColor=#ffffff;strokeColor=#000000;', 30, 30,
+			   	'H*', 'Deep History', null, null, dt + 'deep history'),
+					   	
+		this.createVertexTemplateEntry('ellipse;fillColor=#ffffff;strokeColor=#000000;', 30, 30,
+			   	'', 'Entry Point', null, null, dt + 'entry point'),
+					   	
+		this.createVertexTemplateEntry('shape=sumEllipse;perimeter=ellipsePerimeter;whiteSpace=wrap;html=1;backgroundOutline=1;', 30, 30,
+			   	'', 'Exit Point', null, null, dt + 'exit point'),
+							   	
+		this.createVertexTemplateEntry('ellipse;fillColor=#000000;strokeColor=none;', 20, 20,
+			   	'', 'Junction', null, null, dt + 'junction'),
+					   	
+		this.createVertexTemplateEntry('rhombus;', 30, 30,
+			   	'', 'Choice', null, null, dt + 'choice'),
+					   	
+		this.createVertexTemplateEntry('shape=umlDestroy;', 30, 30,
+			   	'', 'Terminate', null, null, dt + 'terminate'),
+					   	
+		this.createVertexTemplateEntry('html=1;points=[];perimeter=orthogonalPerimeter;fillColor=#000000;strokeColor=none;', 5, 80,
+			   	'', 'Join/Fork', null, null, dt + 'join fork'),
+					   	
+		this.createVertexTemplateEntry('text;align=center;verticalAlign=middle;dashed=0;fillColor=#ffffff;strokeColor=#000000;', 140, 40,
+			   	'OpaqueAction1 spec.', 'Opaque Action', null, null, dt + 'opaque action'),
 					   	
 		// end of new shapes ******************************************************************************
 		
