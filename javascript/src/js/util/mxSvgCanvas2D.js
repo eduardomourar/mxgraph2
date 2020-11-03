@@ -1414,6 +1414,21 @@ mxSvgCanvas2D.createCss = function(w, h, align, valign, wrap, overflow, clip, bg
 			item += 'max-height: ' + Math.round(h) + 'px; ';
 		}
 	}
+	else if (overflow == 'block')
+	{
+		fw = 'width: ' + Math.round(w) + 'px; ';
+		block += 'width: 100%; ';
+		ofl = '';
+		dy = 0;
+		
+		// Use value in px not 100% for NO_FO to work
+		item += fw;
+		
+		if (valign == 'middle')
+		{
+			item += 'max-height: ' + Math.round(h) + 'px; ';
+		}
+	}
 	else
 	{
 		ofl = '';
@@ -1455,7 +1470,7 @@ mxSvgCanvas2D.createCss = function(w, h, align, valign, wrap, overflow, clip, bg
 	{
 		block += 'white-space: nowrap; ';
 		
-		if (ofl == '')
+		if (ofl == '' && overflow != 'block')
 		{
 			dx = 0;
 		}

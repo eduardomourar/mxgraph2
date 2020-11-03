@@ -836,7 +836,12 @@ mxText.prototype.redrawHtmlShapeWithCss3 = function()
 		{
 			tr = 'transform-origin: 0 0; transform: ' + tr + '; ';
 		}
-
+		
+		if (this.overflow == 'block' && this.valign == mxConstants.ALIGN_MIDDLE)
+		{
+			tr += 'max-height: ' + (h + 1) + 'px;';
+		}
+		
 		if (ofl == '')
 		{
 			flex += item;
@@ -852,6 +857,11 @@ mxText.prototype.redrawHtmlShapeWithCss3 = function()
 			}
 		}
 
+		if (this.overflow == 'block')
+		{
+			item += 'width: 100%; ';
+		}
+		
 		if (this.opacity < 100)
 		{
 			block += 'opacity: ' + (this.opacity / 100) + '; ';
@@ -1336,6 +1346,10 @@ mxText.prototype.updateSize = function(node, enableWrap)
 		style.width = (w + 1) + 'px';
 		style.maxHeight = (h + 1) + 'px';
 		style.overflow = 'hidden';
+	}
+	else if (this.overflow == 'block')
+	{
+		style.width = (w + 1) + 'px';
 	}
 	
 	if (this.wrap && w > 0)

@@ -829,10 +829,14 @@
 	 * 'visible' will show the complete label. A value of 'hidden' will clip
 	 * the label so that it does not overlap the vertex bounds. A value of
 	 * 'fill' will use the vertex bounds and a value of 'width' will use the
-	 * vertex width for the label. See <mxGraph.isLabelClipped>. Note that
-	 * the vertical alignment is ignored for overflow fill and for horizontal
-	 * alignment, left should be used to avoid pixel offsets in Internet Explorer
-	 * 11 and earlier or if foreignObjects are disabled. Value is "overflow".
+	 * vertex width and clip the label so that it does not overlap the vertex
+	 * height. A value of 'block' will use the vertex width and no clipping.
+	 * See <mxGraph.isLabelClipped>. The vertical alignment is ignored for
+	 * overflow fill and for horizontal alignment, left should be used to avoid
+	 * pixel offsets in Internet Explorer 11 and earlier or if foreignObjects
+	 * are disabled. The label is top aligned if block is used with a center
+	 * vertical alignment and a label that is larger than the vertex height.
+	 * Value is "overflow".
 	 */
 	STYLE_OVERFLOW: 'overflow',
 

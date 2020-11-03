@@ -630,6 +630,15 @@ mxCellEditor.prototype.resize = function()
 						this.textarea.style.width = this.textarea.scrollWidth + 'px';
 					}
 				}
+				else if (state.style[mxConstants.STYLE_OVERFLOW] == 'block')
+				{
+					if (m.y == -0.5)
+					{
+						this.textarea.style.maxHeight = this.bounds.height + 'px';
+					}
+					
+					this.textarea.style.width = tmp + 'px';
+				}
 				else
 				{
 					this.textarea.style.maxWidth = tmp + 'px';
@@ -650,9 +659,6 @@ mxCellEditor.prototype.resize = function()
 				this.textarea.style.height = 'auto';
 			}
 			
-			var ow = this.textarea.scrollWidth;
-			var oh = this.textarea.scrollHeight;
-			
 			// TODO: Update CSS width and height if smaller than minResize or remove minResize
 			//if (this.minResize != null)
 			//{
@@ -663,6 +669,9 @@ mxCellEditor.prototype.resize = function()
 			// LATER: Keep in visible area, add fine tuning for pixel precision
 			if (document.documentMode == 8)
 			{
+				var ow = this.textarea.scrollWidth;
+				var oh = this.textarea.scrollHeight;
+				
 				// LATER: Scaled wrapping and position is wrong in IE8
 				this.textarea.style.left = Math.max(0, Math.ceil((this.bounds.x - m.x * (this.bounds.width - (ow + 1) * scale) + ow * (scale - 1) * 0 + (m.x + 0.5) * 2) / scale)) + 'px';
 				this.textarea.style.top = Math.max(0, Math.ceil((this.bounds.y - m.y * (this.bounds.height - (oh + 0.5) * scale) + oh * (scale - 1) * 0 + Math.abs(m.y + 0.5) * 1) / scale)) + 'px';
@@ -671,7 +680,10 @@ mxCellEditor.prototype.resize = function()
 				this.textarea.style.height = Math.round(oh * scale) + 'px';
 			}
 			else if (mxClient.IS_QUIRKS)
-			{			
+			{
+				var ow = this.textarea.scrollWidth;
+				var oh = this.textarea.scrollHeight;
+				
 				this.textarea.style.left = Math.max(0, Math.ceil(this.bounds.x - m.x * (this.bounds.width - (ow + 1) * scale) + ow * (scale - 1) * 0 + (m.x + 0.5) * 2)) + 'px';
 				this.textarea.style.top = Math.max(0, Math.ceil(this.bounds.y - m.y * (this.bounds.height - (oh + 0.5) * scale) + oh * (scale - 1) * 0 + Math.abs(m.y + 0.5) * 1)) + 'px';
 			}
