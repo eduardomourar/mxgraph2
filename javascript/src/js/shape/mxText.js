@@ -897,21 +897,22 @@ mxText.prototype.fixFlexboxForIe11 = function(node)
 	
 	for (var i = 0; i < elts.length; i++)
 	{
-		// Fixes right aligned elements to allow for overflow to the left
+		// Fixes right aligned elements to allow for overflow
 		elts[i].style.justifyContent = 'flex-start';
 		elts[i].style.flexDirection = 'row-reverse';
 	}
 	
-	// LATER: Overflow center with flexbox in IE11
-	var elts = node.querySelectorAll('div[style*="display: flex; justify-content: center;"]');
-	var w = -window.innerWidth;
-	
-	for (var i = 0; i < elts.length; i++)
+	// LATER: Overflow center with flexbox in IE11 that keeps word wrapping
+	if (!this.wrap)
 	{
-		elts[i].style.display = 'block';
-		elts[i].style.textAlign = 'center';
-		elts[i].style.marginLeft = w + 'px';
-		elts[i].style.marginRight = w + 'px';
+		var elts = node.querySelectorAll('div[style*="display: flex; justify-content: center;"]');
+		var w = -window.innerWidth;
+		
+		for (var i = 0; i < elts.length; i++)
+		{
+			elts[i].style.marginLeft = w + 'px';
+			elts[i].style.marginRight = w + 'px';
+		}
 	}
 };
 
